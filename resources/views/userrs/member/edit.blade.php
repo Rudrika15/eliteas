@@ -165,7 +165,7 @@
                             <div class="col-md-6 mt-3">
                                 <div class="form-floating">
                                     <input type="text" class="form-control @error('gstRegiState') is-invalid @enderror"
-                                        id="gstRegiState" name="gstRegiState" value="{{$member->gstRegistate}}"
+                                        id="gstRegiState" name="gstRegiState" value="{{$member->gstRegiState}}"
                                         placeholder="gstRegiState">
                                     <label for="gstRegiState">GST Registered State</label>
                                     @error('gstRegiState')
@@ -177,11 +177,11 @@
                             </div>
                             <div class="col-md-6 mt-3">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control @error('gStinPan') is-invalid @enderror"
-                                        id="gStinPan" name="gStinPan" value="{{$member->gStinPan}}"
+                                    <input type="text" class="form-control @error('gstinPan') is-invalid @enderror"
+                                        id="gstinPan" name="gstinPan" value="{{$member->gstinPan}}"
                                         placeholder="GSTIN / PAN">
-                                    <label for="gStinPan">GSTIN / PAN </label>
-                                    @error('gStinPan')
+                                    <label for="gstinPan">GSTIN / PAN </label>
+                                    @error('gstinPan')
                                     <div class="invalid-tooltip">
                                         {{ $message }}
                                     </div>
@@ -275,7 +275,7 @@
                                 <div class="form-floating">
                                     <input type="longText"
                                         class="form-control @error('myBusiness') is-invalid @enderror" id="myBusiness"
-                                        name="myBusiness" value="myBusiness" placeholder="myBusiness">
+                                        name="myBusiness" value="{{$member->myBusiness}}" placeholder="myBusiness">
                                     <label for="myBusiness">My Business</label>
                                     @error('myBusiness')
                                     <div class="invalid-tooltip">
@@ -965,7 +965,7 @@
                                 <div class="form-floating">
                                     <input type="text"
                                         class="form-control @error('topProblemSolved') is-invalid @enderror"
-                                        id="topProblemSolved" name="topProblemSolved" value="{{$tops->topProbleSolved ?? ''}}"
+                                        id="topProblemSolved" name="topProblemSolved" value="{{$tops->topProblemSolved ?? ''}}"
                                         placeholder="topProblemSolved">
                                     <label for="topProblemSolved">Top Problem Solved</label>
                                     @error('topProblemSolved')
@@ -977,11 +977,11 @@
                             </div>
                             <div class="col-md-6 mt-3">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control @error('myFavBNIStory') is-invalid @enderror"
-                                        id="myFavBNIStory" name="myFavBNIStory" value="{{$tops->myFavBNIStory ?? ''}}"
-                                        placeholder="myFavBNIStory">
-                                    <label for="myFavBNIStory">My Favourite BNI Story</label>
-                                    @error('myFavBNIStory')
+                                    <input type="text" class="form-control @error('myFavBniStory') is-invalid @enderror"
+                                        id="myFavBniStory" name="myFavBniStory" value="{{$tops->myFavBniStory ?? ''}}"
+                                        placeholder="myFavBniStory">
+                                    <label for="myFavBniStory">My Favourite BNI Story</label>
+                                    @error('myFavBniStory')
                                     <div class="invalid-tooltip">
                                         {{ $message }}
                                     </div>

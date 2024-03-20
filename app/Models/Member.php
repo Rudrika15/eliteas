@@ -2,8 +2,15 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\User;
+use App\Models\TopsProfile;
+use App\Models\BillingAddress;
+use App\Models\ContactDetails;
+use App\Models\CircleCall;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
+
 
 class Member extends Model
 {
@@ -39,5 +46,10 @@ class Member extends Model
     public function topsProfile()
     {
         return $this->hasOne(TopsProfile::class, 'memberId', 'id');
+    }
+
+    public function cicleCall()
+    {
+        return $this->hasMany(CircleCall::class, 'memberId', 'id');
     }
 }

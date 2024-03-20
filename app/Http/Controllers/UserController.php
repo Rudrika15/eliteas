@@ -68,6 +68,7 @@ class UserController extends Controller
             $member->userId = $user->id; // Assuming user_id column in members table
             $member->firstName = $request->input('firstName'); // Corrected accessing input
             $member->lastName = $request->input('lastName'); // Corrected accessing input
+            $member->status = "Active";
             $member->save();
         }
 

@@ -37,12 +37,14 @@
         <div class="row mb-3">
             <div class="col-md-6">
                 <div class="form-floating">
-                    <select class="form-control" data-error='Circle Meeting Field is required' required name="memberId"
+                    <select class="form-control" data-error='Member Field is required' required name="memberId"
                         id="memberId">
                         <option value="" selected disabled> Select Member </option>
                         @foreach ($member as $memberData)
-                        <option value="{{ $memberData->id }}">{{ $memberData->firstName }} {{
-                            $memberData->lastName }}</option>
+                            @if (auth()->user()->id !== $memberData->id)
+                                <option value="{{ $memberData->id }}">{{ $memberData->firstName }} {{
+                                    $memberData->lastName }}</option>
+                            @endif
                         @endforeach
                     </select>
                     @error('memberId')

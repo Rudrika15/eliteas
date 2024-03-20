@@ -141,7 +141,7 @@ Route::get('members/show/{id?}', [MemberController::class, 'show'])->name('membe
 Route::get('members/create', [MemberController::class, 'create'])->name('members.create');
 Route::post('members/store', [MemberController::class, 'store'])->name('members.store');
 Route::get('members/edit/{id?}', [MemberController::class, 'edit'])->name('members.edit');
-Route::post('members/update', [MemberController::class, 'update'])->name('members.update');
+Route::post('members/update/{id?}', [MemberController::class, 'update'])->name('members.update');
 Route::get('members/delete/{id?}', [MemberController::class, 'delete'])->name('members.delete');
 
 Route::get('/refGiver/index', [CircleMeetingMemberReferenceController::class, 'index'])->name('refGiver.index');

@@ -30,7 +30,7 @@
 
     <!-- Floating Labels Form -->
     <form class="m-3 needs-validation" id="memberForm" enctype="multipart/form-data" method="post"
-        action="{{ route('profile.update', $member->userId) }}" novalidate>
+        action="{{ route('member.update', $member->userId) }}" novalidate>
         @csrf
         <input type="hidden" name="id" value="{{ $member->id }}">
         <div class="accordion" id="accordionExample">
