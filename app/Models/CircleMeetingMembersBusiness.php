@@ -8,4 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class CircleMeetingMembersBusiness extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'businessGiver',
+        'loginMember',
+        'amount',
+        'date',
+        'status',
+    ];
 }

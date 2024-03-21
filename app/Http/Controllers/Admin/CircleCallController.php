@@ -89,7 +89,7 @@ class CircleCallController extends Controller
     public function update(Request $request)
     {
         $this->validate($request, [
-            'circleMemberId' => 'required',
+            'memberId' => 'required',
             'meetingPerson' => 'required',
             'meetingPlace' => 'required',
             'remarks' => 'required',
@@ -97,7 +97,7 @@ class CircleCallController extends Controller
         try {
             $id = $request->id;
             $circlecall = CircleCall::find($id);
-            $circlecall->circleMemberId = $request->circleMemberId;
+            $circlecall->memberId = $request->memberId;
             $circlecall->meetingPerson = $request->meetingPerson;
             $circlecall->meetingPlace = $request->meetingPlace;
             $circlecall->remarks = $request->remarks;

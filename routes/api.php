@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Api\CircleCallController;
+use App\Http\Controllers\Api\CircleMeetingMemberBusinessController;
 
 /*
 |--------------------------------------------------------------------------
@@ -44,8 +45,15 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('circlecalls', [CircleCallController::class, 'index']);
     Route::get('circlecalls/{id}', [CircleCallController::class, 'view']);
     Route::post('circlecalls', [CircleCallController::class, 'create']);
-    Route::put('circlecalls/{id}', [CircleCallController::class, 'update']);
+    Route::put('circlecalls-update/{id}', [CircleCallController::class, 'update']);
     Route::delete('circlecalls/{id}', [CircleCallController::class, 'delete']);
 
 
-    });
+    // Circle Meeting Business Giver
+
+    Route::get('circle-meeting-member-businesses', [CircleMeetingMemberBusinessController::class, 'index']);
+    Route::get('circle-meeting-member-businesses/{id}', [CircleMeetingMemberBusinessController::class, 'view']);
+    Route::post('circle-meeting-member-businesses/create', [CircleMeetingMemberBusinessController::class, 'create']);
+    Route::put('circle-meeting-member-businesses/{id}', [CircleMeetingMemberBusinessController::class, 'update']);
+    Route::delete('circle-meeting-member-businesses/{id}', [CircleMeetingMemberBusinessController::class, 'delete']);
+});
