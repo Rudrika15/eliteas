@@ -59,20 +59,28 @@ class CircleMeetingMemberBusinessController extends Controller
 
     public function update(Request $request, $id)
     {
-        $validator = Validator::make($request->all(), [
-            'businessGiver' => 'required',
-            'loginMember' => 'required',
-            'amount' => 'required',
-            'date' => 'required',
-        ]);
 
-        if ($validator->fails()) {
-            return Utils::errorResponse(['error' => $validator->errors()->first()], 'Invalid Input', 400);
-        }
 
         try {
+
+            $rule = array(
+                'businessGiver' => 'required',
+                'loginMember' => 'required',
+                'amount' => 'required',
+                'date' => 'required',
+            );
+
+            $validator = Validator::make($request->all(), $rule);
+
+            if ($validator->fails()) {
+                return Utils::errorResponse(['error' => $validator->errors()->first()], 'Invalid Input', 400);
+            }
             $busGiver = CircleMeetingMembersBusiness::findOrFail($id);
-            $busGiver->fill($request->all());
+
+            $busGiver->businessGiver = $request->input('businessGiver', $busGiver->businessGiver);
+            $busGiver->loginMember = $request->input('loginMember', $busGiver->loginMember);
+            $busGiver->amount = $request->input('amount', $busGiver->amount);
+            $busGiver->date = $request->input('date', $busGiver->date);
             $busGiver->save();
 
             return Utils::sendResponse(['busGiver' => $busGiver], 'Circle Meeting Member Business Updated Successfully!', 200);

@@ -81,9 +81,9 @@ class CircleMeetingMemberReferenceController extends Controller
     public function edit($id)
     {
         try {
-            $circlemeeting = CircleMeeting::find($id);
+            $refGiver = CircleMeetingMembersReference::find($id);
             $member = Member::all();
-            return view('admin.refGiver.edit', compact('circlemeeting', 'member'));
+            return view('admin.refGiver.edit', compact('refGiver', 'member'));
         } catch (\Throwable $th) {
             throw $th;
             return view('servererror');

@@ -39,7 +39,7 @@
                     <th>Contact No</th>
                     <th>Email</th>
                     <th>Scale</th>
-                    <th>Description</th>
+                    {{-- <th>Description</th> --}}
                     <th>Status</th>
                     <th>Action</th>
                 </tr>
@@ -47,13 +47,13 @@
             <tbody>
                 @foreach ($refGiver as $refGiverData)
                 <tr>
-                    <td>{{$refGiverData->members->firstName ?? '-'}} {{$refGiverData->members->lastName}}</td>
+                    <td>{{$refGiverData->members->firstName ?? '-'}} {{$refGiverData->members->lastName ?? '-'}}</td>
                     <td>{{$refGiverData->referenceGiver ?? '-'}}</td>
                     <td>{{$refGiverData->contactName ?? '-'}}</td>
                     <td>{{$refGiverData->contactNo ?? '-'}}</td>
                     <td>{{$refGiverData->email ?? '-'}}</td>
                     <td>{{$refGiverData->scale ?? '-'}}</td>
-                    <td>{{$refGiverData->description ?? '-'}}</td>
+                    {{-- <td>{{$refGiverData->description ?? '-'}}</td> --}}
                     <td>{{$refGiverData->status}}</td>
                     <td>
                         <a href="{{ route('refGiver.edit', $refGiverData->id) }}" class="btn btn-primary btn-sm">

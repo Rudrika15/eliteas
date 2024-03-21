@@ -1,60 +1,46 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Api;
 
 use App\Models\City;
 use App\Models\Franchise;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
 use App\Models\Circle;
 use App\Models\CircleType;
+use Illuminate\Support\Facades\Validator;
+use App\Utils\Utils;
 
 class CircleController extends Controller
 {
     public function index(Request $request)
     {
         try {
-            $circle = Circle::with('circleType')
+            $circles = Circle::with('circleType')
                 ->with('city')
                 ->with('franchise')
                 ->where('status', 'Active')
                 ->orderBy('id', 'DESC')
                 ->get();
-            return view('admin.circle.index', compact('circle'));
+            return Utils::sendResponse(['circles' => $circles], 'Circles retrieved successfully', 200);
         } catch (\Throwable $th) {
-            throw $th;
-            return view('servererror');
-        }
-    }
-    //For show single data
-    public function view(Request $request, $id)
-    {
-        try {
-            $circle = Circle::findOrFail($id);
-            return response()->json($circle);
-        } catch (\Throwable $th) {
-            throw $th;
-            return view('servererror');
-        }
-    }
-    public function create()
-    {
-        try {
-            $circle = Circle::where('status', '!=', 'Deleted')->get();
-            $franchise = Franchise::where('status', '!=', 'Deleted')->get();
-            $city = City::where('status', '!=', 'Deleted')->get();
-            $circletype = CircleType::where('status', '!=', 'Deleted')->get();
-            return view('admin.circle.create', compact('circle', 'franchise', 'city', 'circletype'));
-        } catch (\Throwable $th) {
-            throw $th;
-            return view('servererror');
+            return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
 
-    public function store(Request $request)
+    public function show(Request $request, $id)
     {
-        $this->validate($request, [
+        try {
+            $circle = Circle::findOrFail($id);
+            return Utils::sendResponse(['circle' => $circle], 'Circle retrieved successfully', 200);
+        } catch (\Throwable $th) {
+            return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
+        }
+    }
+
+    public function create(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
             'circleName' => 'required',
             'franchiseId' => 'required',
             'cityId' => 'required',
@@ -62,10 +48,14 @@ class CircleController extends Controller
             'meetingDay' => 'required',
             'meetingTime' => 'required',
             'numberOfMeetings' => 'required',
-            'weekNo' => 'required|array', // Ensure weekNo is an array
+            // 'weekNo' => 'required|array', // Ensure weekNo is an array
             'start_date' => 'required',
             'end_date' => 'required'
         ]);
+
+        if ($validator->fails()) {
+            return Utils::errorResponse(['error' => $validator->errors()->first()], 'Invalid Input', 400);
+        }
 
         try {
             $circle = new Circle();
@@ -83,45 +73,37 @@ class CircleController extends Controller
 
             $circle->save();
 
-            return redirect()->route('circle.index')->with('success', 'Circle Created Successfully!');
+            return Utils::sendResponse(['circle' => $circle], 'Circle Created Successfully', 201);
         } catch (\Throwable $th) {
-            throw $th;
-            return view('servererror');
+            return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
 
-
-    public function edit($id)
+    public function update(Request $request, $id)
     {
-        try {
-            $circle = Circle::find($id);
-            $franchise = Franchise::where('status', '!=', 'Deleted')->get();
-            $city = City::where('status', '!=', 'Deleted')->get();
-            $circletype = CircleType::where('status', '!=', 'Deleted')->get();
-            return view('admin.circle.edit', compact('franchise', 'circletype', 'city', 'circle'));
-        } catch (\Throwable $th) {
-            throw $th;
-            return view('servererror');
-        }
-    }
-
-    public function update(Request $request)
-    {
-        $this->validate($request, [
+        $validator = Validator::make($request->all(), [
             'circleName' => 'required',
             'cityId' => 'required',
             'franchiseId' => 'required',
             'circletypeId' => 'required',
             'meetingDay' => 'required',
             'meetingTime' => 'required',
-            'weekNo' => 'required|array', // Ensure weekNo is an array
+            // 'weekNo' => 'required|array', // Ensure weekNo is an array
             'start_date' => 'required',
             'end_date' => 'required',
         ]);
 
+        if ($validator->fails()) {
+            return Utils::errorResponse(['error' => $validator->errors()->first()], 'Invalid Input', 400);
+        }
+
         try {
-            $id = $request->id;
             $circle = Circle::find($id);
+
+            if (!$circle) {
+                return Utils::errorResponse(['error' => 'Circle not found.'], 'Not Found', 404);
+            }
+
             $circle->circleName = $request->circleName;
             $circle->cityId = $request->cityId;
             $circle->franchiseId = $request->franchiseId;
@@ -134,24 +116,27 @@ class CircleController extends Controller
             $circle->status = 'Active';
             $circle->save();
 
-            return redirect()->route('circle.index')->with('success', 'Circle Updated Successfully!');
+            return Utils::sendResponse(['circle' => $circle], 'Circle Updated Successfully', 200);
         } catch (\Throwable $th) {
-            throw $th;
-            return view('servererror');
+            return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
 
-    function delete($id)
+    public function delete(Request $request, $id)
     {
         try {
             $circle = Circle::find($id);
-            $circle->status = "Deleted";
+
+            if (!$circle) {
+                return Utils::errorResponse(['error' => 'Circle not found.'], 'Not Found', 404);
+            }
+
+            $circle->status = 'Deleted';
             $circle->save();
 
-            return redirect()->route('circle.index')->with('Success', 'Circle Deleted Successfully!');
+            return Utils::sendResponse([], 'Circle Deleted Successfully', 200);
         } catch (\Throwable $th) {
-            throw $th;
-            return view('servererror');
+            return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
 }
