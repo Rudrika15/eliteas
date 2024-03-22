@@ -15,7 +15,9 @@ class CircleMeetingMemberReferenceController extends Controller
     public function index(Request $request)
     {
         try {
-            $refGiver = CircleMeetingMembersReference::where('status', 'Active')
+            $refGiver = CircleMeetingMembersReference::whereHas('members')
+                ->with('members')
+                ->where('status', 'Active')
                 ->orderBy('id', 'DESC')
                 ->get();
             return view('admin.refGiver.index', compact('refGiver'));

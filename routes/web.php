@@ -33,18 +33,16 @@ use App\Http\Controllers\Admin\FranchiseController;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
 
 Auth::routes();
 
-Route::get('/home', [HomeController::class, 'index'])->name('home');
 Auth::routes();
 Route::group(['middleware' => ['auth']], function () {
     Route::resource('roles', RoleController::class);
     Route::resource('users', UserController::class);
 
+
+    Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
     Route::get('/franchise/index', [FranchiseController::class, 'index'])->name('franchise.index');
     Route::get('franchise/show/{id?}', [FranchiseController::class, 'show'])->name('franchise.show');
     Route::get('franchise/create', [FranchiseController::class, 'create'])->name('franchise.create');
@@ -170,8 +168,4 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::get('member-update/{id?}', [ProfileController::class, 'member'])->name('member');
     Route::post('update', [ProfileController::class, 'memberUpdate'])->name('member.update');
-
-
-
-    Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 });
