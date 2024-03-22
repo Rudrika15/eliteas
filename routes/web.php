@@ -12,7 +12,6 @@ use App\Http\Controllers\Admin\CircleController;
 use App\Http\Controllers\Admin\MemberController;
 use App\Http\Controllers\Admin\CountryController;
 use App\Http\Controllers\Admin\TrainingController;
-use App\Http\Controllers\Admin\FranchiseController;
 use App\Http\Controllers\Admin\CircleCallController;
 use App\Http\Controllers\Admin\CircleTypeController;
 use App\Http\Controllers\Admin\CircleMemberController;
@@ -21,6 +20,7 @@ use App\Http\Controllers\Admin\TrainerMasterController;
 use App\Http\Controllers\Admin\CircleMeetingMembersController;
 use App\Http\Controllers\Admin\CircleMeetingMemberBusinessController;
 use App\Http\Controllers\Admin\CircleMeetingMemberReferenceController;
+use App\Http\Controllers\Api\FranchiseController;
 
 /*
 |--------------------------------------------------------------------------
