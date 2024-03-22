@@ -34,7 +34,7 @@
         action="{{ route('circlemember.update', $circlemember->id) }}" novalidate>
         @csrf
         <input type="hidden" name="id" value="{{ $circlemember->id }}">
-        <input type="hidden" name="id" value="{{ $member->id }}">
+        {{-- <input type="hidden" name="id" value="{{ $member->id }}"> --}}
         <div class="row mb-3">
             <div class="col-md-6">
                 <div class="form-floating">
@@ -71,7 +71,7 @@
                                 <div class="col-md-6 mt-3">
                                     <div class="form-floating">
                                         <input type="text" class="form-control @error('title') is-invalid @enderror"
-                                            id="title" name="title" value="{{$member->title}}" placeholder="title">
+                                            id="title" name="title" value="" placeholder="title">
                                         <label for="title">Title</label>
                                         @error('title')
                                         <div class="invalid-tooltip">
@@ -83,8 +83,7 @@
                                 <div class="col-md-6 mt-3">
                                     <div class="form-floating">
                                         <input type="text" class="form-control @error('firstName') is-invalid @enderror"
-                                            id="firstName" name="firstName" value="{{$member->firstName}}"
-                                            placeholder="First Name">
+                                            id="firstName" name="firstName" value="" placeholder="First Name">
                                         <label for="firstName">First Name</label>
                                         @error('firstName')
                                         <div class="invalid-tooltip">
@@ -96,8 +95,7 @@
                                 <div class="col-md-6 mt-3">
                                     <div class="form-floating">
                                         <input type="text" class="form-control @error('lastName') is-invalid @enderror"
-                                            id="lastName" name="lastName" value="{{$member->lastName}}"
-                                            placeholder="Last Name">
+                                            id="lastName" name="lastName" value="" placeholder="Last Name">
                                         <label for="lastName">Last Name</label>
                                         @error('lastName')
                                         <div class="invalid-tooltip">
@@ -109,7 +107,7 @@
                                 <div class="col-md-6 mt-3">
                                     <div class="form-floating">
                                         <input type="text" class="form-control @error('suffix') is-invalid @enderror"
-                                            id="suffix" name="suffix" value="{{$member->suffix}}" placeholder="Suffix">
+                                            id="suffix" name="suffix" value="" placeholder="Suffix">
                                         <label for="suffix">Suffix</label>
                                         @error('suffix')
                                         <div class="invalid-tooltip">
@@ -122,8 +120,7 @@
                                     <div class="form-floating">
                                         <input type="text"
                                             class="form-control @error('displayName') is-invalid @enderror"
-                                            id="displayName" name="displayName" value="{{$member->displayName}}"
-                                            placeholder="Display Name">
+                                            id="displayName" name="displayName" value="" placeholder="Display Name">
                                         <label for="displayName">Display Name</label>
                                         @error('displayName')
                                         <div class="invalid-tooltip">
@@ -159,8 +156,7 @@
                                     <div class="form-floating">
                                         <input type="text"
                                             class="form-control @error('companyName') is-invalid @enderror"
-                                            id="companyName" name="companyName" value="{{$member->companyName}}"
-                                            placeholder="Company Name">
+                                            id="companyName" name="companyName" value="" placeholder="Company Name">
                                         <label for="companyName">Company Name</label>
                                         @error('companyName')
                                         <div class="invalid-tooltip">
@@ -189,8 +185,7 @@
                                     <div class="form-floating">
                                         <input type="text"
                                             class="form-control @error('gstRegiState') is-invalid @enderror"
-                                            id="gstRegiState" name="gstRegiState" value="{{$member->gstRegiState}}"
-                                            placeholder="gstRegiState">
+                                            id="gstRegiState" name="gstRegiState" value="" placeholder="gstRegiState">
                                         <label for="gstRegiState">GST Registered State</label>
                                         @error('gstRegiState')
                                         <div class="invalid-tooltip">
@@ -202,8 +197,7 @@
                                 <div class="col-md-6 mt-3">
                                     <div class="form-floating">
                                         <input type="text" class="form-control @error('gstinPan') is-invalid @enderror"
-                                            id="gstinPan" name="gstinPan" value="{{$member->gstinPan}}"
-                                            placeholder="GSTIN / PAN">
+                                            id="gstinPan" name="gstinPan" value="" placeholder="GSTIN / PAN">
                                         <label for="gstinPan">GSTIN / PAN </label>
                                         @error('gstinPan')
                                         <div class="invalid-tooltip">
@@ -215,8 +209,7 @@
                                 <div class="col-md-6 mt-3">
                                     <div class="form-floating">
                                         <input type="text" class="form-control @error('industry') is-invalid @enderror"
-                                            id="industry" name="industry" value="{{$member->industry}}"
-                                            placeholder="Industry">
+                                            id="industry" name="industry" value="" placeholder="Industry">
                                         <label for="industry">Industry</label>
                                         @error('industry')
                                         <div class="invalid-tooltip">
@@ -229,8 +222,8 @@
                                     <div class="form-floating">
                                         <input type="text"
                                             class="form-control @error('classification') is-invalid @enderror"
-                                            id="classification" name="classification"
-                                            value="{{$member->classification}}" placeholder="Classification">
+                                            id="classification" name="classification" value=""
+                                            placeholder="Classification">
                                         <label for="classification">Classification</label>
                                         @error('classification')
                                         <div class="invalid-tooltip">
@@ -258,8 +251,7 @@
                                 <div class="col-md-6 mt-3">
                                     <div class="form-floating">
                                         <input type="text" class="form-control @error('chapter') is-invalid @enderror"
-                                            id="chapter" name="chapter" value="{{$member->chapter}}"
-                                            placeholder="Chapter">
+                                            id="chapter" name="chapter" value="" placeholder="Chapter">
                                         <label for="chapter">Chapter</label>
                                         @error('chapter')
                                         <div class="invalid-tooltip">
@@ -272,8 +264,8 @@
                                     <div class="form-floating">
                                         <input type="date"
                                             class="form-control @error('renewalDueDate') is-invalid @enderror"
-                                            id="renewalDueDate" name="renewalDueDate"
-                                            value="{{$member->renewalDueDate}}" placeholder="GSTIN / PAN">
+                                            id="renewalDueDate" name="renewalDueDate" value=""
+                                            placeholder="GSTIN / PAN">
                                         <label for="renewalDueDate">Renewal Due Date </label>
                                         @error('renewalDueDate')
                                         <div class="invalid-tooltip">
@@ -286,8 +278,8 @@
                                     <div class="form-floating">
                                         <input type="text"
                                             class="form-control @error('membershipStatus') is-invalid @enderror"
-                                            id="membershipStatus" name="membershipStatus"
-                                            value="{{$member->membershipStatus}}" placeholder="membershipStatus">
+                                            id="membershipStatus" name="membershipStatus" value=""
+                                            placeholder="membershipStatus">
                                         <label for="membershipStatus">Membership Status</label>
                                         @error('membershipStatus')
                                         <div class="invalid-tooltip">
@@ -300,8 +292,7 @@
                                     <div class="form-floating">
                                         <input type="longText"
                                             class="form-control @error('myBusiness') is-invalid @enderror"
-                                            id="myBusiness" name="myBusiness" value="{{$member->myBusiness}}"
-                                            placeholder="myBusiness">
+                                            id="myBusiness" name="myBusiness" value="" placeholder="myBusiness">
                                         <label for="myBusiness">My Business</label>
                                         @error('myBusiness')
                                         <div class="invalid-tooltip">
@@ -314,7 +305,7 @@
                                     <div class="form-floating">
                                         <input type="longText"
                                             class="form-control @error('keyWords') is-invalid @enderror" id="keyWords"
-                                            name="keyWords" value="{{$member->keyWords}}" placeholder="keyWords">
+                                            name="keyWords" value="" placeholder="keyWords">
                                         <label for="keyWords">Keywords (Comma Seperated)</label>
                                         @error('keyWords')
                                         <div class="invalid-tooltip">
@@ -374,8 +365,7 @@
                                 <div class="col-md-6 mt-3">
                                     <div class="form-floating">
                                         <input type="text" class="form-control @error('username') is-invalid @enderror"
-                                            id="username" name="username" value="{{$member->username}}"
-                                            placeholder="username">
+                                            id="username" name="username" value="" placeholder="username">
                                         <label for="username">Username</label>
                                         @error('username')
                                         <div class="invalid-tooltip">
@@ -387,8 +377,7 @@
                                 <div class="col-md-6 mt-3">
                                     <div class="form-floating">
                                         <input type="text" class="form-control @error('language') is-invalid @enderror"
-                                            id="language" name="language" value="{{$member->language}}"
-                                            placeholder="Language">
+                                            id="language" name="language" value="" placeholder="Language">
                                         <label for="language">Language </label>
                                         @error('language')
                                         <div class="invalid-tooltip">
@@ -400,8 +389,7 @@
                                 <div class="col-md-6 mt-3">
                                     <div class="form-floating">
                                         <input type="text" class="form-control @error('timeZone') is-invalid @enderror"
-                                            id="timeZone" name="timeZone" value="{{$member->timeZone}}"
-                                            placeholder="timeZone">
+                                            id="timeZone" name="timeZone" value="" placeholder="timeZone">
                                         <label for="timeZone">Timezone</label>
                                         @error('timeZone')
                                         <div class="invalid-tooltip">
@@ -468,8 +456,7 @@
                                 <div class="col-md-6 mt-3">
                                     <div class="form-floating">
                                         <input type="text" class="form-control @error('webSite') is-invalid @enderror"
-                                            id="webSite" name="webSite" value="{{$member->webSite}}"
-                                            placeholder="webSite">
+                                            id="webSite" name="webSite" value="" placeholder="webSite">
                                         <label for="webSite">Website</label>
                                         @error('webSite')
                                         <div class="invalid-tooltip">
@@ -496,8 +483,7 @@
                                     <div class="form-floating">
                                         <input type="text"
                                             class="form-control @error('socialLinks') is-invalid @enderror"
-                                            id="socialLinks" name="socialLinks" value="{{$member->socialLinks}}"
-                                            placeholder="socialLinks">
+                                            id="socialLinks" name="socialLinks" value="" placeholder="socialLinks">
                                         <label for="socialLinks">Social Network Links</label>
                                         @error('socialLinks')
                                         <div class="invalid-tooltip">
@@ -1067,8 +1053,7 @@
                                     <div class="col-md-6 mt-3">
                                         <div class="form-floating">
                                             <input type="text" class="form-control @error('goals') is-invalid @enderror"
-                                                id="goals" name="goals" value="{{$member->goals ?? ''}}"
-                                                placeholder="Goals">
+                                                id="goals" name="goals" value="? ''}}" placeholder="Goals">
                                             <label for="goals">Goals</label>
                                             @error('goals')
                                             <div class="invalid-tooltip">
@@ -1081,8 +1066,8 @@
                                         <div class="form-floating">
                                             <input type="text"
                                                 class="form-control @error('accomplishment') is-invalid @enderror"
-                                                id="accomplishment" name="accomplishment"
-                                                value="{{$member->accomplishment ?? ''}}" placeholder="accomplishment">
+                                                id="accomplishment" name="accomplishment" value="? ''}}"
+                                                placeholder="accomplishment">
                                             <label for="accomplishment">Accomplishment</label>
                                             @error('accomplishment')
                                             <div class="invalid-tooltip">
@@ -1095,8 +1080,7 @@
                                         <div class="form-floating">
                                             <input type="text"
                                                 class="form-control @error('interests') is-invalid @enderror"
-                                                id="interests" name="interests" value="{{$member->interests ?? ''}}"
-                                                placeholder="interests">
+                                                id="interests" name="interests" value="? ''}}" placeholder="interests">
                                             <label for="interests">Interests</label>
                                             @error('interests')
                                             <div class="invalid-tooltip">
@@ -1109,8 +1093,7 @@
                                         <div class="form-floating">
                                             <input type="text"
                                                 class="form-control @error('networks') is-invalid @enderror"
-                                                id="networks" name="networks" value="{{$member->networks ?? ''}}"
-                                                placeholder="networks">
+                                                id="networks" name="networks" value="? ''}}" placeholder="networks">
                                             <label for="networks">Networks</label>
                                             @error('networks')
                                             <div class="invalid-tooltip">
@@ -1123,7 +1106,7 @@
                                         <div class="form-floating">
                                             <input type="text"
                                                 class="form-control @error('skills') is-invalid @enderror" id="skills"
-                                                name="skills" value="{{$member->skills ?? ''}}" placeholder="skills">
+                                                name="skills" value="? ''}}" placeholder="skills">
                                             <label for="skills">Skills</label>
                                             @error('skills')
                                             <div class="invalid-tooltip">
