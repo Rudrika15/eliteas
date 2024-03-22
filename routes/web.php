@@ -20,7 +20,7 @@ use App\Http\Controllers\Admin\TrainerMasterController;
 use App\Http\Controllers\Admin\CircleMeetingMembersController;
 use App\Http\Controllers\Admin\CircleMeetingMemberBusinessController;
 use App\Http\Controllers\Admin\CircleMeetingMemberReferenceController;
-use App\Http\Controllers\Api\FranchiseController;
+use App\Http\Controllers\Admin\FranchiseController;
 
 /*
 |--------------------------------------------------------------------------

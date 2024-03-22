@@ -48,7 +48,7 @@
             <div class="col-md-6">
                 <div class="form-floating mt-6">
                     <input type="text" class="form-control @error('lastName') is-invalid @enderror" id="lastName"
-                        name="lastName" placeholder="First Name" required>
+                        name="lastName" placeholder="Last Name" required>
                     <label for="lastName">Last Name</label>
                     @error('lastName')
                     <div class="invalid-tooltip">

@@ -33,4 +33,8 @@ class Circle extends Model
         return $this->belongsTo(City::class, 'id');
     }
 
+    public function circleMember()
+    {
+        return $this->belongsTo(CircleMember::class, 'id');
+    }
 }
