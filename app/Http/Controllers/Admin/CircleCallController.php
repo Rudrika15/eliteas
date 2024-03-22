@@ -7,6 +7,7 @@ use App\Models\CircleCall;
 use App\Models\CircleMember;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\User;
 
 class CircleCallController extends Controller
 {
@@ -37,7 +38,11 @@ class CircleCallController extends Controller
     {
         try {
             $circleMember = CircleMember::where('status', '!=', 'Deleted')->with('circle')->with('member')->get();
-            $member = Member::where('status', '!=', 'Deleted')->get();
+            // $member = Member::where('status', '!=', 'Deleted')->get();
+            return $member =  User::whereHas('roles', function ($q) {
+                $q->where('name', 'Member');
+            })->get();
+
             return view('admin.circlecall.create', compact('member', 'circleMember'));
         } catch (\Throwable $th) {
             throw $th;
