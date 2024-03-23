@@ -8,6 +8,8 @@ use App\Models\CircleMember;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
 
 class CircleCallController extends Controller
 {
@@ -39,7 +41,7 @@ class CircleCallController extends Controller
         try {
             $circleMember = CircleMember::where('status', '!=', 'Deleted')->with('circle')->with('member')->get();
             // $member = Member::where('status', '!=', 'Deleted')->get();
-            return $member =  User::whereHas('roles', function ($q) {
+            $member = User::whereHas('roles', function ($q) {
                 $q->where('name', 'Member');
             })->get();
 
@@ -49,22 +51,37 @@ class CircleCallController extends Controller
             return view('servererror');
         }
     }
+    function getMember(Request $request): JsonResponse
+    {
+        $data = [];
+
+        if ($request->filled('q')) {
+            $data = User::select("firstName", "id")
+                ->whereHas('roles', function ($q) {
+                    $q->where('name', 'Member');
+                })->where('firstName', 'LIKE', '%' . $request->get('q') . '%')
+                ->get();
+        }
+
+        return response()->json($data);
+    }
+
 
     public function store(Request $request)
     {
         // return $request;
         $this->validate($request, [
-            // 'circleMemberId' => 'required',
-            'meetingPerson' => 'required',
+            'meetingPersonId' => 'required',
             'meetingPlace' => 'required',
+            'date' => 'required',
             'remarks' => 'required',
         ]);
         try {
             $circlecall = new CircleCall();
-            $circlecall->circleMemberId = $request->circleMemberId;
-            $circlecall->memberId = $request->memberId;
-            $circlecall->meetingPerson = $request->meetingPerson;
+            $circlecall->memberId = Auth::user()->id;
+            $circlecall->meetingPersonId = $request->meetingPersonId;
             $circlecall->meetingPlace = $request->meetingPlace;
+            $circlecall->date = $request->date;
             $circlecall->remarks = $request->remarks;
             $circlecall->status = 'Active';
 
