@@ -60,10 +60,35 @@
                 </div>
             </div>
         </div>
-        <div class="text-center">
-            <button type="submit" class="btn btn-primary">Submit</button>
-            <button type="reset" class="btn btn-secondary">Reset</button>
-        </div>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <input type="text" class="form-control @error('firstName') is-invalid @enderror" id="firstName"
+                        name="firstName" placeholder="First Name" required>
+                    <label for="firstName">First Name</label>
+                    @error('firstName')
+                    <div class="invalid-tooltip">
+                        {{ $message }}
+                    </div>
+                    @enderror
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <input type="text" class="form-control @error('lastName') is-invalid @enderror" id="lastName"
+                        name="lastName" placeholder="Last Name" required>
+                    <label for="lastName">Last Name</label>
+                    @error('lastName')
+                    <div class="invalid-tooltip">
+                        {{ $message }}
+                    </div>
+                    @enderror
+                </div>
+            </div>
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="reset" class="btn btn-secondary">Reset</button>
+            </div>
     </form><!-- End floating Labels Form -->
 </div>
 

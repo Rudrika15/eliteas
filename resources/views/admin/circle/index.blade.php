@@ -38,7 +38,7 @@
                     <th>City Name</th>
                     <th>Circle Type</th>
                     <th>Meeting Day</th>
-                    <th>Meeting Time</th>
+                    {{-- <th>Meeting Time</th> --}}
                     <th>Status</th>
                     <th>Action</th>
                 </tr>
@@ -51,7 +51,7 @@
                     <td>{{$circleData->city->cityName ?? '-'}}</td>
                     <td>{{$circleData->circletype->circleTypeName ?? '-'}}</td>
                     <td>{{$circleData->meetingDay}}</td>
-                    <td>{{$circleData->meetingTime}}</td>
+                    {{-- <td>{{$circleData->meetingTime}}</td> --}}
                     <td>{{$circleData->status}}</td>
                     <td>
                         <a href="{{ route('circle.edit', $circleData->id) }}" class="btn btn-primary btn-sm">

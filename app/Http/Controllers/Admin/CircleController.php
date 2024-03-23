@@ -16,7 +16,7 @@ class CircleController extends Controller
     {
         try {
             $circle = Circle::with('circleType')
-                ->with('city')
+                ->with('city')->where('status', '!=', 'Deleted')
                 ->with('franchise')
                 ->where('status', 'Active')
                 ->orderBy('id', 'DESC')

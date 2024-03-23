@@ -98,7 +98,9 @@
                     <select class="form-control @error('roles') is-invalid @enderror" id="roles" name="roles"
                         required>
                         @foreach ($roles as $roleId => $roleName)
-                        <option value="{{ $roleId }}">{{ $roleName }}</option>
+                            @if($roleName !== 'Member')
+                                <option value="{{ $roleId }}">{{ $roleName }}</option>
+                            @endif
                         @endforeach
                     </select>
                     <label for="roles">Role</label>
