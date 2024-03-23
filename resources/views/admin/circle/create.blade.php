@@ -117,7 +117,7 @@
             </div>
 
 
-            <div class="col-md-6 mt-3">
+            {{-- <div class="col-md-6 mt-3">
                 <div class="form-floating">
                     <input type="time" class="form-control @error('meetingTime') is-invalid @enderror" id="stateName"
                         name="meetingTime" placeholder="meetingTime" required>
@@ -128,7 +128,7 @@
                     </div>
                     @enderror
                 </div>
-            </div>
+            </div> --}}
 
             <div class="row">
                 <div class="col-md-6 mt-3">

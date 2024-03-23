@@ -3,12 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\City;
+use App\Models\Circle;
 use App\Models\Franchise;
+use App\Models\CircleType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
-use App\Models\Circle;
-use App\Models\CircleType;
 
 class CircleController extends Controller
 {
@@ -60,7 +60,7 @@ class CircleController extends Controller
             'cityId' => 'required',
             'circletypeId' => 'required',
             'meetingDay' => 'required',
-            'meetingTime' => 'required',
+            // 'meetingTime' => 'required',
             'numberOfMeetings' => 'required',
             'weekNo' => 'required|array', // Ensure weekNo is an array
             'start_date' => 'required',
@@ -74,7 +74,7 @@ class CircleController extends Controller
             $circle->cityId = $request->cityId;
             $circle->circletypeId = $request->circletypeId;
             $circle->meetingDay = $request->meetingDay;
-            $circle->meetingTime = $request->meetingTime;
+            // $circle->meetingTime = $request->meetingTime;
             $circle->numberOfMeetings = $request->numberOfMeetings;
             $circle->weekNo = json_encode($request->weekNo); // Serialize the array of week numbers
             $circle->start_date = $request->start_date;
@@ -113,7 +113,7 @@ class CircleController extends Controller
             'franchiseId' => 'required',
             'circletypeId' => 'required',
             'meetingDay' => 'required',
-            'meetingTime' => 'required',
+            // 'meetingTime' => 'required',
             'weekNo' => 'required|array', // Ensure weekNo is an array
             'start_date' => 'required',
             'end_date' => 'required',
@@ -127,7 +127,7 @@ class CircleController extends Controller
             $circle->franchiseId = $request->franchiseId;
             $circle->circletypeId = $request->circletypeId;
             $circle->meetingDay = $request->meetingDay;
-            $circle->meetingTime = $request->meetingTime;
+            // $circle->meetingTime = $request->meetingTime;
             $circle->start_date = $request->start_date;
             $circle->end_date = $request->end_date;
             $circle->weekNo = json_encode($request->weekNo); // Serialize the array of week numbers
