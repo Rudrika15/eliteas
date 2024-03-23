@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Models\City;
 use App\Models\State;
 use App\Models\Member;
+use App\Models\User;
 use App\Models\Country;
 use App\Models\TopsProfile;
 use Illuminate\Http\Request;
@@ -54,10 +55,27 @@ class MemberController extends Controller
             'gender' => 'required',
             'username' => 'required',
             'profilePhoto' => 'required',
+            'email' => 'required',
+            'password' => 'required',
+            'confirmPassword' => 'required|same:password',
         ]);
         try {
+
+            // user table entry
+            // role = Memebr
+
+            // Create user
+            $user = new User;
+            $user->firstName = $request->firstName;
+            $user->lastName = $request->lastName;
+            $user->email = $request->email;
+            $user->password = Hash::make($request->password);
+            $user->assignRole('Member');
+            $user->save(); // 
+
+
             $member = new Member();
-            $member->userId = $request->userId;
+            $member->userId = $user->id; // Access user ID after saving
             $member->title = $request->title;
             $member->firstName = $request->firstName;
             $member->lastName = $request->lastName;

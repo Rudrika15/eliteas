@@ -84,6 +84,49 @@
                                     </div>
                                     <div class="col-md-6 mt-3">
                                         <div class="form-floating">
+                                            <input type="password"
+                                                class="form-control @error('password') is-invalid @enderror"
+                                                id="password" name="password" placeholder="Password">
+                                            <label for="password">Password</label>
+                                            @error('password')
+                                            <div class="invalid-tooltip">
+                                                {{ $message }}
+                                            </div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mt-3">
+                                        <div class="form-floating">
+                                            <input type="password"
+                                                class="form-control @error('password_confirmation') is-invalid @enderror"
+                                                id="password_confirmation" name="password_confirmation"
+                                                placeholder="Confirm Password">
+                                            <label for="password_confirmation">Confirm Password</label>
+                                            @error('password_confirmation')
+                                            <div class="invalid-tooltip">
+                                                {{ $message }}
+                                            </div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mt-3">
+                                        <div class="form-floating">
+                                            <input type="text"
+                                                class="form-control @error('email') is-invalid @enderror"
+                                                id="email" name="email" placeholder="Email">
+                                            <input type="email"
+                                                class="form-control @error('email') is-invalid @enderror"
+                                                id="email" name="email" placeholder="Email">
+                                            <label for="email">Email</label>
+                                            @error('email')
+                                            <div class="invalid-tooltip">
+                                                {{ $message }}
+                                            </div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mt-3">
+                                        <div class="form-floating">
                                             <input type="text"
                                                 class="form-control @error('suffix') is-invalid @enderror" id="suffix"
                                                 name="suffix" placeholder="Suffix">

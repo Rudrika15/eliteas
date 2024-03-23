@@ -78,7 +78,7 @@
             <div class="col-md-6">
                 <div class="form-floating mt-3">
                     <input type="text" class="form-control @error('contactNo') is-invalid @enderror" id="contactNo"
-                        name="contactNo" placeholder="Meeeting Place Name" required>
+                        name="contactNo" placeholder="Contact No" required>
                     <label for="contactNo">Contact No</label>
                     @error('contactNo')
                     <div class="invalid-tooltip">

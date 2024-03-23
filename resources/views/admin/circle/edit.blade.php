@@ -116,7 +116,7 @@
                     @enderror
                 </div>
             </div>
-            <div class="col-md-6">
+            {{-- <div class="col-md-6">
                 <div class="form-floating mt-3">
                     <input type="time" class="form-control @error('meetingTime') is-invalid @enderror" id="meetingTime"
                         name="meetingTime" placeholder="meetingTime" required>
@@ -127,7 +127,7 @@
                     </div>
                     @enderror
                 </div>
-            </div>
+            </div> --}}
 
             <div class="row">
                 <div class="col-md-6 mt-3">
@@ -150,51 +150,51 @@
                 </div>
 
                 <div class="col-md-6 mt-3">
-                    <div class="form-check mt-3">
-                        <label class="form-label" for="weekNo">
-                            Number of Weeks
-                        </label>
-                        @error('weekNo')
-                        <div class="invalid-tooltip">
-                            {{ $message }}
-                        </div>
-                        @enderror
-                    </div>
-                    <div class="row">
-                        <div class="col-md-3">
-                            <div class="form-check mt-3">
-                                <input class="form-check-input" type="checkbox" id="weekNo1" name="weekNo[]"
-                                    value="Week 1">
-                                <label class="form-check-label" for="weekNo1">
-                                    Week 1
-                                </label>
+                    <div class="card">
+                        <div class="card-header">
+                            <label for="weekNo" class="form-label">Number of Weeks</label>
+                            @error('weekNo')
+                            <div class="invalid-tooltip">
+                                {{ $message }}
                             </div>
+                            @enderror
                         </div>
-                        <div class="col-md-3">
-                            <div class="form-check mt-3">
-                                <input class="form-check-input" type="checkbox" id="weekNo2" name="weekNo[]"
-                                    value="Week 2">
-                                <label class="form-check-label" for="weekNo2">
-                                    Week 2
-                                </label>
+                        <div class="card-body row">
+                            <div class="col-md-3">
+                                <div class="form-check mt-3">
+                                    <input class="form-check-input" type="checkbox" id="weekNo1" name="weekNo[]"
+                                        value="Week 1">
+                                    <label class="form-check-label" for="weekNo1">
+                                        Week 1
+                                    </label>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-check mt-3">
-                                <input class="form-check-input" type="checkbox" id="weekNo3" name="weekNo[]"
-                                    value="Week 3">
-                                <label class="form-check-label" for="weekNo3">
-                                    Week 3
-                                </label>
+                            <div class="col-md-3">
+                                <div class="form-check mt-3">
+                                    <input class="form-check-input" type="checkbox" id="weekNo2" name="weekNo[]"
+                                        value="Week 2">
+                                    <label class="form-check-label" for="weekNo2">
+                                        Week 2
+                                    </label>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-check mt-3">
-                                <input class="form-check-input" type="checkbox" id="weekNo4" name="weekNo[]"
-                                    value="Week 4">
-                                <label class="form-check-label" for="weekNo4">
-                                    Week 4
-                                </label>
+                            <div class="col-md-3">
+                                <div class="form-check mt-3">
+                                    <input class="form-check-input" type="checkbox" id="weekNo3" name="weekNo[]"
+                                        value="Week 3">
+                                    <label class="form-check-label" for="weekNo3">
+                                        Week 3
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-check mt-3">
+                                    <input class="form-check-input" type="checkbox" id="weekNo4" name="weekNo[]"
+                                        value="Week 4">
+                                    <label class="form-check-label" for="weekNo4">
+                                        Week 4
+                                    </label>
+                                </div>
                             </div>
                         </div>
                     </div>

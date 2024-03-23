@@ -16,4 +16,9 @@ class CircleMeetingMembersBusiness extends Model
         'date',
         'status',
     ];
+
+    public function members()
+    {
+        return $this->belongsTo(Member::class, 'memberId');
+    }
 }

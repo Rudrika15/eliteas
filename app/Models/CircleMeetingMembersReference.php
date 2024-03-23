@@ -9,6 +9,17 @@ class CircleMeetingMembersReference extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        
+        'memberId',
+        'referenceGiver',
+        'contactName',
+        'contactNo',
+        'email',
+        'scale',
+        'description'
+    ];
+
     public function members()
     {
         return $this->belongsTo(Member::class, 'id');

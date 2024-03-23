@@ -52,4 +52,15 @@ class Member extends Model
     {
         return $this->hasMany(CircleCall::class, 'memberId', 'id');
     }
+
+    public function refGive()
+    {
+        return $this->hasOne(CircleMeetingMembersReference::class, 'memberId', 'id');
+    }
+
+    public function circleMember()
+    {
+        return $this->hasOne(CircleMember::class, 'memberId', 'id');
+    }
+
 }

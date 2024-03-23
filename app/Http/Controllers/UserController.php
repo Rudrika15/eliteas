@@ -59,7 +59,13 @@ class UserController extends Controller
         $input = $request->except('_token');
         $input['password'] = Hash::make($input['password']);
 
-        $user = User::create($input);
+        // $user = User::create($input);
+        $user = new User();
+        $user->firstName = $request->input('firstName'); // Corrected accessing input
+        $user->lastName = $request->input('lastName'); // Corrected accessing input
+        $user->email = $request->input('email'); // Corrected accessing input
+        $user->password = $input['password'];
+        $user->save();
         $user->assignRole($request->input('roles'));
 
         // Check if the selected role is 'member'
