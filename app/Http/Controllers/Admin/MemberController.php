@@ -19,7 +19,7 @@ class MemberController extends Controller
     public function index(Request $request)
     {
         try {
-            $member = Member::all();
+            $member = Member::paginate(4); // show only 10 record per page
             return view('userrs.member.index', compact('member'));
         } catch (\Throwable $th) {
             throw $th;
@@ -89,8 +89,25 @@ class MemberController extends Controller
             $member->gender = $request->gender;
             $member->language = $request->language;
             $member->timeZone = $request->timeZone;
-            $member->profilePhoto = $request->profilePhoto;
-            $member->companyLogo = $request->companyLogo;
+
+            if ($request->profilePhoto) {
+                $member->profilePhoto = time() . '.' . $request->profilePhoto->extension();
+                $request->profilePhoto->move(public_path('ProfilePhoto'),  $member->profilePhoto);
+            }
+
+
+            // $member->profilePhoto = $request->profilePhoto;
+
+
+            if ($request->companyLogo) {
+                $member->companyLogo = time() . '.' . $request->companyLogo->extension();
+                $request->companyLogo->move(public_path('CompanyLogo'),  $member->companyLogo);
+            }
+
+            // $member->companyLogo = $request->companyLogo;
+
+
+
             $member->goals = $request->goals;
             $member->chapter = $request->chapter;
             $member->renewalDueDate = $request->renewalDueDate;
@@ -252,8 +269,25 @@ class MemberController extends Controller
             $member->keyWords = $request->input('keyWords', $member->keyWords);
             $member->language = $request->input('language', $member->language);
             $member->timeZone = $request->input('timeZone', $member->timeZone);
-            $member->profilePhoto = $request->input('profilePhoto', $member->profilePhoto);
-            $member->companyLogo = $request->input('companyLogo', $member->companyLogo);
+
+            if ($request->profilePhoto) {
+                $member->profilePhoto = time() . '.' . $request->profilePhoto->extension();
+                $request->profilePhoto->move(public_path('ProfilePhoto'),  $member->profilePhoto);
+            }
+
+
+            // $member->profilePhoto = $request->input('profilePhoto', $member->profilePhoto);
+
+            if ($request->companyLogo) {
+                $member->companyLogo = time() . '.' . $request->companyLogo->extension();
+                $request->companyLogo->move(public_path('CompanyLogo'),  $member->companyLogo);
+            }
+
+
+
+            // $member->companyLogo = $request->input('companyLogo', $member->companyLogo);
+
+
             $member->goals = $request->input('goals', $member->goals);
             $member->accomplishment = $request->input('accomplishment', $member->accomplishment);
             $member->interests = $request->input('interests', $member->interests);

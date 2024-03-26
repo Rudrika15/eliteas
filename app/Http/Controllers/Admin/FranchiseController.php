@@ -15,9 +15,7 @@ class FranchiseController extends Controller
     public function index(Request $request)
     {
         try {
-            $user = User::whereHas('roles', function($query){
-                $query->where('name', 'Franchise Admin');
-            })->get();
+            $user = User::all();
             $franchises = Franchise::where('status', 'Active')->get();
             return view('admin.franchise.index', compact('franchises', 'user'));
         } catch (\Throwable $th) {

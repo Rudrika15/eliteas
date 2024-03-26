@@ -1,6 +1,15 @@
 @extends('layouts.master')
 
 @section('header', 'Member')
+
+<!-- Bootstrap Icons CDN -->
+{{--
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet"> --}}
+
+<!-- Simple Datatables CDN -->
+{{--
+<link href="https://cdn.jsdelivr.net/npm/simple-datatables" rel="stylesheet"> --}}
+
 @section('content')
 
 {{-- Message --}}
@@ -33,6 +42,7 @@
         <table class="table datatable">
             <thead>
                 <tr>
+                    <th>Circle Name</th>
                     <th>First Name</th>
                     <th>Last Name</th>
                     <th>Username</th>
@@ -45,6 +55,7 @@
             <tbody>
                 @foreach ($member as $memberData)
                 <tr>
+                    <td>{{$memberData->circle->circleName ?? '-'}}</td>
                     <td>{{$memberData->firstName ?? '-'}}</td>
                     <td>{{$memberData->lastName ?? '-'}}</td>
                     <td>{{$memberData->username ?? '-'}}</td>
@@ -56,27 +67,20 @@
                             <i class="bi bi-eye"></i>
                         </a>
 
-                        {{-- <a href="{{ route('franchise.show', $franchiseData->id) }}" class="btn btn-info">
-                            <i class="bi bi-eye"></i>
-                        </a> --}}
-
                         <a href="{{ route('members.delete', $memberData->id) }}" class="btn btn-danger btn-sm ">
                             <i class="bi bi-trash"></i>
                         </a>
-
-                        {{-- <form action="{{ route('circle.delete', $circleData->id) }}" method="POST"
-                            style="display: inline;">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-danger btn-sm mt-1">
-                                <i class="bi bi-trash"></i> <!-- Icon for delete -->
-                            </button>
-                        </form> --}}
                     </td>
                 </tr>
                 @endforeach
             </tbody>
         </table>
         <!-- End Table with stripped rows -->
+
+        <!-- Pagination -->
+        <div class="d-flex justify-content-center">
+            {{ $member->links() }}
+        </div>
+        <!-- End Pagination -->
     </div>
     @endsection

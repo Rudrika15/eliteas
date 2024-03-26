@@ -228,13 +228,7 @@
                 </div>
             </div>
 
-
-
-
         </div>
-
-
-
 </div>
 <div class="text-center">
     <button type="submit" class="btn btn-primary">Submit</button>
@@ -242,5 +236,55 @@
 </div>
 </form><!-- End floating Labels Form -->
 </div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script>
+    $(document).ready(function(){
+    $('#circleType').change(function(){
+        console.log("hello");
+        var selectedCircleType = $('#circleType').val();
+        console.log("selectedCircleType",selectedCircleType);
+        var selectedNumberOfWeek = $('#weekNo').val();
+        console.log(selectedNumberOfWeek);
+        if(selectedCircleType == 'Online'){
+            $('#weekNo').empty();
+            $('#weekNo').append('<option value="">Select Number of Meetings</option>');
+            $('#weekNo').append('<option value="2">2</option>');
+        }else if(selectedCircleType == 'Offline'){
+            $('#weekNo').empty();
+            $('#weekNo').append('<option value="">Select Number of Meetings</option>');
+            $('#weekNo').append('<option value="1">1</option>');
+        }else if(selectedCircleType == 'Hybrid'){
+            $('#weekNo').empty();
+            $('#weekNo').append('<option value="">Select Number of Meetings</option>');
+            $('#weekNo').append('<option value="2">2</option>');
+            $('#weekNo').append('<option value="4">4</option>');
+        }else{
+            $('#weekNo').empty();
+            $('#weekNo').append('<option value="">Number of Meetings</option>');
+            $('#weekNo').append('<option value="1">1</option>');
+            $('#weekNo').append('<option value="2">2</option>');
+            $('#weekNo').append('<option value="3">3</option>');
+            $('#weekNo').append('<option value="4">4</option>');
+            $('#weekNo').append('<option value="5">5</option>');
+        }
+        if(selectedCircleType == 'Online' && selectedNumberOfMeeting > 2){
+            alert('You can only select any 2');
+            $('#weekNo').val('');
+        }
+        if(selectedCircleType == 'Offline' && selectedNumberOfMeeting > 1){
+            alert('You can only select any 1');
+            $('#weekNo').val('');
+        }
+        if(selectedCircleType == 'Hybrid' && selectedNumberOfMeeting > 2){
+            alert('You can only select any 2');
+            $('#weekNo').val('');
+        }
+    });
+});
+
+</script>
 
 @endsection

@@ -111,12 +111,11 @@
                                     </div>
                                     <div class="col-md-6 mt-3">
                                         <div class="form-floating">
-                                            <input type="text"
-                                                class="form-control @error('email') is-invalid @enderror"
+                                            <input type="text" class="form-control @error('email') is-invalid @enderror"
                                                 id="email" name="email" placeholder="Email">
                                             <input type="email"
-                                                class="form-control @error('email') is-invalid @enderror"
-                                                id="email" name="email" placeholder="Email">
+                                                class="form-control @error('email') is-invalid @enderror" id="email"
+                                                name="email" placeholder="Email">
                                             <label for="email">Email</label>
                                             @error('email')
                                             <div class="invalid-tooltip">
@@ -425,28 +424,26 @@
                                         </div>
                                     </div>
                                     <div class="col-md-6 mt-3">
-                                        <div class="form-floating">
-                                            <label for="profilePhoto">Profile Photo</label>
-                                            <input type="file" class="form-control-file" id="profilePhoto"
+                                        <div class="form-label-group mt-3">
+                                            <label for="profilePhoto" class="fw-bold">Profile Photo <sup
+                                                    class="text-danger">*</sup></label>
+                                            <input type="file" class="form-control" id="profilePhoto"
                                                 name="profilePhoto" accept="image/*" onchange="previewPhoto(event)">
-                                            <div id="photoPreview" class="mt-2"></div>
+                                            <img id="photoPreview" src="default.jpg" class="mt-2" width="100px"
+                                                height="100px">
                                             @error('profilePhoto')
-                                            <div class="invalid-tooltip">
-                                                {{ $message }}
-                                            </div>
+                                            <span class="error">{{ $message }}</span>
                                             @enderror
                                         </div>
                                     </div>
                                     <div class="col-md-6 mt-3">
-                                        <div class="form-floating">
-                                            <label for="companyLogo">Company Logo</label>
-                                            <input type="file" class="form-control-file" id="companyLogo"
-                                                name="companyLogo" accept="image/*" onchange="previewPhoto(event)">
-                                            <div id="photoPreview" class="mt-2"></div>
+                                        <div class="form-label-group mt-3">
+                                            <label for="companyLogo" class="fw-bold">Company Logo <sup class="text-danger">*</sup></label>
+                                            <input type="file" class="form-control" id="companyLogo" name="companyLogo" accept="image/*"
+                                                onchange="previewPhoto(event)">
+                                            <img id="logoPreview" src="default.jpg" class="mt-2" width="100px" height="100px">
                                             @error('companyLogo')
-                                            <div class="invalid-tooltip">
-                                                {{ $message }}
-                                            </div>
+                                            <span class="error">{{ $message }}</span>
                                             @enderror
                                         </div>
                                     </div>
@@ -1349,20 +1346,27 @@
     </div>
     <script>
         function previewPhoto(event) {
-                            const file = event.target.files[0];
-                            const reader = new FileReader();
-                    
-                            reader.onload = function(e) {
-                                const preview = document.getElementById('photoPreview');
-                                preview.innerHTML = '';
-                                const img = document.createElement('img');
-                                img.src = e.target.result;
-                                img.style.maxWidth = '100%';
-                                img.style.maxHeight = '200px'; // Adjust the maximum height as needed
-                                preview.appendChild(img);
-                            };
-                    
-                            reader.readAsDataURL(file);
-                        }
+    var input = event.target;
+    var reader = new FileReader();
+    reader.onload = function(){
+    var dataURL = reader.result;
+    var img = document.getElementById('photoPreview');
+    img.src = dataURL;
+    };
+    reader.readAsDataURL(input.files[0]);
+    }
+    </script>
+
+    <script>
+        function previewPhoto(event) {
+    var input = event.target;
+    var reader = new FileReader();
+    reader.onload = function(){
+    var dataURL = reader.result;
+    var img = document.getElementById('logoPreview');
+    img.src = dataURL;
+    };
+    reader.readAsDataURL(input.files[0]);
+    }
     </script>
     @endsection

@@ -37,4 +37,9 @@ class Circle extends Model
     {
         return $this->belongsTo(CircleMember::class, 'id');
     }
+
+    public function member()
+    {
+        return $this->hasMany(Member::class, 'id');
+    }
 }

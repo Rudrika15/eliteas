@@ -189,8 +189,23 @@ class LoginController extends Controller
             $member->keyWords = $request->input('keyWords', $member->keyWords);
             $member->language = $request->input('language', $member->language);
             $member->timeZone = $request->input('timeZone', $member->timeZone);
-            $member->profilePhoto = $request->input('profilePhoto', $member->profilePhoto);
-            $member->companyLogo = $request->input('companyLogo', $member->companyLogo);
+
+            // $member->profilePhoto = $request->input('profilePhoto', $member->profilePhoto);
+
+            if ($request->profilePhoto) {
+                $member->profilePhoto = time() . '.' . $request->profilePhoto->extension();
+                $request->profilePhoto->move(public_path('ProfilePhoto'),  $member->profilePhoto);
+            }
+
+
+            // $member->companyLogo = $request->input('companyLogo', $member->companyLogo);
+
+            if ($request->companyLogo) {
+                $member->companyLogo = time() . '.' . $request->companyLogo->extension();
+                $request->companyLogo->move(public_path('ProfilePhoto'),  $member->companyLogo);
+            }
+            
+            
             $member->goals = $request->input('goals', $member->goals);
             $member->accomplishment = $request->input('accomplishment', $member->accomplishment);
             $member->interests = $request->input('interests', $member->interests);

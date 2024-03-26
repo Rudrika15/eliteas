@@ -68,4 +68,8 @@ class User extends Authenticatable
         return $this->hasOne(TopsProfile::class, 'memberId');
     }
 
+    public function franchise()
+    {
+        return $this->hasOne(Franchise::class, 'userId' , 'id');
+    }
 }
