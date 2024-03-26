@@ -78,6 +78,7 @@ class CircleMemberController extends Controller
 
             // Create and save the member
             $member = new Member();
+            $member->circleId = $request->circleId;
             $member->userId = $user->id;
             $member->title = $request->title;
             $member->firstName = $request->firstName;
@@ -181,11 +182,11 @@ class CircleMemberController extends Controller
             $billing->save();
 
             // Now, create and save the circle member
-            $circlemember = new CircleMember();
-            $circlemember->circleId = $request->circleId;
-            $circlemember->memberId = $member->id; // Set the member ID from the saved member
-            $circlemember->status = 'Active';
-            $circlemember->save();
+            // $circlemember = new CircleMember();
+            // $circlemember->circleId = $request->circleId;
+            // $circlemember->memberId = $member->id; // Set the member ID from the saved member
+            // $circlemember->status = 'Active';
+            // $circlemember->save();
 
             return redirect()->route('circlemember.index')->with('success', 'Circle Member Created Successfully!');
         } catch (\Throwable $th) {
@@ -244,6 +245,7 @@ class CircleMemberController extends Controller
 
             // Update the member
             $member = Member::findOrFail($user->id);
+            $member->circleId = $request->circleId;
             $member->title = $request->title;
             $member->firstName = $request->firstName;
             $member->lastName = $request->lastName;
@@ -343,9 +345,9 @@ class CircleMemberController extends Controller
             $billing->save();
 
             // Update the circle member
-            $circlemember->circleId = $request->circleId;
-            $circlemember->status = 'Active';
-            $circlemember->save();
+            // $circlemember->circleId = $request->circleId;
+            // $circlemember->status = 'Active';
+            // $circlemember->save();
 
             return redirect()->route('circlemember.index')->with('success', 'Circle Member Updated Successfully!');
         } catch (\Throwable $th) {

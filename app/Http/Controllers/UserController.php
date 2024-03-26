@@ -22,7 +22,9 @@ class UserController extends Controller
      */
     public function index(Request $request): View
     {
-        $data = User::latest()->paginate(5);
+        $data = User::whereHas('roles', function ($q) {
+            $q->whereIn('name', ['Admin', 'LT', 'Support']);
+        })->latest()->paginate(5);
 
         return view('users.index', compact('data'))
             ->with('i', ($request->input('page', 1) - 1) * 5);

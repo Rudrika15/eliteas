@@ -85,10 +85,51 @@
                     @enderror
                 </div>
             </div>
-            <div class="text-center">
-                <button type="submit" class="btn btn-primary">Submit</button>
-                <button type="reset" class="btn btn-secondary">Reset</button>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <input type="text" class="form-control @error('email') is-invalid @enderror" id="email" name="email"
+                        placeholder="Email" required>
+                    <label for="email">Email</label>
+                    @error('email')
+                    <div class="invalid-tooltip">
+                        {{ $message }}
+                    </div>
+                    @enderror
+                </div>
             </div>
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <input type="password" class="form-control @error('password') is-invalid @enderror" id="password"
+                        name="password" placeholder="Password" required>
+                    <label for="password">Password</label>
+                    @error('password')
+                    <div class="invalid-tooltip">
+                        {{ $message }}
+                    </div>
+                    @enderror
+                </div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <input type="password" class="form-control @error('confirm-password') is-invalid @enderror"
+                        id="confirm-password" name="confirm-password" placeholder="Confirm Password" required>
+                    <label for="confirm-password">Confirm Password</label>
+                    @error('confirm-password')
+                    <div class="invalid-tooltip">
+                        {{ $message }}
+                    </div>
+                    @enderror
+                </div>
+            </div>
+        </div>
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="reset" class="btn btn-secondary">Reset</button>
+        </div>
     </form><!-- End floating Labels Form -->
 </div>
 
