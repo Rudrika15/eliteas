@@ -4,9 +4,9 @@
 <div class="row">
     <div class="col-lg-12 margin-tb d-flex justify-content-between align-items-center">
         <h2>Users Management</h2>
-        <a class="btn btn-success" href="{{ route('users.create') }}">
+        {{-- <a class="btn btn-success" href="{{ route('users.create') }}">
             <i class="bi bi-person-plus"></i>
-        </a>
+        </a> --}}
     </div>
 </div>
 

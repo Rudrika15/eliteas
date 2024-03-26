@@ -10,12 +10,6 @@
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link " href="{{route('roles.index')}}">
-                <i class="bi bi-shield"></i>
-                <span>Roles</span>
-            </a>
-        </li>
-        <li class="nav-item">
             <a class="nav-link " href="{{route('franchise.index')}}">
                 <i class="bi bi-person-vcard"></i>
                 <span>Franchise</span>
@@ -25,6 +19,12 @@
             <a class="nav-link " href="{{route('members.index')}}">
                 <i class="bi bi-person"></i>
                 <span>Member Profile</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link " href="{{route('roles.index')}}">
+                <i class="bi bi-shield"></i>
+                <span>Roles</span>
             </a>
         </li>
 
@@ -109,12 +109,12 @@
             </a>
         </li>
 
-        <li class="nav-item">
+        {{-- <li class="nav-item">
             <a class="nav-link " href="{{route('circlemeeting.index')}}">
                 <i class="bi bi-people"></i>
                 <span>Circle Meeting</span>
             </a>
-        </li>
+        </li> --}}
         {{-- <li class="nav-item">
             <a class="nav-link " href="{{route('circlecall.index')}}">
                 <i class="bi bi-mic"></i>
@@ -134,11 +134,11 @@
                 <span>Circle Member Business</span>
             </a>
         </li> --}}
-        <li class="nav-item">
+        {{-- <li class="nav-item">
             <a class="nav-link " href="{{route('meetingmember.index')}}">
                 <i class="bi bi-person"></i>
                 <span>Meeting Member</span>
             </a>
-        </li>
+        </li> --}}
     </ul>
 </li>

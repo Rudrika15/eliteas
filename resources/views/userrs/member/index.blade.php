@@ -52,8 +52,8 @@
                     <td>{{$memberData->contact->mobileNo ?? '-'}}</td>
                     <td>{{$memberData->status}}</td>
                     <td>
-                        <a href="{{ route('members.edit', $memberData->id) }}" class="btn btn-primary btn-sm">
-                            <i class="bi bi-pen"></i>
+                        <a href="{{ route('members.edit', $memberData->id) }}" class="btn btn-info btn-sm">
+                            <i class="bi bi-eye"></i>
                         </a>
 
                         {{-- <a href="{{ route('franchise.show', $franchiseData->id) }}" class="btn btn-info">
