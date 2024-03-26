@@ -53,13 +53,24 @@ class CircleCallController extends Controller
     }
     function getMember(Request $request): JsonResponse
     {
+        $query = $request->input('q');
+        $all = $request->input('all');
+
         $data = [];
 
-        if ($request->filled('q')) {
+        // Search all members if the checkbox is checked
+        if ($all) {
+            $data = User::whereHas('roles', function ($q) {
+                $q->where('name', 'Member');
+            })->where('firstName', 'LIKE', '%' . $query . '%')
+                ->get();
+        } else {
+
             $data = User::select("firstName", "id")
                 ->whereHas('roles', function ($q) {
                     $q->where('name', 'Member');
-                })->where('firstName', 'LIKE', '%' . $request->get('q') . '%')
+                })->with('member.circleMember.circle')
+                ->where('firstName', 'LIKE', '%' . $query . '%')
                 ->get();
         }
 

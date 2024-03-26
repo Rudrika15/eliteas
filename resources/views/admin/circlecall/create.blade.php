@@ -29,20 +29,29 @@
             <a href="{{ route('circlecall.index') }}" class="btn btn-secondary btn-sm">BACK</a>
         </div>
 
-        <!-- Floating Labels Form -->
         <form class="m-3 needs-validation" id="circlecallForm" enctype="multipart/form-data" method="post" action="{{ route('circlecall.store') }}" novalidate>
             @csrf
 
             <div class="col-md-12">
-                {{-- <input type="text" name="memberName" id="memberName" placeholder="Search member Name" class="form-control"> --}}
-                <label for="search" class="form-labelv fw-bold">Search member</label>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="search" class="form-labelv fw-bold">Search member</label>
+
+                    </div>
+                    <div class="col-md-6">
+                        <input type="checkbox" name="all" id="all">
+                        <label for="all">Select if you want to search all members</label>
+                    </div>
+                </div>
                 <select class="form-select" id="search">
                 </select>
+            </div>
+            <div id="details" class="">
+
 
             </div>
 
             <br>
-            {{-- circlememberId stor baki --}}
             <div class="row mb-3">
                 <div class="col-md-6">
                     <div class="form-floating mt-3">
@@ -121,13 +130,22 @@
                 url: path,
                 dataType: 'json',
                 delay: 250,
+                data: function(params) {
+                    console.log("params".params);
+                    return {
+                        q: params.term,
+                        all: $('#all').is(':checked') ? 1 : 0
+                    };
+                },
                 processResults: function(data) {
+                    console.log("data".data);
                     return {
                         results: $.map(data, function(item) {
                             return {
                                 text: item.firstName,
                                 id: item.id,
-                                firstName: item.firstName // Adding firstName attribute to the option data
+                                firstName: item.firstName
+                                // globalData: item.member.userId
                             }
                         })
                     };
@@ -136,11 +154,14 @@
             }
         });
 
-        // Update the hidden input field with the selected member's ID
+
         $('#search').on('select2:select', function(e) {
             var data = e.params.data;
+            console.log("data", data);
             $('#selectedMemberId').val(data.id);
             $('#memberName').val(data.firstName);
+            // $('#details').val(data.globalData);
+
         });
     </script>
 @endsection

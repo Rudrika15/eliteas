@@ -156,7 +156,7 @@ class CircleMemberController extends Controller
             $contact->showTollFree = $request->showTollFree;
             $contact->fax = $request->fax;
             $contact->showFax = $request->showFax;
-            $contact->email = $request->email;
+            $contact->email = $request->contactEmail;
             $contact->showEmail = $request->showEmail;
             $contact->addressLine1 = $request->addressLine2;
             $contact->addressLine2 = $request->addressLine2;
