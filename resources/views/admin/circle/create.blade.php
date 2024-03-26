@@ -238,53 +238,44 @@
 </div>
 
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    $(document).ready(function(){
-    $('#circleType').change(function(){
-        console.log("hello");
-        var selectedCircleType = $('#circleType').val();
-        console.log("selectedCircleType",selectedCircleType);
-        var selectedNumberOfWeek = $('#weekNo').val();
-        console.log(selectedNumberOfWeek);
-        if(selectedCircleType == 'Online'){
-            $('#weekNo').empty();
-            $('#weekNo').append('<option value="">Select Number of Meetings</option>');
-            $('#weekNo').append('<option value="2">2</option>');
-        }else if(selectedCircleType == 'Offline'){
-            $('#weekNo').empty();
-            $('#weekNo').append('<option value="">Select Number of Meetings</option>');
-            $('#weekNo').append('<option value="1">1</option>');
-        }else if(selectedCircleType == 'Hybrid'){
-            $('#weekNo').empty();
-            $('#weekNo').append('<option value="">Select Number of Meetings</option>');
-            $('#weekNo').append('<option value="2">2</option>');
-            $('#weekNo').append('<option value="4">4</option>');
-        }else{
-            $('#weekNo').empty();
-            $('#weekNo').append('<option value="">Number of Meetings</option>');
-            $('#weekNo').append('<option value="1">1</option>');
-            $('#weekNo').append('<option value="2">2</option>');
-            $('#weekNo').append('<option value="3">3</option>');
-            $('#weekNo').append('<option value="4">4</option>');
-            $('#weekNo').append('<option value="5">5</option>');
-        }
-        if(selectedCircleType == 'Online' && selectedNumberOfMeeting > 2){
-            alert('You can only select any 2');
-            $('#weekNo').val('');
-        }
-        if(selectedCircleType == 'Offline' && selectedNumberOfMeeting > 1){
-            alert('You can only select any 1');
-            $('#weekNo').val('');
-        }
-        if(selectedCircleType == 'Hybrid' && selectedNumberOfMeeting > 2){
-            alert('You can only select any 2');
-            $('#weekNo').val('');
-        }
-    });
-});
+    $(document).ready(function () {
+        $('input[name="weekNo[]"]').change(function () {
+            var checkedCount = $('input[name="weekNo[]"]:checked').length;
+            if (checkedCount >= 2) {
+                $('input[name="weekNo[]"]:not(:checked)').prop('disabled', true);
+            } else {
+                $('input[name="weekNo[]"]').prop('disabled', false);
+            }
+        });
 
+        $('#circletypeId').change(function () {
+            var circleType = $('#circletypeId').val();
+            console.log('circle type id', circleType);
+            if (circleType === '1') {
+                $('input[name="weekNo[]"]').prop('disabled', false);
+                var checkedCount = $('input[name="weekNo[]"]:checked').length;
+                console.log('checkedCount', checkedCount);
+                if (checkedCount >= 2) {
+                    $('input[name="weekNo[]"]:not(:checked)').prop('disabled', true);
+                }
+            }
+        }).trigger('change'); // Triggering the change event to set initial state
+
+       $('#circletypeId').change(function () {
+        var circleType = $('#circletypeId').val();
+        console.log('circle type id', circleType);
+        if (circleType === '4') {
+        $('input[name="weekNo[]"]').prop('disabled', false);
+        var checkedCount = $('input[name="weekNo[]"]:checked').length;
+        if (checkedCount >= 1) {
+        $('input[name="weekNo[]"]:not(:checked)').prop('disabled', true);
+        }
+        }
+        }).trigger('change'); // Triggering the change event to set initial state
+    });
 </script>
+
 
 @endsection
