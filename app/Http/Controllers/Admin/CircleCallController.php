@@ -58,21 +58,28 @@ class CircleCallController extends Controller
 
         $data = [];
 
+        $myCircle = Member::where('userId', Auth::user()->id)->with('circle')->first();
+
         // Search all members if the checkbox is checked
         if ($all) {
             $data = User::whereHas('roles', function ($q) {
                 $q->where('name', 'Member');
-            })->where('firstName', 'LIKE', '%' . $query . '%')
+            })
+                ->where('firstName', 'LIKE', '%' . $query . '%')
+                ->with('member.circle') // Include circle information
                 ->get();
         } else {
-
-            $data = User::select("firstName", "id")
-                ->whereHas('roles', function ($q) {
-                    $q->where('name', 'Member');
-                })->with('member.circleMember.circle')
+            $data = User::whereHas('roles', function ($q) {
+                $q->where('name', 'Member');
+            })
+                ->whereHas('member', function ($q) use ($myCircle) {
+                    $q->where('circleId', $myCircle->circle->id);
+                })
                 ->where('firstName', 'LIKE', '%' . $query . '%')
+                ->with('member.circle') // Include circle information
                 ->get();
         }
+
 
         return response()->json($data);
     }

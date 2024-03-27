@@ -43,12 +43,10 @@
                         <label for="all">Select if you want to search all members</label>
                     </div>
                 </div>
-                <select class="form-select" id="search">
+                <select class="form-select" style="width: 99%" id="search">
                 </select>
             </div>
             <div id="details" class="">
-
-
             </div>
 
             <br>
@@ -131,21 +129,20 @@
                 dataType: 'json',
                 delay: 250,
                 data: function(params) {
-                    console.log("params".params);
                     return {
                         q: params.term,
                         all: $('#all').is(':checked') ? 1 : 0
                     };
                 },
                 processResults: function(data) {
-                    console.log("data".data);
+                    console.log("item", data);
                     return {
                         results: $.map(data, function(item) {
                             return {
                                 text: item.firstName,
                                 id: item.id,
-                                firstName: item.firstName
-                                // globalData: item.member.userId
+                                firstName: item.firstName,
+                                memberData: item.member // Access member data
                             }
                         })
                     };
@@ -154,14 +151,32 @@
             }
         });
 
-
         $('#search').on('select2:select', function(e) {
             var data = e.params.data;
-            console.log("data", data);
+            console.log(data);
+
+
+            if (data.memberData) {
+                var memberData = data.memberData;
+                console.log(memberData);
+                var detailsHTML = "<div class='row'>";
+                detailsHTML += "<div class='col-md-6'><strong>Member Details:</strong></div>";
+                detailsHTML += "<div class='col-md-6'></div>";
+
+                detailsHTML += "<div class='col-md-6'><strong>Full Name :</strong> " + ((memberData.title && memberData.firstName && memberData.lastName) ? (memberData.title + ' ' + memberData.firstName + ' ' + memberData.lastName) : '-') + "</div>";
+
+                detailsHTML += "<div class='col-md-6'><strong>Circle Name:</strong> " + (memberData.circle ? memberData.circle.circleName : '-') + "</div>";
+                detailsHTML += "<div class='col-md-6'><strong>Chapter :</strong> " + (memberData.chapter ? memberData.chapter : '-') + "</div>";
+                detailsHTML += "<div class='col-md-6'><strong>Company Name :</strong> " + (memberData.companyName ? memberData.companyName : '-') + "</div>";
+                detailsHTML += "<div class='col-md-6'></div>";
+
+                detailsHTML += "</div>";
+            } else {
+                var detailsHTML = "Member details not available";
+            }
+            $('#details').html(detailsHTML);
             $('#selectedMemberId').val(data.id);
             $('#memberName').val(data.firstName);
-            // $('#details').val(data.globalData);
-
         });
     </script>
 @endsection
