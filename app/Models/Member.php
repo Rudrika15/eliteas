@@ -65,6 +65,6 @@ class Member extends Model
 
     public function circle()
     {
-        return $this->hasOne(Circle::class, 'id', 'circleId');
+        return $this->belongsTo(Circle::class, 'circleId');
     }
 }

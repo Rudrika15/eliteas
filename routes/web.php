@@ -132,6 +132,12 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('circlecall/update', [CircleCallController::class, 'update'])->name('circlecall.update');
     Route::get('circlecall/delete/{id?}', [CircleCallController::class, 'delete'])->name('circlecall.delete');
 
+    // get member list
+    Route::get('get-member', [CircleCallController::class, 'getMember'])->name('getMember');
+
+
+
+
     Route::get('/members/index', [MemberController::class, 'index'])->name('members.index');
     Route::get('members/show/{id?}', [MemberController::class, 'show'])->name('members.show');
     Route::get('members/create', [MemberController::class, 'create'])->name('members.create');

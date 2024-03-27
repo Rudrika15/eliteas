@@ -11,6 +11,7 @@ class CircleCall extends Model
     use HasFactory;
 
     protected $fillable = [
+        'userId',
         'memberId',
         'meetingPerson',
         'meetingPlace',
