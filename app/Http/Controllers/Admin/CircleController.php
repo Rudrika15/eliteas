@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\City;
 use App\Models\Circle;
+use App\Models\Schedule;
 use App\Models\Franchise;
 use App\Models\CircleType;
 use Illuminate\Http\Request;
@@ -82,6 +83,12 @@ class CircleController extends Controller
             $circle->status = 'Active';
 
             $circle->save();
+
+
+            $schedule = new Schedule();
+            $schedule->circleId = $circle->id;
+            $schedule->circleId = $request->day;
+            $schedule->status = 'Active';
 
             return redirect()->route('circle.index')->with('success', 'Circle Created Successfully!');
         } catch (\Throwable $th) {
