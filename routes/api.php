@@ -58,6 +58,8 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::delete('circlecalls-delete/{id}', [CircleCallController::class, 'delete']);
 
 
+
+
     // Circle Meeting Business Giver
     Route::get('circle-meeting-member-businesses', [CircleMeetingMemberBusinessController::class, 'index']);
     Route::get('circle-meeting-member-businesses/{id}', [CircleMeetingMemberBusinessController::class, 'view']);
@@ -116,7 +118,7 @@ Route::post('circle-meeting-create', [CircleMeetingController::class, 'create'])
 Route::put('circle-meeting-update/{id}', [CircleMeetingController::class, 'update']);
 Route::delete('circle-meeting-delete/{id}', [CircleMeetingController::class, 'delete']);
 
-// Circle Meeting 
+// Circle Meeting member
 Route::get('circle-meeting-members-index', [CircleMeetingMembersController::class, 'index']);
 Route::get('circle-meeting-members-show/{id}', [CircleMeetingMembersController::class, 'show']);
 Route::post('circle-meeting-members-create', [CircleMeetingMembersController::class, 'create']);
@@ -130,6 +132,8 @@ Route::post('franchise-create', [FranchiseController::class, 'create']);
 Route::put('franchise-update/{id}', [FranchiseController::class, 'update']);
 Route::delete('franchise-delete/{id}', [FranchiseController::class, 'delete']);
 
+//search member 
+Route::get('search-member-index' , [CircleCallController::class, 'searchmember']);
 
 
 });

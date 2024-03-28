@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Api;
 
 use App\Utils\Utils;
+use App\Models\Circle;
 use App\Models\Member;
 use App\Models\CircleCall;
 use App\Models\CircleMember;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class CircleCallController extends Controller
@@ -15,21 +17,21 @@ class CircleCallController extends Controller
     public function index(Request $request)
     {
         try {
-            $circlecall = CircleCall::with('members')
-                ->where('status', 'Active')
-                ->orderBy('id', 'DESC')
-                ->get();
-            return Utils::sendResponse(['circlecall' => $circlecall], 'Circle Calls retrieved successfully', 200);
+            $circleCalls = CircleCall::with('members')
+            ->where('status', 'Active')
+            ->orderBy('id', 'DESC')
+            ->get();
+            return Utils::sendResponse(['circleCalls' => $circleCalls], 'Circle Calls retrieved successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
 
-    public function view(Request $request, $id)
+    public function show(Request $request, $id)
     {
         try {
-            $circlecall = CircleCall::with('members')->findOrFail($id);
-            return Utils::sendResponse(['circlecall' => $circlecall], 'Circle Call retrieved successfully', 200);
+            $circleCall = CircleCall::with('members')->findOrFail($id);
+            return Utils::sendResponse(['circleCall' => $circleCall], 'Circle Call retrieved successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
@@ -38,9 +40,9 @@ class CircleCallController extends Controller
     public function create(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'memberId' => 'required',
-            'meetingPerson' => 'required',
+            'meetingPersonId' => 'required',
             'meetingPlace' => 'required',
+            'date' => 'required',
             'remarks' => 'required',
         ]);
 
@@ -49,12 +51,16 @@ class CircleCallController extends Controller
         }
 
         try {
-            $circlecall = new CircleCall();
-            $circlecall->fill($request->all());
-            $circlecall->status = 'Active';
-            $circlecall->save();
+            $circleCall = new CircleCall();
+            $circleCall->memberId = Auth::user()->id;
+            $circleCall->meetingPersonId = $request->meetingPersonId;
+            $circleCall->meetingPlace = $request->meetingPlace;
+            $circleCall->date = $request->date;
+            $circleCall->remarks = $request->remarks;
+            $circleCall->status = 'Active';
+            $circleCall->save();
 
-            return Utils::sendResponse(['circlecall' => $circlecall], 'Circle Call Created Successfully!', 201);
+            return Utils::sendResponse(['circleCall' => $circleCall], 'Circle Call Created Successfully!', 201);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
@@ -63,9 +69,9 @@ class CircleCallController extends Controller
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'memberId' => 'required',
-            'meetingPerson' => 'required',
+            'meetingPersonId' => 'required',
             'meetingPlace' => 'required',
+            'date' => 'required',
             'remarks' => 'required',
         ]);
 
@@ -74,11 +80,11 @@ class CircleCallController extends Controller
         }
 
         try {
-            $circlecall = CircleCall::findOrFail($id);
-            $circlecall->fill($request->all());
-            $circlecall->save();
+            $circleCall = CircleCall::findOrFail($id);
+            $circleCall->fill($request->all());
+            $circleCall->save();
 
-            return Utils::sendResponse(['circlecall' => $circlecall], 'Circle Call Updated Successfully!', 200);
+            return Utils::sendResponse(['circleCall' => $circleCall], 'Circle Call Updated Successfully!', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
@@ -87,12 +93,36 @@ class CircleCallController extends Controller
     public function delete(Request $request, $id)
     {
         try {
-            $circlecall = CircleCall::findOrFail($id);
-            $circlecall->delete();
+            $circleCall = CircleCall::findOrFail($id);
+            $circleCall->delete();
 
             return Utils::sendResponse([], 'Circle Call Deleted Successfully!', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
-}
+    public function searchmember(Request $request)
+    {
+        $userId = $request->user()->id;
+
+        if ($request->has('global') && $request->input('global')) {
+            $members = Member::where('userId', '!=', $userId)->get();
+            return Utils::sendResponse($members, 'All Members Retrieved Successfully!', 200);
+        } else {
+            $member = Member::where('userId', $userId)->first();
+
+            if ($member) {
+                $circleId = $member->circleId;
+
+                $members = Member::where('circleId', $circleId)
+                    ->where('userId', '!=', $userId)
+                    ->get();
+
+                return Utils::sendResponse($members, 'Members from your Circle Retrieved Successfully!', 200);
+            } else {
+                return Utils::errorResponse(['error' => 'User not authenticated'], 'Unauthorized', 401);
+            }
+        }
+    }
+
+    }

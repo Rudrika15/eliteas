@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use Carbon\Carbon;
 use App\Models\City;
 use App\Models\Circle;
 use App\Models\Schedule;
@@ -61,11 +62,10 @@ class CircleController extends Controller
             'cityId' => 'required',
             'circletypeId' => 'required',
             'meetingDay' => 'required',
-            // 'meetingTime' => 'required',
             'numberOfMeetings' => 'required',
             'weekNo' => 'required|array', // Ensure weekNo is an array
-            'start_date' => 'required',
-            'end_date' => 'required'
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after:start_date'
         ]);
 
         try {
@@ -75,20 +75,63 @@ class CircleController extends Controller
             $circle->cityId = $request->cityId;
             $circle->circletypeId = $request->circletypeId;
             $circle->meetingDay = $request->meetingDay;
-            // $circle->meetingTime = $request->meetingTime;
             $circle->numberOfMeetings = $request->numberOfMeetings;
             $circle->weekNo = json_encode($request->weekNo); // Serialize the array of week numbers
             $circle->start_date = $request->start_date;
             $circle->end_date = $request->end_date;
             $circle->status = 'Active';
-
             $circle->save();
 
+            // Generate and store meeting schedule
+            $scheduleDates = [];
 
-            $schedule = new Schedule();
-            $schedule->circleId = $circle->id;
-            $schedule->circleId = $request->day;
-            $schedule->status = 'Active';
+            $startDate = $request->start_date;
+            $endDate = $request->end_date;
+
+            try {
+                // Loop through each week number
+                foreach ($request->weekNo as $week) {
+                    $weekDates = [];
+                    // Loop through each week between start and end date
+                    $currentDate = clone $startDate;
+                    while ($currentDate <= $endDate) {
+                        // Check if the current day of the week matches the selected meeting day
+                        if ($currentDate->format('l') === $request->meetingDay) {
+                            $weekOfMonth = ceil($currentDate->format('d') / 7);
+                            // If the current week matches the selected week number, store the date
+                            if ($weekOfMonth == $week) {
+                                $weekDates[] = $currentDate->format('Y-m-d');
+                            }
+                        }
+                        // Move to the next week
+                        $currentDate->modify('+7 days');
+                    }
+                    $scheduleDates = array_merge($scheduleDates, $weekDates);
+                }
+
+                // Store schedule dates in the database
+                foreach ($scheduleDates as $date) {
+                    $schedule = new Schedule();
+                    $schedule->circle_id = $circle->id; // Fix the column name
+                    $schedule->date = $date;
+                    if (!$schedule->save()) { // Check if the schedule is saved
+                        // Log the error
+                        error_log("Error storing schedule dates: " . json_encode($schedule->getErrors()));
+                        // Output error message
+                        echo "An error occurred while storing schedule dates. Please check logs for details.";
+                        die(); // Stop further execution
+                    }
+                }
+
+                // Output success message
+                echo "Schedule dates stored successfully.";
+            } catch (\Exception $e) {
+                // Log the error
+                error_log("Error storing schedule dates: " . $e->getMessage());
+                // Output error message
+                echo "An error occurred while storing schedule dates. Please check logs for details.";
+            }
+
 
             return redirect()->route('circle.index')->with('success', 'Circle Created Successfully!');
         } catch (\Throwable $th) {
