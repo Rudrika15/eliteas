@@ -82,56 +82,24 @@ class CircleController extends Controller
             $circle->status = 'Active';
             $circle->save();
 
-            // Generate and store meeting schedule
-            $scheduleDates = [];
 
-            $startDate = $request->start_date;
-            $endDate = $request->end_date;
+            // Logic for creating scheduled meetings
+            $startDate = Carbon::parse($request->start_date);
+            $endDate = Carbon::parse($request->end_date);
+            $dayOfWeek = $request->meetingDay;
+            $weekNumbers = $request->weekNo;
 
-            try {
-                // Loop through each week number
-                foreach ($request->weekNo as $week) {
-                    $weekDates = [];
-                    // Loop through each week between start and end date
-                    $currentDate = clone $startDate;
-                    while ($currentDate <= $endDate) {
-                        // Check if the current day of the week matches the selected meeting day
-                        if ($currentDate->format('l') === $request->meetingDay) {
-                            $weekOfMonth = ceil($currentDate->format('d') / 7);
-                            // If the current week matches the selected week number, store the date
-                            if ($weekOfMonth == $week) {
-                                $weekDates[] = $currentDate->format('Y-m-d');
-                            }
-                        }
-                        // Move to the next week
-                        $currentDate->modify('+7 days');
-                    }
-                    $scheduleDates = array_merge($scheduleDates, $weekDates);
-                }
-
-                // Store schedule dates in the database
-                foreach ($scheduleDates as $date) {
+            $currentDate = $startDate;
+            while ($currentDate->lte($endDate)) {
+                if (in_array($currentDate->weekOfMonth, $weekNumbers) && $currentDate->dayOfWeek === $dayOfWeek) {
                     $schedule = new Schedule();
-                    $schedule->circle_id = $circle->id; // Fix the column name
-                    $schedule->date = $date;
-                    if (!$schedule->save()) { // Check if the schedule is saved
-                        // Log the error
-                        error_log("Error storing schedule dates: " . json_encode($schedule->getErrors()));
-                        // Output error message
-                        echo "An error occurred while storing schedule dates. Please check logs for details.";
-                        die(); // Stop further execution
-                    }
+                    $schedule->circleId = $circle->id;
+                    $schedule->day = $currentDate->format('l');
+                    $schedule->date = $currentDate->format('Y-m-d');
+                    $schedule->save();
                 }
-
-                // Output success message
-                echo "Schedule dates stored successfully.";
-            } catch (\Exception $e) {
-                // Log the error
-                error_log("Error storing schedule dates: " . $e->getMessage());
-                // Output error message
-                echo "An error occurred while storing schedule dates. Please check logs for details.";
+                $currentDate->addWeek();
             }
-
 
             return redirect()->route('circle.index')->with('success', 'Circle Created Successfully!');
         } catch (\Throwable $th) {
@@ -139,6 +107,7 @@ class CircleController extends Controller
             return view('servererror');
         }
     }
+
 
 
     public function edit($id)

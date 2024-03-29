@@ -13,8 +13,5 @@ class Schedule extends Model
         'circleId',
         'day',
         'date',
-        'vanue',
-        'meetingTime',
-        'remarks',
     ];
 }
