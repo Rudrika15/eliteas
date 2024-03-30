@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\CircleMeeting;
 use App\Models\CircleMeetingMembersReference;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use App\Utils\Utils;
 
@@ -15,9 +16,19 @@ class CircleMeetingMemberReferenceController extends Controller
     public function index(Request $request)
     {
         try {
-            $refGivers = CircleMeetingMembersReference::where('status', 'Active')
+            $memberId = Auth::id();
+
+            $member = Member::where('userId', $memberId)->first();
+
+            if (!$member) {
+                return Utils::errorResponse(['error' => 'Member not found for the authenticated user'], 'Not Found', 404);
+            }
+
+            $refGivers = CircleMeetingMembersReference::where('memberId', $member->id)
+                ->where('status', 'Active')
                 ->orderBy('id', 'DESC')
                 ->get();
+
             return Utils::sendResponse(['refGivers' => $refGivers], 'Circle Meeting Members Reference retrieved successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
@@ -37,7 +48,6 @@ class CircleMeetingMemberReferenceController extends Controller
     public function create(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'memberId' => 'required',
             'referenceGiver' => 'required',
             'contactName' => 'required',
             'contactNo' => 'required',
@@ -51,7 +61,15 @@ class CircleMeetingMemberReferenceController extends Controller
         }
 
         try {
+            $memberId = Auth::id();
+            $member = Member::where('userId', $memberId)->first();
+
+            if (!$member) {
+                return Utils::errorResponse(['error' => 'Member not found for the authenticated user'], 'Not Found', 404);
+            }
+
             $refGiver = new CircleMeetingMembersReference();
+            $refGiver->memberId = $member->id;
             $refGiver->fill($request->all());
             $refGiver->status = 'Active';
             $refGiver->save();
@@ -65,7 +83,6 @@ class CircleMeetingMemberReferenceController extends Controller
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'memberId' => 'required',
             'referenceGiver' => 'required',
             'contactName' => 'required',
             'contactNo' => 'required',
@@ -79,7 +96,19 @@ class CircleMeetingMemberReferenceController extends Controller
         }
 
         try {
+            $memberId = Auth::id();
+            $member = Member::where('userId', $memberId)->first();
+
+            if (!$member) {
+                return Utils::errorResponse(['error' => 'Member not found for the authenticated user'], 'Not Found', 404);
+            }
+
             $refGiver = CircleMeetingMembersReference::findOrFail($id);
+
+            if ($refGiver->memberId != $member->id) {
+                return Utils::errorResponse(['error' => 'Unauthorized'], 'Unauthorized', 403);
+            }
+
             $refGiver->fill($request->all());
             $refGiver->save();
 
@@ -92,7 +121,19 @@ class CircleMeetingMemberReferenceController extends Controller
     public function delete(Request $request, $id)
     {
         try {
+            $memberId = Auth::id();
+            $member = Member::where('userId', $memberId)->first();
+
+            if (!$member) {
+                return Utils::errorResponse(['error' => 'Member not found for the authenticated user'], 'Not Found', 404);
+            }
+
             $refGiver = CircleMeetingMembersReference::findOrFail($id);
+
+            if ($refGiver->memberId != $member->id) {
+                return Utils::errorResponse(['error' => 'Unauthorized'], 'Unauthorized', 403);
+            }
+
             $refGiver->delete();
 
             return Utils::sendResponse([], 'Circle Meeting Member Reference Deleted Successfully!', 200);

@@ -26,8 +26,12 @@
     <div class="card-body">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h4 class="mb-0 mt-3">Circle</h4>
-            <a href="{{ route('circle.create') }}" class="btn btn-primary btn-sm mt-3">ADD</a>
+            <div class="d-flex">
+                <a href="{{ route('circle.create') }}" class="btn btn-primary btn-sm mt-3 mr-2 ">ADD</a>
+                <a href="{{ route('schedule.index') }}" class="btn btn-danger btn-sm mt-3">Schedule</a>
+            </div>
         </div>
+
 
         <!-- Table with stripped rows -->
         <table class="table datatable">
@@ -50,7 +54,26 @@
                     <td>{{$circleData->franchise->franchiseName ?? '-'}}</td>
                     <td>{{$circleData->city->cityName ?? '-'}}</td>
                     <td>{{$circleData->circletype->circleTypeName ?? '-'}}</td>
-                    <td>{{$circleData->meetingDay}}</td>
+                    <td>
+                        {{-- Display name based on meeting day --}}
+                        @if($circleData->meetingDay == 0)
+                        Sunday
+                        @elseif($circleData->meetingDay == 1)
+                        Monday
+                        @elseif($circleData->meetingDay == 2)
+                        Tuesday
+                        @elseif($circleData->meetingDay == 3)
+                        Wednesday
+                        @elseif($circleData->meetingDay == 4)
+                        Thursday
+                        @elseif($circleData->meetingDay == 5)
+                        Friday
+                        @elseif($circleData->meetingDay == 6)
+                        Saturday
+                        @else
+                        -
+                        @endif
+                    </td>
                     {{-- <td>{{$circleData->meetingTime}}</td> --}}
                     <td>{{$circleData->status}}</td>
                     <td>

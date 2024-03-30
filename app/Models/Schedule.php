@@ -14,4 +14,9 @@ class Schedule extends Model
         'day',
         'date',
     ];
+
+    public function circle()
+    {
+        return $this->belongsTo(Circle::class, 'circleId', 'id');
+    }
 }

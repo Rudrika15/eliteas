@@ -10,7 +10,7 @@ class CircleMeetingMembersReference extends Model
     use HasFactory;
 
     protected $fillable = [
-        
+
         'memberId',
         'referenceGiver',
         'contactName',
@@ -22,6 +22,6 @@ class CircleMeetingMembersReference extends Model
 
     public function members()
     {
-        return $this->belongsTo(Member::class, 'id');
+        return $this->belongsTo(Member::class, 'memberId', 'id');
     }
 }

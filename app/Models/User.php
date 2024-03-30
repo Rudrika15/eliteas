@@ -70,6 +70,6 @@ class User extends Authenticatable
 
     public function franchise()
     {
-        return $this->hasOne(Franchise::class, 'userId', 'id');
+        return $this->hasOne(Franchise::class, 'userId');
     }
 }

@@ -45,7 +45,7 @@
                 @foreach ($circlecall as $circlecallData)
                 <tr>
                     <td>{{$circlecallData->members->firstName ?? '-'}}</td>
-                    <td>{{$circlecallData->meetingPerson ?? '-'}}</td>
+                    <td>{{$circlecallData->members->firstName ?? '-'}} </td>
                     <td>{{$circlecallData->meetingPlace ?? '-'}}</td>
                     <td>{{$circlecallData->remarks ?? '-'}}</td>
                     <td>{{$circlecallData->status}}</td>

@@ -57,7 +57,7 @@ class CircleController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'circleName' => 'required',
+            'circleName' => 'required|unique:circles',
             'franchiseId' => 'required',
             'cityId' => 'required',
             'circletypeId' => 'required',
@@ -82,23 +82,52 @@ class CircleController extends Controller
             $circle->status = 'Active';
             $circle->save();
 
-
             // Logic for creating scheduled meetings
             $startDate = Carbon::parse($request->start_date);
             $endDate = Carbon::parse($request->end_date);
-            $dayOfWeek = $request->meetingDay;
-            $weekNumbers = $request->weekNo;
+            $weekNumbers = json_decode($circle->weekNo); // Fetch week numbers from the Circle model
+            $meetingDay = $circle->meetingDay; // Fetch meeting day from the Circle model
 
-            $currentDate = $startDate;
-            while ($currentDate->lte($endDate)) {
-                if (in_array($currentDate->weekOfMonth, $weekNumbers) && $currentDate->dayOfWeek === $dayOfWeek) {
-                    $schedule = new Schedule();
-                    $schedule->circleId = $circle->id;
-                    $schedule->day = $currentDate->format('l');
-                    $schedule->date = $currentDate->format('Y-m-d');
-                    $schedule->save();
+            $currentDate = $startDate->copy()->startOfMonth();
+            while ($currentDate <= $endDate) {
+                foreach ($weekNumbers as $weekNumber) {
+                    // Find the first occurrence of the meeting day in this month
+                    $firstOccurrence = $currentDate->copy()->firstOfMonth();
+                    while ($firstOccurrence->dayOfWeek != $meetingDay) {
+                        $firstOccurrence->addDay();
+                    }
+
+                    $meetingDate = null; // Initialize $meetingDate variable
+
+                    // Check which week number is selected and calculate meeting dates accordingly
+                    if ($weekNumber === 'Week 1') {
+                        $meetingDate = $firstOccurrence->copy();
+                    } elseif ($weekNumber === 'Week 2') {
+                        $meetingDate = $firstOccurrence->copy()->addWeek();
+                    } elseif ($weekNumber === 'Week 3') {
+                        $meetingDate = $firstOccurrence->copy()->addWeeks(2);
+                    } elseif ($weekNumber === 'Week 4') {
+                        $meetingDate = $firstOccurrence->copy()->addWeeks(3);
+                    }
+
+                    // Ensure the resulting meeting day is within the month
+                    if ($meetingDate->month != $firstOccurrence->month) {
+                        // If the resulting meeting day is in the next month, reset to the first occurrence of the meeting day
+                        $meetingDate = $firstOccurrence->copy()->addMonths(1);
+                        while ($meetingDate->dayOfWeek != $meetingDay) {
+                            $meetingDate->addDay();
+                        }
+                    }
+
+                    if ($meetingDate && $meetingDate->lte($endDate)) {
+                        $schedule = new Schedule();
+                        $schedule->circleId = $circle->id;
+                        $schedule->day = $meetingDate->dayOfWeek; // Store the day of the week
+                        $schedule->date = $meetingDate->format('Y-m-d');
+                        $schedule->save();
+                    }
                 }
-                $currentDate->addWeek();
+                $currentDate->addMonth();
             }
 
             return redirect()->route('circle.index')->with('success', 'Circle Created Successfully!');
@@ -107,6 +136,9 @@ class CircleController extends Controller
             return view('servererror');
         }
     }
+
+
+
 
 
 
