@@ -7,7 +7,9 @@ use App\Models\CircleCall;
 use App\Models\CircleMember;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Schedule;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 
@@ -45,9 +47,15 @@ class CircleCallController extends Controller
             // $member = Member::where('status', '!=', 'Deleted')->get();
             $member = User::whereHas('roles', function ($q) {
                 $q->where('name', 'Member');
-            })->get();
+            })->with('member.circle')->get();
 
-            return view('admin.circlecall.create', compact('member', 'circleMember'));
+            // return $scheduleDate = Schedule::where('circleId', Auth::user()->member->circle->id)->where('status', 'Active')->get(['date']);
+
+            $scheduleDate = Schedule::where('circleId', Auth::user()->member->circle->id)
+                ->where('status', 'Active')
+                ->pluck('date'); // Pluck all 'date' values from the query result
+
+            return view('admin.circlecall.create', compact('member', 'circleMember', 'scheduleDate'));
         } catch (\Throwable $th) {
             throw $th;
             return view('servererror');
@@ -105,7 +113,7 @@ class CircleCallController extends Controller
             $circlecall->remarks = $request->remarks;
             $circlecall->status = 'Active';
 
- 
+
             $circlecall->save();
 
             return redirect()->route('circlecall.index')->with('success', 'Circle Call Created Successfully!');

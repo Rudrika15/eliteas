@@ -81,7 +81,15 @@
 
                 <div class="col-md-6">
                     <div class="form-floating mt-3">
-                        <input type="date" class="form-control @error('date') is-invalid @enderror" id="date" name="date" placeholder="Meeeting Place Name" required>
+                        <?php
+                        use Illuminate\Support\Carbon;
+                        $nearestDate = $scheduleDate->min();
+                        $nearestDate = $nearestDate ? Carbon::parse($nearestDate)->subDay()->format('Y-m-d') : Carbon::now()->format('Y-m-d');
+                        $startDate = Carbon::now()->format('Y-m-d');
+                        // $nearestDate = '2024-04-24';
+                        // $startDate = '2024-04-07';
+                        ?>
+                        <input type="date" class="form-control @error('date') is-invalid @enderror" id="date" name="date" placeholder="Meeting Date" required min="{{ $startDate }}" max="{{ $nearestDate }}">
                         <label for="date">Date</label>
                         @error('date')
                             <div class="invalid-tooltip">
@@ -90,6 +98,7 @@
                         @enderror
                     </div>
                 </div>
+
                 <div class="col-md-6">
                     <div class="form-floating mt-3">
                         <input type="text" class="form-control @error('remarks') is-invalid @enderror" id="remarks" name="remarks" placeholder="Remarks" required>
