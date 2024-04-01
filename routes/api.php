@@ -134,5 +134,5 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::delete('franchise-delete/{id}', [FranchiseController::class, 'delete']);
 
     //search member 
-    Route::get('search-member-index', [CircleCallController::class, 'searchmember']);
+    Route::post('search-member-index', [CircleCallController::class, 'searchmember']);
 });

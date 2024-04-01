@@ -113,9 +113,7 @@
                                         <div class="form-floating">
                                             <input type="text" class="form-control @error('email') is-invalid @enderror"
                                                 id="email" name="email" placeholder="Email">
-                                            <input type="email"
-                                                class="form-control @error('email') is-invalid @enderror" id="email"
-                                                name="email" placeholder="Email">
+                                            
                                             <label for="email">Email</label>
                                             @error('email')
                                             <div class="invalid-tooltip">

@@ -25,7 +25,7 @@ class Member extends Model
 
     public function contact()
     {
-        return $this->belongsTo(ContactDetails::class, 'id');
+        return $this->belongsTo(ContactDetails::class, 'id', 'memberId');
     }
 
     public function user()
@@ -65,6 +65,6 @@ class Member extends Model
 
     public function circle()
     {
-        return $this->belongsTo(Circle::class, 'circleId');
+        return $this->belongsTo(Circle::class, 'id');
     }
 }
