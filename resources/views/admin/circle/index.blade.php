@@ -53,7 +53,7 @@
                     <td>{{$circleData->circleName}}</td>
                     <td>{{$circleData->franchise->franchiseName ?? '-'}}</td>
                     <td>{{$circleData->city->cityName ?? '-'}}</td>
-                    <td>{{$circleData->circletype->circleTypeName ?? '-'}}</td>
+                    <td>{{$circleData->circletypeId ?? '-'}}</td>
                     <td>
                         {{-- Display name based on meeting day --}}
                         @if($circleData->meetingDay == 0)

@@ -11,6 +11,6 @@ class CircleType extends Model
 
     public function circle()
     {
-        return $this->hasOne(Circle::class, 'id');
+        return $this->hasMany(Circle::class, 'id');
     }
 }

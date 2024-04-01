@@ -32,27 +32,35 @@ class CircleCallController extends Controller
     // }
 
     public function index(Request $request)
-    {
-        try {
-            $userId = Auth::id();
+{
+    try {
+        $userId = Auth::id();
 
-            $member = Member::where('userId', $userId)->first();
+        $member = Member::where('userId', $userId)->first();
 
-            if (!$member) {
-                return Utils::errorResponse(['error' => 'Member not found for the authenticated user'], 'Not Found', 404);
-            }
-
-            $circleCalls = CircleCall::with('members')
-                ->where('memberId', $member->id)
-                ->where('status', 'Active')
-                ->orderBy('id', 'DESC')
-                ->get();
-
-            return Utils::sendResponse(['circleCalls' => $circleCalls], 'Circle Calls retrieved successfully', 200);
-        } catch (\Throwable $th) {
-            return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
+        if (!$member) {
+            return Utils::errorResponse(['error' => 'Member not found for the authenticated user'], 'Not Found', 404);
         }
+
+        $circleCalls = CircleCall::with(['members', 'meetingPerson']) // Eager load meetingPerson relationship
+            ->where('memberId', $member->id)
+            ->where('status', 'Active')
+            ->orderBy('id', 'DESC')
+            ->get();
+
+        // // Transforming the response to replace meetingPersonId with name
+        // $circleCalls->transform(function ($circleCall) {
+        //     $circleCall->meetingPersonName = $circleCall->meetingPerson->name;
+        //     unset($circleCall->meetingPerson); // Remove the meetingPerson object from the response
+        //     return $circleCall;
+        // });
+
+        return Utils::sendResponse(['circleCalls' => $circleCalls], 'Circle Calls retrieved successfully', 200);
+    } catch (\Throwable $th) {
+        return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
     }
+}
+
 
 
 
