@@ -13,7 +13,7 @@ class CircleCall extends Model
     protected $fillable = [
         'userId',
         'memberId',
-        'meetingPerson',
+        'meetingPersonId',
         'meetingPlace',
         'remarks',
     ];
@@ -27,9 +27,8 @@ class CircleCall extends Model
     {
         return $this->belongsTo(Member::class, 'memberId', 'id');
     }
-
     public function meetingPerson()
     {
-        return $this->belongsTo(CircleCall::class , 'meetingPersonName', 'meetingPersonId');
+        return $this->belongsTo(Member::class, 'meetingPersonId', 'userId');
     }
 }
