@@ -17,6 +17,7 @@ class CircleCallController extends Controller
     {
         try {
             $circlecall = CircleCall::with('members')
+                ->with('meetingPerson')
                 ->where('status', 'Active')
                 ->orderBy('id', 'DESC')
                 ->get();
@@ -30,6 +31,7 @@ class CircleCallController extends Controller
     public function view(Request $request, $id)
     {
         try {
+            //
         } catch (\Throwable $th) {
             throw $th;
             return view('servererror');
