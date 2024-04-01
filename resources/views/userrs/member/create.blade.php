@@ -111,9 +111,10 @@
                                     </div>
                                     <div class="col-md-6 mt-3">
                                         <div class="form-floating">
-                                            <input type="text" class="form-control @error('email') is-invalid @enderror"
-                                                id="email" name="email" placeholder="Email">
-                                            
+                                            <input type="email"
+                                                class="form-control @error('email') is-invalid @enderror" id="email"
+                                                name="email" placeholder="Email">
+
                                             <label for="email">Email</label>
                                             @error('email')
                                             <div class="invalid-tooltip">
@@ -424,7 +425,7 @@
                                     <div class="col-md-6 mt-3">
                                         <div class="form-label-group mt-3">
                                             <label for="profilePhoto" class="fw-bold">Profile Photo <sup
-                                                    class="text-danger">*</sup></label>
+                                                    class="text-danger"></sup></label>
                                             <input type="file" class="form-control" id="profilePhoto"
                                                 name="profilePhoto" accept="image/*" onchange="previewPhoto(event)">
                                             <img id="photoPreview" src="default.jpg" class="mt-2" width="100px"
@@ -436,10 +437,12 @@
                                     </div>
                                     <div class="col-md-6 mt-3">
                                         <div class="form-label-group mt-3">
-                                            <label for="companyLogo" class="fw-bold">Company Logo <sup class="text-danger">*</sup></label>
-                                            <input type="file" class="form-control" id="companyLogo" name="companyLogo" accept="image/*"
-                                                onchange="previewPhoto(event)">
-                                            <img id="logoPreview" src="default.jpg" class="mt-2" width="100px" height="100px">
+                                            <label for="companyLogo" class="fw-bold">Company Logo <sup
+                                                    class="text-danger"></sup></label>
+                                            <input type="file" class="form-control" id="companyLogo" name="companyLogo"
+                                                accept="image/*" onchange="previewPhoto(event)">
+                                            <img id="logoPreview" src="default.jpg" class="mt-2" width="100px"
+                                                height="100px">
                                             @error('companyLogo')
                                             <span class="error">{{ $message }}</span>
                                             @enderror
@@ -746,10 +749,11 @@
                                     </div>
                                     <div class="col-md-6 mt-3">
                                         <div class="form-floating">
-                                            <input type="text" class="form-control @error('email') is-invalid @enderror"
-                                                id="email" name="email" placeholder="email">
-                                            <label for="email">Email</label>
-                                            @error('email')
+                                            <input type="text"
+                                                class="form-control @error('conEmail') is-invalid @enderror"
+                                                id="conEmail" name="conEmail" placeholder="conEmail">
+                                            <label for="conEmail">Email</label>
+                                            @error('conEmail')
                                             <div class="invalid-tooltip">
                                                 {{ $message }}
                                             </div>

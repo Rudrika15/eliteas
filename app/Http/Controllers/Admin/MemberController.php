@@ -19,7 +19,7 @@ class MemberController extends Controller
     public function index(Request $request)
     {
         try {
-            $member = Member::paginate(4); // show only 10 record per page
+            $member = Member::all(); // show only 10 record per page
             return view('userrs.member.index', compact('member'));
         } catch (\Throwable $th) {
             throw $th;
@@ -47,6 +47,8 @@ class MemberController extends Controller
 
     public function store(Request $request)
     {
+
+
         $this->validate($request, [
             'title' => 'required',
             'firstName' => 'required',
@@ -54,7 +56,7 @@ class MemberController extends Controller
             'displayName' => 'required',
             'gender' => 'required',
             'username' => 'required',
-            'profilePhoto' => 'required',
+            // 'profilePhoto' => 'required',
             'email' => 'required',
             'password' => 'required',
             'confirmPassword' => 'required|same:password',
@@ -65,13 +67,16 @@ class MemberController extends Controller
             // role = Memebr
 
             // Create user
-            $user = new User;
+            return $user = new User;
             $user->firstName = $request->firstName;
             $user->lastName = $request->lastName;
             $user->email = $request->email;
             $user->password = Hash::make($request->password);
             $user->assignRole('Member');
             $user->save(); // 
+
+
+
 
 
             $member = new Member();
@@ -127,7 +132,7 @@ class MemberController extends Controller
             $member->keyWords = $request->keyWords;
             $member->status = 'Active';
 
-            $member->save();
+            return $member->save();
 
 
             $tops = new TopsProfile();
@@ -172,7 +177,7 @@ class MemberController extends Controller
             $contact->showTollFree = $request->showTollFree;
             $contact->fax = $request->fax;
             $contact->showFax = $request->showFax;
-            $contact->email = $request->email;
+            $contact->conEmail = $request->email;
             $contact->showEmail = $request->showEmail;
             $contact->addressLine1 = $request->addressLine2;
             $contact->addressLine2 = $request->addressLine2;

@@ -101,13 +101,13 @@
                 <span>Circle</span>
             </a>
         </li>
-{{-- 
+
         <li class="nav-item">
             <a class="nav-link " href="{{route('circlemember.index')}}">
                 <i class="bi bi-plus-circle-dotted"></i>
                 <span>Circle Member</span>
             </a>
-        </li> --}}
+        </li>
 
         {{-- <li class="nav-item">
             <a class="nav-link " href="{{route('circlemeeting.index')}}">

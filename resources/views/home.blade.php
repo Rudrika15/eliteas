@@ -13,8 +13,15 @@
                         {{ session('status') }}
                     </div>
                     @endif
+
+                    @role('Admin')
                     <h2>{{ $count }}</h2>
                     <a href="{{ route('schedule.dashIndex') }}">View Details</a>
+                    @endrole
+
+
+
+
                 </div>
             </div>
         </div>

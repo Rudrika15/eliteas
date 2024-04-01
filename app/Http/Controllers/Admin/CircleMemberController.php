@@ -93,8 +93,22 @@ class CircleMemberController extends Controller
             $member->gender = $request->gender;
             $member->language = $request->language;
             $member->timeZone = $request->timeZone;
-            $member->profilePhoto = $request->profilePhoto;
-            $member->companyLogo = $request->companyLogo;
+            if ($request->profilePhoto) {
+                $member->profilePhoto = time() . '.' . $request->profilePhoto->extension();
+                $request->profilePhoto->move(public_path('ProfilePhoto'),  $member->profilePhoto);
+            }
+
+
+            // $member->profilePhoto = $request->profilePhoto;
+
+
+            if ($request->companyLogo) {
+                $member->companyLogo = time() . '.' . $request->companyLogo->extension();
+                $request->companyLogo->move(public_path('CompanyLogo'),  $member->companyLogo);
+            }
+
+            // $member->companyLogo = $request->companyLogo;
+
             $member->goals = $request->goals;
             $member->chapter = $request->chapter;
             $member->renewalDueDate = $request->renewalDueDate;
@@ -182,11 +196,11 @@ class CircleMemberController extends Controller
             $billing->save();
 
             // Now, create and save the circle member
-            // $circlemember = new CircleMember();
-            // $circlemember->circleId = $request->circleId;
-            // $circlemember->memberId = $member->id; // Set the member ID from the saved member
-            // $circlemember->status = 'Active';
-            // $circlemember->save();
+            $circlemember = new CircleMember();
+            $circlemember->circleId = $request->circleId;
+            $circlemember->memberId = $member->id; // Set the member ID from the saved member
+            $circlemember->status = 'Active';
+            $circlemember->save();
 
             return redirect()->route('circlemember.index')->with('success', 'Circle Member Created Successfully!');
         } catch (\Throwable $th) {
@@ -259,8 +273,24 @@ class CircleMemberController extends Controller
             $member->gender = $request->gender;
             $member->language = $request->language;
             $member->timeZone = $request->timeZone;
-            $member->profilePhoto = $request->profilePhoto;
-            $member->companyLogo = $request->companyLogo;
+            
+            if ($request->profilePhoto) {
+                $member->profilePhoto = time() . '.' . $request->profilePhoto->extension();
+                $request->profilePhoto->move(public_path('ProfilePhoto'),  $member->profilePhoto);
+            }
+
+
+            // $member->profilePhoto = $request->input('profilePhoto', $member->profilePhoto);
+
+            if ($request->companyLogo) {
+                $member->companyLogo = time() . '.' . $request->companyLogo->extension();
+                $request->companyLogo->move(public_path('CompanyLogo'),  $member->companyLogo);
+            }
+
+
+
+            // $member->companyLogo = $request->input('companyLogo', $member->companyLogo);
+
             $member->goals = $request->goals;
             $member->chapter = $request->chapter;
             $member->renewalDueDate = $request->renewalDueDate;
