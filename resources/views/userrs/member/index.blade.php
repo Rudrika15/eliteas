@@ -1,15 +1,6 @@
 @extends('layouts.master')
 
 @section('header', 'Member')
-
-<!-- Bootstrap Icons CDN -->
-{{--
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet"> --}}
-
-<!-- Simple Datatables CDN -->
-{{--
-<link href="https://cdn.jsdelivr.net/npm/simple-datatables" rel="stylesheet"> --}}
-
 @section('content')
 
 {{-- Message --}}
@@ -59,7 +50,7 @@
                     <td>{{$memberData->firstName ?? '-'}}</td>
                     <td>{{$memberData->lastName ?? '-'}}</td>
                     <td>{{$memberData->username ?? '-'}}</td>
-                    <td>{{$memberData->contact->email ?? '-'}}</td>
+                    <td>{{$memberData->user->email ?? '-'}}</td>
                     <td>{{$memberData->contact->mobileNo ?? '-'}}</td>
                     <td>{{$memberData->status}}</td>
                     <td>
@@ -76,11 +67,5 @@
             </tbody>
         </table>
         <!-- End Table with stripped rows -->
-
-        <!-- Pagination -->
-        <div class="d-flex justify-content-center">
-            {{ $member->links() }}
-        </div>
-        <!-- End Pagination -->
     </div>
     @endsection

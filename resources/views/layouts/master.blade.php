@@ -15,7 +15,9 @@
 
     <!-- Google Fonts -->
     <link href="https://fonts.gstatic.com" rel="preconnect">
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
+        rel="stylesheet">
 
     <!-- Vendor CSS Files -->
     <link href="{{ asset('vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet" />
@@ -46,7 +48,7 @@
         <div class="d-flex align-items-center justify-content-between">
             <a href="index.html" class="logo d-flex align-items-center">
                 <img src="assets/img/logo.png" alt="">
-                <span class="d-none d-lg-block">ELITEAS</span>
+                <img src="{{ asset('img/logo.png') }}" alt="ELITEAs" class="d-none d-lg-block" width="60" height="60">
             </a>
             <i class="bi bi-list toggle-sidebar-btn"></i>
         </div><!-- End Logo -->
@@ -182,15 +184,17 @@
 
                     <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
                         @if (isset(Auth::user()->profile_photo))
-                            {{-- <img class="img-profile rounded-circle" src="{{url('public/img/logo.png')}}"> --}}
-                            <img class="img-profile rounded-circle" src="public/img/logo.png">
+                        {{-- <img class="img-profile rounded-circle" src="{{url('public/img/logo.png')}}"> --}}
+                        <img class="img-profile rounded-circle" src="public/img/logo.png">
                         @else
-                            <span class="rounded-circle text-center p-2 fs-5 badge logobadge d-inline-block text-light h-50" style="width: 38px !important;">
+                        <span class="rounded-circle text-center p-2 fs-5 badge logobadge d-inline-block text-light h-50"
+                            style="width: 38px !important;">
 
-                            </span>
+                        </span>
                         @endif
                         {{-- <span class="d-none d-md-block dropdown-toggle ps-2">{{Auth::user()->name}}</span> --}}
-                        <span class="d-none d-md-block dropdown-toggle ps-2">Hello, {{ Auth::user()->firstName ?? '-' }}</span>
+                        <span class="d-none d-md-block dropdown-toggle ps-2">Hello, {{ Auth::user()->firstName ?? '-'
+                            }}</span>
                     </a><!-- End Profile Iamge Icon -->
 
                     <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
@@ -268,11 +272,11 @@
             <!-- End Charts Nav -->
 
             @role('Admin')
-                @include('layouts.adminmenu')
+            @include('layouts.adminmenu')
             @endrole
 
             @role('Member')
-                @include('layouts.membermenu')
+            @include('layouts.membermenu')
             @endrole
 
             <!-- End Tables Nav -->
@@ -291,7 +295,7 @@
 
         {{-- <div class="pagetitle">
             {{-- <h1>Dashboard</h1> --}}
-        {{-- <nav>
+            {{-- <nav>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="index.html">Home</a></li>
                     <li class="breadcrumb-item active">Dashboard</li>
@@ -331,7 +335,8 @@
         </div>
     </footer><!-- End Footer -->
 
-    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+            class="bi bi-arrow-up-short"></i></a>
 
     <!-- Vendor JS Files -->
 

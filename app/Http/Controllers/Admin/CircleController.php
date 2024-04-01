@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
+use Carbon\Carbon;
 use App\Models\City;
 use App\Models\Circle;
+use App\Models\Schedule;
 use App\Models\Franchise;
 use App\Models\CircleType;
 use Illuminate\Http\Request;
@@ -55,16 +57,15 @@ class CircleController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'circleName' => 'required',
+            'circleName' => 'required|unique:circles',
             'franchiseId' => 'required',
             'cityId' => 'required',
             'circletypeId' => 'required',
             'meetingDay' => 'required',
-            // 'meetingTime' => 'required',
             'numberOfMeetings' => 'required',
             'weekNo' => 'required|array', // Ensure weekNo is an array
-            'start_date' => 'required',
-            'end_date' => 'required'
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after:start_date'
         ]);
 
         try {
@@ -74,14 +75,60 @@ class CircleController extends Controller
             $circle->cityId = $request->cityId;
             $circle->circletypeId = $request->circletypeId;
             $circle->meetingDay = $request->meetingDay;
-            // $circle->meetingTime = $request->meetingTime;
             $circle->numberOfMeetings = $request->numberOfMeetings;
             $circle->weekNo = json_encode($request->weekNo); // Serialize the array of week numbers
             $circle->start_date = $request->start_date;
             $circle->end_date = $request->end_date;
             $circle->status = 'Active';
-
             $circle->save();
+
+            // Logic for creating scheduled meetings
+            $startDate = Carbon::parse($request->start_date);
+            $endDate = Carbon::parse($request->end_date);
+            $weekNumbers = json_decode($circle->weekNo); // Fetch week numbers from the Circle model
+            $meetingDay = $circle->meetingDay; // Fetch meeting day from the Circle model
+
+            $currentDate = $startDate->copy()->startOfMonth();
+            while ($currentDate <= $endDate) {
+                foreach ($weekNumbers as $weekNumber) {
+                    // Find the first occurrence of the meeting day in this month
+                    $firstOccurrence = $currentDate->copy()->firstOfMonth();
+                    while ($firstOccurrence->dayOfWeek != $meetingDay) {
+                        $firstOccurrence->addDay();
+                    }
+
+                    $meetingDate = null; // Initialize $meetingDate variable
+
+                    // Check which week number is selected and calculate meeting dates accordingly
+                    if ($weekNumber === 'Week 1') {
+                        $meetingDate = $firstOccurrence->copy();
+                    } elseif ($weekNumber === 'Week 2') {
+                        $meetingDate = $firstOccurrence->copy()->addWeek();
+                    } elseif ($weekNumber === 'Week 3') {
+                        $meetingDate = $firstOccurrence->copy()->addWeeks(2);
+                    } elseif ($weekNumber === 'Week 4') {
+                        $meetingDate = $firstOccurrence->copy()->addWeeks(3);
+                    }
+
+                    // Ensure the resulting meeting day is within the month
+                    if ($meetingDate->month != $firstOccurrence->month) {
+                        // If the resulting meeting day is in the next month, reset to the first occurrence of the meeting day
+                        $meetingDate = $firstOccurrence->copy()->addMonths(1);
+                        while ($meetingDate->dayOfWeek != $meetingDay) {
+                            $meetingDate->addDay();
+                        }
+                    }
+
+                    if ($meetingDate && $meetingDate->lte($endDate)) {
+                        $schedule = new Schedule();
+                        $schedule->circleId = $circle->id;
+                        $schedule->day = $meetingDate->dayOfWeek; // Store the day of the week
+                        $schedule->date = $meetingDate->format('Y-m-d');
+                        $schedule->save();
+                    }
+                }
+                $currentDate->addMonth();
+            }
 
             return redirect()->route('circle.index')->with('success', 'Circle Created Successfully!');
         } catch (\Throwable $th) {
@@ -89,6 +136,10 @@ class CircleController extends Controller
             return view('servererror');
         }
     }
+
+
+
+
 
 
     public function edit($id)

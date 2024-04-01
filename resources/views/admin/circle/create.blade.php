@@ -99,13 +99,13 @@
                 <div class="form-floating">
                     <select class="form-select" id="meetingDay" name="meetingDay">
                         <option selected disabled>Select Day</option>
-                        <option value="1">Sunday</option>
-                        <option value="2">Monday</option>
-                        <option value="3">Tuesday</option>
-                        <option value="4">Wednesday</option>
-                        <option value="5">Thursday</option>
-                        <option value="6">Friday</option>
-                        <option value="7">Saturday</option>
+                        <option value="0">Sunday</option>
+                        <option value="1">Monday</option>
+                        <option value="2">Tuesday</option>
+                        <option value="3">Wednesday</option>
+                        <option value="4">Thursday</option>
+                        <option value="5">Friday</option>
+                        <option value="6">Saturday</option>
                     </select>
                     {{-- <label for="circleTypeName">Select Type</label> --}}
                     @error('meetingDay')
@@ -260,22 +260,71 @@
                 if (checkedCount >= 2) {
                     $('input[name="weekNo[]"]:not(:checked)').prop('disabled', true);
                 }
+            } else if (circleType === '4') {
+                $('input[name="weekNo[]"]').prop('disabled', false);
+                var checkedCount = $('input[name="weekNo[]"]:checked').length;
+                if (checkedCount >= 1) {
+                    $('input[name="weekNo[]"]:not(:checked)').prop('disabled', true);
+                }
+            } else if (circleType === '2') {
+                $('input[name="weekNo[]"]').prop('disabled', false);
+                $('input[name="weekNo[]"]').change(function () {
+                    var checkedCount = $('input[name="weekNo[]"]:checked').length;
+                    if (checkedCount >= 1) {
+                        $('input[name="weekNo[]"]:not(:checked)').prop('disabled', true);
+                    } else {
+                        $('input[name="weekNo[]"]').prop('disabled', false);
+                    }
+                });
             }
-        }).trigger('change'); // Triggering the change event to set initial state
-
-       $('#circletypeId').change(function () {
-        var circleType = $('#circletypeId').val();
-        console.log('circle type id', circleType);
-        if (circleType === '4') {
-        $('input[name="weekNo[]"]').prop('disabled', false);
-        var checkedCount = $('input[name="weekNo[]"]:checked').length;
-        if (checkedCount >= 1) {
-        $('input[name="weekNo[]"]:not(:checked)').prop('disabled', true);
-        }
-        }
         }).trigger('change'); // Triggering the change event to set initial state
     });
 </script>
 
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+{{-- <script>
+    $(document).ready(function () {
+        // Function to enable all checkboxes
+        function enableAllCheckboxes() {
+            var circleType = $('#circletypeId').val();
+            if(circleType === '2'){
+                $('input[name="weekNo[]"]').prop('disabled', false);
+            }else{
+                $('input[name="weekNo[]"]').prop('disabled', true);
+            }
+        }
+
+        // Function to disable all checkboxes except the specified one
+        function disableOtherCheckboxes(checkedCheckbox) {
+            $('input[name="weekNo[]"]').not(checkedCheckbox).prop('disabled', true);
+        }
+
+        // Initial setup
+        enableAllCheckboxes();
+
+        // Handling checkbox changes
+        $('input[name="weekNo[]"]').change(function () {
+            var checkedCheckbox = $('input[name="weekNo[]"]:checked');
+            if (checkedCheckbox.length === 1) {
+                disableOtherCheckboxes(checkedCheckbox);
+            } else {
+                enableAllCheckboxes();
+            }
+        });
+
+        // Handling dropdown change
+        $('#circletypeId').change(function () {
+            var circleType = $(this).val();
+            console.log('circle type id', circleType);
+            if (circleType === '2') {
+                $('input[name="weekNo[]"]').prop('disabled', false);
+            } else {
+                enableAllCheckboxes();
+            }
+        });
+    });
+</script> --}}
 
 @endsection

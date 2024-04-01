@@ -105,7 +105,7 @@ class CircleCallController extends Controller
             $circlecall->remarks = $request->remarks;
             $circlecall->status = 'Active';
 
-
+ 
             $circlecall->save();
 
             return redirect()->route('circlecall.index')->with('success', 'Circle Call Created Successfully!');

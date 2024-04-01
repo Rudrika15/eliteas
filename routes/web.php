@@ -1,7 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
@@ -11,7 +12,9 @@ use App\Http\Controllers\Admin\StateController;
 use App\Http\Controllers\Admin\CircleController;
 use App\Http\Controllers\Admin\MemberController;
 use App\Http\Controllers\Admin\CountryController;
+use App\Http\Controllers\Admin\ScheduleController;
 use App\Http\Controllers\Admin\TrainingController;
+use App\Http\Controllers\Admin\FranchiseController;
 use App\Http\Controllers\Admin\CircleCallController;
 use App\Http\Controllers\Admin\CircleTypeController;
 use App\Http\Controllers\Admin\CircleMemberController;
@@ -20,7 +23,6 @@ use App\Http\Controllers\Admin\TrainerMasterController;
 use App\Http\Controllers\Admin\CircleMeetingMembersController;
 use App\Http\Controllers\Admin\CircleMeetingMemberBusinessController;
 use App\Http\Controllers\Admin\CircleMeetingMemberReferenceController;
-use App\Http\Controllers\Admin\FranchiseController;
 
 /*
 |--------------------------------------------------------------------------
@@ -169,6 +171,20 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('meetingmember/edit/{id?}', [CircleMeetingMembersController::class, 'edit'])->name('meetingmember.edit');
     Route::post('meetingmember/update', [CircleMeetingMembersController::class, 'update'])->name('meetingmember.update');
     Route::get('meetingmember/delete/{id?}', [CircleMeetingMembersController::class, 'delete'])->name('meetingmember.delete');
+
+    Route::get('/schedule/index', [ScheduleController::class, 'index'])->name('schedule.index');
+    Route::get('schedule/show/{id?}', [ScheduleController::class, 'show'])->name('schedule.show');
+    Route::get('schedule/create', [ScheduleController::class, 'create'])->name('schedule.create');
+    Route::post('schedule/store', [ScheduleController::class, 'store'])->name('schedule.store');
+    Route::get('schedule/edit/{id?}', [ScheduleController::class, 'edit'])->name('schedule.edit');
+    Route::post('schedule/update', [ScheduleController::class, 'update'])->name('schedule.update');
+    Route::get('schedule/delete/{id?}', [ScheduleController::class, 'delete'])->name('schedule.delete');
+
+    Route::get('/schedule/dashIndex', [ScheduleController::class, 'dashIndex'])->name('schedule.dashIndex');
+    Route::get('/schedule/dashEdit/{id?}', [ScheduleController::class, 'dashEdit'])->name('schedule.dashEdit');
+    Route::post('/schedule/dashUpdate', [ScheduleController::class, 'dashUpdate'])->name('schedule.dashUpdate');
+
+
 
     //Profile Update
 

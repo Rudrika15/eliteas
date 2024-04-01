@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Schedule;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -23,6 +24,7 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $count = Schedule::where('status', 'Active')->count();
+        return view('home', compact('count'));
     }
 }
