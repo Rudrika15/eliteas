@@ -93,6 +93,7 @@ class CircleMemberController extends Controller
             $member->gender = $request->gender;
             $member->language = $request->language;
             $member->timeZone = $request->timeZone;
+            
             if ($request->profilePhoto) {
                 $member->profilePhoto = time() . '.' . $request->profilePhoto->extension();
                 $request->profilePhoto->move(public_path('ProfilePhoto'),  $member->profilePhoto);

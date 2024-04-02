@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\City;
+use App\Models\User;
 use App\Models\State;
 use App\Models\Member;
-use App\Models\User;
 use App\Models\Country;
 use App\Models\TopsProfile;
 use Illuminate\Http\Request;
@@ -13,6 +13,7 @@ use App\Models\BillingAddress;
 use App\Models\ContactDetails;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Hash;
 
 class MemberController extends Controller
 {
@@ -56,7 +57,7 @@ class MemberController extends Controller
             'displayName' => 'required',
             'gender' => 'required',
             'username' => 'required',
-            // 'profilePhoto' => 'required',
+            'profilePhoto' => 'required',
             'email' => 'required',
             'password' => 'required',
             'confirmPassword' => 'required|same:password',
@@ -67,17 +68,13 @@ class MemberController extends Controller
             // role = Memebr
 
             // Create user
-            return $user = new User;
+            $user = new User;
             $user->firstName = $request->firstName;
             $user->lastName = $request->lastName;
             $user->email = $request->email;
             $user->password = Hash::make($request->password);
             $user->assignRole('Member');
             $user->save(); // 
-
-
-
-
 
             $member = new Member();
             $member->userId = $user->id; // Access user ID after saving
@@ -132,7 +129,7 @@ class MemberController extends Controller
             $member->keyWords = $request->keyWords;
             $member->status = 'Active';
 
-            return $member->save();
+            $member->save();
 
 
             $tops = new TopsProfile();
@@ -177,11 +174,11 @@ class MemberController extends Controller
             $contact->showTollFree = $request->showTollFree;
             $contact->fax = $request->fax;
             $contact->showFax = $request->showFax;
-            $contact->conEmail = $request->email;
+            $contact->email = $request->conEmail;
             $contact->showEmail = $request->showEmail;
             $contact->addressLine1 = $request->addressLine2;
             $contact->addressLine2 = $request->addressLine2;
-            $contact->profileAddress = $request->profileAddress;
+            // $contact->profileAddress = $request->profileAddress;
             $contact->city = $request->city;
             $contact->state = $request->state;
             $contact->country = $request->country;

@@ -5,6 +5,15 @@
     <div class="row">
         <div class="col-md-4">
             <div class="card">
+
+                @role('Member')
+                <div class="justify-content-center">
+                    <div class="card-header"><b>Welcome! You are logged in..</b></div>
+                </div>
+                @endrole
+
+
+                @role('Admin')
                 <div class="card-header"><b>Your Next Circle Meetings</b></div>
 
                 <div class="card-body">
@@ -14,7 +23,6 @@
                     </div>
                     @endif
 
-                    @role('Admin')
                     <h2>{{ $count }}</h2>
                     <a href="{{ route('schedule.dashIndex') }}">View Details</a>
                     @endrole

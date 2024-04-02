@@ -42,8 +42,10 @@
             <tbody>
                 @foreach ($circlemember as $circlememberData)
                 <tr>
-                    <td>{{$circlememberData->circle->circleName ?? '-'}}</td>
-                    <td>{{$circlememberData->member->firstName ?? '-'}} {{$circlememberData->member->lastName ?? '-'}}</td>
+                    <td>{{$circlememberData->circle->circleName ?? 'Circle not found'}}</td>
+                    <td>{{$circlememberData->member->firstName ?? 'Member name'}} {{$circlememberData->member->lastName
+                        ?? 'not found'}}
+                    </td>
                     <td>{{$circlememberData->status}}</td>
                     <td>
                         {{-- <a href="{{ route('circlemember.edit', $circlememberData->id) }}"

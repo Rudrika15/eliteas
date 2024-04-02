@@ -102,20 +102,38 @@ class FranchiseController extends Controller
         ]);
 
         try {
-            $franchise = Franchise::find($request->id);
+            $franchises = Franchise::find($request->id);
+            $user = $franchises ? $franchises->user : null; // Check if franchises object exists before trying to find user
 
-            if (!$franchise) {
+            if (!$franchises) {
                 return redirect()->route('franchise.index')->with('error', 'Franchise not found.');
             }
 
-            $franchise->franchiseName = $request->franchiseName;
-            $franchise->franchiseContactDetails = $request->franchiseContactDetails;
-            $franchise->status = 'Active';
-            $franchise->save();
 
-            return redirect()->route('franchise.index')->with('success', 'Franchise details updated successfully.');
-        } catch (\Exception $e) {
-            return redirect()->route('franchise.index')->with('error', 'Failed to update franchise details.');
+            if (!$user) {
+                return redirect()->route('franchise.index')->with('error', 'User not found.');
+            }
+
+            $user->firstName = $request->firstName;
+            $user->lastName = $request->lastName;
+            $user->email = $request->email;
+
+            if ($request->password) {
+                $user->password = Hash::make($request->password);
+            }
+
+            $user->save();
+
+            $franchises = Franchise::find($request->id);
+            $franchises->franchiseName = $request->franchiseName;
+            $franchises->franchiseContactDetails = $request->franchiseContactDetails;
+            $franchises->status = 'Active';
+            $franchises->save();
+
+            return redirect()->route('franchise.index')->with('success', 'Franchise details Updated Successfully!');
+        } catch (\Throwable $th) {
+            throw $th;
+            return view('servererror');
         }
     }
 

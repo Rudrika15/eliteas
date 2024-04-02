@@ -399,28 +399,28 @@
                                     </div>
                                 </div>
                                 <div class="col-md-6 mt-3">
-                                    <div class="form-floating">
-                                        <label for="profilePhoto">Profile Photo</label>
-                                        <input type="file" class="form-control-file" id="profilePhoto"
-                                            name="profilePhoto" accept="image/*" onchange="previewPhoto(event)">
-                                        <div id="photoPreview" class="mt-2"></div>
+                                    <div class="form-label-group mt-3">
+                                        <label for="profilePhoto" class="fw-bold">Profile Photo <sup
+                                                class="text-danger">*</sup></label>
+                                        <input type="file" class="form-control" id="profilePhoto" name="profilePhoto"
+                                            accept="image/*" onchange="previewPhoto(event)">
+                                        <img id="photoPreview" src="default.jpg" class="mt-2" width="100px"
+                                            height="100px">
                                         @error('profilePhoto')
-                                        <div class="invalid-tooltip">
-                                            {{ $message }}
-                                        </div>
+                                        <span class="error">{{ $message }}</span>
                                         @enderror
                                     </div>
                                 </div>
                                 <div class="col-md-6 mt-3">
-                                    <div class="form-floating">
-                                        <label for="companyLogo">Company Logo</label>
-                                        <input type="file" class="form-control-file" id="companyLogo" name="companyLogo"
+                                    <div class="form-label-group mt-3">
+                                        <label for="companyLogo" class="fw-bold">Company Logo <sup
+                                                class="text-danger">*</sup></label>
+                                        <input type="file" class="form-control" id="companyLogo" name="companyLogo"
                                             accept="image/*" onchange="previewPhoto(event)">
-                                        <div id="photoPreview" class="mt-2"></div>
+                                        <img id="logoPreview" src="default.jpg" class="mt-2" width="100px"
+                                            height="100px">
                                         @error('companyLogo')
-                                        <div class="invalid-tooltip">
-                                            {{ $message }}
-                                        </div>
+                                        <span class="error">{{ $message }}</span>
                                         @enderror
                                     </div>
                                 </div>
