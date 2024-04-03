@@ -25,7 +25,7 @@
 
 <div class="card">
     <div class="card-body d-flex justify-content-between align-items-center">
-        <h5 class="card-title">Edit Member</h5>
+        <h5 class="card-title">View Member</h5>
         <a href="{{ route('members.index') }}" class="btn btn-secondary btn-sm">BACK</a>
     </div>
 
@@ -34,6 +34,24 @@
         action="{{ route('members.update', $member->id) }}" novalidate>
         @csrf
         <input type="hidden" name="id" value="{{ $member->id }}">
+        {{-- <div class="col-md-6">
+            <div class="form-floating">
+                <select class="form-control" data-error='Circle Name Field is required' required name="circleId"
+                    id="circleId">
+                    <option value="" selected disabled> Select Circle </option>
+                    @foreach ($circles as $circleData)
+                    <option value="{{ $circleData->id }}" {{$circleData->id ==
+                        old('circleId',$circleData->circleId)?
+                        'selected':''}}>{{ $circleData->circleName }}</option>
+                    @endforeach
+                </select>
+                @error('circleId')
+                <div class="invalid-tooltip">
+                    {{ $message }}
+                </div>
+                @enderror
+            </div>
+        </div> --}}
         <div class="accordion" id="accordionExample">
             <!-- Section 1 -->
             <div class="accordion-item mt-3">
@@ -781,10 +799,15 @@
                             </div>
                             <div class="col-md-6 mt-3">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control @error('bCity') is-invalid @enderror"
-                                        id="bCity" name="bCity" value="{{$billing->bCity ?? ''}}" placeholder="bCity">
-                                    <label for="bCity">City</label>
-                                    @error('bCity')
+                                    <select class="form-select @error('bCountry') is-invalid @enderror" id="bCountry"
+                                        name="bCountry">
+                                        <option value="" selected>Select Country</option>
+                                        @foreach ($countries as $country)
+                                        <option value="{{ $country->id }}" {{ old('bCountry')==$country->id ? 'selected'
+                                            : '' }}>{{ $country->countryName }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('bCountry')
                                     <div class="invalid-tooltip">
                                         {{ $message }}
                                     </div>
@@ -793,10 +816,14 @@
                             </div>
                             <div class="col-md-6 mt-3">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control @error('bState') is-invalid @enderror"
-                                        id="bState" name="bState" value="{{$billing->bState ?? ''}}"
-                                        placeholder="bState">
-                                    <label for="bState">State</label>
+                                    <select class="form-select @error('bState') is-invalid @enderror" id="bState"
+                                        name="bState">
+                                        <option value="" selected>Select State</option>
+                                        @foreach ($states as $state)
+                                        <option value="{{ $state->id }}" {{ old('bState')==$state->id ? 'selected' : ''
+                                            }}>{{ $state->stateName }}</option>
+                                        @endforeach
+                                    </select>
                                     @error('bState')
                                     <div class="invalid-tooltip">
                                         {{ $message }}
@@ -806,11 +833,15 @@
                             </div>
                             <div class="col-md-6 mt-3">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control @error('bCountry') is-invalid @enderror"
-                                        id="bCountry" name="bCountry" value="{{$billing->bCountry ?? ''}}"
-                                        placeholder="bCountry">
-                                    <label for="bCountry">Country</label>
-                                    @error('bCountry')
+                                    <select class="form-select @error('bCity') is-invalid @enderror" id="bCity"
+                                        name="bCity">
+                                        <option value="" selected>Select City</option>
+                                        @foreach ($cities as $city)
+                                        <option value="{{ $city->id }}" {{ old('bCity')==$city->id ? 'selected' : ''
+                                            }}>{{ $city->cityName }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('bCity')
                                     <div class="invalid-tooltip">
                                         {{ $message }}
                                     </div>
@@ -875,11 +906,17 @@
                             </div>
                             <div class="col-md-6 mt-3">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control @error('city') is-invalid @enderror"
-                                        id="city" name="city" value="{{$contactDetails->city ?? ''}}"
-                                        placeholder="city">
-                                    <label for="city">City</label>
-                                    @error('city')
+                                    <select class="form-select @error('country') is-invalid @enderror" id="country"
+                                        name="country">
+                                        <option value="">Select Country</option>
+                                        @foreach($countries as $country)
+                                        <option value="{{ $country->id }}" {{ old('country')==$country->id ? 'selected'
+                                            : '' }}>{{ $country->countryName }}
+                                        </option>
+                                        @endforeach
+                                    </select>
+                                    <label for="country">Country</label>
+                                    @error('country')
                                     <div class="invalid-tooltip">
                                         {{ $message }}
                                     </div>
@@ -888,9 +925,14 @@
                             </div>
                             <div class="col-md-6 mt-3">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control @error('state') is-invalid @enderror"
-                                        id="state" name="state" value="{{$contactDetails->state ?? ''}}"
-                                        placeholder="state">
+                                    <select class="form-select @error('state') is-invalid @enderror" id="state"
+                                        name="state">
+                                        <option value="">Select State</option>
+                                        @foreach($states as $state)
+                                        <option value="{{ $state->id }}" {{ old('state')==$state->id ? 'selected' : ''
+                                            }}>{{ $state->stateName }}</option>
+                                        @endforeach
+                                    </select>
                                     <label for="state">State</label>
                                     @error('state')
                                     <div class="invalid-tooltip">
@@ -901,11 +943,16 @@
                             </div>
                             <div class="col-md-6 mt-3">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control @error('country') is-invalid @enderror"
-                                        id="country" name="country" value="{{$contactDetails->country ?? ''}}"
-                                        placeholder="country">
-                                    <label for="country">Country</label>
-                                    @error('country')
+                                    <select class="form-select @error('city') is-invalid @enderror" id="city"
+                                        name="city">
+                                        <option value="">Select City</option>
+                                        @foreach($cities as $city)
+                                        <option value="{{ $city->id }}" {{ old('city')==$city->id ? 'selected' : ''
+                                            }}>{{ $city->cityName }}</option>
+                                        @endforeach
+                                    </select>
+                                    <label for="city">City</label>
+                                    @error('city')
                                     <div class="invalid-tooltip">
                                         {{ $message }}
                                     </div>
@@ -1336,5 +1383,101 @@
     reader.readAsDataURL(input.files[0]);
     }
 </script>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#bCountry').change(function() {
+            var countryId = $(this).val();
+            if (countryId) {
+                $.ajax({
+                    url: '{{ route('get.states') }}', // Replace with your route for fetching states
+                    type: 'POST',
+                    data: {
+                        countryId: countryId,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(data) {
+                        $('#bState').html(data);
+                        $('#bCity').html('<option value="">Select City</option>');
+                    }
+                });
+            } else {
+                $('#bState').html('<option value="">Select State</option>');
+                $('#bCity').html('<option value="">Select City</option>');
+            }
+        });
+
+        $('#bState').change(function() {
+            var stateId = $(this).val();
+            if (stateId) {
+                $.ajax({
+                    url: '{{ route('get.cities') }}', // Replace with your route for fetching cities
+                    type: 'POST',
+                    data: {
+                        stateId: stateId,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(data) {
+                        $('#bCity').html(data);
+                    }
+                });
+            } else {
+                $('#bCity').html('<option value="">Select City</option>');
+            }
+        });
+    });
+</script>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#country').change(function() {
+            var countryId = $(this).val();
+            if (countryId) {
+                $.ajax({
+                    url: '{{ route('get.states') }}', // Replace with your route for fetching states
+                    type: 'POST',
+                    data: {
+                        countryId: countryId,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(data) {
+                        $('#state').html(data);
+                        $('#city').html('<option value="">Select City</option>');
+                    }
+                });
+            } else {
+                $('#state').html('<option value="">Select State</option>');
+                $('#city').html('<option value="">Select City</option>');
+            }
+        });
+
+        $('#state').change(function() {
+            var stateId = $(this).val();
+            if (stateId) {
+                $.ajax({
+                    url: '{{ route('get.cities') }}', // Replace with your route for fetching cities
+                    type: 'POST',
+                    data: {
+                        stateId: stateId,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(data) {
+                        $('#city').html(data);
+                    }
+                });
+            } else {
+                $('#city').html('<option value="">Select City</option>');
+            }
+        });
+    });
+</script>
+
+
+
+
 
 @endsection

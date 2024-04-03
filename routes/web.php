@@ -78,6 +78,14 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('city/update', [CityController::class, 'update'])->name('city.update');
     Route::delete('city/delete/{id?}', [CityController::class, 'delete'])->name('city.delete');
 
+    // Get city and state
+
+    Route::post('/get-states', [FranchiseController::class, 'getStates'])->name('get.states');
+    Route::post('/get-cities', [FranchiseController::class, 'getCities'])->name('get.cities');
+
+
+
+
     Route::get('/trainer/index', [TrainerMasterController::class, 'index'])->name('trainer.index');
     Route::get('trainer/show/{id?}', [TrainerMasterController::class, 'show'])->name('trainer.show');
     Route::get('trainer/create', [TrainerMasterController::class, 'create'])->name('trainer.create');
@@ -138,6 +146,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('get-member', [CircleCallController::class, 'getMember'])->name('getMember');
 
 
+
+    Route::get('/meetings/{circle}', [CircleController::class, 'showByCircle'])->name('meetings.by.circle');
 
 
     Route::get('/members/index', [MemberController::class, 'index'])->name('members.index');

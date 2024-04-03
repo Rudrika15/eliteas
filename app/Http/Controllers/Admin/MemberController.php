@@ -39,7 +39,10 @@ class MemberController extends Controller
     public function create()
     {
         try {
-            return view('userrs.member.create');
+            $countries = Country::where('status', 'Active')->get();
+            $states = State::where('status', 'Active')->get();
+            $cities = City::where('status', 'Active')->get();
+            return view('userrs.member.create', compact('countries', 'states', 'cities'));
         } catch (\Throwable $th) {
             // throw $th;
             return view('servererror');
@@ -213,13 +216,13 @@ class MemberController extends Controller
     {
         try {
             $member = Member::find($id);
-            $country = Country::where('status', 'Active')->get();
-            $state = State::where('status', 'Active')->get();
-            $city = City::where('status', 'Active')->get();
+            $countries = Country::where('status', 'Active')->get();
+            $states = State::where('status', 'Active')->get();
+            $cities = City::where('status', 'Active')->get();
             $contactDetails = ContactDetails::where('memberId', $id)->first();
             $billing = BillingAddress::where('memberId', $id)->first();
             $tops = TopsProfile::where('memberId', $id)->first();
-            return view('userrs.member.edit', compact('country', 'state', 'city', 'member', 'contactDetails', 'billing', 'tops'));
+            return view('userrs.member.edit', compact('countries', 'states', 'cities', 'member', 'contactDetails', 'billing', 'tops'));
         } catch (\Throwable $th) {
             throw $th;
             return view('servererror');

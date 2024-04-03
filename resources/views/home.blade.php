@@ -23,12 +23,9 @@
                     </div>
                     @endif
 
-                    <h2>{{ $count }}</h2>
+                    {{-- <h2>{{ $count }}</h2> --}}
                     <a href="{{ route('schedule.dashIndex') }}">View Details</a>
                     @endrole
-
-
-
 
                 </div>
             </div>

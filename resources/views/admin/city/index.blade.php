@@ -56,8 +56,7 @@
                             <i class="bi bi-eye"></i>
                         </a> --}}
 
-                        <form action="{{ route('city.delete', $cityData->id) }}" method="POST"
-                            style="display: inline;">
+                        <form action="{{ route('city.delete', $cityData->id) }}" method="POST" style="display: inline;">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-danger btn-sm">

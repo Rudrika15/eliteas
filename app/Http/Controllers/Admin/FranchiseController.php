@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use DataTables;
+use App\Models\City;
 use App\Models\User;
+use App\Models\State;
+use App\Models\Country;
 use App\Models\Franchise;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
@@ -40,7 +43,10 @@ class FranchiseController extends Controller
     {
         try {
             $franchises = Franchise::all();
-            return view('admin.franchise.create', compact('franchises'));
+            $countries = Country::where('status', 'Active')->get();
+            $states = State::where('status', 'Active')->get();
+            $cities = City::where('status', 'Active')->get();
+            return view('admin.franchise.create', compact('franchises', 'countries', 'states', 'cities'));
         } catch (\Throwable $th) {
             //throe $th
             return view('servererror');
@@ -70,6 +76,7 @@ class FranchiseController extends Controller
             $franchises = new Franchise();
             $franchises->franchiseName = $request->franchiseName;
             $franchises->franchiseContactDetails = $request->franchiseContactDetails;
+            $franchises->cityId = $request->cityId;
             $franchises->userId = $user->id;
             $franchises->status = 'Active';
             $franchises->save();
@@ -86,7 +93,10 @@ class FranchiseController extends Controller
     {
         try {
             $franchises = Franchise::find($id);
-            return view('admin.franchise.edit', compact('franchises'));
+            $countries = Country::where('status', 'Active')->get();
+            $states = State::where('status', 'Active')->get();
+            $cities = City::where('status', 'Active')->get();
+            return view('admin.franchise.edit', compact('franchises', 'countries', 'states', 'cities'));
         } catch (\Throwable $th) {
             throw $th;
             return view('servererror');
@@ -127,6 +137,7 @@ class FranchiseController extends Controller
             $franchises = Franchise::find($request->id);
             $franchises->franchiseName = $request->franchiseName;
             $franchises->franchiseContactDetails = $request->franchiseContactDetails;
+            $franchises->cityId = $request->cityId;
             $franchises->status = 'Active';
             $franchises->save();
 
@@ -154,5 +165,31 @@ class FranchiseController extends Controller
         } catch (\Exception $e) {
             return redirect()->route('franchise.index')->with('error', 'Failed to delete franchise.');
         }
+    }
+
+    public function getStates(Request $request)
+    {
+        $countryId = $request->input('countryId');
+        $states = State::where('countryId', $countryId)->get();
+
+        $options = '<option value="">Select State</option>';
+        foreach ($states as $state) {
+            $options .= '<option value="' . $state->id . '">' . $state->stateName . '</option>';
+        }
+
+        return $options;
+    }
+
+    public function getCities(Request $request)
+    {
+        $stateId = $request->input('stateId');
+        $cities = City::where('stateId', $stateId)->get();
+
+        $options = '<option value="">Select City</option>';
+        foreach ($cities as $city) {
+            $options .= '<option value="' . $city->id . '">' . $city->cityName . '</option>';
+        }
+
+        return $options;
     }
 }

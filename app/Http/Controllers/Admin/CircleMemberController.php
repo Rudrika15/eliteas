@@ -49,10 +49,13 @@ class CircleMemberController extends Controller
         try {
             $circle = Circle::where('status', 'Active')->get();
             $member = Member::where('status', 'Active')->get();
+            $countries = Country::where('status', 'Active')->get();
+            $states = State::where('status', 'Active')->get();
+            $cities = City::where('status', 'Active')->get();
             // $city = City::with('country')
             //     ->with('state')
             //     ->get();
-            return view('admin.circlemember.create', compact('circle', 'member'));
+            return view('admin.circlemember.create', compact('circle', 'member', 'countries', 'states', 'cities'));
         } catch (\Throwable $th) {
             throw $th;
             return view('servererror');
@@ -93,7 +96,7 @@ class CircleMemberController extends Controller
             $member->gender = $request->gender;
             $member->language = $request->language;
             $member->timeZone = $request->timeZone;
-            
+
             if ($request->profilePhoto) {
                 $member->profilePhoto = time() . '.' . $request->profilePhoto->extension();
                 $request->profilePhoto->move(public_path('ProfilePhoto'),  $member->profilePhoto);
@@ -219,9 +222,9 @@ class CircleMemberController extends Controller
             $circlemember = CircleMember::find($id);
 
             // Retrieve related data for dropdowns and fields
-            $country = Country::where('status', 'Active')->get();
-            $state = State::where('status', 'Active')->get();
-            $city = City::where('status', 'Active')->get();
+            $countries = Country::where('status', 'Active')->get();
+            $states = State::where('status', 'Active')->get();
+            $cities = City::where('status', 'Active')->get();
             $contactDetails = ContactDetails::where('memberId', $id)->first();
             $billing = BillingAddress::where('memberId', $id)->first();
             $tops = TopsProfile::where('memberId', $id)->first();
@@ -229,7 +232,7 @@ class CircleMemberController extends Controller
             $circles = Circle::where('status', 'Active')->get();
 
             // Pass data to the view for editing
-            return view('admin.circlemember.edit', compact('circles', 'circlemember', 'member', 'country', 'state', 'city', 'contactDetails', 'billing', 'tops'));
+            return view('admin.circlemember.edit', compact('circles', 'circlemember', 'member', 'countries', 'states', 'cities', 'contactDetails', 'billing', 'tops'));
         } catch (\Throwable $th) {
             // Handle exceptions appropriately
             throw $th;
@@ -274,7 +277,7 @@ class CircleMemberController extends Controller
             $member->gender = $request->gender;
             $member->language = $request->language;
             $member->timeZone = $request->timeZone;
-            
+
             if ($request->profilePhoto) {
                 $member->profilePhoto = time() . '.' . $request->profilePhoto->extension();
                 $request->profilePhoto->move(public_path('ProfilePhoto'),  $member->profilePhoto);
@@ -376,9 +379,9 @@ class CircleMemberController extends Controller
             $billing->save();
 
             // Update the circle member
-            // $circlemember->circleId = $request->circleId;
-            // $circlemember->status = 'Active';
-            // $circlemember->save();
+            $circlemember->circleId = $request->circleId;
+            $circlemember->status = 'Active';
+            $circlemember->save();
 
             return redirect()->route('circlemember.index')->with('success', 'Circle Member Updated Successfully!');
         } catch (\Throwable $th) {
