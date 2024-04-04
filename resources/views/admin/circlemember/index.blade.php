@@ -48,10 +48,10 @@
                     </td>
                     <td>{{$circlememberData->status}}</td>
                     <td>
-                        {{-- <a href="{{ route('circlemember.edit', $circlememberData->id) }}"
+                        <a href="{{ route('circlemember.edit', $circlememberData->id) }}"
                             class="btn btn-primary btn-sm">
                             <i class="bi bi-pen"></i>
-                        </a> --}}
+                        </a>
 
                         {{-- <a href="{{ route('franchise.show', $franchiseData->id) }}" class="btn btn-info">
                             <i class="bi bi-eye"></i>

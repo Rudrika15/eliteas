@@ -120,9 +120,9 @@
                                     @enderror
                                 </div>
                             </div>
-                            <div class="col-md-6 mt-3">
+                            {{-- <div class="col-md-6 mt-3">
                                 <div class="form-floating">
-                                    <input type="password" class="form-control @error('password') is-invalid @enderror"
+                                    <input type="hidden" class="form-control @error('password') is-invalid @enderror"
                                         id="password" name="password" placeholder="Password">
                                     <label for="password">Password</label>
                                     @error('password')
@@ -131,8 +131,8 @@
                                     </div>
                                     @enderror
                                 </div>
-                            </div>
-                            <div class="col-md-6 mt-3">
+                            </div> --}}
+                            {{-- <div class="col-md-6 mt-3">
                                 <div class="form-floating">
                                     <input type="password"
                                         class="form-control @error('password_confirmation') is-invalid @enderror"
@@ -145,7 +145,7 @@
                                     </div>
                                     @enderror
                                 </div>
-                            </div>
+                            </div> --}}
                             <div class="col-md-6 mt-3">
                                 <div class="form-floating">
                                     <input type="email" class="form-control @error('email') is-invalid @enderror"

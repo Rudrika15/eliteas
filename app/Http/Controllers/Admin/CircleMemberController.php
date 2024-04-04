@@ -9,13 +9,16 @@ use App\Models\Circle;
 use App\Models\Member;
 use App\Models\Country;
 use App\Models\TopsProfile;
+use Illuminate\Support\Str;
 use App\Models\CircleMember;
 use Illuminate\Http\Request;
 use App\Models\BillingAddress;
 use App\Models\ContactDetails;
+use App\Mail\WelcomeMemberEmail;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 
 class CircleMemberController extends Controller
 {
@@ -66,6 +69,10 @@ class CircleMemberController extends Controller
     {
         $this->validate($request, [
             'circleId' => 'required',
+            'firstName' => 'required',
+            'lastName' => 'required',
+            'email' => 'required',
+            'gender' => 'required',
             // Add validation rules for other fields if necessary
         ]);
 
@@ -75,7 +82,8 @@ class CircleMemberController extends Controller
             $user->firstName = $request->firstName;
             $user->lastName = $request->lastName;
             $user->email = $request->email;
-            $user->password = Hash::make($request->password);
+            // $user->password = Hash::make($request->password);
+            $user->password = Str::random(8);
             $user->assignRole('Member');
             $user->save();
 
@@ -206,6 +214,9 @@ class CircleMemberController extends Controller
             $circlemember->status = 'Active';
             $circlemember->save();
 
+            Mail::to($user->email)->send(new WelcomeMemberEmail($user, $request->password));
+
+
             return redirect()->route('circlemember.index')->with('success', 'Circle Member Created Successfully!');
         } catch (\Throwable $th) {
             // Handle
@@ -228,7 +239,7 @@ class CircleMemberController extends Controller
             $contactDetails = ContactDetails::where('memberId', $id)->first();
             $billing = BillingAddress::where('memberId', $id)->first();
             $tops = TopsProfile::where('memberId', $id)->first();
-            $member = Member::where('status', 'Active')->get();
+            $member = Member::where('userId', $id)->get();
             $circles = Circle::where('status', 'Active')->get();
 
             // Pass data to the view for editing

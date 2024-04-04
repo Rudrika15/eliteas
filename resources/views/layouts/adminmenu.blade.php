@@ -15,12 +15,12 @@
                 <span>Franchise</span>
             </a>
         </li>
-        <li class="nav-item">
+        {{-- <li class="nav-item">
             <a class="nav-link " href="{{route('members.index')}}">
                 <i class="bi bi-person"></i>
                 <span>Member Profile</span>
             </a>
-        </li>
+        </li> --}}
         <li class="nav-item">
             <a class="nav-link " href="{{route('roles.index')}}">
                 <i class="bi bi-shield"></i>
