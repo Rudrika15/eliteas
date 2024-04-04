@@ -151,7 +151,7 @@
                                 text: item.firstName,
                                 id: item.id,
                                 firstName: item.firstName,
-                                memberData: item.member // Access member data
+                                memberData: item.member
                             }
                         })
                     };

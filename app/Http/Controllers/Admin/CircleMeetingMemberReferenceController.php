@@ -9,6 +9,7 @@ use App\Models\CircleMeeting;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
 use App\Models\CircleMeetingMembersReference;
+use Illuminate\Support\Facades\Auth;
 
 class CircleMeetingMemberReferenceController extends Controller
 {
@@ -17,6 +18,8 @@ class CircleMeetingMemberReferenceController extends Controller
         try {
             $refGiver = CircleMeetingMembersReference::where('status', 'Active')
                 ->orderBy('id', 'DESC')
+                ->with('members')
+                ->with('refGiverName')
                 ->get();
             return view('admin.refGiver.index', compact('refGiver'));
         } catch (\Throwable $th) {
@@ -58,10 +61,12 @@ class CircleMeetingMemberReferenceController extends Controller
             // 'busTaken' => 'required',
             // 'hotelName' => 'required',
         ]);
+
+        // return $request;
         try {
             $refGiver = new CircleMeetingMembersReference();
             $refGiver->memberId = $request->memberId;
-            $refGiver->referenceGiver = $request->referenceGiver;
+            $refGiver->referenceGiverId = Auth::user()->id;
             $refGiver->contactName = $request->contactName;
             $refGiver->contactNo = $request->contactNo;
             $refGiver->email = $request->email;

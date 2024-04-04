@@ -50,7 +50,6 @@ class CircleCallController extends Controller
             })->with('member.circle')->get();
 
             // return $scheduleDate = Schedule::where('circleId', Auth::user()->member->circle->id)->where('status', 'Active')->get(['date']);
-
             $scheduleDate = Schedule::where('circleId', Auth::user()->member->circle->id)
                 ->where('status', 'Active')
                 ->pluck('date'); // Pluck all 'date' values from the query result
@@ -89,6 +88,38 @@ class CircleCallController extends Controller
                 ->with('member.circle') // Include circle information
                 ->get();
         }
+
+
+        return response()->json($data);
+    }
+    function getMemberForRef(Request $request): JsonResponse
+    {
+        $query = $request->input('q');
+
+        $data = [];
+
+        $data = User::whereHas('roles', function ($q) {
+            $q->where('name', 'Member');
+        })
+            ->where('firstName', 'LIKE', '%' . $query . '%')
+            ->with('member.circle') // Include circle information
+            ->get();
+
+
+        return response()->json($data);
+    }
+    function getMemberForRefGiver(Request $request): JsonResponse
+    {
+        $query = $request->input('q');
+
+        $data = [];
+
+        $data = User::whereHas('roles', function ($q) {
+            $q->where('name', 'Member');
+        })
+            ->where('firstName', 'LIKE', '%' . $query . '%')
+            ->with('member.circle') // Include circle information
+            ->get();
 
 
         return response()->json($data);
