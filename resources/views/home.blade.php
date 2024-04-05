@@ -14,7 +14,7 @@
 
 
                 @role('Admin')
-                <div class="card-header"><b>Your Next Circle Meetings</b></div>
+                <div class="card-header"><b>Upcoming Circle Meetings</b></div>
 
                 <div class="card-body">
                     @if (session('status'))
