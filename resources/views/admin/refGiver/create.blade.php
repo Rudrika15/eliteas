@@ -46,14 +46,25 @@
                 </div>
                 <div class="col-md-6">
                     <div class="row">
-                        <div class="col-md-6 ">
-                            <label for="search" class="form-labelv fw-bold">Search Contact Name</label>
 
+                        <div class="col-sm-6">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="group" id="internal" value="option1" checked="">
+                                <label class="form-check-label" for="internal">
+                                    Internal
+                                </label>
+                            </div>
                         </div>
-
+                        <div class="col-sm-6">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="group" id="external" value="option2">
+                                <label class="form-check-label" for="external">
+                                    External
+                                </label>
+                            </div>
+                        </div>
                     </div>
-                    <select class="form-select" style="width: 99%" id="search2">
-                    </select>
+
                 </div>
 
                 <div class="col-md-6">

@@ -356,17 +356,26 @@ h6 {
 --------------------------------------------------------------*/
 .logo {
   line-height: 1;
+  display: flex;
+  justify-content: center;
+  padding-top: 10px;
 }
 
 @media (min-width: 1200px) {
   .logo {
     width: 280px;
+    display: flex;
+    justify-content: center;
   }
 }
 
 .logo img {
-  max-height: 26px;
+  max-height: 35px;
   margin-right: 6px;
+  height: 60px;
+  width: 100px;
+  display: flex;
+  justify-content: center;
 }
 
 .logo span {

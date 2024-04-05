@@ -75,6 +75,7 @@ class CircleCallController extends Controller
                 $q->where('name', 'Member');
             })
                 ->where('firstName', 'LIKE', '%' . $query . '%')
+                ->where('id', '!=', Auth::user()->id)
                 ->with('member.circle') // Include circle information
                 ->get();
         } else {
@@ -85,6 +86,7 @@ class CircleCallController extends Controller
                     $q->where('circleId', $myCircle->circle->id);
                 })
                 ->where('firstName', 'LIKE', '%' . $query . '%')
+                ->where('id', '!=', Auth::user()->id)
                 ->with('member.circle') // Include circle information
                 ->get();
         }
@@ -102,6 +104,7 @@ class CircleCallController extends Controller
             $q->where('name', 'Member');
         })
             ->where('firstName', 'LIKE', '%' . $query . '%')
+            ->where('id', '!=', Auth::user()->id)
             ->with('member.circle') // Include circle information
             ->get();
 
@@ -118,7 +121,8 @@ class CircleCallController extends Controller
             $q->where('name', 'Member');
         })
             ->where('firstName', 'LIKE', '%' . $query . '%')
-            ->with('member.circle') // Include circle information
+            ->where('id', '!=', Auth::user()->id)
+            ->with('member.circle')
             ->get();
 
 
