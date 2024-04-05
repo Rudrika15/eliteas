@@ -23,6 +23,7 @@ use App\Http\Controllers\Admin\TrainerMasterController;
 use App\Http\Controllers\Admin\CircleMeetingMembersController;
 use App\Http\Controllers\Admin\CircleMeetingMemberBusinessController;
 use App\Http\Controllers\Admin\CircleMeetingMemberReferenceController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,6 +38,18 @@ use App\Http\Controllers\Admin\CircleMeetingMemberReferenceController;
 
 
 Auth::routes();
+
+
+
+// Forgot Password 
+
+Route::get('forget-password', [ForgotPasswordController::class, 'showForgetPasswordForm'])->name('forget.password.get');
+Route::post('forget-password', [ForgotPasswordController::class, 'submitForgetPasswordForm'])->name('forget.password.post');
+Route::get('reset-password/{token}', [ForgotPasswordController::class, 'showResetPasswordForm'])->name('reset.password.get');
+Route::post('reset-password', [ForgotPasswordController::class, 'submitResetPasswordForm'])->name('reset.password.post');
+
+
+
 
 Auth::routes();
 Route::group(['middleware' => ['auth']], function () {
@@ -77,6 +90,14 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('city/edit/{id?}', [CityController::class, 'edit'])->name('city.edit');
     Route::post('city/update', [CityController::class, 'update'])->name('city.update');
     Route::delete('city/delete/{id?}', [CityController::class, 'delete'])->name('city.delete');
+
+    // Get city and state
+
+    Route::post('/get-states', [FranchiseController::class, 'getStates'])->name('get.states');
+    Route::post('/get-cities', [FranchiseController::class, 'getCities'])->name('get.cities');
+
+
+
 
     Route::get('/trainer/index', [TrainerMasterController::class, 'index'])->name('trainer.index');
     Route::get('trainer/show/{id?}', [TrainerMasterController::class, 'show'])->name('trainer.show');
@@ -140,6 +161,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('get-member-for-ref-giver', [CircleCallController::class, 'getMemberForRefGiver'])->name('getMemberForRefGiver');
 
 
+
+    Route::get('/meetings/{circle}', [CircleController::class, 'showByCircle'])->name('meetings.by.circle');
 
 
     Route::get('/members/index', [MemberController::class, 'index'])->name('members.index');

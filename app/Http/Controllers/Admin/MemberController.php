@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\City;
+use App\Models\User;
 use App\Models\State;
 use App\Models\Member;
-use App\Models\User;
 use App\Models\Country;
 use App\Models\TopsProfile;
 use Illuminate\Http\Request;
@@ -13,13 +13,14 @@ use App\Models\BillingAddress;
 use App\Models\ContactDetails;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Hash;
 
 class MemberController extends Controller
 {
     public function index(Request $request)
     {
         try {
-            $member = Member::paginate(4); // show only 10 record per page
+            $member = Member::all(); // show only 10 record per page
             return view('userrs.member.index', compact('member'));
         } catch (\Throwable $th) {
             throw $th;
@@ -38,7 +39,10 @@ class MemberController extends Controller
     public function create()
     {
         try {
-            return view('userrs.member.create');
+            $countries = Country::where('status', 'Active')->get();
+            $states = State::where('status', 'Active')->get();
+            $cities = City::where('status', 'Active')->get();
+            return view('userrs.member.create', compact('countries', 'states', 'cities'));
         } catch (\Throwable $th) {
             // throw $th;
             return view('servererror');
@@ -47,6 +51,8 @@ class MemberController extends Controller
 
     public function store(Request $request)
     {
+
+
         $this->validate($request, [
             'title' => 'required',
             'firstName' => 'required',
@@ -72,7 +78,6 @@ class MemberController extends Controller
             $user->password = Hash::make($request->password);
             $user->assignRole('Member');
             $user->save(); // 
-
 
             $member = new Member();
             $member->userId = $user->id; // Access user ID after saving
@@ -172,11 +177,11 @@ class MemberController extends Controller
             $contact->showTollFree = $request->showTollFree;
             $contact->fax = $request->fax;
             $contact->showFax = $request->showFax;
-            $contact->email = $request->email;
+            $contact->email = $request->conEmail;
             $contact->showEmail = $request->showEmail;
             $contact->addressLine1 = $request->addressLine2;
             $contact->addressLine2 = $request->addressLine2;
-            $contact->profileAddress = $request->profileAddress;
+            // $contact->profileAddress = $request->profileAddress;
             $contact->city = $request->city;
             $contact->state = $request->state;
             $contact->country = $request->country;
@@ -211,13 +216,13 @@ class MemberController extends Controller
     {
         try {
             $member = Member::find($id);
-            $country = Country::where('status', 'Active')->get();
-            $state = State::where('status', 'Active')->get();
-            $city = City::where('status', 'Active')->get();
+            $countries = Country::where('status', 'Active')->get();
+            $states = State::where('status', 'Active')->get();
+            $cities = City::where('status', 'Active')->get();
             $contactDetails = ContactDetails::where('memberId', $id)->first();
             $billing = BillingAddress::where('memberId', $id)->first();
             $tops = TopsProfile::where('memberId', $id)->first();
-            return view('userrs.member.edit', compact('country', 'state', 'city', 'member', 'contactDetails', 'billing', 'tops'));
+            return view('userrs.member.edit', compact('countries', 'states', 'cities', 'member', 'contactDetails', 'billing', 'tops'));
         } catch (\Throwable $th) {
             throw $th;
             return view('servererror');

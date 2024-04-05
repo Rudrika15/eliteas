@@ -13,4 +13,9 @@ class Franchise extends Model
     {
         return $this->belongsTo(User::class, 'userId', 'id');
     }
+
+    public function city()
+    {
+        return $this->belongsTo(City::class, 'cityId', 'id');
+    }
 }

@@ -11,6 +11,8 @@ use App\Models\CircleType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
+use App\Models\Country;
+use App\Models\State;
 
 class CircleController extends Controller
 {
@@ -43,11 +45,14 @@ class CircleController extends Controller
     public function create()
     {
         try {
+            $countries = Country::where('status', 'Active')->get();
+            $states = State::where('status', 'Active')->get();
+            $cities = City::where('status', 'Active')->get();
+            $city = City::where('status', '!=', 'Deleted')->get();
             $circle = Circle::where('status', '!=', 'Deleted')->get();
             $franchise = Franchise::where('status', '!=', 'Deleted')->get();
-            $city = City::where('status', '!=', 'Deleted')->get();
             $circletype = CircleType::where('status', '!=', 'Deleted')->get();
-            return view('admin.circle.create', compact('circle', 'franchise', 'city', 'circletype'));
+            return view('admin.circle.create', compact('circle', 'franchise', 'city', 'circletype', 'countries', 'states', 'cities'));
         } catch (\Throwable $th) {
             throw $th;
             return view('servererror');
@@ -145,11 +150,14 @@ class CircleController extends Controller
     public function edit($id)
     {
         try {
+            $countries = Country::where('status', 'Active')->get();
+            $states = State::where('status', 'Active')->get();
+            $cities = City::where('status', 'Active')->get();
             $circle = Circle::find($id);
             $franchise = Franchise::where('status', '!=', 'Deleted')->get();
             $city = City::where('status', '!=', 'Deleted')->get();
             $circletype = CircleType::where('status', '!=', 'Deleted')->get();
-            return view('admin.circle.edit', compact('franchise', 'circletype', 'city', 'circle'));
+            return view('admin.circle.edit', compact('franchise', 'circletype', 'city', 'circle', 'countries', 'states', 'cities'));
         } catch (\Throwable $th) {
             throw $th;
             return view('servererror');
@@ -200,6 +208,18 @@ class CircleController extends Controller
             $circle->save();
 
             return redirect()->route('circle.index')->with('Success', 'Circle Deleted Successfully!');
+        } catch (\Throwable $th) {
+            throw $th;
+            return view('servererror');
+        }
+    }
+    
+    public function showByCircle(Request $request, $id)
+    {
+        try {
+            $circle = Circle::findOrFail($id);
+            $schedules = Schedule::where('circleId', $circle->id)->get();
+            return view('admin.circle.show', compact('circle', 'schedules'));
         } catch (\Throwable $th) {
             throw $th;
             return view('servererror');

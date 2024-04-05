@@ -48,13 +48,45 @@
             </div>
             <div class="col-md-6 mt-3">
                 <div class="form-floating">
-                    <select class="form-control" data-error='City Name Field is required' required name="cityId"
-                        id="cityId">
-                        <option value="" selected disabled> Select City</option>
-                        @foreach ($city as $cityData)
-                        <option value="{{ $cityData->id }}">{{ $cityData->cityName }}</option>
+                    <select class="form-select @error('country') is-invalid @enderror" id="country" name="country">
+                        <option value="">Select Country</option>
+                        @foreach($countries as $country)
+                        <option value="{{ $country->id }}">{{ $country->countryName }}</option>
                         @endforeach
                     </select>
+                    <label for="country">Country</label>
+                    @error('country')
+                    <div class="invalid-tooltip">
+                        {{ $message }}
+                    </div>
+                    @enderror
+                </div>
+            </div>
+            <div class="col-md-6 mt-3">
+                <div class="form-floating">
+                    <select class="form-select @error('state') is-invalid @enderror" id="state" name="state">
+                        <option value="">Select State</option>
+                        @foreach($states as $state)
+                        <option value="{{ $state->id }}">{{ $state->stateName }}</option>
+                        @endforeach
+                    </select>
+                    <label for="state">State</label>
+                    @error('state')
+                    <div class="invalid-tooltip">
+                        {{ $message }}
+                    </div>
+                    @enderror
+                </div>
+            </div>
+            <div class="col-md-6 mt-3">
+                <div class="form-floating">
+                    <select class="form-select @error('cityId') is-invalid @enderror" id="cityId" name="cityId">
+                        <option value="">Select City</option>
+                        @foreach($cities as $city)
+                        <option value="{{ $city->id }}">{{ $city->cityName }}</option>
+                        @endforeach
+                    </select>
+                    <label for="cityId">City</label>
                     @error('cityId')
                     <div class="invalid-tooltip">
                         {{ $message }}
@@ -284,47 +316,52 @@
 
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-{{-- <script>
-    $(document).ready(function () {
-        // Function to enable all checkboxes
-        function enableAllCheckboxes() {
-            var circleType = $('#circletypeId').val();
-            if(circleType === '2'){
-                $('input[name="weekNo[]"]').prop('disabled', false);
-            }else{
-                $('input[name="weekNo[]"]').prop('disabled', true);
-            }
-        }
 
-        // Function to disable all checkboxes except the specified one
-        function disableOtherCheckboxes(checkedCheckbox) {
-            $('input[name="weekNo[]"]').not(checkedCheckbox).prop('disabled', true);
-        }
 
-        // Initial setup
-        enableAllCheckboxes();
-
-        // Handling checkbox changes
-        $('input[name="weekNo[]"]').change(function () {
-            var checkedCheckbox = $('input[name="weekNo[]"]:checked');
-            if (checkedCheckbox.length === 1) {
-                disableOtherCheckboxes(checkedCheckbox);
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#country').change(function() {
+            var countryId = $(this).val();
+            if (countryId) {
+                $.ajax({
+                    url: '{{ route('get.states') }}', // Replace with your route for fetching states
+                    type: 'POST',
+                    data: {
+                        countryId: countryId,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(data) {
+                        $('#state').html(data);
+                        $('#city').html('<option value="">Select City</option>');
+                    }
+                });
             } else {
-                enableAllCheckboxes();
+                $('#state').html('<option value="">Select State</option>');
+                $('#city').html('<option value="">Select City</option>');
             }
         });
 
-        // Handling dropdown change
-        $('#circletypeId').change(function () {
-            var circleType = $(this).val();
-            console.log('circle type id', circleType);
-            if (circleType === '2') {
-                $('input[name="weekNo[]"]').prop('disabled', false);
+        $('#state').change(function() {
+            var stateId = $(this).val();
+            if (stateId) {
+                $.ajax({
+                    url: '{{ route('get.cities') }}', // Replace with your route for fetching cities
+                    type: 'POST',
+                    data: {
+                        stateId: stateId,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(data) {
+                        $('#city').html(data);
+                    }
+                });
             } else {
-                enableAllCheckboxes();
+                $('#city').html('<option value="">Select City</option>');
             }
         });
     });
-</script> --}}
+</script>
+
 
 @endsection

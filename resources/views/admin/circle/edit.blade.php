@@ -47,18 +47,54 @@
                     @enderror
                 </div>
             </div>
-            <div class="col-md-6">
-                <div class="form-floating mt-3">
-                    <select class="form-control" data-error='State Name Field is required' required name="cityId"
-                        id="cityId">
-                        <option value="" selected disabled> Select City</option>
-                        @foreach ($city as $cityData)
-                        <option value="{{ $cityData->id }}" {{ $circle->cityId == $cityData->id ? 'selected' : '' }}>
-                            {{ $cityData->cityName }}
+            <div class="col-md-6 mt-3">
+                <div class="form-floating">
+                    <select class="form-select @error('country') is-invalid @enderror" id="country" name="country">
+                        <option value="">Select Country</option>
+                        @foreach($countries as $country)
+                        <option value="{{ $country->id }}" {{ old('country')==$country->id ?
+                            'selected'
+                            : '' }}>{{ $country->countryName }}
                         </option>
                         @endforeach
                     </select>
-                    @error('cityId')
+                    <label for="country">Country</label>
+                    @error('country')
+                    <div class="invalid-tooltip">
+                        {{ $message }}
+                    </div>
+                    @enderror
+                </div>
+            </div>
+            <div class="col-md-6 mt-3">
+                <div class="form-floating">
+                    <select class="form-select @error('state') is-invalid @enderror" id="state" name="state">
+                        <option value="">Select State</option>
+                        @foreach($states as $state)
+                        <option value="{{ $state->id }}" {{ old('state')==$state->id ? 'selected' :
+                            ''
+                            }}>{{ $state->stateName }}</option>
+                        @endforeach
+                    </select>
+                    <label for="state">State</label>
+                    @error('state')
+                    <div class="invalid-tooltip">
+                        {{ $message }}
+                    </div>
+                    @enderror
+                </div>
+            </div>
+            <div class="col-md-6 mt-3">
+                <div class="form-floating">
+                    <select class="form-select @error('city') is-invalid @enderror" id="city" name="city">
+                        <option value="">Select City</option>
+                        @foreach($cities as $city)
+                        <option value="{{ $city->id }}" {{ old('city')==$city->id ? 'selected' : ''
+                            }}>{{ $city->cityName }}</option>
+                        @endforeach
+                    </select>
+                    <label for="city">City</label>
+                    @error('city')
                     <div class="invalid-tooltip">
                         {{ $message }}
                     </div>
@@ -243,5 +279,51 @@
 </div>
 </form><!-- End floating Labels Form -->
 </div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#country').change(function() {
+            var countryId = $(this).val();
+            if (countryId) {
+                $.ajax({
+                    url: '{{ route('get.states') }}', // Replace with your route for fetching states
+                    type: 'POST',
+                    data: {
+                        countryId: countryId,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(data) {
+                        $('#state').html(data);
+                        $('#city').html('<option value="">Select City</option>');
+                    }
+                });
+            } else {
+                $('#state').html('<option value="">Select State</option>');
+                $('#city').html('<option value="">Select City</option>');
+            }
+        });
+
+        $('#state').change(function() {
+            var stateId = $(this).val();
+            if (stateId) {
+                $.ajax({
+                    url: '{{ route('get.cities') }}', // Replace with your route for fetching cities
+                    type: 'POST',
+                    data: {
+                        stateId: stateId,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(data) {
+                        $('#city').html(data);
+                    }
+                });
+            } else {
+                $('#city').html('<option value="">Select City</option>');
+            }
+        });
+    });
+</script>
+
 
 @endsection

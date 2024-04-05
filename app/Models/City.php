@@ -15,6 +15,11 @@ class City extends Model
     }
     public function country()
     {
-        return $this->belongsTo(Country::class, 'id');
+        return $this->belongsTo(Country::class, 'countryId', 'id');
+    }
+
+    public function franchise()
+    {
+        return $this->belongsTo(Franchise::class, 'id');
     }
 }

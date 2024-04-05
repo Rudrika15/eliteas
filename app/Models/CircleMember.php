@@ -26,4 +26,20 @@ class CircleMember extends Model
     {
         return $this->hasOne(Member::class, 'id', 'memberId');
     }
+
+    public function billingAddress()
+    {
+        return $this->hasOne(BillingAddress::class, 'id', 'memberId');
+    }
+
+    public function contactDetails()
+    {
+        return $this->hasOne(ContactDetails::class, 'id', 'memberId');
+    }
+
+    public function topsProfile()
+    {
+        return $this->hasOne(TopsProfile::class, 'id', 'memberId');
+    }
+    
 }

@@ -53,7 +53,7 @@
             <div class="col-md-6">
                 <div class="form-floating">
                     <select class="form-control" data-error='State Name Field is required' required name="stateId"
-                        id="countryId">
+                        id="stateId">
                         <option value="" selected disabled> Select State </option>
                         @foreach ($state as $stateData)
                         <option value="{{ $stateData->id }}">{{ $stateData->stateName }}</option>
@@ -86,5 +86,32 @@
         </div>
     </form><!-- End floating Labels Form -->
 </div>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#countryId').change(function() {
+            var countryId = $(this).val();
+            if (countryId) {
+                $.ajax({
+                    url: '{{ route("get.states") }}', // Replace with your route for fetching states
+                    type: 'POST',
+                    data: {
+                        countryId: countryId,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(data) {
+                        $('#stateId').html(data);
+                    }
+                });
+            } else {
+                $('#stateId').html('<option value="" selected disabled>Select State</option>');
+            }
+        });
+    });
+</script>
+
+
 
 @endsection

@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\CircleTypeController;
 use App\Http\Controllers\Api\CircleMemberController;
 use App\Http\Controllers\Api\CircleMeetingController;
 use App\Http\Controllers\Api\TrainerMasterController;
+use App\Http\Controllers\Api\ForgetPasswordController;
 use App\Http\Controllers\Api\CircleMeetingMembersController;
 use App\Http\Controllers\Api\CircleMeetingMemberBusinessController;
 use App\Http\Controllers\Api\CircleMeetingMemberReferenceController;
@@ -36,6 +37,10 @@ use App\Http\Controllers\Api\CircleMeetingMemberReferenceController;
 
 // login
 Route::post('/login', [LoginController::class, 'login']);
+
+//forgot password
+Route::post('/forgot-password', [ForgetPasswordController::class, 'forgotPassword']);
+// Route::post('/reset-password', [ForgetPasswordController::class, 'resetPassword']);
 
 Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/user/profile', [LoginController::class, 'profile']);
