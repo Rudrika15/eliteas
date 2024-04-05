@@ -20,10 +20,11 @@ use App\Http\Controllers\Admin\CircleTypeController;
 use App\Http\Controllers\Admin\CircleMemberController;
 use App\Http\Controllers\Admin\CircleMeetingController;
 use App\Http\Controllers\Admin\TrainerMasterController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Admin\BusinessCategoryController;
 use App\Http\Controllers\Admin\CircleMeetingMembersController;
 use App\Http\Controllers\Admin\CircleMeetingMemberBusinessController;
 use App\Http\Controllers\Admin\CircleMeetingMemberReferenceController;
-use App\Http\Controllers\Auth\ForgotPasswordController;
 
 /*
 |--------------------------------------------------------------------------
@@ -213,4 +214,19 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::get('member-update/{id?}', [ProfileController::class, 'member'])->name('member');
     Route::post('update', [ProfileController::class, 'memberUpdate'])->name('member.update');
+
+    //Business Caategory
+
+    Route::get('/bCategory/index', [BusinessCategoryController::class, 'index'])->name('bCategory.index');
+    Route::get('bCategory/show/{id?}', [BusinessCategoryController::class, 'show'])->name('bCategory.show');
+    Route::get('bCategory/create', [BusinessCategoryController::class, 'create'])->name('bCategory.create');
+    Route::post('bCategory/store', [BusinessCategoryController::class, 'store'])->name('bCategory.store');
+    Route::get('bCategory/edit/{id?}', [BusinessCategoryController::class, 'edit'])->name('bCategory.edit');
+    Route::post('bCategory/update', [BusinessCategoryController::class, 'update'])->name('bCategory.update');
+    Route::get('bCategory/delete/{id?}', [BusinessCategoryController::class, 'delete'])->name('bCategory.delete');
+
+
+
+
+
 });
