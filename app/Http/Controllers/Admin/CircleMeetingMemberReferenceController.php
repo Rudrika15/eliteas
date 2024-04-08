@@ -20,6 +20,7 @@ class CircleMeetingMemberReferenceController extends Controller
                 ->orderBy('id', 'DESC')
                 ->with('members')
                 ->with('refGiverName')
+                ->where('referenceGiverId', Auth::user()->id)
                 ->get();
             return view('admin.refGiver.index', compact('refGiver'));
         } catch (\Throwable $th) {
@@ -42,12 +43,25 @@ class CircleMeetingMemberReferenceController extends Controller
     {
         try {
             $circlemeeting = CircleMeeting::where('status', 'Active')->get();
-            $member = Member::where('status', 'Active')->get();
-            return view('admin.refGiver.create', compact('circlemeeting', 'member'));
+            $members = Member::where('status', 'Active')->get();
+            return view('admin.refGiver.create', compact('circlemeeting', 'members'));
         } catch (\Throwable $th) {
             throw $th;
             return view('servererror');
         }
+    }
+
+    public function getMemberDetails(Request $request)
+    {
+        $memberName = $request->input('memberName');
+
+        // Assuming you have a Member model and 'email' and 'contactNo' fields in your database table
+        $member = Member::where('firstName', $memberName)->first();
+
+        return response()->json([
+            'email' => $member->email,
+            'contactNo' => $member->contactNo,
+        ]);
     }
 
     public function store(Request $request)

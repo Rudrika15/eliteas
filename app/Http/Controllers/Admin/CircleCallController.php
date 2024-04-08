@@ -7,6 +7,7 @@ use App\Models\CircleCall;
 use App\Models\CircleMember;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Circle;
 use App\Models\Schedule;
 use App\Models\User;
 use Carbon\Carbon;
@@ -18,7 +19,8 @@ class CircleCallController extends Controller
     public function index(Request $request)
     {
         try {
-            $circlecall = CircleCall::with('members')
+            $circlecall = CircleCall::with('member')
+                ->where('memberId', Auth::user()->id)
                 ->with('meetingPerson')
                 ->where('status', 'Active')
                 ->orderBy('id', 'DESC')
@@ -59,6 +61,30 @@ class CircleCallController extends Controller
             throw $th;
             return view('servererror');
         }
+    }
+    function getCircle(Request $request): JsonResponse
+    {
+        $query = $request->input('q');
+
+        $circles = Circle::where('circleName', 'LIKE', '%' . $query . '%')->get();
+
+        $userCircle = Member::where('userId', Auth::user()->id)->with('circle')->first();
+
+        $userCircleName = $userCircle ? $userCircle->circle->circleName : null;
+
+        return response()->json([
+            'circles' => $circles,
+            'userCircleName' => $userCircleName,
+        ]);
+    }
+    public function getCircleMembers(Request $request)
+    {
+
+        $circleId = $request->input('circleId');
+        $members = Member::where('circleId', $circleId)->with('user')->with('contact')
+            ->where('userId', '!=', Auth::user()->id)
+            ->get();
+        return response()->json($members);
     }
     function getMember(Request $request): JsonResponse
     {
