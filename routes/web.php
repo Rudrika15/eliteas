@@ -135,7 +135,13 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('circlecall/delete/{id?}', [CircleCallController::class, 'delete'])->name('circlecall.delete');
 
     // get member list
+    Route::get('get-circle', [CircleCallController::class, 'getCircle'])->name('getCircle');
+    Route::get('get-circle-members', [CircleCallController::class, 'getCircleMembers'])->name('getCircleMembers');
+    // old get member
     Route::get('get-member', [CircleCallController::class, 'getMember'])->name('getMember');
+
+
+    // referance giver
     Route::get('get-member-for-ref', [CircleCallController::class, 'getMemberForRef'])->name('getMemberForRef');
     Route::get('get-member-for-ref-giver', [CircleCallController::class, 'getMemberForRefGiver'])->name('getMemberForRefGiver');
 
@@ -153,6 +159,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/refGiver/index', [CircleMeetingMemberReferenceController::class, 'index'])->name('refGiver.index');
     Route::get('refGiver/show/{id?}', [CircleMeetingMemberReferenceController::class, 'show'])->name('refGiver.show');
     Route::get('refGiver/create', [CircleMeetingMemberReferenceController::class, 'create'])->name('refGiver.create');
+    Route::get('get-member-details', [CircleMeetingMemberReferenceController::class, 'getMemberDetails'])->name('getMemberDetails');
     Route::post('refGiver/store', [CircleMeetingMemberReferenceController::class, 'store'])->name('refGiver.store');
     Route::get('refGiver/edit/{id?}', [CircleMeetingMemberReferenceController::class, 'edit'])->name('refGiver.edit');
     Route::post('refGiver/update', [CircleMeetingMemberReferenceController::class, 'update'])->name('refGiver.update');

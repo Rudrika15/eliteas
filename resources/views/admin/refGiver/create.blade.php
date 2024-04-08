@@ -46,7 +46,6 @@
                 </div>
                 <div class="col-md-6">
                     <div class="row">
-
                         <div class="col-sm-6">
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="group" id="internal" value="option1" checked="">
@@ -64,7 +63,6 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
 
                 <div class="col-md-6">
@@ -82,7 +80,22 @@
                     </div>
                 </div>
 
-                <div class="col-md-6">
+                <div class="col-md-6" id="memberListDropdown" style="display:none;">
+                    <div class="form-floating mt-3">
+
+                        <select name="contactName" id="contactName" class="form-select">
+                            @foreach ($members as $member)
+                                <option value="{{ $member->firstname }}">{{ $member->firstName }}</option>
+                            @endforeach
+                        </select>
+                        @error('contactName')
+                            <div class="invalid-tooltip">
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+                </div>
+                <div class="col-md-6" id="memberListInput" style="display:none;">
                     <div class="form-floating mt-3">
                         <input type="text" class="form-control @error('contactName') is-invalid @enderror" id="contactName" name="contactName" placeholder="Contact Name" required>
                         <label for="contactName">Contact Person Name</label>
@@ -93,6 +106,7 @@
                         @enderror
                     </div>
                 </div>
+
                 <div class="col-md-6">
                     <div class="form-floating mt-3">
                         <input type="text" class="form-control @error('contactNo') is-invalid @enderror" id="refContactNo" name="contactNo" placeholder="Contact No" required>
@@ -208,39 +222,79 @@
             $('#memberName').val(data.firstName);
         });
     </script>
-    <script type="text/javascript">
-        var path = "{{ route('getMemberForRefGiver') }}";
 
-        $('#search2').select2({
-            placeholder: 'Select Member',
-            ajax: {
-                url: path,
-                dataType: 'json',
-                delay: 250,
-                processResults: function(data) {
-                    console.log("item", data);
-                    return {
-                        results: $.map(data, function(item) {
-                            return {
-                                text: item.firstName,
-                                id: item.id,
-                                firstName: item.firstName, // Adding firstName attribute to the option data
-                                email: item.email // Adding email attribute to the option data
-                                // contact: item.email // Adding email attribute to the option data
-                            }
-                        })
-                    };
-                },
-                cache: true
+
+
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Get radio buttons and member list dropdown div
+            var internalRadio = document.getElementById("internal");
+            var externalRadio = document.getElementById("external");
+            var memberListDropdown = document.getElementById("memberListDropdown");
+            var memberListInput = document.getElementById("memberListInput");
+            var contactNoInput = document.getElementById("refContactNo");
+            var emailInput = document.getElementById("contactEmail");
+
+            // Function to show/hide member list dropdown or input field based on radio button selection
+            function toggleMemberInput() {
+                if (internalRadio.checked) {
+                    memberListDropdown.style.display = "block";
+                    memberListInput.style.display = "none";
+                } else {
+                    memberListDropdown.style.display = "none";
+                    memberListInput.style.display = "block";
+                }
             }
-        });
 
-        // Update the hidden input field with the selected member's ID and email
-        $('#search2').on('select2:select', function(e) {
-            var data = e.params.data;
-            $('#refGiverId').val(data.id);
-            $('#contactName').val(data.firstName);
-            $('#contactEmail').val(data.email);
+            // Initial toggle based on default checked radio button
+            toggleMemberInput();
+
+            // Add event listeners to radio buttons to toggle member list dropdown or input field
+            internalRadio.addEventListener("change", toggleMemberInput);
+            externalRadio.addEventListener("change", toggleMemberInput);
+
+            // Add event listener to dropdown change to fetch member details
+            // Add event listener to dropdown change to fetch member details
+            var dropdown = document.getElementById("contactName");
+            dropdown.addEventListener("change", function() {
+                var selectedOption = dropdown.options[dropdown.selectedIndex];
+                var selectedMember = selectedOption.value;
+                console.log("selectedMember", selectedMember);
+                // Make AJAX request to get member details
+                fetch("/get-member-details?memberName=" + selectedMember)
+                    .then(function(response) {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(function(data) {
+                        console.log("Member details:", data); // Log the retrieved member details
+                        // Update contact number and email inputs with member details
+                        contactNoInput.value = data.contactNo;
+                        emailInput.value = data.email;
+                    })
+                    .catch(function(error) {
+                        console.error('Error fetching member details:', error);
+                    });
+            });
+
         });
     </script>
+
+
+
 @endsection
