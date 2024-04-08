@@ -31,7 +31,9 @@ class CircleMemberController extends Controller
                 ->where('status', 'Active')
                 ->orderBy('id', 'DESC')
                 ->get();
-            return view('admin.circlemember.index', compact('circlemember'));
+                $circle = Circle::where('status', 'Active')->get();
+                $bCategory = BusinessCategory::where('status', 'Active')->get();
+            return view('admin.circlemember.index', compact('circlemember', 'circle', 'bCategory'));
         } catch (\Throwable $th) {
             // throw $th;
             return view('servererror');
