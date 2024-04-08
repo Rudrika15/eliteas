@@ -89,6 +89,13 @@
     </a>
     <ul id="circle-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
         <li class="nav-item">
+            <a class="nav-link " href="{{route('bCategory.index')}}">
+                <i class="bi bi-plus-circle"></i>
+                <span>Business Category</span>
+            </a>
+        </li>
+
+        <li class="nav-item">
             <a class="nav-link " href="{{route('circletype.index')}}">
                 <i class="bi bi-plus-circle"></i>
                 <span>Circle Type</span>

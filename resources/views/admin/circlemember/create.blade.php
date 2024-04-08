@@ -50,6 +50,24 @@
                     @enderror
                 </div>
             </div>
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <select class="form-control @error('businessCategory') is-invalid @enderror" id="businessCategory"
+                        name="businessCategory">
+                        <option value="" selected disabled>Select Business Category</option>
+                        @foreach($businessCategory as $businessCategoryData)
+                        <option value="{{ $businessCategoryData->id }}">{{ $businessCategoryData->categoryName }}
+                        </option>
+                        @endforeach
+                    </select>
+                    {{-- <label for="businessCategory">Business Category</label> --}}
+                    @error('businessCategory')
+                    <div class="invalid-tooltip">
+                        {{ $message }}
+                    </div>
+                    @enderror
+                </div>
+            </div>
             {{-- <div class="col-md-6">
                 <div class="form-floating">
                     <select class="form-control" data-error='Circle Field is required' required name="memberId"
@@ -71,124 +89,118 @@
         </div>
 
 
-        <div class="accordion" id="accordionExample">
-            <!-- Section 1 -->
-            <div class="accordion-item mt-3">
-                <h2 class="accordion-header" id="headingOne">
-                    <button class="accordion-button" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                        Personal Information
-                    </button>
-                </h2>
-                <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne"
-                    data-bs-parent="#accordionExample">
-                    <div class="accordion-body">
-                        <div class="row">
-                            <div class="col-md-6 mt-3">
-                                <div class="form-floating">
-                                    <input type="text" class="form-control @error('title') is-invalid @enderror"
-                                        id="title" name="title" placeholder="title">
-                                    <label for="title">Title</label>
-                                    @error('title')
-                                    <div class="invalid-tooltip">
-                                        {{ $message }}
-                                    </div>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div class="col-md-6 mt-3">
-                                <div class="form-floating">
-                                    <input type="text" class="form-control @error('firstName') is-invalid @enderror"
-                                        id="firstName" name="firstName" placeholder="First Name">
-                                    <label for="firstName">First Name</label>
-                                    @error('firstName')
-                                    <div class="invalid-tooltip">
-                                        {{ $message }}
-                                    </div>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div class="col-md-6 mt-3">
-                                <div class="form-floating">
-                                    <input type="text" class="form-control @error('lastName') is-invalid @enderror"
-                                        id="lastName" name="lastName" placeholder="Last Name">
-                                    <label for="lastName">Last Name</label>
-                                    @error('lastName')
-                                    <div class="invalid-tooltip">
-                                        {{ $message }}
-                                    </div>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div class="col-md-6 mt-3">
-                                <div class="form-floating">
-                                    <input type="text" class="form-control @error('username') is-invalid @enderror"
-                                        id="username" name="username" placeholder="User Name">
-                                    <label for="username">User Name</label>
-                                    @error('username')
-                                    <div class="invalid-tooltip">
-                                        {{ $message }}
-                                    </div>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div class="col-md-6 mt-3">
-                                <div class="form-floating">
-                                    <input type="text"
-                                        class="form-control @error('businessCategory') is-invalid @enderror"
-                                        id="businessCategory" name="businessCategory" placeholder="Business Category">
-                                    <label for="businessCategory">Business Category</label>
-                                    @error('businessCategory')
-                                    <div class="invalid-tooltip">
-                                        {{ $message }}
-                                    </div>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div class="col-md-6 mt-3">
-                                <div class="form-floating">
-                                    <input type="email" class="form-control @error('email') is-invalid @enderror"
-                                        id="email" name="email" placeholder="Email">
-                                    <label for="email">Email</label>
-                                    @error('email')
-                                    <div class="invalid-tooltip">
-                                        {{ $message }}
-                                    </div>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div class="col-md-6 mt-3">
-                                <div class="form-floating">
-                                    <input type="text"
-                                        class="form-control @error('businessCategory') is-invalid @enderror"
-                                        id="businessCategory" name="businessCategory" placeholder="Business Category">
-                                    <label for="businessCategory">Business Category</label>
-                                    @error('businessCategory')
-                                    <div class="invalid-tooltip">
-                                        {{ $message }}
-                                    </div>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div class="col-md-6 mt-3">
-                                <div class="form-floating">
-                                    <input type="text"
-                                        class="form-control @error('mobileNo') is-invalid @enderror"
-                                        id="mobileNo" name="mobileNo" placeholder="Mobile No">
-                                    <label for="mobileNo">Mobile No</label>
-                                    @error('mobileNo')
-                                    <div class="invalid-tooltip">
-                                        {{ $message }}
-                                    </div>
-                                    @enderror
-                                </div>
-                            </div>
-                        </div>
 
-                        <div class="text-center mt-3">
-                            <button type="submit" class="btn btn-primary">Submit</button>
-                            <button type="reset" class="btn btn-secondary">Reset</button>
-                        </div>
+        <div class="row">
+            <div class="col-md-6 mt-3">
+                <div class="form-floating">
+                    <input type="text" class="form-control @error('title') is-invalid @enderror" id="title" name="title"
+                        placeholder="title">
+                    <label for="title">Title</label>
+                    @error('title')
+                    <div class="invalid-tooltip">
+                        {{ $message }}
+                    </div>
+                    @enderror
+                </div>
+            </div>
+            <div class="col-md-6 mt-3">
+                <div class="form-floating">
+                    <input type="text" class="form-control @error('firstName') is-invalid @enderror" id="firstName"
+                        name="firstName" placeholder="First Name">
+                    <label for="firstName">First Name</label>
+                    @error('firstName')
+                    <div class="invalid-tooltip">
+                        {{ $message }}
+                    </div>
+                    @enderror
+                </div>
+            </div>
+            <div class="col-md-6 mt-3">
+                <div class="form-floating">
+                    <input type="text" class="form-control @error('lastName') is-invalid @enderror" id="lastName"
+                        name="lastName" placeholder="Last Name">
+                    <label for="lastName">Last Name</label>
+                    @error('lastName')
+                    <div class="invalid-tooltip">
+                        {{ $message }}
+                    </div>
+                    @enderror
+                </div>
+            </div>
+            <div class="col-md-6 mt-3">
+                <div class="form-floating">
+                    <input type="text" class="form-control @error('username') is-invalid @enderror" id="username"
+                        name="username" placeholder="User Name">
+                    <label for="username">User Name</label>
+                    @error('username')
+                    <div class="invalid-tooltip">
+                        {{ $message }}
+                    </div>
+                    @enderror
+                </div>
+            </div>
+            <div class="col-md-6 mt-3">
+                <div class="form-floating">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="gender" id="gender" value="male" checked>
+                        <label class="form-check-label" for="gender">
+                            Male
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="gender" id="gender" value="female" checked>
+                        <label class="form-check-label" for="gender">
+                            Female
+                        </label>
+                    </div>
+                    @error('gender')
+                    <div class="invalid-tooltip">
+                        {{ $message }}
+                    </div>
+                    @enderror
+                </div>
+            </div>
+            <div class="col-md-6 mt-3">
+                <div class="form-floating">
+                    <input type="email" class="form-control @error('email') is-invalid @enderror" id="email"
+                        name="email" placeholder="Email">
+                    <label for="email">Email</label>
+                    @error('email')
+                    <div class="invalid-tooltip">
+                        {{ $message }}
+                    </div>
+                    @enderror
+                </div>
+            </div>
+            <div class="col-md-6 mt-3">
+                <div class="form-floating">
+                    <input type="text" class="form-control @error('mobileNo') is-invalid @enderror" id="mobileNo"
+                        name="mobileNo" placeholder="Mobile No">
+                    <label for="mobileNo">Mobile No</label>
+                    @error('mobileNo')
+                    <div class="invalid-tooltip">
+                        {{ $message }}
+                    </div>
+                    @enderror
+                </div>
+            </div>
+            <div class="col-md-6 mt-3">
+                <div class="form-floating">
+                    <select class="form-select" id="membershipType" name="membershipType">
+                        <option value="" selected disabled>Select Membership Type</option>
+                        <option value="Monthly">Monthly</option>
+                        <option value="Yearly">Yearly</option>
+                        <option value="LifeTime">Life Time</option>
+                    </select>
+                    {{-- <label for="membershipType">Membership Type</label> --}}
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-3">
+            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="reset" class="btn btn-secondary">Reset</button>
+        </div>
     </form><!-- End floating Labels Form -->
 </div>
 <script>
@@ -308,10 +320,5 @@
         });
     });
 </script>
-
-
-
-
-
 
 @endsection

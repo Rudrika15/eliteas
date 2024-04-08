@@ -1,9 +1,9 @@
 @component('mail::message')
 # Welcome to UBN
 
-Your username is: {{ $user->email }}
+Your username is: {{ $username }}
 
-Your password is: {{ $user->password }}
+Your password is: {{$password}}
 
 Please keep this information secure.
 
