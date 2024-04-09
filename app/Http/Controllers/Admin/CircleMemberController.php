@@ -76,9 +76,10 @@ class CircleMemberController extends Controller
             'circleId' => 'required',
             'firstName' => 'required',
             'lastName' => 'required',
-            'email' => 'required',
+            'email' => 'required|unique:users,email',
             'gender' => 'required',
             'mobileNo' => 'required',
+            'username' => 'required|unique:members,username',
             // Add validation rules for other fields if necessary
         ]);
 
@@ -110,7 +111,7 @@ class CircleMemberController extends Controller
             $member->userId = $user->id;
             $member->title = $request->title;
             $member->username = $request->username;
-            $member->businessCategory = $request->businessCategory;
+            $member->businessCategoryId = $request->businessCategory;
             $member->firstName = $request->firstName;
             $member->lastName = $request->lastName;
             // $member->suffix = $request->suffix;
@@ -241,7 +242,7 @@ class CircleMemberController extends Controller
             return redirect()->route('circlemember.index')->with('success', 'Circle Member Created Successfully!');
         } catch (\Throwable $th) {
             // Handle
-            // throw $th;
+            throw $th;
             return view('servererror');
         }
     }

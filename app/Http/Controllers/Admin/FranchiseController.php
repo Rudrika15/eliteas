@@ -8,10 +8,13 @@ use App\Models\User;
 use App\Models\State;
 use App\Models\Country;
 use App\Models\Franchise;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Mail\WelcomeMemberEmail;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 
 class FranchiseController extends Controller
 {
@@ -56,20 +59,30 @@ class FranchiseController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'franchiseName' => 'required',
+            'franchiseName' => 'required|unique:franchises',
             'franchiseContactDetails' => 'required',
             'firstName' => 'required',
             'lastName' => 'required',
             'email' => 'required|email|unique:users',
-            'password' => 'required',
+            
         ]);
 
         try {
-            $user = new User();
+           $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()';
+            $password = '';
+            $length = 8;
+            for ($i = 0; $i < $length; $i++) {
+                $password .= $characters[rand(0, strlen($characters) - 1)];
+            }
+
+            $rowPassword = $password;
+            
+            $user = new User;
             $user->firstName = $request->firstName;
             $user->lastName = $request->lastName;
             $user->email = $request->email;
-            $user->password = Hash::make($request->password);
+            $user->password = Hash::make($rowPassword);
+            // $user->password = Str::random(8);
             $user->assignRole('Franchise Admin');
             $user->save();
 
@@ -80,6 +93,8 @@ class FranchiseController extends Controller
             $franchises->userId = $user->id;
             $franchises->status = 'Active';
             $franchises->save();
+
+            Mail::to($user->email)->send(new WelcomeMemberEmail($user, $rowPassword));
 
             return redirect()->route('franchise.index')->with('success', 'Franchise and User Created Successfully!');
         } catch (\Throwable $th) {
@@ -107,7 +122,7 @@ class FranchiseController extends Controller
     {
         $this->validate($request, [
             'id' => 'required|exists:franchises,id',
-            'franchiseName' => 'required',
+            'franchiseName' => 'required|unique:franchises,id,' . $request->id,
             'franchiseContactDetails' => 'required',
         ]);
 

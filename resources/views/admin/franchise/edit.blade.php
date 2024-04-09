@@ -87,10 +87,11 @@
                         required>
                         <option value="" selected disabled>Select State</option>
                         @foreach ($states as $stateData)
-                        <option value="{{ $stateData->id }}" {{ $stateData->id == old('stateId', $franchises->stateId) ?
+                        <option value="{{ $stateData->id }}" {{ $stateData->id == old('stateId', $franchises->stateId ?? null) ?
                             'selected' : '' }}>
                             {{ $stateData->stateName }}
                         </option>
+
                         @endforeach
                     </select>
                     @error('stateId')

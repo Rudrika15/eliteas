@@ -36,7 +36,7 @@
         <div class="row mb-3">
             <div class="col-md-6">
                 <div class="form-floating">
-                    <select class="form-control" data-error='Circle Field is required' required name="circleId"
+                    <select class="form-select" data-error='Circle Field is required' required name="circleId"
                         id="circleId">
                         <option value="" selected disabled> Select Circle </option>
                         @foreach ($circle as $circleData)
@@ -52,7 +52,7 @@
             </div>
             <div class="col-md-6">
                 <div class="form-floating">
-                    <select class="form-control @error('businessCategory') is-invalid @enderror" id="businessCategory"
+                    <select class="form-select @error('businessCategory') is-invalid @enderror" id="businessCategory"
                         name="businessCategory">
                         <option value="" selected disabled>Select Business Category</option>
                         @foreach($businessCategory as $businessCategoryData)
@@ -93,8 +93,12 @@
         <div class="row">
             <div class="col-md-6 mt-3">
                 <div class="form-floating">
-                    <input type="text" class="form-control @error('title') is-invalid @enderror" id="title" name="title"
-                        placeholder="title">
+                    <select class="form-select @error('title') is-invalid @enderror" id="title" name="title">
+                        <option value="" selected disabled>Select Title</option>
+                        <option value="Mr.">Mr.</option>
+                        <option value="Ms.">Ms.</option>
+                        <option value="Mrs.">Mrs.</option>
+                    </select>
                     <label for="title">Title</label>
                     @error('title')
                     <div class="invalid-tooltip">
@@ -103,6 +107,7 @@
                     @enderror
                 </div>
             </div>
+
             <div class="col-md-6 mt-3">
                 <div class="form-floating">
                     <input type="text" class="form-control @error('firstName') is-invalid @enderror" id="firstName"

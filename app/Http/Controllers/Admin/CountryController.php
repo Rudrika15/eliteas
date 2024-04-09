@@ -53,7 +53,7 @@ class CountryController extends Controller
             $country->status = 'Active';
             $country->save();
 
-            return redirect()->route('country.index')->with('success', 'Country Created Successfully!');
+            return redirect()->route('country.create')->with('success', 'Country Created Successfully!');
         } catch (\Throwable $th) {
             //throw $th;
             return view('servererror');

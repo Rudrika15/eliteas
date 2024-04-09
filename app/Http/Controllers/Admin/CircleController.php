@@ -167,7 +167,7 @@ class CircleController extends Controller
     public function update(Request $request)
     {
         $this->validate($request, [
-            'circleName' => 'required',
+            'circleName' => 'required|unique:circles,circleName,' . $request->id,
             'cityId' => 'required',
             'franchiseId' => 'required',
             'circletypeId' => 'required',

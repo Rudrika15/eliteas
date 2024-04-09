@@ -16,7 +16,6 @@ class StateController extends Controller
 
             $state = State::with('country')
                 ->where('status', 'Active')
-                ->orderBy('id', 'DESC')
                 ->get();
 
             return view('admin.state.index', compact('state'));
@@ -62,7 +61,7 @@ class StateController extends Controller
 
             $state->save();
 
-            return redirect()->route('state.index')->with('success', 'State Created Successfully!');
+            return redirect()->route('state.create')->with('success', 'State Created Successfully!');
         } catch (\Throwable $th) {
             throw $th;
             return view('servererror');
@@ -98,7 +97,6 @@ class StateController extends Controller
 
 
             return redirect()->route('state.index')->with('success', 'State Created Successfully!');
-
         } catch (\Throwable $th) {
             throw $th;
             return view('servererror');

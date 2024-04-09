@@ -39,7 +39,7 @@
                     <select class="form-control" data-error='State Name Field is required' required name="countryId"
                         id="countryId">
                         <option value="" selected disabled> Select Country </option>
-                        @foreach ($country as $countryData)
+                        @foreach ($countries as $countryData)
                         <option value="{{ $countryData->id }}">{{ $countryData->countryName }}</option>
                         @endforeach
                     </select>
@@ -55,7 +55,7 @@
                     <select class="form-control" data-error='State Name Field is required' required name="stateId"
                         id="stateId">
                         <option value="" selected disabled> Select State </option>
-                        @foreach ($state as $stateData)
+                        @foreach ($states as $stateData)
                         <option value="{{ $stateData->id }}">{{ $stateData->stateName }}</option>
                         @endforeach
                     </select>
