@@ -41,5 +41,10 @@ class CircleMember extends Model
     {
         return $this->hasOne(TopsProfile::class, 'id', 'memberId');
     }
+
+    public function user()
+    {
+        return $this->hasOne(User::class, 'id', 'memberId');
+    }
     
 }

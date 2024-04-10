@@ -70,21 +70,21 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($circlemember as $circlememberData)
+                {{-- {{$member}} --}}
+                @foreach ($member as $circlememberData)
                 <tr>
                     <td>{{$circlememberData->circle->circleName ?? '-'}}</td>
-                    <td>{{$circlememberData->member->firstName ?? '-'}} {{$circlememberData->member->lastName
-                        ?? 'not found'}}</td>
-                    <td>{{$circlememberData->member->bCategory->categoryName ?? '-'}}</td>
-                    <td>{{$circlememberData->member->membershipType ?? '-'}} </td>
+                    <td>{{$circlememberData->firstName ?? '-'}} {{$circlememberData->lastName
+                        ?? ''}}</td>
+                    <td>{{$circlememberData->bCategory->categoryName ?? '-'}}</td>
+                    <td>{{$circlememberData->membershipType ?? '-'}} </td>
                     <td>{{$circlememberData->status}}</td>
                     <td>
                         <a href="{{ route('circlemember.edit', $circlememberData->id) }}"
                             class="btn btn-primary btn-sm">
                             <i class="bi bi-pen"></i>
                         </a>
-                        <a href="{{ route('circlemember.delete', $circlememberData->id) }}"
-                            class="btn btn-danger btn-sm">
+                        <a href="{{ route('circlemember.delete') }}" class="btn btn-danger btn-sm">
                             <i class="bi bi-trash"></i>
                         </a>
                     </td>
