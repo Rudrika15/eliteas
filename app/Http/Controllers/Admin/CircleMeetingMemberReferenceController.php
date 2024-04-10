@@ -76,7 +76,7 @@ class CircleMeetingMemberReferenceController extends Controller
             // 'hotelName' => 'required',
         ]);
 
-        // return $request;
+        return $request;
         try {
             $refGiver = new CircleMeetingMembersReference();
             $refGiver->memberId = $request->memberId;
