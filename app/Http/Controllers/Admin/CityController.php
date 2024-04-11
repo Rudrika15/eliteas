@@ -66,7 +66,7 @@ class CityController extends Controller
 
             $city->save();
 
-            return redirect()->route('city.index')->with('success', 'City Created Successfully!');
+            return redirect()->route('city.create')->with('success', 'City Created Successfully!');
         } catch (\Throwable $th) {
             throw $th;
             return view('servererror');

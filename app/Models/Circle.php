@@ -20,7 +20,7 @@ class Circle extends Model
 
     public function circletype()
     {
-        return $this->belongsTo(CircleType::class, 'circleTypeName', 'id');
+        return $this->belongsTo(CircleType::class, 'circletypeId', 'id');
     }
 
     public function franchise()

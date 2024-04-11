@@ -67,4 +67,9 @@ class Member extends Model
     {
         return $this->belongsTo(Circle::class, 'circleId', 'id');
     }
+
+    public function bCategory()
+    {
+        return $this->belongsTo(BusinessCategory::class, 'businessCategoryId', 'id');
+    }
 }

@@ -44,7 +44,7 @@ class BusinessCategoryController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'categoryName' => 'required',
+            'categoryName' => 'required|unique:business_categories,categoryName',
             'categoryIcon' => 'required',
         ]);
 
@@ -86,7 +86,7 @@ class BusinessCategoryController extends Controller
     {
         $this->validate($request, [
             'id' => 'required|exists:business_categories,id',
-            // 'categoryName' => 'required',
+            'categoryName' => 'required|unique:business_categories,categoryName',
             // 'categoryIcon' => 'required',
         ]);
 

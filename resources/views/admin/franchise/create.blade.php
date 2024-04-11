@@ -148,7 +148,7 @@
                 </div>
             </div>
         </div>
-        <div class="row mb-3">
+        {{-- <div class="row mb-3">
             <div class="col-md-6">
                 <div class="form-floating">
                     <input type="password" class="form-control @error('password') is-invalid @enderror" id="password"
@@ -174,7 +174,7 @@
                     @enderror
                 </div>
             </div>
-        </div>
+        </div> --}}
         <div class="text-center">
             <button type="submit" class="btn btn-primary">Submit</button>
             <button type="reset" class="btn btn-secondary">Reset</button>

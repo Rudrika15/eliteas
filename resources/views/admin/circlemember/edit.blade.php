@@ -30,19 +30,21 @@
     </div>
 
     <!-- Floating Labels Form -->
+    {{-- {{$member}} --}}
     <form class="m-3 needs-validation" id="circlememberForm" enctype="multipart/form-data" method="post"
-        action="{{ route('circlemember.update', $circlemember->id) }}" novalidate>
+        action="{{ route('circlemember.update') }}" novalidate>
         @csrf
-        <input type="hidden" name="id" value="{{ $circlemember->id }}">
+        {{-- <input type="hidden" name="memberId" value="{{ $memberId }}"> --}}
+        <input type="hidden" name="memberId" value="{{ $member->id }}">
         {{-- <input type="hidden" name="id" value="{{ $memberId }}"> --}}
         <div class="row mb-3">
             <div class="col-md-6">
                 <div class="form-floating">
-                    <select class="form-control" data-error='Circle Name Field is required' required name="circleId"
+                    <select class="form-select" data-error='Circle Name Field is required' required name="circleId"
                         id="circleId">
                         <option value="" selected disabled> Select Circle </option>
                         @foreach ($circles as $circleData)
-                        <option value="{{ $circleData->id }}" {{ old('circleId', $circlemember->circleId) ==
+                        <option value="{{ $circleData->id }}" {{ old('circleId', $member->circleId) ==
                             $circleData->id ? 'selected' : '' }}>{{ $circleData->circleName }}</option>
                         @endforeach
                     </select>
@@ -55,13 +57,12 @@
             </div>
             <div class="col-md-6">
                 <div class="form-floating">
-                    <select class="form-control @error('businessCategory') is-invalid @enderror" id="businessCategory"
+                    <select class="form-select @error('businessCategory') is-invalid @enderror" id="businessCategory"
                         name="businessCategory">
                         <option value="" disabled>Select Business Category</option>
                         @foreach($businessCategory as $businessCategoryData)
-                        <option value="{{ $businessCategoryData->id }}" {{
-                            old('businessCategory')==$businessCategoryData->id ?
-                            'selected' : '' }}>
+                        <option value="{{ $businessCategoryData->id }}" {{ old('businessCategoryId', $member->
+                            businessCategoryId)==$businessCategoryData->id ? 'selected' : '' }}>
                             {{ $businessCategoryData->categoryName }}
                         </option>
                         @endforeach
@@ -77,14 +78,14 @@
                 <div class="form-floating mt-3">
                     <select class="form-select" id="membershipType" name="membershipType">
                         <option value="" disabled>Select Membership Type</option>
-                        <option value="Monthly" {{ old('membershipType')=='Monthly' ? 'selected' : '' }}>Monthly
-                        </option>
-                        <option value="Yearly" {{ old('membershipType')=='Yearly' ? 'selected' : '' }}>Yearly</option>
-                        <option value="LifeTime" {{ old('membershipType')=='LifeTime' ? 'selected' : '' }}>Life Time
-                        </option>
+                        <option value="Monthly" {{ $member->membershipType === 'Monthly' ? 'selected' : ''
+                            }}>Monthly</option>
+                        <option value="Yearly" {{ $member->membershipType === 'Yearly' ? 'selected' : ''
+                            }}>Yearly</option>
+                        <option value="LifeTime" {{ $member->membershipType === 'LifeTime' ? 'selected' :
+                            '' }}>Life Time</option>
                     </select>
                 </div>
-
             </div>
 
             <div class="accordion" id="accordionExample">
@@ -103,8 +104,7 @@
                                 <div class="col-md-6 mt-3">
                                     <div class="form-floating">
                                         <input type="text" class="form-control @error('title') is-invalid @enderror"
-                                            id="title" name="title" value="{{$circlemember->member->title}}"
-                                            placeholder="title">
+                                            id="title" name="title" value="{{$member->title}}" placeholder="Title">
                                         <label for="title">Title</label>
                                         @error('title')
                                         <div class="invalid-tooltip">
@@ -116,7 +116,7 @@
                                 <div class="col-md-6 mt-3">
                                     <div class="form-floating">
                                         <input type="text" class="form-control @error('firstName') is-invalid @enderror"
-                                            id="firstName" name="firstName" value="{{$circlemember->member->firstName}}"
+                                            id="firstName" name="firstName" value="{{$member->firstName}}"
                                             placeholder="First Name">
                                         <label for="firstName">First Name</label>
                                         @error('firstName')
@@ -129,7 +129,7 @@
                                 <div class="col-md-6 mt-3">
                                     <div class="form-floating">
                                         <input type="text" class="form-control @error('lastName') is-invalid @enderror"
-                                            id="lastName" name="lastName" value="{{$circlemember->member->lastName}}"
+                                            id="lastName" name="lastName" value="{{$member->lastName}}"
                                             placeholder="Last Name">
                                         <label for="lastName">Last Name</label>
                                         @error('lastName')
@@ -142,8 +142,7 @@
                                 <div class="col-md-6 mt-3">
                                     <div class="form-floating">
                                         <input type="text" class="form-control @error('suffix') is-invalid @enderror"
-                                            id="suffix" name="suffix" value="{{$circlemember->member->suffix}}"
-                                            placeholder="Suffix">
+                                            id="suffix" name="suffix" value="{{$member->suffix}}" placeholder="Suffix">
                                         <label for="suffix">Suffix</label>
                                         @error('suffix')
                                         <div class="invalid-tooltip">
@@ -156,8 +155,8 @@
                                     <div class="form-floating">
                                         <input type="text"
                                             class="form-control @error('displayName') is-invalid @enderror"
-                                            id="displayName" name="displayName"
-                                            value="{{$circlemember->member->displayName}}" placeholder="Display Name">
+                                            id="displayName" name="displayName" value="{{$member->displayName}}"
+                                            placeholder="Display Name">
                                         <label for="displayName">Display Name</label>
                                         @error('displayName')
                                         <div class="invalid-tooltip">
@@ -170,21 +169,15 @@
                                     <div class="form-floating">
                                         <div class="form-check">
                                             <input class="form-check-input" type="radio" name="gender" id="genderMale"
-                                                value="male" {{ $circlemember->member->gender === 'male' ? 'checked' :
-                                            ''
-                                            }}>
-                                            <label class="form-check-label" for="genderMale">
-                                                Male
-                                            </label>
+                                                value="male" {{ $member->gender === 'male' ? 'checked' :
+                                            '' }}>
+                                            <label class="form-check-label" for="genderMale">Male</label>
                                         </div>
                                         <div class="form-check">
                                             <input class="form-check-input" type="radio" name="gender" id="genderFemale"
-                                                value="female" {{ $circlemember->member->gender === 'female' ? 'checked'
-                                            :
-                                            '' }}>
-                                            <label class="form-check-label" for="genderFemale">
-                                                Female
-                                            </label>
+                                                value="female" {{ $member->gender === 'female' ? 'checked'
+                                            : '' }}>
+                                            <label class="form-check-label" for="genderFemale">Female</label>
                                         </div>
                                         @error('gender')
                                         <div class="invalid-tooltip">
@@ -192,22 +185,22 @@
                                         </div>
                                         @enderror
                                     </div>
-                                    <div class="col-md-6 mt-3">
-                                        <div class="form-floating">
-                                            <input type="text"
-                                                class="form-control @error('companyName') is-invalid @enderror"
-                                                id="companyName" name="companyName"
-                                                value="{{$circlemember->member->companyName}}"
-                                                placeholder="Company Name">
-                                            <label for="companyName">Company Name</label>
-                                            @error('companyName')
-                                            <div class="invalid-tooltip">
-                                                {{ $message }}
-                                            </div>
-                                            @enderror
+                                </div>
+                                <div class="col-md-6 mt-3">
+                                    <div class="form-floating">
+                                        <input type="text"
+                                            class="form-control @error('companyName') is-invalid @enderror"
+                                            id="companyName" name="companyName" value="{{$member->companyName}}"
+                                            placeholder="Company Name">
+                                        <label for="companyName">Company Name</label>
+                                        @error('companyName')
+                                        <div class="invalid-tooltip">
+                                            {{ $message }}
                                         </div>
+                                        @enderror
                                     </div>
                                 </div>
+
                             </div>
                         </div>
                     </div>
@@ -227,8 +220,7 @@
                                         <div class="form-floating">
                                             <input type="text"
                                                 class="form-control @error('gstRegiState') is-invalid @enderror"
-                                                id="gstRegiState" name="gstRegiState"
-                                                value="{{$circlemember->member->gstRegiState}}"
+                                                id="gstRegiState" name="gstRegiState" value="{{$member->gstRegiState}}"
                                                 placeholder="gstRegiState">
                                             <label for="gstRegiState">GST Registered State</label>
                                             @error('gstRegiState')
@@ -242,8 +234,8 @@
                                         <div class="form-floating">
                                             <input type="text"
                                                 class="form-control @error('gstinPan') is-invalid @enderror"
-                                                id="gstinPan" name="gstinPan"
-                                                value="{{$circlemember->member->gstinPan}}" placeholder="GSTIN / PAN">
+                                                id="gstinPan" name="gstinPan" value="{{$member->gstinPan}}"
+                                                placeholder="GSTIN / PAN">
                                             <label for="gstinPan">GSTIN / PAN </label>
                                             @error('gstinPan')
                                             <div class="invalid-tooltip">
@@ -256,8 +248,8 @@
                                         <div class="form-floating">
                                             <input type="text"
                                                 class="form-control @error('industry') is-invalid @enderror"
-                                                id="industry" name="industry"
-                                                value="{{$circlemember->member->industry}}" placeholder="Industry">
+                                                id="industry" name="industry" value="{{$member->industry}}"
+                                                placeholder="Industry">
                                             <label for="industry">Industry</label>
                                             @error('industry')
                                             <div class="invalid-tooltip">
@@ -271,8 +263,7 @@
                                             <input type="text"
                                                 class="form-control @error('classification') is-invalid @enderror"
                                                 id="classification" name="classification"
-                                                value="{{$circlemember->member->classification}}"
-                                                placeholder="Classification">
+                                                value="{{$member->classification}}" placeholder="Classification">
                                             <label for="classification">Classification</label>
                                             @error('classification')
                                             <div class="invalid-tooltip">
@@ -301,8 +292,7 @@
                                         <div class="form-floating">
                                             <input type="text"
                                                 class="form-control @error('chapter') is-invalid @enderror" id="chapter"
-                                                name="chapter" value="{{$circlemember->member->chapter}}"
-                                                placeholder="Chapter">
+                                                name="chapter" value="{{$member->chapter}}" placeholder="Chapter">
                                             <label for="chapter">Chapter</label>
                                             @error('chapter')
                                             <div class="invalid-tooltip">
@@ -316,8 +306,7 @@
                                             <input type="date"
                                                 class="form-control @error('renewalDueDate') is-invalid @enderror"
                                                 id="renewalDueDate" name="renewalDueDate"
-                                                value="{{$circlemember->member->renewalDueDate}}"
-                                                placeholder="GSTIN / PAN">
+                                                value="{{$member->renewalDueDate}}" placeholder="GSTIN / PAN">
                                             <label for="renewalDueDate">Renewal Due Date </label>
                                             @error('renewalDueDate')
                                             <div class="invalid-tooltip">
@@ -331,8 +320,7 @@
                                             <input type="text"
                                                 class="form-control @error('membershipStatus') is-invalid @enderror"
                                                 id="membershipStatus" name="membershipStatus"
-                                                value="{{$circlemember->member->membershipStatus}}"
-                                                placeholder="membershipStatus">
+                                                value="{{$member->membershipStatus}}" placeholder="membershipStatus">
                                             <label for="membershipStatus">Membership Status</label>
                                             @error('membershipStatus')
                                             <div class="invalid-tooltip">
@@ -345,8 +333,8 @@
                                         <div class="form-floating">
                                             <input type="longText"
                                                 class="form-control @error('myBusiness') is-invalid @enderror"
-                                                id="myBusiness" name="myBusiness"
-                                                value="{{$circlemember->member->myBusiness}}" placeholder="myBusiness">
+                                                id="myBusiness" name="myBusiness" value="{{$member->myBusiness}}"
+                                                placeholder="myBusiness">
                                             <label for="myBusiness">My Business</label>
                                             @error('myBusiness')
                                             <div class="invalid-tooltip">
@@ -359,8 +347,8 @@
                                         <div class="form-floating">
                                             <input type="longText"
                                                 class="form-control @error('keyWords') is-invalid @enderror"
-                                                id="keyWords" name="keyWords"
-                                                value="{{$circlemember->member->keyWords}}" placeholder="keyWords">
+                                                id="keyWords" name="keyWords" value="{{$member->keyWords}}"
+                                                placeholder="keyWords">
                                             <label for="keyWords">Keywords (Comma Seperated)</label>
                                             @error('keyWords')
                                             <div class="invalid-tooltip">
@@ -421,8 +409,8 @@
                                         <div class="form-floating">
                                             <input type="text"
                                                 class="form-control @error('username') is-invalid @enderror"
-                                                id="username" name="username"
-                                                value="{{$circlemember->member->username}}" placeholder="username">
+                                                id="username" name="username" value="{{$member->username}}"
+                                                placeholder="username">
                                             <label for="username">Username</label>
                                             @error('username')
                                             <div class="invalid-tooltip">
@@ -435,8 +423,8 @@
                                         <div class="form-floating">
                                             <input type="text"
                                                 class="form-control @error('language') is-invalid @enderror"
-                                                id="language" name="language"
-                                                value="{{$circlemember->member->language}}" placeholder="Language">
+                                                id="language" name="language" value="{{$member->language}}"
+                                                placeholder="Language">
                                             <label for="language">Language </label>
                                             @error('language')
                                             <div class="invalid-tooltip">
@@ -449,8 +437,8 @@
                                         <div class="form-floating">
                                             <input type="text"
                                                 class="form-control @error('timeZone') is-invalid @enderror"
-                                                id="timeZone" name="timeZone"
-                                                value="{{$circlemember->member->timeZone}}" placeholder="timeZone">
+                                                id="timeZone" name="timeZone" value="{{$member->timeZone}}"
+                                                placeholder="timeZone">
                                             <label for="timeZone">Timezone</label>
                                             @error('timeZone')
                                             <div class="invalid-tooltip">
@@ -485,7 +473,7 @@
                                             @enderror
                                         </div>
                                     </div>
-                                    @php($receiveUpdates = old('receiveUpdates', $circlemember->receiveUpdates ?? null))
+                                    @php($receiveUpdates = old('receiveUpdates', $member->receiveUpdates ?? null))
                                     <div class="col-md-6 mt-3">
                                         <div class="form-check mt-3">
                                             <input class="form-check-input" type="checkbox" id="receiveUpdates"
@@ -502,7 +490,7 @@
                                             @enderror
                                         </div>
                                     </div>
-                                    @php($shareRevenue = old('shareRevenue', $circlemember->shareRevenue ?? null))
+                                    @php($shareRevenue = old('shareRevenue', $member->shareRevenue ?? null))
                                     <div class="col-md-6 mt-3">
                                         <div class="form-check mt-3">
                                             <input class="form-check-input" type="checkbox" id="shareRevenue"
@@ -521,8 +509,7 @@
                                         <div class="form-floating">
                                             <input type="text"
                                                 class="form-control @error('webSite') is-invalid @enderror" id="webSite"
-                                                name="webSite" value="{{$circlemember->member->webSite}}"
-                                                placeholder="webSite">
+                                                name="webSite" value="{{$member->webSite}}" placeholder="webSite">
                                             <label for="webSite">Website</label>
                                             @error('webSite')
                                             <div class="invalid-tooltip">
@@ -531,7 +518,7 @@
                                             @enderror
                                         </div>
                                     </div>
-                                    @php($showWebsite = old('showWebsite', $circlemember->member->showWebsite ?? false))
+                                    @php($showWebsite = old('showWebsite', $member->showWebsite ?? false))
                                     <div class="col-md-6 mt-3">
                                         <div class="form-check mt-3">
                                             <input class="form-check-input" type="checkbox" id="showWebsite"
@@ -550,8 +537,7 @@
                                         <div class="form-floating">
                                             <input type="text"
                                                 class="form-control @error('socialLinks') is-invalid @enderror"
-                                                id="socialLinks" name="socialLinks"
-                                                value="{{$circlemember->member->socialLinks}}"
+                                                id="socialLinks" name="socialLinks" value="{{$member->socialLinks}}"
                                                 placeholder="socialLinks">
                                             <label for="socialLinks">Social Network Links</label>
                                             @error('socialLinks')
@@ -562,7 +548,7 @@
                                         </div>
                                     </div>
                                     @php($showSocialLinks = old('showSocialLinks',
-                                    $circlemember->member->showSocialLinks ??
+                                    $member->showSocialLinks ??
                                     false))
                                     <div class="col-md-6 mt-3">
                                         <div class="form-check mt-3">
@@ -601,7 +587,7 @@
                                             <input type="text"
                                                 class="form-control @error('billingAddress') is-invalid @enderror"
                                                 id="billingAddress" name="billingAddress"
-                                                value="{{$circlemember->contactDetails->billingAddress ?? ''}}"
+                                                value="{{$member->contactDetails->billingAddress ?? ''}}"
                                                 placeholder="billingAddress">
                                             <label for="billingAddress">Billing Address</label>
                                             @error('billingAddress')
@@ -615,8 +601,8 @@
                                         <div class="form-check mt-3">
                                             <input class="form-check-input" type="checkbox" id="showMeOnPublicWeb"
                                                 name="showMeOnPublicWeb" value="Yes" {{
-                                                !is_null($circlemember->contactDetails) &&
-                                            $circlemember->contactDetails->showMeOnPublicWeb == 'Yes' ? 'checked' : ''
+                                                !is_null($member->contactDetails) &&
+                                            $member->contactDetails->showMeOnPublicWeb == 'Yes' ? 'checked' : ''
                                             }}>
                                             <label class="form-check-label" for="showMeOnPublicWeb">
                                                 If Checked the public will be able to search for your services
@@ -631,8 +617,7 @@
                                     <div class="col-md-6 mt-3">
                                         <div class="form-floating">
                                             <input type="text" class="form-control @error('phone') is-invalid @enderror"
-                                                id="phone" name="phone"
-                                                value="{{$circlemember->contactDetails->phone ?? ''}}"
+                                                id="phone" name="phone" value="{{$member->contactDetails->phone ?? ''}}"
                                                 placeholder="phone">
                                             <label for="phone">Phone </label>
                                             @error('phone')
@@ -645,9 +630,9 @@
                                     <div class="col-md-6 mt-3">
                                         <div class="form-check mt-3">
                                             <input class="form-check-input" type="checkbox" id="showPhone"
-                                                name="showPhone" value="Yes" {{ !is_null($circlemember->contactDetails)
+                                                name="showPhone" value="Yes" {{ !is_null($member->contactDetails)
                                             &&
-                                            $circlemember->contactDetails->showPhone == 'Yes' ? 'checked'
+                                            $member->contactDetails->showPhone == 'Yes' ? 'checked'
                                             : '' }}>
                                             <label class="form-check-label" for="showPhone">
                                                 Show this on my public profile
@@ -664,7 +649,7 @@
                                             <input type="text"
                                                 class="form-control @error('directNo') is-invalid @enderror"
                                                 id="directNo" name="directNo"
-                                                value="{{$circlemember->contactDetails->directNo ?? ''}}"
+                                                value="{{$member->contactDetails->directNo ?? ''}}"
                                                 placeholder="directNo">
                                             <label for="directNo">Direct Number</label>
                                             @error('directNo')
@@ -677,10 +662,9 @@
                                     <div class="col-md-6 mt-3">
                                         <div class="form-check mt-3">
                                             <input class="form-check-input" type="checkbox" id="showDirectNo"
-                                                name="showDirectNo" value="Yes" {{
-                                                !is_null($circlemember->contactDetails)
+                                                name="showDirectNo" value="Yes" {{ !is_null($member->contactDetails)
                                             &&
-                                            $circlemember->contactDetails->showDirectNo == 'Yes' ? 'checked' : '' }}>
+                                            $member->contactDetails->showDirectNo == 'Yes' ? 'checked' : '' }}>
                                             <label class="form-check-label" for="showDirectNo">
                                                 Show this on my public profile
                                             </label>
@@ -694,8 +678,7 @@
                                     <div class="col-md-6 mt-3">
                                         <div class="form-floating">
                                             <input type="text" class="form-control @error('home') is-invalid @enderror"
-                                                id="home" name="home"
-                                                value="{{$circlemember->contactDetails->home ?? ''}}"
+                                                id="home" name="home" value="{{$member->contactDetails->home ?? ''}}"
                                                 placeholder="home">
                                             <label for="home">Home</label>
                                             @error('home')
@@ -711,7 +694,7 @@
                                                 <input type="text"
                                                     class="form-control @error('mobileNo') is-invalid @enderror"
                                                     id="mobileNo" name="mobileNo"
-                                                    value="{{$circlemember->contactDetails->mobileNo ?? ''}}"
+                                                    value="{{$member->contactDetails->mobileNo ?? ''}}"
                                                     placeholder="Mobile No">
                                                 <label for="mobileNo">Mobile No</label>
                                                 @error('mobileNo')
@@ -725,7 +708,7 @@
                                             <div class="form-check">
                                                 <input class="form-check-input" type="checkbox" id="showMobileNo"
                                                     name="showMobileNo" value="Yes" {{ (old('showMobileNo',
-                                                    $circlemember->contactDetails->showMobileNo ?? 'No') == 'Yes') ?
+                                                    $member->contactDetails->showMobileNo ?? 'No') == 'Yes') ?
                                                 'checked' : '' }}>
                                                 <label class="form-check-label" for="showMobileNo">
                                                     Show this on my public profile
@@ -741,8 +724,7 @@
                                     <div class="col-md-6 mt-3">
                                         <div class="form-floating">
                                             <input type="text" class="form-control @error('pager') is-invalid @enderror"
-                                                id="pager" name="pager"
-                                                value="{{$circlemember->contactDetails->pager ?? ''}}"
+                                                id="pager" name="pager" value="{{$member->contactDetails->pager ?? ''}}"
                                                 placeholder="pager">
                                             <label for="pager">Pager</label>
                                             @error('pager')
@@ -757,7 +739,7 @@
                                             <input type="text"
                                                 class="form-control @error('voiceMail') is-invalid @enderror"
                                                 id="voiceMail" name="voiceMail"
-                                                value="{{$circlemember->contactDetails->voiceMail ?? ''}}"
+                                                value="{{$member->contactDetails->voiceMail ?? ''}}"
                                                 placeholder="voiceMail">
                                             <label for="voiceMail">Voice Mail</label>
                                             @error('voiceMail')
@@ -772,7 +754,7 @@
                                             <input type="text"
                                                 class="form-control @error('tollFree') is-invalid @enderror"
                                                 id="tollFree" name="tollFree"
-                                                value="{{$circlemember->contactDetails->tollFree ?? ''}}"
+                                                value="{{$member->contactDetails->tollFree ?? ''}}"
                                                 placeholder="tollFree">
                                             <label for="tollFree">Toll Free</label>
                                             @error('tollFree')
@@ -786,7 +768,7 @@
                                         <div class="form-check mt-3">
                                             <input class="form-check-input" type="checkbox" id="showTollFree"
                                                 name="showTollFree" value="Yes" {{ (old('showTollFree',
-                                                $circlemember->contactDetails->showTollFree ?? 'No') == 'Yes') ?
+                                                $member->contactDetails->showTollFree ?? 'No') == 'Yes') ?
                                             'checked' :
                                             '' }}>
                                             <label class="form-check-label" for="showTollFree">
@@ -802,7 +784,7 @@
                                     <div class="col-md-6 mt-3">
                                         <div class="form-floating">
                                             <input type="text" class="form-control @error('fax') is-invalid @enderror"
-                                                id="fax" name="fax" value="{{$circlemember->contactDetails->fax ?? ''}}"
+                                                id="fax" name="fax" value="{{$member->contactDetails->fax ?? ''}}"
                                                 placeholder="fax">
                                             <label for="fax">Fax</label>
                                             @error('fax')
@@ -815,7 +797,7 @@
                                     <div class="col-md-6 mt-3">
                                         <div class="form-check mt-3">
                                             <input class="form-check-input" type="checkbox" id="showFax" name="showFax"
-                                                value="Yes" {{ (old('showFax', $circlemember->contactDetails->showFax ??
+                                                value="Yes" {{ (old('showFax', $member->contactDetails->showFax ??
                                             'No') == 'Yes') ? 'checked' : '' }}>
                                             <label class="form-check-label" for="showFax">
                                                 Show this on my public profile
@@ -832,8 +814,7 @@
                                             <input type="text"
                                                 class="form-control @error('contactEmail') is-invalid @enderror"
                                                 id="contactEmail" name="contactEmail"
-                                                value="{{$circlemember->contactDetails->email ?? ''}}"
-                                                placeholder="email">
+                                                value="{{$member->contactDetails->email ?? ''}}" placeholder="email">
                                             <label for="contactEmail">Email</label>
                                             @error('contactEmail')
                                             <div class="invalid-tooltip">
@@ -846,7 +827,7 @@
                                         <div class="form-check mt-3">
                                             <input class="form-check-input" type="checkbox" id="showEmail"
                                                 name="showEmail" value="Yes" {{ (old('showEmail',
-                                                $circlemember->contactDetails->showEmail ??
+                                                $member->contactDetails->showEmail ??
                                             'No') == 'Yes') ? 'checked' : '' }}>
                                             <label class="form-check-label" for="showEmail">
                                                 Show this on my public profile
@@ -879,7 +860,7 @@
                                             <input type="text"
                                                 class="form-control @error('bAddressLine1') is-invalid @enderror"
                                                 id="bAddressLine1" name="bAddressLine1"
-                                                value="{{$circlemember->billing->bAddressLine1 ?? ''}}"
+                                                value="{{$member->billing->bAddressLine1 ?? ''}}"
                                                 placeholder="Billing Address Line 1">
                                             <label for="bAddressLine1">Address Line 1</label>
                                             @error('bAddressLine1')
@@ -894,7 +875,7 @@
                                             <input type="text"
                                                 class="form-control @error('bAddressLine2') is-invalid @enderror"
                                                 id="bAddressLine2" name="bAddressLine2"
-                                                value="{{$circlemember->billing->bAddressLine2 ?? ''}}"
+                                                value="{{$member->billing->bAddressLine2 ?? ''}}"
                                                 placeholder="bAddressLine2">
                                             <label for="bAddressLine2">Address Line 2 </label>
                                             @error('bAddressLine2')
@@ -964,8 +945,7 @@
                                             <input type="text"
                                                 class="form-control @error('bPinCode') is-invalid @enderror"
                                                 id="bPinCode" name="bPinCode"
-                                                value="{{$circlemember->billing->bPinCode ?? ''}}"
-                                                placeholder="bPinCode">
+                                                value="{{$member->billing->bPinCode ?? ''}}" placeholder="bPinCode">
                                             <label for="bPinCode">Pin Code</label>
                                             @error('bPinCode')
                                             <div class="invalid-tooltip">
@@ -995,7 +975,7 @@
                                             <input type="text"
                                                 class="form-control @error('addressLine1') is-invalid @enderror"
                                                 id="addressLine1" name="addressLine1"
-                                                value="{{$circlemember->contactDetails->addressLine1 ?? ''}}"
+                                                value="{{$member->contactDetails->addressLine1 ?? ''}}"
                                                 placeholder="Billing Address Line 1">
                                             <label for="addressLine1">Address Line 1</label>
                                             @error('addressLine1')
@@ -1010,7 +990,7 @@
                                             <input type="text"
                                                 class="form-control @error('addressLine2') is-invalid @enderror"
                                                 id="addressLine2" name="addressLine2"
-                                                value="{{$circlemember->contactDetails->addressLine2 ?? ''}}"
+                                                value="{{$member->contactDetails->addressLine2 ?? ''}}"
                                                 placeholder="addressLine2">
                                             <label for="addressLine2">Address Line 2 </label>
                                             @error('addressLine2')
@@ -1083,7 +1063,7 @@
                                         <div class="form-floating">
                                             <input type="text"
                                                 class="form-control @error('pinCode') is-invalid @enderror" id="pinCode"
-                                                name="pinCode" value="{{$circlemember->contactDetails->pinCode ?? ''}}"
+                                                name="pinCode" value="{{$member->contactDetails->pinCode ?? ''}}"
                                                 placeholder="pinCode">
                                             <label for="pinCode">Pin Code</label>
                                             @error('pinCode')
@@ -1113,8 +1093,7 @@
                                         <div class="form-floating">
                                             <input type="text"
                                                 class="form-control @error('idealRef') is-invalid @enderror"
-                                                id="idealRef" name="idealRef"
-                                                value="{{$circlemember->tops->idealRef ?? ''}}"
+                                                id="idealRef" name="idealRef" value="{{$member->tops->idealRef ?? ''}}"
                                                 placeholder="Ideal Refferance">
                                             <label for="idealRef">Ideal Referral</label>
                                             @error('idealRef')
@@ -1129,8 +1108,7 @@
                                             <input type="text"
                                                 class="form-control @error('topProduct') is-invalid @enderror"
                                                 id="topProduct" name="topProduct"
-                                                value="{{$circlemember->tops->topProduct ?? ''}}"
-                                                placeholder="topProduct">
+                                                value="{{$member->tops->topProduct ?? ''}}" placeholder="topProduct">
                                             <label for="topProduct">Top Product</label>
                                             @error('topProduct')
                                             <div class="invalid-tooltip">
@@ -1144,7 +1122,7 @@
                                             <input type="text"
                                                 class="form-control @error('topProblemSolved') is-invalid @enderror"
                                                 id="topProblemSolved" name="topProblemSolved"
-                                                value="{{$circlemember->tops->topProblemSolved ?? ''}}"
+                                                value="{{$member->tops->topProblemSolved ?? ''}}"
                                                 placeholder="topProblemSolved">
                                             <label for="topProblemSolved">Top Problem Solved</label>
                                             @error('topProblemSolved')
@@ -1159,7 +1137,7 @@
                                             <input type="text"
                                                 class="form-control @error('myFavBniStory') is-invalid @enderror"
                                                 id="myFavBniStory" name="myFavBniStory"
-                                                value="{{$circlemember->tops->myFavBniStory ?? ''}}"
+                                                value="{{$member->tops->myFavBniStory ?? ''}}"
                                                 placeholder="myFavBniStory">
                                             <label for="myFavBniStory">My Favourite BNI Story</label>
                                             @error('myFavBniStory')
@@ -1174,7 +1152,7 @@
                                             <input type="text"
                                                 class="form-control @error('myIdealRefPartner') is-invalid @enderror"
                                                 id="myIdealRefPartner" name="myIdealRefPartner"
-                                                value="{{$circlemember->tops->myIdealRefPartner ?? ''}}"
+                                                value="{{$member->tops->myIdealRefPartner ?? ''}}"
                                                 placeholder="myIdealRefPartner">
                                             <label for="myIdealRefPartner">My Ideal Refferal Partner</label>
                                             @error('myIdealRefPartner')
@@ -1203,8 +1181,7 @@
                                             <div class="form-floating">
                                                 <input type="text"
                                                     class="form-control @error('goals') is-invalid @enderror" id="goals"
-                                                    name="goals" value="{{$circlemember->member->goals ?? ''}}"
-                                                    placeholder="Goals">
+                                                    name="goals" value="{{$member->goals ?? ''}}" placeholder="Goals">
                                                 <label for="goals">Goals</label>
                                                 @error('goals')
                                                 <div class="invalid-tooltip">
@@ -1218,7 +1195,7 @@
                                                 <input type="text"
                                                     class="form-control @error('accomplishment') is-invalid @enderror"
                                                     id="accomplishment" name="accomplishment"
-                                                    value="{{$circlemember->member->accomplishment ?? ''}}"
+                                                    value="{{$member->accomplishment ?? ''}}"
                                                     placeholder="accomplishment">
                                                 <label for="accomplishment">Accomplishment</label>
                                                 @error('accomplishment')
@@ -1232,8 +1209,7 @@
                                             <div class="form-floating">
                                                 <input type="text"
                                                     class="form-control @error('interests') is-invalid @enderror"
-                                                    id="interests" name="interests"
-                                                    value="{{$circlemember->member->interests ?? ''}}"
+                                                    id="interests" name="interests" value="{{$member->interests ?? ''}}"
                                                     placeholder="interests">
                                                 <label for="interests">Interests</label>
                                                 @error('interests')
@@ -1247,8 +1223,7 @@
                                             <div class="form-floating">
                                                 <input type="text"
                                                     class="form-control @error('networks') is-invalid @enderror"
-                                                    id="networks" name="networks"
-                                                    value="{{$circlemember->member->networks ?? ''}}"
+                                                    id="networks" name="networks" value="{{$member->networks ?? ''}}"
                                                     placeholder="networks">
                                                 <label for="networks">Networks</label>
                                                 @error('networks')
@@ -1262,8 +1237,7 @@
                                             <div class="form-floating">
                                                 <input type="text"
                                                     class="form-control @error('skills') is-invalid @enderror"
-                                                    id="skills" name="skills"
-                                                    value="{{$circlemember->member->skills ?? ''}}"
+                                                    id="skills" name="skills" value="{{$member->skills ?? ''}}"
                                                     placeholder="skills">
                                                 <label for="skills">Skills</label>
                                                 @error('skills')
@@ -1294,7 +1268,7 @@
                                                 <input type="text"
                                                     class="form-control @error('weeklyPresent1') is-invalid @enderror"
                                                     id="weeklyPresent1" name="weeklyPresent1"
-                                                    value="{{$circlemember->tops->weeklyPresent1 ?? ''}}"
+                                                    value="{{$member->tops->weeklyPresent1 ?? ''}}"
                                                     placeholder="weeklyPresent1">
                                                 <label for="weeklyPresent1">Weekly Presentation 1</label>
                                                 @error('weeklyPresent1')
@@ -1309,7 +1283,7 @@
                                                 <input type="text"
                                                     class="form-control @error('weeklyPresent2') is-invalid @enderror"
                                                     id="weeklyPresent2" name="weeklyPresent2"
-                                                    value="{{$circlemember->tops->weeklyPresent2 ?? ''}}"
+                                                    value="{{$member->tops->weeklyPresent2 ?? ''}}"
                                                     placeholder="weeklyPresent2">
                                                 <label for="weeklyPresent2">Weekly Presentation 2</label>
                                                 @error('weeklyPresent2')
@@ -1341,7 +1315,7 @@
                                                 <input type="text"
                                                     class="form-control @error('yearsInBusiness') is-invalid @enderror"
                                                     id="yearsInBusiness" name="yearsInBusiness"
-                                                    value="{{$circlemember->tops->yearsInBusiness ?? ''}}"
+                                                    value="{{$member->tops->yearsInBusiness ?? ''}}"
                                                     placeholder="yearsInBusiness">
                                                 <label for="yearsInBusiness">Years In Business</label>
                                                 @error('yearsInBusiness')
@@ -1356,8 +1330,7 @@
                                                 <input type="text"
                                                     class="form-control @error('prevJobs') is-invalid @enderror"
                                                     id="prevJobs" name="prevJobs"
-                                                    value="{{$circlemember->tops->prevJobs ?? ''}}"
-                                                    placeholder="prevJobs">
+                                                    value="{{$member->tops->prevJobs ?? ''}}" placeholder="prevJobs">
                                                 <label for="prevJobs">Previous Types of Jobs</label>
                                                 @error('prevJobs')
                                                 <div class="invalid-tooltip">
@@ -1370,8 +1343,8 @@
                                             <div class="form-floating">
                                                 <input type="text"
                                                     class="form-control @error('spouse') is-invalid @enderror"
-                                                    id="spouse" name="spouse"
-                                                    value="{{$circlemember->tops->spouse ?? ''}}" placeholder="spouse">
+                                                    id="spouse" name="spouse" value="{{$member->tops->spouse ?? ''}}"
+                                                    placeholder="spouse">
                                                 <label for="spouse">Spouse</label>
                                                 @error('spouse')
                                                 <div class="invalid-tooltip">
@@ -1385,8 +1358,7 @@
                                                 <input type="text"
                                                     class="form-control @error('children') is-invalid @enderror"
                                                     id="children" name="children"
-                                                    value="{{$circlemember->tops->children ?? ''}}"
-                                                    placeholder="children">
+                                                    value="{{$member->tops->children ?? ''}}" placeholder="children">
                                                 <label for="children">Children</label>
                                                 @error('children')
                                                 <div class="invalid-tooltip">
@@ -1399,7 +1371,7 @@
                                             <div class="form-floating">
                                                 <input type="text"
                                                     class="form-control @error('pets') is-invalid @enderror" id="pets"
-                                                    name="pets" value="{{$circlemember->tops->pets ?? ''}}"
+                                                    name="pets" value="{{$member->tops->pets ?? ''}}"
                                                     placeholder="pets">
                                                 <label for="pets">Pets</label>
                                                 @error('pets')
@@ -1414,7 +1386,7 @@
                                                 <input type="text"
                                                     class="form-control @error('hobbiesInterests') is-invalid @enderror"
                                                     id="hobbiesInterests" name="hobbiesInterests"
-                                                    value="{{$circlemember->tops->hobbiesInterests ?? ''}}"
+                                                    value="{{$member->tops->hobbiesInterests ?? ''}}"
                                                     placeholder="hobbiesInterests">
                                                 <label for="hobbiesInterests">Hobbies & Interests</label>
                                                 @error('hobbiesInterests')
@@ -1429,8 +1401,7 @@
                                                 <input type="text"
                                                     class="form-control @error('cityofRes') is-invalid @enderror"
                                                     id="cityofRes" name="cityofRes"
-                                                    value="{{$circlemember->tops->cityofRes ?? ''}}"
-                                                    placeholder="cityofRes">
+                                                    value="{{$member->tops->cityofRes ?? ''}}" placeholder="cityofRes">
                                                 <label for="cityofRes">City of Residence</label>
                                                 @error('cityofRes')
                                                 <div class="invalid-tooltip">
@@ -1444,7 +1415,7 @@
                                                 <input type="text"
                                                     class="form-control @error('yearsInCity') is-invalid @enderror"
                                                     id="yearsInCity" name="yearsInCity"
-                                                    value="{{$circlemember->tops->yearsInCity ?? ''}}"
+                                                    value="{{$member->tops->yearsInCity ?? ''}}"
                                                     placeholder="yearsInCity">
                                                 <label for="yearsInCity">Years In City</label>
                                                 @error('yearsInCity')
@@ -1459,7 +1430,7 @@
                                                 <input type="text"
                                                     class="form-control @error('myBurningDesire') is-invalid @enderror"
                                                     id="myBurningDesire" name="myBurningDesire"
-                                                    value="{{$circlemember->tops->myBurningDesire ?? ''}}"
+                                                    value="{{$member->tops->myBurningDesire ?? ''}}"
                                                     placeholder="myBurningDesire">
                                                 <label for="myBurningDesire">My Burning Desire</label>
                                                 @error('myBurningDesire')
@@ -1474,7 +1445,7 @@
                                                 <input type="text"
                                                     class="form-control @error('dontKnowAboutMe') is-invalid @enderror"
                                                     id="dontKnowAboutMe" name="dontKnowAboutMe"
-                                                    value="{{$circlemember->tops->dontKnowAboutMe ?? ''}}"
+                                                    value="{{$member->tops->dontKnowAboutMe ?? ''}}"
                                                     placeholder="dontKnowAboutMe">
                                                 <label for="dontKnowAboutMe">Something No One Here Knows About
                                                     Me</label>
@@ -1490,7 +1461,7 @@
                                                 <input type="text"
                                                     class="form-control @error('mKeyToSuccess') is-invalid @enderror"
                                                     id="mKeyToSuccess" name="mKeyToSuccess"
-                                                    value="{{$circlemember->tops->mKeyToSuccess ?? ''}}"
+                                                    value="{{$member->tops->mKeyToSuccess ?? ''}}"
                                                     placeholder="mKeyToSuccess">
                                                 <label for="mKeyToSuccess">My Key To Success</label>
                                                 @error('mKeyToSuccess')
