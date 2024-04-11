@@ -45,7 +45,7 @@
                             <div class="form-floating">
 
                                 <!-- Searchable input field -->
-                                <input type="text" class="form-control" readonly id="meetingPersonName" placeholder="Select Member">
+                                <input type="text" class="form-control" id="meetingPersonName" placeholder="Select Member">
                                 <label for="memberName">Member Name</label>
                                 @error('memberId')
                                     <div class="invalid-tooltip">
@@ -69,7 +69,7 @@
                             </div>
                             <div class="col-md-12">
                                 <div class="form-floating mt-3">
-                                    <input type="text" class="form-control @error('email') is-invalid @enderror" id="meetingPersonEmail" name="email" placeholder="email" required>
+                                    <input type="text" class="form-control @error('email') is-invalid @enderror" id="meetingPersonEmail" placeholder="email" required>
                                     <label for="email">Email</label>
                                     @error('email')
                                         <div class="invalid-tooltip">
@@ -114,7 +114,7 @@
                                     <div class="col-md-8">
                                         <input type="hidden" class="form-control" id="contactPersonId">
                                         <div class="form-floating">
-                                            <input type="text" class="form-control" readonly id="contactPersonName" name="contactName" placeholder="Contact Person Name">
+                                            <input type="text" class="form-control contactName" id="contactPersonName" name="contactNameInternal" placeholder="Contact Person Name">
                                             <label for="contactPersonName">Contact Person Name</label>
                                         </div>
                                     </div>
@@ -125,7 +125,7 @@
                         </div>
                         <div class="col-md-12" id="memberListInput" style="display:none;">
                             <div class="form-floating mt-3">
-                                <input type="text" class="form-control @error('contactName') is-invalid @enderror" id="" name="contactName" placeholder="Contact Name">
+                                <input type="text" class="form-control @error('contactName') is-invalid @enderror" id="" name="contactNameExternal" placeholder="Contact Name">
                                 <label for="contactName">Contact Person Name</label>
                                 @error('contactName')
                                     <div class="invalid-tooltip">
@@ -267,6 +267,8 @@
                 if (inputValue === "internal") {
                     $("#memberListDropdown").show();
                     $("#memberListInput").hide();
+                    // $('.contactName').val('');
+                    // $('.contactEmail').val('');
                 } else if (inputValue === "external") {
                     $("#memberListDropdown").hide();
                     $("#memberListInput").show();
