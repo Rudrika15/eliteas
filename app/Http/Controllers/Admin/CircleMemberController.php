@@ -248,6 +248,7 @@ class CircleMemberController extends Controller
     public function edit($id)
     {
         try {
+            $user = User::find($id);
             $member = Member::find($id);
             $countries = Country::where('status', 'Active')->get();
             $states = State::where('status', 'Active')->get();
@@ -259,7 +260,7 @@ class CircleMemberController extends Controller
             $businessCategory = BusinessCategory::where('status', 'Active')->get();
 
 
-            return view('admin.circlemember.edit', compact('countries', 'states', 'cities', 'member', 'contactDetails', 'billing', 'tops', 'circles', 'businessCategory'));
+            return view('admin.circlemember.edit', compact('countries', 'user', 'states', 'cities', 'member', 'contactDetails', 'billing', 'tops', 'circles', 'businessCategory'));
         } catch (\Throwable $th) {
             throw $th;
             return view('servererror');
@@ -272,20 +273,20 @@ class CircleMemberController extends Controller
         try {
             // return $request;
             // Find the member
-            return $member = $request->memberId;
+            // return $member = $request->memberId;
             // $memberId = $request->memberId;
-
+            $member = $request->id;
             // Update only the fields that have new values
-            $user = Member::findOrFail();
-            $user->firstName = $request->firstName;
-            $user->lastName = $request->lastName;
-            // $user->email = $request->email;
-            $user->password = Hash::make($request->password);
-            $user->assignRole('Member');
-            $user->save();
+        //   return   $user = User::findOrFail($id);
+        //     $user->firstName = $request->firstName;
+        //     $user->lastName = $request->lastName;
+        //     // $user->email = $request->email;
+        //     $user->password = Hash::make($request->password);
+        //     $user->assignRole('Member');
+        //     $user->save();
 
             // Update the member
-            $member = Member::findOrFail($user->id);
+            $member = Member::findOrFail($member);
             $member->circleId = $request->circleId;
             $member->title = $request->title;
             $member->firstName = $request->firstName;

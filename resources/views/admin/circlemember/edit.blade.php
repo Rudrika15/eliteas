@@ -32,12 +32,10 @@
     <!-- Floating Labels Form -->
     {{-- {{$member}} --}}
     <form class="m-3 needs-validation" id="circlememberForm" enctype="multipart/form-data" method="post"
-        action="{{ route('circlemember.update') }}" novalidate>
+        action="{{ route('circlemember.update', $member->id) }}" novalidate>
         @csrf
-        {{-- <input type="hidden" name="memberId" value="{{ $memberId }}"> --}}
-        {{-- <input type="hidden" name="memberId" value="{{ $member->id }}"> --}}
-        <input type="hidden" name="id" value="{{ $member->id }}">
-        {{-- <input type="hidden" name="id" value="{{ $memberId }}"> --}}
+
+        <input type="hidden" name="memberId" value="{{ $member->id }}">
         <div class="row mb-3">
             <div class="col-md-6">
                 <div class="form-floating">
@@ -104,8 +102,16 @@
                             <div class="row">
                                 <div class="col-md-6 mt-3">
                                     <div class="form-floating">
-                                        <input type="text" class="form-control @error('title') is-invalid @enderror"
-                                            id="title" name="title" value="{{$member->title}}" placeholder="Title">
+                                        <select class="form-select @error('title') is-invalid @enderror" id="title"
+                                            name="title">
+                                            <option value="" selected disabled>Select Title</option>
+                                            <option value="Mr." {{ old('title', $member->title) === 'Mr.' ? 'selected' :
+                                                '' }}>Mr.</option>
+                                            <option value="Ms." {{ old('title', $member->title) === 'Ms.' ? 'selected' :
+                                                '' }}>Ms.</option>
+                                            <option value="Mrs." {{ old('title', $member->title) === 'Mrs.' ? 'selected'
+                                                : '' }}>Mrs.</option>
+                                        </select>
                                         <label for="title">Title</label>
                                         @error('title')
                                         <div class="invalid-tooltip">
@@ -861,7 +867,7 @@
                                             <input type="text"
                                                 class="form-control @error('bAddressLine1') is-invalid @enderror"
                                                 id="bAddressLine1" name="bAddressLine1"
-                                                value="{{$member->billing->bAddressLine1 ?? ''}}"
+                                                value="{{$member->billingAddress->bAddressLine1 ?? ''}}"
                                                 placeholder="Billing Address Line 1">
                                             <label for="bAddressLine1">Address Line 1</label>
                                             @error('bAddressLine1')
@@ -876,7 +882,7 @@
                                             <input type="text"
                                                 class="form-control @error('bAddressLine2') is-invalid @enderror"
                                                 id="bAddressLine2" name="bAddressLine2"
-                                                value="{{$member->billing->bAddressLine2 ?? ''}}"
+                                                value="{{$member->billingAddress->bAddressLine2 ?? ''}}"
                                                 placeholder="bAddressLine2">
                                             <label for="bAddressLine2">Address Line 2 </label>
                                             @error('bAddressLine2')
@@ -929,9 +935,7 @@
                                                 name="bCity">
                                                 <option value="" selected>Select City</option>
                                                 @foreach ($cities as $city)
-                                                <option value="{{ $city->id }}" {{ old('bCity')==$city->id ? 'selected'
-                                                    : ''
-                                                    }}>{{ $city->cityName }}</option>
+                                                <option value="{{ $city->id }}" {{ old('bCity', $member->billingAddress->bCity ?? '')==$city->id ? 'selected' : '' }}>{{ $city->cityName }}</option>
                                                 @endforeach
                                             </select>
                                             @error('bCity')
@@ -946,7 +950,8 @@
                                             <input type="text"
                                                 class="form-control @error('bPinCode') is-invalid @enderror"
                                                 id="bPinCode" name="bPinCode"
-                                                value="{{$member->billing->bPinCode ?? ''}}" placeholder="bPinCode">
+                                                value="{{$member->billingAddress->bPinCode ?? ''}}"
+                                                placeholder="bPinCode">
                                             <label for="bPinCode">Pin Code</label>
                                             @error('bPinCode')
                                             <div class="invalid-tooltip">
@@ -1094,7 +1099,8 @@
                                         <div class="form-floating">
                                             <input type="text"
                                                 class="form-control @error('idealRef') is-invalid @enderror"
-                                                id="idealRef" name="idealRef" value="{{$member->tops->idealRef ?? ''}}"
+                                                id="idealRef" name="idealRef"
+                                                value="{{$member->topsProfile->idealRef ?? ''}}"
                                                 placeholder="Ideal Refferance">
                                             <label for="idealRef">Ideal Referral</label>
                                             @error('idealRef')
@@ -1109,7 +1115,8 @@
                                             <input type="text"
                                                 class="form-control @error('topProduct') is-invalid @enderror"
                                                 id="topProduct" name="topProduct"
-                                                value="{{$member->tops->topProduct ?? ''}}" placeholder="topProduct">
+                                                value="{{$member->topsProfile->topProduct ?? ''}}"
+                                                placeholder="topProduct">
                                             <label for="topProduct">Top Product</label>
                                             @error('topProduct')
                                             <div class="invalid-tooltip">
@@ -1123,7 +1130,7 @@
                                             <input type="text"
                                                 class="form-control @error('topProblemSolved') is-invalid @enderror"
                                                 id="topProblemSolved" name="topProblemSolved"
-                                                value="{{$member->tops->topProblemSolved ?? ''}}"
+                                                value="{{$member->topsProfile->topProblemSolved ?? ''}}"
                                                 placeholder="topProblemSolved">
                                             <label for="topProblemSolved">Top Problem Solved</label>
                                             @error('topProblemSolved')
@@ -1138,7 +1145,7 @@
                                             <input type="text"
                                                 class="form-control @error('myFavBniStory') is-invalid @enderror"
                                                 id="myFavBniStory" name="myFavBniStory"
-                                                value="{{$member->tops->myFavBniStory ?? ''}}"
+                                                value="{{$member->topsProfile->myFavBniStory ?? ''}}"
                                                 placeholder="myFavBniStory">
                                             <label for="myFavBniStory">My Favourite BNI Story</label>
                                             @error('myFavBniStory')
@@ -1153,7 +1160,7 @@
                                             <input type="text"
                                                 class="form-control @error('myIdealRefPartner') is-invalid @enderror"
                                                 id="myIdealRefPartner" name="myIdealRefPartner"
-                                                value="{{$member->tops->myIdealRefPartner ?? ''}}"
+                                                value="{{$member->topsProfile->myIdealRefPartner ?? ''}}"
                                                 placeholder="myIdealRefPartner">
                                             <label for="myIdealRefPartner">My Ideal Refferal Partner</label>
                                             @error('myIdealRefPartner')
@@ -1269,7 +1276,7 @@
                                                 <input type="text"
                                                     class="form-control @error('weeklyPresent1') is-invalid @enderror"
                                                     id="weeklyPresent1" name="weeklyPresent1"
-                                                    value="{{$member->tops->weeklyPresent1 ?? ''}}"
+                                                    value="{{$member->topsProfile->weeklyPresent1 ?? ''}}"
                                                     placeholder="weeklyPresent1">
                                                 <label for="weeklyPresent1">Weekly Presentation 1</label>
                                                 @error('weeklyPresent1')
@@ -1284,7 +1291,7 @@
                                                 <input type="text"
                                                     class="form-control @error('weeklyPresent2') is-invalid @enderror"
                                                     id="weeklyPresent2" name="weeklyPresent2"
-                                                    value="{{$member->tops->weeklyPresent2 ?? ''}}"
+                                                    value="{{$member->topsProfile->weeklyPresent2 ?? ''}}"
                                                     placeholder="weeklyPresent2">
                                                 <label for="weeklyPresent2">Weekly Presentation 2</label>
                                                 @error('weeklyPresent2')
@@ -1316,7 +1323,7 @@
                                                 <input type="text"
                                                     class="form-control @error('yearsInBusiness') is-invalid @enderror"
                                                     id="yearsInBusiness" name="yearsInBusiness"
-                                                    value="{{$member->tops->yearsInBusiness ?? ''}}"
+                                                    value="{{$member->topsProfile->yearsInBusiness ?? ''}}"
                                                     placeholder="yearsInBusiness">
                                                 <label for="yearsInBusiness">Years In Business</label>
                                                 @error('yearsInBusiness')
@@ -1331,7 +1338,8 @@
                                                 <input type="text"
                                                     class="form-control @error('prevJobs') is-invalid @enderror"
                                                     id="prevJobs" name="prevJobs"
-                                                    value="{{$member->tops->prevJobs ?? ''}}" placeholder="prevJobs">
+                                                    value="{{$member->topsProfile->prevJobs ?? ''}}"
+                                                    placeholder="prevJobs">
                                                 <label for="prevJobs">Previous Types of Jobs</label>
                                                 @error('prevJobs')
                                                 <div class="invalid-tooltip">
@@ -1344,8 +1352,8 @@
                                             <div class="form-floating">
                                                 <input type="text"
                                                     class="form-control @error('spouse') is-invalid @enderror"
-                                                    id="spouse" name="spouse" value="{{$member->tops->spouse ?? ''}}"
-                                                    placeholder="spouse">
+                                                    id="spouse" name="spouse"
+                                                    value="{{$member->topsProfile->spouse ?? ''}}" placeholder="spouse">
                                                 <label for="spouse">Spouse</label>
                                                 @error('spouse')
                                                 <div class="invalid-tooltip">
@@ -1359,7 +1367,8 @@
                                                 <input type="text"
                                                     class="form-control @error('children') is-invalid @enderror"
                                                     id="children" name="children"
-                                                    value="{{$member->tops->children ?? ''}}" placeholder="children">
+                                                    value="{{$member->topsProfile->children ?? ''}}"
+                                                    placeholder="children">
                                                 <label for="children">Children</label>
                                                 @error('children')
                                                 <div class="invalid-tooltip">
@@ -1372,7 +1381,7 @@
                                             <div class="form-floating">
                                                 <input type="text"
                                                     class="form-control @error('pets') is-invalid @enderror" id="pets"
-                                                    name="pets" value="{{$member->tops->pets ?? ''}}"
+                                                    name="pets" value="{{$member->topsProfile->pets ?? ''}}"
                                                     placeholder="pets">
                                                 <label for="pets">Pets</label>
                                                 @error('pets')
@@ -1387,7 +1396,7 @@
                                                 <input type="text"
                                                     class="form-control @error('hobbiesInterests') is-invalid @enderror"
                                                     id="hobbiesInterests" name="hobbiesInterests"
-                                                    value="{{$member->tops->hobbiesInterests ?? ''}}"
+                                                    value="{{$member->topsProfile->hobbiesInterests ?? ''}}"
                                                     placeholder="hobbiesInterests">
                                                 <label for="hobbiesInterests">Hobbies & Interests</label>
                                                 @error('hobbiesInterests')
@@ -1402,7 +1411,8 @@
                                                 <input type="text"
                                                     class="form-control @error('cityofRes') is-invalid @enderror"
                                                     id="cityofRes" name="cityofRes"
-                                                    value="{{$member->tops->cityofRes ?? ''}}" placeholder="cityofRes">
+                                                    value="{{$member->topsProfile->cityofRes ?? ''}}"
+                                                    placeholder="cityofRes">
                                                 <label for="cityofRes">City of Residence</label>
                                                 @error('cityofRes')
                                                 <div class="invalid-tooltip">
@@ -1416,7 +1426,7 @@
                                                 <input type="text"
                                                     class="form-control @error('yearsInCity') is-invalid @enderror"
                                                     id="yearsInCity" name="yearsInCity"
-                                                    value="{{$member->tops->yearsInCity ?? ''}}"
+                                                    value="{{$member->topsProfile->yearsInCity ?? ''}}"
                                                     placeholder="yearsInCity">
                                                 <label for="yearsInCity">Years In City</label>
                                                 @error('yearsInCity')
@@ -1431,7 +1441,7 @@
                                                 <input type="text"
                                                     class="form-control @error('myBurningDesire') is-invalid @enderror"
                                                     id="myBurningDesire" name="myBurningDesire"
-                                                    value="{{$member->tops->myBurningDesire ?? ''}}"
+                                                    value="{{$member->topsProfile->myBurningDesire ?? ''}}"
                                                     placeholder="myBurningDesire">
                                                 <label for="myBurningDesire">My Burning Desire</label>
                                                 @error('myBurningDesire')
@@ -1446,7 +1456,7 @@
                                                 <input type="text"
                                                     class="form-control @error('dontKnowAboutMe') is-invalid @enderror"
                                                     id="dontKnowAboutMe" name="dontKnowAboutMe"
-                                                    value="{{$member->tops->dontKnowAboutMe ?? ''}}"
+                                                    value="{{$member->topsProfile->dontKnowAboutMe ?? ''}}"
                                                     placeholder="dontKnowAboutMe">
                                                 <label for="dontKnowAboutMe">Something No One Here Knows About
                                                     Me</label>
@@ -1462,7 +1472,7 @@
                                                 <input type="text"
                                                     class="form-control @error('mKeyToSuccess') is-invalid @enderror"
                                                     id="mKeyToSuccess" name="mKeyToSuccess"
-                                                    value="{{$member->tops->mKeyToSuccess ?? ''}}"
+                                                    value="{{$member->topsProfile->mKeyToSuccess ?? ''}}"
                                                     placeholder="mKeyToSuccess">
                                                 <label for="mKeyToSuccess">My Key To Success</label>
                                                 @error('mKeyToSuccess')

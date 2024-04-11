@@ -53,12 +53,18 @@ class TrainingController extends Controller
     {
         $this->validate($request, [
             'trainerId' => 'required',
-            'topic' => 'required',
+            // 'topic' => 'required',
         ]);
         try {
             $training = new Training();
             $training->trainerId = $request->trainerId;
-            $training->topic = $request->topic;
+            $training->externalTrainer = $request->trainerName;
+            $training->title = $request->title;
+            $training->type = $request->type;
+            $training->fees = $request->fees;
+            $training->venue = $request->venue;
+            $training->date = $request->date;
+            $training->time = $request->time;
             $training->status = 'Active';
 
             $training->save();
@@ -74,7 +80,7 @@ class TrainingController extends Controller
     {
         try {
             $training = Training::find($id);
-            $trainer = TrainerMaster::where('status', '!=', 'Deleted')->get();
+            $trainer = TrainerMaster::where('status', 'Active')->get();
             return view('admin.training.edit', compact('training', 'trainer'));
         } catch (\Throwable $th) {
             throw $th;
@@ -85,15 +91,20 @@ class TrainingController extends Controller
     public function update(Request $request)
     {
         $this->validate($request, [
-            'trainerId' => 'required',
-            'topic' => 'required',
+            // 'trainerId' => 'required',
 
         ]);
         try {
             $id = $request->id;
             $training = Training::find($id);
             $training->trainerId = $request->trainerId;
-            $training->topic = $request->topic;
+            $training->externalTrainer = $request->trainerName;
+            $training->title = $request->title;
+            $training->type = $request->type;
+            $training->fees = $request->fees;
+            $training->venue = $request->venue;
+            $training->date = $request->date;
+            $training->time = $request->time;
             $training->status = 'Active';
 
             $training->save();
