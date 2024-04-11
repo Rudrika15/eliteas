@@ -35,7 +35,8 @@
         action="{{ route('circlemember.update') }}" novalidate>
         @csrf
         {{-- <input type="hidden" name="memberId" value="{{ $memberId }}"> --}}
-        <input type="hidden" name="memberId" value="{{ $member->id }}">
+        {{-- <input type="hidden" name="memberId" value="{{ $member->id }}"> --}}
+        <input type="hidden" name="id" value="{{ $member->id }}">
         {{-- <input type="hidden" name="id" value="{{ $memberId }}"> --}}
         <div class="row mb-3">
             <div class="col-md-6">
