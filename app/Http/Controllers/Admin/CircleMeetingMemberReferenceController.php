@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\CircleMeeting;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
+use App\Models\CircleMeetingMembersBusiness;
 use App\Models\CircleMeetingMembersReference;
 use Illuminate\Support\Facades\Auth;
 
@@ -76,12 +77,17 @@ class CircleMeetingMemberReferenceController extends Controller
             // 'hotelName' => 'required',
         ]);
 
-        // return $request;
+
+        return $request;
         try {
             $refGiver = new CircleMeetingMembersReference();
             $refGiver->memberId = $request->memberId;
             $refGiver->referenceGiverId = Auth::user()->id;
-            $refGiver->contactName = $request->contactName;
+            if ($request->group == 'internal')
+                $refGiver->contactName = $request->contactNameInternal;
+            else
+                $refGiver->contactName = $request->contactNameExternal;
+
             $refGiver->contactNo = $request->contactNo;
             $refGiver->email = $request->email;
             $refGiver->scale = $request->scale;
@@ -89,6 +95,15 @@ class CircleMeetingMemberReferenceController extends Controller
             $refGiver->status = 'Active';
 
             $refGiver->save();
+
+
+            $busGiver = new CircleMeetingMembersBusiness();
+            // $busGiver->memberId = $request->memberId;
+            $busGiver->businessGiver = $request->businessGiver;
+            $busGiver->loginMember = $request->loginMember;
+            $busGiver->amount = $request->amount;
+            $busGiver->date = $request->date;
+            $busGiver->status = 'Active';
 
             return redirect()->route('refGiver.index')->with('success', ' Created Successfully!');
         } catch (\Throwable $th) {

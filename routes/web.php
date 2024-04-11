@@ -162,6 +162,9 @@ Route::group(['middleware' => ['auth']], function () {
     // old get member
     Route::get('get-member', [CircleCallController::class, 'getMember'])->name('getMember');
 
+    Route::get("get-member-circle-master-modal", function () {
+        return view('circleMemberMaster');
+    });
 
     // referance giver
     Route::get('get-member-for-ref', [CircleCallController::class, 'getMemberForRef'])->name('getMemberForRef');
@@ -233,9 +236,4 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('bCategory/edit/{id?}', [BusinessCategoryController::class, 'edit'])->name('bCategory.edit');
     Route::post('bCategory/update', [BusinessCategoryController::class, 'update'])->name('bCategory.update');
     Route::get('bCategory/delete/{id?}', [BusinessCategoryController::class, 'delete'])->name('bCategory.delete');
-
-
-
-
-
 });
