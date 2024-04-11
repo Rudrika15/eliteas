@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
 use App\Models\CircleMeetingMembersBusiness;
 use App\Models\CircleMeetingMembersReference;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 class CircleMeetingMemberReferenceController extends Controller
@@ -78,7 +79,7 @@ class CircleMeetingMemberReferenceController extends Controller
         ]);
 
 
-        return $request;
+        // return $request;
         try {
             $refGiver = new CircleMeetingMembersReference();
             $refGiver->memberId = $request->memberId;
@@ -99,11 +100,12 @@ class CircleMeetingMemberReferenceController extends Controller
 
             $busGiver = new CircleMeetingMembersBusiness();
             // $busGiver->memberId = $request->memberId;
-            $busGiver->businessGiver = $request->businessGiver;
-            $busGiver->loginMember = $request->loginMember;
+            $busGiver->businessGiverId = Auth::user()->id;
+            $busGiver->loginMemberId = $refGiver->memberId;
             $busGiver->amount = $request->amount;
-            $busGiver->date = $request->date;
+            $busGiver->date = Carbon::now()->toDateString();
             $busGiver->status = 'Active';
+            $busGiver->save();
 
             return redirect()->route('refGiver.index')->with('success', ' Created Successfully!');
         } catch (\Throwable $th) {

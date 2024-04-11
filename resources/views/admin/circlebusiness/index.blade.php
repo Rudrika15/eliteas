@@ -4,11 +4,11 @@
 @section('content')
 
     {{-- Message --}}
-    <div class="alert alert-success alert-block">
-        <button type="button" class="close" data-dismiss="alert">×</button>
-        <strong>test</strong>
-    </div>
     @if (Session::has('success'))
+        <div class="alert alert-success alert-block">
+            <button type="button" class="close" data-dismiss="alert">×</button>
+            <strong>{{ $message }}</strong>
+        </div>
     @endif
 
     @if (Session::has('error'))
@@ -24,7 +24,7 @@
         <div class="card-body">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h4 class="mb-0 mt-3">Circle Meeting Member Business</h4>
-                <a href="{{ route('busGiver.create') }}" class="btn btn-primary btn-sm mt-3">ADD</a>
+                {{-- <a href="{{ route('busGiver.create') }}" class="btn btn-primary btn-sm mt-3">ADD</a> --}}
             </div>
 
             <!-- Table with stripped rows -->
@@ -32,7 +32,7 @@
                 <thead>
                     <tr>
                         <th>Business Giver</th>
-                        <th>Login Member</th>
+                        {{-- <th>Login Member</th> --}}
                         <th>Amount</th>
                         <th>Date</th>
                         <th>Status</th>
@@ -42,8 +42,8 @@
                 <tbody>
                     @foreach ($busGiver as $busGiverData)
                         <tr>
-                            <td>{{ $busGiverData->businessGiver ?? '-' }}</td>
-                            <td>{{ $busGiverData->loginMember ?? '-' }}</td>
+                            <td>{{ $busGiverData->businessGiver->firstName . ' ' . $busGiverData->businessGiver->lastName ?? '-' }}</td>
+                            {{-- <td>{{ $busGiverData->loginMember->firstName . ' ' . $busGiverData->loginMember->lastName ?? '-' }}</td> --}}
                             <td>{{ $busGiverData->amount ?? '-' }}</td>
                             <td>{{ $busGiverData->date ?? '-' }}</td>
                             <td>{{ $busGiverData->status }}</td>
