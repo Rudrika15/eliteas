@@ -48,9 +48,9 @@
             <tbody>
                 @foreach ($training as $trainingData)
                 <tr>
-                    <td>{{$trainingData->trainer->trainerName ?? '-'}}</td>
+                    <td>{{$trainingData->member->firstName ?? '-'}} {{$trainingData->member->lastName ?? '-'}}</td>
                     <td>{{$trainingData->title}}</td>
-                    <td>{{$trainingData->externalTrainer}}</td>
+                    <td>{{$trainingData->externalTrainerId ?? '-'}}</td>
                     <td>{{$trainingData->type}}</td>
                     <td>{{$trainingData->fees}}</td>
                     <td>{{$trainingData->venue}}</td>

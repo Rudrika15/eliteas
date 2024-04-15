@@ -3,15 +3,16 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\City;
+use App\Utils\Utils;
 use App\Models\State;
 use App\Models\Circle;
 use App\Models\Member;
 use App\Models\Country;
 use App\Models\CircleMember;
 use Illuminate\Http\Request;
+use App\Models\BusinessCategory;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
-use App\Utils\Utils;
 
 class CircleMemberController extends Controller
 {
@@ -110,4 +111,50 @@ class CircleMemberController extends Controller
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
+
+    //api for circle wise member data 
+
+    public function circleWiseMember(Request $request)
+    {
+        try {
+            // Fetch members with related data
+            $circlesData = [];
+            $circles = Circle::where('status', 'Active')->get();
+            foreach ($circles as $circle) {
+                $circlesData[$circle->id]['circle'] = $circle;
+                $circlesData[$circle->id]['members'] = $circle->members()->get()->toArray();
+            }
+            // You can return data using Utils::sendResponse for API response
+            return Utils::sendResponse($circlesData, 'Data retrieved successfully', 200);
+        } catch (\Throwable $th) {
+            // Handle exceptions and return error response
+            return Utils::errorResponse([
+                'error' => $th->getMessage()
+            ], 'Internal Server Error', 500);
+        }
+    }
+
+    // public function circleWiseMember(Request $request)
+    // {
+    //     try {
+    //         // Fetch active circles with their members
+    //         $circles = Circle::where('status', 'Active')
+    //         ->with('members')
+    //             ->get();
+
+    //         // You can return data using Utils::sendResponse for API response
+    //         return Utils::sendResponse([
+    //             'circles' => $circles
+    //         ], 'Data retrieved successfully', 200);
+    //     } catch (\Throwable $th) {
+    //         // Handle exceptions and return error response
+    //         return Utils::errorResponse([
+    //             'error' => $th->getMessage()
+    //         ], 'Internal Server Error', 500);
+    //     }
+    // }
+
+
+
 }
+

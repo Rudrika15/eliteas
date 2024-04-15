@@ -47,4 +47,10 @@ class Circle extends Model
     {
         return $this->hasMany(Schedule::class);
     }
+
+    public function members()
+    {
+        return $this->belongsTo(Member::class, 'id', 'circleId');
+    }
+
 }

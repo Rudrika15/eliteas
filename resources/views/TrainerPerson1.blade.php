@@ -1,9 +1,9 @@
-<button type="button" class="btn btn-primary " data-bs-toggle="modal" data-bs-target="#circleContactPerson">
-    Select Referral Person
+<button type="button" class="btn btn-primary " data-bs-toggle="modal" data-bs-target="#circleMaster">
+    Select Trainer Member
 </button>
 
 <!-- Modal -->
-<div class="modal fade" id="circleContactPerson" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+<div class="modal fade" id="circleMaster" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
     aria-labelledby="staticBackdropLabel" aria-hidden="true">
 
     <div class="modal-dialog modal-xl modal-dialog-scrollable">
@@ -15,12 +15,15 @@
                     <div class="col-md-12 border-bottom pb-3">
                         <span class="button"></span>
                         {{-- <h2> Circles </h2> --}}
-                        <div class="row row-cols-4 g-4 circleContactCards">
+                        <div class="row row-cols-4 g-4 circleMemberCards">
+
                             <!-- Circle cards will be populated dynamically via JavaScript -->
                         </div>
+
                     </div>
+
                     <div class="col-md-12 p-3 ">
-                        <div class="circleContactMembers">
+                        <div class="circleMembersList">
 
                         </div>
                     </div>
@@ -43,4 +46,4 @@
 
 
 <link rel="stylesheet" href="{{ asset('css/circleMemberMaster.css') }}">
-<script src="{{ asset('js/circleContactPerson.js') }}"></script>
+<script src="{{ asset('js/trainerPerson1.js') }}"></script>
