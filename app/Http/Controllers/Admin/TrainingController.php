@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Models\TrainerMaster;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Hash;
 
 class TrainingController extends Controller
 {
@@ -52,34 +53,20 @@ class TrainingController extends Controller
     }
 
     public function store(Request $request)
-    {
 
-        // return $request;
-        // Validate the incoming request data
-        $request->validate([
-            // 'trainerId' => 'required',
-            // 'title' => 'required',
-            // 'fees' => 'required|numeric',
-            // 'type' => 'required|in:Online,Offline',
-            // // 'meetingLink' => 'required_if:type,Online|url',
-            // // 'venue' => 'required_if:type,Offline',
-            // 'date' => 'required|date',
-            // 'time' => 'required|date_format:H:i',
-            // 'duration' => 'required',
-            // 'note' => 'nullable|string',
-            // 'meetingPersonName' => 'required',
-            // 'meetingPersonContact' => 'required',
-            // 'meetingPersonEmail' => 'required|email',
-            // 'group' => 'required|in:internal,external',
-            // 'groupMember' => 'required|in:internalMember,externalMember',
-            // 'contactPersonName' => $request->input('group') == 'internal' ? 'required_if:group,internal' : 'required_if:group,external',
-            // 'contactPersonContact' => 'required',
-            // 'contactPersonEmail' => 'required|email',
+    {
+        // return request()->all();
+        // Validate the incoming request data (you may need to add more validation rules)
+        $this->validate($request, [
+            'title' => 'required',
+            'fees' => 'required|numeric',
+            'type' => 'required',
+            'date' => 'required|date',
+            'time' => 'required',
+            'duration' => 'required',
         ]);
 
-        
-        
-        // Create a new Training instance and fill it with validated data
+        // Create a new Training record
         $training = new Training();
         $training->trainerId = $request->memberId;
         $training->title = $request->title;
@@ -91,14 +78,83 @@ class TrainingController extends Controller
         $training->time = $request->time;
         $training->duration = $request->duration;
         $training->note = $request->note;
-        // Save the training record
         $training->save();
 
-        $trainer = new TrainerMaster();
-        $trainer->userId = $request->memberId;
-        $trainer->trainerName = $request->trainerName;
+        // Process Trainer 1
+        if ($request->has('groupMember')) {
+            if ($request->input('groupMember') === 'internalMember') {
+                // Trainer 1 internal
+                $trainer1 = new TrainerMaster();
+                $trainer1->userId = $request->memberId; 
+                $trainer1->trainerName = $request->memberName; 
+                $trainer1->save();
+
+                $user1 = User::findOrFail($trainer1->userId);
+                $user1->assignRole('Trainer');
+            } elseif ($request->input('groupMember') === 'externalMember') {
+                // Trainer 1  external
+                $user1 = new User();
+                $user1->firstName = $request->memberName;
+                $user1->email = $request->email;
+                $user1->password = Hash::make('123456');
+                $user1->assignRole('Trainer');
+                $user1->save();
+
+                $trainer1 = new TrainerMaster();
+                $trainer1->userId = $user1->id;
+                $trainer1->trainerName = $user1->memberNameExternal;
+                $trainer1->save();
+
+            }
+        }
+
+        // Trainer 2
 
 
+        $training = new Training();
+        $training->trainerId = $request->trainerMemberId2;
+        $training->title = $request->title;
+        $training->fees = $request->fees;
+        $training->type = $request->type;
+        $training->meetingLink = $request->meetingLink;
+        $training->venue = $request->venue;
+        $training->date = $request->date;
+        $training->time = $request->time;
+        $training->duration = $request->duration;
+        $training->note = $request->note;
+        $training->save();
+
+
+
+        if ($request->has('group')) {
+            if ($request->input('group') === 'internal') {
+                // Trainer 2 is internal
+                $trainer2 = new TrainerMaster();
+                $trainer2->userId = $request->trainerMemberId2; // Assuming trainerMemberId2 is used for internal trainers
+                $trainer2->trainerName = $request->trainerNameInternal; // Assuming trainerMemberId2 is used for internal trainers
+                $trainer2->save();
+
+                // Assign 'Trainer' role to the user associated with Trainer 2
+                $user2 = User::findOrFail($trainer2->userId);
+                $user2->assignRole('Trainer');
+
+            } elseif ($request->input('group') === 'external') {
+                // Trainer 2 is external
+                $user2 = new User();
+                $user2->firstName = $request->trainerNameExternal;
+                $user2->email = $request->email2;
+                $user2->password = Hash::make('123456'); // Set a default password or generate one securely
+                $user2->assignRole('Trainer');
+                $user2->save();
+
+                $trainer2 = new TrainerMaster();
+                $trainer2->userId = $user2->id;
+                $trainer2->trainerName = $user2->trainerNameExternal;
+                $trainer2->save();
+
+                // Assign 'Trainer' role to the user associated with Trainer 2
+            }
+        }
 
         // Redirect the user after successful submission
         return redirect()->route('training.index')->with('success', 'Training details saved successfully.');

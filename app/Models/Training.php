@@ -17,7 +17,7 @@ class Training extends Model
 
     public function member()
     {
-        return $this->belongsTo(Member::class, 'trainerId', 'Id');
+        return $this->belongsTo(Member::class, 'trainerId', 'userId');
     }
 
 }

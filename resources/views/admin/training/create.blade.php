@@ -34,7 +34,7 @@
         action="{{ route('training.store') }}" novalidate>
         @csrf
 
-    {{-- Trainer 1 Start --}}
+        {{-- Trainer 1 Start --}}
 
         <h3><b>Trainer 1</b></h3>
         <hr>
@@ -73,7 +73,7 @@
 
                                 <!-- Searchable input field -->
                                 <input type="text" name="memberName" class="form-control" id="trainerName"
-                                    placeholder="Select Member">
+                                    name="memberName" placeholder="Select Member">
                                 <label for="memberName">Trainer Name</label>
                                 @error('memberId')
                                 <div class="invalid-tooltip">
@@ -115,7 +115,7 @@
                     <div class="col-md-12">
                         <div class="form-floating mt-3">
                             <input type="text" class="form-control @error('email') is-invalid @enderror"
-                                id="trainerEmail" placeholder="email">
+                                id="trainerEmail" name="email" placeholder="email">
                             <label for="email">Email</label>
                             @error('email')
                             <div class="invalid-tooltip">
@@ -128,9 +128,9 @@
             </div>
         </div>
 
-            {{-- Triainer 1 End --}}
+        {{-- Triainer 1 End --}}
 
-            {{-- Trainer 2 Start --}}
+        {{-- Trainer 2 Start --}}
         <br>
         <br>
         <h3><b>Trainer 2</b></h3>
@@ -159,6 +159,7 @@
                     </div>
                 </div>
             </div>
+
             <div class="row">
                 <div class="col-md-12" id="memberListDropdown" style="display:none;">
                     <div class="form-floating mt-3">
@@ -166,8 +167,8 @@
                             <div class="col-md-4">
                                 @include('trainerPerson2')
                             </div>
-                            <div class="col-md-8">  
-                                <input type="hidden" class="form-control" name="memberId2">
+                            <div class="col-md-8">
+                                <input type="hidden" class="form-control" name="trainerMemberId2" id="trainerId2">
                                 <div class="form-floating">
                                     <input type="text" class="form-control contactName" id="trainerName2"
                                         name="trainerNameInternal" placeholder="Trainer Name Internal">
@@ -181,7 +182,7 @@
                 </div>
                 <div class="col-md-12" id="memberListInput" style="display:none;">
                     <div class="form-floating mt-3">
-                        <input type="text" class="form-control @error('trainerName') is-invalid @enderror" id=""
+                        <input type="text" class="form-control @error('trainerName') is-invalid @enderror" id="trainerNameExternal"
                             name="trainerNameExternal" placeholder="Trainer Name">
                         <label for="trainerName">Trainer Name</label>
                         @error('trainerName')
@@ -206,9 +207,9 @@
                 </div>
                 <div class="col-md-12">
                     <div class="form-floating mt-3">
-                        <input type="text" class="form-control @error('email') is-invalid @enderror"
-                            id="trainerEmail2" name="email" placeholder="email">
-                        <label for="email">Email</label>
+                        <input type="text" class="form-control @error('email') is-invalid @enderror" id="trainerEmail2"
+                            name="email2" placeholder="email2">
+                        <label for="email2">Email</label>
                         @error('email')
                         <div class="invalid-tooltip">
                             {{ $message }}
@@ -353,9 +354,6 @@
             </div>
         </div>
 
-
-
-
 </div>
 
 <div class="text-center mt-3">
@@ -394,7 +392,6 @@
         selectElement.onchange();
     });
 </script>
-
 
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
