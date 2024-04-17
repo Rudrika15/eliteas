@@ -79,6 +79,20 @@
                 </div>
             </div>
 
+            <div class="col-md-6">
+                <div class="form-floating mt-3">
+                    <input type="number" class="form-control @error('amount') is-invalid @enderror" id="amount"
+                        name="amount" placeholder="amount" required>
+                    <label for="amount">Amount</label>
+                    @error('amount')
+                    <div class="invalid-tooltip">
+                        {{ $message }}
+                    </div>
+                    @enderror
+                </div>
+            </div>
+            
+
         </div>
         <div class="text-center">
             <button type="submit" class="btn btn-primary">Submit</button>
