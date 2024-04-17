@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Schedule;
+use App\Models\Training;
+use App\Models\TrainingRegister;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
@@ -25,6 +29,28 @@ class HomeController extends Controller
     public function index()
     {
         $count = Schedule::where('status', 'Active')->count();
-        return view('home', compact('count'));
+        $currentDate = Carbon::now()->toDateString();
+        $nearestTraining = Training::where('status', 'Active')
+            ->whereDate('date', '>=', $currentDate)
+            ->with('trainers.user')
+            ->orderBy('date', 'asc')
+            ->first();
+
+        $findRegister = TrainingRegister::where('userId', Auth::user()->id)
+            ->where('trainingId', $nearestTraining->id)
+            ->where('trainerId', $nearestTraining->trainers->user->id)
+            ->get();
+
+        return view('home', compact('count', 'nearestTraining', 'findRegister'));
+    }
+
+    public function trainingRegister($trainingId, $trainerId)
+    {
+        $register = new TrainingRegister();
+        $register->userId = Auth::user()->id;
+        $register->trainingId = $trainingId;
+        $register->trainerId = $trainerId;
+        $register->save();
+        return redirect()->back()->with('success', 'Training Registered Successfully');
     }
 }

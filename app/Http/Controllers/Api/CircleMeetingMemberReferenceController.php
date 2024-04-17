@@ -49,51 +49,57 @@ class CircleMeetingMemberReferenceController extends Controller
 
     public function create(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+
+        $rules = [
             'memberId' => 'required',
-            'contactNo' => 'required',
-            'email' => 'required|email',
+            // 'contactNo' => 'required',
+            // 'email' => 'required|email',
             'scale' => 'required',
             'description' => 'required',
             'group' => 'required|in:internal,external',
             'contactNameInternal' => 'required_if:group,internal',
             'contactNameExternal' => 'required_if:group,external',
-            'amount' => 'required|numeric',
-        ]);
+        ];
 
+
+        $validator = Validator::make($request->all(), $rules);
         if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
+            return $validator->errors();
         }
+        // return Auth::user()->id;
 
         try {
+            // Create a new reference instance
             $refGiver = new CircleMeetingMembersReference();
             $refGiver->referenceGiverId = Auth::user()->id;
             $refGiver->memberId = $request->memberId;
+            $refGiver->contactNo = $request->contactNo;
+            $refGiver->email = $request->email;
+            $refGiver->scale = $request->scale;
+            $refGiver->description = $request->description;
+            $refGiver->status = 'Active';
 
+            // Determine contact name based on group type
             if ($request->group == 'internal') {
                 $refGiver->contactName = $request->contactNameInternal;
             } else {
                 $refGiver->contactName = $request->contactNameExternal;
             }
 
-            $refGiver->contactNo = $request->contactNo;
-            $refGiver->email = $request->email;
-            $refGiver->scale = $request->scale;
-            $refGiver->description = $request->description;
-            $refGiver->status = 'Active';
             $refGiver->save();
 
+            // Create a new business instance
             $busGiver = new CircleMeetingMembersBusiness();
             $busGiver->businessGiverId = Auth::user()->id;
             $busGiver->loginMemberId = $refGiver->memberId;
-            // $busGiver->amount = $request->amount;
             $busGiver->date = Carbon::now()->toDateString();
             $busGiver->status = 'Active';
             $busGiver->save();
 
-            return redirect()->route('refGiver.index')->with('success', 'Created Successfully!');
+            return Utils::sendResponse(['refGiver' => $refGiver, 'busGiver' => $busGiver], 'Circle Meeting Member Reference created Successfully!', 200);
         } catch (\Throwable $th) {
-            return redirect()->route('servererror');
+            return $th;
+            // return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
 

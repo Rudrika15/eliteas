@@ -62,6 +62,7 @@ class CityController extends Controller
             $city->countryId = $request->countryId;
             $city->stateId = $request->stateId;
             $city->cityName = $request->cityName;
+            $city->amount = $request->amount;
             $city->status = 'Active';
 
             $city->save();
@@ -98,6 +99,7 @@ class CityController extends Controller
             $city->countryId = $request->countryId;
             $city->stateId = $request->stateId;
             $city->cityName = $request->cityName;
+            $city->amount = $request->amount;
             $city->status = 'Active';
 
             $city->save();

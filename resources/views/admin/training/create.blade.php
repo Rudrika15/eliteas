@@ -165,7 +165,7 @@
                     <div class="form-floating mt-3">
                         <div class="row">
                             <div class="col-md-4">
-                                @include('trainerPerson2')
+                                @include('TrainerPerson2')
                             </div>
                             <div class="col-md-8">
                                 <input type="hidden" class="form-control" name="trainerMemberId2" id="trainerId2">

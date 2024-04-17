@@ -4,7 +4,8 @@
 <head>
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-
+    {{-- add csrf --}}
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Dashboard - Admin</title>
     <meta content="" name="description">
     <meta content="" name="keywords">
@@ -259,7 +260,7 @@
         <ul class="sidebar-nav" id="sidebar-nav">
 
             <li class="nav-item">
-                <a class="nav-link " href="#">
+                <a class="nav-link" href="/">
                     <i class="bi bi-grid"></i>
                     <span>Dashboard</span>
                 </a>
