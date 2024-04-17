@@ -25,6 +25,7 @@ use App\Http\Controllers\Admin\BusinessCategoryController;
 use App\Http\Controllers\Admin\CircleMeetingMembersController;
 use App\Http\Controllers\Admin\CircleMeetingMemberBusinessController;
 use App\Http\Controllers\Admin\CircleMeetingMemberReferenceController;
+use App\Http\Controllers\Admin\PaymentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -236,4 +237,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('bCategory/edit/{id?}', [BusinessCategoryController::class, 'edit'])->name('bCategory.edit');
     Route::post('bCategory/update', [BusinessCategoryController::class, 'update'])->name('bCategory.update');
     Route::get('bCategory/delete/{id?}', [BusinessCategoryController::class, 'delete'])->name('bCategory.delete');
+
+    // payment
+    Route::post('/razorpay-payment', [PaymentController::class, 'store'])->name('razorpay.payment.store');
+    Route::get('/trainingRegister/{trainingId?}/{trainerId?}', [HomeController::class, 'trainingRegister'])->name('training.register');
 });

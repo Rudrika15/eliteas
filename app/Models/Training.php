@@ -13,4 +13,8 @@ class Training extends Model
     {
         return $this->belongsTo(TrainerMaster::class, 'id');
     }
+    public function trainers()
+    {
+        return $this->belongsTo(TrainerMaster::class, 'trainerId');
+    }
 }
