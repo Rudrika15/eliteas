@@ -82,8 +82,9 @@ class CircleMeetingMemberReferenceController extends Controller
         // return $request;
         try {
             $refGiver = new CircleMeetingMembersReference();
-            $refGiver->memberId = $request->memberId;
             $refGiver->referenceGiverId = Auth::user()->id;
+            $refGiver->memberId = $request->memberId;
+
             if ($request->group == 'internal')
                 $refGiver->contactName = $request->contactNameInternal;
             else

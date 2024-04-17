@@ -245,24 +245,23 @@ class CircleMemberController extends Controller
     }
 
 
-    public function edit(Request $request, $id)
+    public function edit($id)
     {
         try {
-
+            $user = User::find($id);
+            $member = Member::find($id);
             $countries = Country::where('status', 'Active')->get();
-            $businessCategory = BusinessCategory::where('status', 'Active')->get();
             $states = State::where('status', 'Active')->get();
             $cities = City::where('status', 'Active')->get();
             $contactDetails = ContactDetails::where('memberId', $id)->first();
             $billing = BillingAddress::where('memberId', $id)->first();
             $tops = TopsProfile::where('memberId', $id)->first();
-            $member = Member::find($id);
             $circles = Circle::where('status', 'Active')->get();
+            $businessCategory = BusinessCategory::where('status', 'Active')->get();
 
-            // Pass data to the view for editing
-            return view('admin.circlemember.edit', compact('circles', 'businessCategory', 'member', 'countries', 'states', 'cities', 'contactDetails', 'billing', 'tops'));
+
+            return view('admin.circlemember.edit', compact('countries', 'user', 'states', 'cities', 'member', 'contactDetails', 'billing', 'tops', 'circles', 'businessCategory'));
         } catch (\Throwable $th) {
-            // Handle exceptions appropriately
             throw $th;
             return view('servererror');
         }
@@ -271,29 +270,23 @@ class CircleMemberController extends Controller
 
     public function update(Request $request)
     {
-        $this->validate($request, [
-            'circleId' => 'required',
-            // Add validation rules for other fields if necessary
-        ]);
-
         try {
-            // Retrieve the circle member to update
-            // $circlemember = CircleMember::findOrFail($id);
-            // Update the user
-
-            $memberId = $request->memberId;
-
-
-            $user = User::findOrFail($memberId);
-            $user->firstName = $request->firstName;
-            $user->lastName = $request->lastName;
-            // $user->email = $request->email;
-            $user->password = Hash::make($request->password);
-            $user->assignRole('Member');
-            $user->save();
+            // return $request;
+            // Find the member
+            // return $member = $request->memberId;
+            // $memberId = $request->memberId;
+            $member = $request->id;
+            // Update only the fields that have new values
+        //   return   $user = User::findOrFail($id);
+        //     $user->firstName = $request->firstName;
+        //     $user->lastName = $request->lastName;
+        //     // $user->email = $request->email;
+        //     $user->password = Hash::make($request->password);
+        //     $user->assignRole('Member');
+        //     $user->save();
 
             // Update the member
-            $member = Member::findOrFail($user->id);
+            $member = Member::findOrFail($member);
             $member->circleId = $request->circleId;
             $member->title = $request->title;
             $member->firstName = $request->firstName;
@@ -411,14 +404,9 @@ class CircleMemberController extends Controller
             $billing->status = 'Active';
             $billing->save();
 
-            // Update the circle member
-            // $circlemember->circleId = $request->circleId;
-            // $circlemember->status = 'Active';
-            // $circlemember->save();
 
-            return redirect()->route('circlemember.index')->with('success', 'Circle Member Updated Successfully!');
+            return redirect()->route('circlemember.index')->with('success', 'Member Updated Successfully!');
         } catch (\Throwable $th) {
-            // Handle exceptions appropriately
             throw $th;
             return view('servererror');
         }

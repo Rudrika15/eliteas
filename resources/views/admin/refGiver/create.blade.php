@@ -45,7 +45,7 @@
                             <div class="form-floating">
 
                                 <!-- Searchable input field -->
-                                <input type="text" class="form-control" id="meetingPersonName" placeholder="Select Member">
+                                <input type="text" class="form-control" id="meetingPersonName" name="memberName" placeholder="Select Member">
                                 <label for="memberName">Member Name</label>
                                 @error('memberId')
                                     <div class="invalid-tooltip">

@@ -49,3 +49,21 @@
         font-weight: bold;
     }
 }
+
+.circle-contact-card-one {
+    border: 1px solid #dee2e6;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.circle-contact-card-one.active {
+    background-color: #144681;
+    color: #fff !important;
+
+    .circle-image {
+        background-color: #fff;
+        color: #144681;
+        font-weight: bold;
+    }
+}

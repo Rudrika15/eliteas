@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\ForgetPasswordController;
 use App\Http\Controllers\Api\CircleMeetingMembersController;
 use App\Http\Controllers\Api\CircleMeetingMemberBusinessController;
 use App\Http\Controllers\Api\CircleMeetingMemberReferenceController;
+use App\Models\CircleMember;
 
 /*
 |--------------------------------------------------------------------------
@@ -41,6 +42,9 @@ Route::post('/login', [LoginController::class, 'login']);
 //forgot password
 Route::post('/forgot-password', [ForgetPasswordController::class, 'forgotPassword']);
 // Route::post('/reset-password', [ForgetPasswordController::class, 'resetPassword']);
+
+// Route::post('circle-meeting-member-references-create', [CircleMeetingMemberReferenceController::class, 'create']);
+
 
 Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/user/profile', [LoginController::class, 'profile']);
@@ -140,4 +144,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     //search member 
     Route::post('search-member-index', [CircleCallController::class, 'searchmember']);
+
+    //circle wise mmeber
+    Route::get('circle-wise-member-index', [CircleMemberController::class, 'circleWiseMember']);
 });

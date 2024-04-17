@@ -1,9 +1,9 @@
-<button type="button" class="btn btn-primary " data-bs-toggle="modal" data-bs-target="#circleContactPerson">
-    Select Referral Person
+<button type="button" class="btn btn-primary " data-bs-toggle="modal" data-bs-target="#tranerPerson2">
+    Select Trainer Member 2
 </button>
 
 <!-- Modal -->
-<div class="modal fade" id="circleContactPerson" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+<div class="modal fade" id="tranerPerson2" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
     aria-labelledby="staticBackdropLabel" aria-hidden="true">
 
     <div class="modal-dialog modal-xl modal-dialog-scrollable">
@@ -43,4 +43,4 @@
 
 
 <link rel="stylesheet" href="{{ asset('css/circleMemberMaster.css') }}">
-<script src="{{ asset('js/circleContactPerson.js') }}"></script>
+<script src="{{ asset('js/trainerPerson2.js') }}"></script>

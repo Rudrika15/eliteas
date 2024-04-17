@@ -3,15 +3,16 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\City;
+use App\Utils\Utils;
 use App\Models\State;
 use App\Models\Circle;
 use App\Models\Member;
 use App\Models\Country;
 use App\Models\CircleMember;
 use Illuminate\Http\Request;
+use App\Models\BusinessCategory;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
-use App\Utils\Utils;
 
 class CircleMemberController extends Controller
 {
@@ -110,4 +111,142 @@ class CircleMemberController extends Controller
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
+
+    //api for circle wise member data 
+
+    // public function circleWiseMember(Request $request)
+    // {
+    //     try {
+    //         $circlesData = [];
+    //         $circles = Circle::where('status', 'Active')->get();
+
+    //         foreach ($circles as $circle) {
+    //             $circleData = $circle->toArray();
+    //             // unset($circleData['id']); // Remove 'id' from circle data
+
+    //             $circleMembers = $circle->members()->get()->toArray();
+    //             $circlesData[] = [
+    //                 'circle' => $circleData,
+    //                 'members' => $circleMembers
+    //             ];
+    //         }
+
+    //         // You can return data using Utils::sendResponse for API response
+    //         return Utils::sendResponse($circlesData, 'Data retrieved successfully', 200);
+    //     } catch (\Throwable $th) {
+    //         // Handle exceptions and return error response
+    //         return Utils::errorResponse([
+    //             'error' => $th->getMessage()
+    //         ], 'Internal Server Error', 500);
+    //     }
+    // }
+
+    // public function circleWiseMember(Request $request)
+    // {
+    //     try {
+    //         $circlesData = [];
+    //         $circles = Circle::where('status', 'Active')->get();
+
+    //         foreach ($circles as $circle) {
+    //             // Customize the fields you want to display for the circle
+    //             $circleData = [
+    //                 'id' => $circle->id,
+    //                 'name' => $circle->circleName,
+    //                 // Add more fields as needed
+    //             ];
+
+    //             // Fetch only specific fields for members
+    //             $circleMembers = $circle->members()->select('id', 'circleId', 'firstName', 'lastName')->get()->toArray();
+
+    //             $circlesData[] = [
+    //                 'circle' => $circleData,
+    //                 'members' => $circleMembers
+    //             ];
+    //         }
+
+    //         // You can return data using Utils::sendResponse for API response
+    //         return Utils::sendResponse($circlesData, 'Data retrieved successfully', 200);
+    //     } catch (\Throwable $th) {
+    //         // Handle exceptions and return error response
+    //         return Utils::errorResponse([
+    //             'error' => $th->getMessage()
+    //         ], 'Internal Server Error', 500);
+    //     }
+    // }
+
+
+    public function circleWiseMember(Request $request)
+    {
+        try {
+            $circlesData = [];
+            $circles = Circle::where('status', 'Active')->get();
+
+            foreach ($circles as $circle) {
+                // Customize the fields you want to display for the circle
+                $circleData = [
+                    'id' => $circle->id,
+                    'name' => $circle->circleName,
+                    // Add more fields as needed
+                ];
+
+                // Fetch members for the current circle
+                $circleMembers = $circle->members()->select('id', 'circleId', 'firstName', 'lastName')->get();
+
+                $membersData = [];
+
+                foreach ($circleMembers as $member) {
+                    // Fetch contact details for each member
+                    $memberContactDetails = $member->contactDetails()->select('id', 'memberId', 'mobileNo', 'email')->get()->toArray();
+
+                    $membersData[] = [
+                        'id' => $member->id,
+                        'firstName' => $member->firstName,
+                        'lastName' => $member->lastName,
+                        'contactDetails' => $memberContactDetails,
+                    ];
+                }
+
+                $circlesData[] = [
+                    'circle' => $circleData,
+                    'members' => $membersData,
+                ];
+            }
+
+            // You can return data using Utils::sendResponse for API response
+            return Utils::sendResponse($circlesData, 'Data retrieved successfully', 200);
+        } catch (\Throwable $th) {
+            // Handle exceptions and return error response
+            return Utils::errorResponse([
+                'error' => $th->getMessage()
+            ], 'Internal Server Error', 500);
+        }
+    }
+
+
+
+
+
+    // public function circleWiseMember(Request $request)
+    // {
+    //     try {
+    //         // Fetch active circles with their members
+    //         $circles = Circle::where('status', 'Active')
+    //         ->with('members')
+    //             ->get();
+
+    //         // You can return data using Utils::sendResponse for API response
+    //         return Utils::sendResponse([
+    //             'circles' => $circles
+    //         ], 'Data retrieved successfully', 200);
+    //     } catch (\Throwable $th) {
+    //         // Handle exceptions and return error response
+    //         return Utils::errorResponse([
+    //             'error' => $th->getMessage()
+    //         ], 'Internal Server Error', 500);
+    //     }
+    // }
+
+
+
 }
+
