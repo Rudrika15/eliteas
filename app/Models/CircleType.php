@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class CircleType extends Model
 {
     use HasFactory;
+
+    public function circle()
+    {
+        return $this->hasMany(Circle::class, 'id');
+    }
 }

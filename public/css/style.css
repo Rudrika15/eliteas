@@ -356,17 +356,26 @@ h6 {
 --------------------------------------------------------------*/
 .logo {
   line-height: 1;
+  display: flex;
+  justify-content: center;
+  padding-top: 10px;
 }
 
 @media (min-width: 1200px) {
   .logo {
     width: 280px;
+    display: flex;
+    justify-content: center;
   }
 }
 
 .logo img {
-  max-height: 26px;
+  max-height: 35px;
   margin-right: 6px;
+  height: 60px;
+  width: 100px;
+  display: flex;
+  justify-content: center;
 }
 
 .logo span {
@@ -1230,4 +1239,24 @@ h6 {
   text-align: center;
   font-size: 13px;
   color: #012970;
+}
+
+
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #144681;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #144681;
 }

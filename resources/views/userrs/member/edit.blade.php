@@ -25,7 +25,7 @@
 
 <div class="card">
     <div class="card-body d-flex justify-content-between align-items-center">
-        <h5 class="card-title">Edit Member</h5>
+        <h5 class="card-title">View Member</h5>
         <a href="{{ route('members.index') }}" class="btn btn-secondary btn-sm">BACK</a>
     </div>
 
@@ -34,6 +34,24 @@
         action="{{ route('members.update', $member->id) }}" novalidate>
         @csrf
         <input type="hidden" name="id" value="{{ $member->id }}">
+        {{-- <div class="col-md-6">
+            <div class="form-floating">
+                <select class="form-control" data-error='Circle Name Field is required' required name="circleId"
+                    id="circleId">
+                    <option value="" selected disabled> Select Circle </option>
+                    @foreach ($circles as $circleData)
+                    <option value="{{ $circleData->id }}" {{$circleData->id ==
+                        old('circleId',$circleData->circleId)?
+                        'selected':''}}>{{ $circleData->circleName }}</option>
+                    @endforeach
+                </select>
+                @error('circleId')
+                <div class="invalid-tooltip">
+                    {{ $message }}
+                </div>
+                @enderror
+            </div>
+        </div> --}}
         <div class="accordion" id="accordionExample">
             <!-- Section 1 -->
             <div class="accordion-item mt-3">
@@ -165,7 +183,7 @@
                             <div class="col-md-6 mt-3">
                                 <div class="form-floating">
                                     <input type="text" class="form-control @error('gstRegiState') is-invalid @enderror"
-                                        id="gstRegiState" name="gstRegiState" value="{{$member->gstRegistate}}"
+                                        id="gstRegiState" name="gstRegiState" value="{{$member->gstRegiState}}"
                                         placeholder="gstRegiState">
                                     <label for="gstRegiState">GST Registered State</label>
                                     @error('gstRegiState')
@@ -177,11 +195,11 @@
                             </div>
                             <div class="col-md-6 mt-3">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control @error('gStinPan') is-invalid @enderror"
-                                        id="gStinPan" name="gStinPan" value="{{$member->gStinPan}}"
+                                    <input type="text" class="form-control @error('gstinPan') is-invalid @enderror"
+                                        id="gstinPan" name="gstinPan" value="{{$member->gstinPan}}"
                                         placeholder="GSTIN / PAN">
-                                    <label for="gStinPan">GSTIN / PAN </label>
-                                    @error('gStinPan')
+                                    <label for="gstinPan">GSTIN / PAN </label>
+                                    @error('gstinPan')
                                     <div class="invalid-tooltip">
                                         {{ $message }}
                                     </div>
@@ -275,7 +293,7 @@
                                 <div class="form-floating">
                                     <input type="longText"
                                         class="form-control @error('myBusiness') is-invalid @enderror" id="myBusiness"
-                                        name="myBusiness" value="myBusiness" placeholder="myBusiness">
+                                        name="myBusiness" value="{{$member->myBusiness}}" placeholder="myBusiness">
                                     <label for="myBusiness">My Business</label>
                                     @error('myBusiness')
                                     <div class="invalid-tooltip">
@@ -385,28 +403,26 @@
                                 </div>
                             </div>
                             <div class="col-md-6 mt-3">
-                                <div class="form-floating">
-                                    <label for="profilePhoto">Profile Photo</label>
-                                    <input type="file" class="form-control-file" id="profilePhoto" name="profilePhoto"
+                                <div class="form-label-group mt-3">
+                                    <label for="profilePhoto" class="fw-bold">Profile Photo <sup
+                                            class="text-danger">*</sup></label>
+                                    <input type="file" class="form-control" id="profilePhoto" name="profilePhoto"
                                         accept="image/*" onchange="previewPhoto(event)">
-                                    <div id="photoPreview" class="mt-2"></div>
+                                    <img id="photoPreview" src="default.jpg" class="mt-2" width="100px" height="100px">
                                     @error('profilePhoto')
-                                    <div class="invalid-tooltip">
-                                        {{ $message }}
-                                    </div>
+                                    <span class="error">{{ $message }}</span>
                                     @enderror
                                 </div>
                             </div>
                             <div class="col-md-6 mt-3">
-                                <div class="form-floating">
-                                    <label for="companyLogo">Company Logo</label>
-                                    <input type="file" class="form-control-file" id="companyLogo" name="companyLogo"
+                                <div class="form-label-group mt-3">
+                                    <label for="companyLogo" class="fw-bold">Company Logo <sup
+                                            class="text-danger">*</sup></label>
+                                    <input type="file" class="form-control" id="companyLogo" name="companyLogo"
                                         accept="image/*" onchange="previewPhoto(event)">
-                                    <div id="photoPreview" class="mt-2"></div>
+                                    <img id="logoPreview" src="default.jpg" class="mt-2" width="100px" height="100px">
                                     @error('companyLogo')
-                                    <div class="invalid-tooltip">
-                                        {{ $message }}
-                                    </div>
+                                    <span class="error">{{ $message }}</span>
                                     @enderror
                                 </div>
                             </div>
@@ -540,7 +556,8 @@
                             <div class="col-md-6 mt-3">
                                 <div class="form-floating">
                                     <input type="text" class="form-control @error('phone') is-invalid @enderror"
-                                        id="phone" name="phone" value="{{$contactDetails->phone ?? ''}}" placeholder="phone">
+                                        id="phone" name="phone" value="{{$contactDetails->phone ?? ''}}"
+                                        placeholder="phone">
                                     <label for="phone">Phone </label>
                                     @error('phone')
                                     <div class="invalid-tooltip">
@@ -593,7 +610,8 @@
                             <div class="col-md-6 mt-3">
                                 <div class="form-floating">
                                     <input type="text" class="form-control @error('home') is-invalid @enderror"
-                                        id="home" name="home" value="{{$contactDetails->home ?? ''}}" placeholder="home">
+                                        id="home" name="home" value="{{$contactDetails->home ?? ''}}"
+                                        placeholder="home">
                                     <label for="home">Home</label>
                                     @error('home')
                                     <div class="invalid-tooltip">
@@ -634,7 +652,8 @@
                             <div class="col-md-6 mt-3">
                                 <div class="form-floating">
                                     <input type="text" class="form-control @error('pager') is-invalid @enderror"
-                                        id="pager" name="pager" value="{{$contactDetails->pager ?? ''}}" placeholder="pager">
+                                        id="pager" name="pager" value="{{$contactDetails->pager ?? ''}}"
+                                        placeholder="pager">
                                     <label for="pager">Pager</label>
                                     @error('pager')
                                     <div class="invalid-tooltip">
@@ -712,7 +731,8 @@
                             <div class="col-md-6 mt-3">
                                 <div class="form-floating">
                                     <input type="text" class="form-control @error('email') is-invalid @enderror"
-                                        id="email" name="email" value="{{$contactDetails->email ?? ''}}" placeholder="email">
+                                        id="email" name="email" value="{{$contactDetails->email ?? ''}}"
+                                        placeholder="email">
                                     <label for="email">Email</label>
                                     @error('email')
                                     <div class="invalid-tooltip">
@@ -754,8 +774,8 @@
                             <div class="col-md-6 mt-3">
                                 <div class="form-floating">
                                     <input type="text" class="form-control @error('bAddressLine1') is-invalid @enderror"
-                                        id="bAddressLine1" name="bAddressLine1" value="{{$billing->bAddressLine1 ?? ''}}"
-                                        placeholder="Billing Address Line 1">
+                                        id="bAddressLine1" name="bAddressLine1"
+                                        value="{{$billing->bAddressLine1 ?? ''}}" placeholder="Billing Address Line 1">
                                     <label for="bAddressLine1">Address Line 1</label>
                                     @error('bAddressLine1')
                                     <div class="invalid-tooltip">
@@ -767,8 +787,8 @@
                             <div class="col-md-6 mt-3">
                                 <div class="form-floating">
                                     <input type="text" class="form-control @error('bAddressLine2') is-invalid @enderror"
-                                        id="bAddressLine2" name="bAddressLine2" value="{{$billing->bAddressLine2 ?? ''}}"
-                                        placeholder="bAddressLine2">
+                                        id="bAddressLine2" name="bAddressLine2"
+                                        value="{{$billing->bAddressLine2 ?? ''}}" placeholder="bAddressLine2">
                                     <label for="bAddressLine2">Address Line 2 </label>
                                     @error('bAddressLine2')
                                     <div class="invalid-tooltip">
@@ -779,10 +799,15 @@
                             </div>
                             <div class="col-md-6 mt-3">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control @error('bCity') is-invalid @enderror"
-                                        id="bCity" name="bCity" value="{{$billing->bCity ?? ''}}" placeholder="bCity">
-                                    <label for="bCity">City</label>
-                                    @error('bCity')
+                                    <select class="form-select @error('bCountry') is-invalid @enderror" id="bCountry"
+                                        name="bCountry">
+                                        <option value="" selected>Select Country</option>
+                                        @foreach ($countries as $country)
+                                        <option value="{{ $country->id }}" {{ old('bCountry')==$country->id ? 'selected'
+                                            : '' }}>{{ $country->countryName }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('bCountry')
                                     <div class="invalid-tooltip">
                                         {{ $message }}
                                     </div>
@@ -791,9 +816,14 @@
                             </div>
                             <div class="col-md-6 mt-3">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control @error('bState') is-invalid @enderror"
-                                        id="bState" name="bState" value="{{$billing->bState ?? ''}}" placeholder="bState">
-                                    <label for="bState">State</label>
+                                    <select class="form-select @error('bState') is-invalid @enderror" id="bState"
+                                        name="bState">
+                                        <option value="" selected>Select State</option>
+                                        @foreach ($states as $state)
+                                        <option value="{{ $state->id }}" {{ old('bState')==$state->id ? 'selected' : ''
+                                            }}>{{ $state->stateName }}</option>
+                                        @endforeach
+                                    </select>
                                     @error('bState')
                                     <div class="invalid-tooltip">
                                         {{ $message }}
@@ -803,11 +833,15 @@
                             </div>
                             <div class="col-md-6 mt-3">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control @error('bCountry') is-invalid @enderror"
-                                        id="bCountry" name="bCountry" value="{{$billing->bCountry ?? ''}}"
-                                        placeholder="bCountry">
-                                    <label for="bCountry">Country</label>
-                                    @error('bCountry')
+                                    <select class="form-select @error('bCity') is-invalid @enderror" id="bCity"
+                                        name="bCity">
+                                        <option value="" selected>Select City</option>
+                                        @foreach ($cities as $city)
+                                        <option value="{{ $city->id }}" {{ old('bCity')==$city->id ? 'selected' : ''
+                                            }}>{{ $city->cityName }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('bCity')
                                     <div class="invalid-tooltip">
                                         {{ $message }}
                                     </div>
@@ -846,7 +880,8 @@
                             <div class="col-md-6 mt-3">
                                 <div class="form-floating">
                                     <input type="text" class="form-control @error('addressLine1') is-invalid @enderror"
-                                        id="addressLine1" name="addressLine1" value="{{$contactDetails->addressLine1 ?? ''}}"
+                                        id="addressLine1" name="addressLine1"
+                                        value="{{$contactDetails->addressLine1 ?? ''}}"
                                         placeholder="Billing Address Line 1">
                                     <label for="addressLine1">Address Line 1</label>
                                     @error('addressLine1')
@@ -859,8 +894,8 @@
                             <div class="col-md-6 mt-3">
                                 <div class="form-floating">
                                     <input type="text" class="form-control @error('addressLine2') is-invalid @enderror"
-                                        id="addressLine2" name="addressLine2" value="{{$contactDetails->addressLine2 ?? ''}}"
-                                        placeholder="addressLine2">
+                                        id="addressLine2" name="addressLine2"
+                                        value="{{$contactDetails->addressLine2 ?? ''}}" placeholder="addressLine2">
                                     <label for="addressLine2">Address Line 2 </label>
                                     @error('addressLine2')
                                     <div class="invalid-tooltip">
@@ -871,10 +906,17 @@
                             </div>
                             <div class="col-md-6 mt-3">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control @error('city') is-invalid @enderror"
-                                        id="city" name="city" value="{{$contactDetails->city ?? ''}}" placeholder="city">
-                                    <label for="city">City</label>
-                                    @error('city')
+                                    <select class="form-select @error('country') is-invalid @enderror" id="country"
+                                        name="country">
+                                        <option value="">Select Country</option>
+                                        @foreach($countries as $country)
+                                        <option value="{{ $country->id }}" {{ old('country')==$country->id ? 'selected'
+                                            : '' }}>{{ $country->countryName }}
+                                        </option>
+                                        @endforeach
+                                    </select>
+                                    <label for="country">Country</label>
+                                    @error('country')
                                     <div class="invalid-tooltip">
                                         {{ $message }}
                                     </div>
@@ -883,8 +925,14 @@
                             </div>
                             <div class="col-md-6 mt-3">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control @error('state') is-invalid @enderror"
-                                        id="state" name="state" value="{{$contactDetails->state ?? ''}}" placeholder="state">
+                                    <select class="form-select @error('state') is-invalid @enderror" id="state"
+                                        name="state">
+                                        <option value="">Select State</option>
+                                        @foreach($states as $state)
+                                        <option value="{{ $state->id }}" {{ old('state')==$state->id ? 'selected' : ''
+                                            }}>{{ $state->stateName }}</option>
+                                        @endforeach
+                                    </select>
                                     <label for="state">State</label>
                                     @error('state')
                                     <div class="invalid-tooltip">
@@ -895,11 +943,16 @@
                             </div>
                             <div class="col-md-6 mt-3">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control @error('country') is-invalid @enderror"
-                                        id="country" name="country" value="{{$contactDetails->country ?? ''}}"
-                                        placeholder="country">
-                                    <label for="country">Country</label>
-                                    @error('country')
+                                    <select class="form-select @error('city') is-invalid @enderror" id="city"
+                                        name="city">
+                                        <option value="">Select City</option>
+                                        @foreach($cities as $city)
+                                        <option value="{{ $city->id }}" {{ old('city')==$city->id ? 'selected' : ''
+                                            }}>{{ $city->cityName }}</option>
+                                        @endforeach
+                                    </select>
+                                    <label for="city">City</label>
+                                    @error('city')
                                     <div class="invalid-tooltip">
                                         {{ $message }}
                                     </div>
@@ -965,8 +1018,8 @@
                                 <div class="form-floating">
                                     <input type="text"
                                         class="form-control @error('topProblemSolved') is-invalid @enderror"
-                                        id="topProblemSolved" name="topProblemSolved" value="{{$tops->topProbleSolved ?? ''}}"
-                                        placeholder="topProblemSolved">
+                                        id="topProblemSolved" name="topProblemSolved"
+                                        value="{{$tops->topProblemSolved ?? ''}}" placeholder="topProblemSolved">
                                     <label for="topProblemSolved">Top Problem Solved</label>
                                     @error('topProblemSolved')
                                     <div class="invalid-tooltip">
@@ -977,11 +1030,11 @@
                             </div>
                             <div class="col-md-6 mt-3">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control @error('myFavBNIStory') is-invalid @enderror"
-                                        id="myFavBNIStory" name="myFavBNIStory" value="{{$tops->myFavBNIStory ?? ''}}"
-                                        placeholder="myFavBNIStory">
-                                    <label for="myFavBNIStory">My Favourite BNI Story</label>
-                                    @error('myFavBNIStory')
+                                    <input type="text" class="form-control @error('myFavBniStory') is-invalid @enderror"
+                                        id="myFavBniStory" name="myFavBniStory" value="{{$tops->myFavBniStory ?? ''}}"
+                                        placeholder="myFavBniStory">
+                                    <label for="myFavBniStory">My Favourite BNI Story</label>
+                                    @error('myFavBniStory')
                                     <div class="invalid-tooltip">
                                         {{ $message }}
                                     </div>
@@ -1020,7 +1073,8 @@
                                 <div class="col-md-6 mt-3">
                                     <div class="form-floating">
                                         <input type="text" class="form-control @error('goals') is-invalid @enderror"
-                                            id="goals" name="goals" value="{{$member->goals ?? ''}}" placeholder="Goals">
+                                            id="goals" name="goals" value="{{$member->goals ?? ''}}"
+                                            placeholder="Goals">
                                         <label for="goals">Goals</label>
                                         @error('goals')
                                         <div class="invalid-tooltip">
@@ -1072,7 +1126,8 @@
                                 <div class="col-md-6 mt-3">
                                     <div class="form-floating">
                                         <input type="text" class="form-control @error('skills') is-invalid @enderror"
-                                            id="skills" name="skills" value="{{$member->skills ?? ''}}" placeholder="skills">
+                                            id="skills" name="skills" value="{{$member->skills ?? ''}}"
+                                            placeholder="skills">
                                         <label for="skills">Skills</label>
                                         @error('skills')
                                         <div class="invalid-tooltip">
@@ -1101,8 +1156,8 @@
                                     <div class="form-floating">
                                         <input type="text"
                                             class="form-control @error('weeklyPresent1') is-invalid @enderror"
-                                            id="weeklyPresent1" name="weeklyPresent1" value="{{$tops->weeklyPresent1 ?? ''}}"
-                                            placeholder="weeklyPresent1">
+                                            id="weeklyPresent1" name="weeklyPresent1"
+                                            value="{{$tops->weeklyPresent1 ?? ''}}" placeholder="weeklyPresent1">
                                         <label for="weeklyPresent1">Weekly Presentation 1</label>
                                         @error('weeklyPresent1')
                                         <div class="invalid-tooltip">
@@ -1115,8 +1170,8 @@
                                     <div class="form-floating">
                                         <input type="text"
                                             class="form-control @error('weeklyPresent2') is-invalid @enderror"
-                                            id="weeklyPresent2" name="weeklyPresent2" value="{{$tops->weeklyPresent2 ?? ''}}"
-                                            placeholder="weeklyPresent2">
+                                            id="weeklyPresent2" name="weeklyPresent2"
+                                            value="{{$tops->weeklyPresent2 ?? ''}}" placeholder="weeklyPresent2">
                                         <label for="weeklyPresent2">Weekly Presentation 2</label>
                                         @error('weeklyPresent2')
                                         <div class="invalid-tooltip">
@@ -1145,7 +1200,8 @@
                                     <div class="form-floating">
                                         <input type="text"
                                             class="form-control @error('yearsInBusiness') is-invalid @enderror"
-                                            id="yearsInBusiness" name="yearsInBusiness" value="{{$tops->yearsInBusiness ?? ''}}" placeholder="yearsInBusiness">
+                                            id="yearsInBusiness" name="yearsInBusiness"
+                                            value="{{$tops->yearsInBusiness ?? ''}}" placeholder="yearsInBusiness">
                                         <label for="yearsInBusiness">Years In Business</label>
                                         @error('yearsInBusiness')
                                         <div class="invalid-tooltip">
@@ -1157,7 +1213,8 @@
                                 <div class="col-md-6 mt-3">
                                     <div class="form-floating">
                                         <input type="text" class="form-control @error('prevJobs') is-invalid @enderror"
-                                            id="prevJobs" name="prevJobs" value="{{$tops->prevJobs ?? ''}}" placeholder="prevJobs">
+                                            id="prevJobs" name="prevJobs" value="{{$tops->prevJobs ?? ''}}"
+                                            placeholder="prevJobs">
                                         <label for="prevJobs">Previous Types of Jobs</label>
                                         @error('prevJobs')
                                         <div class="invalid-tooltip">
@@ -1169,7 +1226,8 @@
                                 <div class="col-md-6 mt-3">
                                     <div class="form-floating">
                                         <input type="text" class="form-control @error('spouse') is-invalid @enderror"
-                                            id="spouse" name="spouse" value="{{$tops->spouse ?? ''}}" placeholder="spouse">
+                                            id="spouse" name="spouse" value="{{$tops->spouse ?? ''}}"
+                                            placeholder="spouse">
                                         <label for="spouse">Spouse</label>
                                         @error('spouse')
                                         <div class="invalid-tooltip">
@@ -1181,7 +1239,8 @@
                                 <div class="col-md-6 mt-3">
                                     <div class="form-floating">
                                         <input type="text" class="form-control @error('children') is-invalid @enderror"
-                                            id="children" name="children" value="{{$tops->children ?? ''}}" placeholder="children">
+                                            id="children" name="children" value="{{$tops->children ?? ''}}"
+                                            placeholder="children">
                                         <label for="children">Children</label>
                                         @error('children')
                                         <div class="invalid-tooltip">
@@ -1206,8 +1265,8 @@
                                     <div class="form-floating">
                                         <input type="text"
                                             class="form-control @error('hobbiesInterests') is-invalid @enderror"
-                                            id="hobbiesInterests" name="hobbiesInterests" value="{{$tops->hobbiesInterests ?? ''}}"
-                                            placeholder="hobbiesInterests">
+                                            id="hobbiesInterests" name="hobbiesInterests"
+                                            value="{{$tops->hobbiesInterests ?? ''}}" placeholder="hobbiesInterests">
                                         <label for="hobbiesInterests">Hobbies & Interests</label>
                                         @error('hobbiesInterests')
                                         <div class="invalid-tooltip">
@@ -1219,7 +1278,8 @@
                                 <div class="col-md-6 mt-3">
                                     <div class="form-floating">
                                         <input type="text" class="form-control @error('cityofRes') is-invalid @enderror"
-                                            id="cityofRes" name="cityofRes" value="{{$tops->cityofRes ?? ''}}" placeholder="cityofRes">
+                                            id="cityofRes" name="cityofRes" value="{{$tops->cityofRes ?? ''}}"
+                                            placeholder="cityofRes">
                                         <label for="cityofRes">City of Residence</label>
                                         @error('cityofRes')
                                         <div class="invalid-tooltip">
@@ -1232,7 +1292,8 @@
                                     <div class="form-floating">
                                         <input type="text"
                                             class="form-control @error('yearsInCity') is-invalid @enderror"
-                                            id="yearsInCity" name="yearsInCity" value="{{$tops->yearsInCity ?? ''}}" placeholder="yearsInCity">
+                                            id="yearsInCity" name="yearsInCity" value="{{$tops->yearsInCity ?? ''}}"
+                                            placeholder="yearsInCity">
                                         <label for="yearsInCity">Years In City</label>
                                         @error('yearsInCity')
                                         <div class="invalid-tooltip">
@@ -1245,7 +1306,8 @@
                                     <div class="form-floating">
                                         <input type="text"
                                             class="form-control @error('myBurningDesire') is-invalid @enderror"
-                                            id="myBurningDesire" name="myBurningDesire" value="{{$tops->myBurningDesire ?? ''}}" placeholder="myBurningDesire">
+                                            id="myBurningDesire" name="myBurningDesire"
+                                            value="{{$tops->myBurningDesire ?? ''}}" placeholder="myBurningDesire">
                                         <label for="myBurningDesire">My Burning Desire</label>
                                         @error('myBurningDesire')
                                         <div class="invalid-tooltip">
@@ -1258,7 +1320,8 @@
                                     <div class="form-floating">
                                         <input type="text"
                                             class="form-control @error('dontKnowAboutMe') is-invalid @enderror"
-                                            id="dontKnowAboutMe" name="dontKnowAboutMe" value="{{$tops->dontKnowAboutMe ?? ''}}" placeholder="dontKnowAboutMe">
+                                            id="dontKnowAboutMe" name="dontKnowAboutMe"
+                                            value="{{$tops->dontKnowAboutMe ?? ''}}" placeholder="dontKnowAboutMe">
                                         <label for="dontKnowAboutMe">Something No One Here Knows About
                                             Me</label>
                                         @error('dontKnowAboutMe')
@@ -1272,7 +1335,8 @@
                                     <div class="form-floating">
                                         <input type="text"
                                             class="form-control @error('mKeyToSuccess') is-invalid @enderror"
-                                            id="mKeyToSuccess" name="mKeyToSuccess" value="{{$tops->mKeyToSuccess ?? ''}}" placeholder="mKeyToSuccess">
+                                            id="mKeyToSuccess" name="mKeyToSuccess"
+                                            value="{{$tops->mKeyToSuccess ?? ''}}" placeholder="mKeyToSuccess">
                                         <label for="mKeyToSuccess">My Key To Success</label>
                                         @error('mKeyToSuccess')
                                         <div class="invalid-tooltip">
@@ -1292,5 +1356,128 @@
             </div>
     </form><!-- End floating Labels Form -->
 </div>
+
+
+<script>
+    function previewPhoto(event) {
+    var input = event.target;
+    var reader = new FileReader();
+    reader.onload = function(){
+    var dataURL = reader.result;
+    var img = document.getElementById('photoPreview');
+    img.src = dataURL;
+    };
+    reader.readAsDataURL(input.files[0]);
+    }
+</script>
+
+<script>
+    function previewPhoto(event) {
+    var input = event.target;
+    var reader = new FileReader();
+    reader.onload = function(){
+    var dataURL = reader.result;
+    var img = document.getElementById('logoPreview');
+    img.src = dataURL;
+    };
+    reader.readAsDataURL(input.files[0]);
+    }
+</script>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#bCountry').change(function() {
+            var countryId = $(this).val();
+            if (countryId) {
+                $.ajax({
+                    url: '{{ route('get.states') }}', // Replace with your route for fetching states
+                    type: 'POST',
+                    data: {
+                        countryId: countryId,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(data) {
+                        $('#bState').html(data);
+                        $('#bCity').html('<option value="">Select City</option>');
+                    }
+                });
+            } else {
+                $('#bState').html('<option value="">Select State</option>');
+                $('#bCity').html('<option value="">Select City</option>');
+            }
+        });
+
+        $('#bState').change(function() {
+            var stateId = $(this).val();
+            if (stateId) {
+                $.ajax({
+                    url: '{{ route('get.cities') }}', // Replace with your route for fetching cities
+                    type: 'POST',
+                    data: {
+                        stateId: stateId,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(data) {
+                        $('#bCity').html(data);
+                    }
+                });
+            } else {
+                $('#bCity').html('<option value="">Select City</option>');
+            }
+        });
+    });
+</script>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#country').change(function() {
+            var countryId = $(this).val();
+            if (countryId) {
+                $.ajax({
+                    url: '{{ route('get.states') }}', // Replace with your route for fetching states
+                    type: 'POST',
+                    data: {
+                        countryId: countryId,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(data) {
+                        $('#state').html(data);
+                        $('#city').html('<option value="">Select City</option>');
+                    }
+                });
+            } else {
+                $('#state').html('<option value="">Select State</option>');
+                $('#city').html('<option value="">Select City</option>');
+            }
+        });
+
+        $('#state').change(function() {
+            var stateId = $(this).val();
+            if (stateId) {
+                $.ajax({
+                    url: '{{ route('get.cities') }}', // Replace with your route for fetching cities
+                    type: 'POST',
+                    data: {
+                        stateId: stateId,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(data) {
+                        $('#city').html(data);
+                    }
+                });
+            } else {
+                $('#city').html('<option value="">Select City</option>');
+            }
+        });
+    });
+</script>
+
+
+
+
 
 @endsection

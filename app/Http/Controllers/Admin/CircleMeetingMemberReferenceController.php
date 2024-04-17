@@ -8,7 +8,10 @@ use Illuminate\Http\Request;
 use App\Models\CircleMeeting;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
+use App\Models\CircleMeetingMembersBusiness;
 use App\Models\CircleMeetingMembersReference;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class CircleMeetingMemberReferenceController extends Controller
 {
@@ -17,6 +20,9 @@ class CircleMeetingMemberReferenceController extends Controller
         try {
             $refGiver = CircleMeetingMembersReference::where('status', 'Active')
                 ->orderBy('id', 'DESC')
+                ->with('members')
+                ->with('refGiverName')
+                ->where('referenceGiverId', Auth::user()->id)
                 ->get();
             return view('admin.refGiver.index', compact('refGiver'));
         } catch (\Throwable $th) {
@@ -39,12 +45,25 @@ class CircleMeetingMemberReferenceController extends Controller
     {
         try {
             $circlemeeting = CircleMeeting::where('status', 'Active')->get();
-            $member = Member::where('status', 'Active')->get();
-            return view('admin.refGiver.create', compact('circlemeeting', 'member'));
+            $members = Member::where('status', 'Active')->get();
+            return view('admin.refGiver.create', compact('circlemeeting', 'members'));
         } catch (\Throwable $th) {
             throw $th;
             return view('servererror');
         }
+    }
+
+    public function getMemberDetails(Request $request)
+    {
+        $memberName = $request->input('memberName');
+
+        // Assuming you have a Member model and 'email' and 'contactNo' fields in your database table
+        $member = Member::where('firstName', $memberName)->first();
+
+        return response()->json([
+            'email' => $member->email,
+            'contactNo' => $member->contactNo,
+        ]);
     }
 
     public function store(Request $request)
@@ -58,11 +77,18 @@ class CircleMeetingMemberReferenceController extends Controller
             // 'busTaken' => 'required',
             // 'hotelName' => 'required',
         ]);
+
+
+        // return $request;
         try {
             $refGiver = new CircleMeetingMembersReference();
             $refGiver->memberId = $request->memberId;
-            $refGiver->referenceGiver = $request->referenceGiver;
-            $refGiver->contactName = $request->contactName;
+            $refGiver->referenceGiverId = Auth::user()->id;
+            if ($request->group == 'internal')
+                $refGiver->contactName = $request->contactNameInternal;
+            else
+                $refGiver->contactName = $request->contactNameExternal;
+
             $refGiver->contactNo = $request->contactNo;
             $refGiver->email = $request->email;
             $refGiver->scale = $request->scale;
@@ -70,6 +96,16 @@ class CircleMeetingMemberReferenceController extends Controller
             $refGiver->status = 'Active';
 
             $refGiver->save();
+
+
+            $busGiver = new CircleMeetingMembersBusiness();
+            // $busGiver->memberId = $request->memberId;
+            $busGiver->businessGiverId = Auth::user()->id;
+            $busGiver->loginMemberId = $refGiver->memberId;
+            $busGiver->amount = $request->amount;
+            $busGiver->date = Carbon::now()->toDateString();
+            $busGiver->status = 'Active';
+            $busGiver->save();
 
             return redirect()->route('refGiver.index')->with('success', ' Created Successfully!');
         } catch (\Throwable $th) {
@@ -81,9 +117,9 @@ class CircleMeetingMemberReferenceController extends Controller
     public function edit($id)
     {
         try {
-            $circlemeeting = CircleMeeting::find($id);
+            $refGiver = CircleMeetingMembersReference::find($id);
             $member = Member::all();
-            return view('admin.refGiver.edit', compact('circlemeeting', 'member'));
+            return view('admin.refGiver.edit', compact('refGiver', 'member'));
         } catch (\Throwable $th) {
             throw $th;
             return view('servererror');

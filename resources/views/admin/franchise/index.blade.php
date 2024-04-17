@@ -34,6 +34,8 @@
             <thead>
                 <tr>
                     <th>Franchise Name</th>
+                    <th>Owner Name</th>
+                    <th>City Name</th>
                     <th>Franchise Contact Details</th>
                     <th>Status</th>
                     <th>Action</th>
@@ -43,6 +45,9 @@
                 @foreach ($franchises as $franchiseData)
                 <tr>
                     <td>{{$franchiseData->franchiseName}}</td>
+                    <td>{{ $franchiseData->user ? $franchiseData->user->firstName.' '.$franchiseData->user->lastName :
+                        '-' }}</td>
+                    <td>{{$franchiseData->city->cityName ?? '-'}}</td>
                     <td>{{$franchiseData->franchiseContactDetails}}</td>
                     <td>{{$franchiseData->status}}</td>
                     <td>

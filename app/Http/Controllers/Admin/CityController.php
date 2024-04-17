@@ -29,6 +29,7 @@ class CityController extends Controller
     public function view(Request $request, $id)
     {
         try {
+
             $city = City::findOrFail($id);
             return response()->json($city);
         } catch (\Throwable $th) {
@@ -39,12 +40,12 @@ class CityController extends Controller
     public function create()
     {
         try {
-            $country = Country::where('status', '!=', 'Deleted')->get();
-            $state = State::where('status', '!=', 'Deleted')->get();
+            $countries = Country::where('status', '!=', 'Deleted')->get();
+            $states = State::where('status', '!=', 'Deleted')->get();
             $city = City::with('country')
                 ->with('state')
                 ->get();
-            return view('admin.city.create', compact('country', 'state', 'city'));
+            return view('admin.city.create', compact('countries', 'states', 'city'));
         } catch (\Throwable $th) {
             throw $th;
             return view('servererror');
@@ -65,7 +66,7 @@ class CityController extends Controller
 
             $city->save();
 
-            return redirect()->route('city.index')->with('success', 'City Created Successfully!');
+            return redirect()->route('city.create')->with('success', 'City Created Successfully!');
         } catch (\Throwable $th) {
             throw $th;
             return view('servererror');
@@ -76,9 +77,9 @@ class CityController extends Controller
     {
         try {
             $city = City::find($id);
-            $state = State::where('status', '!=', 'Deleted')->get();
-            $country = Country::where('status', '!=', 'Deleted')->get();
-            return view('admin.city.edit', compact('country', 'state', 'city'));
+            $states = State::where('status', '!=', 'Deleted')->get();
+            $countries = Country::where('status', '!=', 'Deleted')->get();
+            return view('admin.city.edit', compact('countries', 'states', 'city'));
         } catch (\Throwable $th) {
             throw $th;
             return view('servererror');

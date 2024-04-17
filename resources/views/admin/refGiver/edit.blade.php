@@ -66,11 +66,11 @@
                 </div>
             </div>
             <div class="col-md-6">
-                <div class="form-floating mt-6">
-                    <input type="text" class="form-control @error('contatcName') is-invalid @enderror" id="contatcName"
-                        name="contatcName" value="{{$refGiver->contactName}}" placeholder="Contact Name" required>
-                    <label for="contatcName">Contact Person Name</label>
-                    @error('contatcName')
+                <div class="form-floating mt-3">
+                    <input type="text" class="form-control @error('contactName') is-invalid @enderror" id="contactName"
+                        name="contactName" value="{{$refGiver->contactName}}" placeholder="Contact Name" required>
+                    <label for="contactName">Contact Person Name</label>
+                    @error('contactName')
                     <div class="invalid-tooltip">
                         {{ $message }}
                     </div>
@@ -117,7 +117,7 @@
                 <div class="form-floating mt-3">
                     <input type="text" class="form-control @error('description') is-invalid @enderror" id="description"
                         name="description" placeholder="description" name="{{$refGiver->description}}" required>
-                    <label for="description">Description</label>
+                    <label for="description">description</label>
                     @error('description')
                     <div class="invalid-tooltip">
                         {{ $message }}
