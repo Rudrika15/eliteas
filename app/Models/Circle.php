@@ -50,7 +50,6 @@ class Circle extends Model
 
     public function members()
     {
-        return $this->belongsTo(Member::class, 'id', 'circleId');
+        return $this->hasMany(Member::class, 'circleId', 'id');
     }
-
 }

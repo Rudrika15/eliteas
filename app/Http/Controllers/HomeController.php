@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Member;
 use App\Models\Schedule;
 use App\Models\Training;
 use App\Models\TrainingRegister;
@@ -42,7 +43,15 @@ class HomeController extends Controller
             ->where('trainerId', $nearestTraining->trainers->user->id)
             ->get();
 
-        return view('home', compact('count', 'nearestTraining', 'findRegister'));
+        // upcoming circle meetings
+        $myCircle = Member::where('userId', Auth::user()->id)->first();
+
+
+        $meeting = Schedule::where('circleId', $myCircle->circleId)->where('date', '>=', $currentDate)
+            ->with('circle.franchise')
+            ->where('status', 'Active')->first();
+
+        return view('home', compact('count', 'nearestTraining', 'findRegister', 'meeting'));
     }
 
     public function trainingRegister($trainingId, $trainerId)

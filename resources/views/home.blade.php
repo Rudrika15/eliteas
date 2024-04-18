@@ -39,6 +39,50 @@
         @role('Member')
             <div class="row">
                 <div class="col-md-12">
+                    <div class="card-title"><b>Upcoming Circle Meetings</b></div>
+                </div>
+                {{ $meeting }}
+                <div class="col-md-6">
+                    <div class="card border-0 shadow workshopCard">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <h4 class="card-title">{{ $meeting->circle->circleName }}</h4>
+                                            <span class="text-muted">( {{ $meeting->circle->city->cityName }} )</span>
+                                        </div>
+                                        <div class="col-md-6 pt-3 text-muted text-end">
+                                            {{ $meeting->date }} <br>
+                                            {{ $meeting->meetingTime }}
+                                        </div>
+                                    </div>
+                                    <p>
+                                        <small class="fw-italic text-muted pt-2 fw-italic">
+                                            Total Members : {{ $meeting->circle->members->count() }}
+                                        </small>
+                                        <br>
+                                        <small class="text-muted">
+                                            Franchise Name : {{ $meeting->circle->franchise->franchiseName }}
+                                        </small>
+                                    </p>
+                                </div>
+                                <div class="col-md-6 text-end">
+                                    <div class="">
+
+
+
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
                     <div class="card-title"><b>Upcoming Traning Workshops</b></div>
                 </div>
                 <div class="col-md-12">
@@ -99,9 +143,9 @@
 
                             {{-- <h2>{{ $count }}</h2> --}}
                             <a href="{{ route('schedule.dashIndex') }}">View Details</a>
-                        @endrole
 
-                    </div>
+                        </div>
+                    @endrole
                 </div>
             </div>
         </div>
