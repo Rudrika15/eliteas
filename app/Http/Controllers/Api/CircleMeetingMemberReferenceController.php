@@ -98,8 +98,8 @@ class CircleMeetingMemberReferenceController extends Controller
 
             return Utils::sendResponse(['refGiver' => $refGiver, 'busGiver' => $busGiver], 'Circle Meeting Member Reference created Successfully!', 200);
         } catch (\Throwable $th) {
-            return $th;
-            // return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
+            // throw $th;
+            return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
 

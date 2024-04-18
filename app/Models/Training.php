@@ -15,10 +15,8 @@ class Training extends Model
     }
     public function trainers()
     {
-        return $this->belongsTo(TrainerMaster::class, 'trainerId');
+        return $this->belongsTo(TrainerMaster::class, 'trainerId', 'memberId');
     }
-
-
     public function member()
     {
         return $this->belongsTo(Member::class, 'trainerId', 'userId');
