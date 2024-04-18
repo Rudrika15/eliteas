@@ -32,6 +32,7 @@ class HomeController extends Controller
         $currentDate = Carbon::now()->toDateString();
         $nearestTraining = Training::where('status', 'Active')
             ->whereDate('date', '>=', $currentDate)
+            // ->whereHas('trainers.user')
             ->with('trainers.user')
             ->orderBy('date', 'asc')
             ->first();
