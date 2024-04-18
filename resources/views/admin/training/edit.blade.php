@@ -74,12 +74,12 @@
                         @include('TrainerPerson1')
                     </div>
                     <div class="col-md-12">
-                        <input type="hidden" id="trainerId" name="memberId" value="{{ old('trainerId') }}">
+                        <input type="hidden" id="trainerId" name="memberId" value="{{ $training->trainers->id ?? '' }}">
                         <div class="form-floating">
 
                             <!-- Searchable input field -->
                             <input type="text" name="memberName" class="form-control" id="trainerName" name="memberName"
-                                placeholder="Select Member" value="{{ $trainer->memberName }}">
+                                placeholder="Select Member" value="{{ $training->trainers->trainerName ?? '' }}">
                             <label for="memberName">Trainer Name</label>
                             @error('memberId')
                             <div class="invalid-tooltip">

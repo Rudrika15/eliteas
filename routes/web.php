@@ -26,6 +26,7 @@ use App\Http\Controllers\Admin\CircleMeetingMembersController;
 use App\Http\Controllers\Admin\CircleMeetingMemberBusinessController;
 use App\Http\Controllers\Admin\CircleMeetingMemberReferenceController;
 use App\Http\Controllers\Admin\PaymentController;
+use App\Http\Controllers\TestimonialController;
 
 /*
 |--------------------------------------------------------------------------
@@ -43,7 +44,7 @@ Auth::routes();
 
 
 
-// Forgot Password 
+// Forgot Password
 
 Route::get('forget-password', [ForgotPasswordController::class, 'showForgetPasswordForm'])->name('forget.password.get');
 Route::post('forget-password', [ForgotPasswordController::class, 'submitForgetPasswordForm'])->name('forget.password.post');
@@ -241,4 +242,8 @@ Route::group(['middleware' => ['auth']], function () {
     // payment
     Route::post('/razorpay-payment', [PaymentController::class, 'store'])->name('razorpay.payment.store');
     Route::get('/trainingRegister/{trainingId?}/{trainerId?}', [HomeController::class, 'trainingRegister'])->name('training.register');
+
+    Route::get('testimonial/index',[TestimonialController::class,'index'])->name('testimonial.index');
+    Route::get('testimonial/create',[TestimonialController::class,'create'])->name('testimonial.create');
+    Route::post('testimonial/store',[TestimonialController::class,'store'])->name('testimonial.store');
 });

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Member;
 use App\Models\Schedule;
+use App\Models\Testimonial;
 use App\Models\Training;
 use App\Models\TrainingRegister;
 use Carbon\Carbon;
@@ -33,7 +34,7 @@ class HomeController extends Controller
         $currentDate = Carbon::now()->toDateString();
         $nearestTraining = Training::where('status', 'Active')
             ->whereDate('date', '>=', $currentDate)
-            // ->whereHas('trainers.user')
+            ->whereHas('trainers.user')
             ->with('trainers.user')
             ->orderBy('date', 'asc')
             ->first();
@@ -42,16 +43,10 @@ class HomeController extends Controller
             ->where('trainingId', $nearestTraining->id)
             ->where('trainerId', $nearestTraining->trainers->user->id)
             ->get();
+        $testimonials = Testimonial::where('memberId', Auth::user()->member->id)->with('member')->orderBy('id', 'DESC')->take(3)->get();
 
-        // upcoming circle meetings
-        $myCircle = Member::where('userId', Auth::user()->id)->first();
-
-
-        $meeting = Schedule::where('circleId', $myCircle->circleId)->where('date', '>=', $currentDate)
-            ->with('circle.franchise')
-            ->where('status', 'Active')->first();
-
-        return view('home', compact('count', 'nearestTraining', 'findRegister', 'meeting'));
+        // return $testimonials;
+        return view('home', compact('count', 'nearestTraining', 'findRegister', 'testimonials'));
     }
 
     public function trainingRegister($trainingId, $trainerId)
