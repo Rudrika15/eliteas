@@ -34,6 +34,16 @@
                 position: relative;
                 z-index: 2;
             }
+            .p-testimonial-message
+            {
+                width: 70%;
+           /* this code clamps based on specified lines */
+           overflow: hidden;
+          -webkit-box-orient: vertical;
+         -webkit-line-clamp: 2;
+         display: -webkit-box;
+            }
+
         </style>
 
         @role('Member')
@@ -158,6 +168,7 @@
     {{-- Testimonial --}}
     @if(count($testimonials)>0)
 
+
     <div class="row">
         <div class="col-md-12">
             <div class="card-title"><b>Testimonials</b></div>
@@ -166,13 +177,14 @@
             <div class="row">
                 @foreach($testimonials as $testimonial)
                 <div class="col-md-4">
-                    <div class="card" style="border-radius: 10px;height:250px;">
+                    <div class="card" style="border-radius:10px;height:250px;">
 
                             <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
                                 {{-- {{asset('/')}} --}}
-                                <img src="{{asset('ProfilePhoto/'.$testimonial->member->profilePhoto)}}" alt="Profile" class="rounded-circle border-4 border" style="height: 100px;width:100px;">
-                                <h3>{{$testimonial->user->firstName . " " . $testimonial->user->lastName}}</h3>
-                                <h6 class="text-center text-muted text-truncate" style="width:300px;"><i class="bi bi-quote" style="font-size: 30px;"></i>{{$testimonial->message}}dddddddddddddddddddd ddddddddddddddd</h6>
+                                {{-- {{$testimonial->member->profilePhoto}} --}}
+                                <img src="{{asset('ProfilePhoto/'.$testimonial->sender->profilePhoto)}}" alt="Profile" class="rounded-circle img-thumbnail object-fit-cover" style="height: 100px;width:100px;">
+                                <h3>{{$testimonial->sender->firstName . " " . $testimonial->sender->lastName}}</h3>
+                                <p class="text-center text-muted text-wrap p-testimonial-message"><i class="bi bi-quote text-dark" style="font-size: 20px;"></i>{{$testimonial->message}}<i class="bi bi-quote text-dark" style="font-size: 20px;display:inline-block;transform:rotate(180deg);"></i></p>
                             </div>
 
                     </div>
