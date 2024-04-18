@@ -44,22 +44,49 @@
                 <tbody>
                     @foreach ($testimonials as $testimonial)
                         <tr>
-                            <td>{{ $testimonial->user->firstName ?? '-' }}</td>
-                            <td>{{ $testimonial->message ?? '-' }}</td>
-                            <td>{{ $testimonial->uploadedDate ?? '-' }}</td>
+                            <td>{{ $testimonial->sender->firstName ?? '' }} {{ $testimonial->sender->lastName ?? '' }}</td>
+                            <td>{{ $testimonial->message ?? '' }}</td>
+                            <td>{{ $testimonial->uploadedDate ?? '' }}</td>
                             <td>{{ $testimonial->status }}</td>
-                            {{-- <td>
-                                <a href="{{ route('circlecall.edit', $circlecallData->id) }}" class="btn btn-primary btn-sm">
-                                    <i class="bi bi-pen"></i>
-                                </a>
-                                <a href="{{ route('circlecall.delete', $circlecallData->id) }}" class="btn btn-danger btn-sm">
-                                    <i class="bi bi-trash"></i>
-                                </a>
-                            </td> --}}
+
                         </tr>
                     @endforeach
                 </tbody>
             </table>
             <!-- End Table with stripped rows -->
         </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="mb-0 mt-3">My Testimonials</h4>
+
+            </div>
+
+            <!-- Table with stripped rows -->
+            <table class="table datatable">
+                <thead>
+                    <tr>
+                        <th>Circle Member</th>
+                        <th>Message</th>
+                        <th>UploadedDate</th>
+                        <th>Status</th>
+                        {{-- <th>Action</th> --}}
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($myTestimonials as $myTestimonial)
+                        <tr>
+                            <td>{{ $myTestimonial->receiver->firstName ?? '' }} {{ $myTestimonial->receiver->lastName ?? '' }}</td>
+                            <td>{{ $myTestimonial->message ?? '' }}</td>
+                            <td>{{ $myTestimonial->uploadedDate ?? '' }}</td>
+                            <td>{{ $myTestimonial->status }}</td>
+
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+            <!-- End Table with stripped rows -->
+        </div>
+    </div>
     @endsection

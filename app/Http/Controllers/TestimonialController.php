@@ -15,10 +15,11 @@ class TestimonialController extends Controller
      */
     public function index()
     {
-        $testimonials = Testimonial::where('memberId',Auth::user()->member->id)->get();
-        // $testimonials = Testimonial::where('userId',Auth::user()->id)->get();
+        $testimonials = Testimonial::where('memberId',Auth::user()->member->id)->with('sender')->get();
+        $myTestimonials = Testimonial::where('userId',Auth::user()->id)->with('receiver')->get();
         // return Auth::user()->member->id;
-        return view('testimonial.index',["testimonials"=>$testimonials]);
+        // return $testimonials;
+        return view('testimonial.index',["testimonials"=>$testimonials,'myTestimonials'=>$myTestimonials]);
     }
 
     /**

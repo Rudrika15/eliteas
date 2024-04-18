@@ -50,7 +50,7 @@ class HomeController extends Controller
             ->where('trainingId', $nearestTraining->id)
             ->where('trainerId', $nearestTraining->trainers->user->id)
             ->get();
-        $testimonials = Testimonial::where('memberId', Auth::user()->member->id)->with('member')->orderBy('id', 'DESC')->take(3)->get();
+        $testimonials = Testimonial::where('memberId', Auth::user()->member->id)->with('sender')->orderBy('id', 'DESC')->take(3)->get();
         $myCircle = Auth::user()->member->circleId;
         $meeting = Schedule::where('circleId', Auth::user()->member->circleId)
             ->with('circle.members')
