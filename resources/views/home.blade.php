@@ -155,7 +155,7 @@
 
 
 
-    {{-- Testimonial --}}
+    {{-- Testimonial
     @if(count($testimonials)>0)
 
     <div class="row">
@@ -169,7 +169,7 @@
                     <div class="card" style="border-radius: 10px;height:250px;">
 
                             <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
-                                {{-- {{asset('/')}} --}}
+
                                 <img src="{{asset('ProfilePhoto/'.$testimonial->member->profilePhoto)}}" alt="Profile" class="rounded-circle border-4 border" style="height: 100px;width:100px;">
                                 <h3>{{$testimonial->user->firstName . " " . $testimonial->user->lastName}}</h3>
                                 <h6 class="text-center text-muted text-truncate" style="width:300px;"><i class="bi bi-quote" style="font-size: 30px;"></i>{{$testimonial->message}}dddddddddddddddddddd ddddddddddddddd</h6>
@@ -181,14 +181,14 @@
             </div>
         </div>
     </div>
-    @endif
+    @endif --}}
     {{-- end testimonial --}}
 
     <!-- Button trigger modal -->
 
 
     <!-- Modal -->
-    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    {{-- <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -248,9 +248,9 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> --}}
 
-    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    {{-- <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -344,7 +344,7 @@
                     });
                 });
         }
-    </script>
+    </script> --}}
 
     <!-- sweetalert -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>

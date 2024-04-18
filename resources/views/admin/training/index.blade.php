@@ -50,7 +50,7 @@
                 <tr>
                     <td>{{$trainingData->member->firstName ?? '-'}} {{$trainingData->member->lastName ?? '-'}}</td>
                     <td>{{$trainingData->title}}</td>
-                    <td>{{$trainingData->externalTrainerId ?? '-'}}</td>
+                    <td>{{$trainingData->user->firstName ?? '-'}}</td>
                     <td>{{$trainingData->type}}</td>
                     <td>{{$trainingData->fees}}</td>
                     <td>{{$trainingData->venue}}</td>

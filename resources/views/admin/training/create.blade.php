@@ -86,10 +86,10 @@
                     </div>
                     <div class="col-md-12" id="memberListInputMember" style="display:none;">
                         <div class="form-floating mt-3">
-                            <input type="text" class="form-control @error('contactName') is-invalid @enderror"
+                            <input type="text" class="form-control @error('memberNameExternal') is-invalid @enderror"
                                 id="trainerNameExternal" name="memberNameExternal" placeholder="Contact Name">
-                            <label for="contactName">Trainer Name External</label>
-                            @error('contactName')
+                            <label for="memberNameExternal">Trainer Name External</label>
+                            @error('memberNameExternal')
                             <div class="invalid-tooltip">
                                 {{ $message }}
                             </div>
@@ -182,10 +182,10 @@
                 </div>
                 <div class="col-md-12" id="memberListInput" style="display:none;">
                     <div class="form-floating mt-3">
-                        <input type="text" class="form-control @error('trainerName') is-invalid @enderror" id="trainerNameExternal"
+                        <input type="text" class="form-control @error('trainerNameExternal') is-invalid @enderror" id="trainerNameExternal"
                             name="trainerNameExternal" placeholder="Trainer Name">
-                        <label for="trainerName">Trainer Name</label>
-                        @error('trainerName')
+                        <label for="trainerNameExternal">Trainer Name</label>
+                        @error('trainerNameExternal')
                         <div class="invalid-tooltip">
                             {{ $message }}
                         </div>

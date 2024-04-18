@@ -100,12 +100,19 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::put('trainings-update/{id}', [TrainingController::class, 'update']);
     Route::delete('trainings-delete/{id}', [TrainingController::class, 'delete']);
 
+    //Training Register
+
+    // Route::post('/training-register/{trainingId}/{trainerId}', [TrainingController::class, 'trainingRegister']);
+
+    Route::post('/training-register', [TrainingController::class, 'trainingRegister']);
+
     // Circle Type
     Route::get('circle-type-index', [CircleTypeController::class, 'index']);
     Route::get('circle-type-show/{id}', [CircleTypeController::class, 'show']);
     Route::post('circle-type-create', [CircleTypeController::class, 'create']);
     Route::put('circle-type-update/{id}', [CircleTypeController::class, 'update']);
     Route::delete('circle-type-delete/{id}', [CircleTypeController::class, 'delete']);
+
 
     // Circle
     Route::get('circle-index', [CircleController::class, 'index']);

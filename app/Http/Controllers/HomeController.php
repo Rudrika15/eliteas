@@ -32,26 +32,36 @@ class HomeController extends Controller
     {
         $count = Schedule::where('status', 'Active')->count();
         $currentDate = Carbon::now()->toDateString();
-        $nearestTraining = Training::where('status', 'Active')
-            ->whereDate('date', '>=', $currentDate)
-            ->whereHas('trainers.user')
-            ->with('trainers.user')
-            ->orderBy('date', 'asc')
-            ->first();
+        // $nearestTraining = Training::where('status', 'Active')
+        //     ->whereDate('date', '>=', $currentDate)
+        //     ->whereHas('trainers.user')
+        //     ->with('trainers.user')
+        //     ->orderBy('date', 'asc')
+        //     ->first();
 
-        $findRegister = TrainingRegister::where('userId', Auth::user()->id)
-            ->where('trainingId', $nearestTraining->id)
-            ->where('trainerId', $nearestTraining->trainers->user->id)
-            ->get();
-        $testimonials = Testimonial::where('memberId', Auth::user()->member->id)->with('member')->orderBy('id', 'DESC')->take(3)->get();
-        $myCircle = Auth::user()->member->circleId;
-        $meeting = Schedule::where('circleId', Auth::user()->member->circleId)
-            ->with('circle.members')
-            ->with('circle.franchise')
-            ->where('status', 'Active')->first();
+        // $findRegister = TrainingRegister::where('userId', Auth::user()->id)
+        //     ->where('trainingId', $nearestTraining->id)
+        //     ->where('trainerId', $nearestTraining->trainers->user->id)
+        //     ->get();
+
+
+        // if (Auth::user()->hasRole('admin')) {
+
+        //     $testimonials = Testimonial::all();
+        // } else {
+
+        //     $testimonials = Testimonial::where('memberId', Auth::user()->member->id)->whereHas('member')->with('member')->orderBy('id', 'DESC')->take(3)->get();
+        // }   
+
+        // $myCircle = Auth::user()->member->circleId;
+        // $meeting = Schedule::where('circleId', Auth::user()->member->circleId)
+        //     ->with('circle.members')
+        //     ->with('circle.franchise')
+        //     ->where('status', 'Active')->first();
 
         // return $testimonials;
-        return view('home', compact('count', 'nearestTraining', 'findRegister', 'testimonials', 'meeting'));
+        // return view('home', compact('count', 'nearestTraining', 'findRegister', 'testimonials', 'meeting'));
+        return view('home', compact('count'));
     }
 
     public function trainingRegister($trainingId, $trainerId)

@@ -21,4 +21,9 @@ class Training extends Model
     {
         return $this->belongsTo(Member::class, 'trainerId', 'userId');
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'externalTrainerId', 'id');
+    }
 }
