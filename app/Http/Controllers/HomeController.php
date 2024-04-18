@@ -44,9 +44,14 @@ class HomeController extends Controller
             ->where('trainerId', $nearestTraining->trainers->user->id)
             ->get();
         $testimonials = Testimonial::where('memberId', Auth::user()->member->id)->with('member')->orderBy('id', 'DESC')->take(3)->get();
+        $myCircle = Auth::user()->member->circleId;
+        $meeting = Schedule::where('circleId', Auth::user()->member->circleId)
+            ->with('circle.members')
+            ->with('circle.franchise')
+            ->where('status', 'Active')->first();
 
         // return $testimonials;
-        return view('home', compact('count', 'nearestTraining', 'findRegister', 'testimonials'));
+        return view('home', compact('count', 'nearestTraining', 'findRegister', 'testimonials', 'meeting'));
     }
 
     public function trainingRegister($trainingId, $trainerId)
