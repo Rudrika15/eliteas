@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Schedule;
+use App\Models\Testimonial;
 use App\Models\Training;
 use App\Models\TrainingRegister;
 use Carbon\Carbon;
@@ -32,6 +33,7 @@ class HomeController extends Controller
         $currentDate = Carbon::now()->toDateString();
         $nearestTraining = Training::where('status', 'Active')
             ->whereDate('date', '>=', $currentDate)
+            ->whereHas('trainers.user')
             ->with('trainers.user')
             ->orderBy('date', 'asc')
             ->first();
@@ -40,8 +42,10 @@ class HomeController extends Controller
             ->where('trainingId', $nearestTraining->id)
             ->where('trainerId', $nearestTraining->trainers->user->id)
             ->get();
+        $testimonials = Testimonial::where('memberId',Auth::user()->member->id)->with('member')->orderBy('id','DESC')->take(3)->get();
 
-        return view('home', compact('count', 'nearestTraining', 'findRegister'));
+        // return $testimonials;
+        return view('home', compact('count', 'nearestTraining','findRegister','testimonials'));
     }
 
     public function trainingRegister($trainingId, $trainerId)

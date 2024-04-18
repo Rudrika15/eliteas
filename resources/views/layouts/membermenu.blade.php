@@ -16,3 +16,9 @@
         <span>Circle Member Business</span>
     </a>
 </li>
+<li class="nav-item">
+    <a class="nav-link " href="{{route('testimonial.index')}}">
+        <i class="bi bi-person"></i>
+        <span>Testimonial</span>
+    </a>
+</li>
