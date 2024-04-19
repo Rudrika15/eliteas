@@ -204,25 +204,25 @@
 @if (count($testimonials) > 0)
 <div class="row">
     <div class="col-md-12">
-        <div class="card-title"><b>Testimonials</b></div>
+        <div class="card-title text-center"><b>Testimonials</b></div>
     </div>
-    <div class="col-md-9" >
+    <div class="col-md-9">
         <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
             <div class="carousel-inner">
                 @foreach ($testimonials as $key => $testimonial)
                 <div class="carousel-item {{ $key == 0 ? 'active' : '' }}">
-                    <div class="card" style="border-radius:10px;height:250px;">
+                    <div class="card" style="border-radius:10px; height:250px; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
 
                         <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
                             {{-- {{asset('/')}} --}}
                             {{-- {{$testimonial->member->profilePhoto}} --}}
-                            <img src="{{ asset('ProfilePhoto/' . $testimonial->sender->profilePhoto) }}"
-                                alt="Profile" class="rounded-circle img-thumbnail object-fit-cover"
+                            <img src="{{ asset('ProfilePhoto/' . $testimonial->sender->profilePhoto) }}" alt="Profile"
+                                class="rounded-circle img-thumbnail object-fit-cover"
                                 style="height: 100px;width:100px;">
                             <h3>{{ $testimonial->sender->firstName . ' ' . $testimonial->sender->lastName }}</h3>
                             <p class="text-center text-muted text-wrap p-testimonial-message"><i
-                                    class="bi bi-quote text-dark" style="font-size: 20px;"></i>{{ $testimonial->message }}<i
-                                    class="bi bi-quote text-dark"
+                                    class="bi bi-quote text-dark" style="font-size: 20px;"></i>{{ $testimonial->message
+                                }}<i class="bi bi-quote text-dark"
                                     style="font-size: 20px;display:inline-block;transform:rotate(180deg);"></i></p>
                         </div>
                     </div>
@@ -244,141 +244,141 @@
 </div>
 @endif
 
-    {{-- end testimonial --}}
+{{-- end testimonial --}}
 
-    <!-- Button trigger modal -->
+<!-- Button trigger modal -->
 
 
-    <!-- Modal -->
-    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-        aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabel">Join {{ $nearestTraining->title }} Training</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-6 text-start">
-                            <p class="text-muted">
-                                <small>{{ $nearestTraining->venue }}</small>
-                            </p>
-                        </div>
-                        <div class="col-md-6 text-end">
-                            <h6 class="card-subtitle mt-2 text-muted ">{{ $nearestTraining->date }}</h6>
-                            <small class="text-muted">{{ $nearestTraining->time }}</small>
-                        </div>
+<!-- Modal -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Join {{ $nearestTraining->title }} Training</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6 text-start">
+                        <p class="text-muted">
+                            <small>{{ $nearestTraining->venue }}</small>
+                        </p>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <h6 class="card-subtitle mt-2 text-muted ">{{ $nearestTraining->date }}</h6>
+                        <small class="text-muted">{{ $nearestTraining->time }}</small>
                     </div>
                 </div>
-                <style>
-                    .modal-footers {
-                        /* display: flex; */
-                        */ flex-shrink: 0;
-                        /* flex-wrap: wrap; */
-                        align-items: center;
-                        padding: calc(var(--bs-modal-padding) - var(--bs-modal-footer-gap)* .5);
-                        background-color: var(--bs-modal-footer-bg);
-                        border-top: var(--bs-modal-footer-border-width) solid var(--bs-modal-footer-border-color);
-                        border-bottom-right-radius: var(--bs-modal-inner-border-radius);
-                        border-bottom-left-radius: var(--bs-modal-inner-border-radius);
+            </div>
+            <style>
+                .modal-footers {
+                    /* display: flex; */
+                    */ flex-shrink: 0;
+                    /* flex-wrap: wrap; */
+                    align-items: center;
+                    padding: calc(var(--bs-modal-padding) - var(--bs-modal-footer-gap)* .5);
+                    background-color: var(--bs-modal-footer-bg);
+                    border-top: var(--bs-modal-footer-border-width) solid var(--bs-modal-footer-border-color);
+                    border-bottom-right-radius: var(--bs-modal-inner-border-radius);
+                    border-bottom-left-radius: var(--bs-modal-inner-border-radius);
 
-                    }
-                </style>
-                <div class="modal-footers">
-                    <div class="d-flex justify-content-between">
+                }
+            </style>
+            <div class="modal-footers">
+                <div class="d-flex justify-content-between">
 
-                        <div class="text-start">
-                            @if ($nearestTraining->fees == 0)
-                            <h5 class="text-muted text-center">Free</h5>
-                            @else
-                            <h5 class="text-muted text-center amount"> ₹ {{ $nearestTraining->fees }}</h5>
-                            @endif
-                        </div>
-                        <div class="">
-                            @if (count($findRegister) == 0)
-                            @if ($nearestTraining->fees == 0)
-                            <a href="{{ route('training.register') }}/{{ $nearestTraining->id }}/{{ $nearestTraining->trainers->user->id }}"
-                                class="btn btn-primary">Register Now</a>
-                            @else
-                            <button type="button" class="btn btn-primary pay">Pay Now</button>
-                            @endif
-                            @else
-                            <span class="text-muted">Already Registered</span>
-                            @endif
-                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-                        </div>
+                    <div class="text-start">
+                        @if ($nearestTraining->fees == 0)
+                        <h5 class="text-muted text-center">Free</h5>
+                        @else
+                        <h5 class="text-muted text-center amount"> ₹ {{ $nearestTraining->fees }}</h5>
+                        @endif
+                    </div>
+                    <div class="">
+                        @if (count($findRegister) == 0)
+                        @if ($nearestTraining->fees == 0)
+                        <a href="{{ route('training.register') }}/{{ $nearestTraining->id }}/{{ $nearestTraining->trainers->user->id }}"
+                            class="btn btn-primary">Register Now</a>
+                        @else
+                        <button type="button" class="btn btn-primary pay">Pay Now</button>
+                        @endif
+                        @else
+                        <span class="text-muted">Already Registered</span>
+                        @endif
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
 
-    {{-- invite person modal --}}
-    <!-- Button trigger modal -->
+{{-- invite person modal --}}
+<!-- Button trigger modal -->
 
 
-    <!-- Modal -->
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-scrollable">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Person Details</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="registrationForm" action="{{ route('invite.person') }}" method="POST">
-                        @csrf
-                        <input type="hidden" name="meetingId" id="meetingId" value="{{ $meeting->id }}">
-                        <div class="mb-3">
-                            <label for="personName" class="form-label">Name</label><span class="text-danger">*</span>
-                            <input type="text" class="form-control" name="personName" id="personName">
-                            <span class="error-message text-danger"></span> <!-- Error message placeholder -->
-                        </div>
-                        <div class="mb-3">
-                            <label for="personEmail" class="form-label">Email address</label><span
-                                class="text-danger">*</span>
-                            <input type="email" class="form-control" name="personEmail" id="personEmail"
-                                aria-describedby="emailHelp">
-                            <span class="error-message text-danger"></span> <!-- Error message placeholder -->
-                        </div>
-                        <div class="mb-3">
-                            <label for="personContact" class="form-label">Contact Number</label><span
-                                class="text-danger">*</span>
-                            <input type="tel" class="form-control" name="personContact" id="personContact"
-                                pattern="[0-9]{10}">
-                            <span class="error-message text-danger"></span> <!-- Error message placeholder -->
-                        </div>
-                        <div class="mb-3">
-                            <label for="personBusiness" class="form-label">Business Category</label><span
-                                class="text-danger">*</span>
-                            <select name="  businessCategoryId" class="form-select" id="personBusiness">
-                                <option value="" disabled selected>--Select Business Category--</option>
-                                @foreach ($businessCategory as $category)
-                                <option value="{{ $category->id }}"><img
-                                        src="{{ asset('BusinessCategory') }}/{{ $category->image }}" alt=""> {{
-                                    $category->categoryName }}</option>
-                                @endforeach
-                            </select>
-                            <span class="error-message text-danger"></span> <!-- Error message placeholder -->
-                        </div>
-                        <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary">Submit</button>
-                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-                        </div>
-                    </form>
-                </div>
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Person Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="registrationForm" action="{{ route('invite.person') }}" method="POST">
+                    @csrf
+                    <input type="hidden" name="meetingId" id="meetingId" value="{{ $meeting->id }}">
+                    <div class="mb-3">
+                        <label for="personName" class="form-label">Name</label><span class="text-danger">*</span>
+                        <input type="text" class="form-control" name="personName" id="personName">
+                        <span class="error-message text-danger"></span> <!-- Error message placeholder -->
+                    </div>
+                    <div class="mb-3">
+                        <label for="personEmail" class="form-label">Email address</label><span
+                            class="text-danger">*</span>
+                        <input type="email" class="form-control" name="personEmail" id="personEmail"
+                            aria-describedby="emailHelp">
+                        <span class="error-message text-danger"></span> <!-- Error message placeholder -->
+                    </div>
+                    <div class="mb-3">
+                        <label for="personContact" class="form-label">Contact Number</label><span
+                            class="text-danger">*</span>
+                        <input type="tel" class="form-control" name="personContact" id="personContact"
+                            pattern="[0-9]{10}">
+                        <span class="error-message text-danger"></span> <!-- Error message placeholder -->
+                    </div>
+                    <div class="mb-3">
+                        <label for="personBusiness" class="form-label">Business Category</label><span
+                            class="text-danger">*</span>
+                        <select name="  businessCategoryId" class="form-select" id="personBusiness">
+                            <option value="" disabled selected>--Select Business Category--</option>
+                            @foreach ($businessCategory as $category)
+                            <option value="{{ $category->id }}"><img
+                                    src="{{ asset('BusinessCategory') }}/{{ $category->image }}" alt=""> {{
+                                $category->categoryName }}</option>
+                            @endforeach
+                        </select>
+                        <span class="error-message text-danger"></span> <!-- Error message placeholder -->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
+</div>
 
-    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
             // Get all elements with the 'pay-button' class
             var payButtons = document.querySelectorAll('.pay');
             console.log('pay', payButtons);
@@ -469,11 +469,11 @@
                     });
                 });
         }
-    </script> 
+</script>
 
-    {{-- validation --}}
-    <script>
-        $(document).ready(function() {
+{{-- validation --}}
+<script>
+    $(document).ready(function() {
             $('#registrationForm').submit(function(event) {
                 event.preventDefault(); // Prevent form submission
 
@@ -524,31 +524,31 @@
             var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             return emailRegex.test(email);
         }
-    </script>
+</script>
 
-    <!-- sweetalert -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<!-- sweetalert -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 
-    <!-- end -->
+<!-- end -->
 
-    @if (Session::get('success'))
-    <script>
-        Swal.fire({
+@if (Session::get('success'))
+<script>
+    Swal.fire({
                 icon: 'success',
                 title: "{{ Session::get('success') }}",
                 showConfirmButton: true,
 
             });
-    </script>
-    @endif
+</script>
+@endif
 
-    @if (Session::get('error'))
-    <script>
-        Swal.fire({
+@if (Session::get('error'))
+<script>
+    Swal.fire({
                 icon: 'error',
                 title: "{{ Session::get('error') }}",
                 showConfirmButton: true,
             });
-    </script>
-    @endif
-    @endsection
+</script>
+@endif
+@endsection
