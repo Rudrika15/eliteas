@@ -158,4 +158,5 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     //Meeting Invitation
     Route::get('meeting-invitations-index', [MeetingInvitationController::class, 'index']);
+    Route::post('/invitation', [MeetingInvitationController::class, 'invitation']);
 });
