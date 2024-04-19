@@ -80,6 +80,13 @@
                 <span>Training</span>
             </a>
         </li>
+
+        <li class="nav-item">
+            <a class="nav-link " href="{{route('trainingInvitation.index')}}">
+                <i class="bi bi-gear-wide-connected"></i>
+                <span>Training Invitations</span>
+            </a>
+        </li>
     </ul>
 </li><!-- End Tables Nav -->
 

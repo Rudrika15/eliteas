@@ -118,6 +118,11 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('training/update', [TrainingController::class, 'update'])->name('training.update');
     Route::get('training/delete/{id?}', [TrainingController::class, 'delete'])->name('training.delete');
 
+
+    //Training Invitations All
+
+    Route::get('trainingInvitations/index', [TrainingController::class, 'trainingInvitations'])->name('trainingInvitations.index');
+
     Route::get('/circletype/index', [CircleTypeController::class, 'index'])->name('circletype.index');
     Route::get('circletype/show/{id?}', [CircleTypeController::class, 'show'])->name('circletype.show');
     Route::get('circletype/create', [CircleTypeController::class, 'create'])->name('circletype.create');
