@@ -316,21 +316,4 @@ class TrainingController extends Controller
             return view('servererror');
         }
     }
-
-
-    public function trainingInvitations(Request $request)
-    {
-        try {
-
-            $trainingInvitations = Training::with('trainer')
-            ->where('status', 'Active')
-            ->orderBy('id', 'DESC')
-                ->get();
-
-            return view('admin.training.index', compact('training'));
-        } catch (\Throwable $th) {
-            throw $th;
-            return view('servererror');
-        }
-    }
 }

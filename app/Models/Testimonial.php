@@ -12,8 +12,12 @@ class Testimonial extends Model
     {
         return $this->hasOne(User::class,'id','userId');
     }
-    function member()
+    function sender()
     {
         return $this->hasOne(Member::class,'userId','userId');
+    }
+    function receiver()
+    {
+        return $this->hasOne(Member::class,'id','memberId');
     }
 }
