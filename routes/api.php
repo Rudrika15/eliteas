@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\ForgetPasswordController;
 use App\Http\Controllers\Api\CircleMeetingMembersController;
 use App\Http\Controllers\Api\CircleMeetingMemberBusinessController;
 use App\Http\Controllers\Api\CircleMeetingMemberReferenceController;
+use App\Http\Controllers\Api\MeetingInvitationController;
 use App\Models\CircleMember;
 
 /*
@@ -154,4 +155,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     //circle wise mmeber
     Route::get('circle-wise-member-index', [CircleMemberController::class, 'circleWiseMember']);
+
+    //Meeting Invitation
+    Route::get('meeting-invitations-index', [MeetingInvitationController::class, 'index']);
 });

@@ -46,7 +46,16 @@ class HomeController extends Controller
             ->orderBy('date', 'asc')
             ->first();
         $businessCategory = BusinessCategory::all();
+
+
+        if (!Auth::user()->hasRole('Admin')) {
         $myInvites = MeetingInvitation::where('invitedMemberId', Auth::user()->id)->get();
+        } else {
+            $myInvites = MeetingInvitation::take(3)->get();
+        }
+
+
+
 
         $findRegister = TrainingRegister::where('userId', Auth::user()->id)
             ->where('trainingId', $nearestTraining->id)

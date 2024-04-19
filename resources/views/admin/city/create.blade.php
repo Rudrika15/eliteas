@@ -91,7 +91,20 @@
                     @enderror
                 </div>
             </div>
-            
+
+            <div class="col-md-6">
+                <div class="form-floating mt-3">
+                    <input type="number" class="form-control @error('memberAmount') is-invalid @enderror"
+                        id="memberAmount" name="memberAmount" placeholder="memberAmount" required>
+                    <label for="memberAmount">Member Amount</label>
+                    @error('memberAmount')
+                    <div class="invalid-tooltip">
+                        {{ $message }}
+                    </div>
+                    @enderror
+                </div>
+            </div>
+
 
         </div>
         <div class="text-center">
