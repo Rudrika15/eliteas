@@ -11,20 +11,27 @@ class MeetingInvitation extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $personName;
-    public $personEmail;
-    public $invitedPerson;
+    public $data;
+    // public $personName;
+    // public $personEmail;
+    // public $invitedPersonFirstName;
+    // public $invitedPersonLastName;
+    // public $amount;
+
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($personName, $personEmail, $invitedPerson)
+    public function __construct($data)
     {
-        $this->personName = $personName;
-        $this->personEmail = $personEmail;
-        $this->invitedPerson = $invitedPerson;
+        $this->data = $data;
+        // $this->personName = $personName;
+        // $this->personEmail = $personEmail;
+        // $this->invitedPersonFirstName = $invitedPersonFirstName;
+        // $this->invitedPersonLastName = $invitedPersonLastName;
+        // $this->amount = $amount;
     }
 
     /**

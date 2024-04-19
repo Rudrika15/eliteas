@@ -45,23 +45,27 @@ class HomeController extends Controller
             ->with('trainers.user')
             ->orderBy('date', 'asc')
             ->first();
+        $businessCategory = BusinessCategory::all();
+        $myInvites = MeetingInvitation::where('invitedMemberId', Auth::user()->id)->get();
 
         $findRegister = TrainingRegister::where('userId', Auth::user()->id)
             ->where('trainingId', $nearestTraining->id)
             ->where('trainerId', $nearestTraining->trainers->user->id)
             ->get();
-        $testimonials = Testimonial::where('memberId', Auth::user()->member->id)->with('sender')->orderBy('id', 'DESC')->take(3)->get();
-        $myCircle = Auth::user()->member->circleId;
-        $meeting = Schedule::where('circleId', Auth::user()->member->circleId)
-            ->with('circle.members')
-            ->with('circle.franchise')
-            ->where('status', 'Active')->first();
 
-        // business category
-        $businessCategory = BusinessCategory::all();
+        if (!Auth::user()->hasRole('Admin')) {
+            // business category
 
-        $myInvites = MeetingInvitation::where('invitedMemberId', Auth::user()->id)->get();
-        return view('home', compact('count', 'nearestTraining', 'findRegister', 'testimonials', 'meeting', 'businessCategory', 'myInvites'));
+            $testimonials = Testimonial::where('memberId', Auth::user()->member->id)->with('sender')->orderBy('id', 'DESC')->take(3)->get();
+            $myCircle = Auth::user()->member->circleId;
+            $meeting = Schedule::where('circleId', Auth::user()->member->circleId)
+                ->with('circle.members')
+                ->with('circle.franchise')
+                ->where('status', 'Active')->first();
+
+            return view('home', compact('count', 'nearestTraining', 'findRegister', 'testimonials', 'meeting', 'businessCategory', 'myInvites'));
+        }
+        return view('home', compact('count', 'nearestTraining',  'businessCategory', 'myInvites', 'findRegister'));
     }
 
     public function trainingRegister($trainingId, $trainerId)
@@ -92,10 +96,35 @@ class HomeController extends Controller
         $invitation->businessCategoryId = $request->businessCategoryId;
         $invitation->save();
 
+        $fees = Schedule::where('id', $request->meetingId)->with('circle.city')->first();
         $personName = $request->personName;
-        $personEmail = $request->email;
+        $personEmail = $request->personEmail;
         $invitedPerson = User::where('id', Auth::user()->id)->first();
-        Mail::to($request->personEmail)->send(new MailMeetingInvitation($personName, $personEmail, $invitedPerson));
+        $invitedPersonFirstName = $invitedPerson->firstName;
+        $invitedPersonLastName = $invitedPerson->lastName;
+        $amount = $fees->circle->city->amount;
+        $data = [
+            'personName' => $personName,
+            'personEmail' => $personEmail,
+            'invitedPersonFirstName' => $invitedPersonFirstName,
+            'invitedPersonLastName' => $invitedPersonLastName,
+            'amount' => $amount
+        ];
+        Mail::to($request->personEmail)->send(new MailMeetingInvitation($data));
         return redirect()->back()->with('success', 'Invitation Sent Successfully');
+    }
+
+
+    public function invitationPay($personName, $personEmail, $invitedPersonFirstName, $invitedPersonLastName, $amount)
+    {
+        $amounts =  $amount;
+        $data = [
+            'personName' => $personName,    
+            'personEmail' => $personEmail,
+            'invitedPersonFirstName' => $invitedPersonFirstName,
+            'invitedPersonLastName' => $invitedPersonLastName,
+            'amount' => $amount
+        ];
+        return view('invitationPay', compact('data'));
     }
 }

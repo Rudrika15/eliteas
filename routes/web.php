@@ -247,7 +247,6 @@ Route::group(['middleware' => ['auth']], function () {
     // payment
     Route::post('/razorpay-payment', [PaymentController::class, 'store'])->name('razorpay.payment.store');
     Route::post('/razorpay-payment-invite', [PaymentController::class, 'invitePayment'])->name('razorpay.payment.invite');
-    Route::get('/trainingRegister/{trainingId?}/{trainerId?}', [HomeController::class, 'trainingRegister'])->name('training.register');
 
     // invite person
     Route::post('/invite', [HomeController::class, 'invitation'])->name('invite.person');
@@ -256,3 +255,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('testimonial/create', [TestimonialController::class, 'create'])->name('testimonial.create');
     Route::post('testimonial/store', [TestimonialController::class, 'store'])->name('testimonial.store');
 });
+
+Route::get('/trainingRegister/{trainingId?}/{trainerId?}', [HomeController::class, 'trainingRegister'])->name('training.register');
+// Route::get('/invitationPay/{personName?}/{personEmail?}/{invitedPersonFirstName?}/{invitedPersonLastName?}/{amount?}', [HomeController::class, 'invitationPay'])->name('invitationPay');
+Route::get('/invitationPay/{personName?}/{personEmail?}/{invitedPersonFirstName?}/{invitedPersonLastName?}/{amount?}', [HomeController::class, 'invitationPay'])->name('invitationPay');

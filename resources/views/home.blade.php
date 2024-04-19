@@ -137,12 +137,50 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="col-md-12">
-                <div class="card-title"><b>Invite peoples to join</b></div>
+    </div>
+
+
+    @if (!Auth::check() && Auth::user()->role === 'Admin')
+        {{-- Testimonial --}}
+        @if (count($testimonials) > 0)
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card-title"><b>Testimonials</b></div>
+                </div>
+                <div class="col-md-12">
+                    <div class="row">
+                        @foreach ($testimonials as $testimonial)
+                            <div class="col-md-4">
+                                <div class="card" style="border-radius:10px;height:250px;">
+
+                                    <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
+                                        {{-- {{asset('/')}} --}}
+                                        {{-- {{$testimonial->member->profilePhoto}} --}}
+                                        <img src="{{ asset('ProfilePhoto/' . $testimonial->sender->profilePhoto) }}" alt="Profile" class="rounded-circle img-thumbnail object-fit-cover" style="height: 100px;width:100px;">
+                                        <h3>{{ $testimonial->sender->firstName . ' ' . $testimonial->sender->lastName }}</h3>
+                                        <p class="text-center text-muted text-wrap p-testimonial-message"><i class="bi bi-quote text-dark" style="font-size: 20px;"></i>{{ $testimonial->message }}<i class="bi bi-quote text-dark" style="font-size: 20px;display:inline-block;transform:rotate(180deg);"></i></p>
+                                    </div>
+                                </div>
+                        @endforeach
+                    </div>
+                </div>
             </div>
-            <div class="card border-0 shadow workshopCard">
-                <div class="card-body">
+        @endif
+    @endif
+    {{-- end testimonial --}}
+
+    <!-- Button trigger modal -->
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Join {{ $nearestTraining->title }} Training</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
                     <div class="row">
                         <div class="col-md-12">
                             <div class="">
@@ -315,63 +353,57 @@
 </div>
 
 
-{{-- invite person modal --}}
-<!-- Button trigger modal -->
+    {{-- invite person modal  --}}
 
 
-<!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Person Details</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="registrationForm" action="{{ route('invite.person') }}" method="POST">
-                    @csrf
-                    <input type="hidden" name="meetingId" id="meetingId" value="{{ $meeting->id }}">
-                    <div class="mb-3">
-                        <label for="personName" class="form-label">Name</label><span class="text-danger">*</span>
-                        <input type="text" class="form-control" name="personName" id="personName">
-                        <span class="error-message text-danger"></span> <!-- Error message placeholder -->
+    @role('Member')
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Person Details</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="mb-3">
-                        <label for="personEmail" class="form-label">Email address</label><span
-                            class="text-danger">*</span>
-                        <input type="email" class="form-control" name="personEmail" id="personEmail"
-                            aria-describedby="emailHelp">
-                        <span class="error-message text-danger"></span> <!-- Error message placeholder -->
+                    <div class="modal-body">
+                        <form id="registrationForm" action="{{ route('invite.person') }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="meetingId" id="meetingId" value="{{ $meeting->id }}">
+                            <div class="mb-3">
+                                <label for="personName" class="form-label">Name</label><span class="text-danger">*</span>
+                                <input type="text" class="form-control" name="personName" id="personName">
+                                <span class="error-message text-danger"></span> <!-- Error message placeholder -->
+                            </div>
+                            <div class="mb-3">
+                                <label for="personEmail" class="form-label">Email address</label><span class="text-danger">*</span>
+                                <input type="email" class="form-control" name="personEmail" id="personEmail" aria-describedby="emailHelp">
+                                <span class="error-message text-danger"></span> <!-- Error message placeholder -->
+                            </div>
+                            <div class="mb-3">
+                                <label for="personContact" class="form-label">Contact Number</label><span class="text-danger">*</span>
+                                <input type="tel" class="form-control" name="personContact" id="personContact" pattern="[0-9]{10}">
+                                <span class="error-message text-danger"></span> <!-- Error message placeholder -->
+                            </div>
+                            <div class="mb-3">
+                                <label for="personBusiness" class="form-label">Business Category</label><span class="text-danger">*</span>
+                                <select name="  businessCategoryId" class="form-select" id="personBusiness">
+                                    <option value="" disabled selected>--Select Business Category--</option>
+                                    @foreach ($businessCategory as $category)
+                                        <option value="{{ $category->id }}"><img src="{{ asset('BusinessCategory') }}/{{ $category->image }}" alt=""> {{ $category->categoryName }}</option>
+                                    @endforeach
+                                </select>
+                                <span class="error-message text-danger"></span> <!-- Error message placeholder -->
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </form>
                     </div>
-                    <div class="mb-3">
-                        <label for="personContact" class="form-label">Contact Number</label><span
-                            class="text-danger">*</span>
-                        <input type="tel" class="form-control" name="personContact" id="personContact"
-                            pattern="[0-9]{10}">
-                        <span class="error-message text-danger"></span> <!-- Error message placeholder -->
-                    </div>
-                    <div class="mb-3">
-                        <label for="personBusiness" class="form-label">Business Category</label><span
-                            class="text-danger">*</span>
-                        <select name="  businessCategoryId" class="form-select" id="personBusiness">
-                            <option value="" disabled selected>--Select Business Category--</option>
-                            @foreach ($businessCategory as $category)
-                            <option value="{{ $category->id }}"><img
-                                    src="{{ asset('BusinessCategory') }}/{{ $category->image }}" alt=""> {{
-                                $category->categoryName }}</option>
-                            @endforeach
-                        </select>
-                        <span class="error-message text-danger"></span> <!-- Error message placeholder -->
-                    </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">Submit</button>
-                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-                    </div>
-                </form>
+                </div>
             </div>
         </div>
-    </div>
-</div>
+    @endrole
 
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
