@@ -24,6 +24,7 @@ class MeetingInvitation extends Mailable
      *
      * @return void
      */
+    public $amount;
     public function __construct($data)
     {
         $this->data = $data;
@@ -41,8 +42,10 @@ class MeetingInvitation extends Mailable
      */
     public function build()
     {
+
         return $this
             ->subject('Meeting Invitation')
-            ->view('emails.invitation');
+            ->view('emails.invitation',['amount'=>$this->data['amount']]);
+
     }
 }
