@@ -12,7 +12,7 @@ class TrainerMasterController extends Controller
     public function index(Request $request)
     {
         try {
-            $trainer = TrainerMaster::where('status', 'Active')->get();
+            $trainer = TrainerMaster::where('status', 'Active')->paginate(10);
             return view('admin.trainerMaster.index', compact('trainer'));
         } catch (\Throwable $th) {
             throw $th;

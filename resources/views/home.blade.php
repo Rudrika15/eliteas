@@ -52,7 +52,6 @@
                 <div class="col-md-12">
                     <div class="card-title"><b>Upcoming Circle Meetings</b></div>
                 </div>
-
                 <div class="col-md-12">
                     <div class="card border-0 shadow workshopCard">
                         <div class="card-body">

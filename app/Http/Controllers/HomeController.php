@@ -39,6 +39,7 @@ class HomeController extends Controller
     {
         $count = Schedule::where('status', 'Active')->count();
         $currentDate = Carbon::now()->toDateString();
+        
         $nearestTraining = Training::where('status', 'Active')
             ->whereDate('date', '>=', $currentDate)
             ->whereHas('trainers.user')

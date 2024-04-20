@@ -1,11 +1,13 @@
 <?php
 
+use App\Models\CircleMember;
 use Illuminate\Http\Request;
+use App\Mail\MeetingInvitation;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\LoginController;
+// use App\Http\Controllers\Api\CircleMeetingMemberBusinessController;
 use App\Http\Controllers\Api\CircleController;
 use App\Http\Controllers\Api\TrainingController;
-// use App\Http\Controllers\Api\CircleMeetingMemberBusinessController;
 use App\Http\Controllers\Api\FranchiseController;
 use App\Http\Controllers\Api\CircleCallController;
 use App\Http\Controllers\Api\CircleTypeController;
@@ -13,11 +15,11 @@ use App\Http\Controllers\Api\CircleMemberController;
 use App\Http\Controllers\Api\CircleMeetingController;
 use App\Http\Controllers\Api\TrainerMasterController;
 use App\Http\Controllers\Api\ForgetPasswordController;
+use App\Http\Controllers\Api\BusinessCategoryController;
+use App\Http\Controllers\Api\MeetingInvitationController;
 use App\Http\Controllers\Api\CircleMeetingMembersController;
 use App\Http\Controllers\Api\CircleMeetingMemberBusinessController;
 use App\Http\Controllers\Api\CircleMeetingMemberReferenceController;
-use App\Http\Controllers\Api\MeetingInvitationController;
-use App\Models\CircleMember;
 
 /*
 |--------------------------------------------------------------------------
@@ -158,5 +160,11 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     //Meeting Invitation
     Route::get('meeting-invitations-index', [MeetingInvitationController::class, 'index']);
-    Route::post('/invitation', [MeetingInvitationController::class, 'invitation']);
+    Route::post('meetings-invitation', [MeetingInvitationController::class, 'invitation']);
+
+    //Circle Meeting View
+    Route::get('circle-meeting-view', [MeetingInvitationController::class, 'getMeetingForCircle']);
+
+    //Business Category View
+    Route::get('business-category-index', [BusinessCategoryController::class, 'index']);
 });

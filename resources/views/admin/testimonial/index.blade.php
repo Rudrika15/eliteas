@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('header', 'State')
+@section('header', 'Testimonial')
 @section('content')
 
 {{-- Message --}}
@@ -25,40 +25,31 @@
 <div class="card">
     <div class="card-body">
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <h4 class="mb-0 mt-3">Trainings</h4>
-            <a href="{{ route('training.create') }}" class="btn btn-primary btn-sm mt-3">ADD</a>
+            <h4 class="mb-0 mt-3">Testmonial</h4>
         </div>
 
         <!-- Table with stripped rows -->
         <table class="table datatable">
             <thead>
                 <tr>
-                    <th>Trainer Name</th>
-                    <th>Title</th>
-                    <th>External Trainer</th>
-                    <th>Type</th>
-                    <th>Fees</th>
-                    <th>Venue</th>
+                    <th>Testimonial Giver</th>
+                    <th>Testimonial Taker</th>
+                    <th>Message</th>
                     <th>Date</th>
-                    <th>Time</th>
                     <th>Status</th>
-                    <th>Action</th>
+                    {{-- <th>Action</th> --}}
                 </tr>
             </thead>
             <tbody>
-                @foreach ($training as $trainingData)
+                @foreach ($testimonials as $testimonialData)
                 <tr>
-                    <td>{{$trainingData->member->firstName ?? '-'}} {{$trainingData->member->lastName ?? '-'}}</td>
-                    <td>{{$trainingData->title}}</td>
-                    <td>{{$trainingData->user->firstName ?? '-'}}</td>
-                    <td>{{$trainingData->type}}</td>
-                    <td>{{$trainingData->fees}}</td>
-                    <td>{{$trainingData->venue}}</td>
-                    <td>{{$trainingData->date}}</td>
-                    <td>{{$trainingData->time}}</td>
-                    <td>{{$trainingData->status}}</td>
-                    <td>
-                        <a href="{{ route('training.edit', $trainingData->id) }}" class="btn btn-primary btn-sm">
+                    <td>{{$testimonialData->user->firstName ?? '-'}} {{$testimonialData->user->lastName ?? '-'}}</td>
+                    <td>{{$testimonialData->member->firstName ?? '-'}} {{$testimonialData->member->lastName ?? '-'}}</td>
+                    <td>{{$testimonialData->message}}</td>
+                    <td>{{$testimonialData->uploadedDate}}</td>
+                    <td>{{$testimonialData->status}}</td>
+                    {{-- <td>
+                        <a href="{{ route('training.edit', $testimonialData->id) }}" class="btn btn-primary btn-sm">
                             <i class="bi bi-pen"></i>
                         </a>
 
@@ -66,9 +57,9 @@
                             <i class="bi bi-eye"></i>
                         </a> --}}
 
-                        <a href="{{ route('training.delete', $trainingData->id) }}" class="btn btn-danger btn-sm mt-3">
+                        {{-- <a href="{{ route('training.delete', $trainingData->id) }}" class="btn btn-danger btn-sm mt-3">
                             <i class="bi bi-trash"></i>
-                        </a>
+                        </a> --}}
 
 
                         {{-- <form action="{{ route('training.delete', $trainingData->id) }}" method="POST"
@@ -79,7 +70,7 @@
                                 <i class="bi bi-trash"></i> <!-- Icon for delete -->
                             </button>
                         </form> --}}
-                    </td>
+                    {{-- </td> --}}
                 </tr>
                 @endforeach
             </tbody>

@@ -35,38 +35,35 @@
                 <tr>
                     <th>Trainer Name</th>
                     <th>Training Name</th>
-                    {{-- <th>Status</th> --}}
-                    {{-- <th>Action</th> --}}
                 </tr>
             </thead>
             <tbody>
                 @foreach ($trainer as $trainerData)
                 <tr>
                     <td>{{$trainerData->trainerName}}</td>
-                    <td>{{$trainerData->title ?? '-'}}</td>
+                    <td>{{$trainerData->trainer->   title ?? '-'}}</td>
                     {{-- <td>{{$trainerData->status}}</td> --}}
                     <td>
                         {{-- <a href="{{ route('trainer.edit', $trainerData->id) }}" class="btn btn-primary btn-sm">
                             <i class="bi bi-pen"></i>
                         </a> --}}
-
+            
                         {{-- <a href="{{ route('franchise.show', $franchiseData->id) }}" class="btn btn-info">
                             <i class="bi bi-eye"></i>
                         </a> --}}
-
+            
                         {{-- <a href="{{ route('trainer.delete', $trainerData->id) }}" class="btn btn-danger btn-sm">
                             <i class="bi bi-trash"></i>
                         </a> --}}
-
-                        {{-- <form action="{{ route('trainer.delete', $trainerData->id) }}" method="POST"
-                            style="display: inline;">
+            
+                        {{-- <form action="{{ route('trainer.delete', $trainerData->id) }}" method="POST" style="display: inline;">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-danger btn-sm">
                                 <i class="bi bi-trash"></i> <!-- Icon for delete -->
                             </button>
                         </form> --}}
-
+            
                     </td>
                 </tr>
                 @endforeach
