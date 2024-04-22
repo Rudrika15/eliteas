@@ -22,6 +22,13 @@ class TestimonialController extends Controller
         return view('testimonial.index',["testimonials"=>$testimonials,'myTestimonials'=>$myTestimonials]);
     }
 
+    public function indexAdmin()
+    {
+        $testimonials = Testimonial::all();
+
+        return view ('admin.testimonial.index',compact('testimonials'));
+    }
+
     /**
      * Show the form for creating a new resource.
      */

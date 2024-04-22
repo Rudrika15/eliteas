@@ -55,8 +55,7 @@ class TrainingController extends Controller
     public function store(Request $request)
 
     {
-        // return request()->all();
-        // Validate the incoming request data (you may need to add more validation rules)
+        // Validate the incoming request
         $this->validate($request, [
             'title' => 'required',
             'fees' => 'required|numeric',
@@ -66,99 +65,126 @@ class TrainingController extends Controller
             'duration' => 'required',
         ]);
 
-        // Create a new Training record
-        $training = new Training();
-        $training->trainerId = $request->memberId;
-        $training->title = $request->title;
-        $training->fees = $request->fees;
-        $training->type = $request->type;
-        $training->meetingLink = $request->meetingLink;
-        $training->venue = $request->venue;
-        $training->date = $request->date;
-        $training->time = $request->time;
-        $training->duration = $request->duration;
-        $training->note = $request->note;
-        $training->save();
-
         // Process Trainer 1
         if ($request->has('groupMember')) {
+
             if ($request->input('groupMember') === 'internalMember') {
+                
                 // Trainer 1 internal
                 $trainer1 = new TrainerMaster();
-                $trainer1->userId = $request->memberId; 
-                $trainer1->trainerName = $request->memberName; 
+                $trainer1->userId = $request->memberId;
+                $trainer1->trainerName = $request->memberName;
                 $trainer1->save();
 
                 $user1 = User::findOrFail($trainer1->userId);
-                $user1->assignRole('Trainer');
+                $user1->assignRole('Trainer'); // Assign 'Trainer' role to the user
+
+                // Create Training record for Trainer 1
+                $training1 = new Training();
+                $training1->title = $request->title;
+                $training1->fees = $request->fees;
+                $training1->type = $request->type;
+                $training1->meetingLink = $request->meetingLink;
+                $training1->venue = $request->venue;
+                $training1->date = $request->date;
+                $training1->time = $request->time;
+                $training1->duration = $request->duration;
+                $training1->note = $request->note;
+                $training1->trainerId = $trainer1->userId; // Assuming trainerId field is used for internal trainers
+                $training1->save();
+
             } elseif ($request->input('groupMember') === 'externalMember') {
-                // Trainer 1  external
+
+                // Trainer 1 external
                 $user1 = new User();
-                $user1->firstName = $request->memberName;
+                $user1->firstName = $request->memberNameExternal;
                 $user1->email = $request->email;
                 $user1->password = Hash::make('123456');
-                $user1->assignRole('Trainer');
+                $user1->assignRole('Trainer'); // Assign 'Trainer' role to the user
                 $user1->save();
 
                 $trainer1 = new TrainerMaster();
                 $trainer1->userId = $user1->id;
-                $trainer1->trainerName = $user1->memberNameExternal;
+                $trainer1->trainerName = $user1->firstName;
                 $trainer1->save();
 
+                // Create Training record for Trainer 1
+                $training1 = new Training();
+                $training1->title = $request->title;
+                $training1->fees = $request->fees;
+                $training1->type = $request->type;
+                $training1->meetingLink = $request->meetingLink;
+                $training1->venue = $request->venue;
+                $training1->date = $request->date;
+                $training1->time = $request->time;
+                $training1->duration = $request->duration;
+                $training1->note = $request->note;
+                $training1->externalTrainerId = $user1->id; // Assuming externalTrainerId field is used for external trainers
+                $training1->save();
             }
         }
 
-        // Trainer 2
-
-
-        $training = new Training();
-        $training->trainerId = $request->trainerMemberId2;
-        $training->title = $request->title;
-        $training->fees = $request->fees;
-        $training->type = $request->type;
-        $training->meetingLink = $request->meetingLink;
-        $training->venue = $request->venue;
-        $training->date = $request->date;
-        $training->time = $request->time;
-        $training->duration = $request->duration;
-        $training->note = $request->note;
-        $training->save();
-
-
-
+        // Process Trainer 2
         if ($request->has('group')) {
             if ($request->input('group') === 'internal') {
-                // Trainer 2 is internal
+                // Trainer 2 internal
                 $trainer2 = new TrainerMaster();
-                $trainer2->userId = $request->trainerMemberId2; // Assuming trainerMemberId2 is used for internal trainers
-                $trainer2->trainerName = $request->trainerNameInternal; // Assuming trainerMemberId2 is used for internal trainers
+                $trainer2->userId = $request->trainerMemberId2;
+                $trainer2->trainerName = $request->trainerNameInternal;
                 $trainer2->save();
 
-                // Assign 'Trainer' role to the user associated with Trainer 2
                 $user2 = User::findOrFail($trainer2->userId);
-                $user2->assignRole('Trainer');
+                $user2->assignRole('Trainer'); // Assign 'Trainer' role to the user
+
+                // Create Training record for Trainer 2
+                $training2 = new Training();
+                $training2->title = $request->title;
+                $training2->fees = $request->fees;
+                $training2->type = $request->type;
+                $training2->meetingLink = $request->meetingLink;
+                $training2->venue = $request->venue;
+                $training2->date = $request->date;
+                $training2->time = $request->time;
+                $training2->duration = $request->duration;
+                $training2->note = $request->note;
+                $training2->trainerId = $trainer2->userId; // Assuming trainerId field is used for internal trainers
+                $training2->save();
 
             } elseif ($request->input('group') === 'external') {
-                // Trainer 2 is external
+
+                // Trainer 2 external
                 $user2 = new User();
                 $user2->firstName = $request->trainerNameExternal;
                 $user2->email = $request->email2;
-                $user2->password = Hash::make('123456'); // Set a default password or generate one securely
-                $user2->assignRole('Trainer');
+                $user2->password = Hash::make('123456');
+                $user2->assignRole('Trainer'); // Assign 'Trainer' role to the user
                 $user2->save();
 
                 $trainer2 = new TrainerMaster();
                 $trainer2->userId = $user2->id;
-                $trainer2->trainerName = $user2->trainerNameExternal;
+                $trainer2->trainerName = $user2->firstName;
                 $trainer2->save();
 
-                // Assign 'Trainer' role to the user associated with Trainer 2
+                // Create Training record for Trainer 2
+                $training2 = new Training();
+                $training2->title = $request->title;
+                $training2->fees = $request->fees;
+                $training2->type = $request->type;
+                $training2->meetingLink = $request->meetingLink;
+                $training2->venue = $request->venue;
+                $training2->date = $request->date;
+                $training2->time = $request->time;
+                $training2->duration = $request->duration;
+                $training2->note = $request->note;
+                $training2->externalTrainerId = $user2->id; // Assuming externalTrainerId field is used for external trainers
+                $training2->save();
             }
         }
 
         // Redirect the user after successful submission
         return redirect()->route('training.index')->with('success', 'Training details saved successfully.');
     }
+
 
 
     public function edit($id)

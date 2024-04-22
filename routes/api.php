@@ -1,11 +1,13 @@
 <?php
 
+use App\Models\CircleMember;
 use Illuminate\Http\Request;
+use App\Mail\MeetingInvitation;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\LoginController;
+// use App\Http\Controllers\Api\CircleMeetingMemberBusinessController;
 use App\Http\Controllers\Api\CircleController;
 use App\Http\Controllers\Api\TrainingController;
-// use App\Http\Controllers\Api\CircleMeetingMemberBusinessController;
 use App\Http\Controllers\Api\FranchiseController;
 use App\Http\Controllers\Api\CircleCallController;
 use App\Http\Controllers\Api\CircleTypeController;
@@ -13,10 +15,11 @@ use App\Http\Controllers\Api\CircleMemberController;
 use App\Http\Controllers\Api\CircleMeetingController;
 use App\Http\Controllers\Api\TrainerMasterController;
 use App\Http\Controllers\Api\ForgetPasswordController;
+use App\Http\Controllers\Api\BusinessCategoryController;
+use App\Http\Controllers\Api\MeetingInvitationController;
 use App\Http\Controllers\Api\CircleMeetingMembersController;
 use App\Http\Controllers\Api\CircleMeetingMemberBusinessController;
 use App\Http\Controllers\Api\CircleMeetingMemberReferenceController;
-use App\Models\CircleMember;
 
 /*
 |--------------------------------------------------------------------------
@@ -100,12 +103,19 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::put('trainings-update/{id}', [TrainingController::class, 'update']);
     Route::delete('trainings-delete/{id}', [TrainingController::class, 'delete']);
 
+    //Training Register
+
+    // Route::post('/training-register/{trainingId}/{trainerId}', [TrainingController::class, 'trainingRegister']);
+
+    Route::post('/training-register', [TrainingController::class, 'trainingRegister']);
+
     // Circle Type
     Route::get('circle-type-index', [CircleTypeController::class, 'index']);
     Route::get('circle-type-show/{id}', [CircleTypeController::class, 'show']);
     Route::post('circle-type-create', [CircleTypeController::class, 'create']);
     Route::put('circle-type-update/{id}', [CircleTypeController::class, 'update']);
     Route::delete('circle-type-delete/{id}', [CircleTypeController::class, 'delete']);
+
 
     // Circle
     Route::get('circle-index', [CircleController::class, 'index']);
@@ -147,4 +157,14 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     //circle wise mmeber
     Route::get('circle-wise-member-index', [CircleMemberController::class, 'circleWiseMember']);
+
+    //Meeting Invitation
+    Route::get('meeting-invitations-index', [MeetingInvitationController::class, 'index']);
+    Route::post('meetings-invitation', [MeetingInvitationController::class, 'invitation']);
+
+    //Circle Meeting View
+    Route::get('circle-meeting-view', [MeetingInvitationController::class, 'getMeetingForCircle']);
+
+    //Business Category View
+    Route::get('business-category-index', [BusinessCategoryController::class, 'index']);
 });

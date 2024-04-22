@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('header', 'City')
+@section('header', 'Testimonial')
 @section('content')
 
 {{-- Message --}}
@@ -25,34 +25,31 @@
 <div class="card">
     <div class="card-body">
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <h4 class="mb-0 mt-3">City</h4>
-            <a href="{{ route('city.create') }}" class="btn btn-primary btn-sm mt-3">ADD</a>
+            <h4 class="mb-0 mt-3">Testmonial</h4>
         </div>
 
         <!-- Table with stripped rows -->
         <table class="table datatable">
             <thead>
                 <tr>
-                    <th>Country Name</th>
-                    <th>State Name</th>
-                    <th>City Name</th>
-                    <th>Amount</th>
-                    <th>Member Amount</th>
+                    <th>Testimonial Giver</th>
+                    <th>Testimonial Taker</th>
+                    <th>Message</th>
+                    <th>Date</th>
                     <th>Status</th>
-                    <th>Action</th>
+                    {{-- <th>Action</th> --}}
                 </tr>
             </thead>
             <tbody>
-                @foreach ($city as $cityData)
+                @foreach ($testimonials as $testimonialData)
                 <tr>
-                    <td>{{$cityData->country->countryName ?? '-'}}</td>
-                    <td>{{$cityData->state->stateName ?? '-'}}</td>
-                    <td>{{$cityData->cityName}}</td>
-                    <td>{{$cityData->amount}}</td>
-                    <td>{{$cityData->memberAmount}}</td>
-                    <td>{{$cityData->status}}</td>
-                    <td>
-                        <a href="{{ route('city.edit', $cityData->id) }}" class="btn btn-primary btn-sm">
+                    <td>{{$testimonialData->user->firstName ?? '-'}} {{$testimonialData->user->lastName ?? '-'}}</td>
+                    <td>{{$testimonialData->member->firstName ?? '-'}} {{$testimonialData->member->lastName ?? '-'}}</td>
+                    <td>{{$testimonialData->message}}</td>
+                    <td>{{$testimonialData->uploadedDate}}</td>
+                    <td>{{$testimonialData->status}}</td>
+                    {{-- <td>
+                        <a href="{{ route('training.edit', $testimonialData->id) }}" class="btn btn-primary btn-sm">
                             <i class="bi bi-pen"></i>
                         </a>
 
@@ -60,14 +57,20 @@
                             <i class="bi bi-eye"></i>
                         </a> --}}
 
-                        <form action="{{ route('city.delete', $cityData->id) }}" method="POST" style="display: inline;">
+                        {{-- <a href="{{ route('training.delete', $trainingData->id) }}" class="btn btn-danger btn-sm mt-3">
+                            <i class="bi bi-trash"></i>
+                        </a> --}}
+
+
+                        {{-- <form action="{{ route('training.delete', $trainingData->id) }}" method="POST"
+                            style="display: inline;">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-danger btn-sm">
                                 <i class="bi bi-trash"></i> <!-- Icon for delete -->
                             </button>
-                        </form>
-                    </td>
+                        </form> --}}
+                    {{-- </td> --}}
                 </tr>
                 @endforeach
             </tbody>

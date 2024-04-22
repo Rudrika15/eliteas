@@ -80,6 +80,7 @@
                 <span>Training</span>
             </a>
         </li>
+
     </ul>
 </li><!-- End Tables Nav -->
 
@@ -148,4 +149,13 @@
             </a>
         </li> --}}
     </ul>
+
+    <li class="nav-item">
+        <a class="nav-link " href="{{route('testimonials.indexAdmin')}}">
+            <i class="bi bi-person"></i>
+            <span>Testimonial</span>
+        </a>
+    </li>
+
+
 </li>

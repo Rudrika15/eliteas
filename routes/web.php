@@ -245,10 +245,14 @@ Route::group(['middleware' => ['auth']], function () {
 
     // invite person
     Route::post('/invite', [HomeController::class, 'invitation'])->name('invite.person');
-
+    //testimonials user side
     Route::get('testimonial/index', [TestimonialController::class, 'index'])->name('testimonial.index');
     Route::get('testimonial/create', [TestimonialController::class, 'create'])->name('testimonial.create');
     Route::post('testimonial/store', [TestimonialController::class, 'store'])->name('testimonial.store');
+
+    //Testimonial View Admin Side
+    Route::get('testimonials/indexAdmin', [TestimonialController::class, 'indexAdmin'])->name('testimonials.indexAdmin');
+
 });
 
 Route::get('/trainingRegister/{trainingId?}/{trainerId?}', [HomeController::class, 'trainingRegister'])->name('training.register');
