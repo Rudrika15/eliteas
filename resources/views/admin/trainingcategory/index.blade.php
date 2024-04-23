@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('header', 'Trainer Master')
+@section('header', 'Training Category')
 @section('content')
 
 {{-- Message --}}
@@ -25,40 +25,39 @@
 <div class="card">
     <div class="card-body">
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <h4 class="mb-0 mt-3">Trainer Master</h4>
-            <a href="{{ route('trainer.create') }}" class="btn btn-primary btn-sm mt-3">ADD</a>
+            <h4 class="mb-0 mt-3">Training Category</h4>
+            <a href="{{ route('tCategory.create') }}" class="btn btn-primary btn-sm mt-3">ADD</a>
         </div>
 
         <!-- Table with stripped rows -->
         <table class="table datatable">
             <thead>
                 <tr>
-                    <th>Trainer First Name</th>
-                    <th>Trainer Last Name</th>
-                    <th>Email</th>
-                    <th>Contact</th>
-                    <th>status</th>
+                    <th>Category Name</th>
+                    <th>Status</th>
                     <th>Action</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach ($trainer as $trainerData)
+                @foreach ($trainingCategory as $trainingCategoryData)
                 <tr>
-                    <td>{{$trainerData->firstName}}</td>
-                    <td>{{$trainerData->lastName}}</td>
-                    <td>{{$trainerData->email}}</td>
-                    <td>{{$trainerData->contactNo}}</td>
-                    <td>{{$trainerData->status}}</td>
-
+                    <td>{{$trainingCategoryData->categoryName ?? '-'}}</td>
+                    
+                    <td>{{$trainingCategoryData->status}}</td>
                     <td>
-                        <a href="{{ route('trainer.edit', $trainerData->id) }}" class="btn btn-primary btn-sm">
+                        <a href="{{ route('tCategory.edit', $trainingCategoryData->id) }}"
+                            class="btn btn-primary btn-sm">
                             <i class="bi bi-pen"></i>
                         </a>
-            
-                        <a href="{{ route('trainer.delete', $trainerData->id) }}" class="btn btn-danger btn-sm">
+
+                        {{-- <a href="{{ route('franchise.show', $franchiseData->id) }}" class="btn btn-info">
+                            <i class="bi bi-eye"></i>
+                        </a> --}}
+
+                        <a href="{{ route('tCategory.delete', $trainingCategoryData->id) }}"
+                            class="btn btn-danger btn-sm">
                             <i class="bi bi-trash"></i>
                         </a>
-            
                     </td>
                 </tr>
                 @endforeach

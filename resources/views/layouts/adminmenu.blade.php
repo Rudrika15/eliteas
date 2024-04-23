@@ -32,9 +32,67 @@
 </li><!-- End Components Nav -->
 
 
-<!-- End Components Nav -->
+{{-- Master Menu --}}
 
 <li class="nav-item">
+    <a class="nav-link collapsed" data-bs-target="#master-nav" data-bs-toggle="collapse" href="#">
+        <i class="bi bi-gear"></i><span>Master</span><i class="bi bi-chevron-down ms-auto"></i>
+    </a>
+    <ul id="master-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+        <li class="nav-item">
+            <a class="nav-link " href="{{route('membershipType.index')}}">
+                <i class="bi bi-globe"></i>
+                <span>Membership Type</span>
+            </a>
+        </li>
+    </ul>
+    <ul id="master-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+        <li class="nav-item">
+            <a class="nav-link " href="{{route('tCategory.index')}}">
+                <i class="bi bi-globe"></i>
+                <span>Training Category</span>
+            </a>
+        </li>
+    </ul>
+    <ul id="master-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+        <li class="nav-item">
+            <a class="nav-link " href="{{route('bCategory.index')}}">
+                <i class="bi bi-plus-circle"></i>
+                <span>Business Category</span>
+            </a>
+        </li>
+    </ul>
+    <ul id="master-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+        <li class="nav-item">
+            <a class="nav-link " href="{{route('country.index')}}">
+                <i class="bi bi-globe"></i>
+                <span>Country</span>
+            </a>
+        </li>
+    </ul>
+    <ul id="master-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+        <li class="nav-item">
+            <a class="nav-link " href="{{route('state.index')}}">
+                <i class="bi bi-flag"></i>
+                <span>State</span>
+            </a>
+        </li>
+    </ul>
+    <ul id="master-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+        <li class="nav-item">
+            <a class="nav-link " href="{{route('city.index')}}">
+                <i class="bi bi-buildings"></i>
+                <span>City</span>
+            </a>
+        </li>
+    </ul>
+</li><!-- End Forms Nav -->
+
+{{-- Master Menu End --}}
+
+<!-- End Components Nav -->
+
+{{-- <li class="nav-item">
     <a class="nav-link collapsed" data-bs-target="#region-nav" data-bs-toggle="collapse" href="#">
         <i class="bi bi-globe"></i><span>Region</span><i class="bi bi-chevron-down ms-auto"></i>
     </a>
@@ -60,7 +118,7 @@
             </a>
         </li>
     </ul>
-</li><!-- End Forms Nav -->
+</li><!-- End Forms Nav --> --}}
 
 <li class="nav-item">
     <a class="nav-link collapsed" data-bs-target="#training-nav" data-bs-toggle="collapse" href="#">
@@ -89,12 +147,6 @@
         <i class="bi bi-plus-circle-dotted"></i><span>Circle</span><i class="bi bi-chevron-down ms-auto"></i>
     </a>
     <ul id="circle-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-        <li class="nav-item">
-            <a class="nav-link " href="{{route('bCategory.index')}}">
-                <i class="bi bi-plus-circle"></i>
-                <span>Business Category</span>
-            </a>
-        </li>
 
         <li class="nav-item">
             <a class="nav-link " href="{{route('circletype.index')}}">
@@ -150,12 +202,15 @@
         </li> --}}
     </ul>
 
-    <li class="nav-item">
-        <a class="nav-link " href="{{route('testimonials.indexAdmin')}}">
-            <i class="bi bi-person"></i>
-            <span>Testimonial</span>
-        </a>
-    </li>
+
+
+    
+<li class="nav-item">
+    <a class="nav-link " href="{{route('testimonials.indexAdmin')}}">
+        <i class="bi bi-person"></i>
+        <span>Testimonial</span>
+    </a>
+</li>
 
 
 </li>

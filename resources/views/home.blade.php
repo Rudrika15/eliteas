@@ -209,7 +209,7 @@
                         <div class="col-md-12">
                             <div>
                                 <ul class="list-group list-group-flush">
-                                    <li class="list-group-item text-center fw-bold">All Training Invites</li>
+                                    <li class="list-group-item text-center fw-bold">All Circle Meetings Invites</li>
                                     @foreach ($myInvites->take(3) as $invite)
                                         <li class="list-group-item">
                                             {{ $invite->personName }}

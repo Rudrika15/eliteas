@@ -22,9 +22,11 @@ use App\Http\Controllers\Admin\CircleMeetingController;
 use App\Http\Controllers\Admin\TrainerMasterController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Admin\BusinessCategoryController;
+use App\Http\Controllers\Admin\TrainingCategoryController;
 use App\Http\Controllers\Admin\CircleMeetingMembersController;
 use App\Http\Controllers\Admin\CircleMeetingMemberBusinessController;
 use App\Http\Controllers\Admin\CircleMeetingMemberReferenceController;
+use App\Http\Controllers\Admin\MembershipTypeController;
 use App\Http\Controllers\Admin\PaymentController;
 use App\Http\Controllers\TestimonialController;
 
@@ -238,6 +240,16 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('bCategory/edit/{id?}', [BusinessCategoryController::class, 'edit'])->name('bCategory.edit');
     Route::post('bCategory/update', [BusinessCategoryController::class, 'update'])->name('bCategory.update');
     Route::get('bCategory/delete/{id?}', [BusinessCategoryController::class, 'delete'])->name('bCategory.delete');
+   
+    //Training Caategory
+
+    Route::get('/tCategory/index', [TrainingCategoryController::class, 'index'])->name('tCategory.index');
+    Route::get('tCategory/show/{id?}', [TrainingCategoryController::class, 'show'])->name('tCategory.show');
+    Route::get('tCategory/create', [TrainingCategoryController::class, 'create'])->name('tCategory.create');
+    Route::post('tCategory/store', [TrainingCategoryController::class, 'store'])->name('tCategory.store');
+    Route::get('tCategory/edit/{id?}', [TrainingCategoryController::class, 'edit'])->name('tCategory.edit');
+    Route::post('tCategory/update', [TrainingCategoryController::class, 'update'])->name('tCategory.update');
+    Route::get('tCategory/delete/{id?}', [TrainingCategoryController::class, 'delete'])->name('tCategory.delete');
 
     // payment
     Route::post('/razorpay-payment', [PaymentController::class, 'store'])->name('razorpay.payment.store');
@@ -252,6 +264,17 @@ Route::group(['middleware' => ['auth']], function () {
 
     //Testimonial View Admin Side
     Route::get('testimonials/indexAdmin', [TestimonialController::class, 'indexAdmin'])->name('testimonials.indexAdmin');
+
+
+    //Membership Master
+    Route::get('/membershipType/index', [MembershipTypeController::class, 'index'])->name('membershipType.index');
+    Route::get('membershipType/show/{id?}', [MembershipTypeController::class, 'show'])->name('membershipType.show');
+    Route::get('membershipType/create', [MembershipTypeController::class, 'create'])->name('membershipType.create');
+    Route::post('membershipType/store', [MembershipTypeController::class, 'store'])->name('membershipType.store');
+    Route::get('membershipType/edit/{id?}', [MembershipTypeController::class, 'edit'])->name('membershipType.edit');
+    Route::post('membershipType/update', [MembershipTypeController::class, 'update'])->name('membershipType.update');
+    Route::get('membershipType/delete/{id?}', [MembershipTypeController::class, 'delete'])->name('membershipType.delete');
+
 });
 
 Route::get('/trainingRegister/{trainingId?}/{trainerId?}', [HomeController::class, 'trainingRegister'])->name('training.register');

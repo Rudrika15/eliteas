@@ -318,19 +318,47 @@
     <br>
     <br>
     <br>
+
+{{-- footer start --}}
+
+
+
     <!-- ======= Footer ======= -->
-    <footer id="footer" class="footer">
-        <div class="copyright">
-            &copy; Copyright <strong><span>FlipCode Solutions</span></strong>. All Rights Reserved
-        </div>
-        <div class="credits">
-            <!-- All the links in the footer should remain intact. -->
-            <!-- You can delete the links only if you purchased the pro version. -->
-            <!-- Licensing information: https://bootstrapmade.com/license/ -->
-            <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/ -->
-            Designed by <a href="#">FlipCode</a>
+    <style>
+        .show-on-scroll {
+            display: none;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+    </style>
+    <footer id="footer" class="footer fixed-bottom bg-light border-top py-2 show-on-scroll">
+        <div class="container">
+            <div class="copyright text-center">
+                &copy; Copyright <strong><span>FlipCode Solutions</span></strong>. All Rights Reserved
+            </div>
+            <div class="credits text-center">
+                <!-- All the links in the footer should remain intact. -->
+                <!-- You can delete the links only if you purchased the pro version. -->
+                <!-- Licensing information: https://bootstrapmade.com/license/ -->
+                <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/ -->
+                Designed by <a href="#">FlipCode</a>
+            </div>
         </div>
     </footer><!-- End Footer -->
+
+    <script>
+        window.addEventListener('scroll', function() {
+            const footer = document.querySelector('.footer');
+            if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
+                footer.classList.remove('show-on-scroll');
+            } else {
+                footer.classList.add('show-on-scroll');
+            }
+        });
+    </script>
+
+    {{-- footer end --}}
 
     <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
