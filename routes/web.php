@@ -252,9 +252,14 @@ Route::group(['middleware' => ['auth']], function () {
 
     //Testimonial View Admin Side
     Route::get('testimonials/indexAdmin', [TestimonialController::class, 'indexAdmin'])->name('testimonials.indexAdmin');
-
 });
 
 Route::get('/trainingRegister/{trainingId?}/{trainerId?}', [HomeController::class, 'trainingRegister'])->name('training.register');
 Route::get('/invitationPay/{personName?}/{personEmail?}/{invitedPersonFirstName?}/{invitedPersonLastName?}/{amount?}', [HomeController::class, 'invitationPay'])->name('invitationPay');
 // Route::post('/invitationPay', [HomeController::class, 'invitationPay'])->name('invitationPay');
+
+
+
+// global search 
+Route::get('/search', [HomeController::class, 'findMember'])->name('search');
+Route::get('/searchQuery', [HomeController::class, 'search'])->name('searchQuery');

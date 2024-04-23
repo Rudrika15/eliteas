@@ -1223,10 +1223,14 @@ h6 {
 # Footer
 --------------------------------------------------------------*/
 .footer {
-  padding: 20px 0;
+  padding: 20px 10px;
   font-size: 14px;
   transition: all 0.3s;
   border-top: 1px solid #cddfff;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  /* Optionally set background color */
 }
 
 .footer .copyright {
