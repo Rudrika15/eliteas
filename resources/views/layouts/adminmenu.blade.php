@@ -1,17 +1,18 @@
 <li class="nav-item">
     <a class="nav-link collapsed" data-bs-target="#users-nav" data-bs-toggle="collapse" href="#">
-        <i class="bi bi-menu-button-wide"></i><span>Users</span><i class="bi bi-chevron-down ms-auto"></i>
+        <i class="bi bi-menu-button-wide" style="color: #e76a35"></i><span>Users</span><i
+            class="bi bi-chevron-down ms-auto" style="color: #e76a35"></i>
     </a>
     <ul id="users-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
         <li class="nav-item">
-            <a class="nav-link " href="{{route('users.index')}}">
-                <i class="bi bi-person"></i>
+            <a class="nav-link " href="{{ route('users.index') }}">
+                <i class="bi bi-person" style="color: #e76a35"></i>
                 <span>User</span>
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link " href="{{route('franchise.index')}}">
-                <i class="bi bi-person-vcard"></i>
+            <a class="nav-link " href="{{ route('franchise.index') }}">
+                <i class="bi bi-person-vcard" style="color: #e76a35"></i>
                 <span>Franchise</span>
             </a>
         </li>
@@ -22,8 +23,8 @@
             </a>
         </li> --}}
         <li class="nav-item">
-            <a class="nav-link " href="{{route('roles.index')}}">
-                <i class="bi bi-shield"></i>
+            <a class="nav-link " href="{{ route('roles.index') }}">
+                <i class="bi bi-shield" style="color: #e76a35"></i>
                 <span>Roles</span>
             </a>
         </li>
@@ -36,26 +37,27 @@
 
 <li class="nav-item">
     <a class="nav-link collapsed" data-bs-target="#region-nav" data-bs-toggle="collapse" href="#">
-        <i class="bi bi-globe"></i><span>Region</span><i class="bi bi-chevron-down ms-auto"></i>
+        <i class="bi bi-globe" style="color: #e76a35"></i><span>Region</span><i class="bi bi-chevron-down ms-auto"
+            style="color: #e76a35"></i>
     </a>
     <ul id="region-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
         <li class="nav-item">
-            <a class="nav-link " href="{{route('country.index')}}">
-                <i class="bi bi-globe"></i>
+            <a class="nav-link " href="{{ route('country.index') }}">
+                <i class="bi bi-globe" style="color: #e76a35"></i>
                 <span>Country</span>
             </a>
         </li>
 
         <li class="nav-item">
-            <a class="nav-link " href="{{route('state.index')}}">
-                <i class="bi bi-flag"></i>
+            <a class="nav-link " href="{{ route('state.index') }}">
+                <i class="bi bi-flag" style="color: #e76a35"></i>
                 <span>State</span>
             </a>
         </li>
 
         <li class="nav-item">
-            <a class="nav-link " href="{{route('city.index')}}">
-                <i class="bi bi-buildings"></i>
+            <a class="nav-link " href="{{ route('city.index') }}">
+                <i class="bi bi-buildings" style="color: #e76a35"></i>
                 <span>City</span>
             </a>
         </li>
@@ -64,19 +66,20 @@
 
 <li class="nav-item">
     <a class="nav-link collapsed" data-bs-target="#training-nav" data-bs-toggle="collapse" href="#">
-        <i class="bi bi-person-gear"></i><span>Training</span><i class="bi bi-chevron-down ms-auto"></i>
+        <i class="bi bi-person-gear" style="color: #e76a35"></i><span>Training</span><i
+            class="bi bi-chevron-down ms-auto" style="color: #e76a35"></i>
     </a>
     <ul id="training-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
         <li class="nav-item">
-            <a class="nav-link " href="{{route('trainer.index')}}">
-                <i class="bi bi-person-gear"></i>
+            <a class="nav-link " href="{{ route('trainer.index') }}">
+                <i class="bi bi-person-gear" style="color: #e76a35"></i>
                 <span>Trainer Master</span>
             </a>
         </li>
 
         <li class="nav-item">
-            <a class="nav-link " href="{{route('training.index')}}">
-                <i class="bi bi-gear-wide-connected"></i>
+            <a class="nav-link " href="{{ route('training.index') }}">
+                <i class="bi bi-gear-wide-connected" style="color: #e76a35"></i>
                 <span>Training</span>
             </a>
         </li>
@@ -86,33 +89,34 @@
 
 <li class="nav-item">
     <a class="nav-link collapsed" data-bs-target="#circle-nav" data-bs-toggle="collapse" href="#">
-        <i class="bi bi-plus-circle-dotted"></i><span>Circle</span><i class="bi bi-chevron-down ms-auto"></i>
+        <i class="bi bi-plus-circle-dotted" style="color: #e76a35"></i><span>Circle</span><i
+            class="bi bi-chevron-down ms-auto" style="color: #e76a35"></i>
     </a>
     <ul id="circle-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
         <li class="nav-item">
-            <a class="nav-link " href="{{route('bCategory.index')}}">
-                <i class="bi bi-plus-circle"></i>
+            <a class="nav-link " href="{{ route('bCategory.index') }}">
+                <i class="bi bi-plus-circle" style="color: #e76a35"></i>
                 <span>Business Category</span>
             </a>
         </li>
 
         <li class="nav-item">
-            <a class="nav-link " href="{{route('circletype.index')}}">
-                <i class="bi bi-plus-circle"></i>
+            <a class="nav-link " href="{{ route('circletype.index') }}">
+                <i class="bi bi-plus-circle" style="color: #e76a35"></i>
                 <span>Circle Type</span>
             </a>
         </li>
 
         <li class="nav-item">
-            <a class="nav-link " href="{{route('circle.index')}}">
-                <i class="bi bi-plus-circle-dotted"></i>
+            <a class="nav-link " href="{{ route('circle.index') }}">
+                <i class="bi bi-plus-circle-dotted" style="color: #e76a35"></i>
                 <span>Circle</span>
             </a>
         </li>
 
         <li class="nav-item">
-            <a class="nav-link " href="{{route('circlemember.index')}}">
-                <i class="bi bi-plus-circle-dotted"></i>
+            <a class="nav-link " href="{{ route('circlemember.index') }}">
+                <i class="bi bi-plus-circle-dotted" style="color: #e76a35"></i>
                 <span>Circle Member</span>
             </a>
         </li>
@@ -150,12 +154,12 @@
         </li> --}}
     </ul>
 
-    <li class="nav-item">
-        <a class="nav-link " href="{{route('testimonials.indexAdmin')}}">
-            <i class="bi bi-person"></i>
-            <span>Testimonial</span>
-        </a>
-    </li>
+<li class="nav-item">
+    <a class="nav-link collapsed" href="{{ route('testimonials.indexAdmin') }}">
+        <i class="bi bi-person" style="color: #e76a35"></i>
+        <span style="color: #1d2856">Testimonial</span>
+    </a>
+</li>
 
 
 </li>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Member;
 use App\Models\Testimonial;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -15,18 +16,18 @@ class TestimonialController extends Controller
      */
     public function index()
     {
-        $testimonials = Testimonial::where('memberId',Auth::user()->member->id)->with('sender')->get();
-        $myTestimonials = Testimonial::where('userId',Auth::user()->id)->with('receiver')->get();
+        $testimonials = Testimonial::where('memberId', Auth::user()->member->id)->with('sender')->get();
+        $myTestimonials = Testimonial::where('userId', Auth::user()->id)->with('receiver')->get();
         // return Auth::user()->member->id;
         // return $testimonials;
-        return view('testimonial.index',["testimonials"=>$testimonials,'myTestimonials'=>$myTestimonials]);
+        return view('testimonial.index', ["testimonials" => $testimonials, 'myTestimonials' => $myTestimonials]);
     }
 
     public function indexAdmin()
     {
         $testimonials = Testimonial::all();
 
-        return view ('admin.testimonial.index',compact('testimonials'));
+        return view('admin.testimonial.index', compact('testimonials'));
     }
 
     /**
@@ -44,7 +45,7 @@ class TestimonialController extends Controller
     {
         $request->validate([
             'circlePersonId' => 'required',
-            'message'=>'required'
+            'message' => 'required'
         ]);
 
         $testimonial = new Testimonial();
@@ -54,7 +55,7 @@ class TestimonialController extends Controller
         $testimonial->status = 'Active';
         $testimonial->uploadedDate = Carbon::now()->toDateString();
         $testimonial->save();
-        return view('testimonial.create')->with("success","message");
+        return view('testimonial.create')->with("success", "message");
     }
 
     /**
@@ -84,8 +85,21 @@ class TestimonialController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Testimonial $testimonial)
+    public function destroy($id)
     {
-        //
+        $testimonial = Testimonial::find($id);
+        $testimonial->delete();
+        return redirect()->back()->with("success", "Testimonial deleted successfully.");
+    }
+    public function archives()
+    {
+        $testimonials = Testimonial::onlyTrashed()->get();
+        return view('admin.testimonial.archives', \compact('testimonials'));
+    }
+    public function restore($id)
+    {
+        $testimonials = Testimonial::withTrashed()->find($id);
+        $testimonials->restore();
+        return \redirect()->route('testimonials.indexAdmin');
     }
 }

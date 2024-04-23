@@ -252,6 +252,10 @@ Route::group(['middleware' => ['auth']], function () {
 
     //Testimonial View Admin Side
     Route::get('testimonials/indexAdmin', [TestimonialController::class, 'indexAdmin'])->name('testimonials.indexAdmin');
+
+    Route::get('testimonial/destroy{id}', [TestimonialController::class, 'destroy'])->name('testimonial.destroy');
+    Route::get('testimonial/archives', [TestimonialController::class, 'archives'])->name('testimonial.archives');
+    Route::get('testimonial/restore/{id}', [TestimonialController::class, 'restore'])->name('testimonial.restore');
 });
 
 Route::get('/trainingRegister/{trainingId?}/{trainerId?}', [HomeController::class, 'trainingRegister'])->name('training.register');

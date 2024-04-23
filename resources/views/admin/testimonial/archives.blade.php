@@ -26,8 +26,7 @@
         <div class="card-body">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h4 class="mb-0 mt-3">Testmonial</h4>
-                <a href="{{ route('testimonial.archives') }}" class="btn mt-3 btn-sm"
-                    style="background-color: #e76a35">Archives</a>
+                {{-- <a href="{{route('')}}" class="btn mt-3 btn-sm" style="background-color: #e76a35">Archives</a> --}}
             </div>
 
             <!-- Table with stripped rows -->
@@ -54,10 +53,9 @@
                             <td>{{ $testimonialData->status }}</td>
                             <td>
 
-                                <a href="{{ route('testimonial.destroy', $testimonialData->id) }}"
-                                    onclick="return confirm('Do You Want To Delete It')"
-                                    class="btn btn-danger btn-sm d-flex justify-content-center align-items-center"><i
-                                        class="bi bi-trash"></i></a>
+                                <a href="{{ route('testimonial.restore', $testimonialData->id) }}"
+                                    onclick="return confirm('Do You Want To restore It')"
+                                    class="btn btn-success btn-sm d-flex justify-content-center align-items-center">restore</a>
                             </td>
                             {{-- <td>
                         <a href="{{ route('training.edit', $testimonialData->id) }}" class="btn btn-primary btn-sm">

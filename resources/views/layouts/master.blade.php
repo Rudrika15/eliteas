@@ -16,7 +16,9 @@
 
     <!-- Google Fonts -->
     <link href="https://fonts.gstatic.com" rel="preconnect">
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
+        rel="stylesheet">
 
     <!-- Vendor CSS Files -->
     <link href="{{ asset('vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet" />
@@ -42,12 +44,12 @@
 <body>
 
     <!-- ======= Header ======= -->
-    <header id="header" class="header fixed-top d-flex align-items-center">
+    <header id="header" class="header fixed-top d-flex align-items-center shadow-none border ">
 
         <div class="d-flex justify-content-between">
             <a href="#" class="logo">
                 {{-- <img src="assets/img/logo.png" alt=""> --}}
-                <img src="{{ asset('img/logo.png') }}" alt="ELITEAs" class="d-none d-lg-block" width="100">
+                <img src="{{ asset('img/logo2.jpg') }}" alt="ELITEAs" class="d-none d-lg-block" width="100">
             </a>
             <i class="bi bi-list toggle-sidebar-btn"></i>
         </div><!-- End Logo -->
@@ -181,17 +183,21 @@
 
                 <li class="nav-item dropdown pe-3">
 
-                    <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+                    <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#"
+                        data-bs-toggle="dropdown">
                         @if (isset(Auth::user()->profile_photo))
                             {{-- <img class="img-profile rounded-circle" src="{{url('public/img/logo.png')}}"> --}}
                             <img class="img-profile rounded-circle" src="public/img/logo.png">
                         @else
-                            <span class="rounded-circle text-center p-2 fs-5 badge logobadge d-inline-block text-light h-50" style="width: 38px !important;">
+                            <span
+                                class="rounded-circle text-center p-2 fs-5 badge logobadge d-inline-block text-light h-50"
+                                style="width: 38px !important;">
 
                             </span>
                         @endif
                         {{-- <span class="d-none d-md-block dropdown-toggle ps-2">{{Auth::user()->name}}</span> --}}
-                        <span class="d-none d-md-block dropdown-toggle ps-2">Hello, {{ Auth::user()->firstName ?? '-' }}</span>
+                        <span class="d-none d-md-block dropdown-toggle ps-2">Hello,
+                            {{ Auth::user()->firstName ?? '-' }}</span>
                     </a><!-- End Profile Iamge Icon -->
 
                     <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
@@ -235,12 +241,14 @@
                         </li>
 
                         <li>
-                            <a class="dropdown-item d-flex align-items-center" href="{{ route('logout') }}" onclick="event.preventDefault();
+                            <a class="dropdown-item d-flex align-items-center" href="{{ route('logout') }}"
+                                onclick="event.preventDefault();
                             document.getElementById('logout-form').submit();">
                                 <i class="bi bi-box-arrow-right"></i>
                                 <span>Sign Out</span>
 
-                                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                <form id="logout-form" action="{{ route('logout') }}" method="POST"
+                                    class="d-none">
                                     @csrf
                                 </form>
                             </a>
@@ -260,9 +268,9 @@
         <ul class="sidebar-nav" id="sidebar-nav">
 
             <li class="nav-item">
-                <a class="nav-link" href="/">
-                    <i class="bi bi-grid"></i>
-                    <span>Dashboard</span>
+                <a class="nav-link collapsed" href="/">
+                    <i class="bi bi-grid" style="color: #e76a35"></i>
+                    <span style="color: #1d2865 ;">Dashboard</span>
                 </a>
             </li><!-- End Dashboard Nav -->
 
@@ -332,7 +340,8 @@
         </div>
     </footer><!-- End Footer -->
 
-    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+            class="bi bi-arrow-up-short"></i></a>
 
     <!-- Vendor JS Files -->
 
