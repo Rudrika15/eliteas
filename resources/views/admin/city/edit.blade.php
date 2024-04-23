@@ -35,15 +35,16 @@
         @csrf
         <input type="hidden" name="id" value="{{ $city->id }}">
         <div class="row mb-3">
-            <div class="col-md-6">
+            <div class="col-md-6 mt-3">
                 <div class="form-floating">
-                    <select class="form-control" data-error='Country Name Field is required' required name="countryId"
-                        id="countryId">
-                        <option value="" selected disabled> Select Country </option>
-                        @foreach ($country as $countryData)
-                        <option value="{{ $countryData->id }}" {{$countryData->id ==
-                            old('countryId',$countryData->countryId)?
-                            'selected':''}}>{{ $countryData->countryName }}</option>
+                    <select class="form-select @error('countryId') is-invalid @enderror" id="countryId" name="countryId"
+                        required>
+                        <option value="" selected disabled>Select Country</option>
+                        @foreach ($countries as $countryData)
+                        <option value="{{ $countryData->id }}" {{ $countryData->id == old('countryId',
+                            $city->countryId) ? 'selected' : '' }}>
+                            {{ $countryData->countryName }}
+                        </option>
                         @endforeach
                     </select>
                     @error('countryId')
@@ -53,15 +54,16 @@
                     @enderror
                 </div>
             </div>
-
-            <div class="col-md-6">
+            <div class="col-md-6 mt-3">
                 <div class="form-floating">
-                    <select class="form-control" data-error='State Name Field is required' required name="stateId"
-                        id="stateId">
-                        <option value="" selected disabled> Select State </option>
-                        @foreach ($state as $stateData)
-                        <option value="{{ $stateData->id }}" {{$stateData->id == old('stateId',$stateData->stateId)?
-                            'selected':''}}>{{ $stateData->stateName }}</option>
+                    <select class="form-select @error('stateId') is-invalid @enderror" id="stateId" name="stateId"
+                        required>
+                        <option value="" selected disabled>Select State</option>
+                        @foreach ($states as $stateData)
+                        <option value="{{ $stateData->id }}" {{ $stateData->id == old('stateId', $city->stateId) ?
+                            'selected' : '' }}>
+                            {{ $stateData->stateName }}
+                        </option>
                         @endforeach
                     </select>
                     @error('stateId')
@@ -86,6 +88,34 @@
                 </div>
             </div>
 
+
+            <div class="col-md-6">
+                <div class="form-floating mt-3">
+                    <input type="number" class="form-control @error('amount') is-invalid @enderror" id="amount"
+                        name="amount" placeholder="amount" value="{{$city->amount}}" required>
+                    <label for="amount">Amount</label>
+                    @error('amount')
+                    <div class="invalid-tooltip">
+                        {{ $message }}
+                    </div>
+                    @enderror
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-floating mt-3">
+                    <input type="number" class="form-control @error('memberAmount') is-invalid @enderror" id="memberAmount"
+                        name="memberAmount" placeholder="memberAmount" value="{{$city->memberAmount}}" required>
+                    <label for="memberAmount">Member Amount</label>
+                    @error('memberAmount')
+                    <div class="invalid-tooltip">
+                        {{ $message }}
+                    </div>
+                    @enderror
+                </div>
+            </div>
+
+
         </div>
         <div class="text-center">
             <button type="submit" class="btn btn-primary">Submit</button>
@@ -93,5 +123,31 @@
         </div>
     </form><!-- End floating Labels Form -->
 </div>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#countryId').change(function() {
+            var countryId = $(this).val();
+            if (countryId) {
+                $.ajax({
+                    url: '{{ route("get.states") }}', // Replace with your route for fetching states
+                    type: 'POST',
+                    data: {
+                        countryId: countryId,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(data) {
+                        $('#stateId').html(data);
+                    }
+                });
+            } else {
+                $('#stateId').html('<option value="" selected disabled>Select State</option>');
+            }
+        });
+    });
+</script>
+
 
 @endsection

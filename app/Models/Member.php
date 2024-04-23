@@ -2,8 +2,15 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\User;
+use App\Models\TopsProfile;
+use App\Models\BillingAddress;
+use App\Models\ContactDetails;
+use App\Models\CircleCall;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
+
 
 class Member extends Model
 {
@@ -18,7 +25,7 @@ class Member extends Model
 
     public function contact()
     {
-        return $this->belongsTo(ContactDetails::class, 'id');
+        return $this->belongsTo(ContactDetails::class, 'id', 'memberId');
     }
 
     public function user()
@@ -39,5 +46,30 @@ class Member extends Model
     public function topsProfile()
     {
         return $this->hasOne(TopsProfile::class, 'memberId', 'id');
+    }
+
+    public function cicleCall()
+    {
+        return $this->hasMany(CircleCall::class, 'memberId', 'id');
+    }
+
+    public function refGive()
+    {
+        return $this->hasOne(CircleMeetingMembersReference::class, 'memberId', 'id');
+    }
+
+    public function circleMember()
+    {
+        return $this->hasOne(CircleMember::class, 'memberId', 'id');
+    }
+
+    public function circle()
+    {
+        return $this->belongsTo(Circle::class, 'circleId', 'id');
+    }
+
+    public function bCategory()
+    {
+        return $this->belongsTo(BusinessCategory::class, 'businessCategoryId', 'id');
     }
 }

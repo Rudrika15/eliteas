@@ -11,6 +11,19 @@ class Training extends Model
 
     public function trainer()
     {
-        return $this->belongsTo(TrainerMaster::class, 'id');
+        return $this->belongsTo(TrainerMaster::class, 'trainerId', 'id');
+    }
+    public function trainers()
+    {
+        return $this->belongsTo(TrainerMaster::class, 'trainerId', 'id');
+    }
+    public function member()
+    {
+        return $this->belongsTo(Member::class, 'trainerId', 'userId');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'externalTrainerId', 'id');
     }
 }

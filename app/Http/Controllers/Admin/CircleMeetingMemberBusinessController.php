@@ -9,13 +9,17 @@ use App\Models\CircleMeeting;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
 use App\Models\CircleMeetingMembersBusiness;
+use App\Models\Schedule;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class CircleMeetingMemberBusinessController extends Controller
 {
     public function index(Request $request)
     {
         try {
-            $busGiver = CircleMeetingMembersBusiness::where('status', 'Active')
+            $busGiver = CircleMeetingMembersBusiness::where('loginMemberId', Auth::user()->id)
+                ->where('status', 'Active')
                 ->orderBy('id', 'DESC')
                 ->get();
             return view('admin.circlebusiness.index', compact('busGiver'));
@@ -40,6 +44,7 @@ class CircleMeetingMemberBusinessController extends Controller
         try {
             // $circlemeeting = CircleMeeting::where('status', 'Active')->get();
             // $member = Member::where('status', 'Active')->get();
+
             return view('admin.circlebusiness.create');
         } catch (\Throwable $th) {
             throw $th;

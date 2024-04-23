@@ -53,7 +53,7 @@
                 </div>
             </div>
             <div class="col-md-6">
-                <div class="form-floating mt-3">
+                <div class="form-floating mt-6">
                     <input type="text" class="form-control @error('meetingPerson') is-invalid @enderror"
                         id="meetingPerson" name="meetingPerson" placeholder="Meeeting Person Name"
                         value="{{$circlecall->meetingPerson}}" required>

@@ -34,7 +34,13 @@
             <thead>
                 <tr>
                     <th>Trainer Name</th>
-                    <th>Topic</th>
+                    <th>Title</th>
+                    <th>External Trainer</th>
+                    <th>Type</th>
+                    <th>Fees</th>
+                    <th>Venue</th>
+                    <th>Date</th>
+                    <th>Time</th>
                     <th>Status</th>
                     <th>Action</th>
                 </tr>
@@ -42,8 +48,14 @@
             <tbody>
                 @foreach ($training as $trainingData)
                 <tr>
-                    <td>{{$trainingData->trainer->trainerName ?? '-'}}</td>
-                    <td>{{$trainingData->topic}}</td>
+                    <td>{{$trainingData->member->firstName ?? '-'}} {{$trainingData->member->lastName ?? '-'}}</td>
+                    <td>{{$trainingData->title}}</td>
+                    <td>{{$trainingData->user->firstName ?? '-'}}</td>
+                    <td>{{$trainingData->type}}</td>
+                    <td>{{$trainingData->fees}}</td>
+                    <td>{{$trainingData->venue}}</td>
+                    <td>{{$trainingData->date}}</td>
+                    <td>{{$trainingData->time}}</td>
                     <td>{{$trainingData->status}}</td>
                     <td>
                         <a href="{{ route('training.edit', $trainingData->id) }}" class="btn btn-primary btn-sm">
@@ -54,7 +66,7 @@
                             <i class="bi bi-eye"></i>
                         </a> --}}
 
-                        <a href="{{ route('training.delete', $trainingData->id) }}" class="btn btn-danger btn-sm">
+                        <a href="{{ route('training.delete', $trainingData->id) }}" class="btn btn-danger btn-sm mt-3">
                             <i class="bi bi-trash"></i>
                         </a>
 

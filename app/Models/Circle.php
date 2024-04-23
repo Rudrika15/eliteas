@@ -20,17 +20,36 @@ class Circle extends Model
 
     public function circletype()
     {
-        return $this->belongsTo(CircleType::class, 'id');
+        return $this->belongsTo(CircleType::class, 'circletypeId', 'id');
     }
 
     public function franchise()
     {
-        return $this->belongsTo(Franchise::class, 'id');
+        return $this->belongsTo(Franchise::class, 'franchiseId', 'id');
     }
 
     public function city()
     {
-        return $this->belongsTo(City::class, 'id');
+        return $this->belongsTo(City::class, 'cityId', 'id');
     }
 
+    public function circleMember()
+    {
+        return $this->belongsTo(CircleMember::class, 'id');
+    }
+
+    public function member()
+    {
+        return $this->hasMany(Member::class, 'id');
+    }
+
+    public function schedule()
+    {
+        return $this->hasMany(Schedule::class);
+    }
+
+    public function members()
+    {
+        return $this->hasMany(Member::class, 'circleId', 'id');
+    }
 }

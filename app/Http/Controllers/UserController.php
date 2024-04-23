@@ -22,7 +22,9 @@ class UserController extends Controller
      */
     public function index(Request $request): View
     {
-        $data = User::latest()->paginate(5);
+        $data = User::whereHas('roles', function ($q) {
+            $q->whereIn('name', ['Admin', 'LT', 'Support']);
+        })->latest()->paginate(5);
 
         return view('users.index', compact('data'))
             ->with('i', ($request->input('page', 1) - 1) * 5);
@@ -59,7 +61,13 @@ class UserController extends Controller
         $input = $request->except('_token');
         $input['password'] = Hash::make($input['password']);
 
-        $user = User::create($input);
+        // $user = User::create($input);
+        $user = new User();
+        $user->firstName = $request->input('firstName'); // Corrected accessing input
+        $user->lastName = $request->input('lastName'); // Corrected accessing input
+        $user->email = $request->input('email'); // Corrected accessing input
+        $user->password = $input['password'];
+        $user->save();
         $user->assignRole($request->input('roles'));
 
         // Check if the selected role is 'member'
@@ -68,6 +76,7 @@ class UserController extends Controller
             $member->userId = $user->id; // Assuming user_id column in members table
             $member->firstName = $request->input('firstName'); // Corrected accessing input
             $member->lastName = $request->input('lastName'); // Corrected accessing input
+            $member->status = "Active";
             $member->save();
         }
 

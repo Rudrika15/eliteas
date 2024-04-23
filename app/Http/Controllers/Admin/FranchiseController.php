@@ -2,19 +2,28 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\Franchise;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\URL;
 use DataTables;
+use App\Models\City;
+use App\Models\User;
+use App\Models\State;
+use App\Models\Country;
+use App\Models\Franchise;
+use Illuminate\Support\Str;
+use Illuminate\Http\Request;
+use App\Mail\WelcomeMemberEmail;
+use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 
 class FranchiseController extends Controller
 {
     public function index(Request $request)
     {
         try {
+            $user = User::all();
             $franchises = Franchise::where('status', 'Active')->get();
-            return view('admin.franchise.index', compact('franchises'));
+            return view('admin.franchise.index', compact('franchises', 'user'));
         } catch (\Throwable $th) {
             throw $th;
             return view('servererror');
@@ -37,7 +46,10 @@ class FranchiseController extends Controller
     {
         try {
             $franchises = Franchise::all();
-            return view('admin.franchise.create', compact('franchises'));
+            $countries = Country::where('status', 'Active')->get();
+            $states = State::where('status', 'Active')->get();
+            $cities = City::where('status', 'Active')->get();
+            return view('admin.franchise.create', compact('franchises', 'countries', 'states', 'cities'));
         } catch (\Throwable $th) {
             //throe $th
             return view('servererror');
@@ -47,19 +59,46 @@ class FranchiseController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'franchiseName' => 'required',
+            'franchiseName' => 'required|unique:franchises',
             'franchiseContactDetails' => 'required',
+            'firstName' => 'required',
+            'lastName' => 'required',
+            'email' => 'required|email|unique:users',
+            
         ]);
 
         try {
+           $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()';
+            $password = '';
+            $length = 8;
+            for ($i = 0; $i < $length; $i++) {
+                $password .= $characters[rand(0, strlen($characters) - 1)];
+            }
+
+            $rowPassword = $password;
+            
+            $user = new User;
+            $user->firstName = $request->firstName;
+            $user->lastName = $request->lastName;
+            $user->email = $request->email;
+            $user->password = Hash::make($rowPassword);
+            // $user->password = Str::random(8);
+            $user->assignRole('Franchise Admin');
+            $user->save();
+
             $franchises = new Franchise();
             $franchises->franchiseName = $request->franchiseName;
             $franchises->franchiseContactDetails = $request->franchiseContactDetails;
+            $franchises->cityId = $request->cityId;
+            $franchises->userId = $user->id;
             $franchises->status = 'Active';
             $franchises->save();
 
-            return redirect()->route('franchise.index')->with('success', 'Franchise Created Successfully!');
+            Mail::to($user->email)->send(new WelcomeMemberEmail($user, $rowPassword));
+
+            return redirect()->route('franchise.index')->with('success', 'Franchise and User Created Successfully!');
         } catch (\Throwable $th) {
+            throw $th;
             return view('servererror');
         }
     }
@@ -69,7 +108,10 @@ class FranchiseController extends Controller
     {
         try {
             $franchises = Franchise::find($id);
-            return view('admin.franchise.edit', compact('franchises'));
+            $countries = Country::where('status', 'Active')->get();
+            $states = State::where('status', 'Active')->get();
+            $cities = City::where('status', 'Active')->get();
+            return view('admin.franchise.edit', compact('franchises', 'countries', 'states', 'cities'));
         } catch (\Throwable $th) {
             throw $th;
             return view('servererror');
@@ -80,25 +122,44 @@ class FranchiseController extends Controller
     {
         $this->validate($request, [
             'id' => 'required|exists:franchises,id',
-            'franchiseName' => 'required',
+            'franchiseName' => 'required|unique:franchises,id,' . $request->id,
             'franchiseContactDetails' => 'required',
         ]);
 
         try {
-            $franchise = Franchise::find($request->id);
+            $franchises = Franchise::find($request->id);
+            $user = $franchises ? $franchises->user : null; // Check if franchises object exists before trying to find user
 
-            if (!$franchise) {
+            if (!$franchises) {
                 return redirect()->route('franchise.index')->with('error', 'Franchise not found.');
             }
 
-            $franchise->franchiseName = $request->franchiseName;
-            $franchise->franchiseContactDetails = $request->franchiseContactDetails;
-            $franchise->status = 'Active';
-            $franchise->save();
 
-            return redirect()->route('franchise.index')->with('success', 'Franchise details updated successfully.');
-        } catch (\Exception $e) {
-            return redirect()->route('franchise.index')->with('error', 'Failed to update franchise details.');
+            if (!$user) {
+                return redirect()->route('franchise.index')->with('error', 'User not found.');
+            }
+
+            $user->firstName = $request->firstName;
+            $user->lastName = $request->lastName;
+            $user->email = $request->email;
+
+            if ($request->password) {
+                $user->password = Hash::make($request->password);
+            }
+
+            $user->save();
+
+            $franchises = Franchise::find($request->id);
+            $franchises->franchiseName = $request->franchiseName;
+            $franchises->franchiseContactDetails = $request->franchiseContactDetails;
+            $franchises->cityId = $request->cityId;
+            $franchises->status = 'Active';
+            $franchises->save();
+
+            return redirect()->route('franchise.index')->with('success', 'Franchise details Updated Successfully!');
+        } catch (\Throwable $th) {
+            throw $th;
+            return view('servererror');
         }
     }
 
@@ -119,5 +180,31 @@ class FranchiseController extends Controller
         } catch (\Exception $e) {
             return redirect()->route('franchise.index')->with('error', 'Failed to delete franchise.');
         }
+    }
+
+    public function getStates(Request $request)
+    {
+        $countryId = $request->input('countryId');
+        $states = State::where('countryId', $countryId)->get();
+
+        $options = '<option value="">Select State</option>';
+        foreach ($states as $state) {
+            $options .= '<option value="' . $state->id . '">' . $state->stateName . '</option>';
+        }
+
+        return $options;
+    }
+
+    public function getCities(Request $request)
+    {
+        $stateId = $request->input('stateId');
+        $cities = City::where('stateId', $stateId)->get();
+
+        $options = '<option value="">Select City</option>';
+        foreach ($cities as $city) {
+            $options .= '<option value="' . $city->id . '">' . $city->cityName . '</option>';
+        }
+
+        return $options;
     }
 }

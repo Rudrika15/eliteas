@@ -36,6 +36,8 @@
                     <th>Country Name</th>
                     <th>State Name</th>
                     <th>City Name</th>
+                    <th>Amount</th>
+                    <th>Member Amount</th>
                     <th>Status</th>
                     <th>Action</th>
                 </tr>
@@ -46,6 +48,8 @@
                     <td>{{$cityData->country->countryName ?? '-'}}</td>
                     <td>{{$cityData->state->stateName ?? '-'}}</td>
                     <td>{{$cityData->cityName}}</td>
+                    <td>{{$cityData->amount}}</td>
+                    <td>{{$cityData->memberAmount}}</td>
                     <td>{{$cityData->status}}</td>
                     <td>
                         <a href="{{ route('city.edit', $cityData->id) }}" class="btn btn-primary btn-sm">
@@ -56,8 +60,7 @@
                             <i class="bi bi-eye"></i>
                         </a> --}}
 
-                        <form action="{{ route('city.delete', $cityData->id) }}" method="POST"
-                            style="display: inline;">
+                        <form action="{{ route('city.delete', $cityData->id) }}" method="POST" style="display: inline;">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-danger btn-sm">

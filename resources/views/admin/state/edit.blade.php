@@ -33,7 +33,7 @@
 <form class="m-3 needs-validation" id="stateForm" enctype="multipart/form-data" method="post"
         action="{{ route('state.update', $state->id) }}" novalidate>
         @csrf
-        <input type="hidden" name="id" value="{{ $state->id }}">f
+        <input type="hidden" name="id" value="{{ $state->id }}">
         <div class="row mb-3">
             <div class="col-md-6">
                 <div class="form-floating">
