@@ -1,11 +1,12 @@
 <!doctype html>
 <html lang="en">
+
 <head>
     <title>Title</title>
     <!-- Required meta tags -->
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-<meta name="csrf-token" content="{{ csrf_token() }}" />
+    <meta name="csrf-token" content="{{ csrf_token() }}" />
     <!-- Bootstrap CSS v5.2.1 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" />
 </head>
@@ -52,19 +53,18 @@
     }
 </style>
 </head>
+
 <body>
 
     @if (Session::has('data'))
+        <div class="container mt-5">
+            <div class="card-container p-4">
+                The payable amount is for
+                <h3 class="" id="amount">₹ {{ session('data')['amount'] }}</h3>
 
-    <div class="container mt-5">
-        <div class="card-container p-4">
-            The payable amount is for
-            <h3 class="" id="amount">₹ {{ session("data")["amount"] }}</h3>
-
-            <a href="#" class="btn btn-pay pay">Pay Now </a>
+                <a href="#" class="btn btn-pay pay">Pay Now </a>
+            </div>
         </div>
-    </div>
-
     @endif
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -89,19 +89,20 @@
                     console.log('amount', amount);
                     console.log('pay button', payButtons);
 
-                    username = "{{session('data')['personName']}}"
-                    useremail = "{{session('data')['personEmail']}}"
+                    username = "{{ session('data')['personName'] }}"
+                    useremail = "{{ session('data')['personEmail'] }}"
                     // username = "{{ $data['personName'] }}";
                     // useremail = "{{ $data['personEmail'] }}";
                     console.log('username', username);
+
 
                     var options = {
                         "key": "{{ env('RAZORPAY_KEY') }}",
                         "amount": amount,
                         "currency": "INR",
-                        "name": "Brandbeans",
+                        "name": "UBN",
                         "description": "Razorpay payment",
-                        "image": "/images/logo-icon.png",
+                        "image": "/img/logo.png",
                         "handler": function(response) {
                             // Handle the response after payment
                             console.log(response);
@@ -127,7 +128,7 @@
             var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
             console.log('csrfToken', csrfToken);
             var url = `{{ route('razorpay.payment.invite') }}`;
-            var email = "{{session('data')['personEmail']}}";
+            var email = "{{ session('data')['personEmail'] }}";
             fetch(url, {
                     method: 'POST',
                     headers: {
