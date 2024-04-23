@@ -40,7 +40,7 @@ class HomeController extends Controller
     {
         $count = Schedule::where('status', 'Active')->count();
         $currentDate = Carbon::now()->toDateString();
-        
+
         $nearestTraining = Training::where('status', 'Active')
             ->whereDate('date', '>=', $currentDate)
             ->whereHas('trainers.user')
@@ -51,7 +51,7 @@ class HomeController extends Controller
 
 
         if (!Auth::user()->hasRole('Admin')) {
-        $myInvites = MeetingInvitation::where('invitedMemberId', Auth::user()->id)->get();
+            $myInvites = MeetingInvitation::where('invitedMemberId', Auth::user()->id)->get();
         } else {
             $myInvites = MeetingInvitation::take(3)->get();
         }
@@ -137,12 +137,35 @@ class HomeController extends Controller
             'invitedPersonLastName' => $invitedPersonLastName,
             'amount' => $amount
         ];
-        if(!session()->has("data"))
-        {
-            session(["data"=>$data]);
+        if (!session()->has("data")) {
+            session(["data" => $data]);
         }
 
 
         return view('invitationPay', compact('data'));
+    }
+
+
+    public function findMember()
+    {
+        return view('find');
+    }
+
+    public function search(Request $request)
+    {
+        $query = $request->input('query');
+        $members = Member::where('firstName', 'like', '%' . $query . '%')
+            ->orWhere('lastName', 'like', '%' . $query . '%')
+            ->orWhereHas('circle', function ($q) use ($query) {
+                $q->where('circleName', 'like', '%' . $query . '%');
+            })
+            ->with('user', 'circle')
+            ->get();
+        $message = "Search results for '$query'";
+
+        return response()->json([
+            'message' => $message,
+            'members' => $members
+        ]);
     }
 }
