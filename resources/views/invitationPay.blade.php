@@ -95,6 +95,7 @@
                     // useremail = "{{ $data['personEmail'] }}";
                     console.log('username', username);
 
+
                     var options = {
                         "key": "{{ env('RAZORPAY_KEY') }}",
                         "amount": amount,
