@@ -13,6 +13,7 @@ use App\Models\TrainingRegister;
 use App\Models\User;
 use App\Utils\Utils;
 use Carbon\Carbon;
+use Illuminate\Contracts\Session\Session;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -120,6 +121,7 @@ class HomeController extends Controller
             'invitedPersonLastName' => $invitedPersonLastName,
             'amount' => $amount
         ];
+
         Mail::to($request->personEmail)->send(new MailMeetingInvitation($data));
         return redirect()->back()->with('success', 'Invitation Sent Successfully');
     }
@@ -129,12 +131,18 @@ class HomeController extends Controller
     {
         $amounts =  $amount;
         $data = [
-            'personName' => $personName,    
+            'personName' => $personName,
             'personEmail' => $personEmail,
             'invitedPersonFirstName' => $invitedPersonFirstName,
             'invitedPersonLastName' => $invitedPersonLastName,
             'amount' => $amount
         ];
+        if(!session()->has("data"))
+        {
+            session(["data"=>$data]);
+        }
+
+
         return view('invitationPay', compact('data'));
     }
 }

@@ -42,7 +42,8 @@ class PaymentController extends Controller
         $invitation = MeetingInvitation::where('email', $request->input('email'))->first();
         $invitation->paymentStatus = 'Accepted';
         $invitation->save();
-
-        return response()->json(['message' => 'Payment done'], 200);
+        session()->forget('data');
+        return redirect("/")->with("success","Payment done");
+        // return response()->json(['message' => 'Payment done'], 200);
     }
 }

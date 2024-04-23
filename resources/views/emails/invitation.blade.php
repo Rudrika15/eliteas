@@ -50,16 +50,29 @@
         <h1>Meeting Invitation</h1>
         <p>Hello {{ $data['personName'] }},</p>
         <span>{{ $data['personEmail'] }}</span>
+        @php
+
+
+
+        @endphp
         <p>You are invited to a meeting by {{ $data['invitedPersonFirstName'] }} {{ $data['invitedPersonLastName'] }}.</p>
         <p>Please join us at the scheduled time.</p>
         <p>Thank you.</p>
 
         <p> Click here to pay joining fees: {{ $data['amount'] }}</p>
 
-        {{-- <a href="{{ route('invitationPay') }}/{{ $personName }}/{{ $invitedPersonFirstName }}/{{ $invitedPersonLastName }}/{{ $personEmail }}/{{ $amount }}" class="btn btn-primary ">Pay Now</a> --}}
+        {{-- <form action="{{route('invitationPay')}}" target="_blank" method="post">
+            @csrf
+            <input type="hidden" name="personName" value="{{ $data['personName'] }}"/>
+            <input type="hidden" name="invitedPersonFirstName" value="{{ $data['personName'] }}"/>
+            <input type="hidden" name="invitedPersonLastName" value="{{ $data['personName'] }}"/>
+            <input type="hidden" name="personEmail" value="{{ $data['personName'] }}"/>
+            <input type="hidden" name="amount" value="{{ $data['personName'] }}"/>
+            <input type="submit" class="btn btn-primary " value="Pay Now"/>
+        </form> --}}
         <a href="{{ route('invitationPay') }}/{{ $data['personName'] }}/{{ $data['invitedPersonFirstName'] }}/{{ $data['invitedPersonLastName'] }}/{{ $data['personEmail'] }}/{{ $data['amount'] }}" class="btn btn-primary ">Pay Now</a>
+        {{-- <a href="{{ route('invitationPay') }}/{{ $personName }}/{{ $invitedPersonFirstName }}/{{ $invitedPersonLastName }}/{{ $personEmail }}/{{ $amount }}" class="btn btn-primary ">Pay Now</a> --}}
     </div>
-
 
 
 
