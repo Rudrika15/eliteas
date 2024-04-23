@@ -90,7 +90,7 @@
                             <i class="bi bi-pen"></i>
                         </a>
                         <a href="{{ route('schedule.delete', $meeting['data']->id) }}"
-                            class="btn btn-danger btn-sm mt-3">
+                            class="btn btn-danger btn-sm ">
                             <i class="bi bi-trash"></i>
                         </a>
                     </td>
