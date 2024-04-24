@@ -1,6 +1,7 @@
 <li class="nav-item">
     <a class="nav-link collapsed" data-bs-target="#users-nav" data-bs-toggle="collapse" href="#">
-        <i class="bi bi-menu-button-wide" style="color: #e76a35"></i><span>Users</span><i class="bi bi-chevron-down ms-auto" style="color: #e76a35"></i>
+        <i class="bi bi-menu-button-wide" style="color: #e76a35"></i><span>Users</span><i
+            class="bi bi-chevron-down ms-auto" style="color: #e76a35"></i>
     </a>
     <ul id="users-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
         <li class="nav-item">
@@ -36,12 +37,13 @@
 
 <li class="nav-item">
     <a class="nav-link collapsed" data-bs-target="#master-nav" data-bs-toggle="collapse" href="#">
-        <i class="bi bi-gear"></i><span>Master</span><i class="bi bi-chevron-down ms-auto"></i>
+        <i class="bi bi-gear" style="color: #e76a35"></i><span>Master</span><i class="bi bi-chevron-down ms-auto"
+            style="color: #e76a35"></i>
     </a>
     <ul id="master-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
         <li class="nav-item">
             <a class="nav-link " href="{{ route('membershipType.index') }}">
-                <i class="bi bi-globe"></i>
+                <i class="bi bi-globe" style="color: #e76a35"></i>
                 <span>Membership Type</span>
             </a>
         </li>
@@ -49,7 +51,7 @@
     <ul id="master-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
         <li class="nav-item">
             <a class="nav-link " href="{{ route('tCategory.index') }}">
-                <i class="bi bi-globe"></i>
+                <i class="bi bi-globe" style="color: #e76a35"></i>
                 <span>Training Category</span>
             </a>
         </li>
@@ -57,7 +59,7 @@
     <ul id="master-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
         <li class="nav-item">
             <a class="nav-link " href="{{ route('bCategory.index') }}">
-                <i class="bi bi-plus-circle"></i>
+                <i class="bi bi-plus-circle" style="color: #e76a35"></i>
                 <span>Business Category</span>
             </a>
         </li>
@@ -65,7 +67,7 @@
     <ul id="master-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
         <li class="nav-item">
             <a class="nav-link " href="{{ route('country.index') }}">
-                <i class="bi bi-globe"></i>
+                <i class="bi bi-globe" style="color: #e76a35"></i>
                 <span>Country</span>
             </a>
         </li>
@@ -73,7 +75,7 @@
     <ul id="master-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
         <li class="nav-item">
             <a class="nav-link " href="{{ route('state.index') }}">
-                <i class="bi bi-flag"></i>
+                <i class="bi bi-flag" style="color: #e76a35"></i>
                 <span>State</span>
             </a>
         </li>
@@ -81,7 +83,7 @@
     <ul id="master-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
         <li class="nav-item">
             <a class="nav-link " href="{{ route('city.index') }}">
-                <i class="bi bi-buildings"></i>
+                <i class="bi bi-buildings" style="color: #e76a35"></i>
                 <span>City</span>
             </a>
         </li>
@@ -123,7 +125,8 @@
 
 <li class="nav-item">
     <a class="nav-link collapsed" data-bs-target="#training-nav" data-bs-toggle="collapse" href="#">
-        <i class="bi bi-person-gear" style="color: #e76a35"></i><span>Training</span><i class="bi bi-chevron-down ms-auto" style="color: #e76a35"></i>
+        <i class="bi bi-person-gear" style="color: #e76a35"></i><span>Training</span><i
+            class="bi bi-chevron-down ms-auto" style="color: #e76a35"></i>
     </a>
     <ul id="training-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
         <li class="nav-item">
@@ -145,7 +148,8 @@
 
 <li class="nav-item">
     <a class="nav-link collapsed" data-bs-target="#circle-nav" data-bs-toggle="collapse" href="#">
-        <i class="bi bi-plus-circle-dotted" style="color: #e76a35"></i><span>Circle</span><i class="bi bi-chevron-down ms-auto" style="color: #e76a35"></i>
+        <i class="bi bi-plus-circle-dotted" style="color: #e76a35"></i><span>Circle</span><i
+            class="bi bi-chevron-down ms-auto" style="color: #e76a35"></i>
     </a>
     <ul id="circle-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
         <li class="nav-item">

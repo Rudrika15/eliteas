@@ -51,7 +51,7 @@
                 {{-- <img src="assets/img/logo.png" alt=""> --}}
                 <img src="{{ asset('img/logo2.jpg') }}" alt="ELITEAs" class="d-none d-lg-block" width="100">
             </a>
-            <i class="bi bi-list toggle-sidebar-btn"></i>
+            <i class="bi bi-list toggle-sidebar-btn mt-2"></i>
         </div><!-- End Logo -->
 
         <div class="search-bar">
@@ -263,7 +263,7 @@
     </header><!-- End Header -->
 
     <!-- ======= Sidebar ======= -->
-    <aside id="sidebar" class="sidebar">
+    <aside id="sidebar" class="sidebar mt-3">
 
         <ul class="sidebar-nav" id="sidebar-nav">
 
@@ -313,7 +313,7 @@
             <div class="row">
 
                 <!-- Left side columns -->
-                <div class="container-fluid">
+                <div class="container-fluid p-4">
                     <!-- Page Heading -->
                     @yield('content')
                 </div>

@@ -52,8 +52,8 @@
                         <div class="col-lg-4 col-md-6 d-flex flex-column align-items-center justify-content-center">
 
                             <div class="d-flex justify-content-center py-4">
-                                <a href="index.html" class="logo d-flex align-items-center w-auto">
-                                    <img src="{{ asset('img/logo.png') }}" alt="">
+                                <a href="index.html" class="main-logo d-flex align-items-center w-auto">
+                                    <img src="{{ asset('img/logo2.jpg') }}" alt="">
                                     {{-- <span class="d-none d-lg-block">Elite</span> --}}
                                 </a>
                             </div><!-- End Logo -->
@@ -73,9 +73,9 @@
                                                 value="{{ old('email') }}" required autocomplete="email" autofocus>
                                             <label for="email">Email Address</label>
                                             @error('email')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
                                             @enderror
                                         </div>
 
@@ -85,9 +85,9 @@
                                                 name="password" required autocomplete="current-password">
                                             <label for="password">Password</label>
                                             @error('password')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
                                             @enderror
                                         </div>
 
@@ -102,9 +102,9 @@
                                         </div>
 
                                         @if (Route::has('password.request'))
-                                        <div class="mt-3 text-center">
-                                            <a href="{{ route('forget.password.get') }}">Forgot Your Password?</a>
-                                        </div>
+                                            <div class="mt-3 text-center">
+                                                <a href="{{ route('forget.password.get') }}">Forgot Your Password?</a>
+                                            </div>
                                         @endif
                                     </form>
                                 </div>

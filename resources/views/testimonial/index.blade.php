@@ -38,7 +38,7 @@
                         <th>Message</th>
                         <th>UploadedDate</th>
                         <th>Status</th>
-                        {{-- <th>Action</th> --}}
+                        {{-- <th>Action</th> --}} 
                     </tr>
                 </thead>
                 <tbody>

@@ -358,7 +358,7 @@ h6 {
   line-height: 1;
   display: flex;
   justify-content: center;
-  padding-top: 10px;
+  /* padding-top: 10px; */
 }
 
 @media (min-width: 1200px) {
@@ -370,12 +370,18 @@ h6 {
 }
 
 .logo img {
-  max-height: 35px;
+  /* max-height: 35px; */
+  /* margin-bottom: 10px; */
   margin-right: 6px;
-  height: 60px;
-  width: 100px;
+  height: 100%;
+  
+  /* width: ; */
   display: flex;
   justify-content: center;
+}
+
+.main-logo img{
+  height: 100px;
 }
 
 .logo span {
@@ -388,7 +394,7 @@ h6 {
 .header {
   transition: all 0.5s;
   z-index: 997;
-  height: 60px;
+  height: 80px;
   box-shadow: 0px 2px 20px rgba(1, 41, 112, 0.1);
   background-color: #fff;
   padding-left: 20px;

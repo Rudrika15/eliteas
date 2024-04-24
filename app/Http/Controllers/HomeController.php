@@ -36,6 +36,8 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
+
+
     public function index()
     {
         $count = Schedule::where('status', 'Active')->count();
@@ -47,6 +49,7 @@ class HomeController extends Controller
             ->with('trainers.user')
             ->orderBy('date', 'asc')
             ->first();
+        $nearestTraining->date = Carbon::parse($nearestTraining->date);
         $businessCategory = BusinessCategory::all();
 
 
@@ -69,7 +72,9 @@ class HomeController extends Controller
             $meeting = Schedule::where('circleId', Auth::user()->member->circleId)
                 ->with('circle.members')
                 ->with('circle.franchise')
-                ->where('status', 'Active')->first();
+                ->where('status', 'Active')
+                ->where('date', '>=', \today())->first();
+            $meeting->date = Carbon::parse($meeting->date);
 
             return view('home', compact('count', 'nearestTraining', 'findRegister', 'testimonials', 'meeting', 'businessCategory', 'myInvites'));
         }

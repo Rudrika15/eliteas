@@ -53,8 +53,11 @@ class CircleCallController extends Controller
 
             // return $scheduleDate = Schedule::where('circleId', Auth::user()->member->circle->id)->where('status', 'Active')->get(['date']);
             $scheduleDate = Schedule::where('circleId', Auth::user()->member->circle->id)
+
                 ->where('status', 'Active')
                 ->pluck('date'); // Pluck all 'date' values from the query result
+
+
 
             return view('admin.circlecall.create', compact('member', 'circleMember', 'scheduleDate'));
         } catch (\Throwable $th) {
