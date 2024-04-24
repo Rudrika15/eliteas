@@ -50,11 +50,8 @@ class HomeController extends Controller
         $businessCategory = BusinessCategory::all();
 
 
-        if (!Auth::user()->hasRole('Admin')) {
-            $myInvites = MeetingInvitation::where('invitedMemberId', Auth::user()->id)->get();
-        } else {
-            $myInvites = MeetingInvitation::take(3)->get();
-        }
+        $myInvites = MeetingInvitation::where('invitedMemberId', Auth::user()->id)->get();
+
 
 
 
