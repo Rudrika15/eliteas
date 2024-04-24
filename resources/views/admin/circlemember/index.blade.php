@@ -80,10 +80,18 @@
                     <td>{{$circlememberData->membershipType ?? '-'}} </td>
                     <td>{{$circlememberData->status}}</td>
                     <td>
+
+                        <a href="{{ route('circlemember.activity', $circlememberData->id) }}"
+                            class="btn btn-info btn-sm">
+                            <i class="bi bi-info-circle"></i>
+                        </a>
+
+
                         <a href="{{ route('circlemember.edit', $circlememberData->id) }}"
                             class="btn btn-primary btn-sm">
                             <i class="bi bi-pen"></i>
                         </a>
+
 
                         <a href="{{ route('circlemember.delete') }}" class="btn btn-danger btn-sm">
                             <i class="bi bi-trash"></i>

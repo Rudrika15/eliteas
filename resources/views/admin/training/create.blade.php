@@ -56,8 +56,9 @@
                     <input type="text" class="form-control mt-3" id="trainerName" name="memberName"
                         placeholder="Select Member">
                 </div>
-                <div class="member-list" id="memberListInputMember" style="display:none;">
-                    <input type="text" class="form-control mt-3" id="trainerNameExternal" name="memberNameExternal"
+                <div class="external-trainer-list" id="memberListInputMember" style="display:none;">
+                    @include('TrainerPerson1External')
+                    <input type="text" class="form-control mt-3" id="trainerNameExternal" name="trainerNameExternal"
                         placeholder="Trainer Name External">
                 </div>
 
@@ -106,12 +107,12 @@
         {{-- Training Details --}}
         <div class="accordion-item mt-3">
             <h2 class="accordion-header" id="headingSix">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSix"
-                    aria-expanded="true" aria-controls="collapseSix">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSix"
+                    aria-expanded="false" aria-controls="collapseSix">
                     Training Details
                 </button>
             </h2>
-            <div id="collapseSix" class="accordion-collapse collapse show" aria-labelledby="headingSix">
+            <div id="collapseSix" class="accordion-collapse collapse" aria-labelledby="headingSix">
                 <div class="accordion-body">
                     <div class="row">
                         <div class="col-md-6">
@@ -181,33 +182,62 @@
         });
 
         // Initialize Select2 for member selection
-        $('#trainerName, #trainerNameExternal').select2({
-            placeholder: 'Select Member',
-            ajax: {
-                url: "{{ route('getMemberForRef') }}",
-                dataType: 'json',
-                delay: 250,
-                processResults: function(data) {
-                    return {
-                        results: $.map(data, function(item) {
-                            return {
-                                text: item.firstName,
-                                id: item.id,
-                                firstName: item.firstName // Adding firstName attribute to the option data
-                            }
-                        })
-                    };
-                },
-                cache: true
-            }
-        });
+        // $('#trainerName, #trainerNameExternal').select2({
+        //     placeholder: 'Select Member',
+        //     ajax: {
+        //         url: "{{ route('getExternalTrainers') }}",
+        //         dataType: 'json',
+        //         delay: 250,
+        //         processResults: function(data) {
+        //             return {
+        //                 results: $.map(data, function(item) {
+        //                     return {
+        //                         text: item.firstName,
+        //                         id: item.id,
+        //                         firstName: item.firstName // Adding firstName attribute to the option data
+        //                     }
+        //                 })
+        //             };
+        //         },
+        //         cache: true
+        //     }
+        // });
 
         // Update the hidden input field with the selected member's ID and name
         $('#trainerName, #trainerNameExternal').on('select2:select', function(e) {
             var data = e.params.data;
-            $(this).closest('.member-list').find('input[name="memberId"]').val(data.id);
+            $(this).closest('.external-trainer-list').find('input[name="trainerId"]').val(data.id);
         });
     });
+</script>
+
+
+<script>
+    $(document).ready(function() {
+        // Show/hide trainer member lists based on radio button selection
+        $('.trainer-radio').click(function() {
+        var inputValue = $(this).val();
+        if (inputValue === "internalMember") {
+        $('#memberListDropdownMember').show();
+        $('#memberListInputMember').hide();
+        } else if (inputValue === "externalMember") {
+        $('#memberListDropdownMember').hide();
+        $('#memberListInputMember').show();
+        } else if (inputValue === "internal") {
+        $('#memberListDropdown').show();
+        $('#memberListInput').hide();
+        } else if (inputValue === "external") {
+        $('#memberListDropdown').hide();
+        $('#memberListInput').show();
+        }
+        });
+
+        $('#trainerName, #trainerNameExternal').on('select2:select', function(e) {
+        var data = e.params.data;
+        $(this).closest('.external-trainer-list').find('input[name="trainerId"]').val(data.id);
+        });
+        });
+
 </script>
 
 @endsection

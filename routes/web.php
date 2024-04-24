@@ -9,9 +9,11 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\CityController;
 use App\Http\Controllers\Admin\StateController;
+use App\Http\Controllers\TestimonialController;
 use App\Http\Controllers\Admin\CircleController;
 use App\Http\Controllers\Admin\MemberController;
 use App\Http\Controllers\Admin\CountryController;
+use App\Http\Controllers\Admin\PaymentController;
 use App\Http\Controllers\Admin\ScheduleController;
 use App\Http\Controllers\Admin\TrainingController;
 use App\Http\Controllers\Admin\FranchiseController;
@@ -21,14 +23,13 @@ use App\Http\Controllers\Admin\CircleMemberController;
 use App\Http\Controllers\Admin\CircleMeetingController;
 use App\Http\Controllers\Admin\TrainerMasterController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Admin\MembershipTypeController;
 use App\Http\Controllers\Admin\BusinessCategoryController;
 use App\Http\Controllers\Admin\TrainingCategoryController;
 use App\Http\Controllers\Admin\CircleMeetingMembersController;
+use App\Http\Controllers\Admin\CircleMemberActivityController;
 use App\Http\Controllers\Admin\CircleMeetingMemberBusinessController;
 use App\Http\Controllers\Admin\CircleMeetingMemberReferenceController;
-use App\Http\Controllers\Admin\MembershipTypeController;
-use App\Http\Controllers\Admin\PaymentController;
-use App\Http\Controllers\TestimonialController;
 
 /*
 |--------------------------------------------------------------------------
@@ -143,6 +144,9 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('circlemember/edit/{id?}', [CircleMemberController::class, 'edit'])->name('circlemember.edit');
     Route::post('circlemember/update/{id?}', [CircleMemberController::class, 'update'])->name('circlemember.update');
     Route::get('circlemember/delete/{id?}', [CircleMemberController::class, 'delete'])->name('circlemember.delete');
+    
+    //member activity
+    Route::get('circlemember/activity/{id?}', [CircleMemberActivityController::class, 'activity'])->name('circlemember.activity');
 
     Route::get('/circlemeeting/index', [CircleMeetingController::class, 'index'])->name('circlemeeting.index');
     Route::get('circlemeeting/show/{id?}', [CircleMeetingController::class, 'show'])->name('circlemeeting.show');
@@ -165,6 +169,10 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('get-circle-members', [CircleCallController::class, 'getCircleMembers'])->name('getCircleMembers');
     // old get member
     Route::get('get-member', [CircleCallController::class, 'getMember'])->name('getMember');
+
+    // get external trainer list
+    Route::get('get-external-trainers' , [TrainerMasterController::class, 'getExternalTrainers'])->name('getExternalTrainers');
+
 
     Route::get("get-member-circle-master-modal", function () {
         return view('circleMemberMaster');

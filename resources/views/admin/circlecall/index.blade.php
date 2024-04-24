@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('header', 'City')
+@section('header', 'Circle 1:1')
 @section('content')
 
     {{-- Message --}}

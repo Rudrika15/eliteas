@@ -166,4 +166,5 @@ $(document).ready(function () {
         // Add 'active' class to the clicked circle card
         $(this).addClass("active");
     });
+    
 });

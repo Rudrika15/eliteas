@@ -8,6 +8,7 @@ use App\Models\State;
 use App\Models\Circle;
 use App\Models\Member;
 use App\Models\Country;
+use App\Models\CircleCall;
 use App\Models\TopsProfile;
 use Illuminate\Support\Str;
 use App\Models\CircleMember;
@@ -426,4 +427,18 @@ class CircleMemberController extends Controller
             return view('servererror');
         }
     }
+
+    public function activity()
+    {
+        try {
+            $circlecall = CircleCall::where('status', 'Active')
+            ->where('memberId', 'userId')
+            ->get();
+            return view('admin.circlemember.activity', compact('circlecall'));
+        } catch (\Throwable $th) {
+            throw $th;
+            return view('servererror');
+        }
+    }
+
 }
