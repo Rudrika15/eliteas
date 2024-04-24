@@ -208,19 +208,10 @@
             </a>
         </li> --}}
     </ul>
-
-    <<<<<<< HEAD <li class="nav-item">
-        <a class="nav-link " href="{{ route('testimonials.indexAdmin') }}">
-            <i class="bi bi-person"></i>
-            <span>Testimonial</span>
-            =======
 <li class="nav-item">
     <a class="nav-link collapsed" href="{{ route('testimonials.indexAdmin') }}">
         <i class="bi bi-person" style="color: #e76a35"></i>
         <span style="color: #1d2856">Testimonial</span>
-        >>>>>>> c477fec18e9d88e2462d3e1bda9908c113d5947e
     </a>
 </li>
-
-
 </li>
