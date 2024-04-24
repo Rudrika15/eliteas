@@ -73,8 +73,8 @@ class MeetingInvitationController extends Controller
             $today = Carbon::today();
 
             $meeting = Schedule::where('circleId', $myCircle)
-                // ->with('circle.members')
-                // ->with('circle.franchise')
+                ->with('circle.members')
+                ->with('circle.franchise')
                 ->where('status', 'Active')
                 ->where('date', '>', $today)
                 ->orderBy('date', 'asc')
@@ -84,17 +84,17 @@ class MeetingInvitationController extends Controller
             if ($meeting) {
                 $meetingData = $meeting->toArray();
                 $meetingData['circle'] = $meeting->circle->toArray();
-                // $members = [];
-                // foreach ($meeting->circle->members as $member) {
-                //     $members[] = [
-                //         'id' => $member->id,
-                //         'name' => $member->firstName . ' ' . $member->lastName,
-                //         'email' => $member->email,
-                //         'contact' => $member->contactNo,
-                //     ];
-                // }
-                // $meetingData['circle']['members'] = $members;
-                // $meetingData['circle']['franchise'] = $meeting->circle->franchise->toArray();
+                $members = [];
+                foreach ($meeting->circle->members as $member) {
+                    $members[] = [
+                        'id' => $member->id,
+                        'name' => $member->firstName . ' ' . $member->lastName,
+                        'email' => $member->email,
+                        'contact' => $member->contactNo,
+                    ];
+                }
+                $meetingData['circle']['members'] = $members;
+                $meetingData['circle']['franchise'] = $meeting->circle->franchise->toArray();
             }
 
             return Utils::sendResponse($meetingData, 'Upcoming Circle Meeting Retrieved Successfully', 200);

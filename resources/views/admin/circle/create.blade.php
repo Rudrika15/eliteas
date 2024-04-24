@@ -253,7 +253,7 @@
                                 {{ $message }}
                             </div>
                         @enderror
-                    </div>
+                    </div>  
                 </div>
 
                 <div class="col-md-6 mt-3">

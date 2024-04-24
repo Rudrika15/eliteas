@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\User;
 use App\Models\Franchise;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use App\Models\TrainerMaster;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Hash;
 
 class TrainerMasterController extends Controller
 {
@@ -45,18 +47,40 @@ class TrainerMasterController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'trainerName' => 'required',
+            'firstName' => 'required',
+            'lastName' => 'required',
+            'email' => 'required',
+            'contactNo' => 'required',
         ]);
 
         try {
+
+            $user = new User();
+            $user->firstName = $request->firstName;
+            $user->lastName = $request->lastName;
+            $user->email = $request->email;
+            $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()';
+            $password = '';
+            $length = 8;
+            for ($i = 0; $i < $length; $i++) {
+                $password .= $characters[rand(0, strlen($characters) - 1)];
+            }
+            $user->password = Hash::make($password);
+            $user->assignRole('Trainer');
+            $user->save();
+
             $trainer = new TrainerMaster();
-            $trainer->trainerName = $request->trainerName;
+            $trainer->userId = $user->id;
+            $trainer->firstName = $request->firstName;
+            $trainer->lastName = $request->lastName;
+            $trainer->email = $user->email;
+            $trainer->contactNo = $request->contactNo;
             $trainer->status = 'Active';
             $trainer->save();
 
             return redirect()->route('trainer.index')->with('success', 'Trainer Created Successfully!');
         } catch (\Throwable $th) {
-            //throw $th;
+            throw $th;
             return view('servererror');
         }
     }

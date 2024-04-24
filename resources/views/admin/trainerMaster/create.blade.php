@@ -36,16 +36,57 @@
         <div class="row mb-3">
             <div class="col-md-6">
                 <div class="form-floating">
-                    <input type="text" class="form-control @error('trainerName') is-invalid @enderror" id="trainerName"
-                        name="trainerName" placeholder="Train Name" required>
-                    <label for="trainerName">Train Name</label>
-                    @error('trainerName')
+                    <input type="text" class="form-control @error('firstName') is-invalid @enderror" id="firstName"
+                        name="firstName" placeholder="Train Name" required>
+                    <label for="firstName">First Name</label>
+                    @error('firstName')
                     <div class="invalid-tooltip">
                         {{ $message }}
                     </div>
                     @enderror
                 </div>
             </div>
+
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <input type="text" class="form-control @error('lastName') is-invalid @enderror" id="lastName"
+                        name="lastName" placeholder="Train Name" required>
+                    <label for="lastName">Last Name</label>
+                    @error('lastName')
+                    <div class="invalid-tooltip">
+                        {{ $message }}
+                    </div>
+                    @enderror
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-floating mt-3">
+                    <input type="text" class="form-control @error('email') is-invalid @enderror" id="email" name="email"
+                        placeholder="Train Name" required>
+                    <label for="email">Email</label>
+                    @error('email')
+                    <div class="invalid-tooltip">
+                        {{ $message }}
+                    </div>
+                    @enderror
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-floating mt-3">
+                    <input type="text" class="form-control @error('contactNo') is-invalid @enderror" id="contactNo"
+                        name="contactNo" placeholder="Contact No" required>
+                    <label for="contactNo">Contact No</label>
+                    @error('contactNo')
+                    <div class="invalid-tooltip">
+                        {{ $message }}
+                    </div>
+                    @enderror
+                </div>
+            </div>
+
+
         </div>
         <div class="text-center">
             <button type="submit" class="btn btn-primary">Submit</button>
