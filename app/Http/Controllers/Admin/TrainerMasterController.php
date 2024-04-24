@@ -136,4 +136,15 @@ class TrainerMasterController extends Controller
             return view('servererror');
         }
     }
+
+    public function getExternalTrainer(Request $request)
+    {
+
+        $exTrainer = TrainerMaster::with('user')
+
+            ->get();
+        return response()->json($exTrainer);
+    }
+
+
 }
