@@ -152,12 +152,12 @@
             class="bi bi-chevron-down ms-auto" style="color: #e76a35"></i>
     </a>
     <ul id="circle-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-        <li class="nav-item">
+        {{-- <li class="nav-item">
             <a class="nav-link " href="{{ route('bCategory.index') }}">
                 <i class="bi bi-plus-circle" style="color: #e76a35"></i>
                 <span>Business Category</span>
             </a>
-        </li>
+        </li> --}}
 
         <li class="nav-item">
             <a class="nav-link " href="{{ route('circletype.index') }}">

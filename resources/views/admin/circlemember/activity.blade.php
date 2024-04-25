@@ -22,53 +22,7 @@
 </div>
 @endif
 
-
-<div class="row dashboard-cards">
-    <div class="card col-md-4">
-        <a href="{{ route('circlecall.index') }}">
-            <div class="card-title">
-                <h4><small>Circle 1:1 Meetings</small></h4>
-                {{-- <div class="task-count">14</div> --}}
-            </div>
-        </a>
-    </div>
-
-    <div class="card col-md-4">
-        <div class="card-title">
-            <a href="{{ route('circlecall.index') }}">
-            <h4><small>Invited People for Circle Meetings</small></h4>
-            {{-- <div class="task-count">14</div> --}}
-        </div>
-        </a>
-    </div>
-
-    <div class="card col-md-4">
-        <div class="card-title">
-            <a href="{{ route('circlecall.index') }}">
-            <h4><small>Reference Giver Details</small></h4>
-            {{-- <div class="task-count">14</div> --}}
-        </div>
-        </a>
-    </div>
-
-    <div class="card col-md-4">
-        <div class="card-title">
-            <h4><small>Circle Member Business</small></h4>
-            {{-- <div class="task-count">14</div> --}}
-        </div>
-    </div>
-
-    <div class="card col-md-4">
-        <div class="card-title">
-            <h3><small>Testimonials</small></h3>
-            {{-- <div class="task-count">14</div> --}}
-        </div>
-    </div>
-
-    <!-- Repeat similar structure for other cards (omitted for brevity) -->
-
-</div>
-
+Make New Accordian design
 
 
 
