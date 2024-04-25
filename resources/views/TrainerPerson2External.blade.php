@@ -1,9 +1,9 @@
-<button type="button" class="btn btn-primary " data-bs-toggle="modal" data-bs-target="#trainerMaster" id="trainerBtn">
-    Select External Trainer Member
+<button type="button" class="btn btn-primary " data-bs-toggle="modal" data-bs-target="#trainerMaster2" id="trainerBtn">
+    Select External Trainer Member 2
 </button>
 
 <!-- Modal -->
-<div class="modal fade" id="trainerMaster" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+<div class="modal fade" id="trainerMaster2" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
     aria-labelledby="staticBackdropLabel" aria-hidden="true">
 
     <div class="modal-dialog modal-xl modal-dialog-scrollable">
@@ -15,7 +15,7 @@
                     <div class="col-md-12 border-bottom pb-3">
                         <span class="button"></span>
                         <h3> External Trainers </h3>
-                        <div class="row row-cols-4 g-4 trainerDetails">
+                        <div class="row row-cols-4 g-4 trainerDetails2">
 
                             <!-- Circle cards will be populated dynamically via JavaScript -->
                         </div>
@@ -42,7 +42,7 @@
 
 
 <link rel="stylesheet" href="{{ asset('css/circleMemberMaster.css') }}">
-<script src="{{ asset('js/trainerPerson1External.js') }}"></script>
+<script src="{{ asset('js/trainerPerson2External.js') }}"></script>
 
 <script>
     // on load of document

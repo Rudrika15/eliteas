@@ -10,7 +10,7 @@ class CircleMemberActivityController extends Controller
     public function activity()
     {
         try {
-            return view('admin.circlemember.activity', compact('circlecall'));
+            return view('admin.circlemember.activity');
         } catch (\Throwable $th) {
             throw $th;
             return view('servererror');

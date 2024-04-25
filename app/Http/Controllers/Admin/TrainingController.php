@@ -69,7 +69,7 @@ class TrainingController extends Controller
         if ($request->has('groupMember')) {
 
             if ($request->input('groupMember') === 'internalMember') {
-                
+
                 // Trainer 1 internal
                 $trainer1 = new TrainerMaster();
                 $trainer1->userId = $request->memberId;
@@ -92,7 +92,6 @@ class TrainingController extends Controller
                 $training1->note = $request->note;
                 $training1->trainerId = $trainer1->userId; // Assuming trainerId field is used for internal trainers
                 $training1->save();
-
             } elseif ($request->input('groupMember') === 'externalMember') {
 
                 // Trainer 1 external
@@ -149,7 +148,6 @@ class TrainingController extends Controller
                 $training2->note = $request->note;
                 $training2->trainerId = $trainer2->userId; // Assuming trainerId field is used for internal trainers
                 $training2->save();
-
             } elseif ($request->input('group') === 'external') {
 
                 // Trainer 2 external
@@ -315,5 +313,27 @@ class TrainingController extends Controller
             throw $th;
             return view('servererror');
         }
+    }
+
+
+    // public function getExternalTrainer(Request $request)
+    // {
+
+    //     $exTrainer = TrainerMaster::all();
+
+    //     return response()->json($exTrainer);
+    // }
+
+
+    public function getTrainerDetails(Request $request)
+    {
+
+        $trainerMaster = TrainerMaster::all();
+
+        if (!$trainerMaster) {
+            return response()->json(['error' => 'Trainer not found'], 404);
+        }
+
+        return response()->json($trainerMaster);
     }
 }

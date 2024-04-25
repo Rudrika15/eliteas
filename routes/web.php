@@ -171,7 +171,18 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('get-member', [CircleCallController::class, 'getMember'])->name('getMember');
 
     // get external trainer list
-    Route::get('get-external-trainers' , [TrainerMasterController::class, 'getExternalTrainers'])->name('getExternalTrainers');
+    // Route::get('get-external-trainers' , [TrainingController::class, 'getExternalTrainers'])->name('getExternalTrainers');
+
+    Route::get('/get-trainer-details',[TrainingController::class, 'getTrainerDetails'])->name('getTrainerDetails');
+
+
+    Route::get("get-external-trainer-modal", function () {
+        return view('TrainerPerson1External');
+    });
+
+    Route::get("get-external-trainer-modal2", function () {
+        return view('TrainerPerson2External');
+    });
 
 
     Route::get("get-member-circle-master-modal", function () {
