@@ -16,9 +16,7 @@
 
     <!-- Google Fonts -->
     <link href="https://fonts.gstatic.com" rel="preconnect">
-    <link
-        href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
 
     <!-- Vendor CSS Files -->
     <link href="{{ asset('vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet" />
@@ -145,53 +143,16 @@
 
                 </li><!-- End Notification Nav -->
 
-                <li class="nav-item dropdown">
 
-                    <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
-                        <i class="bi bi-chat-left-text"></i>
-                        <span class="badge bg-success badge-number">3</span>
-                    </a><!-- End Messages Icon -->
-
-                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow messages">
-                        <li class="dropdown-header">
-                            You have 3 new messages
-                            <a href="#"><span class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a>
-                        </li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-
-                        <li class="message-item">
-                            <a href="#">
-                                <img src="public/img/messages-1.jpg" alt="" class="rounded-circle">
-                                <div>
-                                    <h4>Maria Hudson</h4>
-                                    <p>Velit asperiores et ducimus soluta repudiandae labore officia est ut...</p>
-                                    <p>4 hrs. ago</p>
-                                </div>
-                            </a>
-                        </li>
-
-
-                        <li class="dropdown-footer">
-                            <a href="#">Show all messages</a>
-                        </li>
-
-                    </ul><!-- End Messages Dropdown Items -->
-
-                </li><!-- End Messages Nav -->
 
                 <li class="nav-item dropdown pe-3">
 
-                    <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#"
-                        data-bs-toggle="dropdown">
+                    <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
                         @if (isset(Auth::user()->profile_photo))
                             {{-- <img class="img-profile rounded-circle" src="{{url('public/img/logo.png')}}"> --}}
                             <img class="img-profile rounded-circle" src="public/img/logo.png">
                         @else
-                            <span
-                                class="rounded-circle text-center p-2 fs-5 badge logobadge d-inline-block text-light h-50"
-                                style="width: 38px !important;">
+                            <span class="rounded-circle text-center p-2 fs-5 badge logobadge d-inline-block text-light h-50" style="width: 38px !important;">
 
                             </span>
                         @endif
@@ -241,14 +202,12 @@
                         </li>
 
                         <li>
-                            <a class="dropdown-item d-flex align-items-center" href="{{ route('logout') }}"
-                                onclick="event.preventDefault();
+                            <a class="dropdown-item d-flex align-items-center" href="{{ route('logout') }}" onclick="event.preventDefault();
                             document.getElementById('logout-form').submit();">
                                 <i class="bi bi-box-arrow-right"></i>
                                 <span>Sign Out</span>
 
-                                <form id="logout-form" action="{{ route('logout') }}" method="POST"
-                                    class="d-none">
+                                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                                     @csrf
                                 </form>
                             </a>
@@ -355,8 +314,7 @@
         </div>
     </footer><!-- End Footer -->
 
-    <a href="#" class="back-to-top d-flex align-items-center justify-content-center "
-        style="background-color: #1d2865; "><i class="bi bi-arrow-up-short"></i></a>
+    <a href="#" class="back-to-top d-flex align-items-center justify-content-center " style="background-color: #1d2865; "><i class="bi bi-arrow-up-short"></i></a>
 
     <!-- Vendor JS Files -->
 

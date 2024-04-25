@@ -22,3 +22,9 @@
         <span style="color: #1d2865;">Testimonial</span>
     </a>
 </li>
+<li class="nav-item">
+    <a class="nav-link collapsed" href="{{ route('connection.index') }}">
+        <i class="bi bi-person-heart" style="color: #e76a35"></i>
+        <span style="color: #1d2865;">Connection Request</span>
+    </a>
+</li>

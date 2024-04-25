@@ -11,6 +11,7 @@ use App\Models\Testimonial;
 use App\Models\Training;
 use App\Models\TrainingRegister;
 use App\Models\User;
+use App\Models\Connection;
 use App\Utils\Utils;
 use Carbon\Carbon;
 use Illuminate\Contracts\Session\Session;
@@ -169,5 +170,23 @@ class HomeController extends Controller
             'message' => $message,
             'members' => $members
         ]);
+    }
+
+    public function connect(Request $request)
+    {
+        $memberId = $request->input('memberId');
+        $userId = Auth::user()->id;
+
+        $connection = new Connection();
+        $connection->memberId = $memberId;
+        $connection->userId = $userId;
+        $connection->save();
+        return response()->json(['message' => 'Connection request processed successfully']);
+    }
+
+    public function myConnections()
+    {
+        $connections = Connection::where('userId', Auth::user()->id)->get();
+        return view('connections', compact('connections'));
     }
 }
