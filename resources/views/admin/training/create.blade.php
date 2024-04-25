@@ -91,7 +91,7 @@
                 <!-- Member selection -->
                 <div class="member-list" id="memberListDropdown" style="display:none;">
                     @include('TrainerPerson2')
-                    <input type="hidsden" name="trainerId" id="trainerId">
+                    <input type="hidsden" name="trainerId2" id="trainerId2">
                     <input type="text" class="form-control mt-3" id="trainerName2" name="trainerNameInternal"
                         placeholder="Trainer Name Internal">
                 </div>
