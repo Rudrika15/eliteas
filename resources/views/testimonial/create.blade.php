@@ -1,6 +1,7 @@
 @extends('layouts.master')
 
-@section('header', 'Circle 1:1 Meeting')
+@section('title', 'UBN - Testimonial')
+{{-- <title>UBN - Testimonial</title> --}}
 @section('content')
 
     {{-- Message --}}
@@ -29,7 +30,8 @@
             <a href="{{ route('testimonial.index') }}" class="btn btn-secondary btn-sm">BACK</a>
         </div>
 
-        <form class="m-3 needs-validation" id="circlecallForm" enctype="multipart/form-data" method="post" action="{{ route('testimonial.store') }}" novalidate>
+        <form class="m-3 needs-validation" id="circlecallForm" enctype="multipart/form-data" method="post"
+            action="{{ route('testimonial.store') }}" novalidate>
             @csrf
 
             <!-- Button trigger modal -->
@@ -40,7 +42,8 @@
                 <div class="col-md-12">
                     <div class="form-floating mt-3">
                         <input type="hidden" id="circlePersonId" name="circlePersonId">
-                        <input type="text" class="form-control" id="circlePersonName" placeholder="Select Member" disabled>
+                        <input type="text" class="form-control" id="circlePersonName" placeholder="Select Member"
+                            disabled>
                         <label for="meetingPersonName">Circle Member Name</label>
                         @error('circlePersonId')
                             <div class="invalid-tooltip">
@@ -52,7 +55,8 @@
 
                 <div class="col-md-12">
                     <div class="form-floating mt-3">
-                        <textarea class="form-control @error('message') is-invalid @enderror" id="message" name="message" placeholder="Enter Message"></textarea>
+                        <textarea class="form-control @error('message') is-invalid @enderror" id="message" name="message"
+                            placeholder="Enter Message"></textarea>
                         <label for="message">Message</label>
                         @error('message')
                             <div class="invalid-tooltip">
