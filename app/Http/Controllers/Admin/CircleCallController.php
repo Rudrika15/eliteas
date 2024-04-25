@@ -53,13 +53,20 @@ class CircleCallController extends Controller
 
             // return $scheduleDate = Schedule::where('circleId', Auth::user()->member->circle->id)->where('status', 'Active')->get(['date']);
             $scheduleDate = Schedule::where('circleId', Auth::user()->member->circle->id)
-
                 ->where('status', 'Active')
+                ->where('date')
                 ->pluck('date'); // Pluck all 'date' values from the query result
 
+            $lastDate = Schedule::where('circleId', Auth::user()->member->circle->id)
+                ->where('date', '<', now())
+                ->orderBy('date', 'desc')
+                ->pluck('date')
+                ->first();
 
 
-            return view('admin.circlecall.create', compact('member', 'circleMember', 'scheduleDate'));
+
+
+            return view('admin.circlecall.create', compact('member', 'circleMember', 'scheduleDate', 'lastDate'));
         } catch (\Throwable $th) {
             throw $th;
             return view('servererror');
@@ -193,6 +200,9 @@ class CircleCallController extends Controller
             $circlecall = CircleCall::find($id);
             $member = Member::where('status', '!=', 'Deleted')->get();
             $circleMember = CircleMember::where('status', '!=', 'Deleted')->get();
+            // return $circleMember;
+
+
             return view('admin.circlecall.edit', compact('circlecall', 'circleMember', 'member'));
         } catch (\Throwable $th) {
             throw $th;
@@ -202,20 +212,23 @@ class CircleCallController extends Controller
 
     public function update(Request $request)
     {
+        // return $request->all();
         $this->validate($request, [
-            'memberId' => 'required',
-            'meetingPerson' => 'required',
+            // 'memberId' => 'required',
+            'meetingPersonId' => 'required',
             'meetingPlace' => 'required',
             'remarks' => 'required',
         ]);
+
         try {
             $id = $request->id;
             $circlecall = CircleCall::find($id);
-            $circlecall->memberId = $request->memberId;
-            $circlecall->meetingPerson = $request->meetingPerson;
+            // $circlecall->memberId = $request->memberId;
+            $circlecall->meetingPersonId = $request->meetingPersonId;
             $circlecall->meetingPlace = $request->meetingPlace;
             $circlecall->remarks = $request->remarks;
             $circlecall->status = 'Active';
+
             $circlecall->save();
 
 

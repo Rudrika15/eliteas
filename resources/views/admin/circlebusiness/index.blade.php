@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('header', 'Reference Giver')
+@section('title', 'UBN - Circle Business')
 @section('content')
 
     {{-- Message --}}
@@ -42,7 +42,8 @@
                 <tbody>
                     @foreach ($busGiver as $busGiverData)
                         <tr>
-                            <td>{{ $busGiverData->businessGiver->firstName . ' ' . $busGiverData->businessGiver->lastName ?? '-' }}</td>
+                            <td>{{ $busGiverData->businessGiver->firstName . ' ' . $busGiverData->businessGiver->lastName ?? '-' }}
+                            </td>
                             {{-- <td>{{ $busGiverData->loginMember->firstName . ' ' . $busGiverData->loginMember->lastName ?? '-' }}</td> --}}
                             <td>{{ $busGiverData->amount ?? '-' }}</td>
                             <td>{{ $busGiverData->date ?? '-' }}</td>
@@ -51,7 +52,8 @@
                                 <a href="{{ route('busGiver.edit', $busGiverData->id) }}" class="btn btn-primary btn-sm">
                                     <i class="bi bi-pen"></i>
                                 </a>
-                                <a href="{{ route('busGiver.delete', $busGiverData->id) }}" class="btn btn-danger btn-sm">
+                                <a onclick="return confirm('Do You Want To Delete It')"
+                                    href="{{ route('busGiver.delete', $busGiverData->id) }}" class="btn btn-danger btn-sm">
                                     <i class="bi bi-trash"></i>
                                 </a>
 

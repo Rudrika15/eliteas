@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('header', 'Reference Giver')
+@section('title', 'UBN - Referance Giver')
 @section('content')
 
     {{-- Message --}}
@@ -48,7 +48,8 @@
                     <tbody>
                         @foreach ($refGiver as $refGiverData)
                             <tr>
-                                <td>{{ $refGiverData->members->firstName ?? '-' }} {{ $refGiverData->members->lastName ?? '-' }}
+                                <td>{{ $refGiverData->members->firstName ?? '-' }}
+                                    {{ $refGiverData->members->lastName ?? '-' }}
                                 </td>
                                 {{-- <td>{{ $refGiverData->refGiverName->firstName ?? '-' }}</td> --}}
                                 <td>{{ $refGiverData->contactName ?? '-' }}</td>
@@ -58,10 +59,12 @@
                                 <td>{{ $refGiverData->description ?? '-' }}</td>
                                 <td>{{ $refGiverData->status }}</td>
                                 <td>
-                                    <a href="{{ route('refGiver.edit', $refGiverData->id) }}" class="btn btn-primary btn-sm">
+                                    <a href="{{ route('refGiver.edit', $refGiverData->id) }}"
+                                        class="btn btn-primary btn-sm">
                                         <i class="bi bi-pen"></i>
                                     </a>
-                                    <a href="{{ route('refGiver.delete', $refGiverData->id) }}" class="btn btn-danger btn-sm">
+                                    <a onclick="return confirm('Do You Want To Delete It')" href="{{ route('refGiver.delete', $refGiverData->id) }}"
+                                        class="btn btn-danger btn-sm">
                                         <i class="bi bi-trash"></i>
                                     </a>
 

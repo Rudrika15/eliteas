@@ -1,9 +1,10 @@
-<button type="button" class="btn btn-primary " data-bs-toggle="modal" data-bs-target="#circleMaster">
+<button type="button" class="btn btn-bg-blue " data-bs-toggle="modal" data-bs-target="#circleMaster">
     Select Meeting Persons
 </button>
 
 <!-- Modal -->
-<div class="modal fade" id="circleMaster" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+<div class="modal fade" id="circleMaster" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
 
     <div class="modal-dialog modal-xl modal-dialog-scrollable">
         <div class="modal-content">

@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('header', 'Circle 1:1')
+@section('title', 'UBN - 1:1 Meeting')
 @section('content')
 
     {{-- Message --}}
@@ -24,13 +24,13 @@
 
     <div class="card">
         <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h4 class="mb-0 mt-3">1:1 Meeting</h4>
-                <a href="{{ route('circlecall.create') }}" class="btn btn-primary btn-sm mt-3">ADD</a>
+            <div class="d-flex justify-content-between align-items-center mb-5">
+                <h4 class="mb-0 mt-3 text-blue">1:1 Meeting</h4>
+                <a href="{{ route('circlecall.create') }}" class="btn btn-bg-blue btn-sm mt-3">ADD</a>
             </div>
-
+            <hr class="mb-5">
             <!-- Table with stripped rows -->
-            <table class="table datatable">
+            <table class="table datatable mb-5">
                 <thead>
                     <tr>
                         <th>Circle Member</th>
@@ -45,15 +45,19 @@
                     @foreach ($circlecall as $circlecallData)
                         <tr>
                             <td>{{ $circlecallData->member->firstName ?? '-' }}</td>
-                            <td>{{ $circlecallData->meetingPerson->firstName ?? '-' }}</td>
+                            <td>{{ $circlecallData->meetingPerson->firstName ?? '-' }}
+                                {{ $circlecallData->meetingPerson->lastName ?? '-' }}</td>
                             <td>{{ $circlecallData->meetingPlace ?? '-' }}</td>
                             <td>{{ $circlecallData->remarks ?? '-' }}</td>
                             <td>{{ $circlecallData->status }}</td>
                             <td>
-                                <a href="{{ route('circlecall.edit', $circlecallData->id) }}" class="btn btn-primary btn-sm">
+                                <a href="{{ route('circlecall.edit', $circlecallData->id) }}"
+                                    class="btn btn-bg-blue btn-sm">
                                     <i class="bi bi-pen"></i>
                                 </a>
-                                <a href="{{ route('circlecall.delete', $circlecallData->id) }}" class="btn btn-danger btn-sm">
+                                <a onclick="return confirm('Do You Want To Delete It')"
+                                    href="{{ route('circlecall.delete', $circlecallData->id) }}"
+                                    class="btn btn-bg-orange btn-sm">
                                     <i class="bi bi-trash"></i>
                                 </a>
                             </td>

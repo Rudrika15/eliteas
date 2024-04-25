@@ -6,7 +6,12 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     {{-- add csrf --}}
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Dashboard - Admin</title>
+
+    <title>@yield('title')</title>
+
+
+
+
     <meta content="" name="description">
     <meta content="" name="keywords">
 
@@ -70,11 +75,11 @@
                     </a>
                 </li><!-- End Search Icon-->
 
-                <li class="nav-item dropdown">
+                {{-- <li class="nav-item dropdown">
 
-                    <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
+                    <a class="nav-link nav-icon " href="#" data-bs-toggle="dropdown">
                         <i class="bi bi-bell"></i>
-                        <span class="badge bg-primary badge-number">4</span>
+                        <span class="badge bg-primary badge-number ">4</span>
                     </a><!-- End Notification Icon -->
 
                     <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
@@ -179,7 +184,7 @@
 
                     </ul><!-- End Messages Dropdown Items -->
 
-                </li><!-- End Messages Nav -->
+                </li><!-- End Messages Nav --> --}}
 
                 <li class="nav-item dropdown pe-3">
 
@@ -247,8 +252,7 @@
                                 <i class="bi bi-box-arrow-right"></i>
                                 <span>Sign Out</span>
 
-                                <form id="logout-form" action="{{ route('logout') }}" method="POST"
-                                    class="d-none">
+                                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                                     @csrf
                                 </form>
                             </a>
@@ -313,7 +317,7 @@
             <div class="row">
 
                 <!-- Left side columns -->
-                <div class="container-fluid p-4">
+                <div class="container-fluid p-5">
                     <!-- Page Heading -->
                     @yield('content')
                 </div>

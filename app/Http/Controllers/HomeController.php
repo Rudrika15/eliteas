@@ -16,6 +16,7 @@ use Carbon\Carbon;
 use Illuminate\Contracts\Session\Session;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
@@ -75,6 +76,9 @@ class HomeController extends Controller
                 ->where('status', 'Active')
                 ->where('date', '>=', \today())->first();
             $meeting->date = Carbon::parse($meeting->date);
+
+            // Determine the table name based on the slug
+
 
             return view('home', compact('count', 'nearestTraining', 'findRegister', 'testimonials', 'meeting', 'businessCategory', 'myInvites'));
         }
