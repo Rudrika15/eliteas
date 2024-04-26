@@ -30,41 +30,43 @@
         </div>
 
         <!-- Table with stripped rows -->
-        <table class="table datatable">
-            <thead>
-                <tr>
-                    <th>Member Name</th>
-                    <th>Attandance</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($meetingmember as $meetingmemberData)
-                <tr>
-                    <td>{{$meetingmemberData->member->firstName ?? '-'}} {{$meetingmemberData->member->lastName ??
-                        '-'}}</td>
-                    <td>{{$meetingmemberData->attandance ?? '-'}}</td>
-                    <td>{{$meetingmemberData->status ?? '-'}}</td>
-                    <td>
-                        <a href="{{ route('meetingmember.edit', $meetingmemberData->id) }}"
-                            class="btn btn-primary btn-sm">
-                            <i class="bi bi-pen"></i>
-                        </a>
+        <div class="table-responsive">
+            <table class="table datatable">
+                <thead>
+                    <tr>
+                        <th>Member Name</th>
+                        <th>Attandance</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($meetingmember as $meetingmemberData)
+                    <tr>
+                        <td>{{$meetingmemberData->member->firstName ?? '-'}} {{$meetingmemberData->member->lastName ??
+                            '-'}}</td>
+                        <td>{{$meetingmemberData->attandance ?? '-'}}</td>
+                        <td>{{$meetingmemberData->status ?? '-'}}</td>
+                        <td>
+                            <a href="{{ route('meetingmember.edit', $meetingmemberData->id) }}"
+                                class="btn btn-primary btn-sm">
+                                <i class="bi bi-pen"></i>
+                            </a>
 
-                        {{-- <a href="{{ route('franchise.show', $franchiseData->id) }}" class="btn btn-info">
-                            <i class="bi bi-eye"></i>
-                        </a> --}}
+                            {{-- <a href="{{ route('franchise.show', $franchiseData->id) }}" class="btn btn-info">
+                                <i class="bi bi-eye"></i>
+                            </a> --}}
 
-                        <a href="{{ route('meetingmember.delete', $meetingmemberData->id) }}"
-                            class="btn btn-danger btn-sm mt-1">
-                            <i class="bi bi-trash"></i>
-                        </a>
-                    </td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
-        <!-- End Table with stripped rows -->
+                            <a href="{{ route('meetingmember.delete', $meetingmemberData->id) }}"
+                                class="btn btn-danger btn-sm mt-1">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+            <!-- End Table with stripped rows -->
+        </div>
     </div>
     @endsection

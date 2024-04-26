@@ -79,22 +79,6 @@ class TrainingController extends Controller
         $training1->externalTrainerId = $request->externalTrainerId ? $request->externalTrainerId : ($request->externalTrainerId2 ? $request->externalTrainerId2 : null); // External Trainer 1 ID
         $training1->save();
 
-        
-        // // Create Training record for Trainer 2
-        // $training2 = new Training();
-        // $training2->title = $request->title;
-        // $training2->fees = $request->fees;
-        // $training2->type = $request->type;
-        // $training2->meetingLink = $request->meetingLink;
-        // $training2->venue = $request->venue;
-        // $training2->date = $request->date;
-        // $training2->time = $request->time;
-        // $training2->duration = $request->duration;
-        // $training2->note = $request->note;
-        // $training2->trainerId = $request->trainerId2 ?? null; // Internal Trainer 2 ID
-        // $training2->externalTrainerId = $request->externalTrainerId2; // External Trainer 2 ID
-        // $training2->save();
-
         // Redirect the user after successful submission
         return redirect()->route('training.index')->with('success', 'Training details saved successfully.');
     }
@@ -112,9 +96,11 @@ class TrainingController extends Controller
         }
     }
 
-    public function update(Request $request, Training $training)
+    public function update(Request $request, $id)
     {
-        // Validate the incoming request data (you may need to adjust validation rules)
+        return $request;
+
+        // Validate the incoming request
         $this->validate($request, [
             'title' => 'required',
             'fees' => 'required|numeric',
@@ -124,8 +110,10 @@ class TrainingController extends Controller
             'duration' => 'required',
         ]);
 
-        // Update the existing Training record
-        $training->trainerId = $request->memberId;
+        // Find the training record to update
+        $training = Training::findOrFail($id);
+
+        // Update Training record
         $training->title = $request->title;
         $training->fees = $request->fees;
         $training->type = $request->type;
@@ -135,85 +123,14 @@ class TrainingController extends Controller
         $training->time = $request->time;
         $training->duration = $request->duration;
         $training->note = $request->note;
+        $training->trainerId = $request->trainerId ? $request->trainerId : ($request->trainerId2 ? $request->trainerId2 : null); // Internal Trainer 1 ID
+        $training->externalTrainerId = $request->externalTrainerId ? $request->externalTrainerId : ($request->externalTrainerId2 ? $request->externalTrainerId2 : null); // External Trainer 1 ID
         $training->save();
-
-        // Update Trainer 1
-        if ($request->has('groupMember')) {
-            if ($request->input('groupMember') === 'internalMember') {
-                // Update Trainer 1 internal
-                $trainer1 = TrainerMaster::where('userId', $request->memberId)->first();
-                if (!$trainer1) {
-                    $trainer1 = new TrainerMaster();
-                    $trainer1->userId = $request->memberId;
-                }
-                $trainer1->trainerName = $request->memberName;
-                $trainer1->save();
-
-                $user1 = User::findOrFail($trainer1->userId);
-                $user1->assignRole('Trainer');
-            } elseif ($request->input('groupMember') === 'externalMember') {
-                // Update Trainer 1 external
-                $user1 = User::where('id', $request->memberId)->first();
-                if (!$user1) {
-                    $user1 = new User();
-                    $user1->id = $request->memberId;
-                }
-                $user1->firstName = $request->memberName;
-                $user1->email = $request->email;
-                $user1->password = Hash::make('123456');
-                $user1->assignRole('Trainer');
-                $user1->save();
-
-                $trainer1 = TrainerMaster::where('userId', $user1->id)->first();
-                if (!$trainer1) {
-                    $trainer1 = new TrainerMaster();
-                    $trainer1->userId = $user1->id;
-                }
-                $trainer1->trainerName = $user1->memberNameExternal;
-                $trainer1->save();
-            }
-        }
-
-        // Update Trainer 2
-        if ($request->has('group')) {
-            if ($request->input('group') === 'internal') {
-                // Update Trainer 2 internal
-                $trainer2 = TrainerMaster::where('userId', $request->trainerMemberId2)->first();
-                if (!$trainer2) {
-                    $trainer2 = new TrainerMaster();
-                    $trainer2->userId = $request->trainerMemberId2;
-                }
-                $trainer2->trainerName = $request->trainerNameInternal;
-                $trainer2->save();
-
-                $user2 = User::findOrFail($trainer2->userId);
-                $user2->assignRole('Trainer');
-            } elseif ($request->input('group') === 'external') {
-                // Update Trainer 2 external
-                $user2 = User::where('id', $request->trainerMemberId2)->first();
-                if (!$user2) {
-                    $user2 = new User();
-                    $user2->id = $request->trainerMemberId2;
-                }
-                $user2->firstName = $request->trainerNameExternal;
-                $user2->email = $request->email2;
-                $user2->password = Hash::make('123456'); // Set a default password or generate one securely
-                $user2->assignRole('Trainer');
-                $user2->save();
-
-                $trainer2 = TrainerMaster::where('userId', $user2->id)->first();
-                if (!$trainer2) {
-                    $trainer2 = new TrainerMaster();
-                    $trainer2->userId = $user2->id;
-                }
-                $trainer2->trainerName = $user2->trainerNameExternal;
-                $trainer2->save();
-            }
-        }
 
         // Redirect the user after successful update
         return redirect()->route('training.index')->with('success', 'Training details updated successfully.');
     }
+
 
 
     function delete($id)

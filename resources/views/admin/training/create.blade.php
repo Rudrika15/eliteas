@@ -245,6 +245,35 @@
 
 </script>
 
+<script type="text/javascript">
+    $(document).ready(function(){
+
+        var selectElement = document.getElementById("type");
+
+        selectElement.onchange = function() {
+
+            var selectedValue = selectElement.value;
+            
+            var meetingLinkElement = document.getElementById("meetingLink");
+            
+            var venueElement = document.getElementById("venue");
+
+            meetingLinkElement.style.display = "none";
+            
+            venueElement.style.display = "none";
+
+            if (selectedValue === "Online") {
+                meetingLinkElement.style.display = "block";
+            
+            } else if (selectedValue === "Offline") {
+                venueElement.style.display = "block";
+            
+            } 
+        };
+        selectElement.onchange();
+    });
+</script>
+
 @endsection
 
 @section('styles')

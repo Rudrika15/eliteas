@@ -58,51 +58,53 @@
 
 
         <!-- Table with stripped rows -->
-        <table class="table datatable">
-            <thead>
-                <tr>
-                    <th>Circle Name</th>
-                    <th>Member Name</th>
-                    <th>Business Category</th>
-                    <th>Membership Type</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                {{-- {{$member}} --}}
-                @foreach ($member as $circlememberData)
-                <tr>
-                    <td>{{$circlememberData->circle->circleName ?? '-'}}</td>
-                    <td>{{$circlememberData->firstName ?? '-'}} {{$circlememberData->lastName
-                        ?? ''}}</td>
-                    <td>{{$circlememberData->bCategory->categoryName ?? '-'}}</td>
-                    <td>{{$circlememberData->membershipType ?? '-'}} </td>
-                    <td>{{$circlememberData->status}}</td>
-                    <td>
+        <div class="table-responsive">
+            <table class="table datatable table-responsive">
+                <thead>
+                    <tr>
+                        <th>Circle Name</th>
+                        <th>Member Name</th>
+                        <th>Business Category</th>
+                        <th>Membership Type</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{-- {{$member}} --}}
+                    @foreach ($member as $circlememberData)
+                    <tr>
+                        <td>{{$circlememberData->circle->circleName ?? '-'}}</td>
+                        <td>{{$circlememberData->firstName ?? '-'}} {{$circlememberData->lastName
+                            ?? ''}}</td>
+                        <td>{{$circlememberData->bCategory->categoryName ?? '-'}}</td>
+                        <td>{{$circlememberData->membershipType ?? '-'}} </td>
+                        <td>{{$circlememberData->status}}</td>
+                        <td>
 
-                        <a href="{{ route('circlemember.activity', $circlememberData->id) }}"
-                            class="btn btn-info btn-sm">
-                            <i class="bi bi-info-circle"></i>
-                        </a>
-
-
-                        <a href="{{ route('circlemember.edit', $circlememberData->id) }}"
-                            class="btn btn-primary btn-sm">
-                            <i class="bi bi-pen"></i>
-                        </a>
+                            <a href="{{ route('circlemember.activity', $circlememberData->id) }}"
+                                class="btn btn-info btn-sm">
+                                <i class="bi bi-info-circle"></i>
+                            </a>
 
 
-                        <a href="{{ route('circlemember.delete') }}" class="btn btn-danger btn-sm">
-                            <i class="bi bi-trash"></i>
-                        </a>
-                    
-                    </td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
-        <!-- End Table with stripped rows -->
+                            <a href="{{ route('circlemember.edit', $circlememberData->id) }}"
+                                class="btn btn-primary btn-sm">
+                                <i class="bi bi-pen"></i>
+                            </a>
+
+
+                            <a href="{{ route('circlemember.delete') }}" class="btn btn-danger btn-sm mt-3">
+                                <i class="bi bi-trash"></i>
+                            </a>
+
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+            <!-- End Table with stripped rows -->
+        </div>
     </div>
 </div>
 
