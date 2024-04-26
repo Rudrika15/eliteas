@@ -7,10 +7,15 @@ $(document).ready(function () {
                 if (data && data.length > 0) {
                     var trainerDetails = "";
                     data.forEach(function (trainer) {
+
+                        var trainerId = trainer.userId;
+
+
                         trainerDetails +=
                             '<div class="card mb-3 mr-3 text-center trainer-card" data-trainer-id="' +
                             trainer.id +
                             '">' +
+                            trainer.userId + 
                             '<div class="card-body text-center">' +
                             '<h5 class="card-title" style="font-size:20px; color:1D2856;">' +
                             trainer.firstName +

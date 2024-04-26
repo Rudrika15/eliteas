@@ -59,7 +59,7 @@
                 </div>
                 <div class="external-trainer-list" id="memberListInputMember" style="display:none;">
                     @include('TrainerPerson1External')
-                    <input type="hidsden" name="externalTrainerId" id="trainerId">
+                    <input type="hidsden" name="externalTrainerId" id="userId">
                     <input type="text" class="form-control mt-3" id="trainerNameExternal" name="trainerNameExternal"
                         placeholder="Trainer Name External">
                 </div>
