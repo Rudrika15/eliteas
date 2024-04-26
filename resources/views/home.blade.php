@@ -1,5 +1,6 @@
 @extends('layouts.master')
 
+@section('title', 'UBN - Dashboard')
 @section('content')
     <div class="container">
         <style>
@@ -47,7 +48,7 @@
 
         @role('Member')
             <div class="row">
-                <div class="col-md-9">
+                <div class="col-md-12">
                     <div class="card-title"><b>Upcoming Circle Meetings</b></div>
                     <div class="card border-0 shadow workshopCard">
                         <div class="card-body">
@@ -73,9 +74,9 @@
                                 </small>
                             </p>
                             <div class="row">
-                                <div class="col-md-11 card-title">Invite people to join</div>
-                                <div class="col-md-1 mt-2">
-                                    <button type="button" class="btn btn-primary btn-sm mt-2" data-bs-toggle="modal"
+                                <div class="col-md-10 card-title ms-3">Invite people to join</div>
+                                <div class="col-md-1 mt-2 ms-5 ps-5">
+                                    <button type="button" class="btn btn-bg-blue btn-sm mt-2" data-bs-toggle="modal"
                                         data-bs-target="#exampleModal">
                                         Invite
                                     </button>
@@ -88,15 +89,30 @@
                                         <div class="card-title"> My Invites </div>
                                     </button>
                                 </h2>
-                                <div id="collapseSix" class="accordion-collapse collapse show" aria-labelledby="headingSix">
+                                <div id="collapseSix" class="accordion-collapse collapse " aria-labelledby="headingSix">
                                     <div class="accordion-body mt-2">
-                                        @foreach ($myInvites as $invite)
-                                            <b> Name:- </b> {{ $invite->personName }}
-                                            <br>
-                                            <b> Email:- </b> <small class="text-muted">{{ $invite->personEmail }}</small>
-                                            <br>
-                                            <hr>
-                                        @endforeach
+
+                                        <table class="table table-border">
+                                            <thead>
+                                                <tr>
+                                                    <th>Name</th>
+                                                    <th>Email</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    @foreach ($myInvites as $invite)
+                                                <tr>
+                                                    <td><small class="text-muted">{{ $invite->personName }}</small></td>
+                                                    <td><small class="text-muted">{{ $invite->personEmail }}</small></td>
+                                                </tr>
+                                                @endforeach
+                                                </tr>
+                                            </tbody>
+                                        </table>
+
+
+
                                     </div>
                                 </div>
                             </div>
@@ -106,7 +122,7 @@
             </div>
 
             <div class="row">
-                <div class="col-md-9">
+                <div class="col-md-12">
                     <div class="card-title"><b>Upcoming Training Workshops</b></div>
                     <div class="card border-0 shadow workshopCard">
                         <div class="card-body">
@@ -137,7 +153,7 @@
                                     @if (count($findRegister) == 0)
                                         @if ($nearestTraining->fees == 0)
                                             <h5 class="text-muted text-end me-4 pt-5">Free</h5>
-                                            <button type="button" class="btn btn-primary btn-md" data-bs-toggle="modal"
+                                            <button type="button" class="btn btn-bg-blue btn-md" data-bs-toggle="modal"
                                                 data-bs-target="#staticBackdrop">
                                                 Register
                                             </button>
@@ -146,7 +162,7 @@
                                                 {{ $nearestTraining->fees }}
                                             </h5>
                                             <div class="d-flex justify-content-end">
-                                                <button type="button" class="btn btn-primary btn-md " data-bs-toggle="modal"
+                                                <button type="button" class="btn btn-bg-blue btn-md " data-bs-toggle="modal"
                                                     data-bs-target="#staticBackdrop">
                                                     Join Now
                                                 </button>

@@ -144,7 +144,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('circlemember/edit/{id?}', [CircleMemberController::class, 'edit'])->name('circlemember.edit');
     Route::post('circlemember/update/{id?}', [CircleMemberController::class, 'update'])->name('circlemember.update');
     Route::get('circlemember/delete/{id?}', [CircleMemberController::class, 'delete'])->name('circlemember.delete');
-    
+
     //member activity
     Route::get('circlemember/activity/{id?}', [CircleMemberActivityController::class, 'activity'])->name('circlemember.activity');
 
@@ -173,7 +173,7 @@ Route::group(['middleware' => ['auth']], function () {
     // get external trainer list
     // Route::get('get-external-trainers' , [TrainingController::class, 'getExternalTrainers'])->name('getExternalTrainers');
 
-    Route::get('/get-trainer-details',[TrainingController::class, 'getTrainerDetails'])->name('getTrainerDetails');
+    Route::get('/get-trainer-details', [TrainingController::class, 'getTrainerDetails'])->name('getTrainerDetails');
 
 
     Route::get("get-external-trainer-modal", function () {
@@ -259,7 +259,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('bCategory/edit/{id?}', [BusinessCategoryController::class, 'edit'])->name('bCategory.edit');
     Route::post('bCategory/update', [BusinessCategoryController::class, 'update'])->name('bCategory.update');
     Route::get('bCategory/delete/{id?}', [BusinessCategoryController::class, 'delete'])->name('bCategory.delete');
-   
+
     //Training Caategory
 
     Route::get('/tCategory/index', [TrainingCategoryController::class, 'index'])->name('tCategory.index');
@@ -308,3 +308,7 @@ Route::get('/invitationPay/{personName?}/{personEmail?}/{invitedPersonFirstName?
 // global search 
 Route::get('/search', [HomeController::class, 'findMember'])->name('search');
 Route::get('/searchQuery', [HomeController::class, 'search'])->name('searchQuery');
+Route::post('/connect', [HomeController::class, 'connect'])->name('connect');
+
+// my connections
+Route::get('/connections/index', [HomeController::class, 'myConnections'])->name('connection.index');

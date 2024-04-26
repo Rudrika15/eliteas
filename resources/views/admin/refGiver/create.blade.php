@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('header', 'Circle Meeting Member Refference')
+@section('title', 'UBN - Referance Giver')
 @section('content')
 
     {{-- Message --}}
@@ -30,7 +30,8 @@
         </div>
 
         <!-- Floating Labels Form -->
-        <form class="m-3 needs-validation" id="meetingMemberRefForm" enctype="multipart/form-data" method="post" action="{{ route('refGiver.store') }}" novalidate>
+        <form class="m-3 needs-validation" id="meetingMemberRefForm" enctype="multipart/form-data" method="post"
+            action="{{ route('refGiver.store') }}" novalidate>
             @csrf
 
             <div class="row">
@@ -45,7 +46,8 @@
                             <div class="form-floating">
 
                                 <!-- Searchable input field -->
-                                <input type="text" class="form-control" id="meetingPersonName" name="memberName" placeholder="Select Member">
+                                <input type="text" class="form-control" id="meetingPersonName" name="memberName"
+                                    placeholder="Select Member">
                                 <label for="memberName">Member Name</label>
                                 @error('memberId')
                                     <div class="invalid-tooltip">
@@ -58,7 +60,8 @@
 
                             <div class="col-md-12">
                                 <div class="form-floating mt-3">
-                                    <input type="text" class="form-control @error('contactNo') is-invalid @enderror" id="meetingPersonContact" placeholder="Contact No" required>
+                                    <input type="text" class="form-control @error('contactNo') is-invalid @enderror"
+                                        id="meetingPersonContact" placeholder="Contact No" required>
                                     <label for="contactNo">Contact No</label>
                                     @error('contactNo')
                                         <div class="invalid-tooltip">
@@ -69,7 +72,8 @@
                             </div>
                             <div class="col-md-12">
                                 <div class="form-floating mt-3">
-                                    <input type="text" class="form-control @error('email') is-invalid @enderror" id="meetingPersonEmail" placeholder="email" required>
+                                    <input type="text" class="form-control @error('email') is-invalid @enderror"
+                                        id="meetingPersonEmail" placeholder="email" required>
                                     <label for="email">Email</label>
                                     @error('email')
                                         <div class="invalid-tooltip">
@@ -88,7 +92,8 @@
                     <div class="row">
                         <div class="col-sm-6">
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="group" id="internal" value="internal" checked="">
+                                <input class="form-check-input" type="radio" name="group" id="internal"
+                                    value="internal" checked="">
                                 <label class="form-check-label" for="internal">
                                     Internal
                                 </label>
@@ -96,7 +101,8 @@
                         </div>
                         <div class="col-sm-6">
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="group" id="external" value="external">
+                                <input class="form-check-input" type="radio" name="group" id="external"
+                                    value="external">
                                 <label class="form-check-label" for="external">
                                     External
                                 </label>
@@ -114,7 +120,8 @@
                                     <div class="col-md-8">
                                         <input type="hidden" class="form-control" id="contactPersonId">
                                         <div class="form-floating">
-                                            <input type="text" class="form-control contactName" id="contactPersonName" name="contactNameInternal" placeholder="Contact Person Name">
+                                            <input type="text" class="form-control contactName" id="contactPersonName"
+                                                name="contactNameInternal" placeholder="Contact Person Name">
                                             <label for="contactPersonName">Contact Person Name</label>
                                         </div>
                                     </div>
@@ -125,7 +132,8 @@
                         </div>
                         <div class="col-md-12" id="memberListInput" style="display:none;">
                             <div class="form-floating mt-3">
-                                <input type="text" class="form-control @error('contactName') is-invalid @enderror" id="" name="contactNameExternal" placeholder="Contact Name">
+                                <input type="text" class="form-control @error('contactName') is-invalid @enderror"
+                                    id="" name="contactNameExternal" placeholder="Contact Name">
                                 <label for="contactName">Contact Person Name</label>
                                 @error('contactName')
                                     <div class="invalid-tooltip">
@@ -136,7 +144,9 @@
                         </div>
                         <div class="col-md-12">
                             <div class="form-floating mt-3">
-                                <input type="text" class="form-control @error('contactNo') is-invalid @enderror selectedMemberContact" id="contactPersonContact" name="contactNo" placeholder="Contact No" required>
+                                <input type="text"
+                                    class="form-control @error('contactNo') is-invalid @enderror selectedMemberContact"
+                                    id="contactPersonContact" name="contactNo" placeholder="Contact No" required>
                                 <label for="contactNo">Contact No</label>
                                 @error('contactNo')
                                     <div class="invalid-tooltip">
@@ -147,7 +157,8 @@
                         </div>
                         <div class="col-md-12">
                             <div class="form-floating mt-3">
-                                <input type="text" class="form-control @error('email') is-invalid @enderror" id="contactPersonEmail" name="email" placeholder="email" required>
+                                <input type="text" class="form-control @error('email') is-invalid @enderror"
+                                    id="contactPersonEmail" name="email" placeholder="email" required>
                                 <label for="email">Email</label>
                                 @error('email')
                                     <div class="invalid-tooltip">
@@ -165,7 +176,8 @@
 
             <div class="col-md-12">
                 <div class="form-floating mt-3">
-                    <input type="text" class="form-control @error('description') is-invalid @enderror" id="description" name="description" placeholder="description" required>
+                    <input type="text" class="form-control @error('description') is-invalid @enderror"
+                        id="description" name="description" placeholder="description" required>
                     <label for="description">Description</label>
                     @error('description')
                         <div class="invalid-tooltip">
@@ -178,7 +190,8 @@
             <div class="col-md-12 pt-2">
                 <label for="scale">Scale [1-5]</label>
                 <div class="form-floating mt-3">
-                    <input type="range" class="form-range @error('scale') is-invalid @enderror" id="scale" name="scale" placeholder="scale" required min="1" max="5" step="1">
+                    <input type="range" class="form-range @error('scale') is-invalid @enderror" id="scale"
+                        name="scale" placeholder="scale" required min="1" max="5" step="1">
                     <div class="d-flex justify-content-between align-items-center mt-2">
                         <span class="badge bg-primary rounded-pill">1</span>
                         <span class="badge bg-primary rounded-pill">2</span>
@@ -237,7 +250,8 @@
                             return {
                                 text: item.firstName,
                                 id: item.id,
-                                firstName: item.firstName // Adding firstName attribute to the option data
+                                firstName: item
+                                    .firstName // Adding firstName attribute to the option data
                             }
                         })
                     };

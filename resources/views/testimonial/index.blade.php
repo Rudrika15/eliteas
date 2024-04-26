@@ -1,6 +1,7 @@
 @extends('layouts.master')
+{{-- <title></title> --}}
+@section('title', 'UBN - Testimonial')
 
-@section('header', 'City')
 @section('content')
 
     {{-- Message --}}
@@ -38,7 +39,7 @@
                         <th>Message</th>
                         <th>UploadedDate</th>
                         <th>Status</th>
-                        {{-- <th>Action</th> --}} 
+                        {{-- <th>Action</th> --}}
                     </tr>
                 </thead>
                 <tbody>
@@ -77,7 +78,8 @@
                 <tbody>
                     @foreach ($myTestimonials as $myTestimonial)
                         <tr>
-                            <td>{{ $myTestimonial->receiver->firstName ?? '' }} {{ $myTestimonial->receiver->lastName ?? '' }}</td>
+                            <td>{{ $myTestimonial->receiver->firstName ?? '' }}
+                                {{ $myTestimonial->receiver->lastName ?? '' }}</td>
                             <td>{{ $myTestimonial->message ?? '' }}</td>
                             <td>{{ $myTestimonial->uploadedDate ?? '' }}</td>
                             <td>{{ $myTestimonial->status }}</td>
@@ -89,4 +91,4 @@
             <!-- End Table with stripped rows -->
         </div>
     </div>
-    @endsection
+@endsection

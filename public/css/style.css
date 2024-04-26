@@ -1270,3 +1270,23 @@ h6 {
 ::-webkit-scrollbar-thumb:hover {
   background: #144681;
 }
+
+/* btn colors  */
+.btn-bg-orange{
+  background-color: #e76a35 !important ;
+  color: white !important;
+}
+
+.btn-bg-blue{
+  background-color: #1d2856 !important;
+  color: white !important;
+}
+
+/* text-icon colors */
+.text-orange{
+  color: #e76a35 !important;
+}
+
+.text-blue{
+  color: #1d2856;
+}

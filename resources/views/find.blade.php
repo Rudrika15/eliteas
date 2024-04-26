@@ -34,16 +34,21 @@
 
 </head>
 
-<body>
+<body class="" style="background-color: #f5e9e2; mix-blend-mode: multiply;">
     <header>
         <!-- place navbar here -->
     </header>
     <main>
 
-        <div class="container d-flex justify-content-center pt-5">
-
-            <input type="text" name="query" id="searchInput" placeholder="Enter circle name or member name..." class="form-control" title="Enter search keyword">
-            {{-- <button type="submit" title="Search" class="btn btn-primary ms-2 px-4"><i class="bi bi-search"></i></button> --}}
+        <div class="pt-5 px-3">
+            <div class="row">
+                <div class="col-md-1">
+                    <img src="{{ asset('img/logo2.jpg') }}" alt="ELITEAs" class="d-none d-lg-block pb-2" width="100">
+                </div>
+                <div class="col-md-11 pt-3">
+                    <input type="text" name="query" id="searchInput" placeholder="Enter circle name or member name..." class="form-control" title="Enter search keyword">
+                </div>
+            </div>
 
         </div>
         <div class="container pt-5">
@@ -160,35 +165,132 @@
             if (response && response.members && Array.isArray(response.members)) {
                 // Loop through the members array and create card elements
                 response.members.forEach(function(member) {
+                    console.log("member", member);
                     var cardElement = document.createElement('div');
                     cardElement.classList.add('card', 'mb-3');
 
                     var cardBody = document.createElement('div');
                     cardBody.classList.add('card-body');
 
+                    // Name Row
+                    var nameRow = document.createElement('div');
+                    nameRow.classList.add('row');
+
+                    var nameCol = document.createElement('div');
+                    nameCol.classList.add('col-md-8');
+
                     var cardTitle = document.createElement('h5');
                     cardTitle.classList.add('card-title');
                     cardTitle.textContent = member.firstName + ' ' + member.lastName; // Adjust as needed
+                    nameCol.appendChild(cardTitle);
+                    nameRow.appendChild(nameCol);
+
+                    // Email
+                    if (member.user && member.user.email) {
+                        var emailCol = document.createElement('div');
+                        emailCol.classList.add('col-md-8', 'text-muted');
+
+                        var cardEmail = document.createElement('p');
+                        cardEmail.classList.add('card-text');
+                        cardEmail.textContent = 'Email: ' + member.user.email;
+                        emailCol.appendChild(cardEmail);
+
+                        nameRow.appendChild(emailCol);
+                    }
+
+                    cardBody.appendChild(nameRow);
 
                     var cardText = document.createElement('p');
                     cardText.classList.add('card-text');
                     cardText.textContent = 'Circle Name: ' + member.circle.circleName; // Adjust as needed
 
-                    // Append card elements to card body
-                    cardBody.appendChild(cardTitle);
+                    // Button Element
+                    var buttonWrapper = document.createElement('div');
+                    buttonWrapper.classList.add('text-end');
+
+                    var button = document.createElement('button');
+                    button.innerHTML = `<i class="bi bi-person-plus-fill"></i> Connect`;
+                    button.classList.add('btn', 'btn-primary', 'btn-sm');
+
+                    // Add click event listener to the button
+                    button.addEventListener('click', function() {
+                        // Perform action here when the button is clicked
+                        // For example, make an AJAX call
+                        fetch('/connect', {
+                                method: 'POST', // Adjust method as needed (e.g., 'GET', 'POST')
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                    // Add any additional headers if required
+                                },
+                                body: JSON.stringify({
+                                    memberId: member.id // Assuming member ID is available
+                                })
+                            })
+                            .then(response => {
+                                if (response.ok) {
+                                    return response.json();
+                                } else {
+                                    throw new Error('Network response was not ok');
+                                }
+                            })
+                            .then(data => {
+                                console.log(data);
+                                // Perform any further actions based on the response
+                            })
+                            .catch(error => {
+                                console.error('Fetch error:', error);
+                            });
+                    });
+
+                    // Append elements to card body
                     cardBody.appendChild(cardText);
 
-                    // Append card body to card element
+                    // Append button to wrapper
+                    buttonWrapper.appendChild(button);
+
+                    // Append card body and button wrapper to card element
                     cardElement.appendChild(cardBody);
+                    cardElement.appendChild(buttonWrapper);
 
                     // Append card element to search results container
                     searchResultsElement.appendChild(cardElement);
                 });
+
+
+
             } else {
                 console.error('Invalid response format or missing data');
             }
         }
     </script>
+
+
+    <!-- sweetalert -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+    <!-- end -->
+
+    @if (Session::get('success'))
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: "{{ Session::get('success') }}",
+                showConfirmButton: true,
+
+            });
+        </script>
+    @endif
+
+    @if (Session::get('error'))
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: "{{ Session::get('error') }}",
+                showConfirmButton: true,
+            });
+        </script>
+    @endif
 </body>
 
 </html>
