@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('header', 'Circle Meeting Member Business')
+@section('title', 'UBN - Circle Business')
 @section('content')
 
     {{-- Message --}}
@@ -25,16 +25,17 @@
 
     <div class="card">
         <div class="card-body d-flex justify-content-between align-items-center">
-            <h5 class="card-title">Circle Meeting Member Business</h5>
+            <h5 class="card-title">Circle Member Business</h5>
             <a href="{{ route('busGiver.index') }}" class="btn btn-secondary btn-sm">BACK</a>
         </div>
 
         <!-- Floating Labels Form -->
-        <form class="m-3 needs-validation" id="circleMemberBusForm" enctype="multipart/form-data" method="post" action="{{ route('busGiver.store') }}" novalidate>
+        <form class="m-3 needs-validation" id="circleMemberBusForm" enctype="multipart/form-data" method="post"
+            action="{{ route('busGiver.store') }}" novalidate>
             @csrf
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    {{-- <div class="form-floating">
+
+            {{-- <div class="col-md-6"> --}}
+            {{-- <div class="form-floating">
                     <select class="form-control" data-error=' Field is required' required name="businessGiver"
                         id="businessGiver">
                         <option value="" selected disabled> Select Business Giver Member </option>
@@ -49,21 +50,28 @@
                     </div>
                     @enderror
                 </div> --}}
+            {{-- </div> --}}
+            <div class="">
+
+                <div class="form-floating mt-6">
+                    <input type="hidden" name="businessGiverId" id="" value="{{ $busGiver->businessGiverId }}">
+                    <input type="text" class="form-control @error('businessGiver') is-invalid @enderror"
+                        id="businessGiver" name="businessGiver"
+                        value="{{ $busGiver->loginMember->firstName . ' ' . $busGiver->loginMember->lastName }}"
+                        placeholder="Reference Giver" readonly required>
+                    <label for="businessGiver">Business Giver</label>
+                    @error('businessGiver')
+                        <div class="invalid-tooltip">
+                            {{ $message }}
+                        </div>
+                    @enderror
                 </div>
-                <div class="col-md-6">
-                    <div class="form-floating mt-6">
-                        <input type="text" class="form-control @error('businessGiver') is-invalid @enderror" id="businessGiver" name="businessGiver" placeholder="Reference Giver" required>
-                        <label for="businessGiver">Business Giver</label>
-                        @error('businessGiver')
-                            <div class="invalid-tooltip">
-                                {{ $message }}
-                            </div>
-                        @enderror
-                    </div>
-                </div>
-                <div class="col-md-6">
+            </div>
+            <input type="hidden" name="loginMemberId" value="{{ $busGiver->loginMemberId }}">
+            {{-- <div class="col-md-6">
                     <div class="form-floating mt-3">
-                        <input type="text" class="form-control @error('loginMember') is-invalid @enderror" id="loginMember" name="loginMember" placeholder="Contact Name" required>
+                        <input type="text" class="form-control @error('loginMember') is-invalid @enderror"
+                            id="loginMember" name="loginMember" placeholder="Contact Name" required>
                         <label for="loginMember">Login Member</label>
                         @error('loginMember')
                             <div class="invalid-tooltip">
@@ -71,31 +79,33 @@
                             </div>
                         @enderror
                     </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-floating mt-3">
-                        <input type="text" class="form-control @error('contactNo') is-invalid @enderror" id="amount" name="amount" placeholder="Amount" required>
-                        <label for="amount">Amount</label>
-                        @error('amount')
-                            <div class="invalid-tooltip">
-                                {{ $message }}
-                            </div>
-                        @enderror
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-floating mt-3">
-                        <input type="date" class="form-control @error('date') is-invalid @enderror" id="date" name="date" placeholder="date" required>
-                        <label for="date">Date</label>
-                        @error('date')
-                            <div class="invalid-tooltip">
-                                {{ $message }}
-                            </div>
-                        @enderror
-                    </div>
+                </div> --}}
+            <div class="">
+                <div class="form-floating mt-3">
+                    <input type="text" class="form-control @error('contactNo') is-invalid @enderror" id="amount"
+                        name="amount" placeholder="Amount" required>
+                    <label for="amount">Amount</label>
+                    @error('amount')
+                        <div class="invalid-tooltip">
+                            {{ $message }}
+                        </div>
+                    @enderror
                 </div>
             </div>
-            <div class="text-center">
+            <div class="">
+                <div class="form-floating mt-3">
+                    <input type="date" class="form-control @error('date') is-invalid @enderror" id="date"
+                        name="date" placeholder="date" required>
+                    <label for="date">Date</label>
+                    @error('date')
+                        <div class="invalid-tooltip">
+                            {{ $message }}
+                        </div>
+                    @enderror
+                </div>
+            </div>
+
+            <div class="text-center mt-5">
                 <button type="submit" class="btn btn-primary">Submit</button>
                 <button type="reset" class="btn btn-secondary">Reset</button>
             </div>

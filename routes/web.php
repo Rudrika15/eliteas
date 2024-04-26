@@ -212,12 +212,12 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('get-member-details', [CircleMeetingMemberReferenceController::class, 'getMemberDetails'])->name('getMemberDetails');
     Route::post('refGiver/store', [CircleMeetingMemberReferenceController::class, 'store'])->name('refGiver.store');
     Route::get('refGiver/edit/{id?}', [CircleMeetingMemberReferenceController::class, 'edit'])->name('refGiver.edit');
-    Route::post('refGiver/update', [CircleMeetingMemberReferenceController::class, 'update'])->name('refGiver.update');
+    Route::post('refGiver/update/{id?}', [CircleMeetingMemberReferenceController::class, 'update'])->name('refGiver.update');
     Route::get('refGiver/delete/{id?}', [CircleMeetingMemberReferenceController::class, 'delete'])->name('refGiver.delete');
 
     Route::get('/busGiver/index', [CircleMeetingMemberBusinessController::class, 'index'])->name('busGiver.index');
     Route::get('busGiver/show/{id?}', [CircleMeetingMemberBusinessController::class, 'show'])->name('busGiver.show');
-    Route::get('busGiver/create', [CircleMeetingMemberBusinessController::class, 'create'])->name('busGiver.create');
+    Route::get('busGiver/create/{id?}', [CircleMeetingMemberBusinessController::class, 'create'])->name('busGiver.create');
     Route::post('busGiver/store', [CircleMeetingMemberBusinessController::class, 'store'])->name('busGiver.store');
     Route::get('busGiver/edit/{id?}', [CircleMeetingMemberBusinessController::class, 'edit'])->name('busGiver.edit');
     Route::post('busGiver/update', [CircleMeetingMemberBusinessController::class, 'update'])->name('busGiver.update');

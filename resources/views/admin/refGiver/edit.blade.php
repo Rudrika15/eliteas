@@ -11,7 +11,7 @@
     </style>
     {{-- Message --}}
     @if (Session::has('success'))
-        <div class="alert alert-success alert-dismissible" role="alert">
+        <div id="success-alert" class="alert alert-success alert-dismissible" role="alert">
             <button type="button" class="close" data-dismiss="alert">
                 {{-- <i class="fa fa-times"></i> --}}
             </button>
@@ -20,14 +20,22 @@
     @endif
 
     @if (Session::has('error'))
-        <div class="alert alert-danger alert-dismissible" role="alert">
+        <div class="alert alert-danger alert-dismissible" id="error-alert" role="alert">
             <button type="button" class="close" data-dismiss="alert">
                 {{-- <i class="fa fa-times"></i> --}}
             </button>
             <strong>Error !</strong> {{ session('error') }}
         </div>
     @endif
+    <script>
+        $(document).ready(function() {
+            // Hide success message after 2 seconds
+            $('#success-alert').delay(2000).fadeOut('slow');
 
+            // Hide error message after 2 seconds
+            $('#error-alert').delay(2000).fadeOut('slow');
+        });
+    </script>
 
     <div class="card">
         <div class="card-body">
@@ -39,7 +47,7 @@
 
             <!-- Floating Labels Form -->
             <form class="m-3 needs-validation" id="meetingMemberRefForm" enctype="multipart/form-data" method="post"
-                action="{{ route('refGiver.update') }}" novalidate>
+                action="{{ route('refGiver.update', $refGiver->id) }}" novalidate>
                 @csrf
                 <div class="row">
                     <div class="col-sm-6">
@@ -53,7 +61,8 @@
                     </div>
                     <div class="col-sm-6">
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="group" id="external" value="external">
+                            <input class="form-check-input" type="radio" name="group" id="external" value="external"
+                                {{ $refGiver->contactName ? 'checked' : '' }}>
                             <label class="form-check-label" for="external">
                                 External
                             </label>
@@ -85,11 +94,11 @@
                 {{-- </div> --}}
                 {{-- <div class="row"> --}}
 
-                <div class="">
+                {{-- <div class="">
                     <div class="form-floating mt-3">
                         <input type="text" class="form-control @error('contactNo') is-invalid @enderror"
                             id="meetingPersonContact" placeholder="Contact No"
-                            value="{{ $refGiver->members->contactDetails->mobileNo }}" readonly required>
+                            value="{{ $refGiver->members->contactDetails->mobileNo ?? '-' }}" readonly required>
                         <label for="contactNo">Contact No</label>
                         @error('contactNo')
                             <div class="invalid-tooltip">
@@ -102,7 +111,7 @@
                     <div class="form-floating mt-3">
                         <input type="text" class="form-control @error('email') is-invalid @enderror"
                             id="meetingPersonEmail" placeholder="email"
-                            value="{{ $refGiver->members->contactDetails->email }}" required readonly>
+                            value="{{ $refGiver->members->contactDetails->email ?? '-' }}" required readonly>
                         <label for="email">Email</label>
                         @error('email')
                             <div class="invalid-tooltip">
@@ -110,11 +119,12 @@
                             </div>
                         @enderror
                     </div>
-                </div>
+                </div> --}}
                 <div class="mt-3">
                     <div class="form-floating ">
                         <input type="text" class="form-control @error('description') is-invalid @enderror"
-                            id="description" name="description" placeholder="description" required>
+                            id="description" name="description" placeholder="description"
+                            value="{{ $refGiver->description }}" required>
                         <label for="description">Description</label>
                         @error('description')
                             <div class="invalid-tooltip">
@@ -160,7 +170,7 @@
 
                     <div class="form-floating mt-3">
                         <input type="text" class="form-control @error('contactName') is-invalid @enderror" id=""
-                            name="contactNameExternal" placeholder="Contact Name">
+                            name="contactNameExternal" placeholder="Contact Name" value="{{ $refGiver->contactName }}">
                         <label for="contactName">Contact Person Name</label>
                         @error('contactName')
                             <div class="invalid-tooltip">
@@ -173,7 +183,8 @@
                         <div class="form-floating mt-3">
                             <input type="text"
                                 class="form-control @error('contactNo') is-invalid @enderror selectedMemberContact"
-                                id="contactPersonContact" name="contactNo" placeholder="Contact No">
+                                id="contactPersonContact" name="contactNo" value="{{ $refGiver->contactNo }}"
+                                placeholder="Contact No">
                             <label for="contactNo">Contact No</label>
                             @error('contactNo')
                                 <div class="invalid-tooltip">
@@ -185,7 +196,7 @@
                     <div class="">
                         <div class="form-floating mt-3">
                             <input type="text" class="form-control @error('email') is-invalid @enderror"
-                                id="contactPersonEmail" name="email" placeholder="email">
+                                id="contactPersonEmail" name="email" value="{{ $refGiver->email }}" placeholder="email">
                             <label for="email">Email</label>
                             @error('email')
                                 <div class="invalid-tooltip">
@@ -207,7 +218,8 @@
                     <label for="scale">Scale [1-5]</label>
                     <div class="form-floating mt-3">
                         <input type="range" class="form-range  @error('scale') is-invalid @enderror" id="scale"
-                            name="scale" placeholder="scale" required min="1" max="5" step="1">
+                            name="scale" placeholder="scale" value="{{ $refGiver->scale }}" required min="1"
+                            max="5" step="1">
                         <div class="d-flex justify-content-between align-items-center mt-2">
                             <span class="badge btn-bg-blue rounded-pill">1</span>
                             <span class="badge btn-bg-blue rounded-pill">2</span>
@@ -292,9 +304,19 @@
 
     <script>
         $(document).ready(function() {
-            // Show the internal portion by default
-            $("#memberListDropdown").show();
+            // Check if the "External" radio button is already checked on page load
+            var initialValue = $('input[name="group"]:checked').attr("id");
 
+            // Show/hide elements based on the initial state
+            if (initialValue === "internal") {
+                $("#memberListDropdown").show();
+                $("#memberListInput").hide();
+            } else if (initialValue === "external") {
+                $("#memberListDropdown").hide();
+                $("#memberListInput").show();
+            }
+
+            // Toggle elements when radio button is clicked
             $('input[type="radio"]').click(function() {
                 var inputValue = $(this).attr("id");
                 if (inputValue === "internal") {
@@ -309,6 +331,8 @@
             });
         });
     </script>
+
+
 
 
     <!-- Your JavaScript code to trigger inclusion of circleMemberMaster -->

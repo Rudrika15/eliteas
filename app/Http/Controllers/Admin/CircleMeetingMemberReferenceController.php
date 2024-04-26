@@ -82,6 +82,7 @@ class CircleMeetingMemberReferenceController extends Controller
         // return $request;
         try {
             $refGiver = new CircleMeetingMembersReference();
+
             $refGiver->referenceGiverId = Auth::user()->id;
             $refGiver->memberId = $request->memberId;
 
@@ -140,10 +141,14 @@ class CircleMeetingMemberReferenceController extends Controller
 
         ]);
         try {
+            // return $id;
             $id = $request->id;
             $refGiver = CircleMeetingMembersReference::find($id);
+
+
             $refGiver->memberId = $request->memberId;
-            $refGiver->referenceGiver = $request->referenceGiver;
+
+            // $refGiver->referenceGiver = $request->referenceGiver;
             $refGiver->contactName = $request->contactName;
             $refGiver->contactNo = $request->contactNo;
             $refGiver->email = $request->email;
@@ -152,8 +157,6 @@ class CircleMeetingMemberReferenceController extends Controller
             $refGiver->status = 'Active';
 
             $refGiver->save();
-
-
             return redirect()->route('refGiver.index')->with('success', ' Updated Successfully!');
         } catch (\Throwable $th) {
             throw $th;

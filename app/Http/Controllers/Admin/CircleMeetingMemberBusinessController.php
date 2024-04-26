@@ -39,13 +39,12 @@ class CircleMeetingMemberBusinessController extends Controller
             return view('servererror');
         }
     }
-    public function create()
+    public function create($id)
     {
         try {
-            // $circlemeeting = CircleMeeting::where('status', 'Active')->get();
-            // $member = Member::where('status', 'Active')->get();
+            $busGiver = CircleMeetingMembersBusiness::find($id);
 
-            return view('admin.circlebusiness.create');
+            return view('admin.circlebusiness.create', \compact('busGiver'));
         } catch (\Throwable $th) {
             throw $th;
             return view('servererror');
@@ -66,15 +65,15 @@ class CircleMeetingMemberBusinessController extends Controller
         try {
             $busGiver = new CircleMeetingMembersBusiness();
             // $busGiver->memberId = $request->memberId;
-            $busGiver->businessGiver = $request->businessGiver;
-            $busGiver->loginMember = $request->loginMember;
+            $busGiver->businessGiverId = $request->businessGiverId;
+            $busGiver->loginMemberId = $request->loginMemberId;
             $busGiver->amount = $request->amount;
             $busGiver->date = $request->date;
             $busGiver->status = 'Active';
 
             $busGiver->save();
 
-            return redirect()->route('busGiver.index')->with('success', ' Created Successfully!');
+            return redirect()->route('busGiver.index')->with('success', 'Created Successfully!');
         } catch (\Throwable $th) {
             throw $th;
             return view('servererror');

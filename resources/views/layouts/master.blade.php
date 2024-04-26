@@ -21,7 +21,9 @@
 
     <!-- Google Fonts -->
     <link href="https://fonts.gstatic.com" rel="preconnect">
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
+        rel="stylesheet">
 
     <!-- Vendor CSS Files -->
     <link href="{{ asset('vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet" />
@@ -34,6 +36,9 @@
 
     <!-- Template Main CSS File -->
     <link href="{{ asset('css/style.css') }}" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+        crossorigin="anonymous"></script>
+
 
     <!-- =======================================================
   * Template Name: NiceAdmin
@@ -185,12 +190,15 @@
 
                 <li class="nav-item dropdown pe-3">
 
-                    <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+                    <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#"
+                        data-bs-toggle="dropdown">
                         @if (isset(Auth::user()->profile_photo))
                             {{-- <img class="img-profile rounded-circle" src="{{url('public/img/logo.png')}}"> --}}
                             <img class="img-profile rounded-circle" src="public/img/logo.png">
                         @else
-                            <span class="rounded-circle text-center p-2 fs-5 badge logobadge d-inline-block text-light h-50" style="width: 38px !important;">
+                            <span
+                                class="rounded-circle text-center p-2 fs-5 badge logobadge d-inline-block text-light h-50"
+                                style="width: 38px !important;">
 
                             </span>
                         @endif
@@ -240,7 +248,8 @@
                         </li>
 
                         <li>
-                            <a class="dropdown-item d-flex align-items-center" href="{{ route('logout') }}" onclick="event.preventDefault();
+                            <a class="dropdown-item d-flex align-items-center" href="{{ route('logout') }}"
+                                onclick="event.preventDefault();
                             document.getElementById('logout-form').submit();">
                                 <i class="bi bi-box-arrow-right"></i>
                                 <span>Sign Out</span>
@@ -352,10 +361,16 @@
         </div>
     </footer><!-- End Footer -->
 
-    <a href="#" class="back-to-top d-flex align-items-center justify-content-center " style="background-color: #1d2865; "><i class="bi bi-arrow-up-short"></i></a>
+    <a href="#" class="back-to-top d-flex align-items-center justify-content-center "
+        style="background-color: #1d2865; "><i class="bi bi-arrow-up-short"></i></a>
 
     <!-- Vendor JS Files -->
-
+    <script>
+        // Hide the success message after 5 minutes
+        setTimeout(function() {
+            $('.alert').fadeOut('slow');
+        }, 2000);
+    </script>
     <script src="{{ asset('vendor/apexcharts/apexcharts.min.js') }}"></script>
     <script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ asset('vendor/chart.js/chart.umd.js') }}"></script>
