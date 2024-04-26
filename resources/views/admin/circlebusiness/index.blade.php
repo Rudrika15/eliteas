@@ -22,13 +22,13 @@
 
     <div class="card">
         <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h4 class="mb-0 mt-3">Circle Meeting Member Business</h4>
+            <div class="d-flex justify-content-between align-items-center mb-5">
+                <h4 class="mb-0 mt-3 text-blue">Circle Meeting Member Business</h4>
                 {{-- <a href="{{ route('busGiver.create') }}" class="btn btn-primary btn-sm mt-3">ADD</a> --}}
             </div>
-
+            <hr class="mb-5">
             <!-- Table with stripped rows -->
-            <table class="table datatable">
+            <table class="table datatable mb-5">
                 <thead>
                     <tr>
                         <th>Business Giver</th>
@@ -49,11 +49,12 @@
                             <td>{{ $busGiverData->date ?? '-' }}</td>
                             <td>{{ $busGiverData->status }}</td>
                             <td>
-                                <a href="{{ route('busGiver.edit', $busGiverData->id) }}" class="btn btn-primary btn-sm">
+                                <a href="{{ route('busGiver.edit', $busGiverData->id) }}" class="btn btn-bg-blue btn-sm">
                                     <i class="bi bi-pen"></i>
                                 </a>
                                 <a onclick="return confirm('Do You Want To Delete It')"
-                                    href="{{ route('busGiver.delete', $busGiverData->id) }}" class="btn btn-danger btn-sm">
+                                    href="{{ route('busGiver.delete', $busGiverData->id) }}"
+                                    class="btn btn-bg-orange btn-sm">
                                     <i class="bi bi-trash"></i>
                                 </a>
 
