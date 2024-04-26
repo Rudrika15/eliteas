@@ -33,355 +33,117 @@
     <form class="m-3 needs-validation" id="trainingForm" enctype="multipart/form-data" method="post"
         action="{{ route('training.update') }}" novalidate>
         @csrf
-
-        {{-- Trainer 1 Start --}}
-
+        
+        {{-- Trainer 1 --}}
         <h3><b>Trainer 1</b></h3>
         <hr>
-
-        <div class="row-col-12">
+        <div class="row">
             <div class="col-md-6">
-
-                {{-- get old value of radio button --}}
-                @php($radioValue = old('groupMember', ''))
-
-                <div class="row">
-                    <div class="col-sm-6">
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="groupMember" id="internalMember"
-                                value="internalMember" {{ $radioValue=='internalMember' ? 'checked' : '' }}>
-                            <label class="form-check-label" for="internalMember">
-                                Internal
-                            </label>
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="groupMember" id="externalMember"
-                                value="externalMember" {{ $radioValue=='externalMember' ? 'checked' : '' }}>
-                            <label class="form-check-label" for="externalMember">
-                                External
-                            </label>
-                        </div>
-                    </div>
+                <!-- Trainer selection -->
+                <div class="form-check">
+                    <input class="form-check-input trainer-radio" type="radio" name="groupMember" id="internalMember"
+                        value="internalMember" checked>
+                    <label class="form-check-label" for="internalMember">Internal</label>
                 </div>
-            </div>
-
-
-            <div class="row pt-5">
-                <div class="col-md-4" id="memberListDropdownMember" style="">
-                    <div class="col-md-12">
-                        @include('TrainerPerson1')
-                    </div>
-                    <div class="col-md-12">
-                        <input type="hidden" id="trainerId" name="memberId" value="{{ $training->trainers->id ?? '' }}">
-                        <div class="form-floating">
-
-                            <!-- Searchable input field -->
-                            <input type="text" name="memberName" class="form-control" id="trainerName" name="memberName"
-                                placeholder="Select Member" value="{{ $training->trainers->trainerName ?? '' }}">
-                            <label for="memberName">Trainer Name</label>
-                            @error('memberId')
-                            <div class="invalid-tooltip">
-                                {{ $message }}
-                            </div>
-                            @enderror
-                        </div>
-                    </div>
-
+                <div class="form-check">
+                    <input class="form-check-input trainer-radio" type="radio" name="groupMember" id="externalMember"
+                        value="externalMember">
+                    <label class="form-check-label" for="externalMember">External</label>
                 </div>
-                <div class="col-md-12" id="memberListInputMember" style="display:none;">
-                    <div class="form-floating mt-3">
-                        <input type="text" class="form-control @error('contactName') is-invalid @enderror"
-                            id="trainerNameExternal" name="memberNameExternal" placeholder="Contact Name"
-                            value="{{ $training->memberNameExternal }}">
-                        <label for="contactName">Trainer Name External</label>
-                        @error('contactName')
-                        <div class="invalid-tooltip">
-                            {{ $message }}
-                        </div>
-                        @enderror
-                    </div>
+        
+                <!-- Member selection -->
+                <div class="member-list" id="memberListDropdownMember">
+                    @include('TrainerPerson1')
+                    <input type="hidden" name="trainerId" id="trainerId">
+                    <input type="text" class="form-control mt-3" id="trainerName" name="memberName" placeholder="Select Member">
                 </div>
-
-            </div>
-
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="form-floating mt-3">
-                        <input type="text" class="form-control @error('contactNo') is-invalid @enderror"
-                            id="trainerContact" placeholder="Contact No" value="{{ $training->contactNo }}">
-                        <label for="contactNo">Contact No</label>
-                        @error('contactNo')
-                        <div class="invalid-tooltip">
-                            {{ $message }}
-                        </div>
-                        @enderror
-                    </div>
+                <div class="external-trainer-list" id="memberListInputMember" style="display:none;">
+                    @include('TrainerPerson1External')
+                    <input type="hidden" name="externalTrainerId" id="externalTrainerId" value="{{$training->externalTrainerId}}">
+                    <input type="text" class="form-control mt-3" id="trainerNameExternal" name="trainerNameExternal"
+                        placeholder="Trainer Name External">
                 </div>
-                <div class="col-md-12">
-                    <div class="form-floating mt-3">
-                        <input type="text" class="form-control @error('email') is-invalid @enderror" id="trainerEmail"
-                            name="email" placeholder="email" value="{{ $training->email }}">
-                        <label for="email">Email</label>
-                        @error('email')
-                        <div class="invalid-tooltip">
-                            {{ $message }}
-                        </div>
-                        @enderror
-                    </div>
-                </div>
+        
+                <!-- Contact details -->
+                <input type="text" class="form-control mt-3" id="trainerContact" name="contactNo" placeholder="Contact No">
+                <input type="text" class="form-control mt-3" id="trainerEmail" name="email" placeholder="Email">
             </div>
         </div>
-</div>
-
-{{-- Triainer 1 End --}}
-
-{{-- Trainer 2 Start --}}
-<br>
-<br>
-<h3><b>Trainer 2</b></h3>
-<hr>
-<br>
-<br>
-
-
-<div class="col-md-6  border-start">
-    {{-- get old value of radio button --}}
-    @php($radioValue = old('group', ''))
-
-    <div class="row">
-        <div class="col-sm-6">
-            <div class="form-check">
-                <input class="form-check-input" type="radio" name="group" id="internal" value="internal" {{
-                    $radioValue=='internal' ? 'checked' : '' }}>
-                <label class="form-check-label" for="internal">
-                    Internal
-                </label>
-            </div>
-        </div>
-        <div class="col-sm-6">
-            <div class="form-check">
-                <input class="form-check-input" type="radio" name="group" id="external" value="external" {{
-                    $radioValue=='external' ? 'checked' : '' }}>
-                <label class="form-check-label" for="external">
-                    External
-                </label>
-            </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-12" id="memberListDropdown" style="display:none;">
-            <div class="form-floating mt-3">
-                <div class="row">
-                    <div class="col-md-4">
-                        @include('trainerPerson2')
-                    </div>
-                    <div class="col-md-8">
-                        <input type="hidden" class="form-control" name="trainerMemberId2" id="trainerId2"
-                            value="{{ old('trainerMemberId2') }}">
-                        <div class="form-floating">
-                            <input type="text" class="form-control contactName" id="trainerName2"
-                                name="trainerNameInternal" placeholder="Trainer Name Internal"
-                                value="{{ $training->trainerName }}">
-                            <label for="trainerName">Trainer Name</label>
-                        </div>
-                    </div>
-
+        
+        {{-- Trainer 2 --}}
+        <h3><b>Trainer 2</b></h3>
+        <hr>
+        <div class="row">
+            <div class="col-md-6">
+                <!-- Trainer selection -->
+                <div class="form-check">
+                    <input class="form-check-input trainer-radio" type="radio" name="group" id="internal" value="internal"
+                        checked>
+                    <label class="form-check-label" for="internal">Internal</label>
                 </div>
-
-            </div>
-        </div>
-        <div class="col-md-12" id="memberListInput" style="display:none;">
-            <div class="form-floating mt-3">
-                <input type="text" class="form-control @error('trainerName') is-invalid @enderror"
-                    id="trainerNameExternal" name="trainerNameExternal" placeholder="Trainer Name"
-                    value="{{ $training->trainerName }}">
-                <label for="trainerName">Trainer Name</label>
-                @error('trainerName')
-                <div class="invalid-tooltip">
-                    {{ $message }}
+                <div class="form-check">
+                    <input class="form-check-input trainer-radio" type="radio" name="group" id="external" value="external">
+                    <label class="form-check-label" for="external">External</label>
                 </div>
-                @enderror
-            </div>
-        </div>
-        <div class="col-md-12">
-            <div class="form-floating mt-3">
-                <input type="text" class="form-control @error('contactNo') is-invalid @enderror selectedMemberContact"
-                    id="trainerContact2" name="contactNo" placeholder="Contact No" value="{{ $training->contactNo }}">
-                <label for="contactNo">Contact No</label>
-                @error('contactNo')
-                <div class="invalid-tooltip">
-                    {{ $message }}
+        
+                <!-- Member selection -->
+                <div class="member-list" id="memberListDropdown" style="display:none;">
+                    @include('TrainerPerson2')
+                    <input type="hidden" name="trainerId2" id="trainerId2">
+                    <input type="text" class="form-control mt-3" id="trainerName2" name="trainerNameInternal"
+                        placeholder="Trainer Name Internal">
                 </div>
-                @enderror
-            </div>
-        </div>
-        <div class="col-md-12">
-            <div class="form-floating mt-3">
-                <input type="text" class="form-control @error('email') is-invalid @enderror" id="trainerEmail2"
-                    name="email2" placeholder="email2" value="{{ $training->email }}">
-                <label for="email2">Email</label>
-                @error('email')
-                <div class="invalid-tooltip">
-                    {{ $message }}
+                <div class="member-list" id="memberListInput" style="display:none;">
+                    @include('TrainerPerson2External')
+                    <input type="hidden" name="externalTrainerId2" id="externalTrainerId2">
+                    <input type="text" class="form-control mt-3" id="trainerNameExternal2" name="trainerNameExternal2"
+                        placeholder="Trainer Name External">
                 </div>
-                @enderror
+        
+                <!-- Contact details -->
+                <input type="text" class="form-control mt-3" id="trainerContact2" name="contactNo2" placeholder="Contact No">
+                <input type="text" class="form-control mt-3" id="trainerEmail2" name="email2" placeholder="Email">
             </div>
         </div>
-    </div>
-</div>
-
-
-{{-- Trianer 2 End --}}
-
-<div class="col-md-12">
-    <div class="accordion-item mt-3">
-        <h2 class="accordion-header" id="headingSix">
-            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSix"
-                aria-expanded="true" aria-controls="collapseSix">
-                Training Details
-            </button>
-        </h2>
-        <div id="collapseSix" class="accordion-collapse collapse show" aria-labelledby="headingSix"
-            data-bs-parent="#accordionExample">
-            <div class="accordion-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-floating mt-3">
-                            <input type="text" class="form-control @error('title') is-invalid @enderror" id="title"
-                                name="title" placeholder="Title" value="{{ $training->title }}">
-                            <label for="title">Title</label>
-                            @error('title')
-                            <div class="invalid-tooltip">
-                                {{ $message }}
-                            </div>
-                            @enderror
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-floating mt-3">
-                            <input type="text" class="form-control @error('fees') is-invalid @enderror" id="fees"
-                                name="fees" placeholder="Fees" value="{{ $training->fees }}">
-                            <label for="fees">Fees</label>
-                            @error('fees')
-                            <div class="invalid-tooltip">
-                                {{ $message }}
-                            </div>
-                            @enderror
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-floating mt-3">
-                            <select class="form-select @error('type') is-invalid @enderror" id="type" name="type">
-                                <option value="" disabled>Select Meeting Type</option>
-                                <option value="Online" {{ old('type')=='Online' ? 'selected' : '' }}>Online
-                                </option>
-                                <option value="Offline" {{ old('type')=='Offline' ? 'selected' : '' }}>Offline
-                                </option>
+        
+        {{-- Training Details --}}
+        <div class="accordion-item mt-3">
+            <h2 class="accordion-header" id="headingSix">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSix"
+                    aria-expanded="false" aria-controls="collapseSix">
+                    Training Details
+                </button>
+            </h2>
+            <div id="collapseSix" class="accordion-collapse collapse" aria-labelledby="headingSix">
+                <div class="accordion-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <input type="text" class="form-control mt-3" id="title" name="title" placeholder="Title" value="{{ old('title', $training->title) }}">
+                            <input type="text" class="form-control mt-3" id="fees" name="fees" placeholder="Fees" value="{{ old('fees', $training->fees) }}">
+                            <select class="form-select mt-3" id="type" name="type">
+                                <option value="" selected disabled>Select Meeting Type</option>
+                                <option value="Online" {{ old('type', $training->type) == 'Online' ? 'selected' : '' }}>Online</option>
+                                <option value="Offline" {{ old('type', $training->type) == 'Offline' ? 'selected' : '' }}>Offline</option>
                             </select>
-                            <label for="type">Meeting Type</label>
-                            @error('type')
-                            <div class="invalid-tooltip">
-                                {{ $message }}
-                            </div>
-                            @enderror
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-floating mt-3">
-                            <input type="text" class="form-control @error('meetingLink') is-invalid @enderror"
-                                id="meetingLink" name="meetingLink" placeholder="Meeting Link"
-                                value="{{ $training->meetingLink }}">
-                            <label for="meetingLink">Meeting Link</label>
-                            @error('meetingLink')
-                            <div class="invalid-tooltip">
-                                {{ $message }}
-                            </div>
-                            @enderror
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-floating mt-3">
-                            <input type="text" class="form-control @error('venue') is-invalid @enderror" id="venue"
-                                name="venue" placeholder="Venue" value="{{ $training->venue }}">
-                            <label for="venue">Venue</label>
-                            @error('venue')
-                            <div class="invalid-tooltip">
-                                {{ $message }}
-                            </div>
-                            @enderror
-                        </div>
-                    </div>
-
-                    <div class="col-md-6">
-                        <div class="form-floating mt-3">
-                            <input type="date" class="form-control @error('date') is-invalid @enderror" id="date"
-                                name="date" placeholder="Date" value="{{ old('date', $training->date) }}">
-                            <label for="date">Date</label>
-                            @error('date')
-                            <div class="invalid-tooltip">
-                                {{ $message }}
-                            </div>
-                            @enderror
-                        </div>
-                    </div>
-
-
-                    <div class="col-md-6">
-                        <div class="form-floating mt-3">
-                            <input type="time" class="form-control @error('time') is-invalid @enderror" id="time"
-                                name="time" placeholder="Time" value="{{ old('time', $training->time) }}">
-                            <label for="time">Time</label>
-                            @error('time')
-                            <div class="invalid-tooltip">
-                                {{ $message }}
-                            </div>
-                            @enderror
-                        </div>
-                    </div>
-
-                    <div class="col-md-6">
-                        <div class="form-floating mt-3">
-                            <input type="text" class="form-control @error('duration') is-invalid @enderror"
-                                id="duration" name="duration" placeholder="Duration" value="{{ $training->duration }}">
-                            <label for="duration">Duration</label>
-                            @error('duration')
-                            <div class="invalid-tooltip">
-                                {{ $message }}
-                            </div>
-                            @enderror
-                        </div>
-                    </div>
-                    <div class="col-md-12">
-                        <div class="form-floating mt-3">
-                            <textarea class="form-control @error('note') is-invalid @enderror" id="note" name="note"
-                                placeholder="Note" rows="3">{{ $training->note }}</textarea>
-                            <label for="note">Note</label>
-                            @error('note')
-                            <div class="invalid-tooltip">
-                                {{ $message }}
-                            </div>
-                            @enderror
+                            <input type="text" class="form-control mt-3" id="meetingLink" name="meetingLink"
+                                placeholder="Meeting Link" style="display:none;" value="{{ old('meetingLink', $training->meetingLink) }}">
+                            <input type="text" class="form-control mt-3" id="venue" name="venue" placeholder="Venue"
+                                style="display:none;" value="{{ old('venue', $training->venue) }}">
+                            <input type="date" class="form-control mt-3" id="date" name="date" placeholder="Date" value="{{ old('date', $training->date) }}">
+                            <input type="time" class="form-control mt-3" id="time" name="time" placeholder="Time" value="{{ old('time', $training->time) }}">
+                            <input type="text" class="form-control mt-3" id="duration" name="duration" placeholder="Duration" value="{{ old('duration', $training->duration) }}">
+                            <textarea class="form-control mt-3" id="note" name="note" placeholder="Note" rows="3">{{ old('note', $training->note) }}</textarea>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
-
-
-
-
-</div>
-
-<div class="text-center mt-3">
-    <button type="submit" class="btn btn-primary">Submit</button>
-    <button type="reset" class="btn btn-secondary">Reset</button>
-</div>
-</form><!-- End floating Labels Form -->
+        
+        <div class="text-center mt-3">
+            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="reset" class="btn btn-secondary">Reset</button>
+        </div>
+        </form><!-- End floating Labels Form -->
 </div>
 
 
