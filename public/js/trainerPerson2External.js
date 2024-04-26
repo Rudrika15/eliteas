@@ -10,7 +10,7 @@ $(document).ready(function () {
                     data.forEach(function (trainer) {
                         trainerDetails2 +=
                             '<div class="card mb-3 mr-3 text-center trainer-card" data-trainer-id="' +
-                            trainer.id +
+                            trainer.userId +
                             '">' +
                             '<div class="card-body text-center">' +
                             '<h5 class="card-title" style="font-size:20px; color:1D2856;">' +
@@ -34,6 +34,7 @@ $(document).ready(function () {
                     // Handle click event on trainer-card
                     $(".trainer-card").click(function () {
                         var trainerId = $(this).data("trainer-id");
+                        console.log(trainerId);
                         var trainerNameExternal2 = $(this)
                             .find(".card-title")
                             .text();
@@ -47,7 +48,7 @@ $(document).ready(function () {
                             .text();
                             console.log(trainerContact2);
 
-                        $("#trainerId").val(trainerId);
+                        $("#externalTrainerId2").val(trainerId);
                         $("#trainerNameExternal2").val(trainerNameExternal2);
                         $("#trainerEmail2").val(trainerEmail2);
                         $("#trainerContact2").val(trainerContact2);

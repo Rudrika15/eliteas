@@ -75,24 +75,25 @@ class TrainingController extends Controller
         $training1->time = $request->time;
         $training1->duration = $request->duration;
         $training1->note = $request->note;
-        $training1->trainerId = $request->trainerId; // Internal Trainer 1 ID
-        $training1->externalTrainerId = $request->externalTrainerId1; // External Trainer 1 ID
+        $training1->trainerId = $request->trainerId ? $request->trainerId : ($request->trainerId2 ? $request->trainerId2 : null); // Internal Trainer 1 ID
+        $training1->externalTrainerId = $request->externalTrainerId ? $request->externalTrainerId : ($request->externalTrainerId2 ? $request->externalTrainerId2 : null); // External Trainer 1 ID
         $training1->save();
 
-        // Create Training record for Trainer 2
-        $training2 = new Training();
-        $training2->title = $request->title;
-        $training2->fees = $request->fees;
-        $training2->type = $request->type;
-        $training2->meetingLink = $request->meetingLink;
-        $training2->venue = $request->venue;
-        $training2->date = $request->date;
-        $training2->time = $request->time;
-        $training2->duration = $request->duration;
-        $training2->note = $request->note;
-        $training2->trainerId = $request->trainerId2; // Internal Trainer 2 ID
-        $training2->externalTrainerId = $request->externalTrainerId2; // External Trainer 2 ID
-        $training2->save();
+        
+        // // Create Training record for Trainer 2
+        // $training2 = new Training();
+        // $training2->title = $request->title;
+        // $training2->fees = $request->fees;
+        // $training2->type = $request->type;
+        // $training2->meetingLink = $request->meetingLink;
+        // $training2->venue = $request->venue;
+        // $training2->date = $request->date;
+        // $training2->time = $request->time;
+        // $training2->duration = $request->duration;
+        // $training2->note = $request->note;
+        // $training2->trainerId = $request->trainerId2 ?? null; // Internal Trainer 2 ID
+        // $training2->externalTrainerId = $request->externalTrainerId2; // External Trainer 2 ID
+        // $training2->save();
 
         // Redirect the user after successful submission
         return redirect()->route('training.index')->with('success', 'Training details saved successfully.');

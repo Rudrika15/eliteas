@@ -7,16 +7,14 @@ $(document).ready(function () {
                 if (data && data.length > 0) {
                     var trainerDetails = "";
                     data.forEach(function (trainer) {
-
-                        var trainerId = trainer.userId;
-
+                        // console.log(trainer);
 
                         trainerDetails +=
                             '<div class="card mb-3 mr-3 text-center trainer-card" data-trainer-id="' +
-                            trainer.id +
+                            trainer.userId +
                             '">' +
-                            trainer.userId + 
-                            '<div class="card-body text-center">' +
+                            // trainer.userId +
+                            // '<div class="card-body text-center">' +
                             '<h5 class="card-title" style="font-size:20px; color:1D2856;">' +
                             trainer.firstName +
                             " " +
@@ -38,13 +36,14 @@ $(document).ready(function () {
                     // Handle click event on trainer-card
                     $(".trainer-card").click(function () {
                         var trainerId = $(this).data("trainer-id");
+                        console.log("trainerId", trainerId);
                         var trainerNameExternal = $(this)
                             .find(".card-title")
                             .text();
                         var trainerEmail = $(this).find(".email").text();
                         var trainerContact = $(this).find(".mobile").text();
 
-                        $("#trainerId").val(trainerId);
+                        $("#externalTrainerId").val(trainerId);
                         $("#trainerNameExternal").val(trainerNameExternal);
                         $("#trainerEmail").val(trainerEmail);
                         $("#trainerContact").val(trainerContact);

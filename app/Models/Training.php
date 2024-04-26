@@ -26,4 +26,5 @@ class Training extends Model
     {
         return $this->belongsTo(User::class, 'externalTrainerId', 'id');
     }
+
 }
