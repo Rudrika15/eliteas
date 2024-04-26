@@ -53,7 +53,8 @@
 
                             <div class="d-flex justify-content-center py-4">
                                 <a href="index.html" class="main-logo d-flex align-items-center w-auto">
-                                    <img src="{{ asset('img/logo2.jpg') }}" alt="">
+                                    <img src="{{ asset('img/logo2.jpg') }}" alt=""
+                                        style="background-color: #F5E9E2; mix-blend-mode: multiply;">
                                     {{-- <span class="d-none d-lg-block">Elite</span> --}}
                                 </a>
                             </div><!-- End Logo -->

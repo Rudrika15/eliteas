@@ -24,14 +24,14 @@
 
     <div class="card">
         <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h4 class="mb-0 mt-3">Reference Giver</h4>
-                <a href="{{ route('refGiver.create') }}" class="btn btn-primary btn-sm mt-3">ADD</a>
+            <div class="d-flex justify-content-between align-items-center mb-5">
+                <h4 class="mb-0 mt-3 text-blue">Reference Giver</h4>
+                <a href="{{ route('refGiver.create') }}" class="btn btn-bg-blue btn-sm mt-3">ADD</a>
             </div>
-
+            <hr>
             <!-- Table with stripped rows -->
-            <div class="table-responsive">
-                <table class="table datatable">
+            <div class="table-responsive mt-5 ">
+                <table class="table datatable mb-5">
                     <thead>
                         <tr>
                             <th>Member Name</th>
@@ -60,11 +60,12 @@
                                 <td>{{ $refGiverData->status }}</td>
                                 <td>
                                     <a href="{{ route('refGiver.edit', $refGiverData->id) }}"
-                                        class="btn btn-primary btn-sm">
+                                        class="btn btn-bg-blue btn-sm">
                                         <i class="bi bi-pen"></i>
                                     </a>
-                                    <a onclick="return confirm('Do You Want To Delete It')" href="{{ route('refGiver.delete', $refGiverData->id) }}"
-                                        class="btn btn-danger btn-sm">
+                                    <a onclick="return confirm('Do You Want To Delete It')"
+                                        href="{{ route('refGiver.delete', $refGiverData->id) }}"
+                                        class="btn btn-bg-orange btn-sm">
                                         <i class="bi bi-trash"></i>
                                     </a>
 

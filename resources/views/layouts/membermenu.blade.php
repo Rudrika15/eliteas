@@ -18,7 +18,7 @@
 </li>
 <li class="nav-item">
     <a class="nav-link collapsed " href="{{ route('testimonial.index') }}">
-        <i class="bi bi-stars text-orange"></i>
+        <i class="bi bi-chat-quote text-orange"></i>
         <span class="text-blue">Testimonial</span>
     </a>
 </li>

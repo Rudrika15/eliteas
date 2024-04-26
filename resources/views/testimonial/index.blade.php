@@ -25,14 +25,14 @@
 
     <div class="card">
         <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h4 class="mb-0 mt-3">Testimonials</h4>
+            <div class="d-flex justify-content-between align-items-center mb-5">
+                <h4 class="mb-0 mt-3 text-blue">Testimonials</h4>
 
-                <a href="{{ route('testimonial.create') }}" class="btn btn-primary btn-sm mt-3">ADD</a>
+                <a href="{{ route('testimonial.create') }}" class="btn btn-bg-blue btn-sm mt-3">ADD</a>
             </div>
-
+            <hr class="mb-5">
             <!-- Table with stripped rows -->
-            <table class="table datatable">
+            <table class="table datatable mb-5">
                 <thead>
                     <tr>
                         <th>Circle Member</th>
@@ -59,13 +59,13 @@
     </div>
     <div class="card">
         <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h4 class="mb-0 mt-3">My Testimonials</h4>
+            <div class="d-flex justify-content-between align-items-center mb-5">
+                <h4 class="mb-0 mt-3 text-blue">My Testimonials</h4>
 
             </div>
-
+            <hr class="mb-5">
             <!-- Table with stripped rows -->
-            <table class="table datatable">
+            <table class="table datatable mb-5">
                 <thead>
                     <tr>
                         <th>Circle Member</th>

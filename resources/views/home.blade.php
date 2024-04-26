@@ -74,8 +74,8 @@
                                 </small>
                             </p>
                             <div class="row">
-                                <div class="col-md-10 card-title ms-3">Invite people to join</div>
-                                <div class="col-md-1 mt-2 ms-5 ps-5">
+                                <div class="col-md-11 ps-3 card-title ">Invite people to join</div>
+                                <div class="col-md-1 mt-2 ">
                                     <button type="button" class="btn btn-bg-blue btn-sm mt-2" data-bs-toggle="modal"
                                         data-bs-target="#exampleModal">
                                         Invite
