@@ -121,7 +121,8 @@
                 performSearch(searchText);
             }, 500); // Adjust the delay time as needed
         });
-
+ 
+        
         // Function to perform the search using AJAX
         function performSearch(query) {
             // Make an AJAX request
