@@ -220,7 +220,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('busGiver/create/{id?}', [CircleMeetingMemberBusinessController::class, 'create'])->name('busGiver.create');
     Route::post('busGiver/store', [CircleMeetingMemberBusinessController::class, 'store'])->name('busGiver.store');
     Route::get('busGiver/edit/{id?}', [CircleMeetingMemberBusinessController::class, 'edit'])->name('busGiver.edit');
-    Route::post('busGiver/update', [CircleMeetingMemberBusinessController::class, 'update'])->name('busGiver.update');
+    Route::post('busGiver/update/{id?}', [CircleMeetingMemberBusinessController::class, 'update'])->name('busGiver.update');
     Route::get('busGiver/delete/{id?}', [CircleMeetingMemberBusinessController::class, 'delete'])->name('busGiver.delete');
 
     Route::get('/meetingmember/index', [CircleMeetingMembersController::class, 'index'])->name('meetingmember.index');

@@ -97,14 +97,16 @@ class CircleMeetingMemberBusinessController extends Controller
         try {
             $id = $request->id;
             $busGiver = CircleMeetingMembersBusiness::find($id);
+
+            // return $busGiver;
             // $busGiver->memberId = $request->memberId;
-            $busGiver->businessGiver = $request->businessGiver;
-            $busGiver->loginMember = $request->loginMember;
-            $busGiver->amount = $request->amount;
+            $busGiver->businessGiverId = $request->businessGiverId;
+            $busGiver->loginMemberId = $request->loginMemberId;
+            $busGiver->amount += $request->amount;
             $busGiver->date = $request->date;
             $busGiver->status = 'Active';
 
-            $busGiver->save();
+            $busGiver->update();
 
 
             return redirect()->route('busGiver.index')->with('success', ' Updated Successfully!');

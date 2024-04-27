@@ -10,8 +10,8 @@ class CircleMeetingMembersBusiness extends Model
     use HasFactory;
 
     protected $fillable = [
-        'businessGiver',
-        'loginMember',
+        'businessGiverId',
+        'loginMemberId',
         'amount',
         'date',
         'status',

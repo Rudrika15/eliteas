@@ -12,12 +12,13 @@ $(document).ready(function () {
                         // Create a unique ID for each member card
                         var memberId = member.userId;
                         // console.log("profile", member.profilePhoto);
-                        var profilePhotoUrl = "../ProfilePhoto/" + member.profilePhoto;
+                        var profilePhotoUrl = member.profilePhoto ? "../ProfilePhoto/" + member.profilePhoto : "/img/profile.png";
 
                         // Construct the HTML for the member card
                         membersList += '<div class="col">';
                         membersList += '<div id="' + memberId + '" class="card h-90 member-card" data-member-id="' + member.userId + '">';
-                        membersList += '<div class="d-flex align-items-center justify-content-center bg-light rounded-circle mx-auto" style="width: 100px; height: 90px;">';
+                        membersList += '<div class="d-flex align-items-center justify-content-center bg-light rounded-circle mt-2  mx-auto" style="width: 100px; height: 90px;">';
+                        // Use the provided profile photo if available, otherwise use the default image
                         membersList += '<img src="' + profilePhotoUrl + '" class="card-img-top rounded-circle" alt="' + (member.firstName && member.lastName ? member.firstName + ' ' + member.lastName : 'Member') + '" style="width: 80px; height: 80px;">';
                         membersList += '</div>';
                         membersList += '<div class="card-body text-center">';

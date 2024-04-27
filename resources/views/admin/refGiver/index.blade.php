@@ -36,11 +36,12 @@
                 <table class="table datatable mb-5">
                     <thead>
                         <tr>
-                            <th>Member Name</th>
+
+                            <th >Member Name</th>
                             {{-- <th>Reference Giver Name</th> --}}
-                            <th>Contact Name</th>
-                            <th>Contact No</th>
-                            <th>Email</th>
+                            <th>Ex.Contact Name</th>
+                            <th>Ex.Contact No</th>
+                            <th>Ex.Email</th>
                             <th>Scale</th>
                             <th>Description</th>
                             <th>Status</th>
@@ -60,7 +61,7 @@
                                 <td>{{ $refGiverData->scale ?? '-' }}</td>
                                 <td>{{ $refGiverData->description ?? '-' }}</td>
                                 <td>{{ $refGiverData->status }}</td>
-                                <td>
+                                <td class="d-flex gap-1">
                                     <a href="{{ route('refGiver.edit', $refGiverData->id) }}"
                                         class="btn btn-bg-blue btn-sm">
                                         <i class="bi bi-pen"></i>

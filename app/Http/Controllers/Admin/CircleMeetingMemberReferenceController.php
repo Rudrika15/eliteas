@@ -149,7 +149,7 @@ class CircleMeetingMemberReferenceController extends Controller
             $refGiver->memberId = $request->memberId;
 
             // $refGiver->referenceGiver = $request->referenceGiver;
-            $refGiver->contactName = $request->contactName;
+            $refGiver->contactName = $request->contactNameExternal;
             $refGiver->contactNo = $request->contactNo;
             $refGiver->email = $request->email;
             $refGiver->scale = $request->scale;

@@ -4,7 +4,7 @@
 @section('content')
 
     {{-- Message --}}
-    @if (Session::has('success'))
+    {{-- @if (Session::has('success'))
         <div class="alert alert-success alert-block">
             <button type="button" class="close" data-dismiss="alert">×</button>
             <strong>{{ $message }}</strong>
@@ -15,10 +15,10 @@
         <div class="alert alert-danger alert-dismissible" role="alert">
             <button type="button" class="close" data-dismiss="alert">
                 {{-- <i class="fa fa-times"></i> --}}
-            </button>
-            <strong>Error !</strong> {{ session('error') }}
-        </div>
-    @endif
+    {{-- </button>
+    <strong>Error !</strong> {{ session('error') }}
+    </div>
+    @endif  --}}
 
     <div class="card">
         <div class="card-body">
@@ -49,7 +49,7 @@
                             <td>{{ $busGiverData->date ?? '-' }}</td>
                             <td>{{ $busGiverData->status }}</td>
                             <td>
-                                <a href="{{ route('busGiver.create', $busGiverData->id) }}" class="btn btn-bg-blue btn-sm">
+                                <a href="{{ route('busGiver.edit', $busGiverData->id) }}" class="btn btn-bg-blue btn-sm">
                                     <i class="bi bi-plus"></i>
                                 </a>
                                 {{-- <a onclick="return confirm('Do You Want To Delete It')"

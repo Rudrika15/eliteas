@@ -371,6 +371,30 @@
             $('.alert').fadeOut('slow');
         }, 2000);
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+    <!-- end -->
+
+    @if (Session::get('success'))
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: "{{ Session::get('success') }}",
+                showConfirmButton: true,
+
+            });
+        </script>
+    @endif
+
+    @if (Session::get('error'))
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: "{{ Session::get('error') }}",
+                showConfirmButton: true,
+            });
+        </script>
+    @endif
     <script src="{{ asset('vendor/apexcharts/apexcharts.min.js') }}"></script>
     <script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ asset('vendor/chart.js/chart.umd.js') }}"></script>

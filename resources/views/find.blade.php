@@ -34,7 +34,7 @@
 
 </head>
 
-<body class="" style="background-color: #f5e9e2; mix-blend-mode: multiply;">
+<body class="" style=" mix-blend-mode: multiply;">
     <header>
         <!-- place navbar here -->
     </header>
