@@ -75,8 +75,25 @@ class TrainingController extends Controller
         $training1->time = $request->time;
         $training1->duration = $request->duration;
         $training1->note = $request->note;
-        $training1->trainerId = $request->trainerId ? $request->trainerId : ($request->trainerId2 ? $request->trainerId2 : null); // Internal Trainer 1 ID
-        $training1->externalTrainerId = $request->externalTrainerId ? $request->externalTrainerId : ($request->externalTrainerId2 ? $request->externalTrainerId2 : null); // External Trainer 1 ID
+
+        // Check if both trainerIds are present
+        if ($request->has('trainerId') && $request->has('trainerId2')) {
+            $trainerIds = implode(',', [$request->trainerId, $request->trainerId2]);
+            $training1->trainerId = $trainerIds;
+        } else {
+            // Otherwise, set trainerId based on available data
+            $training1->trainerId = $request->trainerId ?? $request->trainerId2 ?? null;
+        }
+
+        // Check if both externalTrainerIds are present
+        if ($request->has('externalTrainerId') && $request->has('externalTrainerId2')) {
+            $externalTrainerIds = implode(',', [$request->externalTrainerId, $request->externalTrainerId2]);
+            $training1->externalTrainerId = $externalTrainerIds;
+        } else {
+            // Otherwise, set externalTrainerId based on available data
+            $training1->externalTrainerId = $request->externalTrainerId ?? $request->externalTrainerId2 ?? null;
+        }
+
         $training1->save();
 
         // Redirect the user after successful submission
@@ -84,11 +101,13 @@ class TrainingController extends Controller
     }
 
 
+
     public function edit($id)
     {
         try {
             $training = Training::find($id);
             $trainer = TrainerMaster::where('status', 'Active')->get();
+
             return view('admin.training.edit', compact('training', 'trainer'));
         } catch (\Throwable $th) {
             throw $th;
