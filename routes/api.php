@@ -20,6 +20,8 @@ use App\Http\Controllers\Api\MeetingInvitationController;
 use App\Http\Controllers\Api\CircleMeetingMembersController;
 use App\Http\Controllers\Api\CircleMeetingMemberBusinessController;
 use App\Http\Controllers\Api\CircleMeetingMemberReferenceController;
+use App\Http\Controllers\Api\ConnectionController;
+use App\Http\Controllers\Api\TestimonialController;
 
 /*
 |--------------------------------------------------------------------------
@@ -167,4 +169,21 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     //Business Category View
     Route::get('business-category-index', [BusinessCategoryController::class, 'index']);
+
+
+    //Testimonial
+
+    Route::get('/testimonials/index', [TestimonialController::class, 'index']);
+    Route::get('/testimonials/myTestimonials', [TestimonialController::class, 'myTestimonials']);
+    Route::post('/testimonials/create', [TestimonialController::class, 'create']);
+    // Route::get('/testimonials/admin', [TestimonialController::class, 'indexAdmin']);
+    // Route::delete('/testimonials/{id}', [TestimonialController::class, 'destroy']);
+    // Route::get('/testimonials/archives', [TestimonialController::class, 'archives']);
+    // Route::put('/testimonials/restore/{id}', [TestimonialController::class, 'restore']);
+
+    // Connections
+
+    Route::get('/connections/myConnections', [ConnectionController::class, 'myConnections']);
+
+
 });
