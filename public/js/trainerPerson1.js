@@ -1,98 +1,125 @@
 $(document).ready(function () {
-    // Function to fetch and display circle members
+    // Function to fetch and display circle members with both "trainer" and "member" roles
     function showcircleMembersList(circleId) {
         $.ajax({
             url: "/get-circle-members?circleId=" + circleId,
             dataType: "json",
             success: function (data) {
-                if (data.length > 0) {
-                    // Display circle members in the designated area
-                    var membersList =
-                        '<div class="row row-cols-1 row-cols-md-4 g-4">';
-                    data.forEach(function (member) {
-                        // Create a unique ID for each member card
-                        var memberId = member.userId;
-                        // console.log("profile", member.profilePhoto);
-                        var profilePhotoUrl =
-                            "../ProfilePhoto/" + member.profilePhoto;
+                // Fetch roles for each user and filter based on "trainer" and "member" roles
+                var promises = data.map(function (member) {
+                    return $.ajax({
+                        url: "/get-user-roles?userId=" + member.userId,
+                        dataType: "json",
+                    }).then(function (roles) {
+                        // Check if user has both "trainer" and "member" roles
+                        if (
+                            roles.includes("trainer") &&
+                            roles.includes("member")
+                        ) {
+                            return member;
+                        }
+                    });
+                });
 
-                        // Construct the HTML for the member card
-                        membersList += '<div class="col">';
-                        membersList +=
-                            '<div id="' +
-                            memberId +
-                            '" class="card h-90 member-card" data-member-id="' +
-                            member.userId +
-                            '">';
-                        membersList +=
-                            '<div class="d-flex align-items-center justify-content-center bg-light rounded-circle mx-auto" style="width: 100px; height: 90px;">';
-                        membersList +=
-                            '<img src="' +
-                            profilePhotoUrl +
-                            '" class="card-img-top rounded-circle" alt="' +
-                            (member.firstName && member.lastName
-                                ? member.firstName + " " + member.lastName
-                                : "Member") +
-                            '" style="width: 80px; height: 80px;">';
+                // Resolve all promises
+                Promise.all(promises).then(function (filteredData) {
+                    // Remove undefined values
+                    filteredData = filteredData.filter(function (member) {
+                        return member !== undefined;
+                    });
+
+                    if (filteredData.length > 0) {
+                        // Display filtered circle members in the designated area
+                        var membersList =
+                            '<div class="row row-cols-1 row-cols-md-4 g-4">';
+                        filteredData.forEach(function (member) {
+                            // Create a unique ID for each member card
+                            var memberId = member.userId;
+                            var profilePhotoUrl =
+                                "../ProfilePhoto/" + member.profilePhoto;
+
+                            // Construct the HTML for the member card
+                            membersList += '<div class="col">';
+                            membersList +=
+                                '<div id="' +
+                                memberId +
+                                '" class="card h-90 member-card" data-member-id="' +
+                                member.userId +
+                                '">';
+                            membersList +=
+                                '<div class="d-flex align-items-center justify-content-center bg-light rounded-circle mx-auto" style="width: 100px; height: 90px;">';
+                            membersList +=
+                                '<img src="' +
+                                profilePhotoUrl +
+                                '" class="card-img-top rounded-circle" alt="' +
+                                (member.firstName && member.lastName
+                                    ? member.firstName + " " + member.lastName
+                                    : "Member") +
+                                '" style="width: 80px; height: 80px;">';
+                            membersList += "</div>";
+                            membersList +=
+                                '<div class="card-body text-center">';
+                            membersList +=
+                                '<h5 class="card-title">' +
+                                (member.title ? member.title + " " : "") +
+                                (member.firstName
+                                    ? member.firstName + " "
+                                    : "") +
+                                (member.lastName ? member.lastName : "") +
+                                "</h5>";
+                            membersList +=
+                                '<p class="card-text email">' +
+                                (member.user && member.user.email
+                                    ? member.user.email
+                                    : "-") +
+                                "</p>";
+                            membersList +=
+                                '<p class="card-text mobile">' +
+                                (member.contact && member.contact.mobileNo
+                                    ? member.contact.mobileNo
+                                    : "-") +
+                                "</p>";
+                            membersList += "<hr>";
+                            membersList +=
+                                '<p class="card-text">' +
+                                (member.companyName
+                                    ? member.companyName
+                                    : "-") +
+                                "</p>";
+                            membersList += "</div></div></div>";
+                        });
                         membersList += "</div>";
-                        membersList += '<div class="card-body text-center">';
-                        membersList +=
-                            '<h5 class="card-title">' +
-                            (member.title ? member.title + " " : "") +
-                            (member.firstName ? member.firstName + " " : "") +
-                            (member.lastName ? member.lastName : "") +
-                            "</h5>";
-                        membersList +=
-                            '<p class="card-text email">' +
-                            (member.user && member.user.email
-                                ? member.user.email
-                                : "-") +
-                            "</p>";
-                        membersList +=
-                            '<p class="card-text mobile">' +
-                            (member.contact && member.contact.mobileNo
-                                ? member.contact.mobileNo
-                                : "-") +
-                            "</p>";
-                        membersList += "<hr>";
-                        membersList +=
-                            '<p class="card-text">' +
-                            (member.companyName ? member.companyName : "-") +
-                            "</p>";
-                        membersList += "</div></div></div>";
-                    });
-                    membersList += "</div>";
-                    $(".circleMembersList").html(membersList);
-                    console.log("memberList", data);
-                    // Event listener for member card click
-                    $(".member-card").click(function () {
-                        var memberId = $(this).data("member-id");
-                        var memberName = $(this).find(".card-title").text();
-                        var memberEmail = $(this).find(".email").text();
-                        var memberContact = $(this).find(".mobile").text();
+                        $(".circleMembersList").html(membersList);
 
-                        $("#trainerId").val(memberId)
-                            ? $("#trainerId").val(memberId)
-                            : "";
-                        $("#trainerName").val(memberName)
-                            ? $("#trainerName").val(memberName)
-                            : "";
-                        $("#trainerEmail").val(memberEmail)
-                            ? $("#trainerEmail").val(memberEmail)
-                            : "";
-                        $("#trainerContact").val(memberContact)
-                            ? $("#trainerContact").val(memberContact)
-                            : "";
+                        // Event listener for member card click
+                        $(".member-card").click(function () {
+                            var memberId = $(this).data("member-id");
+                            var memberName = $(this).find(".card-title").text();
+                            var memberEmail = $(this).find(".email").text();
+                            var memberContact = $(this).find(".mobile").text();
 
-                        console.log("trainerId", $("#trainerName").val());
-                        console.log("trainerName", memberName);
+                            $("#trainerId").val(memberId)
+                                ? $("#trainerId").val(memberId)
+                                : "";
+                            $("#trainerName").val(memberName)
+                                ? $("#trainerName").val(memberName)
+                                : "";
+                            $("#trainerEmail").val(memberEmail)
+                                ? $("#trainerEmail").val(memberEmail)
+                                : "";
+                            $("#trainerContact").val(memberContact)
+                                ? $("#trainerContact").val(memberContact)
+                                : "";
 
-                        // Close the modal
-                        $("#circleMaster").modal("hide");
-                    });
-                } else {
-                    $("#circleMembersList").html("<p>No members found.</p>");
-                }
+                            // Close the modal
+                            $("#circleMaster").modal("hide");
+                        });
+                    } else {
+                        $(".circleMembersList").html(
+                            "<p>No members found with both 'trainer' and 'member' roles.</p>"
+                        );
+                    }
+                });
             },
         });
     }
@@ -166,5 +193,4 @@ $(document).ready(function () {
         // Add 'active' class to the clicked circle card
         $(this).addClass("active");
     });
-    
 });
