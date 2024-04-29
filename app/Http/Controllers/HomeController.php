@@ -58,9 +58,6 @@ class HomeController extends Controller
         $myInvites = MeetingInvitation::where('invitedMemberId', Auth::user()->id)->get();
 
 
-
-
-
         $findRegister = TrainingRegister::where('userId', Auth::user()->id)
             ->where('trainingId', $nearestTraining->id)
             ->where('trainerId', $nearestTraining->trainers->user->id)
