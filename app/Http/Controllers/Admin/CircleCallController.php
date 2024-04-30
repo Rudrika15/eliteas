@@ -91,11 +91,19 @@ class CircleCallController extends Controller
     {
 
         $circleId = $request->input('circleId');
-        $members = Member::where('circleId', $circleId)->with('user')->with('contact')
+        $members = Member::where('circleId', $circleId)
+            ->whereHas('user', function ($q) {
+                $q->whereHas('roles', function ($q) {
+                    $q->whereIn('name', ['Member', 'Trainer']);
+                });
+            })
+            ->with('user')
+            ->with('contact')
             ->where('userId', '!=', Auth::user()->id)
             ->get();
         return response()->json($members);
     }
+    
     function getMember(Request $request): JsonResponse
     {
         $query = $request->input('q');

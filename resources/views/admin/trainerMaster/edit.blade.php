@@ -52,10 +52,10 @@
                     @include('InternalTrainer')
                     <input type="hiddden" name="trainerId" id="trainerId" value="{{ $trainer->userId }}">
                     <input type="text" class="form-control mt-3" id="trainerName" name="memberName" placeholder="Select Member"
-                        readonly>
+                        readonly value="{{$trainer->user->firstName}} {{$trainer->user->lastName}}">
                     <input type="text" class="form-control mt-3" id="trainerContact" name="contactNo" placeholder="Contact No"
-                        readonly>
-                    <input type="text" class="form-control mt-3" id="trainerEmail" name="email" placeholder="Email" readonly>
+                        readonly value="{{$trainer->user->contactNo}}">
+                    <input type="text" class="form-control mt-3" id="trainerEmail" name="email" value="{{$trainer->user->email}}" placeholder="Email" readonly>
                 </div>
                 {{-- <div class="externalTrainer" id="externalTrainer" name="externalTrainer">
                     <input type="hidden" name="externalTrainerId" id="externalTrainerId"> --}}

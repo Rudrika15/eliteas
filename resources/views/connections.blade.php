@@ -41,7 +41,7 @@
             <tbody>
                 @foreach ($connections as $connection)
                 <tr>
-                    <td>{{ $connection->memberId }}</td>
+                    <td>{{ $connection->members->firstName ?? '' }} {{ $connection->members->lastName ?? '' }}</td>
                     <td>
                         @if ($connection->status == 'Pending')
                         <span class="badge bg-info">{{ $connection->status }}</span>

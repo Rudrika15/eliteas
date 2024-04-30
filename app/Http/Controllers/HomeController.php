@@ -193,4 +193,25 @@ class HomeController extends Controller
         $connections = Connection::where('userId', Auth::user()->id)->get();
         return view('connections', compact('connections'));
     }
+
+    public function accepted($id)
+    {
+        $connection = Connection::find($id);
+
+        $connection->status = 'Accepted';
+        $connection->save();
+
+        return redirect()->back()->with('success', 'Connection request accepted');
+    }
+
+    public function rejected($id)
+    {
+        $connection = Connection::find($id);
+
+        $connection->status = 'Rejected';
+        $connection->save();
+
+        return redirect()->back()->with('error', 'Connection request rejected');
+    }
+
 }

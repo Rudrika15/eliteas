@@ -30,6 +30,7 @@ use App\Http\Controllers\Admin\CircleMeetingMembersController;
 use App\Http\Controllers\Admin\CircleMemberActivityController;
 use App\Http\Controllers\Admin\CircleMeetingMemberBusinessController;
 use App\Http\Controllers\Admin\CircleMeetingMemberReferenceController;
+use App\Http\Controllers\Admin\ConnectionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -313,3 +314,8 @@ Route::post('/connect', [HomeController::class, 'connect'])->name('connect');
 
 // my connections
 Route::get('/connections/index', [HomeController::class, 'myConnections'])->name('connection.index');
+
+//Connection Action
+// Route::post('/connectionAccepted', [HomeController::class, 'accepted'])->name('connection.accepted');
+// Route::post('/connectionRejected', [HomeController::class, 'rejected'])->name('connection.rejected');
+

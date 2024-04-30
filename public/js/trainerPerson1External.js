@@ -7,27 +7,32 @@ $(document).ready(function () {
                 if (data && data.length > 0) {
                     var trainerDetails = "";
                     data.forEach(function (trainer) {
-                        // console.log(trainer);
-
-                        trainerDetails +=
-                            '<div class="card mb-3 mr-3 text-center trainer-card" data-trainer-id="' +
-                            trainer.userId +
-                            '">' +
-                            // trainer.userId +
-                            // '<div class="card-body text-center">' +
-                            '<h5 class="card-title" style="font-size:20px; color:1D2856;">' +
-                            trainer.firstName +
-                            " " +
-                            trainer.lastName +
-                            "</h5>" +
-                            '<p class="card-text lead email" style="font-size:20px; color:grey;">' +
-                            trainer.email +
-                            "</p>" +
-                            '<p class="card-text lead mobile" style="font-size:20px; color:grey;">' +
-                            trainer.contactNo +
-                            "</p>" +
-                            "</div>" + // Close card-body
-                            "</div>"; // Close card
+                        console.log(trainer);
+                        if (trainer.users) {
+                            // Check if 'users' property exists
+                            trainerDetails +=
+                                '<div class="card mb-3 mr-3 text-center trainer-card" data-trainer-id="' +
+                                trainer.userId + // Assuming 'id' is the user's ID in TrainerMaster model
+                                '">' +
+                                '<h5 class="card-title" style="font-size:20px; color:1D2856;">' +
+                                trainer.users.firstName + // Assuming 'first_name' and 'last_name' are fields in the 'users' relationship
+                                " " +
+                                trainer.users.lastName +
+                                "</h5>" +
+                                '<p class="card-text lead email" style="font-size:20px; color:grey;">' +
+                                trainer.users.email +
+                                "</p>" +
+                                '<p class="card-text lead mobile" style="font-size:20px; color:grey;">' +
+                                trainer.externalMemberContact +
+                                "</p>" +
+                                "</div>";
+                                console.log(trainerDetails);
+                        } else {
+                            console.error(
+                                "No user data found for trainer:",
+                                trainer
+                            );
+                        }
                     });
 
                     // Update modal content
@@ -36,7 +41,6 @@ $(document).ready(function () {
                     // Handle click event on trainer-card
                     $(".trainer-card").click(function () {
                         var trainerId = $(this).data("trainer-id");
-                        console.log("trainerId", trainerId);
                         var trainerNameExternal = $(this)
                             .find(".card-title")
                             .text();
