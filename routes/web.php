@@ -309,6 +309,7 @@ Route::get('/invitationPay/{personName?}/{personEmail?}/{invitedPersonFirstName?
 Route::get('/search', [HomeController::class, 'findMember'])->name('search');
 Route::get('/searchQuery', [HomeController::class, 'search'])->name('searchQuery');
 Route::post('/connect', [HomeController::class, 'connect'])->name('connect');
+Route::get('/foundPersonDetails/{id}', [HomeController::class, 'foundPersonDetails'])->name('foundPersonDetails');
 
 // my connections
 Route::get('/connections/index', [HomeController::class, 'myConnections'])->name('connection.index');

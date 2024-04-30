@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Mail\MeetingInvitation as MailMeetingInvitation;
+use App\Models\BillingAddress;
 use App\Models\BusinessCategory;
+use App\Models\City;
 use App\Models\MeetingInvitation;
 use App\Models\Member;
 use App\Models\Schedule;
@@ -12,6 +14,10 @@ use App\Models\Training;
 use App\Models\TrainingRegister;
 use App\Models\User;
 use App\Models\Connection;
+use App\Models\ContactDetails;
+use App\Models\Country;
+use App\Models\State;
+use App\Models\TopsProfile;
 use App\Utils\Utils;
 use Carbon\Carbon;
 use Illuminate\Contracts\Session\Session;
@@ -192,5 +198,30 @@ class HomeController extends Controller
     {
         $connections = Connection::where('userId', Auth::user()->id)->get();
         return view('connections', compact('connections'));
+    }
+    public function foundPersonDetails($id)
+    {
+        try {
+            $aid = Auth::user()->id;
+            if ($aid === 0) {
+                // If no $aid is provided, fetch the currently authenticated user's ID
+                $aid = Auth::user()->id;
+            }
+            $member = Member::find($id);
+            // $id = $memberId->id;
+            // Fetch profile data based on the provided $id
+            // $member = Member::where()->first(); // Assuming userId column stores user ID
+            $country = Country::where('status', 'Active')->get();
+            $state = State::where('status', 'Active')->get();
+            $city = City::where('status', 'Active')->get();
+            $contactDetails = ContactDetails::find($id);
+            $billing = BillingAddress::find($id);
+            $tops = TopsProfile::find($id);
+
+            return view('foundPersonDetails', compact('member', 'country', 'state', 'city', 'contactDetails', 'billing', 'tops'));
+        } catch (\Throwable $th) {
+            // In case of an error, redirect to servererror view
+            return view('servererror');
+        }
     }
 }

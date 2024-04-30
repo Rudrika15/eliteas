@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>Title</title>
+    <title>UBN - Search User </title>
     <!-- Required meta tags -->
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
@@ -83,7 +83,7 @@
 
 
 
-    <div class="modal" id="memberModal">
+    {{-- <div class="modal" id="memberModal">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -98,7 +98,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> --}}
 
 
 
@@ -234,8 +234,21 @@
                     nameText.textContent = member.firstName + ' ' + member.lastName;
                     // Add click event listener to the card title (first name and last name)
                     nameText.addEventListener('click', function() {
-                        openModal(member);
+                        // Get the route URL with the id concatenated
+                        var routeURL = '/foundPersonDetails/' + member
+                        .id; // Assuming the route follows this pattern
+
+                        // Create an anchor tag
+                        var anchorTag = document.createElement('a');
+
+                        // Set the href attribute to the route URL
+                        anchorTag.href = routeURL;
+
+                        // Click the anchor tag to open the page
+                        anchorTag.click();
                     });
+
+
                     nameText.style.cursor = "pointer";
                     cardTitle.appendChild(nameText); // Append the span element to the card title
                     nameCol.appendChild(cardTitle);
@@ -319,51 +332,6 @@
                 });
             } else {
                 console.error('Invalid response format or missing data');
-            }
-        }
-
-        // Function to open the modal with member details
-        function openModal(member) {
-            var modal = document.getElementById('memberModal');
-            var modalContent = document.getElementById('modalContent');
-            var modaltitle = document.getElementById('modal-title');
-
-            // Populate modal with member details
-            modaltitle.innerHTML = ` <h2>${member.firstName} ${member.lastName}</h2>`;
-            // modaltitle.html(` <h2>${member.firstName} ${member.lastName}</h2>`)
-            modalContent.innerHTML = `
-                <p> <b> Circle Name </b>: ${member.circle.circleName ? member.circle.circleName : '-'}</p>
-                <p> <b> Email </b>: ${member.user && member.user.email ? member.user.email : '-'}</p>
-                <p> <b> Gender </b>: ${member.gender ? member.gender : '-'} </p>
-                <p> <b> Username </b> : ${member.username ? member.username : '-'} </p>
-                <p> <b> Language </b> : ${member.language ? member.language : '-'} </p>
-                <p> <b> Skills </b>: ${member.skills ? member.skills : '-'} </p>
-                <p> <b> TimeZone </b>: ${member.timeZone ? member.skills : '-' } </p>
-                
-            `;
-
-            // Show the modal
-            // modal.style.display = "block";
-            $("#memberModal").fadeIn();
-
-            // modal.show();
-
-            // Close the modal when clicking on the close button
-            var closeBtn = modal.querySelector(".close");
-            closeBtn.onclick = function() {
-                $("#memberModal").fadeOut();
-            }
-
-            var closeBtn = modal.querySelector(".btn-close");
-            closeBtn.onclick = function() {
-                $("#memberModal").fadeOut();
-            }
-
-            // Close the modal when clicking outside the modal
-            window.onclick = function(event) {
-                if (event.target == modal) {
-                    $("#memberModal").slideUp();
-                }
             }
         }
     </script>
