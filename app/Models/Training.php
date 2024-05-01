@@ -11,11 +11,11 @@ class Training extends Model
 
     public function trainer()
     {
-        return $this->belongsTo(TrainerMaster::class, 'trainerId', 'id');
+        return $this->belongsTo(TrainerMaster::class, 'trainingId', 'id');
     }
     public function trainers()
     {
-        return $this->belongsTo(TrainerMaster::class, 'trainerId', 'id');
+        return $this->hasMany(TrainingTrainers::class, 'trainingId', 'id');
     }
     public function member()
     {
@@ -24,7 +24,11 @@ class Training extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'externalTrainerId', 'id');
+        return $this->belongsTo(User::class, 'trainerId', 'id');
     }
 
+    public function registerTraining()
+    {
+        return $this->hasMany(TrainingRegister::class, 'trainingId', 'id');
+    }
 }

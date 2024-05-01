@@ -8,5 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class TrainingTrainers extends Model
 {
     use HasFactory;
+    
+    public $table = 'trainings_trainers';
 
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'userId', 'id');
+    }
 }

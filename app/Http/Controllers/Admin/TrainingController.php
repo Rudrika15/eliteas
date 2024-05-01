@@ -55,10 +55,9 @@ class TrainingController extends Controller
 
     public function store(Request $request)
     {
-        // return $request;
         // Validate the incoming request
-        $this->validate($request, [
-            // Add your validation rules here
+        $request->validate([
+           
         ]);
 
         // Create Training record
@@ -74,29 +73,27 @@ class TrainingController extends Controller
         $training->note = $request->note;
         $training->save();
 
-        // Add trainers to the Training_trainers table
+        // Add trainers to the Training_trainers table if present in the request
         $trainers = [
-            ['trainerId' => $request->trainerId1, 'externalTrainerId' => $request->externalTrainerId1],
-            ['trainerId' => $request->trainerId2, 'externalTrainerId' => $request->externalTrainerId2]
+            'trainerId' => $request->trainerId ?? null,
+            'externalTrainerId' => $request->externalTrainerId ?? null,
+            'trainerId2' => $request->trainerId2 ?? null,
+            'externalTrainerId2' => $request->externalTrainerId2 ?? null,
         ];
 
-        $trainerId1 = $request->trainerId;
-        $externalTrainerId1 = $request->externalTrainerId;
-
-        $trainerId2 = $request->trainerId2;
-        $externalTrainerId2 = $request->externalTrainerId2;
-
-        $userId1 = $trainerId1 ? $trainerId1 : $externalTrainerId1;
-        $userId2 = $trainerId2 ? $trainerId2 : $externalTrainerId2;
-
-        DB::table('trainings_trainers')->insert([
-            ['trainingId' => $training->id, 'userId' => $userId1, 'status' => 'Active', 'created_at' => now(), 'updated_at' => now()],
-            ['trainingId' => $training->id, 'userId' => $userId2, 'status' => 'Active', 'created_at' => now(), 'updated_at' => now()],
-        ]);
+        foreach ($trainers as $key => $value) {
+            if (!is_null($value)) {
+                DB::table('trainings_trainers')->insert([
+                    ['trainingId' => $training->id, 'userId' => $value, 'status' => 'Active', 'created_at' => now(), 'updated_at' => now()],
+                ]);
+            }
+        }
 
         // Redirect the user after successful submission
         return redirect()->route('training.index')->with('success', 'Training details saved successfully.');
     }
+
+
 
 
 
