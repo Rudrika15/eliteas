@@ -211,14 +211,14 @@ class HomeController extends Controller
             // $id = $memberId->id;
             // Fetch profile data based on the provided $id
             // $member = Member::where()->first(); // Assuming userId column stores user ID
-            $country = Country::where('status', 'Active')->get();
-            $state = State::where('status', 'Active')->get();
-            $city = City::where('status', 'Active')->get();
-            $contactDetails = ContactDetails::find($id);
-            $billing = BillingAddress::find($id);
-            $tops = TopsProfile::find($id);
+            // $country = Country::where('status', 'Active')->get();
+            // $state = State::where('status', 'Active')->get();
+            // $city = City::where('status', 'Active')->get();
+            // $contactDetails = ContactDetails::find($id);
+            // $billing = BillingAddress::find($id);
+            // $tops = TopsProfile::find($id);
 
-            return view('foundPersonDetails', compact('member', 'country', 'state', 'city', 'contactDetails', 'billing', 'tops'));
+            return view('foundPersonDetails', compact('member'));
         } catch (\Throwable $th) {
             // In case of an error, redirect to servererror view
             return view('servererror');

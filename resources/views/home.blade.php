@@ -640,5 +640,5 @@
     </script>
 
     <!-- sweetalert -->
-   
+
 @endsection
