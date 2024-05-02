@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Mail\MeetingInvitation as MailMeetingInvitation;
+use App\Models\BillingAddress;
 use App\Models\BusinessCategory;
+use App\Models\City;
 use App\Models\MeetingInvitation;
 use App\Models\Member;
 use App\Models\Schedule;
@@ -12,6 +14,10 @@ use App\Models\Training;
 use App\Models\TrainingRegister;
 use App\Models\User;
 use App\Models\Connection;
+use App\Models\ContactDetails;
+use App\Models\Country;
+use App\Models\State;
+use App\Models\TopsProfile;
 use App\Utils\Utils;
 use Carbon\Carbon;
 use Illuminate\Contracts\Session\Session;
@@ -173,21 +179,27 @@ class HomeController extends Controller
         ]);
     }
 
-    public function connect(Request $request)
-    {
-        $memberId = $request->input('memberId');
-        $userId = Auth::user()->id;
+   
 
-        $connection = new Connection();
-        $connection->memberId = $memberId;
-        $connection->userId = $userId;
-        $connection->save();
-        return response()->json(['message' => 'Connection request processed successfully']);
-    }
-
-    public function myConnections()
+    public function foundPersonDetails($id)
     {
-        $connections = Connection::where('userId', Auth::user()->id)->get();
-        return view('connections', compact('connections'));
+        try {
+            $aid = Auth::id(); // Get the ID of the authenticated user
+            $member = Member::find($id);
+
+
+            // Find connection based on the authenticated user's ID and member ID
+            $connection = Connection::where('userId', $aid)
+                ->where('memberId', $id)
+                ->first();
+
+            // Alternatively, if you want to get all connections related to the authenticated user:
+            // $connections = Connection::where('userId', $aid)->get();
+
+            return view('foundPersonDetails', compact('member', 'connection'));
+        } catch (\Throwable $th) {
+            // In case of an error, redirect to servererror view
+            return view('servererror');
+        }
     }
 }

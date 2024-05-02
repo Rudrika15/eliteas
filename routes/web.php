@@ -30,6 +30,7 @@ use App\Http\Controllers\Admin\CircleMeetingMembersController;
 use App\Http\Controllers\Admin\CircleMemberActivityController;
 use App\Http\Controllers\Admin\CircleMeetingMemberBusinessController;
 use App\Http\Controllers\Admin\CircleMeetingMemberReferenceController;
+use App\Http\Controllers\Admin\ConnectionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -308,7 +309,10 @@ Route::get('/invitationPay/{personName?}/{personEmail?}/{invitedPersonFirstName?
 // global search 
 Route::get('/search', [HomeController::class, 'findMember'])->name('search');
 Route::get('/searchQuery', [HomeController::class, 'search'])->name('searchQuery');
-Route::post('/connect', [HomeController::class, 'connect'])->name('connect');
+Route::get('/foundPersonDetails/{id}', [HomeController::class, 'foundPersonDetails'])->name('foundPersonDetails');
 
-// my connections
-Route::get('/connections/index', [HomeController::class, 'myConnections'])->name('connection.index');
+// connections
+Route::post('/connect', [ConnectionController::class, 'connect'])->name('connect');
+Route::get('/connections/index', [ConnectionController::class, 'myConnections'])->name('connection.index');
+Route::get('/connections/accept/{id}', [ConnectionController::class, 'accept'])->name('connection.accept');
+Route::get('/connections/reject/{id}', [ConnectionController::class, 'reject'])->name('connection.reject');
