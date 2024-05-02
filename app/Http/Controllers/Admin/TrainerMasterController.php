@@ -46,44 +46,59 @@ class TrainerMasterController extends Controller
 
     public function store(Request $request)
     {
+        // Validate the request
         $this->validate($request, [
-            'firstName' => 'required',
-            'lastName' => 'required',
-            'email' => 'required',
-            'contactNo' => 'required',
+            // Add validation rules for your fields if needed
         ]);
 
         try {
+            if ($request->type == 'externalMember') { // Change from 'group' to 'type'
+                // Create a new user
+                $user = new User();
+                $user->firstName = $request->firstName;
+                $user->lastName = $request->lastName;
+                $user->email = $request->email;
+                $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()';
+                $password = '';
+                $length = 8;
+                for ($i = 0; $i < $length; $i++) {
+                    $password .= $characters[rand(0, strlen($characters) - 1)];
+                }
+                $user->password = Hash::make($password);
+                $user->save(); // Save the user to the database
+                $user->assignRole('Trainer'); // Assign role to the user
 
-            $user = new User();
-            $user->firstName = $request->firstName;
-            $user->lastName = $request->lastName;
-            $user->email = $request->email;
-            $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()';
-            $password = '';
-            $length = 8;
-            for ($i = 0; $i < $length; $i++) {
-                $password .= $characters[rand(0, strlen($characters) - 1)];
+                // Create a new TrainerMaster
+                $trainer = new TrainerMaster();
+                $trainer->userId = $user->id;
+                $trainer->type = $request->type; // Change from 'group' to 'type'
+                $trainer->status = 'Active';
+                $trainer->save();
+            } else if ($request->type == 'internalMember') {
+                // Find the user by ID
+                $user = User::find($request->trainerId);
+                if (!$user) {
+                    return redirect()->back()->with('error', 'User not found.');
+                }
+                $user->assignRole('Trainer'); // Assign role to the user
+                $user->save();
+
+                $trainer = new TrainerMaster();
+                $trainer->userId = $user->id;
+                $trainer->type = $request->type; // Change from 'group' to 'type'
+                $trainer->status = 'Active';
+                $trainer->save();
+
             }
-            $user->password = Hash::make($password);
-            $user->assignRole('Trainer');
-            $user->save();
-
-            $trainer = new TrainerMaster();
-            $trainer->userId = $user->id;
-            $trainer->firstName = $request->firstName;
-            $trainer->lastName = $request->lastName;
-            $trainer->email = $user->email;
-            $trainer->contactNo = $request->contactNo;
-            $trainer->status = 'Active';
-            $trainer->save();
 
             return redirect()->route('trainer.index')->with('success', 'Trainer Created Successfully!');
         } catch (\Throwable $th) {
             throw $th;
+            // Log the error or handle it gracefully
             return view('servererror');
         }
     }
+
 
 
     public function edit(Request $request, $id)
@@ -97,30 +112,45 @@ class TrainerMasterController extends Controller
         }
     }
 
-    public function update(Request $request)
-    {
-        $this->validate($request, [
-            'id' => 'required|exists:trainer_masters,id',
-            'trainerName' => 'required',
-        ]);
+    public function update(Request $request, $id)
+{
+    // Validate the request
+    $this->validate($request, [
+        // Add validation rules for your fields if needed
+    ]);
 
-        try {
-            $trainer = TrainerMaster::find($request->id);
-
-            if (!$trainer) {
-                return redirect()->route('trainer.index')->with('error', 'Trainer not found.');
-            }
-
-            $trainer->trainerName = $request->trainerName;
-            $trainer->status = 'Active';
-            $trainer->save();
-
-            return redirect()->route('trainer.index')->with('success', 'Trainer details updated successfully.');
-        } catch (\Throwable $th) {
-            //thow $th;
-            return redirect()->route('trainer.index')->with('error', 'Failed to update Trainer details.');
+    try {
+        // Find the user by ID
+        $user = User::find($id);
+        if (!$user) {
+            return redirect()->back()->with('error', 'User not found.');
         }
+
+        // Update the user details
+        $user->firstName = $request->firstName;
+        $user->lastName = $request->lastName;
+        $user->email = $request->email;
+        $user->save();
+
+        // Find the TrainerMaster by user ID
+        $trainer = TrainerMaster::where('userId', $user->id)->first();
+        if (!$trainer) {
+            return redirect()->back()->with('error', 'Trainer details not found.');
+        }
+
+        // Update the TrainerMaster details
+        $trainer->type = $request->type;
+        // Update other TrainerMaster fields if needed
+        $trainer->save();
+
+        return redirect()->route('trainer.index')->with('success', 'Trainer Updated Successfully!');
+    } catch (\Throwable $th) {
+        throw $th;
+        // Log the error or handle it gracefully
+        return view('servererror');
     }
+}
+
 
 
     function delete($id)
@@ -136,6 +166,4 @@ class TrainerMasterController extends Controller
             return view('servererror');
         }
     }
-
-
 }

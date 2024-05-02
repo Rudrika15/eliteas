@@ -33,10 +33,8 @@
         <table class="table datatable">
             <thead>
                 <tr>
-                    <th>Trainer First Name</th>
-                    <th>Trainer Last Name</th>
-                    <th>Email</th>
-                    <th>Contact</th>
+                    <th>Trainer Name</th>
+                    <th>Type</th>
                     <th>status</th>
                     <th>Action</th>
                 </tr>
@@ -44,10 +42,13 @@
             <tbody>
                 @foreach ($trainer as $trainerData)
                 <tr>
-                    <td>{{$trainerData->firstName}}</td>
-                    <td>{{$trainerData->lastName}}</td>
-                    <td>{{$trainerData->email}}</td>
-                    <td>{{$trainerData->contactNo}}</td>
+                    <td>{{$trainerData->user->firstName}} {{$trainerData->user->lastName}}</td>
+                    <td>@if($trainerData->type == 'internalMember')
+                        Internal Member
+                    @elseif($trainerData->type == 'externalMember')
+                        External Trainer
+                    @endif
+                    </td>
                     <td>{{$trainerData->status}}</td>
 
                     <td>

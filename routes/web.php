@@ -194,7 +194,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('get-member-for-ref', [CircleCallController::class, 'getMemberForRef'])->name('getMemberForRef');
     Route::get('get-member-for-ref-giver', [CircleCallController::class, 'getMemberForRefGiver'])->name('getMemberForRefGiver');
 
-
+    //get user by role fr trainer
+    Route::get('/get-user-roles/{userId}', [UserController::class, 'getUserRoles']);
 
     Route::get('/meetings/{circle}', [CircleController::class, 'showByCircle'])->name('meetings.by.circle');
 

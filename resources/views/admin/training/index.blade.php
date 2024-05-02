@@ -34,9 +34,9 @@
             <table class="table datatable">
                 <thead>
                     <tr>
-                        <th>Trainer Name</th>
+                        {{-- <th>Trainer Name</th> --}}
                         <th>Title</th>
-                        <th>External Trainer</th>
+                        {{-- <th>External Trainer</th> --}}
                         <th>Type</th>
                         <th>Fees</th>
                         <th>Meeting Link</th>
@@ -50,7 +50,7 @@
                 <tbody>
                     @foreach ($training as $trainingData)
                     <tr>
-                        <td>
+                        {{-- <td>
                             @php
                             $trainerIds = explode(',', $trainingData->trainerId);
                             $trainerNames = [];
@@ -62,9 +62,9 @@
                             }
                             echo implode(', ', $trainerNames) ?: '-';
                             @endphp
-                        </td>
+                        </td> --}}
                         <td>{{$trainingData->title ?? '-'}}</td>
-                        <td>
+                        {{-- <td>
                             @php
                             $externalTrainerIds = explode(',', $trainingData->externalTrainerId);
                             $externalTrainerNames = [];
@@ -76,7 +76,7 @@
                             }
                             echo implode(', ', $externalTrainerNames) ?: '-';
                             @endphp
-                        </td>
+                        </td> --}}
                         {{-- <td>{{$trainingData->user->firstName ?? '-'}} {{$trainingData->user->lastName ?? '-'}}</td> --}}
                         <td>{{$trainingData->type ?? '-'}}</td>
                         <td>{{$trainingData->fees}}</td>

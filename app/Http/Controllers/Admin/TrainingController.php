@@ -7,6 +7,7 @@ use App\Models\Member;
 use App\Models\Training;
 use Illuminate\Http\Request;
 use App\Models\TrainerMaster;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
@@ -55,50 +56,45 @@ class TrainingController extends Controller
     public function store(Request $request)
     {
         // Validate the incoming request
-        $this->validate($request, [
-            'title' => 'required',
-            'fees' => 'required|numeric',
-            'type' => 'required',
-            'date' => 'required|date',
-            'time' => 'required',
-            'duration' => 'required',
+        $request->validate([
+           
         ]);
 
-        // Create Training record for Trainer 1
-        $training1 = new Training();
-        $training1->title = $request->title;
-        $training1->fees = $request->fees;
-        $training1->type = $request->type;
-        $training1->meetingLink = $request->meetingLink;
-        $training1->venue = $request->venue;
-        $training1->date = $request->date;
-        $training1->time = $request->time;
-        $training1->duration = $request->duration;
-        $training1->note = $request->note;
+        // Create Training record
+        $training = new Training();
+        $training->title = $request->title;
+        $training->fees = $request->fees;
+        $training->type = $request->type;
+        $training->meetingLink = $request->meetingLink;
+        $training->venue = $request->venue;
+        $training->date = $request->date;
+        $training->time = $request->time;
+        $training->duration = $request->duration;
+        $training->note = $request->note;
+        $training->save();
 
-        // Check if both trainerIds are present
-        if ($request->has('trainerId') && $request->has('trainerId2')) {
-            $trainerIds = implode(',', [$request->trainerId, $request->trainerId2]);
-            $training1->trainerId = $trainerIds;
-        } else {
-            // Otherwise, set trainerId based on available data
-            $training1->trainerId = $request->trainerId ?? $request->trainerId2 ?? null;
+        // Add trainers to the Training_trainers table if present in the request
+        $trainers = [
+            'trainerId' => $request->trainerId ?? null,
+            'externalTrainerId' => $request->externalTrainerId ?? null,
+            'trainerId2' => $request->trainerId2 ?? null,
+            'externalTrainerId2' => $request->externalTrainerId2 ?? null,
+        ];
+
+        foreach ($trainers as $key => $value) {
+            if (!is_null($value)) {
+                DB::table('trainings_trainers')->insert([
+                    ['trainingId' => $training->id, 'userId' => $value, 'status' => 'Active', 'created_at' => now(), 'updated_at' => now()],
+                ]);
+            }
         }
-
-        // Check if both externalTrainerIds are present
-        if ($request->has('externalTrainerId') && $request->has('externalTrainerId2')) {
-            $externalTrainerIds = implode(',', [$request->externalTrainerId, $request->externalTrainerId2]);
-            $training1->externalTrainerId = $externalTrainerIds;
-        } else {
-            // Otherwise, set externalTrainerId based on available data
-            $training1->externalTrainerId = $request->externalTrainerId ?? $request->externalTrainerId2 ?? null;
-        }
-
-        $training1->save();
 
         // Redirect the user after successful submission
         return redirect()->route('training.index')->with('success', 'Training details saved successfully.');
     }
+
+
+
 
 
 
@@ -178,13 +174,14 @@ class TrainingController extends Controller
 
     public function getTrainerDetails(Request $request)
     {
+        $trainerMasters = TrainerMaster::where('type', 'externalMember')
+            ->with('users')
+            ->get();
 
-        $trainerMaster = TrainerMaster::all();
-
-        if (!$trainerMaster) {
-            return response()->json(['error' => 'Trainer not found'], 404);
+        if ($trainerMasters->isEmpty()) {
+            return response()->json(['error' => 'Trainers not found'], 404);
         }
 
-        return response()->json($trainerMaster);
+        return response()->json($trainerMasters);
     }
 }

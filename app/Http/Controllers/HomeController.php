@@ -51,23 +51,38 @@ class HomeController extends Controller
         $count = Schedule::where('status', 'Active')->count();
         $currentDate = Carbon::now()->toDateString();
 
+        $currentDate = Carbon::now();
         $nearestTraining = Training::where('status', 'Active')
             ->whereDate('date', '>=', $currentDate)
             ->whereHas('trainers.user')
             ->with('trainers.user')
+            // ->with('registerTraining')
             ->orderBy('date', 'asc')
             ->first();
-        $nearestTraining->date = Carbon::parse($nearestTraining->date);
+
+        if (empty($nearestTraining)) {
+            session()->flash('warning', 'No training for this month');
+        } else {
+            $nearestTraining->date = Carbon::parse($nearestTraining->date);
+        }
+
         $businessCategory = BusinessCategory::all();
 
 
         $myInvites = MeetingInvitation::where('invitedMemberId', Auth::user()->id)->get();
 
 
-        $findRegister = TrainingRegister::where('userId', Auth::user()->id)
-            ->where('trainingId', $nearestTraining->id)
-            ->where('trainerId', $nearestTraining->trainers->user->id)
-            ->get();
+        if ($nearestTraining) {
+            $findRegister = TrainingRegister::where('userId', Auth::user()->id)
+                ->where('trainingId', $nearestTraining->id)
+                ->where('trainerId', $nearestTraining->trainerId)
+                ->get();
+        } else {
+            $findRegister = [];
+        }
+
+        
+
 
         if (!Auth::user()->hasRole('Admin')) {
             // business category
@@ -202,4 +217,25 @@ class HomeController extends Controller
             return view('servererror');
         }
     }
+
+    public function accepted($id)
+    {
+        $connection = Connection::find($id);
+
+        $connection->status = 'Accepted';
+        $connection->save();
+
+        return redirect()->back()->with('success', 'Connection request accepted');
+    }
+
+    public function rejected($id)
+    {
+        $connection = Connection::find($id);
+
+        $connection->status = 'Rejected';
+        $connection->save();
+
+        return redirect()->back()->with('error', 'Connection request rejected');
+    }
+
 }

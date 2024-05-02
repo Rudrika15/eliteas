@@ -18,4 +18,10 @@ class TrainerMaster extends Model
     {
         return $this->belongsTo(Training::class, 'trainerId' , 'id');
     }
+
+    public function users()
+    {
+        return $this->belongsTo(User::class, 'userId' , 'id');
+    }
+
 }

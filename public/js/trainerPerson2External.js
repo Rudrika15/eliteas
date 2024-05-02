@@ -14,15 +14,15 @@ $(document).ready(function () {
                             '">' +
                             '<div class="card-body text-center">' +
                             '<h5 class="card-title" style="font-size:20px; color:1D2856;">' +
-                            trainer.firstName +
+                            trainer.users.firstName +
                             " " +
-                            trainer.lastName +
+                            trainer.users.lastName +
                             "</h5>" +
                             '<p class="card-text lead email" style="font-size:20px; color:grey;">' +
-                            trainer.email +
+                            trainer.users.email +
                             "</p>" +
                             '<p class="card-text lead contactNo2" style="font-size:20px; color:grey;">' +
-                            trainer.contactNo +
+                            trainer.externalMemberContact +
                             "</p>" +
                             "</div>" + // Close card-body
                             "</div>"; // Close card
@@ -38,15 +38,13 @@ $(document).ready(function () {
                         var trainerNameExternal2 = $(this)
                             .find(".card-title")
                             .text();
-                        var trainerEmail2 = $(this)
-                            .find(".email")
-                            .text();
-                            console.log(trainerEmail2);
+                        var trainerEmail2 = $(this).find(".email").text();
+                        console.log(trainerEmail2);
 
                         var trainerContact2 = $(this)
                             .find(".contactNo2")
                             .text();
-                            console.log(trainerContact2);
+                        console.log(trainerContact2);
 
                         $("#externalTrainerId2").val(trainerId);
                         $("#trainerNameExternal2").val(trainerNameExternal2);
@@ -71,7 +69,7 @@ $(document).ready(function () {
                 $(".trainerDetails2").html(
                     "<p>Error fetching trainer details.</p>"
                 );
-                $("#trainerMaster").modal("show");
+                $("#trainerMaster2").modal("show");
             },
         });
     }

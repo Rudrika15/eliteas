@@ -158,4 +158,21 @@ class UserController extends Controller
         return redirect()->route('users.index')
             ->with('success', 'User deleted successfully');
     }
+
+    
+public function getUserRoles($userId)
+{
+    // Fetch user roles based on $userId
+    $user = User::find($userId);
+
+    if (!$user) {
+        return response()->json(['error' => 'User not found'], 404);
+    }
+
+    // Assuming user roles are stored in a roles column or relation
+    $roles = $user->roles()->pluck('name')->toArray();
+
+    return response()->json($roles);
+}
+
 }
