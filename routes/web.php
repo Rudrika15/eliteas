@@ -175,6 +175,7 @@ Route::group(['middleware' => ['auth']], function () {
     // Route::get('get-external-trainers' , [TrainingController::class, 'getExternalTrainers'])->name('getExternalTrainers');
 
     Route::get('/get-trainer-details', [TrainingController::class, 'getTrainerDetails'])->name('getTrainerDetails');
+    Route::get('/get-internal-trainer-details', [TrainingController::class, 'getInternalTrainerDetails'])->name('getInternalTrainerDetails');
 
 
     Route::get("get-external-trainer-modal", function () {

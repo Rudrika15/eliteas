@@ -184,4 +184,17 @@ class TrainingController extends Controller
 
         return response()->json($trainerMasters);
     }
+
+    public function getInternalTrainerDetails(Request $request)
+    {
+        $trainerMasters = TrainerMaster::where('type', 'internalMember')
+            ->with('users')
+            ->get();
+
+        if ($trainerMasters->isEmpty()) {
+            return response()->json(['error' => 'Trainers not found'], 404);
+        }
+
+        return response()->json($trainerMasters);
+    }
 }

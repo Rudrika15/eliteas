@@ -130,7 +130,7 @@
                         </div>
 
                         <div class="col-md-2 pt-3 text-muted text-end">
-                            {{ $nearestTraining->date->format('j M Y') }} <br>
+                            {{ \Carbon\Carbon::parse($nearestTraining->date)->format('j M Y') }} <br>
                             {{ $nearestTraining->time }}
                         </div>
                     </div>
@@ -138,12 +138,12 @@
                         <div class="col-md-8 mt-4">
                             <p>
                                 <small class="fw-italic text-muted pt-2 fw-italic">
-                                    {{ $nearestTraining->trainerId ?? '-' }}
-                                    {{ $nearestTraining->trainerId ?? '-' }}
+                                    {{ $nearestTraining->trainersTrainings->user->firstName ?? '-' }}
+                                    {{ $nearestTraining->trainersTrainings->user->lastName ?? '-' }}
                                 </small>
                                 <br>
                                 <small class="text-muted">
-                                    {{ $nearestTraining->trainerId ?? '-' }}
+                                    {{ $nearestTraining->trainersTrainings->user->email ?? '-' }}
                                 </small>
                             </p>
                         </div>
@@ -320,8 +320,7 @@
 </div>
 <div class="row" style=" position: relative;">
     <div class="col-md-9" style="position: relative; left: 50%; transform: translateX(-50%);">
-        <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel"
-            style=" position: relative;">
+        <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel" style=" position: relative;">
             <div class="carousel-inner">
                 @foreach ($testimonials as $key => $testimonial)
                 <div class="carousel-item {{ $key == 0 ? 'active' : '' }}" style="position: relative;">
@@ -383,7 +382,8 @@
                         </p>
                     </div>
                     <div class="col-md-6 text-end">
-                        <h6 class="card-subtitle mt-2 text-muted ">{{ $nearestTraining->date->format('j M Y') }}
+                        <h6>
+                        {{ \Carbon\Carbon::parse($nearestTraining->date)->format('j M Y') }}
                         </h6>
                         <small class="text-muted">{{ $nearestTraining->time }}</small>
                     </div>

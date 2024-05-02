@@ -31,4 +31,9 @@ class Training extends Model
     {
         return $this->hasMany(TrainingRegister::class, 'trainingId', 'id');
     }
+
+    public function trainersTrainings()
+    {
+        return $this->belongsTo(TrainingTrainers::class, 'id');
+    }
 }

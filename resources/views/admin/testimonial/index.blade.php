@@ -57,7 +57,7 @@
                             <td>
 
                                 <a href="{{ route('testimonial.destroy', $testimonialData->id) }}"
-                                    onclick="return confirm('Do You Want To Delete It')"
+                                    onclick="return confirm('Do You Want To Delete It ?')"
                                     class="btn btn-danger btn-sm d-flex justify-content-center align-items-center"><i
                                         class="bi bi-trash"></i></a>
                             </td>

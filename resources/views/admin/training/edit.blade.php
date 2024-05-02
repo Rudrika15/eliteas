@@ -53,14 +53,15 @@
                 <!-- Member selection -->
                 <div class="member-list" id="memberListDropdownMember">
                     @include('TrainerPerson1')
-                    <input type="hiddedn" name="trainerId" id="trainerId" value="{{$training->trainerId}}">
+                    <input type="hiddedn" name="trainerId" id="trainerId"
+                        value="{{$training->trainersTrainings->userId}}">
                     <input type="text" class="form-control mt-3" id="trainerName" name="memberName"
                         placeholder="Select Trainer Internal">
                 </div>
                 <div class="external-trainer-list" id="memberListInputMember" style="display:none;">
                     @include('TrainerPerson1External')
                     <input type="hiddden" name="externalTrainerId" id="externalTrainerId"
-                        value="{{$training->externalTrainerId}}">
+                        value="{{$training->trainersTrainings->userId}}">
                     <input type="text" class="form-control mt-3" id="trainerNameExternal" name="trainerNameExternal"
                         placeholder="Trainer Name External">
                 </div>
@@ -92,14 +93,15 @@
                 <!-- Member selection -->
                 <div class="member-list" id="memberListDropdown" style="display:none;">
                     @include('TrainerPerson2')
-                    <input type="hiddedn" name="trainerId2" id="trainerId2" value=" {{$training->trainerId}}">
+                    <input type="hiddedn" name="trainerId2" id="trainerId2"
+                        value=" {{$training->trainersTrainings->userId}}">
                     <input type="text" class="form-control mt-3" id="trainerName2" name="trainerNameInternal"
                         placeholder="Trainer Name Internal">
                 </div>
                 <div class="member-list" id="memberListInput" style="display:none;">
                     @include('TrainerPerson2External')
                     <input type="hiddden" name="externalTrainerId2" id="externalTrainerId2"
-                        value="{{$training->externalTrainerId}}">
+                        value="{{$training->trainersTrainings->userId}}">
                     <input type="text" class="form-control mt-3" id="trainerNameExternal2" name="trainerNameExternal2"
                         placeholder="Trainer Name External">
                 </div>
