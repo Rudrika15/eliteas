@@ -182,43 +182,24 @@ class HomeController extends Controller
         ]);
     }
 
-    public function connect(Request $request)
-    {
-        $memberId = $request->input('memberId');
-        $userId = Auth::user()->id;
+   
 
-        $connection = new Connection();
-        $connection->memberId = $memberId;
-        $connection->userId = $userId;
-        $connection->save();
-        return response()->json(['message' => 'Connection request processed successfully']);
-    }
-
-    public function myConnections()
-    {
-        $connections = Connection::where('userId', Auth::user()->id)->get();
-        return view('connections', compact('connections'));
-    }
     public function foundPersonDetails($id)
     {
         try {
-            $aid = Auth::user()->id;
-            if ($aid === 0) {
-                // If no $aid is provided, fetch the currently authenticated user's ID
-                $aid = Auth::user()->id;
-            }
+            $aid = Auth::id(); // Get the ID of the authenticated user
             $member = Member::find($id);
-            // $id = $memberId->id;
-            // Fetch profile data based on the provided $id
-            // $member = Member::where()->first(); // Assuming userId column stores user ID
-            // $country = Country::where('status', 'Active')->get();
-            // $state = State::where('status', 'Active')->get();
-            // $city = City::where('status', 'Active')->get();
-            // $contactDetails = ContactDetails::find($id);
-            // $billing = BillingAddress::find($id);
-            // $tops = TopsProfile::find($id);
 
-            return view('foundPersonDetails', compact('member'));
+
+            // Find connection based on the authenticated user's ID and member ID
+            $connection = Connection::where('userId', $aid)
+                ->where('memberId', $id)
+                ->first();
+
+            // Alternatively, if you want to get all connections related to the authenticated user:
+            // $connections = Connection::where('userId', $aid)->get();
+
+            return view('foundPersonDetails', compact('member', 'connection'));
         } catch (\Throwable $th) {
             // In case of an error, redirect to servererror view
             return view('servererror');

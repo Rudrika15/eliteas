@@ -52,7 +52,7 @@
                 <div class="col">
                     <h2>Personal information</h2>
                     <ul>
-                        <li>Title = {{ $member->title }}</li>
+                        <li><b> Title = {{ $member->title }}</li>
                         <li> Suffix = {{ $member->suffix }}</li>
                         <li> Display Name = {{ $member->displayName }}</li>
                         <li> Company Name = {{ $member->companyName }}</li>
@@ -220,6 +220,7 @@
 </script>
 
 </html> --}}
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -230,6 +231,8 @@
     <title>UBN - Profile Details</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link href="{{ asset('vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet" />
     <style type="text/css">
         body {
             margin-top: 20px;
@@ -291,6 +294,25 @@
         .shadow-none {
             box-shadow: none !important;
         }
+
+        .btn-bg-orange {
+            background-color: #e76a35 !important;
+            color: white !important;
+        }
+
+        .btn-bg-blue {
+            background-color: #1d2856 !important;
+            color: white !important;
+        }
+
+        /* text-icon colors */
+        .text-orange {
+            color: #e76a35 !important;
+        }
+
+        .text-blue {
+            color: #1d2856;
+        }
     </style>
 </head>
 
@@ -323,18 +345,40 @@
                                         class="rounded-circle" width="100">
                                 @endif
                                 <div class="mt-3">
-                                    <h4>{{ $member->title . '' . $member->firstName . ' ' . $member->lastName }}</h4>
-                                    <p class="text-secondary mb-1">{{ $member->skills }}</p>
-                                    {{-- <p class="text-secondary mb-1">{{ $member->goals }}</p> --}}
+                                    <h4 class="text-blue">{{ $member->title . ' ' . $member->displayName }}</h4>
+
+                                    <p class="text-secondary d-flex justify-content-center mb-1">{{ $member->skills }}
+                                        &#x2022 {{ $member->suffix }}
+                                        &#x2022 {{ $member->gender }}
+                                        &#x2022 {{ $member->industry }}
+
+                                    </p>
+
                                     <p class="text-muted font-size-sm">
                                         {{ $member->contactDetails->addressLine1 ?? '-' }}
                                         {{ $member->contactDetails->addressLine2 ?? '-' }}
                                         {{ $member->contactDetails->city ?? '-' }} ,
                                         {{ $member->contactDetails->state ?? '-' }}
                                     </p>
+                                    @if (!$connection)
+                                        <form action="{{ route('connect') }}" id="connectForm" method="POST">
+                                            @csrf
+                                            <input type="hidden" value="{{ $member->id }}" name="memberId"
+                                                id="">
+                                            <button type="submit" class="btn btn-bg-blue shadow-none">Connect &nbsp;<i
+                                                    class="bi bi-person-plus-fill"></i></button>
+                                        </form>
+                                    @elseif ($connection->status == 'Accepted')
+                                        <button type="button" class="btn btn-bg-blue shadow-none">Connected &nbsp;<i
+                                                class="bi bi-check-circle-fill"></i></button>
+                                    @else
+                                        <button type="button" class="btn btn-bg-blue shadow-none">Requested &nbsp;<i
+                                                class="bi bi-clock"></i></button>
+                                    @endif
 
-                                    <button class="btn btn-primary">Follow</button>
-                                    <button class="btn btn-outline-primary">Message</button>
+
+
+                                    {{-- <button class="btn btn-outline-primary">Message</button> --}}
                                 </div>
                             </div>
                         </div>
@@ -381,7 +425,8 @@
                                         viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                         stroke-linecap="round" stroke-linejoin="round"
                                         class="feather feather-instagram mr-2 icon-inline text-danger">
-                                        <rect x="2" y="2" width="20" height="20" rx="5" ry="5">
+                                        <rect x="2" y="2" width="20" height="20" rx="5"
+                                            ry="5">
                                         </rect>
                                         <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
                                         <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
@@ -389,9 +434,9 @@
                                 <span class="text-secondary">bootdey</span>
                             </li>
                             <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
-                                <h6 class="mb-0"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                        stroke-linecap="round" stroke-linejoin="round"
+                                <h6 class="mb-0"><svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                        height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                                         class="feather feather-facebook mr-2 icon-inline text-primary">
                                         <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z">
                                         </path>
@@ -409,7 +454,7 @@
                                     <h6 class="mb-0">Full Name</h6>
                                 </div>
                                 <div class="col-sm-9 text-secondary">
-                                    Kenneth Valdez
+                                    {{ $member->firstName ?? '-' }} {{ $member->lastName }}
                                 </div>
                             </div>
                             <hr>
@@ -418,9 +463,28 @@
                                     <h6 class="mb-0">Email</h6>
                                 </div>
                                 <div class="col-sm-9 text-secondary">
-                                    hey@gmail.com
+                                    {{ $member->contactDetails->email ?? '-' }}
                                 </div>
 
+                            </div>
+                            <hr>
+
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <h6 class="mb-0">Company Name</h6>
+                                </div>
+                                <div class="col-sm-9 text-secondary">
+                                    {{ $member->companyName }}
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <h6 class="mb-0">Language</h6>
+                                </div>
+                                <div class="col-sm-9 text-secondary">
+                                    {{ $member->language }}
+                                </div>
                             </div>
                             <hr>
                             <div class="row">
@@ -428,25 +492,30 @@
                                     <h6 class="mb-0">Phone</h6>
                                 </div>
                                 <div class="col-sm-9 text-secondary">
-                                    (239) 816-9029
+                                    {{ $member->contactDetails->phone ?? '-' }}
                                 </div>
                             </div>
                             <hr>
                             <div class="row">
                                 <div class="col-sm-3">
-                                    <h6 class="mb-0">Mobile</h6>
+                                    <h6 class="mb-0">Mobile No</h6>
                                 </div>
                                 <div class="col-sm-9 text-secondary">
-                                    (320) 380-4539
+                                    {{ $member->contactDetails->mobileNo ?? '-' }}
                                 </div>
                             </div>
+
                             <hr>
                             <div class="row">
                                 <div class="col-sm-3">
-                                    <h6 class="mb-0">Address</h6>
+                                    <h6 class="mb-0">Billing Address</h6>
                                 </div>
                                 <div class="col-sm-9 text-secondary">
-                                    Bay Area, San Francisco, CA
+                                    {{ $member->billingAddress->bAddressLine1 ?? '-' }}
+                                    {{ $member->billingAddress->bAddressLine2 ?? '-' }} <br>
+                                    {{ $member->billingAddress->bCity ?? '-' }}
+                                    {{ $member->billingAddress->bState ?? '-' }}
+                                    {{ $member->billingAddress->bPinCode ?? '-' }}
                                 </div>
                             </div>
 
@@ -455,67 +524,69 @@
                     <div class="row gutters-sm">
                         <div class="col-sm-6 mb-3">
                             <div class="card h-100">
-                                <div class="card-body">
-                                    <h6 class="d-flex align-items-center mb-3"><i
-                                            class="material-icons text-info mr-2">assignment</i>Project Status</h6>
-                                    <small>Web Design</small>
-                                    <div class="progress mb-3" style="height: 5px">
-                                        <div class="progress-bar bg-primary" role="progressbar" style="width: 80%"
-                                            aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <small>Website Markup</small>
-                                    <div class="progress mb-3" style="height: 5px">
-                                        <div class="progress-bar bg-primary" role="progressbar" style="width: 72%"
-                                            aria-valuenow="72" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <small>One Page</small>
-                                    <div class="progress mb-3" style="height: 5px">
-                                        <div class="progress-bar bg-primary" role="progressbar" style="width: 89%"
-                                            aria-valuenow="89" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <small>Mobile Template</small>
-                                    <div class="progress mb-3" style="height: 5px">
-                                        <div class="progress-bar bg-primary" role="progressbar" style="width: 55%"
-                                            aria-valuenow="55" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <small>Backend API</small>
-                                    <div class="progress mb-3" style="height: 5px">
-                                        <div class="progress-bar bg-primary" role="progressbar" style="width: 66%"
-                                            aria-valuenow="66" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
+                                <div class="card-body ">
+                                    <h4 class="card-title text-orange text-center">My Bios</h4>
+                                    <hr>
+                                    <ul class="list-unstyled">
+                                        <li><b> Years In Business = </b>
+                                            {{ $member->topsProfile->yearsInBusiness ?? '-' }}
+                                        </li>
+
+                                        <li><b> Previous Types Of Jobs = </b>
+                                            {{ $member->topsProfile->prevJobs ?? '-' }}
+                                        </li>
+                                        <li><b> Spouse = </b> {{ $member->topsProfile->spouse ?? '-' }}</li>
+                                        <li><b> Childrens = </b> {{ $member->topsProfile->children ?? '-' }}</li>
+                                        <li><b> Pets = </b> {{ $member->topsProfile->pets ?? '-' }}</li>
+                                        <li><b> Hobbies & Interests = </b>
+                                            {{ $member->topsProfile->hobbiesInterests ?? '-' }}
+                                        </li>
+                                        <li><b> City Of Residence = </b> {{ $member->topsProfile->cityofRes ?? '-' }}
+                                        </li>
+                                        <li><b> Years In City = </b> {{ $member->topsProfile->yearsInCity ?? '-' }}
+                                        </li>
+                                        <li><b> My Burning Desire = </b>
+                                            {{ $member->topsProfile->myBurningDesire ?? '-' }}
+                                        </li>
+                                        <li><b> Something No One Here Knows About Me = </b>
+                                            {{ $member->topsProfile->dontKnowAboutMe ?? '-' }}
+                                        </li>
+                                        <li><b> My Key To Success = </b>
+                                            {{ $member->topsProfile->mKeyToSuccess ?? '-' }}
+                                        </li>
+                                    </ul>
+
                                 </div>
                             </div>
                         </div>
                         <div class="col-sm-6 mb-3">
                             <div class="card h-100">
                                 <div class="card-body">
-                                    <h6 class="d-flex align-items-center mb-3"><i
-                                            class="material-icons text-info mr-2">assignment</i>Project Status</h6>
-                                    <small>Web Design</small>
-                                    <div class="progress mb-3" style="height: 5px">
-                                        <div class="progress-bar bg-primary" role="progressbar" style="width: 80%"
-                                            aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <small>Website Markup</small>
-                                    <div class="progress mb-3" style="height: 5px">
-                                        <div class="progress-bar bg-primary" role="progressbar" style="width: 72%"
-                                            aria-valuenow="72" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <small>One Page</small>
-                                    <div class="progress mb-3" style="height: 5px">
-                                        <div class="progress-bar bg-primary" role="progressbar" style="width: 89%"
-                                            aria-valuenow="89" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <small>Mobile Template</small>
-                                    <div class="progress mb-3" style="height: 5px">
-                                        <div class="progress-bar bg-primary" role="progressbar" style="width: 55%"
-                                            aria-valuenow="55" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <small>Backend API</small>
-                                    <div class="progress mb-3" style="height: 5px">
-                                        <div class="progress-bar bg-primary" role="progressbar" style="width: 66%"
-                                            aria-valuenow="66" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
+                                    <h4 class="card-title text-orange text-center">Tops Profile</h4>
+                                    <hr>
+                                    <ul class="list-unstyled">
+                                        <li><b> Ideal Referral = </b> {{ $member->topsProfile->idealRef ?? '-' }} </li>
+                                        <li><b> Top Product = </b> {{ $member->topsProfile->topProduct ?? '-' }}</li>
+                                        <li><b> Top Problem Solved = </b>
+                                            {{ $member->topsProfile->topProblemSolved ?? '-' }}
+                                        </li>
+                                        <li><b> My Fav. BNI Story = </b>
+                                            {{ $member->topsProfile->myFavBniStory ?? '-' }}
+                                        </li>
+                                        <li><b> My Ideal Ref. Partner = </b>
+                                            {{ $member->topsProfile->myIdealRefPartner ?? '-' }}</li>
+                                    </ul>
+
+                                    <h4 class="card-title text-orange text-center">Gains Profile</h4>
+                                    <hr>
+                                    <ul class="list-unstyled">
+                                        <li><b> Goals = </b> {{ $member->goals ?? '-' }}</li>
+                                        <li><b> Accomplishment = </b> {{ $member->accomplishment ?? '-' }}</li>
+                                        <li><b> Interests = </b> {{ $member->interests ?? '-' }}</li>
+                                        <li><b> Networks = </b> {{ $member->networks ?? '-' }}</li>
+                                        <li><b> Skills = </b> {{ $member->skills ?? '-' }}</li>
+                                    </ul>
+
                                 </div>
                             </div>
                         </div>
@@ -527,7 +598,51 @@
     <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
     <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.bundle.min.js"></script>
-    <script type="text/javascript"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        // JavaScript to handle form submission
+        document.getElementById('connectForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent default form submission
+            var form = this;
+
+            // Submit the form via AJAX
+            fetch(form.action, {
+                    method: form.method,
+                    body: new FormData(form)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Check if the request was successful
+                    if (data && data.message) {
+                        // Show SweetAlert notification
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success!',
+                            text: data.message
+                        }).then(() => {
+                            // Reload the page after the success message is displayed
+                            window.location.reload();
+                        });
+                    } else {
+                        // Show error message if something went wrong
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Something went wrong!'
+                        });
+                    }
+                })
+                .catch(error => {
+                    // Show error message if there was an error with the request
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Something went wrong!'
+                    });
+                });
+        });
+    </script>
 </body>
 
 </html>
