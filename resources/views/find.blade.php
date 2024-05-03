@@ -2,13 +2,14 @@
 <html lang="en">
 
 <head>
-    <title>Title</title>
+    <title>UBN - Search User </title>
     <!-- Required meta tags -->
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 
     <!-- Bootstrap CSS v5.2.1 -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" />
     {{-- add csrf --}}
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Dashboard - Admin</title>
@@ -21,7 +22,9 @@
 
     <!-- Google Fonts -->
     <link href="https://fonts.gstatic.com" rel="preconnect">
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
+        rel="stylesheet">
     <!-- Vendor CSS Files -->
     <link href="{{ asset('vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet" />
     <link href="{{ asset('vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet" />
@@ -31,7 +34,8 @@
     <link href="{{ asset('vendor/simple-datatables/style.css') }}" rel="stylesheet" />
     <!-- Template Main CSS File -->
     <link href="{{ asset('css/style.css') }}" rel="stylesheet" />
-
+    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+        crossorigin="anonymous"></script>
 </head>
 
 <body class="" style=" mix-blend-mode: multiply;">
@@ -43,10 +47,13 @@
         <div class="pt-5 px-3">
             <div class="row">
                 <div class="col-md-1">
-                    <img src="{{ asset('img/logo2.jpg') }}" alt="ELITEAs" class="d-none d-lg-block pb-2" width="100">
+                    <img src="{{ asset('img/logo2.jpg') }}" alt="ELITEAs" class="d-none d-lg-block pb-2"
+                        width="100">
                 </div>
                 <div class="col-md-11 pt-3">
-                    <input type="text" name="query" id="searchInput" placeholder="Enter circle name or member name..." class="form-control" title="Enter search keyword">
+                    <input type="text" name="query" id="searchInput"
+                        placeholder="Enter circle name or member name..." class="form-control"
+                        title="Enter search keyword">
                 </div>
             </div>
 
@@ -65,6 +72,40 @@
         </div>
     </main>
     <br>
+    {{-- <div id="memberModal" class="modal">
+        <div class="model-dialog">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <div id="modalContent"></div> <!-- This is the element to display member details -->
+            </div>
+        </div>
+    </div> --}}
+
+
+
+    {{-- <div class="modal" id="memberModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modal-title"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="modalContent"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary close" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div> --}}
+
+
+
+
+
+
+
 
     <footer id="footer" class="footer">
         <div class="copyright">
@@ -75,9 +116,12 @@
         </div>
     </footer><!-- End Footer -->
 
-    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+            class="bi bi-arrow-up-short"></i></a>
 
     <!-- Vendor JS Files -->
+
+
 
     <script src="{{ asset('vendor/apexcharts/apexcharts.min.js') }}"></script>
     <script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
@@ -93,11 +137,17 @@
     <script src="{{ asset('js/main.js') }}"></script>
 
     <!-- Bootstrap JavaScript Libraries -->
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous">
+    </script>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+        integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous">
+    </script>
+
 
     <script>
+        // Paste your JavaScript code here
         // Declare a variable to hold the timeout ID
         var timeoutId;
 
@@ -121,6 +171,7 @@
                 performSearch(searchText);
             }, 500); // Adjust the delay time as needed
         });
+
 
         // Function to perform the search using AJAX
         function performSearch(query) {
@@ -146,8 +197,6 @@
         }
 
         // Function to display the search results
-        // Function to display the search results
-        // Function to display the search results
         function displaySearchResults(response) {
             var searchTextElement = document.querySelector('.searchText');
             var searchResultsElement = document.getElementById('searchResults');
@@ -165,7 +214,7 @@
             if (response && response.members && Array.isArray(response.members)) {
                 // Loop through the members array and create card elements
                 response.members.forEach(function(member) {
-                    console.log("member", member);
+                    console.log('member', member);
                     var cardElement = document.createElement('div');
                     cardElement.classList.add('card', 'mb-3');
 
@@ -181,7 +230,30 @@
 
                     var cardTitle = document.createElement('h5');
                     cardTitle.classList.add('card-title');
-                    cardTitle.textContent = member.firstName + ' ' + member.lastName; // Adjust as needed
+                    var nameText = document.createElement('span');
+                    nameText.textContent = member.firstName + ' ' + member.lastName;
+                    // Add click event listener to the card title (first name and last name)
+                    nameText.addEventListener('click', function() {
+                        // Get the route URL with the id concatenated
+                        var routeURL = '/foundPersonDetails/' + member
+                        .id; // Assuming the route follows this pattern
+
+                        // Create an anchor tag
+                        var anchorTag = document.createElement('a');
+
+                        // Set the href attribute to the route URL
+                        anchorTag.href = routeURL;
+
+                        // Click the anchor tag to open the page
+                        anchorTag.click();
+                    });
+
+
+                    nameText.style.cursor = "pointer";
+                    cardTitle.appendChild(nameText); // Append the span element to the card title
+                    nameCol.appendChild(cardTitle);
+                    nameRow.appendChild(nameCol);
+
                     nameCol.appendChild(cardTitle);
                     nameRow.appendChild(nameCol);
 
@@ -216,11 +288,13 @@
                     button.addEventListener('click', function() {
                         // Perform action here when the button is clicked
                         // For example, make an AJAX call
+                        console.log('clicked');
                         fetch('/connect', {
                                 method: 'POST', // Adjust method as needed (e.g., 'GET', 'POST')
                                 headers: {
                                     'Content-Type': 'application/json',
-                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                        .getAttribute('content')
                                     // Add any additional headers if required
                                 },
                                 body: JSON.stringify({
@@ -256,9 +330,6 @@
                     // Append card element to search results container
                     searchResultsElement.appendChild(cardElement);
                 });
-
-
-
             } else {
                 console.error('Invalid response format or missing data');
             }
