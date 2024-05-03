@@ -56,15 +56,12 @@ class HomeController extends Controller
             ->whereDate('date', '>=', $currentDate)
             ->whereHas('trainers.user')
             ->with('trainers.user')
-            // ->with('registerTraining')
+            ->whereHas('trainersTrainings.user')
+            ->with('trainersTrainings.user')
             ->orderBy('date', 'asc')
             ->first();
 
-        if (empty($nearestTraining)) {
-            session()->flash('warning', 'No training for this month');
-        } else {
-            $nearestTraining->date = Carbon::parse($nearestTraining->date);
-        }
+        
 
         $businessCategory = BusinessCategory::all();
 

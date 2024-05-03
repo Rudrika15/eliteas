@@ -10,6 +10,7 @@ use App\Models\TrainerMaster;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
+use App\Models\TrainingTrainers;
 use Illuminate\Support\Facades\Hash;
 
 class TrainingController extends Controller
@@ -56,9 +57,7 @@ class TrainingController extends Controller
     public function store(Request $request)
     {
         // Validate the incoming request
-        $request->validate([
-           
-        ]);
+        $request->validate([]);
 
         // Create Training record
         $training = new Training();
@@ -101,7 +100,9 @@ class TrainingController extends Controller
     public function edit($id)
     {
         try {
-            $training = Training::find($id);
+            // $training = Training::find($id);
+            $training = Training::where('id', $id)->first();
+            
             $trainer = TrainerMaster::where('status', 'Active')->get();
 
             return view('admin.training.edit', compact('training', 'trainer'));
@@ -183,5 +184,19 @@ class TrainingController extends Controller
         }
 
         return response()->json($trainerMasters);
+    }
+
+    public function getInternalTrainerDetails(Request $request)
+    {
+        $internalTrainerMasters = TrainerMaster::where('type', 'internalMember')
+            ->with('users')
+            ->with('members')
+            ->get();
+        return $internalTrainerMasters;
+        if ($internalTrainerMasters->isEmpty()) {
+            return response()->json(['error' => 'Trainers not found'], 404);
+        }
+
+        return response()->json($internalTrainerMasters);
     }
 }

@@ -175,63 +175,63 @@ class CircleMemberController extends Controller
     // }
 
 
-    public function circleWiseMember(Request $request)
-    {
-        try {
-
-            
-        } catch (\Throwable $th) {
-            return Utils::errorResponse([
-                'error' => $th->getMessage()
-            ], 'Internal Server Error', 500);
-        }
-    }
     // public function circleWiseMember(Request $request)
     // {
     //     try {
-    //         $circlesData = [];
-    //         $circles = Circle::where('status', 'Active')->get();
 
-    //         foreach ($circles as $circle) {
-    //             // Customize the fields you want to display for the circle
-    //             $circleData = [
-    //                 'id' => $circle->id,
-    //                 'name' => $circle->circleName,
-    //                 // Add more fields as needed
-    //             ];
-
-    //             // Fetch members for the current circle
-    //             $circleMembers = $circle->members()->select('id', 'circleId', 'firstName', 'lastName')->get();
-
-    //             $membersData = [];
-
-    //             foreach ($circleMembers as $member) {
-    //                 // Fetch contact details for each member
-    //                 $memberContactDetails = $member->contactDetails()->select('id', 'memberId', 'mobileNo', 'email')->get()->toArray();
-
-    //                 $membersData[] = [
-    //                     'id' => $member->id,
-    //                     'firstName' => $member->firstName,
-    //                     'lastName' => $member->lastName,
-    //                     'contactDetails' => $memberContactDetails,
-    //                 ];
-    //             }
-
-    //             $circlesData[] = [
-    //                 'circle' => $circleData,
-    //                 'members' => $membersData,
-    //             ];
-    //         }
-
-    //         // You can return data using Utils::sendResponse for API response
-    //         return Utils::sendResponse($circlesData, 'Data retrieved successfully', 200);
+            
     //     } catch (\Throwable $th) {
-    //         // Handle exceptions and return error response
     //         return Utils::errorResponse([
     //             'error' => $th->getMessage()
     //         ], 'Internal Server Error', 500);
     //     }
     // }
+    public function circleWiseMember(Request $request)
+    {
+        try {
+            $circlesData = [];
+            $circles = Circle::where('status', 'Active')->get();
+
+            foreach ($circles as $circle) {
+                // Customize the fields you want to display for the circle
+                $circleData = [
+                    'id' => $circle->id,
+                    'name' => $circle->circleName,
+                    // Add more fields as needed
+                ];
+
+                // Fetch members for the current circle
+                $circleMembers = $circle->members()->select('id', 'circleId', 'firstName', 'lastName')->get();
+
+                $membersData = [];
+
+                foreach ($circleMembers as $member) {
+                    // Fetch contact details for each member
+                    $memberContactDetails = $member->contactDetails()->select('id', 'memberId', 'mobileNo', 'email')->get()->toArray();
+
+                    $membersData[] = [
+                        'id' => $member->id,
+                        'firstName' => $member->firstName,
+                        'lastName' => $member->lastName,
+                        'contactDetails' => $memberContactDetails,
+                    ];
+                }
+
+                $circlesData[] = [
+                    'circle' => $circleData,
+                    'members' => $membersData,
+                ];
+            }
+
+            // You can return data using Utils::sendResponse for API response
+            return Utils::sendResponse($circlesData, 'Data retrieved successfully', 200);
+        } catch (\Throwable $th) {
+            // Handle exceptions and return error response
+            return Utils::errorResponse([
+                'error' => $th->getMessage()
+            ], 'Internal Server Error', 500);
+        }
+    }
 
 
 

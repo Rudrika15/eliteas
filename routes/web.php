@@ -175,6 +175,7 @@ Route::group(['middleware' => ['auth']], function () {
     // Route::get('get-external-trainers' , [TrainingController::class, 'getExternalTrainers'])->name('getExternalTrainers');
 
     Route::get('/get-trainer-details', [TrainingController::class, 'getTrainerDetails'])->name('getTrainerDetails');
+    Route::get('/get-internal-trainer-details', [TrainingController::class, 'getInternalTrainerDetails'])->name('getInternalTrainerDetails');
 
 
     Route::get("get-external-trainer-modal", function () {
@@ -299,21 +300,21 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('testimonial/destroy{id}', [TestimonialController::class, 'destroy'])->name('testimonial.destroy');
     Route::get('testimonial/archives', [TestimonialController::class, 'archives'])->name('testimonial.archives');
     Route::get('testimonial/restore/{id}', [TestimonialController::class, 'restore'])->name('testimonial.restore');
+    
+    Route::get('/trainingRegister/{trainingId?}/{trainerId?}', [HomeController::class, 'trainingRegister'])->name('training.register');
+    Route::get('/invitationPay/{personName?}/{personEmail?}/{invitedPersonFirstName?}/{invitedPersonLastName?}/{amount?}', [HomeController::class, 'invitationPay'])->name('invitationPay');
+    // Route::post('/invitationPay', [HomeController::class, 'invitationPay'])->name('invitationPay');
+    
+    
+    
+    // global search 
+    Route::get('/search', [HomeController::class, 'findMember'])->name('search');
+    Route::get('/searchQuery', [HomeController::class, 'search'])->name('searchQuery');
+    Route::get('/foundPersonDetails/{id}', [HomeController::class, 'foundPersonDetails'])->name('foundPersonDetails');
+    
+    // connections
+    Route::post('/connect', [ConnectionController::class, 'connect'])->name('connect');
+    Route::get('/connections/index', [ConnectionController::class, 'myConnections'])->name('connection.index');
+    Route::get('/connections/accept/{id}', [ConnectionController::class, 'accept'])->name('connection.accept');
+    Route::get('/connections/reject/{id}', [ConnectionController::class, 'reject'])->name('connection.reject');
 });
-
-Route::get('/trainingRegister/{trainingId?}/{trainerId?}', [HomeController::class, 'trainingRegister'])->name('training.register');
-Route::get('/invitationPay/{personName?}/{personEmail?}/{invitedPersonFirstName?}/{invitedPersonLastName?}/{amount?}', [HomeController::class, 'invitationPay'])->name('invitationPay');
-// Route::post('/invitationPay', [HomeController::class, 'invitationPay'])->name('invitationPay');
-
-
-
-// global search 
-Route::get('/search', [HomeController::class, 'findMember'])->name('search');
-Route::get('/searchQuery', [HomeController::class, 'search'])->name('searchQuery');
-Route::get('/foundPersonDetails/{id}', [HomeController::class, 'foundPersonDetails'])->name('foundPersonDetails');
-
-// connections
-Route::post('/connect', [ConnectionController::class, 'connect'])->name('connect');
-Route::get('/connections/index', [ConnectionController::class, 'myConnections'])->name('connection.index');
-Route::get('/connections/accept/{id}', [ConnectionController::class, 'accept'])->name('connection.accept');
-Route::get('/connections/reject/{id}', [ConnectionController::class, 'reject'])->name('connection.reject');

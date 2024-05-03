@@ -54,8 +54,8 @@
                             <td>
 
                                 <a href="{{ route('testimonial.restore', $testimonialData->id) }}"
-                                    onclick="return confirm('Do You Want To restore It')"
-                                    class="btn btn-success btn-sm d-flex justify-content-center align-items-center">restore</a>
+                                    onclick="return confirm('Do You Want To restore It ?')"
+                                    class="btn btn-success btn-sm d-flex justify-content-center align-items-center">Restore</a>
                             </td>
                             {{-- <td>
                         <a href="{{ route('training.edit', $testimonialData->id) }}" class="btn btn-primary btn-sm">

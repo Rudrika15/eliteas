@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\CircleMeetingMembersBusiness;
+use App\Utils\Utils;
+use App\Models\Member;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
-use App\Utils\Utils;
+use App\Models\CircleMeetingMembersBusiness;
+use App\Models\User;
 
 class CircleMeetingMemberBusinessController extends Controller
 {
@@ -57,37 +60,55 @@ class CircleMeetingMemberBusinessController extends Controller
         }
     }
 
+
     public function update(Request $request, $id)
     {
-
-
         try {
+            $id = $request->id;
+            $busGiver = CircleMeetingMembersBusiness::find($id);
 
-            $rule = array(
-                'businessGiver' => 'required',
-                'loginMember' => 'required',
-                'amount' => 'required',
-                'date' => 'required',
-            );
-
-            $validator = Validator::make($request->all(), $rule);
-
-            if ($validator->fails()) {
-                return Utils::errorResponse(['error' => $validator->errors()->first()], 'Invalid Input', 400);
+            // Check if the business giver exists
+            if (!$busGiver) {
+                return Utils::errorResponse([], 'Circle Meeting Member Business not found', 404);
             }
-            $busGiver = CircleMeetingMembersBusiness::findOrFail($id);
 
-            $busGiver->businessGiver = $request->input('businessGiver', $busGiver->businessGiver);
-            $busGiver->loginMember = $request->input('loginMember', $busGiver->loginMember);
-            $busGiver->amount = $request->input('amount', $busGiver->amount);
-            $busGiver->date = $request->input('date', $busGiver->date);
+            // Retrieve memberId using userId
+            $userId = $busGiver->businessGiverId;
+            $member = Member::where('userId', $userId)->first();
+
+            // Check if the member exists
+            if (!$member) {
+                return Utils::errorResponse([], 'Member not found', 404);
+            }
+
+            // Get the user associated with the member
+            $user = User::find($userId);
+
+            // Check if the user exists
+            if (!$user) {
+                return Utils::errorResponse([], 'User not found', 404);
+            }
+
+            // Update business giver amount and status
+            $busGiver->amount += $request->amount;
+            $busGiver->status = 'Active';
             $busGiver->save();
 
-            return Utils::sendResponse(['busGiver' => $busGiver], 'Circle Meeting Member Business Updated Successfully!', 200);
+            return Utils::sendResponse([
+                'busGiver' => $busGiver,
+                'userId' => $user->id,
+                'profilePhoto' => $member->profilePhoto,
+                'firstName' => $user->firstName,
+                'lastName' => $user->lastName,
+                'email' => $user->email
+            ], 'Circle Meeting Member Business Updated Successfully!', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
+
+
+
 
     public function delete(Request $request, $id)
     {

@@ -1,9 +1,9 @@
-<button type="button" class="btn btn-primary " data-bs-toggle="modal" data-bs-target="#internalTrainerMaster" id="iTrainerBtn">
-    Select Internal Trainer Member
+<button type="button" class="btn btn-primary " data-bs-toggle="modal" data-bs-target="#circleMaster">
+    Select Trainer Member
 </button>
 
 <!-- Modal -->
-<div class="modal fade" id="internalTrainerMaster" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+<div class="modal fade" id="circleMaster" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
     aria-labelledby="staticBackdropLabel" aria-hidden="true">
 
     <div class="modal-dialog modal-xl modal-dialog-scrollable">
@@ -14,15 +14,19 @@
                 <div class="row d-flex  justify-content-center ">
                     <div class="col-md-12 border-bottom pb-3">
                         <span class="button"></span>
-                        <h3> Internal Trainers </h3>
-                        <div class="row row-cols-4 g-4 internalTrainerDetails">
+                        {{-- <h2> Circles </h2> --}}
+                        <div class="row row-cols-4 g-4 circleMemberCards">
+
                             <!-- Circle cards will be populated dynamically via JavaScript -->
                         </div>
-                        
 
                     </div>
 
+                    <div class="col-md-12 p-3 ">
+                        <div class="circleMembersList">
 
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
@@ -43,23 +47,3 @@
 
 <link rel="stylesheet" href="{{ asset('css/circleMemberMaster.css') }}">
 <script src="{{ asset('js/trainerPerson1.js') }}"></script>
-
-<script>
-    // on load of document
-    $(document).ready(function(){
-        // when button with id trainerBtn is clicked
-        $('#iTrainerBtn').click(function(){
-            console.log('button clicked');
-            // make ajax request to get data
-            $.ajax({
-                url: "{{ route('getInternalTrainerDetails') }}",
-                type: 'GET',
-                success: function(response){
-                    // populate data in the modal
-                    $('.internalTrainerDetails').html(response.html);
-                    console.log('response', response);
-                }
-            });
-        });
-    });
-</script>

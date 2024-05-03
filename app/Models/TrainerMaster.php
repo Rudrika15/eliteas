@@ -24,4 +24,9 @@ class TrainerMaster extends Model
         return $this->belongsTo(User::class, 'userId' , 'id');
     }
 
+    public function members()
+    {
+        return $this->belongsto(Member::class, 'userId' , 'id');
+    }
+
 }
