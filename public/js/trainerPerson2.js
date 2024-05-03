@@ -1,166 +1,80 @@
 $(document).ready(function () {
-    // Function to fetch and display circle members
-    function showcircleContactMembers(circleId) {
+    function showInternalTrainerData2() {
         $.ajax({
-            url: "/get-circle-members?circleId=" + circleId,
+            url: "/get-internal-trainer-details",
             dataType: "json",
             success: function (data) {
-                if (data.length > 0) {
-                    // Display circle members in the designated area
-                    var membersList =
-                        '<div class="row row-cols-1 row-cols-md-4 g-4">';
-                    data.forEach(function (member) {
-                        // Create a unique ID for each member card
-                        var memberId = member.userId;
-                        // console.log("profile", member.profilePhoto);
-                        var profilePhotoUrl =
-                            "../ProfilePhoto/" + member.profilePhoto;
-
-                        // Construct the HTML for the member card
-                        membersList += '<div class="col">';
-                        membersList +=
-                            '<div id="' +
-                            memberId +
-                            '" class="card h-90 member-contact-card2" data-member-id="' +
-                            member.userId +
-                            '">';
-                        membersList +=
-                            '<div class="d-flex align-items-center justify-content-center bg-light rounded-circle mx-auto" style="width: 100px; height: 90px;">';
-                        membersList +=
-                            '<img src="' +
-                            profilePhotoUrl +
-                            '" class="card-img-top rounded-circle" alt="' +
-                            (member.firstName && member.lastName
-                                ? member.firstName + " " + member.lastName
-                                : "Member") +
-                            '" style="width: 80px; height: 80px;">';
-                        membersList += "</div>";
-                        membersList += '<div class="card-body text-center">';
-                        membersList +=
-                            '<h5 class="card-title">' +
-                            (member.title ? member.title + " " : "") +
-                            (member.firstName ? member.firstName + " " : "") +
-                            (member.lastName ? member.lastName : "") +
-                            "</h5>";
-                        membersList +=
-                            '<p class="card-text email">' +
-                            (member.user && member.user.email
-                                ? member.user.email
-                                : "-") +
-                            "</p>";
-                        membersList +=
-                            '<p class="card-text mobile">' +
-                            (member.contact && member.contact.mobileNo
-                                ? member.contact.mobileNo
-                                : "-") +
-                            "</p>";
-                        membersList += "<hr>";
-                        membersList +=
-                            '<p class="card-text">' +
-                            (member.companyName ? member.companyName : "-") +
-                            "</p>";
-                        membersList += "</div></div></div>";
+                if (data && data.length > 0) {
+                    var internalTrainerDetails2 = "";
+                    data.forEach(function (trainer) {
+                        console.log(trainer);
+                        if (trainer.users) {
+                            // Check if 'users' property exists
+                            internalTrainerDetails2 +=
+                                '<div class="card mb-3 mr-3 text-center trainer-card" data-trainer-id="' +
+                                trainer.userId + // Assuming 'id' is the user's ID in TrainerMaster model
+                                '">' +
+                                '<h5 class="card-title" style="font-size:20px; color:1D2856;">' +
+                                trainer.users.firstName + // Assuming 'first_name' and 'last_name' are fields in the 'users' relationship
+                                " " +
+                                trainer.users.lastName +
+                                "</h5>" +
+                                '<p class="card-text lead email" style="font-size:20px; color:grey;">' +
+                                trainer.users.email +
+                                "</p>" +
+                                '<p class="card-text lead mobile" style="font-size:20px; color:grey;">' +
+                                trainer.members.mobileNo +
+                                "</p>" +
+                                "</div>";
+                            console.log(internalTrainerDetails2);
+                        } else {
+                            console.error(
+                                "No user data found for trainer:",
+                                trainer
+                            );
+                        }
                     });
-                    membersList += "</div>";
-                    $(".circleContactMembers").html(membersList);
-                    console.log("memberList", data);
-                    // Event listener for member card click
-                    $(".member-contact-card2").click(function () {
-                        var memberId = $(this).data("member-id");
-                        var memberName = $(this).find(".card-title").text();
-                        var memberEmail = $(this).find(".email").text();
-                        var memberContact = $(this).find(".mobile").text();
 
-                        $("#trainerId2").val(memberId);
-                        $("#trainerName2").val(memberName);
-                        $("#trainerEmail2").val(memberEmail);
-                        $("#trainerContact2").val(memberContact);
+                    // Update modal content
+                    $(".internalTrainerDetails2").html(internalTrainerDetails2);
+                    console.log(internalTrainerDetails2);
+                    // Handle click event on trainer-card
+                    $(".trainer-card").click(function () {
+                        var trainerId = $(this).data("trainer-id");
+                        var trainerName2 = $(this).find(".card-title").text();
+                        var trainerEmail2 = $(this).find(".email").text();
+                        var contactNo2 = $(this).find(".mobile").text();
 
-                        console.log(
-                            "trainerId2",
-                            $("#trainerName2").val()
-                        );
-                        console.log("trainerName2", memberName);
+                        $("#trainerId2").val(trainerId);
+                        $("#trainerName2").val(trainerName2);
+                        $("#trainerEmail2").val(trainerEmail2);
+                        $("#contactNo2").val(contactNo2);
 
                         // Close the modal
-                        $("#tranerPerson2").modal("hide");
+                        $("#internalTrainerMaster2").modal("hide");
                     });
+
+                    // Show the modal
+                    $("#internalTrainerMaster2").modal("show");
                 } else {
-                    $("#circleContactMembers").html("<p>No members found.</p>");
+                    $(".internalTrainerDetails2").html(
+                        "<p>Trainer details not found.</p>"
+                    );
+                    $("#internalTrainerMaster2").modal("show");
                 }
+            },
+            error: function (xhr, status, error) {
+                console.error("Error fetching trainer details:", error);
+                $(".internalTrainerDetails2").html(
+                    "<p>Error fetching trainer details.</p>"
+                );
+                $("#internalTrainerMaster2").modal("show");
             },
         });
     }
 
-    // Function to fetch and display user's circles
-    function showUserCircles() {
-        $.ajax({
-            url: "/get-circle",
-            dataType: "json",
-            success: function (data) {
-                var circles = data.circles;
-                var userCircleName = data.userCircleName;
-
-                // Find the user's circle and move it to the first position in the array
-                var userCircle = null;
-                circles.forEach(function (circle, index) {
-                    if (circle.circleName === userCircleName) {
-                        console.log("circleMy", circle);
-                        userCircle = circle;
-                        circles.splice(index, 1); // Remove the user's circle from the array
-                    }
-                });
-                if (userCircle) {
-                    // Add the 'active' class directly to the user's circle card
-                    userCircle.isActive = true;
-                    circles.unshift(userCircle); // Add the user's circle to the beginning of the array
-                }
-
-                // Populate cards with circle data
-                var circleMemberCards = "";
-                circles.forEach(function (circle) {
-                    var initial = circle.circleName.charAt(0).toUpperCase(); // Get the first character and capitalize it
-                    var isActive = circle.isActive ? "active" : ""; // Check if the circle is the user's circle
-
-                    circleMemberCards +=
-                        '<div class="col-md-3" style="cursor: pointer">';
-                    circleMemberCards +=
-                        '<div class="border p-2 text-center circle-contact-card ' +
-                        isActive +
-                        '" data-circle-id="' +
-                        circle.id +
-                        '">';
-                    circleMemberCards += '<div class=" mb-3">';
-                    circleMemberCards +=
-                        '<div class="circle-image">' + initial + "</div>"; // Placeholder image using first initial
-                    circleMemberCards +=
-                        '<h5 class="text-center">' +
-                        circle.circleName +
-                        "</h5>";
-                    circleMemberCards += "</div></div></div>";
-                });
-                $(".circleContactCards").html(circleMemberCards);
-
-                $(".circle-contact-card").click(function () {
-                    var circleId = $(this).data("circle-id");
-
-                    showcircleContactMembers(circleId);
-                });
-
-                if (userCircle) {
-                    showcircleContactMembers(userCircle.id);
-                }
-            },
-        });
-    }
-
-    // Call the function to show user's circles when the page loads
-    showUserCircles();
-
-    $(document).on("click", ".circle-contact-card", function () {
-        // Remove 'active' class from all circle cards
-        $(".circle-contact-card2").removeClass("active");
-        // Add 'active' class to the clicked circle card
-        $(this).addClass("active");
+    // Trigger the function when the button is clicked
+    $("button[data-bs-target='#internalTrainerMaster2']").click(function () {
+        showInternalTrainerData2();
     });
 });

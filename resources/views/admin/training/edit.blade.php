@@ -53,8 +53,7 @@
                 <!-- Member selection -->
                 <div class="member-list" id="memberListDropdownMember">
                     @include('TrainerPerson1')
-                    <input type="hiddedn" name="trainerId" id="trainerId"
-                        value="{{$training->trainersTrainings->userId}}">
+                    <input type="hiddedn" name="trainerId" id="trainerId" value="{{$training->trainers[0]->userId}}">
                     <input type="text" class="form-control mt-3" id="trainerName" name="memberName"
                         placeholder="Select Trainer Internal">
                 </div>
@@ -94,7 +93,7 @@
                 <div class="member-list" id="memberListDropdown" style="display:none;">
                     @include('TrainerPerson2')
                     <input type="hiddedn" name="trainerId2" id="trainerId2"
-                        value=" {{$training->trainersTrainings->userId}}">
+                        @if($training->trainers[1])value="{{$training->trainers[1]->userId}}" @endif>
                     <input type="text" class="form-control mt-3" id="trainerName2" name="trainerNameInternal"
                         placeholder="Trainer Name Internal">
                 </div>

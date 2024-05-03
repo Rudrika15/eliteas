@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\CircleMeetingMembersBusiness;
+use App\Utils\Utils;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
-use App\Utils\Utils;
+use App\Models\CircleMeetingMembersBusiness;
 
 class CircleMeetingMemberBusinessController extends Controller
 {
@@ -59,28 +60,28 @@ class CircleMeetingMemberBusinessController extends Controller
 
     public function update(Request $request, $id)
     {
-
-
         try {
 
-            $rule = array(
-                'businessGiver' => 'required',
-                'loginMember' => 'required',
-                'amount' => 'required',
-                'date' => 'required',
-            );
+            // $rule = array(
+                
+            // );
 
-            $validator = Validator::make($request->all(), $rule);
+            // $validator = Validator::make($request->all(), $rule);
 
-            if ($validator->fails()) {
-                return Utils::errorResponse(['error' => $validator->errors()->first()], 'Invalid Input', 400);
-            }
-            $busGiver = CircleMeetingMembersBusiness::findOrFail($id);
+            // if ($validator->fails()) {
+            //     return Utils::errorResponse(['error' => $validator->errors()->first()], 'Invalid Input', 400);
+            // }
+            $id = $request->id;
+            $busGiver = CircleMeetingMembersBusiness::find($id);
 
-            $busGiver->businessGiver = $request->input('businessGiver', $busGiver->businessGiver);
-            $busGiver->loginMember = $request->input('loginMember', $busGiver->loginMember);
-            $busGiver->amount = $request->input('amount', $busGiver->amount);
-            $busGiver->date = $request->input('date', $busGiver->date);
+            // return $busGiver;
+            // $busGiver->memberId = $request->memberId;
+            // $busGiver->businessGiverId = $request->businessGiverId;
+            // $busGiver->loginMemberId = Auth::user()->id;
+            $busGiver->amount += $request->amount;
+            // $busGiver->date = $request->date;
+            $busGiver->status = 'Active';
+
             $busGiver->save();
 
             return Utils::sendResponse(['busGiver' => $busGiver], 'Circle Meeting Member Business Updated Successfully!', 200);

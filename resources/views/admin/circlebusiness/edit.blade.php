@@ -55,7 +55,7 @@
                 <div class="">
 
                     <div class="form-floating mt-6">
-                        <input type="hidden" name="businessGiverId" id=""
+                        <input type="hidden" name="businessGiverId" id="businessGiverId"
                             value="{{ $busGiver->businessGiverId }}">
                         <input type="text" class="form-control @error('businessGiver') is-invalid @enderror"
                             id="businessGiver" name="businessGiver"
