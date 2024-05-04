@@ -13,7 +13,6 @@
 </div>
 @endif
 
-
 @if (Session::has('error'))
 <div class="alert alert-danger alert-dismissible" role="alert">
     <button type="button" class="close" data-dismiss="alert">
@@ -23,6 +22,7 @@
 </div>
 @endif
 
+
 <div class="card">
     <div class="card-body d-flex justify-content-between align-items-center">
         <h5 class="card-title">Edit Training</h5>
@@ -31,8 +31,9 @@
 
     <!-- Floating Labels Form -->
     <form class="m-3 needs-validation" id="trainingForm" enctype="multipart/form-data" method="post"
-        action="{{ route('training.update') }}" novalidate>
+        action="{{ route('training.update', $training->id) }}" novalidate>
         @csrf
+        <input type="hidden" name="id" value="{{ $training->id }}">
 
         {{-- Trainer 1 --}}
         <h3><b>Trainer 1</b></h3>
@@ -42,34 +43,35 @@
                 <!-- Trainer selection -->
                 <div class="form-check">
                     <input class="form-check-input trainer-radio" type="radio" name="groupMember" id="internalMember"
-                        value="internalMember" checked>
+                        value="internalMember" {{ $training->trainers[0]->type == 'internalMember' ? 'checked' : '' }}>
                     <label class="form-check-label" for="internalMember">Internal</label>
                 </div>
                 <div class="form-check">
                     <input class="form-check-input trainer-radio" type="radio" name="groupMember" id="externalMember"
-                        value="externalMember">
+                        value="externalMember" {{ $training->trainers[0]->type == 'externalMember' ? '' : 'checked' }}>
                     <label class="form-check-label" for="externalMember">External</label>
                 </div>
 
                 <!-- Member selection -->
                 <div class="member-list" id="memberListDropdownMember">
                     @include('TrainerPerson1')
-                    <input type="hiddedn" name="trainerId" id="trainerId" value="{{$training->trainers[0]->userId}}">
+                    <input type="hiddedn" name="trainerId" id="trainerId" @if($training->trainers[0] && $training->trainers[0]->type ==
+                    'internalMember') value="{{$training->trainers[0]->userId}}" @endif>
                     <input type="text" class="form-control mt-3" id="trainerName" name="memberName"
-                        placeholder="Select Trainer Internal">
+                        placeholder="Select Trainer Internal" readonly>
                 </div>
                 <div class="external-trainer-list" id="memberListInputMember" style="display:none;">
                     @include('TrainerPerson1External')
                     <input type="hiddden" name="externalTrainerId" id="externalTrainerId"
-                        value="{{$training->trainersTrainings->userId}}">
+                        value="{{$training->trainers[0]->userId}}">
                     <input type="text" class="form-control mt-3" id="trainerNameExternal" name="trainerNameExternal"
-                        placeholder="Trainer Name External">
+                        placeholder="Trainer Name External" value="{{$training->trainers[0]->user->firstName}} {{$training->trainers[0]->user->lastName}}" readonly>
                 </div>
 
                 <!-- Contact details -->
                 <input type="text" class="form-control mt-3" id="trainerContact" name="contactNo"
-                    placeholder="Contact No">
-                <input type="text" class="form-control mt-3" id="trainerEmail" name="email" placeholder="Email">
+                    placeholder="Contact No" readonly value="{{$training->trainers[0]->user->contactNo}}">
+                <input type="text" class="form-control mt-3" id="trainerEmail" name="email" placeholder="Email" value="{{$training->trainers[0]->user->email}}" readonly>
             </div>
         </div>
 
@@ -94,22 +96,23 @@
                 <div class="member-list" id="memberListDropdown" style="display:none;">
                     @include('TrainerPerson2')
                     <input type="hiddedn" name="trainerId2" id="trainerId2"
-                        @if($training->trainers[1])value="{{$training->trainers[1]->userId}}" @endif>
+                        @if($training->trainers[1] && $training->trainers[1]->type == 'internalMember') value="{{$training->trainers[1]->userId}}" >
                     <input type="text" class="form-control mt-3" id="trainerName2" name="trainerNameInternal"
-                        placeholder="Trainer Name Internal">
+                        placeholder="Trainer Name Internal" value=" {{$training->trainers[1]->user->firstName}} {{$training->trainers[1]->user->lastName}}" readonly @endif>
                 </div>
                 <div class="member-list" id="memberListInput" style="display:none;">
                     @include('TrainerPerson2External')
                     <input type="hiddden" name="externalTrainerId2" id="externalTrainerId2"
-                        value="{{$training->trainersTrainings->userId}}">
+                        value="{{$training->trainers[1]->userId}}">
                     <input type="text" class="form-control mt-3" id="trainerNameExternal2" name="trainerNameExternal2"
-                        placeholder="Trainer Name External">
+                        placeholder="Trainer Name External" value="{{$training->trainers[1]->user->firstName}} {{$training->trainers[1]->user->lastName}}" readonly>
                 </div>
 
                 <!-- Contact details -->
                 <input type="text" class="form-control mt-3" id="trainerContact2" name="contactNo2"
-                    placeholder="Contact No">
-                <input type="text" class="form-control mt-3" id="trainerEmail2" name="email2" placeholder="Email">
+                    placeholder="Contact No" readonly value="{{$training->trainers[1]->user->contactNo}}">
+                <input type="text" class="form-control mt-3" id="trainerEmail2" name="email2" placeholder="Email"
+                    value="{{$training->trainers[1]->user->email}}" readonly>
             </div>
         </div>
 
@@ -203,6 +206,48 @@
 
 
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+<script>
+    $(document).ready(function() {
+            // Show the internal portion by default
+            $("#memberListDropdown").show();
+
+            $('input[type="radio"]').show(function() {
+                var inputValue = $(this).attr("id");
+                if (inputValue === "internal") {
+                    $("#memberListDropdown").show();
+                    $("#memberListInput").hide();
+                    // $('.contactName').val('');
+                    // $('.contactEmail').val('');
+                } else if (inputValue === "external") {
+                    $("#memberListDropdown").hide();
+                    $("#memberListInput").show();
+                }
+            });
+        });
+</script>
+
+<script>
+    $(document).ready(function() {
+            // Show the internal portion by default
+            $("#memberListDropdownMember").show();
+
+            $('input[type="radio"]').show(function() {
+                var inputValue = $(this).attr("id");
+                if (inputValue === "internalMember") {
+                    $("#memberListDropdownMember").show();
+                    $("#memberListInputMember").hide();
+                    // $('.contactName').val('');
+                    // $('.contactEmail').val('');
+                } else if (inputValue === "externalMember") {
+                    $("#memberListDropdownMember").hide();
+                    $("#memberListInputMember").show();
+                }
+            });
+        });
+</script>
 
 <script type="text/javascript">
     var path = "{{ route('getMemberForRef') }}";
@@ -238,7 +283,7 @@
 
 
 {{-- toggle between internal and external --}}
-
+{{-- 
 <script>
     $(document).ready(function() {
             // Show the internal portion by default
@@ -277,6 +322,6 @@
                 }
             });
         });
-</script>
+</script> --}}
 
 @endsection

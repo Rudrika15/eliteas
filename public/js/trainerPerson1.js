@@ -23,7 +23,7 @@ $(document).ready(function () {
                                 trainer.users.email +
                                 "</p>" +
                                 '<p class="card-text lead mobile" style="font-size:20px; color:grey;">' +
-                                trainer.members.mobileNo +
+                                trainer.users.contactNo +
                                 "</p>" +
                                 "</div>";
                             console.log(internalTrainerDetails);
@@ -50,7 +50,7 @@ $(document).ready(function () {
                         $("#trainerId").val(trainerId);
                         $("#trainerName").val(trainerName);
                         $("#trainerEmail").val(trainerEmail);
-                        $("#contactNo").val(contactNo);
+                        $("#trainerContact").val(contactNo);
 
                         // Close the modal
                         $("#internalTrainerMaster").modal("hide");

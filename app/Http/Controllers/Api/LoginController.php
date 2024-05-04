@@ -73,26 +73,34 @@ class LoginController extends Controller
     {
         $user = Auth::user();
 
-        // Update only members table data of the logged-in user
+
         $member = Member::where('userId', $user->id)->first();
 
         if (!$member) {
             return Utils::errorResponse(['error' => 'Member not found'], 404);
         }
 
-        // Get the fields that have new values in the request
         $updatedFields = array_filter($request->all());
 
-        // Update only the fields that have new values
+        if ($request->profilePhoto) {
+            $member->profilePhoto = time() . '.' . $request->profilePhoto->extension();
+            $request->profilePhoto->move(public_path('ProfilePhoto'),  $member->profilePhoto);
+        }
+
+        if ($request->companyLogo) {
+            $member->companyLogo = time() . '.' . $request->companyLogo->extension();
+            $request->companyLogo->move(public_path('CompanyLogo'),  $member->companyLogo);
+        }
+
         foreach ($updatedFields as $key => $value) {
             $member->{$key} = $value;
         }
 
-        // Save the updated member
         $member->save();
 
         return Utils::sendResponse([$member, 'message' => 'Your Profile data updated successfully'], 200);
     }
+    
 
 
     public function billingAddressUpdate(Request $request)

@@ -52,9 +52,9 @@
                     <td>{{$trainerData->status}}</td>
 
                     <td>
-                        <a href="{{ route('trainer.edit', $trainerData->id) }}" class="btn btn-primary btn-sm">
+                        {{-- <a href="{{ route('trainer.edit', $trainerData->id) }}" class="btn btn-primary btn-sm">
                             <i class="bi bi-pen"></i>
-                        </a>
+                        </a> --}}
             
                         <a href="{{ route('trainer.delete', $trainerData->id) }}" class="btn btn-danger btn-sm">
                             <i class="bi bi-trash"></i>

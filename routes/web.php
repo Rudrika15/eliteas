@@ -111,7 +111,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('trainer/create', [TrainerMasterController::class, 'create'])->name('trainer.create');
     Route::post('trainer/store', [TrainerMasterController::class, 'store'])->name('trainer.store');
     Route::get('trainer/edit/{id?}', [TrainerMasterController::class, 'edit'])->name('trainer.edit');
-    Route::post('trainer/update', [TrainerMasterController::class, 'update'])->name('trainer.update');
+    Route::post('trainer/update{id}', [TrainerMasterController::class, 'update'])->name('trainer.update');
     Route::get('trainer/delete/{id?}', [TrainerMasterController::class, 'delete'])->name('trainer.delete');
 
     Route::get('/training/index', [TrainingController::class, 'index'])->name('training.index');
@@ -119,7 +119,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('training/create', [TrainingController::class, 'create'])->name('training.create');
     Route::post('training/store', [TrainingController::class, 'store'])->name('training.store');
     Route::get('training/edit/{id?}', [TrainingController::class, 'edit'])->name('training.edit');
-    Route::post('training/update', [TrainingController::class, 'update'])->name('training.update');
+    Route::post('training/update/{id}', [TrainingController::class, 'update'])->name('training.update');
     Route::get('training/delete/{id?}', [TrainingController::class, 'delete'])->name('training.delete');
 
     Route::get('/circletype/index', [CircleTypeController::class, 'index'])->name('circletype.index');

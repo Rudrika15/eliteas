@@ -121,17 +121,12 @@ class TrainerMasterController extends Controller
     ]);
 
     try {
+        
         // Find the user by ID
-        $user = User::find($id);
+        $user = User::find($request->trainerId);
         if (!$user) {
             return redirect()->back()->with('error', 'User not found.');
         }
-
-        // Update the user details
-        $user->firstName = $request->firstName;
-        $user->lastName = $request->lastName;
-        $user->email = $request->email;
-        $user->save();
 
         // Find the TrainerMaster by user ID
         $trainer = TrainerMaster::where('userId', $user->id)->first();

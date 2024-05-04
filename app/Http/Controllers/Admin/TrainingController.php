@@ -112,75 +112,43 @@ class TrainingController extends Controller
         }
     }
 
-    // public function update(Request $request, $id)
-    // {
-    //     return $request;
-
-    //     // Validate the incoming request
-    //     $this->validate($request, [
-    //         'title' => 'required',
-    //         'fees' => 'required|numeric',
-    //         'type' => 'required',
-    //         'date' => 'required|date',
-    //         'time' => 'required',
-    //         'duration' => 'required',
-    //     ]);
-
-    //     // Find the training record to update
-    //     $training = Training::findOrFail($id);
-
-    //     // Update Training record
-    //     $training->title = $request->title;
-    //     $training->fees = $request->fees;
-    //     $training->type = $request->type;
-    //     $training->meetingLink = $request->meetingLink;
-    //     $training->venue = $request->venue;
-    //     $training->date = $request->date;
-    //     $training->time = $request->time;
-    //     $training->duration = $request->duration;
-    //     $training->note = $request->note;
-    //     $training->trainerId = $request->trainerId ? $request->trainerId : ($request->trainerId2 ? $request->trainerId2 : null); // Internal Trainer 1 ID
-    //     $training->externalTrainerId = $request->externalTrainerId ? $request->externalTrainerId : ($request->externalTrainerId2 ? $request->externalTrainerId2 : null); // External Trainer 1 ID
-    //     $training->save();
-
-    //     // Redirect the user after successful update
-    //     return redirect()->route('training.index')->with('success', 'Training details updated successfully.');
-    // }
-
-
 
     public function update(Request $request, $id)
     {
         // Validate the incoming request
-        $request->validate([]);
+        $validatedData = $request->validate([
 
-        // Find the training record
+        ]);
+
+        // Update the fields with validated data
         $training = Training::findOrFail($id);
+        $training->update($validatedData);
 
-        // Update Training record
-        $training->title = $request->title;
-        $training->fees = $request->fees;
-        $training->type = $request->type;
-        $training->meetingLink = $request->meetingLink;
-        $training->venue = $request->venue;
-        $training->date = $request->date;
-        $training->time = $request->time;
-        $training->duration = $request->duration;
-        $training->note = $request->note;
-        $training->save();
+        // Add trainers to the Training_trainers table if present in the request
+        $trainers = [
+            'trainerId' => $request->input('trainerId'),
+            'externalTrainerId' => $request->input('externalTrainerId'),
+            'trainerId2' => $request->input('trainerId2'),
+            'externalTrainerId2' => $request->input('externalTrainerId2'),
+        ];
 
-        // Update trainers for the training
-        $trainerIds = $request->input('trainerIds', []);
-        // You might want to clear existing trainers for this training before updating
-        $training->trainers()->detach();
-        foreach ($trainerIds as $trainerId) {
-            // Attach each trainer to the training
-            $training->trainers()->attach($trainerId);
+        // Delete all trainers of the training
+        DB::table('trainings_trainers')->where('trainingId', $training->id)->delete();
+
+        foreach ($trainers as $key => $value) {
+            if (!is_null($value)) {
+                // Insert the trainer into the table
+                DB::table('trainings_trainers')->insert([
+                    ['trainingId' => $training->id, 'userId' => $value, 'status' => 'Active', 'created_at' => now(), 'updated_at' => now()],
+                ]);
+            }
         }
 
-        // Redirect the user after successful update
+        // Redirect the user after successful submission
         return redirect()->route('training.index')->with('success', 'Training details updated successfully.');
     }
+
+
 
 
 
