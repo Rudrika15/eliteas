@@ -53,7 +53,7 @@
                 <!-- Member selection -->
                 <div class="member-list" id="memberListDropdownMember">
                     @include('InternalTrainer')
-                    <input type="hiddden" name="trainerId" id="trainerId">
+                    <input type="hidden" name="trainerId" id="trainerId">
                     <input type="text" class="form-control mt-3" id="trainerName" name="memberName"
                         placeholder="Select Member" readonly>
                     <input type="text" class="form-control mt-3" id="trainerContact" name="contactNo"

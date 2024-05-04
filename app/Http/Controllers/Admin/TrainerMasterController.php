@@ -72,6 +72,7 @@ class TrainerMasterController extends Controller
                 $trainer = new TrainerMaster();
                 $trainer->userId = $user->id;
                 $trainer->type = $request->type; // Change from 'group' to 'type'
+                $trainer->externalMemberContact = $request->contactNo;
                 $trainer->status = 'Active';
                 $trainer->save();
             } else if ($request->type == 'internalMember') {

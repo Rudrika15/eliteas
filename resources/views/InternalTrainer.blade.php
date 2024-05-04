@@ -46,4 +46,4 @@
 
 
 <link rel="stylesheet" href="{{ asset('css/circleMemberMaster.css') }}">
-<script src="{{ asset('js/trainerPerson1.js') }}"></script>
+<script src="{{ asset('js/trainerMaster.js') }}"></script>
