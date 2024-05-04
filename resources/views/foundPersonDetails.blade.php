@@ -230,8 +230,8 @@
 
     <title>UBN - Profile Details</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" rel="stylesheet">
-
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" />
     <link href="{{ asset('vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet" />
     <style type="text/css">
         body {
@@ -521,128 +521,413 @@
 
                         </div>
                     </div>
-                    <div class="row gutters-sm">
-                        <div class="col-sm-6 mb-3">
-                            <div class="card h-100">
-                                <div class="card-body ">
-                                    <h4 class="card-title text-orange text-center">My Bios</h4>
-                                    <hr>
-                                    <ul class="list-unstyled">
-                                        <li><b> Years In Business = </b>
-                                            {{ $member->topsProfile->yearsInBusiness ?? '-' }}
-                                        </li>
 
-                                        <li><b> Previous Types Of Jobs = </b>
-                                            {{ $member->topsProfile->prevJobs ?? '-' }}
-                                        </li>
-                                        <li><b> Spouse = </b> {{ $member->topsProfile->spouse ?? '-' }}</li>
-                                        <li><b> Childrens = </b> {{ $member->topsProfile->children ?? '-' }}</li>
-                                        <li><b> Pets = </b> {{ $member->topsProfile->pets ?? '-' }}</li>
-                                        <li><b> Hobbies & Interests = </b>
-                                            {{ $member->topsProfile->hobbiesInterests ?? '-' }}
-                                        </li>
-                                        <li><b> City Of Residence = </b> {{ $member->topsProfile->cityofRes ?? '-' }}
-                                        </li>
-                                        <li><b> Years In City = </b> {{ $member->topsProfile->yearsInCity ?? '-' }}
-                                        </li>
-                                        <li><b> My Burning Desire = </b>
-                                            {{ $member->topsProfile->myBurningDesire ?? '-' }}
-                                        </li>
-                                        <li><b> Something No One Here Knows About Me = </b>
-                                            {{ $member->topsProfile->dontKnowAboutMe ?? '-' }}
-                                        </li>
-                                        <li><b> My Key To Success = </b>
-                                            {{ $member->topsProfile->mKeyToSuccess ?? '-' }}
-                                        </li>
-                                    </ul>
 
+                    {{-- <div class="row gutters-sm"> --}}
+                    {{-- <div class="col-lg-6 col-sm-6 mb-3"> --}}
+                    {{-- <div class="accordion " id="accordionExample">
+                        <!-- Accordion Item 1 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingOne">
+                                <button class="accordion-button collapsed shadow-none" type="button"
+                                    data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true"
+                                    aria-controls="collapseOne">
+                                    My Bios
+                                </button>
+                            </h2>
+                            <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne"
+                                data-bs-parent="#accordionExample">
+                                <div class="accordion-body">
+                                    <div class="card shadow">
+                                        <div class="card-body">
+                                            <h4 class="card-title text-orange text-center">My Bios</h4>
+                                            <hr>
+                                            <ul class="list-unstyled">
+                                                <li><b> Years In Business : </b>
+                                                    {{ $member->topsProfile->yearsInBusiness ?? '-' }}</li>
+                                                <hr>
+                                                <li><b> Previous Types Of Jobs : </b>
+                                                    {{ $member->topsProfile->prevJobs ?? '-' }}</li>
+                                                <hr>
+                                                <li><b> Spouse : </b> {{ $member->topsProfile->spouse ?? '-' }}</li>
+                                                <hr>
+                                                <li><b> Childrens : </b> {{ $member->topsProfile->children ?? '-' }}
+                                                </li>
+                                                <hr>
+                                                <li><b> Pets : </b> {{ $member->topsProfile->pets ?? '-' }}</li>
+                                                <hr>
+                                                <li><b> Hobbies & Interests : </b>
+                                                    {{ $member->topsProfile->hobbiesInterests ?? '-' }}</li>
+                                                <hr>
+                                                <li><b> City Of Residence : </b>
+                                                    {{ $member->topsProfile->cityofRes ?? '-' }}</li>
+                                                <hr>
+                                                <li><b> Years In City : </b>
+                                                    {{ $member->topsProfile->yearsInCity ?? '-' }}</li>
+                                                <hr>
+                                                <li><b> My Burning Desire : </b>
+                                                    {{ $member->topsProfile->myBurningDesire ?? '-' }}</li>
+                                                <hr>
+                                                <li><b> Something No One Here Knows About Me : </b>
+                                                    {{ $member->topsProfile->dontKnowAboutMe ?? '-' }}</li>
+                                                <hr>
+                                                <li><b> My Key To Success : </b>
+                                                    {{ $member->topsProfile->mKeyToSuccess ?? '-' }}</li>
+                                                <hr>
+                                            </ul>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-sm-6 mb-3">
-                            <div class="card h-100">
-                                <div class="card-body">
-                                    <h4 class="card-title text-orange text-center">Tops Profile</h4>
-                                    <hr>
-                                    <ul class="list-unstyled">
-                                        <li><b> Ideal Referral = </b> {{ $member->topsProfile->idealRef ?? '-' }} </li>
-                                        <li><b> Top Product = </b> {{ $member->topsProfile->topProduct ?? '-' }}</li>
-                                        <li><b> Top Problem Solved = </b>
-                                            {{ $member->topsProfile->topProblemSolved ?? '-' }}
-                                        </li>
-                                        <li><b> My Fav. BNI Story = </b>
-                                            {{ $member->topsProfile->myFavBniStory ?? '-' }}
-                                        </li>
-                                        <li><b> My Ideal Ref. Partner = </b>
-                                            {{ $member->topsProfile->myIdealRefPartner ?? '-' }}</li>
-                                    </ul>
 
-                                    <h4 class="card-title text-orange text-center">Gains Profile</h4>
-                                    <hr>
-                                    <ul class="list-unstyled">
-                                        <li><b> Goals = </b> {{ $member->goals ?? '-' }}</li>
-                                        <li><b> Accomplishment = </b> {{ $member->accomplishment ?? '-' }}</li>
-                                        <li><b> Interests = </b> {{ $member->interests ?? '-' }}</li>
-                                        <li><b> Networks = </b> {{ $member->networks ?? '-' }}</li>
-                                        <li><b> Skills = </b> {{ $member->skills ?? '-' }}</li>
-                                    </ul>
+                        <!-- Accordion Item 2 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingTwo">
+                                <button class="accordion-button collapsed shadow-none" type="button"
+                                    data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false"
+                                    aria-controls="collapseTwo">
+                                    Tops Profile
+                                </button>
+                            </h2>
+                            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo"
+                                data-bs-parent="#accordionExample">
+                                <div class="accordion-body">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h4 class="card-title text-orange text-center">Tops Profile</h4>
+                                            <hr>
+                                            <ul class="list-unstyled">
+                                                <li><b> Ideal Referral : </b>
+                                                    {{ $member->topsProfile->idealRef ?? '-' }}</li>
+                                                <li><b> Top Product : </b>
+                                                    {{ $member->topsProfile->topProduct ?? '-' }}</li>
+                                                <li><b> Top Problem Solved : </b>
+                                                    {{ $member->topsProfile->topProblemSolved ?? '-' }}</li>
+                                                <li><b> My Fav. BNI Story : </b>
+                                                    {{ $member->topsProfile->myFavBniStory ?? '-' }}</li>
+                                                <li><b> My Ideal Ref. Partner : </b>
+                                                    {{ $member->topsProfile->myIdealRefPartner ?? '-' }}</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
+                        <!-- Accordion Item 3 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingThree">
+                                <button class="accordion-button collapsed shadow-none" type="button"
+                                    data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false"
+                                    aria-controls="collapseThree">
+                                    Gains Profile
+                                </button>
+                            </h2>
+                            <div id="collapseThree" class="accordion-collapse collapse"
+                                aria-labelledby="headingThree" data-bs-parent="#accordionExample">
+                                <div class="accordion-body">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h4 class="card-title text-orange text-center">Gains Profile</h4>
+                                            <hr>
+                                            <ul class="list-unstyled">
+                                                <li><b> Goals : </b> {{ $member->goals ?? '-' }}</li>
+                                                <li><b> Accomplishment : </b> {{ $member->accomplishment ?? '-' }}</li>
+                                                <li><b> Interests : </b> {{ $member->interests ?? '-' }}</li>
+                                                <li><b> Networks : </b> {{ $member->networks ?? '-' }}</li>
+                                                <li><b> Skills : </b> {{ $member->skills ?? '-' }}</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div> --}}
+                    <div class="card">
+                        <div class="card-body">
+                            <!-- Nav tabs -->
+                            <ul class="nav nav-tabs" id="myTabs" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active text-blue" id="bios-tab" data-bs-toggle="tab"
+                                        data-bs-target="#bios" type="button" role="tab" aria-controls="bios"
+                                        aria-selected="true">My Bios</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link text-blue" id="tops-tab" data-bs-toggle="tab"
+                                        data-bs-target="#tops" type="button" role="tab" aria-controls="tops"
+                                        aria-selected="false">Tops Profile</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link text-blue" id="gains-tab" data-bs-toggle="tab"
+                                        data-bs-target="#gains" type="button" role="tab" aria-controls="gains"
+                                        aria-selected="false">Gains Profile</button>
+                                </li>
+                            </ul>
+                            <!-- Tab panes -->
+                            <div class="tab-content" id="myTabsContent">
+                                <div class="tab-pane fade active show " id="bios" role="tabpanel"
+                                    aria-labelledby="bios-tab">
+                                    <!-- Bios Content -->
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <!-- Your content for My Bios goes here -->
+                                            <h4 class="card-title text-orange text-center">My Bios</h4>
+                                            <hr>
+                                            <ul class="list-unstyled">
+                                                <div class="row ">
+                                                    <div class="col">
+                                                        <li><b> Years In Business </b>
+                                                            <p class= "text-secondary">
+                                                                {{ $member->topsProfile->yearsInBusiness ?? '-' }}
+                                                            </p>
+                                                        </li>
+                                                        <hr>
+                                                        <li><b> Previous Types Of Jobs </b>
+                                                            <p class= "text-secondary">
+                                                                {{ $member->topsProfile->prevJobs ?? '-' }}
+                                                            </p>
+                                                        </li>
+                                                        <hr>
+                                                        <li><b> Spouse </b>
+                                                            <p class= "text-secondary">
+                                                                {{ $member->topsProfile->spouse ?? '-' }}
+                                                            </p>
+                                                        </li>
+                                                        <hr>
+                                                        <li><b> Childrens </b>
+                                                            <p class= "text-secondary">
+                                                                {{ $member->topsProfile->children ?? '-' }}
+                                                            </p>
+                                                        </li>
+                                                        <hr>
+                                                        <li><b> Pets </b>
+                                                            <p class= "text-secondary">
+                                                                {{ $member->topsProfile->pets ?? '-' }}
+                                                            </p>
+                                                        </li>
+                                                        <hr>
+                                                    </div>
+                                                    <div class="col">
+                                                        <li><b> Hobbies & Interests </b>
+                                                            <p class= "text-secondary">
+                                                                {{ $member->topsProfile->hobbiesInterests ?? '-' }}
+                                                            </p>
+                                                        </li>
+                                                        <hr>
+                                                        <li><b> City Of Residence </b>
+                                                            <p class= "text-secondary">
+                                                                {{ $member->topsProfile->cityofRes ?? '-' }}
+                                                            </p>
+                                                        </li>
+                                                        <hr>
+                                                        <li><b> Years In City </b>
+                                                            <p class= "text-secondary">
+                                                                {{ $member->topsProfile->yearsInCity ?? '-' }}
+                                                            </p>
+                                                        </li>
+                                                        <hr>
+                                                        <li><b> My Burning Desire </b>
+                                                            <p class= "text-secondary">
+                                                                {{ $member->topsProfile->myBurningDesire ?? '-' }}
+                                                            </p>
+                                                        </li>
+                                                        <hr>
+                                                        <li><b> Something No One Here Knows About Me </b>
+                                                            <p class= "text-secondary">
+                                                                {{ $member->topsProfile->dontKnowAboutMe ?? '-' }}
+                                                            </p>
+                                                        </li>
+                                                        <hr>
+
+                                                    </div>
+                                                    <li class="text-center"><b> My Key To Success </b>
+                                                        <p class= "text-secondary">
+                                                            {{ $member->topsProfile->mKeyToSuccess ?? '-' }}
+                                                        </p>
+                                                    </li>
+
+                                                </div>
+                                                <hr>
+                                            </ul>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="tops" role="tabpanel"
+                                    aria-labelledby="tops-tab">
+                                    <!-- Tops Profile Content -->
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <!-- Your content for Tops Profile goes here -->
+                                            <h4 class="card-title text-orange text-center">Tops Profile</h4>
+                                            <hr>
+                                            <ul class="list-unstyled">
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <li><b> Ideal Referral </b>
+                                                            <p class= "text-secondary">
+                                                                {{ $member->topsProfile->idealRef ?? '-' }}
+                                                            </p>
+                                                        </li>
+                                                        <hr>
+                                                        <li><b> Top Product </b>
+                                                            <p class= "text-secondary">
+                                                                {{ $member->topsProfile->topProduct ?? '-' }}
+                                                            </p>
+                                                        </li>
+                                                        <hr>
+
+                                                    </div>
+                                                    <div class="col">
+                                                        <li><b> My Fav. BNI Story </b>
+                                                            <p class= "text-secondary">
+                                                                {{ $member->topsProfile->myFavBniStory ?? '-' }}
+                                                            </p>
+                                                        </li>
+                                                        <hr>
+                                                        <li><b> My Ideal Ref. Partner </b>
+                                                            <p class= "text-secondary">
+                                                                {{ $member->topsProfile->myIdealRefPartner ?? '-' }}
+                                                            </p>
+                                                        </li>
+                                                        <hr>
+                                                    </div>
+                                                    <li class="text-center"><b> Top Problem Solved </b>
+                                                        <p class= "text-secondary">
+                                                            {{ $member->topsProfile->topProblemSolved ?? '-' }}
+                                                        </p>
+                                                    </li>
+
+                                                </div>
+                                                <hr>
+
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="gains" role="tabpanel"
+                                    aria-labelledby="gains-tab">
+                                    <!-- Gains Profile Content -->
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <!-- Your content for Gains Profile goes here -->
+                                            <h4 class="card-title text-orange text-center">Gains Profile</h4>
+                                            <hr>
+
+                                            <ul class="list-unstyled">
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <li><b> Goals </b>
+                                                            <p class= "text-secondary"> {{ $member->goals ?? '-' }}
+                                                            </p>
+                                                        </li>
+                                                        <hr>
+                                                        <li><b> Accomplishment </b>
+                                                            <p class= "text-secondary">
+                                                                {{ $member->accomplishment ?? '-' }}
+                                                            </p>
+                                                        </li>
+                                                        <hr>
+                                                    </div>
+                                                    <div class="col">
+                                                        <li><b> Interests </b>
+                                                            <p class= "text-secondary">
+                                                                {{ $member->interests ?? '-' }}
+                                                            </p>
+                                                        </li>
+                                                        <hr>
+                                                        <li><b> Networks </b>
+                                                            <p class= "text-secondary"> {{ $member->networks ?? '-' }}
+                                                            </p>
+                                                        </li>
+                                                        <hr>
+                                                    </div>
+                                                    <li class="text-center"><b> Skills </b>
+                                                        <p class= "text-secondary"> {{ $member->skills ?? '-' }}
+                                                        </p>
+                                                    </li>
+
+                                                </div>
+                                                <hr>
+                                            </ul>
+
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+
+
+                    {{-- </div> --}}
+
+                    {{-- </div> --}}
                 </div>
             </div>
         </div>
     </div>
-    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.bundle.min.js"></script>
+    {{-- <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script> --}}
+    {{-- <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script> --}}
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Bootstrap JavaScript Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous">
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+        integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous">
+    </script>
 
     <script>
         // JavaScript to handle form submission
-        document.getElementById('connectForm').addEventListener('submit', function(event) {
-            event.preventDefault(); // Prevent default form submission
-            var form = this;
+        document.addEventListener('DOMContentLoaded', function() {
+            var connectForm = document.getElementById('connectForm');
+            if (connectForm) {
+                connectForm.addEventListener('submit', function(event) {
+                    event.preventDefault(); // Prevent default form submission
+                    var form = this;
 
-            // Submit the form via AJAX
-            fetch(form.action, {
-                    method: form.method,
-                    body: new FormData(form)
-                })
-                .then(response => response.json())
-                .then(data => {
-                    // Check if the request was successful
-                    if (data && data.message) {
-                        // Show SweetAlert notification
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Success!',
-                            text: data.message
-                        }).then(() => {
-                            // Reload the page after the success message is displayed
-                            window.location.reload();
+                    // Submit the form via AJAX
+                    fetch(form.action, {
+                            method: form.method,
+                            body: new FormData(form)
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            // Check if the request was successful
+                            if (data && data.message) {
+                                // Show SweetAlert notification
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Success!',
+                                    text: data.message
+                                }).then(() => {
+                                    // Reload the page after the success message is displayed
+                                    window.location.reload();
+                                });
+                            } else {
+                                // Show error message if something went wrong
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Oops...',
+                                    text: 'Something went wrong!'
+                                });
+                            }
+                        })
+                        .catch(error => {
+                            // Show error message if there was an error with the request
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: 'Something went wrong!'
+                            });
                         });
-                    } else {
-                        // Show error message if something went wrong
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Oops...',
-                            text: 'Something went wrong!'
-                        });
-                    }
-                })
-                .catch(error => {
-                    // Show error message if there was an error with the request
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: 'Something went wrong!'
-                    });
                 });
+            }
         });
     </script>
+
 </body>
 
 </html>
