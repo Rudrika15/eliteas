@@ -16,6 +16,10 @@ class ConnectionController extends Controller
         try {
             $connections = Connection::where('userId', Auth::user()->id)
             ->where('status', 'Pending')
+            ->with(['members' => function ($query) {
+                $query->select('id', 'userId', 'firstName', 'lastName', 'profilePhoto')
+                ->with(['user:id,email']);
+            }])
             ->get();
             return Utils::sendResponse(['connections' => $connections], 'My Connections retrieved successfully', 200);
         } catch (\Throwable $th) {
@@ -27,6 +31,10 @@ class ConnectionController extends Controller
         try {
             $connections = Connection::where('userId', Auth::user()->id)
             ->where('status', 'Accepted')
+            ->with(['members' => function ($query) {
+                $query->select('id', 'userId', 'firstName', 'lastName', 'profilePhoto')
+                ->with(['user:id,email']);
+            }])
             ->get();
             return Utils::sendResponse(['connections' => $connections], 'My Connections retrieved successfully', 200);
         } catch (\Throwable $th) {
@@ -40,6 +48,12 @@ class ConnectionController extends Controller
 
             $userId = Auth::user()->id;
             $memberId = $request->input('memberId');
+
+            $isExist = Connection::where('memberId', $memberId)->where('userId', $userId)->first();
+
+            if($isExist){
+                return Utils::sendResponse(['message' => 'You are already sent the request'], 200);
+            }
 
             $connections = new Connection();
             $connections->memberId = $memberId;
@@ -88,6 +102,24 @@ class ConnectionController extends Controller
             return Utils::sendResponse(['message' => 'Connection Request Action done Successfully.'], 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
+        }
+    }
+
+    public function viewMemberProfile(Request $request)
+    {
+        try {
+            $member = Member::where('id', $request->input('memberId'))
+                ->with('user', 'circle', 'billingAddress', 'contactDetails', 'topsProfile')
+                ->first();
+
+            return Utils::sendResponse([
+                'message' => 'Member Profile',
+                'member' => $member
+            ], 200);
+        } catch (\Throwable $th) {
+            return Utils::errorResponse([
+                'error' => $th->getMessage()
+            ], 'Internal Server Error', 500);
         }
     }
 
