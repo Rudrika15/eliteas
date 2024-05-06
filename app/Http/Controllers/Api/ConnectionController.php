@@ -77,8 +77,15 @@ class ConnectionController extends Controller
                 ->orWhereHas('circle', function ($q) use ($find) {
                     $q->where('circleName', 'like', '%' . $find . '%');
                 })
-                ->with('user', 'circle')
-                ->get();
+                ->with(['user', 'circle', 'connections' => function ($q) {
+                    $q->where('userId', Auth::user()->id);
+                }])
+                ->get()
+                ->map(function ($member) {
+                    $member['status'] = $member->connections->isEmpty() ? null : ($member->connections->first()->status == 'Accepted' ? 'Connected' : 'Pending');
+                    unset($member['connections']);
+                    return $member;
+                });
 
             $message = "Search results for '$find'";
 

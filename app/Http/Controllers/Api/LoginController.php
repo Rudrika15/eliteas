@@ -69,38 +69,29 @@ class LoginController extends Controller
     }
 
 
-    public function memberUpdate(Request $request)
-    {
-        $user = Auth::user();
+    // public function memberUpdate(Request $request)
+    // {
+    //     $user = Auth::user();
 
 
-        $member = Member::where('userId', $user->id)->first();
+    //     $member = Member::where('userId', $user->id)->first();
 
-        if (!$member) {
-            return Utils::errorResponse(['error' => 'Member not found'], 404);
-        }
+    //     if (!$member) {
+    //         return Utils::errorResponse(['error' => 'Member not found'], 404);
+    //     }
 
-        $updatedFields = array_filter($request->all());
+    //     $updatedFields = array_filter($request->all());
 
-        if ($request->profilePhoto) {
-            $member->profilePhoto = time() . '.' . $request->profilePhoto->extension();
-            $request->profilePhoto->move(public_path('ProfilePhoto'),  $member->profilePhoto);
-        }
 
-        if ($request->companyLogo) {
-            $member->companyLogo = time() . '.' . $request->companyLogo->extension();
-            $request->companyLogo->move(public_path('CompanyLogo'),  $member->companyLogo);
-        }
+    //     foreach ($updatedFields as $key => $value) {
+    //         $member->{$key} = $value;
+    //     }
 
-        foreach ($updatedFields as $key => $value) {
-            $member->{$key} = $value;
-        }
+    //     $member->save();
 
-        $member->save();
+    //     return Utils::sendResponse([$member, 'message' => 'Your Profile data updated successfully'], 200);
+    // }
 
-        return Utils::sendResponse([$member, 'message' => 'Your Profile data updated successfully'], 200);
-    }
-    
 
 
     public function billingAddressUpdate(Request $request)
@@ -125,6 +116,8 @@ class LoginController extends Controller
             return Utils::errorResponse(['error' => 'Billing Address not found'], 404);
         }
     }
+
+
 
     public function contactDetailsUpdate(Request $request)
     {
@@ -212,8 +205,8 @@ class LoginController extends Controller
                 $member->companyLogo = time() . '.' . $request->companyLogo->extension();
                 $request->companyLogo->move(public_path('ProfilePhoto'),  $member->companyLogo);
             }
-            
-            
+
+
             $member->goals = $request->input('goals', $member->goals);
             $member->accomplishment = $request->input('accomplishment', $member->accomplishment);
             $member->interests = $request->input('interests', $member->interests);
@@ -288,10 +281,89 @@ class LoginController extends Controller
             $billing->bPinCode = $request->input('bPinCode', $billing->bPinCode);
             $billing->save();
 
-            
+
             return Utils::sendResponse([$member, $tops, $contact, $billing, 'message' => 'Member Profile data updated successfully'], 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => 'Member Profile not found'], 404);
         }
     }
+
+    public function memberUpdate(Request $request)
+    {
+
+        $user = Auth::user();
+
+
+        $member = Member::where('userId', $user->id)->first();
+        
+        if (!$member) {
+            return Utils::errorResponse(['error' => 'Member not found'], 404);
+        }
+        $member->title = $request->input('title', $member->title);
+        $member->firstName = $request->input('firstName', $member->firstName);
+        $member->lastName = $request->input('lastName', $member->lastName);
+        $member->suffix = $request->input('suffix', $member->suffix);
+        $member->displayName = $request->input('displayName', $member->displayName);
+        $member->gender = $request->input('gender', $member->gender);
+        $member->companyName = $request->input('companyName', $member->companyName);
+        $member->gstRegiState = $request->input('gstRegiState', $member->gstRegiState);
+        $member->gstinPan = $request->input('gstinPan', $member->gstinPan);
+        $member->industry = $request->input('industry', $member->industry);
+        $member->classification = $request->input('classification', $member->classification);
+        $member->chapter = $request->input('chapter', $member->chapter);
+        $member->renewalDueDate = $request->input('renewalDueDate', $member->renewalDueDate);
+        $member->membershipStatus = $request->input('membershipStatus', $member->membershipStatus);
+        $member->keyWords = $request->input('keyWords', $member->keyWords);
+        $member->language = $request->input('language', $member->language);
+        $member->timeZone = $request->input('timeZone', $member->timeZone);
+
+        if ($request->hasFile('profilePhoto')) {
+            $file = $request->file('profilePhoto');
+            $filename = time() . '.' . $file->getClientOriginalExtension();
+            if ($member->profilePhoto) {
+                $filePath = public_path('ProfilePhoto/') . $member->profilePhoto;
+                if (file_exists($filePath)) {
+                    unlink($filePath);
+                }
+            }
+            $file->move(public_path('ProfilePhoto'),  $filename);
+            $member->profilePhoto = $filename;
+        }
+
+        if ($request->hasFile('companyLogo')) {
+            $file = $request->file('companyLogo');
+            $filename = time() . '.' . $file->getClientOriginalExtension();
+            if ($member->companyLogo) {
+                $filePath = public_path('CompanyLogo/') . $member->companyLogo;
+                if (file_exists($filePath)) {
+                    unlink($filePath);
+                }
+            }
+            $file->move(public_path('CompanyLogo'),  $filename);
+            $member->companyLogo = $filename;
+        }
+
+        $member->goals = $request->input('goals', $member->goals);
+        $member->accomplishment = $request->input('accomplishment', $member->accomplishment);
+        $member->interests = $request->input('interests', $member->interests);
+        $member->networks = $request->input('networks', $member->networks);
+        $member->skills = $request->input('skills', $member->skills);
+        $member->myBusiness = $request->input('myBusiness', $member->myBusiness);
+        $member->webSite = $request->input('webSite', $member->webSite);
+        $member->showWebsite = $request->input('showWebsite', $member->showWebsite);
+        $member->socialLinks = $request->input('socialLinks', $member->socialLinks);
+        $member->showSocialLinks = $request->input('showSocialLinks', $member->showSocialLinks);
+        $member->receiveUpdates = $request->input('receiveUpdates', $member->receiveUpdates);
+        $member->shareRevenue = $request->input('shareRevenue', $member->shareRevenue);
+        // Continue updating other fields...
+
+        $member->save();
+
+
+        return Utils::sendResponse([$member, 'message' => 'Member Profile data updated successfully'], 200);
+    }
+    
+
+
+
 }

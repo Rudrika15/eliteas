@@ -72,4 +72,9 @@ class Member extends Model
     {
         return $this->belongsTo(BusinessCategory::class, 'businessCategoryId', 'id');
     }
+
+    public function connections()
+    {
+        return $this->hasMany(Connection::class, 'memberId', 'id');
+    }
 }
