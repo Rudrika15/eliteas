@@ -15,13 +15,43 @@ class ConnectionController extends Controller
     {
         try {
             $connections = Connection::where('userId', Auth::user()->id)
-            ->where('status', 'Pending')
-            ->with(['members' => function ($query) {
-                $query->select('id', 'userId', 'firstName', 'lastName', 'profilePhoto')
-                ->with(['user:id,email']);
-            }])
-            ->get();
-            return Utils::sendResponse(['connections' => $connections], 'My Connections retrieved successfully', 200);
+                ->where('status', 'Pending')
+                ->with(['members' => function ($query) {
+                    $query->select('id', 'userId', 'firstName', 'lastName', 'profilePhoto')
+                        ->with(['user:id,email']);
+                }])->get();
+
+            // check if there are any connections
+            if ($connections->isEmpty()) {
+                return Utils::sendResponse([], 'No pending connections requests', 200);
+            }
+
+            return Utils::sendResponse(['connections' => $connections], 'My Connections Requests retrieved successfully', 200);
+        } catch (\Throwable $th) {
+            return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
+        }
+    }
+    public function ConnectionsRequests(Request $request)
+    {
+        try {
+
+            $userId = Auth::user()->id;
+
+            $connections = Connection::whereHas('members', function ($query) use ($userId) {
+                $query->where('userId', $userId);
+            })->where('status', 'Pending')
+                ->with(['members' => function ($query) {
+                    $query->select('id', 'userId', 'firstName', 'lastName', 'profilePhoto')
+                        ->with(['user:id,email']);
+                }])
+                ->get();
+
+            // check if there are any connections
+            if ($connections->isEmpty()) {
+                return Utils::sendResponse([], 'No pending connections requests', 200);
+            }
+
+            return Utils::sendResponse(['connections' => $connections], 'My Connections Requests retrieved successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
@@ -30,12 +60,12 @@ class ConnectionController extends Controller
     {
         try {
             $connections = Connection::where('userId', Auth::user()->id)
-            ->where('status', 'Accepted')
-            ->with(['members' => function ($query) {
-                $query->select('id', 'userId', 'firstName', 'lastName', 'profilePhoto')
-                ->with(['user:id,email']);
-            }])
-            ->get();
+                ->where('status', 'Accepted')
+                ->with(['members' => function ($query) {
+                    $query->select('id', 'userId', 'firstName', 'lastName', 'profilePhoto')
+                        ->with(['user:id,email']);
+                }])
+                ->get();
             return Utils::sendResponse(['connections' => $connections], 'My Connections retrieved successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
@@ -44,14 +74,14 @@ class ConnectionController extends Controller
 
     public function sendRequest(Request $request)
     {
-        try{
+        try {
 
             $userId = Auth::user()->id;
             $memberId = $request->input('memberId');
 
             $isExist = Connection::where('memberId', $memberId)->where('userId', $userId)->first();
 
-            if($isExist){
+            if ($isExist) {
                 return Utils::sendResponse(['message' => 'You are already sent the request'], 200);
             }
 
@@ -60,7 +90,7 @@ class ConnectionController extends Controller
             $connections->userId = $userId;
             $connections->save();
 
-            return Utils::sendResponse(['message' => 'Connection Request sent Successfully'], 200);
+            return Utils::sendResponse([$memberId => $connections, 'message' => 'Connection Request sent Successfully'], 200);
         } catch (\Throwable $th) {
             //throw $th;
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
@@ -82,7 +112,8 @@ class ConnectionController extends Controller
                 }])
                 ->get()
                 ->map(function ($member) {
-                    $member['status'] = $member->connections->isEmpty() ? null : ($member->connections->first()->status == 'Accepted' ? 'Connected' : 'Pending');
+                    $status = $member->connections->isEmpty() ? null : $member->connections->first()->status;
+                    $member['status'] = $status == 'Accepted' ? 'Connected' : ($status == 'Pending' ? 'Pending' : null);
                     unset($member['connections']);
                     return $member;
                 });
@@ -129,8 +160,4 @@ class ConnectionController extends Controller
             ], 'Internal Server Error', 500);
         }
     }
-
-
-
-    
 }

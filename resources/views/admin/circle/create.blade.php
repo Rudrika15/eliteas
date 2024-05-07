@@ -26,8 +26,7 @@
     <div class="card">
         <div class="card-body d-flex justify-content-between align-items-center">
             <h5 class="card-title" style="color: #1d2856;">Create Circle</h5>
-            <a href="{{ route('circle.index') }}" class="btn  btn-sm"
-                style="background-color: #e76a35 ; color: white">BACK</a>
+            <a href="{{ route('circle.index') }}" class="btn btn-bg-orange  btn-sm">BACK</a>
         </div>
         <hr>
         <!-- Floating Labels Form -->
@@ -270,11 +269,11 @@
                 </div>
             </div>
 
-    </div>
-    </div>
-    <div class="text-center">
-        <button type="submit" class="btn " style="background-color: #1d2856; color: white">Submit</button>
-        <button type="reset" class="btn " style="background-color: #e76a35; color: white">Reset</button>
+            <div class="text-center mt-3">
+                <button type="submit" class="btn btn-bg-blue ">Submit</button>
+                <button type="reset" class="btn btn-bg-orange" >Reset</button>
+            </div>
+            </div>
     </div>
     </form><!-- End floating Labels Form -->
     </div>

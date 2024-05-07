@@ -25,7 +25,7 @@
 <div class="card">
     <div class="card-body d-flex justify-content-between align-items-center">
         <h5 class="card-title">Edit Role</h5>
-        <a href="{{ route('roles.index') }}" class="btn btn-secondary btn-sm">Back</a>
+        <a href="{{ route('roles.index') }}" class="btn btn-bg-orange btn-sm">Back</a>
     </div>
     <!-- Floating Labels Form -->
     <form class="m-3 needs-validation" id="rolesForm" enctype="multipart/form-data" method="post"
@@ -52,8 +52,8 @@
                 </div>
             </div>
             <div class="col-xs-12 col-sm-12 col-md-12 text-center">
-                <button type="submit" class="btn btn-primary">Submit</button>
-                <a href="{{ route('roles.index') }}" class="btn btn-secondary">Cancel</a>
+                <button type="submit" class="btn btn-bg-blue">Submit</button>
+                <a href="{{ route('roles.index') }}" class="btn btn-bg-orange">Cancel</a>
             </div>
         </div>
     </form><!-- End floating Labels Form -->

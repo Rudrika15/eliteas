@@ -26,7 +26,7 @@
     <div class="card-body">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h4 class="mb-0 mt-3">City</h4>
-            <a href="{{ route('city.create') }}" class="btn btn-primary btn-sm mt-3">ADD</a>
+            <a href="{{ route('city.create') }}" class="btn btn-bg-orange btn-sm mt-3"><i class="bi bi-plus-circle"></i></a>
         </div>
 
         <!-- Table with stripped rows -->
@@ -52,7 +52,7 @@
                     <td>{{$cityData->memberAmount}}</td>
                     <td>{{$cityData->status}}</td>
                     <td>
-                        <a href="{{ route('city.edit', $cityData->id) }}" class="btn btn-primary btn-sm">
+                        <a href="{{ route('city.edit', $cityData->id) }}" class="btn btn-bg-blue btn-sm">
                             <i class="bi bi-pen"></i>
                         </a>
 
@@ -63,7 +63,7 @@
                         <form action="{{ route('city.delete', $cityData->id) }}" method="POST" style="display: inline;">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="btn btn-danger btn-sm">
+                            <button type="submit" class="btn btn-danger btn-sm mt-3">
                                 <i class="bi bi-trash"></i> <!-- Icon for delete -->
                             </button>
                         </form>

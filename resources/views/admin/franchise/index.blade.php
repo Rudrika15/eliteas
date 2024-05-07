@@ -26,7 +26,7 @@
     <div class="card-body">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h4 class="mb-0 mt-3">Franchise</h4>
-            <a href="{{ route('franchise.create') }}" class="btn btn-primary btn-sm mt-3">ADD</a>
+            <a href="{{ route('franchise.create') }}" class="btn btn-bg-orange btn-sm mt-3"><i class="bi bi-plus-circle"></i></a>
         </div>
 
         <!-- Table with stripped rows -->
@@ -51,7 +51,7 @@
                     <td>{{$franchiseData->franchiseContactDetails}}</td>
                     <td>{{$franchiseData->status}}</td>
                     <td>
-                        <a href="{{ route('franchise.edit', $franchiseData->id) }}" class="btn btn-primary btn-sm">
+                        <a href="{{ route('franchise.edit', $franchiseData->id) }}" class="btn btn-bg-blue btn-sm">
                             <i class="bi bi-pen"></i>
                         </a>
 
@@ -59,7 +59,7 @@
                             <i class="bi bi-eye"></i>
                         </a> --}}
 
-                        <a href="{{ route('franchise.delete', $franchiseData->id) }}" class="btn btn-danger btn-sm">
+                        <a href="{{ route('franchise.delete', $franchiseData->id) }}" class="btn btn-danger btn-sm mt-3">
                             <i class="bi bi-trash"></i>
                         </a>
                     </td>

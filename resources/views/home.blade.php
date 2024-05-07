@@ -76,7 +76,7 @@
                             <div class="row">
                                 <div class="col-md-11 ps-3 card-title ">Invite people to join</div>
                                 <div class="col-md-1 mt-2 ">
-                                    <button type="button" class="btn btn-bg-blue btn-sm mt-2" data-bs-toggle="modal"
+                                    <button type="button" class="btn btn-bg-orange btn-sm mt-2" data-bs-toggle="modal"
                                         data-bs-target="#exampleModal">
                                         Invite
                                     </button>
@@ -207,7 +207,7 @@
                             @endif
 
                             {{-- <h2>{{ $count }}</h2> --}}
-                            <a href="{{ route('schedule.dashIndex') }}">View Details</a>
+                            <a href="{{ route('schedule.dashIndex') }}" class="btn btn-bg-blue btn-md btn-sm">View Details</a>
 
                         </div>
                     @endrole
@@ -242,7 +242,7 @@
                                         </li>
                                     @endforeach
                                     <li class="list-group-item text-center fw-bold">
-                                        <button type="button" class="btn btn-primary btn-sm mt-2" data-bs-toggle="modal"
+                                        <button type="button" class="btn btn-bg-blue btn-sm mt-2" data-bs-toggle="modal"
                                             data-bs-target="#allInvitesModal">
                                             Show More...
                                         </button>
@@ -299,7 +299,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-bg-blue" data-bs-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>
@@ -428,7 +428,7 @@
                                             <a href="{{ route('training.register') }}/{{ $nearestTraining->id }}/{{ $nearestTraining->trainers->user->id }}"
                                                 class="btn btn-primary">Register Now</a>
                                         @else
-                                            <button type="button" class="btn btn-primary pay">Pay Now</button>
+                                            <button type="button" class="btn btn-bg-blue pay">Pay Now</button>
                                         @endif
                                     @else
                                         <span class="text-muted">Already Registered</span>
@@ -495,7 +495,7 @@
                                     <span class="error-message text-danger"></span> <!-- Error message placeholder -->
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                    <button type="submit" class="btn btn-bg-blue">Submit</button>
                                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
                                 </div>
                         </form>

@@ -25,7 +25,7 @@
 <div class="card">
     <div class="card-body d-flex justify-content-between align-items-center">
         <h5 class="card-title">Edit Franchise</h5>
-        <a href="{{ route('franchise.index') }}" class="btn btn-secondary btn-sm">BACK</a>
+        <a href="{{ route('franchise.index') }}" class="btn btn-bg-orange btn-sm">BACK</a>
     </div>
 
     <!-- Floating Labels Form -->
@@ -165,8 +165,8 @@
         </div>
 
         <div class="text-center">
-            <button type="submit" class="btn btn-primary">Submit</button>
-            <button type="reset" class="btn btn-secondary">Reset</button>
+            <button type="submit" class="btn btn-bg-blue">Submit</button>
+            <button type="reset" class="btn btn-bg-orange">Reset</button>
         </div>
     </form><!-- End floating Labels Form -->
 </div>

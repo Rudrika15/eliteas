@@ -28,7 +28,7 @@
             <div class="d-flex justify-content-between align-items-center mb-5">
                 <h4 class="mb-0 mt-3 text-blue">Testimonials</h4>
 
-                <a href="{{ route('testimonial.create') }}" class="btn btn-bg-blue btn-sm mt-3">ADD</a>
+                <a href="{{ route('testimonial.create') }}" class="btn btn-bg-orange btn-sm mt-3"><i class="bi bi-plus-circle"></i></a>
             </div>
             <hr class="mb-5">
             <!-- Table with stripped rows -->

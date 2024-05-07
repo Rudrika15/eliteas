@@ -1,4 +1,4 @@
-<button type="button" class="btn btn-primary " data-bs-toggle="modal" data-bs-target="#internalTrainerMaster" id="iTrainerBtn">
+<button type="button" class="btn btn-bg-blue " data-bs-toggle="modal" data-bs-target="#internalTrainerMaster" id="iTrainerBtn">
     Select Internal Trainer Member
 </button>
 

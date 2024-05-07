@@ -26,7 +26,7 @@
     <div class="card-body">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h4 class="mb-0 mt-3">Country</h4>
-            <a href="{{ route('country.create') }}" class="btn btn-primary btn-sm mt-3">ADD</a>
+            <a href="{{ route('country.create') }}" class="btn btn-bg-orange btn-sm mt-3"><i class="bi bi-plus-circle"></i></a>
         </div>
 
         <!-- Table with stripped rows -->
@@ -44,7 +44,7 @@
                     <td>{{$countryData->countryName}}</td>
                     <td>{{$countryData->status}}</td>
                     <td>
-                        <a href="{{ route('country.edit', $countryData->id) }}" class="btn btn-primary btn-sm">
+                        <a href="{{ route('country.edit', $countryData->id) }}" class="btn btn-bg-blue btn-sm">
                             <i class="bi bi-pen"></i>
                         </a>
 

@@ -25,7 +25,7 @@
     <div class="card-body">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h2 class="mt-3">Users Management</h2>
-            <a class="btn btn-success btmn-sm mt-3" href="{{ route('users.create') }}">
+            <a class="btn btn-bg-orange mt-3" href="{{ route('users.create') }}">
                 <i class="bi bi-person-plus"></i>
             </a>
         </div>
@@ -57,10 +57,10 @@
                         @endif
                     </td>
                     <td>
-                        <a class="btn btn-info btn-sm" href="{{ route('users.show', $user->id) }}">
+                        <a class="btn btn-bg-orange btn-sm" href="{{ route('users.show', $user->id) }}">
                             <i class="bi bi-eye"></i>
                         </a>
-                        <a class="btn btn-primary btn-sm" href="{{ route('users.edit', $user->id) }}">
+                        <a class="btn btn-bg-blue btn-sm" href="{{ route('users.edit', $user->id) }}">
                             <i class="bi bi-pencil"></i>
                         </a>
                         {!! Form::open(['method' => 'DELETE', 'route' => ['users.destroy', $user->id], 'style' =>

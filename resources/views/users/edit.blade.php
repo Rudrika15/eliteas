@@ -25,7 +25,7 @@
         <div class="card-header">
             <div class="d-flex justify-content-between align-items-center">
                 <h5 class="card-title">Edit User</h5>
-                <a href="{{ route('users.index') }}" class="btn btn-secondary btn-sm">Back</a>
+                <a href="{{ route('users.index') }}" class="btn btn-bg-orange btn-sm">Back</a>
             </div>
         </div>
         <div class="card-body">
@@ -86,7 +86,7 @@
                     <label for="roles" class="form-label">Role</label>
                     <select class="form-select @error('roles') is-invalid @enderror" id="roles" name="roles[]" required>
                         @foreach ($roles as $roleId => $roleName)
-                        @if ($roleName !== 'Member')
+                        @if ($roleName !== 'Member' && $roleName !== 'Trainer')
                         <option value="{{ $roleId }}">{{ $roleName }}</option>
                         @endif
                         @endforeach
@@ -98,8 +98,8 @@
                     @enderror
                 </div>
                 <div class="col-md-12 text-center">
-                    <button type="submit" class="btn btn-primary mt-3">Submit</button>
-                    <button type="reset" class="btn btn-secondary mt-3">Reset</button>
+                    <button type="submit" class="btn btn-bg-blue mt-3">Submit</button>
+                    <button type="reset" class="btn btn-bg-orange mt-3">Reset</button>
                 </div>
             </form>
         </div>

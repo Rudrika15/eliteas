@@ -26,7 +26,7 @@
 <div class="card">
     <div class="card-body d-flex justify-content-between align-items-center">
         <h5 class="card-title">Create New Role</h5>
-        <a href="{{ route('roles.index') }}" class="btn btn-secondary btn-sm">BACK</a>
+        <a href="{{ route('roles.index') }}" class="btn btn-bg-orange btn-sm">BACK</a>
     </div>
 
     <!-- Floating Labels Form -->
@@ -52,8 +52,8 @@
                 </div>
             </div>
             <div class="col-xs-12 col-sm-12 col-md-12 text-center">
-                <button type="submit" class="btn btn-primary">Submit</button>
-                <button type="reset" class="btn btn-secondary">Reset</button>
+                <button type="submit" class="btn btn-bg-blue">Submit</button>
+                <button type="reset" class="btn btn-bg-orange">Reset</button>
             </div>
         </div>
         {{-- <div class="text-center">

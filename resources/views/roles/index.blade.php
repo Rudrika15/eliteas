@@ -26,7 +26,7 @@
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h2 class="mt-3">Role Management</h2>
             @can('role-create')
-            <a class="btn btn-success btn-sm mt-3" href="{{ route('roles.create') }}">
+            <a class="btn btn-bg-orange btn-sm mt-3" href="{{ route('roles.create') }}">
                 <i class="bi bi-plus-circle"></i>
             </a>
             @endcan
@@ -47,11 +47,11 @@
                     <td>{{ ++$i }}</td>
                     <td>{{ $role->name }}</td>
                     <td>
-                        <a class="btn btn-info btn-sm" href="{{ route('roles.show', $role->id) }}">
+                        <a class="btn btn-bg-orange btn-sm" href="{{ route('roles.show', $role->id) }}">
                             <i class="bi bi-eye"></i>
                         </a>
                         @can('role-edit')
-                        <a class="btn btn-primary btn-sm" href="{{ route('roles.edit', $role->id) }}">
+                        <a class="btn btn-bg-blue btn-sm" href="{{ route('roles.edit', $role->id) }}">
                             <i class="bi bi-pen"></i>
                         </a>
                         @endcan
@@ -59,7 +59,7 @@
                         {!! Form::open(['method' => 'DELETE', 'route' => ['roles.destroy', $role->id], 'style' =>
                         'display:inline'])
                         !!}
-                        <button type="submit" class="btn btn-danger btn-sm1">
+                        <button type="submit" class="btn btn-danger btn-sm">
                             <i class="bi bi-trash"></i>
                         </button>
                         {!! Form::close() !!}

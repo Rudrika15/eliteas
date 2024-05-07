@@ -26,7 +26,7 @@
 <div class="card">
     <div class="card-body d-flex justify-content-between align-items-center">
         <h5 class="card-title">Edit Training</h5>
-        <a href="{{ route('training.index') }}" class="btn btn-secondary btn-sm">BACK</a>
+        <a href="{{ route('training.index') }}" class="btn btn-bg-orange btn-sm">BACK</a>
     </div>
 
     <!-- Floating Labels Form -->

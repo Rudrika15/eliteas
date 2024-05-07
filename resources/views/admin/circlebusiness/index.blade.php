@@ -49,7 +49,7 @@
                             <td>{{ $busGiverData->date ?? '-' }}</td>
                             <td>{{ $busGiverData->status }}</td>
                             <td>
-                                <a href="{{ route('busGiver.edit', $busGiverData->id) }}" class="btn btn-bg-blue btn-sm">
+                                <a href="{{ route('busGiver.edit', $busGiverData->id) }}" class="btn btn-bg-orange btn-sm">
                                     <i class="bi bi-plus"></i>
                                 </a>
                                 {{-- <a onclick="return confirm('Do You Want To Delete It')"
