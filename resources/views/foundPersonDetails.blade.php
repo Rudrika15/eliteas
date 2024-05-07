@@ -330,7 +330,7 @@
 
             <div class="row gutters-sm">
                 <div class="col-md-4 mb-3">
-                    <div class="card">
+                    <div class="card ">
                         <div class="card-body">
                             <div class="d-flex flex-column align-items-center text-center">
                                 @php
@@ -407,7 +407,7 @@
                                             d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22">
                                         </path>
                                     </svg>Github</h6>
-                                <span class="text-secondary">bootdey</span>
+                                <span class="text-secondary"></span>
                             </li>
                             <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
                                 <h6 class="mb-0"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -418,7 +418,7 @@
                                             d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z">
                                         </path>
                                     </svg>Twitter</h6>
-                                <span class="text-secondary">@bootdey</span>
+                                <span class="text-secondary"></span>
                             </li>
                             <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
                                 <h6 class="mb-0"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -431,7 +431,7 @@
                                         <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
                                         <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
                                     </svg>Instagram</h6>
-                                <span class="text-secondary">bootdey</span>
+                                <span class="text-secondary"></span>
                             </li>
                             <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
                                 <h6 class="mb-0"><svg xmlns="http://www.w3.org/2000/svg" width="24"
@@ -441,13 +441,13 @@
                                         <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z">
                                         </path>
                                     </svg>Facebook</h6>
-                                <span class="text-secondary">bootdey</span>
+                                <span class="text-secondary"></span>
                             </li>
                         </ul>
                     </div>
                 </div>
                 <div class="col-md-8">
-                    <div class="card mb-3">
+                    {{-- <div class="card mb-3">
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-sm-3">
@@ -520,7 +520,7 @@
                             </div>
 
                         </div>
-                    </div>
+                    </div> --}}
 
 
                     {{-- <div class="row gutters-sm"> --}}
@@ -538,7 +538,7 @@
                             <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne"
                                 data-bs-parent="#accordionExample">
                                 <div class="accordion-body">
-                                    <div class="card shadow">
+                                    <div class="card ">
                                         <div class="card-body">
                                             <h4 class="card-title text-orange text-center">My Bios</h4>
                                             <hr>
@@ -644,12 +644,17 @@
                             </div>
                         </div>
                     </div> --}}
-                    <div class="card">
+                    <div class="card ">
                         <div class="card-body">
                             <!-- Nav tabs -->
                             <ul class="nav nav-tabs" id="myTabs" role="tablist">
                                 <li class="nav-item" role="presentation">
-                                    <button class="nav-link active text-blue" id="bios-tab" data-bs-toggle="tab"
+                                    <button class="nav-link active text-blue" id="profile-tab" data-bs-toggle="tab"
+                                        data-bs-target="#profile" type="button" role="tab"
+                                        aria-controls="profile" aria-selected="true">My Profile</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link  text-blue" id="bios-tab" data-bs-toggle="tab"
                                         data-bs-target="#bios" type="button" role="tab" aria-controls="bios"
                                         aria-selected="true">My Bios</button>
                                 </li>
@@ -666,90 +671,198 @@
                             </ul>
                             <!-- Tab panes -->
                             <div class="tab-content" id="myTabsContent">
-                                <div class="tab-pane fade active show " id="bios" role="tabpanel"
+                                <div class="tab-pane fade active show " id="profile" role="tabpanel"
+                                    aria-labelledby="profile-tab">
+                                    <!-- Bios Content -->
+                                    <div class="card shadow-none">
+                                        <div class="card-body">
+                                            <!-- Your content for My Bios goes here -->
+                                            <h4 class="card-title text-orange text-center">My Profile</h4>
+                                            <hr>
+                                            {{-- <ul class="list-unstyled"> --}}
+                                            <div class="row">
+                                                <div class="col-sm-3">
+                                                    <h6 class="mb-0">Full Name</h6>
+                                                </div>
+                                                <div class="col-sm-9 text-secondary">
+                                                    {{ $member->firstName ?? '-' }} {{ $member->lastName }}
+                                                </div>
+                                            </div>
+                                            <hr>
+                                            <div class="row">
+                                                <div class="col-sm-3">
+                                                    <h6 class="mb-0">Email</h6>
+                                                </div>
+                                                <div class="col-sm-9 text-secondary">
+                                                    {{ $member->contactDetails->email ?? '-' }}
+                                                </div>
+
+                                            </div>
+                                            <hr>
+
+                                            <div class="row">
+                                                <div class="col-sm-3">
+                                                    <h6 class="mb-0">Company Name</h6>
+                                                </div>
+                                                <div class="col-sm-9 text-secondary">
+                                                    {{ $member->companyName }}
+                                                </div>
+                                            </div>
+                                            <hr>
+                                            <div class="row">
+                                                <div class="col-sm-3">
+                                                    <h6 class="mb-0">Language</h6>
+                                                </div>
+                                                <div class="col-sm-9 text-secondary">
+                                                    {{ $member->language }}
+                                                </div>
+                                            </div>
+                                            <hr>
+                                            <div class="row">
+                                                <div class="col-sm-3">
+                                                    <h6 class="mb-0">Phone</h6>
+                                                </div>
+                                                <div class="col-sm-9 text-secondary">
+                                                    {{ $member->contactDetails->phone ?? '-' }}
+                                                </div>
+                                            </div>
+                                            <hr>
+                                            <div class="row">
+                                                <div class="col-sm-3">
+                                                    <h6 class="mb-0">Mobile No</h6>
+                                                </div>
+                                                <div class="col-sm-9 text-secondary">
+                                                    {{ $member->contactDetails->mobileNo ?? '-' }}
+                                                </div>
+                                            </div>
+
+                                            <hr>
+                                            <div class="row">
+                                                <div class="col-sm-3">
+                                                    <h6 class="mb-0">Billing Address</h6>
+                                                </div>
+                                                <div class="col-sm-9 text-secondary">
+                                                    {{ $member->billingAddress->bAddressLine1 ?? '-' }}
+                                                    {{ $member->billingAddress->bAddressLine2 ?? '-' }} <br>
+                                                    {{ $member->billingAddress->bCity ?? '-' }}
+                                                    {{ $member->billingAddress->bState ?? '-' }}
+                                                    {{ $member->billingAddress->bPinCode ?? '-' }}
+                                                </div>
+                                                {{-- </ul> --}}
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade " id="bios" role="tabpanel"
                                     aria-labelledby="bios-tab">
                                     <!-- Bios Content -->
-                                    <div class="card">
+                                    <div class="card shadow-none">
                                         <div class="card-body">
                                             <!-- Your content for My Bios goes here -->
                                             <h4 class="card-title text-orange text-center">My Bios</h4>
                                             <hr>
-                                            <ul class="list-unstyled">
-                                                <div class="row ">
-                                                    <div class="col">
-                                                        <li><b> Years In Business </b>
-                                                            <p class= "text-secondary">
-                                                                {{ $member->topsProfile->yearsInBusiness ?? '-' }}
-                                                            </p>
-                                                        </li>
-                                                        <hr>
-                                                        <li><b> Previous Types Of Jobs </b>
-                                                            <p class= "text-secondary">
-                                                                {{ $member->topsProfile->prevJobs ?? '-' }}
-                                                            </p>
-                                                        </li>
-                                                        <hr>
-                                                        <li><b> Spouse </b>
-                                                            <p class= "text-secondary">
-                                                                {{ $member->topsProfile->spouse ?? '-' }}
-                                                            </p>
-                                                        </li>
-                                                        <hr>
-                                                        <li><b> Childrens </b>
-                                                            <p class= "text-secondary">
-                                                                {{ $member->topsProfile->children ?? '-' }}
-                                                            </p>
-                                                        </li>
-                                                        <hr>
-                                                        <li><b> Pets </b>
-                                                            <p class= "text-secondary">
-                                                                {{ $member->topsProfile->pets ?? '-' }}
-                                                            </p>
-                                                        </li>
-                                                        <hr>
-                                                    </div>
-                                                    <div class="col">
-                                                        <li><b> Hobbies & Interests </b>
-                                                            <p class= "text-secondary">
-                                                                {{ $member->topsProfile->hobbiesInterests ?? '-' }}
-                                                            </p>
-                                                        </li>
-                                                        <hr>
-                                                        <li><b> City Of Residence </b>
-                                                            <p class= "text-secondary">
-                                                                {{ $member->topsProfile->cityofRes ?? '-' }}
-                                                            </p>
-                                                        </li>
-                                                        <hr>
-                                                        <li><b> Years In City </b>
-                                                            <p class= "text-secondary">
-                                                                {{ $member->topsProfile->yearsInCity ?? '-' }}
-                                                            </p>
-                                                        </li>
-                                                        <hr>
-                                                        <li><b> My Burning Desire </b>
-                                                            <p class= "text-secondary">
-                                                                {{ $member->topsProfile->myBurningDesire ?? '-' }}
-                                                            </p>
-                                                        </li>
-                                                        <hr>
-                                                        <li><b> Something No One Here Knows About Me </b>
-                                                            <p class= "text-secondary">
-                                                                {{ $member->topsProfile->dontKnowAboutMe ?? '-' }}
-                                                            </p>
-                                                        </li>
-                                                        <hr>
-
-                                                    </div>
-                                                    <li class="text-center"><b> My Key To Success </b>
-                                                        <p class= "text-secondary">
-                                                            {{ $member->topsProfile->mKeyToSuccess ?? '-' }}
-                                                        </p>
-                                                    </li>
-
+                                            {{-- <ul class="list-unstyled"> --}}
+                                            <div class="row">
+                                                <div class="col-sm-3">
+                                                    <h6 class="mb-0">Years In Business</h6>
                                                 </div>
-                                                <hr>
-                                            </ul>
+                                                <div class="col-sm-9 text-secondary">
+                                                    {{ $member->topsProfile->yearsInBusiness ?? '-' }}
+                                                </div>
+                                            </div>
+                                            <hr>
+                                            <div class="row">
+                                                <div class="col-sm-3">
+                                                    <h6 class="mb-0">Previous Types Of Jobs</h6>
+                                                </div>
+                                                <div class="col-sm-9 text-secondary">
+                                                    {{ $member->topsProfile->prevJobs ?? '-' }}
+                                                </div>
+                                            </div>
+                                            <hr>
+                                            <div class="row">
+                                                <div class="col-sm-3">
+                                                    <h6 class="mb-0">Spouse</h6>
+                                                </div>
+                                                <div class="col-sm-9 text-secondary">
+                                                    {{ $member->topsProfile->spouse ?? '-' }}
+                                                </div>
+                                            </div>
+                                            <hr>
+                                            <div class="row">
+                                                <div class="col-sm-3">
+                                                    <h6 class="mb-0">Childrens </h6>
+                                                </div>
+                                                <div class="col-sm-9 text-secondary">
+                                                    {{ $member->topsProfile->children ?? '-' }}
+                                                </div>
+                                            </div>
+                                            <hr>
+                                            <div class="row">
+                                                <div class="col-sm-3">
+                                                    <h6 class="mb-0">Pets </h6>
+                                                </div>
+                                                <div class="col-sm-9 text-secondary">
+                                                    {{ $member->topsProfile->pets ?? '-' }}
+                                                </div>
+                                            </div>
+                                            <hr>
+                                            <div class="row">
+                                                <div class="col-sm-3">
+                                                    <h6 class="mb-0">Hobbies & Interests </h6>
+                                                </div>
+                                                <div class="col-sm-9 text-secondary">
+                                                    {{ $member->topsProfile->hobbiesInterests ?? '-' }}
+                                                </div>
+                                            </div>
+                                            <hr>
+                                            <div class="row">
+                                                <div class="col-sm-3">
+                                                    <h6 class="mb-0">City Of Residence </h6>
+                                                </div>
+                                                <div class="col-sm-9 text-secondary">
+                                                    {{ $member->topsProfile->cityofRes ?? '-' }}
+                                                </div>
+                                            </div>
+                                            <hr>
+                                            <div class="row">
+                                                <div class="col-sm-3">
+                                                    <h6 class="mb-0">Years In City </h6>
+                                                </div>
+                                                <div class="col-sm-9 text-secondary">
+                                                    {{ $member->topsProfile->yearsInCity ?? '-' }}
+                                                </div>
+                                            </div>
+                                            {{-- <hr>
+                                            <div class="row">
+                                                <div class="col-sm-3">
+                                                    <h6 class="mb-0">My Burning Desire </h6>
+                                                </div>
+                                                <div class="col-sm-9 text-secondary">
+                                                    {{ $member->topsProfile->myBurningDesire ?? '-' }}
+                                                </div>
+                                            </div>
+                                            <hr>
+                                            <div class="row">
+                                                <div class="col-sm-3">
+                                                    <h6 class="mb-0"> Something No One Here Knows About Me </h6>
+                                                </div>
+                                                <div class="col-sm-9 text-secondary">
+                                                    {{ $member->topsProfile->dontKnowAboutMe ?? '-' }}
+                                                </div>
+                                            </div>
+                                            <hr>
+                                            <div class="row">
+                                                <div class="col-sm-3">
+                                                    <h6 class="mb-0"> My Key To Success </h6>
+                                                </div>
+                                                <div class="col-sm-9 text-secondary">
+                                                    {{ $member->topsProfile->mKeyToSuccess ?? '-' }}
+                                                </div>
+                                            </div> --}}
+
+                                            {{-- </ul> --}}
 
                                         </div>
                                     </div>
@@ -757,100 +870,117 @@
                                 <div class="tab-pane fade" id="tops" role="tabpanel"
                                     aria-labelledby="tops-tab">
                                     <!-- Tops Profile Content -->
-                                    <div class="card">
+                                    <div class="card shadow-none">
                                         <div class="card-body">
                                             <!-- Your content for Tops Profile goes here -->
                                             <h4 class="card-title text-orange text-center">Tops Profile</h4>
                                             <hr>
-                                            <ul class="list-unstyled">
-                                                <div class="row">
-                                                    <div class="col">
-                                                        <li><b> Ideal Referral </b>
-                                                            <p class= "text-secondary">
-                                                                {{ $member->topsProfile->idealRef ?? '-' }}
-                                                            </p>
-                                                        </li>
-                                                        <hr>
-                                                        <li><b> Top Product </b>
-                                                            <p class= "text-secondary">
-                                                                {{ $member->topsProfile->topProduct ?? '-' }}
-                                                            </p>
-                                                        </li>
-                                                        <hr>
-
-                                                    </div>
-                                                    <div class="col">
-                                                        <li><b> My Fav. BNI Story </b>
-                                                            <p class= "text-secondary">
-                                                                {{ $member->topsProfile->myFavBniStory ?? '-' }}
-                                                            </p>
-                                                        </li>
-                                                        <hr>
-                                                        <li><b> My Ideal Ref. Partner </b>
-                                                            <p class= "text-secondary">
-                                                                {{ $member->topsProfile->myIdealRefPartner ?? '-' }}
-                                                            </p>
-                                                        </li>
-                                                        <hr>
-                                                    </div>
-                                                    <li class="text-center"><b> Top Problem Solved </b>
-                                                        <p class= "text-secondary">
-                                                            {{ $member->topsProfile->topProblemSolved ?? '-' }}
-                                                        </p>
-                                                    </li>
-
+                                            {{-- <ul class="list-unstyled"> --}}
+                                            <div class="row">
+                                                <div class="col-sm-3">
+                                                    <h6 class="mb-0"> Ideal Referral </h6>
                                                 </div>
-                                                <hr>
+                                                <div class="col-sm-9 text-secondary">
+                                                    {{ $member->topsProfile->idealRef ?? '-' }}
+                                                </div>
 
-                                            </ul>
+                                            </div>
+                                            <hr>
+                                            <div class="row">
+                                                <div class="col-sm-3">
+                                                    <h6 class="mb-0"> Top Product </h6>
+                                                </div>
+                                                <div class="col-sm-9 text-secondary">
+                                                    {{ $member->topsProfile->topProduct ?? '-' }}
+                                                </div>
+                                            </div>
+                                            <hr>
+                                            <div class="row">
+                                                <div class="col-sm-3">
+                                                    <h6 class="mb-0"> My Fav. BNI Story </h6>
+                                                </div>
+                                                <div class="col-sm-9 text-secondary">
+                                                    {{ $member->topsProfile->myFavBniStory ?? '-' }}
+                                                </div>
+                                            </div>
+                                            <hr>
+                                            <div class="row">
+                                                <div class="col-sm-3">
+                                                    <h6 class="mb-0"> My Ideal Ref. Partner </h6>
+                                                </div>
+                                                <div class="col-sm-9 text-secondary">
+                                                    {{ $member->topsProfile->myIdealRefPartner ?? '-' }}
+                                                </div>
+                                            </div>
+                                            <hr>
+                                            <div class="row">
+                                                <div class="col-sm-3">
+                                                    <h6 class="mb-0"> Top Problem Solved </h6>
+                                                </div>
+                                                <div class="col-sm-9 text-secondary">
+                                                    {{ $member->topsProfile->topProblemSolved ?? '-' }}
+                                                </div>
+                                            </div>
+
+                                            {{-- </ul> --}}
                                         </div>
                                     </div>
                                 </div>
                                 <div class="tab-pane fade" id="gains" role="tabpanel"
                                     aria-labelledby="gains-tab">
                                     <!-- Gains Profile Content -->
-                                    <div class="card">
+                                    <div class="card shadow-none">
                                         <div class="card-body">
                                             <!-- Your content for Gains Profile goes here -->
                                             <h4 class="card-title text-orange text-center">Gains Profile</h4>
                                             <hr>
 
-                                            <ul class="list-unstyled">
-                                                <div class="row">
-                                                    <div class="col">
-                                                        <li><b> Goals </b>
-                                                            <p class= "text-secondary"> {{ $member->goals ?? '-' }}
-                                                            </p>
-                                                        </li>
-                                                        <hr>
-                                                        <li><b> Accomplishment </b>
-                                                            <p class= "text-secondary">
-                                                                {{ $member->accomplishment ?? '-' }}
-                                                            </p>
-                                                        </li>
-                                                        <hr>
-                                                    </div>
-                                                    <div class="col">
-                                                        <li><b> Interests </b>
-                                                            <p class= "text-secondary">
-                                                                {{ $member->interests ?? '-' }}
-                                                            </p>
-                                                        </li>
-                                                        <hr>
-                                                        <li><b> Networks </b>
-                                                            <p class= "text-secondary"> {{ $member->networks ?? '-' }}
-                                                            </p>
-                                                        </li>
-                                                        <hr>
-                                                    </div>
-                                                    <li class="text-center"><b> Skills </b>
-                                                        <p class= "text-secondary"> {{ $member->skills ?? '-' }}
-                                                        </p>
-                                                    </li>
-
+                                            {{-- <ul class="list-unstyled"> --}}
+                                            <div class="row">
+                                                <div class="col-sm-3">
+                                                    <h6 class="mb-0"> Goals </h6>
                                                 </div>
-                                                <hr>
-                                            </ul>
+                                                <div class="col-sm-9 text-secondary">
+                                                    {{ $member->goals ?? '-' }}
+                                                </div>
+                                            </div>
+                                            <hr>
+                                            <div class="row">
+                                                <div class="col-sm-3">
+                                                    <h6 class="mb-0"> Accomplishment </h6>
+                                                </div>
+                                                <div class="col-sm-9 text-secondary">
+                                                    {{ $member->accomplishment ?? '-' }}
+                                                </div>
+                                            </div>
+                                            <hr>
+                                            <div class="row">
+                                                <div class="col-sm-3">
+                                                    <h6 class="mb-0"> Interests </h6>
+                                                </div>
+                                                <div class="col-sm-9 text-secondary">
+                                                    {{ $member->interests ?? '-' }}
+                                                </div>
+                                            </div>
+                                            <hr>
+                                            <div class="row">
+                                                <div class="col-sm-3">
+                                                    <h6 class="mb-0"> Networks </h6>
+                                                </div>
+                                                <div class="col-sm-9 text-secondary">
+                                                    {{ $member->networks ?? '-' }}
+                                                </div>
+                                            </div>
+                                            <hr>
+                                            <div class="row">
+                                                <div class="col-sm-3">
+                                                    <h6 class="mb-0"> Skills </h6>
+                                                </div>
+                                                <div class="col-sm-9 text-secondary">
+                                                    {{ $member->skills ?? '-' }}
+                                                </div>
+                                            </div>
+                                            {{-- </ul> --}}
 
                                         </div>
                                     </div>
