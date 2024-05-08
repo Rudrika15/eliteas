@@ -42,7 +42,7 @@
                         <option value="" selected disabled> Select Country </option>
                         @foreach ($country as $countryData)
                         <option value="{{ $countryData->id }}" {{$countryData->id == old('countryId',$state->countryId)?
-                            'selected':''}}>{{ $countryData->stateName }}</option>
+                            'selected':''}}>{{ $countryData->countryName }}</option>
                         @endforeach
                     </select>
                     @error('countryId')

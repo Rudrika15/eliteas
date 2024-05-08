@@ -33,11 +33,12 @@
         action="{{ route('training.store') }}" novalidate>
         @csrf
 
-        {{-- Trainer 1 --}}
-        <h3><b>Trainer 1</b></h3>
-        <hr>
+        {{-- Trainer 1 and Trainer 2 --}}
         <div class="row">
             <div class="col-md-6">
+                <!-- Trainer 1 -->
+                <h3><b>Trainer 1</b></h3>
+                <hr>
                 <!-- Trainer selection -->
                 <div class="form-check">
                     <input class="form-check-input trainer-radio" type="radio" name="groupMember" id="internalMember"
@@ -53,29 +54,39 @@
                 <!-- Member selection -->
                 <div class="member-list" id="memberListDropdownMember">
                     @include('TrainerPerson1')
-                    <input type="hiddden" name="trainerId" id="trainerId">
-                    <input type="text" class="form-control mt-3" id="trainerName" name="memberName"
-                        placeholder="Select Member">
+                    <div class="form-floating mt-3">
+                        <input type="hidden" name="trainerId" id="trainerId">
+                        <input type="text" class="form-control" id="trainerName" name="memberName"
+                            placeholder="Select Member">
+                        <label for="trainerName">Select Member</label>
+                    </div>
                 </div>
                 <div class="external-trainer-list" id="memberListInputMember" style="display:none;">
                     @include('TrainerPerson1External')
-                    <input type="hiddden" name="externalTrainerId" id="externalTrainerId">
-                    <input type="text" class="form-control mt-3" id="trainerNameExternal" name="trainerNameExternal"
-                        placeholder="Trainer Name External">
+                    <div class="form-floating mt-3">
+                        <input type="hidden" name="externalTrainerId" id="externalTrainerId">
+                        <input type="text" class="form-control" id="trainerNameExternal" name="trainerNameExternal"
+                            placeholder="Trainer Name External">
+                        <label for="trainerNameExternal">Trainer Name External</label>
+                    </div>
                 </div>
 
                 <!-- Contact details -->
-                <input type="text" class="form-control mt-3" id="trainerContact" name="contactNo"
-                    placeholder="Contact No">
-                <input type="text" class="form-control mt-3" id="trainerEmail" name="email" placeholder="Email">
+                <div class="form-floating mt-3">
+                    <input type="text" class="form-control" id="trainerContact" name="contactNo"
+                        placeholder="Contact No">
+                    <label for="trainerContact">Contact No</label>
+                </div>
+                <div class="form-floating mt-3">
+                    <input type="text" class="form-control" id="trainerEmail" name="email" placeholder="Email">
+                    <label for="trainerEmail">Email</label>
+                </div>
             </div>
-        </div>
 
-        {{-- Trainer 2 --}}
-        <h3><b>Trainer 2</b></h3>
-        <hr>
-        <div class="row">
             <div class="col-md-6">
+                <!-- Trainer 2 -->
+                <h3><b>Trainer 2</b></h3>
+                <hr>
                 <!-- Trainer selection -->
                 <div class="form-check">
                     <input class="form-check-input trainer-radio" type="radio" name="group" id="internal"
@@ -91,62 +102,97 @@
                 <!-- Member selection -->
                 <div class="member-list" id="memberListDropdown" style="display:none;">
                     @include('TrainerPerson2')
-                    <input type="hiddden" name="trainerId2" id="trainerId2">
-                    <input type="text" class="form-control mt-3" id="trainerName2" name="trainerNameInternal"
-                        placeholder="Trainer Name Internal">
+                    <input type="hidden" name="trainerId2" id="trainerId2">
+                    <div class="form-floating mt-3">
+                        <input type="text" class="form-control" id="trainerName2" name="trainerNameInternal"
+                            placeholder="Trainer Name Internal">
+                        <label for="trainerName2">Trainer Name Internal</label>
+                    </div>
                 </div>
                 <div class="member-list" id="memberListInput" style="display:none;">
                     @include('TrainerPerson2External')
-                    <input type="hiddden" name="externalTrainerId2" id="externalTrainerId2">
-                    <input type="text" class="form-control mt-3" id="trainerNameExternal2" name="trainerNameExternal2"
-                        placeholder="Trainer Name External">
+                    <input type="hidden" name="externalTrainerId2" id="externalTrainerId2">
+                    <div class="form-floating mt-3">
+                        <input type="text" class="form-control" id="trainerNameExternal2" name="trainerNameExternal2"
+                            placeholder="Trainer Name External">
+                        <label for="trainerNameExternal2">Trainer Name External</label>
+                    </div>
                 </div>
 
                 <!-- Contact details -->
-                <input type="text" class="form-control mt-3" id="trainerContact2" name="contactNo2"
-                    placeholder="Contact No">
-                <input type="text" class="form-control mt-3" id="trainerEmail2" name="email2" placeholder="Email">
+                <div class="form-floating mt-3">
+                    <input type="text" class="form-control" id="trainerContact2" name="contactNo2"
+                        placeholder="Contact No">
+                    <label for="trainerContact2">Contact No</label>
+                </div>
+                <div class="form-floating mt-3">
+                    <input type="text" class="form-control" id="trainerEmail2" name="email2" placeholder="Email">
+                    <label for="trainerEmail2">Email</label>
+                </div>
             </div>
         </div>
 
         {{-- Training Details --}}
         <div class="accordion-item mt-3">
             <h2 class="accordion-header" id="headingSix">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSix"
-                    aria-expanded="false" aria-controls="collapseSix">
+                <button class="accordion-button collapsed show" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#collapseSix" aria-expanded="false" aria-controls="collapseSix">
                     Training Details
                 </button>
             </h2>
-            <div id="collapseSix" class="accordion-collapse collapse" aria-labelledby="headingSix">
+            <div id="collapseSix" class="accordion-collapse collapse show" aria-labelledby="headingSix">
                 <div class="accordion-body">
                     <div class="row">
-                        <div class="col-md-6">
-                            <input type="text" class="form-control mt-3" id="title" name="title" placeholder="Title">
-                            <input type="text" class="form-control mt-3" id="fees" name="fees" placeholder="Fees">
-                            <select class="form-select mt-3" id="type" name="type">
-                                <option value="" selected disabled>Select Meeting Type</option>
-                                <option value="Online">Online</option>
-                                <option value="Offline">Offline</option>
-                            </select>
-                            <input type="text" class="form-control mt-3" id="meetingLink" name="meetingLink"
-                                placeholder="Meeting Link" style="display:none;">
-                            <input type="text" class="form-control mt-3" id="venue" name="venue" placeholder="Venue"
-                                style="display:none;">
-                            <input type="date" class="form-control mt-3" id="date" name="date" placeholder="Date">
-                            <input type="time" class="form-control mt-3" id="time" name="time" placeholder="Time">
-                            <input type="text" class="form-control mt-3" id="duration" name="duration"
-                                placeholder="Duration">
-                            <textarea class="form-control mt-3" id="note" name="note" placeholder="Note"
-                                rows="3"></textarea>
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <input type="text" class="form-control mt-3" id="title" name="title" placeholder="Title">
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="text" class="form-control mt-3" id="fees" name="fees" placeholder="Fees">
+                                </div>
+                                <div class="col-md-6">
+                                    <select class="form-select mt-3" id="type" name="type">
+                                        <option value="" selected disabled>Select Meeting Type</option>
+                                        <option value="Online">Online</option>
+                                        <option value="Offline">Offline</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="text" class="form-control mt-3" id="meetingLink" name="meetingLink" placeholder="Meeting Link" style="display:none;">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <input type="text" class="form-control mt-3" id="venue" name="venue" placeholder="Venue" style="display:none;">
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="date" class="form-control mt-3" id="date" name="date" placeholder="Date">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <input type="time" class="form-control mt-3" id="time" name="time" placeholder="Time">
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="text" class="form-control mt-3" id="duration" name="duration" placeholder="Duration">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <textarea class="form-control mt-3" id="note" name="note" placeholder="Note" rows="3"></textarea>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
+
         <div class="text-center mt-3">
-            <button type="submit" class="btn btn-primary">Submit</button>
-            <button type="reset" class="btn btn-secondary">Reset</button>
+            <button type="submit" class="btn btn-bg-blue">Submit</button>
+            <button type="reset" class="btn btn-bg-orange">Reset</button>
         </div>
     </form>
 </div>
@@ -273,6 +319,9 @@
         selectElement.onchange();
     });
 </script>
+
+    
+
 
 @endsection
 
