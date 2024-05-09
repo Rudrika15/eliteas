@@ -120,14 +120,8 @@ class CityController extends Controller
             $city = City::find($id);
             $city->status = "Deleted";
             $city->save();
-            $response = [
-                'success' => true,
-                'message' => 'City Deleted Successfully!',
-            ];
-
-            return response()->json($response);
+            return redirect()->route('city.index')->with('success', 'City Deleted Successfully!');
         } catch (\Throwable $th) {
-            throw $th;
             return view('servererror');
         }
     }

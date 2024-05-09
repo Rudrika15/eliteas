@@ -56,7 +56,7 @@
                         </a>
                         <a onclick="return confirm('Do You Want To Delete It')"
                             href="{{ route('circlecall.delete', $circlecallData->id) }}"
-                            class="btn btn-bg-orange btn-sm">
+                            class="btn btn-danger btn-sm">
                             <i class="bi bi-trash"></i>
                         </a>
                     </td>

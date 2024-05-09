@@ -63,7 +63,7 @@ class HomeController extends Controller
 
         
 
-        $businessCategory = BusinessCategory::all();
+        $businessCategory = BusinessCategory::where('status', 'Active')->get();
 
 
         $myInvites = MeetingInvitation::where('invitedMemberId', Auth::user()->id)->get();
@@ -91,7 +91,13 @@ class HomeController extends Controller
                 ->with('circle.franchise')
                 ->where('status', 'Active')
                 ->where('date', '>=', \today())->first();
+            
             $meeting->date = Carbon::parse($meeting->date);
+
+            $myInvites = MeetingInvitation::where('invitedMemberId', Auth::user()->id)
+                ->where('meetingId', $meeting->id)
+                ->get();
+
 
             // Determine the table name based on the slug
 
@@ -166,7 +172,6 @@ class HomeController extends Controller
 
         return view('invitationPay', compact('data'));
     }
-
 
     public function findMember()
     {

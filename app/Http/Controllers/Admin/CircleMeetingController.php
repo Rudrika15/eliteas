@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
 use App\Models\CircleMeeting;
+use App\Models\MeetingInvitation;
 
 class CircleMeetingController extends Controller
 {
@@ -133,4 +134,11 @@ class CircleMeetingController extends Controller
             return view('servererror');
         }
     }
+
+    public function invitedPersonList()
+    {
+        $invitedPersonList = MeetingInvitation::all();
+        return view('admin.circleMeeting.invitedPersonList', compact('invitedPersonList'));
+    }
+
 }

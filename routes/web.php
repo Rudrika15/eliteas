@@ -305,6 +305,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/invitationPay/{personName?}/{personEmail?}/{invitedPersonFirstName?}/{invitedPersonLastName?}/{amount?}', [HomeController::class, 'invitationPay'])->name('invitationPay');
     // Route::post('/invitationPay', [HomeController::class, 'invitationPay'])->name('invitationPay');
     
+    // Invited Prople List
+    Route::get('/invitedPersonList', [CircleMeetingController::class, 'invitedPersonList'])->name('invitedPersonList');
     
     
     // global search 

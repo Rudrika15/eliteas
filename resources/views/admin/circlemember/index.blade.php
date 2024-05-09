@@ -28,7 +28,7 @@
             <h4 class="mb-0 mt-3">Circle Member</h4>
             <a href="{{ route('circlemember.create') }}" class="btn btn-bg-orange btn-sm mt-3"><i class="bi bi-plus-circle"></i></a>
         </div>
-
+        
         <!-- Dropdown for filtering by Circle and Category side by side -->
 
         <div class="d-flex align-items-center mb-3">
@@ -56,7 +56,7 @@
             </select>
         </div>
 
-
+        
         <!-- Table with stripped rows -->
         <div class="table-responsive">
             <table class="table datatable table-responsive">
@@ -94,7 +94,7 @@
                             </a>
 
 
-                            <a href="{{ route('circlemember.delete') }}" class="btn btn-danger btn-sm mt-3">
+                            <a href="{{ route('circlemember.delete') }}" class="btn btn-danger btn-sm">
                                 <i class="bi bi-trash"></i>
                             </a>
 

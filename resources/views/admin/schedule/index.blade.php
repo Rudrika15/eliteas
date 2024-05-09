@@ -81,7 +81,7 @@
                             <i class="bi bi-eye"></i>
                         </a> --}}
 
-                        <a href="{{ route('schedule.delete', $schedulesData->id) }}" class="btn btn-danger btn-sm mt-3">
+                        <a href="{{ route('schedule.delete', $schedulesData->id) }}" class="btn btn-danger btn-sm">
                             <i class="bi bi-trash"></i>
                         </a>
                     </td>

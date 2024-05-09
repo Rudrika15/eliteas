@@ -62,31 +62,12 @@
                     </div>
                     @enderror
                 </div>
-                <div class="col-md-6">
-                    <label for="password" class="form-label">Password</label>
-                    <input type="password" class="form-control @error('password') is-invalid @enderror" id="password"
-                        name="password" placeholder="Password" required>
-                    @error('password')
-                    <div class="invalid-feedback">
-                        {{ $message }}
-                    </div>
-                    @enderror
-                </div>
-                <div class="col-md-6">
-                    <label for="confirmPassword" class="form-label">Confirm Password</label>
-                    <input type="password" class="form-control @error('confirm-password') is-invalid @enderror"
-                        id="confirmPassword" name="confirm-password" placeholder="Confirm Password" required>
-                    @error('confirm-password')
-                    <div class="invalid-feedback">
-                        {{ $message }}
-                    </div>
-                    @enderror
-                </div>
+                
                 <div class="col-md-6">
                     <label for="roles" class="form-label">Role</label>
                     <select class="form-select @error('roles') is-invalid @enderror" id="roles" name="roles[]" required>
                         @foreach ($roles as $roleId => $roleName)
-                        @if ($roleName !== 'Member' && $roleName !== 'Trainer')
+                        @if ($roleName !== 'Member' && $roleName !== 'Trainer' && $roleName !== 'Franchise Admin')
                         <option value="{{ $roleId }}">{{ $roleName }}</option>
                         @endif
                         @endforeach

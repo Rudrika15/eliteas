@@ -79,7 +79,7 @@ class MembershipTypeController extends Controller
     public function update(Request $request)
     {
         $this->validate($request, [
-            'id' => 'required|exists:membershiptypes,id',
+            'id' => 'required|exists:membership_types,id',
             'membershipType' => 'required|unique:membership_types,membershipType',
             // 'categoryIcon' => 'required',
         ]);

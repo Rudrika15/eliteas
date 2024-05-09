@@ -19,6 +19,7 @@ use App\Mail\WelcomeMemberEmail;
 use App\Models\BusinessCategory;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
+use App\Models\MembershipType;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 
@@ -57,10 +58,11 @@ class CircleMemberController extends Controller
             $countries = Country::where('status', 'Active')->get();
             $states = State::where('status', 'Active')->get();
             $cities = City::where('status', 'Active')->get();
+            $membershipType = MembershipType::where('status', 'Active')->get();
             // $city = City::with('country')
             //     ->with('state')
             //     ->get();
-            return view('admin.circlemember.create', compact('circle', 'member', 'countries', 'states', 'cities', 'businessCategory'));
+            return view('admin.circlemember.create', compact('circle', 'membershipType', 'member', 'countries', 'states', 'cities', 'businessCategory'));
         } catch (\Throwable $th) {
             // throw $th;
             return view('servererror');
@@ -98,6 +100,7 @@ class CircleMemberController extends Controller
             $user->firstName = $request->firstName;
             $user->lastName = $request->lastName;
             $user->email = $request->email;
+            $user->contactNo = $request->mobileNo;
             $user->password = Hash::make($rowPassword);
             // $user->password = Str::random(8);
             $user->assignRole('Member');
@@ -259,9 +262,10 @@ class CircleMemberController extends Controller
             $tops = TopsProfile::where('memberId', $id)->first();
             $circles = Circle::where('status', 'Active')->get();
             $businessCategory = BusinessCategory::where('status', 'Active')->get();
+            $membershipType = MembershipType::where('status', 'Active')->get();
 
 
-            return view('admin.circlemember.edit', compact('countries', 'user', 'states', 'cities', 'member', 'contactDetails', 'billing', 'tops', 'circles', 'businessCategory'));
+            return view('admin.circlemember.edit', compact('countries', 'membershipType', 'user', 'states', 'cities', 'member', 'contactDetails', 'billing', 'tops', 'circles', 'businessCategory'));
         } catch (\Throwable $th) {
             throw $th;
             return view('servererror');

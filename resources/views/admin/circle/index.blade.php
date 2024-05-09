@@ -83,11 +83,11 @@
                                 <i class="bi bi-eye"></i>
                             </a>
 
-                            <a href="{{ route('circle.edit', $circleData->id) }}" class="btn btn-bg-blue btn-sm mt-3">
+                            <a href="{{ route('circle.edit', $circleData->id) }}" class="btn btn-bg-blue btn-sm ">
                                 <i class="bi bi-pen"></i>
                             </a>
 
-                            <a href="{{ route('circle.delete', $circleData->id) }}" class="btn btn-danger btn-sm mt-3">
+                            <a href="{{ route('circle.delete', $circleData->id) }}" class="btn btn-danger btn-sm ">
                                 <i class="bi bi-trash"></i>
                             </a>
 

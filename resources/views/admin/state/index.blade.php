@@ -54,14 +54,9 @@
                             <i class="bi bi-eye"></i>
                         </a> --}}
 
-                        <form action="{{ route('state.delete', $stateData->id) }}" method="POST"
-                            style="display: inline;">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-danger btn-sm">
-                                <i class="bi bi-trash"></i> <!-- Icon for delete -->
-                            </button>
-                        </form>
+                        <a href="{{ route('state.delete', $stateData->id) }}" class="btn btn-danger btn-sm">
+                            <i class="bi bi-trash"></i>
+                        </a>
                     </td>
                 </tr>
                 @endforeach

@@ -191,14 +191,22 @@
             </div>
             <div class="col-md-6 mt-3">
                 <div class="form-floating">
-                    <select class="form-select" id="membershipType" name="membershipType">
+                    <select class="form-select @error('membershipType') is-invalid @enderror" id="membershipType"
+                        name="membershipType">
                         <option value="" selected disabled>Select Membership Type</option>
-                        <option value="Monthly">Monthly</option>
-                        <option value="Yearly">Yearly</option>
-                        <option value="LifeTime">Life Time</option>
+                        @foreach($membershipType as $membershipTypeData)
+                        <option value="{{ $membershipTypeData->id }}">{{ $membershipTypeData->membershipType }}
+                        </option>
+                        @endforeach
                     </select>
-                    {{-- <label for="membershipType">Membership Type</label> --}}
+                    {{-- <label for="businessCategory">Business Category</label> --}}
+                    @error('membershipType')
+                    <div class="invalid-tooltip">
+                        {{ $message }}
+                    </div>
+                    @enderror
                 </div>
+            </div>
             </div>
         </div>
 

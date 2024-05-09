@@ -97,7 +97,7 @@
                 <div class="form-floating mt-3">
                     <select class="form-control @error('roles') is-invalid @enderror" id="roles" name="roles" required>
                         @foreach ($roles as $roleId => $roleName)
-                        @if(!in_array($roleName, ['Member', 'Franchise Admin']))
+                        @if(!in_array($roleName, ['Member', 'Franchise Admin', 'Trainer']))
                         <option value="{{ $roleId }}">{{ $roleName }}</option>
                         @endif
                         @endforeach

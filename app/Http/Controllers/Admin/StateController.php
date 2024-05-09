@@ -103,21 +103,18 @@ class StateController extends Controller
         }
     }
 
-    function delete($id)
+    public function delete($id)
     {
         try {
-            $state = State::find($id);
-            $state->status = "Deleted";
-            $state->save();
-            $response = [
-                'success' => true,
-                'message' => 'State Deleted Successfully!',
-            ];
+            $states = State::find($id);
 
-            return response()->json($response);
+            $states->status = 'Deleted';
+            $states->save();
+
+            return redirect()->route('state.index')->with('success', 'Business Category deleted successfully.');
         } catch (\Throwable $th) {
-            throw $th;
-            return view('servererror');
+            //throw $th;
+            return redirect()->route('state.index')->with('error', 'Failed to delete Business Category.');
         }
     }
 }

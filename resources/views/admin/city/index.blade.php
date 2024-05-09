@@ -63,7 +63,7 @@
                         <form action="{{ route('city.delete', $cityData->id) }}" method="POST" style="display: inline;">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="btn btn-danger btn-sm mt-3">
+                            <button type="submit" class="btn btn-danger btn-sm">
                                 <i class="bi bi-trash"></i> <!-- Icon for delete -->
                             </button>
                         </form>

@@ -35,6 +35,7 @@
                 <tr>
                     <th>Trainer Name</th>
                     <th>Type</th>
+                    <th>Contact No</th>
                     <th>status</th>
                     <th>Action</th>
                 </tr>
@@ -49,6 +50,7 @@
                         External Trainer
                     @endif
                     </td>
+                    <td>{{$trainerData->user->ContactNo ?? '-'}}</td>
                     <td>{{$trainerData->status}}</td>
 
                     <td>

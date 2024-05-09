@@ -46,7 +46,7 @@
                             </td>
                             {{-- <td>{{ $busGiverData->loginMember->firstName . ' ' . $busGiverData->loginMember->lastName ?? '-' }}</td> --}}
                             <td>{{ $busGiverData->amount ?? '-' }}</td>
-                            <td>{{ $busGiverData->date ?? '-' }}</td>
+                            <td>{{ \Carbon\Carbon::parse($busGiverData->date)->format('d-m-Y') ?? '-' }}</td>                            
                             <td>{{ $busGiverData->status }}</td>
                             <td>
                                 <a href="{{ route('busGiver.edit', $busGiverData->id) }}" class="btn btn-bg-orange btn-sm">

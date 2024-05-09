@@ -180,6 +180,7 @@ class TrainingController extends Controller
     public function getTrainerDetails(Request $request)
     {
         $trainerMasters = TrainerMaster::where('type', 'externalMember')
+            ->where('status', 'Active')
             ->with('users')
             ->get();
 
@@ -193,6 +194,7 @@ class TrainingController extends Controller
     public function getInternalTrainerDetails(Request $request)
     {
         $internalTrainerMasters = TrainerMaster::where('type', 'internalMember')
+            ->where('status', 'Active')
             ->with('users')
             ->with('members')
             ->get();
