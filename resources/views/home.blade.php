@@ -428,7 +428,7 @@
                     <div class="">
                         @if (count($findRegister) == 0)
                         @if ($nearestTraining->fees == 0)
-                        <a href="{{ route('training.register') }}/{{ $nearestTraining->id }}/{{ $nearestTraining->trainers->user->id }}"
+                        <a href="{{ route('training.register') }}/{{ $nearestTraining->id }}/{{ $nearestTraining->trainersTrainings->user->id }}"
                             class="btn btn-primary">Register Now</a>
                         @else
                         <button type="button" class="btn btn-bg-blue pay">Pay Now</button>
@@ -563,7 +563,7 @@
             var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
             var url = `{{ route('razorpay.payment.store') }}`;
             var trainingId = '{{ $nearestTraining->id ?? '-' }}';
-            var trainerId = '{{ $nearestTraining->trainerId ?? '-' }}';
+            var trainerId = '{{ $nearestTraining->trainersTrainings->user->id }}';
             console.log('trainingId', trainingId);
             console.log('trainerId', trainerId);
             fetch(url, {
@@ -586,7 +586,7 @@
                     Swal.fire({
                         icon: 'success',
                         title: 'Success',
-                        text: 'Payment ID stored successfully',
+                        text: 'Payment Successfull',
                     }).then((result) => {
                         if (result.isConfirmed) {
                             window.location.reload();

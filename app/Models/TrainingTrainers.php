@@ -15,4 +15,10 @@ class TrainingTrainers extends Model
     {
         return $this->belongsTo(User::class, 'userId' , 'id');
     }
+
+    public function training()
+    {
+        return $this->belongsTo(Training::class, 'trainingId', 'id');
+    }
+
 }

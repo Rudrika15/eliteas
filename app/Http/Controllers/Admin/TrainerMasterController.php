@@ -7,6 +7,7 @@ use App\Models\Franchise;
 use Illuminate\Http\Request;
 use App\Models\TrainerMaster;
 use App\Http\Controllers\Controller;
+use App\Models\TrainingTrainers;
 use Illuminate\Support\Facades\Hash;
 
 class TrainerMasterController extends Controller
@@ -58,6 +59,7 @@ class TrainerMasterController extends Controller
                 $user->firstName = $request->firstName;
                 $user->lastName = $request->lastName;
                 $user->email = $request->email;
+                $user->contactNo = $request->contactNo;
                 $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()';
                 $password = '';
                 $length = 8;
@@ -157,6 +159,17 @@ class TrainerMasterController extends Controller
             $trainer->save();
 
             return redirect()->route('trainer.index')->with('success', 'Trainer deleted Successfully!');
+        } catch (\Throwable $th) {
+            throw $th;
+            return view('servererror');
+        }
+    }
+
+    public function trainingWiseTrainerList(Request $request)
+    {
+        try {
+            $trainers = TrainingTrainers::where('status', 'Active')->get();
+            return view('admin.trainerMaster.trainingWiseTrainerList', compact('trainers'));
         } catch (\Throwable $th) {
             throw $th;
             return view('servererror');

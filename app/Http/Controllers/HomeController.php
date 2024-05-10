@@ -61,7 +61,7 @@ class HomeController extends Controller
             ->orderBy('date', 'asc')
             ->first();
 
-        
+
 
         $businessCategory = BusinessCategory::where('status', 'Active')->get();
 
@@ -72,13 +72,13 @@ class HomeController extends Controller
         if ($nearestTraining) {
             $findRegister = TrainingRegister::where('userId', Auth::user()->id)
                 ->where('trainingId', $nearestTraining->id)
-                ->where('trainerId', $nearestTraining->trainerId)
+                ->where('trainerId', $nearestTraining->trainersTrainings->user->id)
                 ->get();
         } else {
             $findRegister = [];
         }
 
-        
+
 
 
         if (!Auth::user()->hasRole('Admin')) {
@@ -91,7 +91,7 @@ class HomeController extends Controller
                 ->with('circle.franchise')
                 ->where('status', 'Active')
                 ->where('date', '>=', \today())->first();
-            
+
             $meeting->date = Carbon::parse($meeting->date);
 
             $myInvites = MeetingInvitation::where('invitedMemberId', Auth::user()->id)
@@ -196,7 +196,7 @@ class HomeController extends Controller
         ]);
     }
 
-   
+
 
     public function foundPersonDetails($id)
     {
@@ -239,5 +239,4 @@ class HomeController extends Controller
 
         return redirect()->back()->with('error', 'Connection request rejected');
     }
-
 }

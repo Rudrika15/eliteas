@@ -50,7 +50,7 @@
                         External Trainer
                     @endif
                     </td>
-                    <td>{{$trainerData->user->ContactNo ?? '-'}}</td>
+                    <td>{{$trainerData->users->contactNo ?? $trainerData->externalMemberContact ?? '-'}} </td>
                     <td>{{$trainerData->status}}</td>
 
                     <td>

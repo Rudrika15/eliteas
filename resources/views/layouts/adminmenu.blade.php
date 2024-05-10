@@ -143,6 +143,13 @@
             </a>
         </li>
 
+        <li class="nav-item">
+            <a class="nav-link " href="{{ route('trainer.list') }}">
+                <i class="bi bi-gear-wide-connected" style="color: #e76a35"></i>
+                <span>Trainer List</span>
+            </a>
+        </li>
+
     </ul>
 </li><!-- End Tables Nav -->
 

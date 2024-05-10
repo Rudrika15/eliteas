@@ -114,6 +114,10 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('trainer/update{id}', [TrainerMasterController::class, 'update'])->name('trainer.update');
     Route::get('trainer/delete/{id?}', [TrainerMasterController::class, 'delete'])->name('trainer.delete');
 
+    //Trainer List
+    Route::get('trainer/list', [TrainerMasterController::class, 'trainingWiseTrainerList'])->name('trainer.list');
+
+
     Route::get('/training/index', [TrainingController::class, 'index'])->name('training.index');
     Route::get('training/show/{id?}', [TrainingController::class, 'show'])->name('training.show');
     Route::get('training/create', [TrainingController::class, 'create'])->name('training.create');
@@ -251,7 +255,7 @@ Route::group(['middleware' => ['auth']], function () {
     //Profile Update
 
     Route::get('member-update/{id?}', [ProfileController::class, 'member'])->name('member');
-    Route::post('update', [ProfileController::class, 'memberUpdate'])->name('member.update');
+    Route::post('update/{id?}', [ProfileController::class, 'memberUpdate'])->name('member.update');
 
     //Business Caategory
 

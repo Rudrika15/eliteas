@@ -33,9 +33,10 @@
         <table class="table datatable mb-5">
             <thead>
                 <tr>
-                    <th>Circle Member</th>
+                    {{-- <th>Circle Member</th> --}}
                     <th>Meeting Person</th>
                     <th>Meeting Place</th>
+                    <th>Date</th>
                     <th>Remarks</th>
                     <th>Status</th>
                     <th>Action</th>
@@ -44,10 +45,11 @@
             <tbody>
                 @foreach ($circlecall as $circlecallData)
                 <tr>
-                    <td>{{ $circlecallData->member->firstName ?? '-' }}</td>
+                    {{-- <td>{{ $circlecallData->member->firstName ?? '-' }}</td> --}}
                     <td>{{ $circlecallData->meetingPerson->firstName ?? '-' }}
                         {{ $circlecallData->meetingPerson->lastName ?? '-' }}</td>
                     <td>{{ $circlecallData->meetingPlace ?? '-' }}</td>
+                    <td>{{ $circlecallData->date ? date('d-m-Y', strtotime($circlecallData->date)) : '-' }}</td>
                     <td>{{ $circlecallData->remarks ?? '-' }}</td>
                     <td>{{ $circlecallData->status }}</td>
                     <td>
