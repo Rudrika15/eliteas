@@ -1,6 +1,6 @@
 <li class="nav-item">
     <a class="nav-link collapsed" data-bs-target="#users-nav" data-bs-toggle="collapse" href="#">
-        <i class="bi bi-menu-button-wide" style="color: #e76a35"></i><span>Users</span><i
+        <i class="bi bi-menu-button-wide" style="color: #e76a35"></i><span>Admin</span><i
             class="bi bi-chevron-down ms-auto" style="color: #e76a35"></i>
     </a>
     <ul id="users-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
@@ -35,60 +35,7 @@
 
 {{-- Master Menu --}}
 
-<li class="nav-item">
-    <a class="nav-link collapsed" data-bs-target="#master-nav" data-bs-toggle="collapse" href="#">
-        <i class="bi bi-gear" style="color: #e76a35"></i><span>Master</span><i class="bi bi-chevron-down ms-auto"
-            style="color: #e76a35"></i>
-    </a>
-    <ul id="master-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-        <li class="nav-item">
-            <a class="nav-link " href="{{ route('membershipType.index') }}">
-                <i class="bi bi-globe" style="color: #e76a35"></i>
-                <span>Membership Type</span>
-            </a>
-        </li>
-    </ul>
-    <ul id="master-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-        <li class="nav-item">
-            <a class="nav-link " href="{{ route('tCategory.index') }}">
-                <i class="bi bi-globe" style="color: #e76a35"></i>
-                <span>Training Category</span>
-            </a>
-        </li>
-    </ul>
-    <ul id="master-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-        <li class="nav-item">
-            <a class="nav-link " href="{{ route('bCategory.index') }}">
-                <i class="bi bi-plus-circle" style="color: #e76a35"></i>
-                <span>Business Category</span>
-            </a>
-        </li>
-    </ul>
-    <ul id="master-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-        <li class="nav-item">
-            <a class="nav-link " href="{{ route('country.index') }}">
-                <i class="bi bi-globe" style="color: #e76a35"></i>
-                <span>Country</span>
-            </a>
-        </li>
-    </ul>
-    <ul id="master-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-        <li class="nav-item">
-            <a class="nav-link " href="{{ route('state.index') }}">
-                <i class="bi bi-flag" style="color: #e76a35"></i>
-                <span>State</span>
-            </a>
-        </li>
-    </ul>
-    <ul id="master-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-        <li class="nav-item">
-            <a class="nav-link " href="{{ route('city.index') }}">
-                <i class="bi bi-buildings" style="color: #e76a35"></i>
-                <span>City</span>
-            </a>
-        </li>
-    </ul>
-</li><!-- End Forms Nav -->
+
 
 {{-- Master Menu End --}}
 
@@ -219,10 +166,67 @@
             </a>
         </li> --}}
     </ul>
+
+    <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#master-nav" data-bs-toggle="collapse" href="#">
+            <i class="bi bi-gear" style="color: #e76a35"></i><span>Master</span><i class="bi bi-chevron-down ms-auto"
+                style="color: #e76a35"></i>
+        </a>
+        <ul id="master-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+            <li class="nav-item">
+                <a class="nav-link " href="{{ route('membershipType.index') }}">
+                    <i class="bi bi-globe" style="color: #e76a35"></i>
+                    <span>Membership Type</span>
+                </a>
+            </li>
+        </ul>
+        <ul id="master-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+            <li class="nav-item">
+                <a class="nav-link " href="{{ route('tCategory.index') }}">
+                    <i class="bi bi-globe" style="color: #e76a35"></i>
+                    <span>Training Category</span>
+                </a>
+            </li>
+        </ul>
+        <ul id="master-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+            <li class="nav-item">
+                <a class="nav-link " href="{{ route('bCategory.index') }}">
+                    <i class="bi bi-plus-circle" style="color: #e76a35"></i>
+                    <span>Business Category</span>
+                </a>
+            </li>
+        </ul>
+        <ul id="master-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+            <li class="nav-item">
+                <a class="nav-link " href="{{ route('country.index') }}">
+                    <i class="bi bi-globe" style="color: #e76a35"></i>
+                    <span>Country</span>
+                </a>
+            </li>
+        </ul>
+        <ul id="master-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+            <li class="nav-item">
+                <a class="nav-link " href="{{ route('state.index') }}">
+                    <i class="bi bi-flag" style="color: #e76a35"></i>
+                    <span>State</span>
+                </a>
+            </li>
+        </ul>
+        <ul id="master-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+            <li class="nav-item">
+                <a class="nav-link " href="{{ route('city.index') }}">
+                    <i class="bi bi-buildings" style="color: #e76a35"></i>
+                    <span>City</span>
+                </a>
+            </li>
+        </ul>
+    </li><!-- End Forms Nav -->
+
+
+
 <li class="nav-item">
     <a class="nav-link collapsed" href="{{ route('testimonials.indexAdmin') }}">
         <i class="bi bi-person" style="color: #e76a35"></i>
         <span style="color: #1d2856">Testimonial</span>
     </a>
-</li>
 </li>

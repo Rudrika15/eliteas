@@ -26,9 +26,10 @@
     <div class="card-body">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h4 class="mb-0 mt-3">Circle Member</h4>
-            <a href="{{ route('circlemember.create') }}" class="btn btn-bg-orange btn-sm mt-3"><i class="bi bi-plus-circle"></i></a>
+            <a href="{{ route('circlemember.create') }}" class="btn btn-bg-orange btn-sm mt-3"><i
+                    class="bi bi-plus-circle"></i></a>
         </div>
-        
+
         <!-- Dropdown for filtering by Circle and Category side by side -->
 
         <div class="d-flex align-items-center mb-3">
@@ -56,7 +57,7 @@
             </select>
         </div>
 
-        
+
         <!-- Table with stripped rows -->
         <div class="table-responsive">
             <table class="table datatable table-responsive">
@@ -66,8 +67,9 @@
                         <th>Member Name</th>
                         <th>Business Category</th>
                         <th>Membership Type</th>
-                        <th>Status</th>
+                        <th>Roles</th> <!-- New column for roles -->
                         <th>Action</th>
+                        <th>Role Action</th> <!-- New column for assigning role -->
                     </tr>
                 </thead>
                 <tbody>
@@ -79,26 +81,104 @@
                             ?? ''}}</td>
                         <td>{{$circlememberData->bCategory->categoryName ?? '-'}}</td>
                         <td>{{$circlememberData->membershipType ?? '-'}} </td>
-                        <td>{{$circlememberData->status}}</td>
                         <td>
-
+                            @foreach ($circlememberData->user->roles as $role)
+                            <span class="badge rounded-pill bg-success">{{ $role->name }}</span>
+                            @if (!$loop->last)
+                            ,
+                            @endif
+                            @endforeach
+                        </td>
+                        <td>
                             <a href="{{ route('circlemember.activity', $circlememberData->id) }}"
                                 class="btn btn-bg-orange btn-sm">
                                 <i class="bi bi-info-circle"></i>
                             </a>
-
-
                             <a href="{{ route('circlemember.edit', $circlememberData->id) }}"
                                 class="btn btn-bg-blue btn-sm">
                                 <i class="bi bi-pen"></i>
                             </a>
-
-
                             <a href="{{ route('circlemember.delete') }}" class="btn btn-danger btn-sm">
                                 <i class="bi bi-trash"></i>
                             </a>
-
                         </td>
+                        <td>
+                            <button type="button" class="btn btn-bg-blue btn-sm" data-bs-toggle="modal"
+                                data-bs-target="#assignRoleModal{{ $circlememberData->id }}"><i
+                                    class="bi bi-person-plus"></i>
+                            </button>
+
+                            {{-- Modal --}}
+
+                            <div class="modal fade" id="assignRoleModal{{ $circlememberData->id }}"
+                                data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                                aria-labelledby="assignRoleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="assignRoleModalLabel">Assign Role</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form action="{{ route('assign.role') }}" method="POST">
+                                                @csrf
+                                                <input type="hiddden" name="memberId"
+                                                    value="{{ $circlememberData->id }}">
+                                                <select name="roleId" class="form-select">
+                                                    <option value="">Select Role</option>
+                                                    @foreach($roles as $role)
+                                                    @if (!in_array($role->name, ['Franchise Admin', 'Member', 'Admin']))
+                                                    <option value="{{ $role->id }}">{{ $role->name }}</option>
+                                                    @endif
+                                                    @endforeach
+                                                </select>
+                                                <button type="submit" class="btn btn-primary btn-sm">Assign</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- //remove role --}}
+
+                            <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal"
+                                data-bs-target="#removeRoleModal{{ $circlememberData->id }}"><i
+                                    class="bi bi-trash"></i>
+                            </button>
+                            {{-- Modal --}}
+
+                            <div class="modal fade" id="removeRoleModal{{ $circlememberData->id }}"
+                                data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                                aria-labelledby="removeRoleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="removeRoleModalLabel">Remove Role</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form action="{{ route('remove.role') }}" method="POST">
+                                                @csrf
+                                                <input type="hiddden" name="memberId"
+                                                    value="{{ $circlememberData->id }}">
+                                                <select name="roleId" class="form-select">
+                                                    <option value="">Select Role</option>
+                                                    @foreach($circlememberData->user->roles as $role)
+                                                    @if (!in_array($role->name, ['Member', 'Trainer', 'Admin']))
+                                                    <option value="{{ $role->id }}">{{ $role->name }}</option>
+                                                    @endif
+                                                    @endforeach
+                                                </select>
+                                                <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+
                     </tr>
                     @endforeach
                 </tbody>

@@ -26,7 +26,7 @@
 <div class="card">
     <div class="card-body">
         <div class="d-flex justify-content-between align-items-center mb-5">
-            <h4 class="mb-0 mt-3 text-blue">Testimonials</h4>
+            <h4 class="mb-0 mt-3 text-blue">Received Testimonials</h4>
 
             <a href="{{ route('testimonial.create') }}" class="btn btn-bg-orange btn-sm mt-3"><i
                     class="bi bi-plus-circle"></i></a>
@@ -62,7 +62,8 @@
     <div class="card-body">
         <div class="d-flex justify-content-between align-items-center mb-5">
             <h4 class="mb-0 mt-3 text-blue">My Testimonials</h4>
-
+            {{-- <a href="{{ route('testimonial.archives') }}" class="btn mt-3 btn-sm"
+                style="background-color: #e76a35">Archives</a> --}}
         </div>
         <hr class="mb-5">
         <!-- Table with stripped rows -->
@@ -73,7 +74,7 @@
                     <th>Message</th>
                     <th>UploadedDate</th>
                     <th>Status</th>
-                    {{-- <th>Action</th> --}}
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -84,7 +85,15 @@
                     <td>{{ $myTestimonial->message ?? '' }}</td>
                     <td>{{ \Carbon\Carbon::parse($testimonial->uploadedDate)->format('d-m-Y') ?? '' }}</td>
                     <td>{{ $myTestimonial->status }}</td>
-
+                    <td>
+                        <a href="{{ route('testimonial.edit', $myTestimonial->id) }}" class="btn btn-primary btn-sm">
+                            <i class="bi bi-pen"></i>
+                        </a>
+                        {{-- <a href="{{ route('testimonial.destroy', $myTestimonial->id) }}"
+                            onclick="return confirm('Do You Want To Delete It ?')"
+                            class="btn btn-danger btn-sm"><i
+                                class="bi bi-trash"></i></a> --}}
+                    </td>
                 </tr>
                 @endforeach
             </tbody>

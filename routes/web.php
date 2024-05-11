@@ -152,7 +152,12 @@ Route::group(['middleware' => ['auth']], function () {
 
     //member activity
     Route::get('circlemember/activity/{id?}', [CircleMemberActivityController::class, 'activity'])->name('circlemember.activity');
+    //give new role to member
+    Route::post('/assign-role', [CircleMemberController::class, 'assignRole'])->name('assign.role');
+    Route::post('/remove-role', [CircleMemberController::class, 'removeRole'])->name('remove.role');
 
+
+    
     Route::get('/circlemeeting/index', [CircleMeetingController::class, 'index'])->name('circlemeeting.index');
     Route::get('circlemeeting/show/{id?}', [CircleMeetingController::class, 'show'])->name('circlemeeting.show');
     Route::get('circlemeeting/create', [CircleMeetingController::class, 'create'])->name('circlemeeting.create');
@@ -283,10 +288,16 @@ Route::group(['middleware' => ['auth']], function () {
 
     // invite person
     Route::post('/invite', [HomeController::class, 'invitation'])->name('invite.person');
+
     //testimonials user side
     Route::get('testimonial/index', [TestimonialController::class, 'index'])->name('testimonial.index');
     Route::get('testimonial/create', [TestimonialController::class, 'create'])->name('testimonial.create');
     Route::post('testimonial/store', [TestimonialController::class, 'store'])->name('testimonial.store');
+    Route::post('testimonial/edit/{?id}', [TestimonialController::class, 'edit'])->name('testimonial.edit');
+    Route::post('testimonial/update', [TestimonialController::class, 'update'])->name('testimonial.update');
+    // Route::post('testimonial/delete{?id}', [TestimonialController::class, 'delete'])->name('testimonial.delete');
+
+
 
     //Testimonial View Admin Side
     Route::get('testimonials/indexAdmin', [TestimonialController::class, 'indexAdmin'])->name('testimonials.indexAdmin');

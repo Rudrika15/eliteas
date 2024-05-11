@@ -69,9 +69,14 @@ class TestimonialController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Testimonial $testimonial)
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit($id)
     {
-        //
+        $myTestimonial = Testimonial::find($id);
+
+        return view('testimonial.edit', compact('myTestimonial'));
     }
 
     /**
@@ -79,7 +84,18 @@ class TestimonialController extends Controller
      */
     public function update(Request $request, Testimonial $testimonial)
     {
-        //
+        $request->validate([
+            'circlePersonId' => 'required',
+            'message' => 'required'
+        ]);
+
+        $testimonial->userId = Auth::user()->id;
+        $testimonial->memberId = $request->circlePersonId;
+        $testimonial->message = $request->message;
+        $testimonial->status = 'Active';
+        $testimonial->uploadedDate = Carbon::now()->toDateString();
+        $testimonial->save();
+        return redirect()->route('testimonial.index')->with("success", "Testimonial updated successfully.");
     }
 
     /**

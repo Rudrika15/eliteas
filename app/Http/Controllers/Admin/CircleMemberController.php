@@ -15,11 +15,12 @@ use App\Models\CircleMember;
 use Illuminate\Http\Request;
 use App\Models\BillingAddress;
 use App\Models\ContactDetails;
+use App\Models\MembershipType;
 use App\Mail\WelcomeMemberEmail;
 use App\Models\BusinessCategory;
+use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
-use App\Models\MembershipType;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 
@@ -32,7 +33,8 @@ class CircleMemberController extends Controller
             $member = Member::whereHas('circle')->with('circle')->whereHas('contactDetails')->with('contactDetails')->with('user')->with('topsProfile')->with('billingAddress')->get();
             $circle = Circle::where('status', 'Active')->get();
             $bCategory = BusinessCategory::where('status', 'Active')->get();
-            return view('admin.circlemember.index', compact('member', 'circle', 'bCategory'));
+            $roles = Role::whereNotIn('name', ['Admin', 'Member', 'Trainer', 'Franchise '])->get();
+            return view('admin.circlemember.index', compact('member', 'roles', 'circle', 'bCategory'));
         } catch (\Throwable $th) {
             throw $th;
             return view('servererror');
@@ -282,13 +284,13 @@ class CircleMemberController extends Controller
             // $memberId = $request->memberId;
             $member = $request->id;
             // Update only the fields that have new values
-        //   return   $user = User::findOrFail($id);
-        //     $user->firstName = $request->firstName;
-        //     $user->lastName = $request->lastName;
-        //     // $user->email = $request->email;
-        //     $user->password = Hash::make($request->password);
-        //     $user->assignRole('Member');
-        //     $user->save();
+            //   return   $user = User::findOrFail($id);
+            //     $user->firstName = $request->firstName;
+            //     $user->lastName = $request->lastName;
+            //     // $user->email = $request->email;
+            //     $user->password = Hash::make($request->password);
+            //     $user->assignRole('Member');
+            //     $user->save();
 
             // Update the member
             $member = Member::findOrFail($member);
@@ -436,13 +438,53 @@ class CircleMemberController extends Controller
     {
         try {
             $circlecall = CircleCall::where('status', 'Active')
-            ->where('memberId', 'userId')
-            ->get();
+                ->where('memberId', 'userId')
+                ->get();
             return view('admin.circlemember.activity', compact('circlecall'));
         } catch (\Throwable $th) {
             throw $th;
             return view('servererror');
         }
+    }
+
+    public function assignRole(Request $request)
+    {
+        // Validate the incoming request
+        $request->validate([
+            'memberId' => 'required|exists:circle_members,id',
+            'roleId' => 'required|exists:roles,id',
+        ]);
+
+        // Find the circle member
+        $member = CircleMember::findOrFail($request->memberId);
+
+        // Find the role
+        $role = Role::findOrFail($request->roleId);
+
+        // Attach the role to the user (assuming the relationship is defined)
+        $member->user->roles()->attach($role);
+
+        return redirect()->back()->with('success', 'Role assigned successfully.');
+    }
+
+    public function removeRole(Request $request)
+    {
+        // Validate the incoming request
+        $request->validate([
+            'memberId' => 'required|exists:circle_members,id',
+            'roleId' => 'required|exists:roles,id',
+        ]);
+
+        // Find the circle member
+        $member = CircleMember::findOrFail($request->memberId);
+
+        // Find the role
+        $role = Role::findOrFail($request->roleId);
+
+        // Detach the role from the user (assuming the relationship is defined)
+        $member->user->roles()->detach($role);
+
+        return redirect()->back()->with('success', 'Role removed successfully.');
     }
 
 }
