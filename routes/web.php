@@ -293,9 +293,9 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('testimonial/index', [TestimonialController::class, 'index'])->name('testimonial.index');
     Route::get('testimonial/create', [TestimonialController::class, 'create'])->name('testimonial.create');
     Route::post('testimonial/store', [TestimonialController::class, 'store'])->name('testimonial.store');
-    Route::post('testimonial/edit/{?id}', [TestimonialController::class, 'edit'])->name('testimonial.edit');
+    Route::get('testimonial/edit/{id?}', [TestimonialController::class, 'edit'])->name('testimonial.edit');
     Route::post('testimonial/update', [TestimonialController::class, 'update'])->name('testimonial.update');
-    // Route::post('testimonial/delete{?id}', [TestimonialController::class, 'delete'])->name('testimonial.delete');
+    // Route::post('testimonial/delete{id?}', [TestimonialController::class, 'delete'])->name('testimonial.delete');
 
 
 
@@ -331,7 +331,8 @@ Route::group(['middleware' => ['auth']], function () {
     
     // connections
     Route::post('/connect', [ConnectionController::class, 'connect'])->name('connect');
-    Route::get('/connections/index', [ConnectionController::class, 'myConnections'])->name('connection.index');
+    Route::get('/connections/connectionRequests', [ConnectionController::class, 'connectionRequests'])->name('connection.connectionRequests');
+    Route::get('/connections/myConnections', [ConnectionController::class, 'myConnections'])->name('connection.myConnections');
     Route::get('/connections/accept/{id}', [ConnectionController::class, 'accept'])->name('connection.accept');
     Route::get('/connections/reject/{id}', [ConnectionController::class, 'reject'])->name('connection.reject');
 });

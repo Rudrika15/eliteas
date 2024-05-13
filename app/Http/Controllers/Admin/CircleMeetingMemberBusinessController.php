@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Admin;
 use App\Models\Member;
 use Illuminate\Http\Request;
 use App\Models\CircleMeeting;
+use App\Models\BusinessAmount;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
 use App\Models\CircleMeetingMembersBusiness;
@@ -28,6 +29,8 @@ class CircleMeetingMemberBusinessController extends Controller
             return view('servererror');
         }
     }
+
+    
     //For show single data
     public function view(Request $request, $id)
     {
@@ -84,7 +87,8 @@ class CircleMeetingMemberBusinessController extends Controller
     {
         try {
             $busGiver = CircleMeetingMembersBusiness::find($id);
-            return view('admin.circlebusiness.edit', compact('busGiver'));
+            $paymentHistory = BusinessAmount::where('circleMeetingMemberBusinessId', $id)->get();
+            return view('admin.circlebusiness.edit', compact('busGiver', 'paymentHistory'));
         } catch (\Throwable $th) {
             throw $th;
             return view('servererror');
@@ -105,8 +109,14 @@ class CircleMeetingMemberBusinessController extends Controller
             $busGiver->amount += $request->amount;
             $busGiver->date = $request->date;
             $busGiver->status = 'Active';
-
             $busGiver->update();
+
+            $businessAmount = new BusinessAmount();
+            $businessAmount->circleMeetingMemberBusinessId = $id;
+            $businessAmount->amount = $request->amount;
+            $businessAmount->date = Carbon::now()->toDateString();
+            $businessAmount->status = 'Active';
+            $businessAmount->save();
 
 
             return redirect()->route('busGiver.index')->with('success', ' Updated Successfully!');

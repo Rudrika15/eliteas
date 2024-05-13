@@ -22,9 +22,34 @@
         <span class="text-blue">Testimonial</span>
     </a>
 </li>
-<li class="nav-item">
+{{-- <li class="nav-item">
     <a class="nav-link collapsed" href="{{ route('connection.index') }}">
         <i class="bi bi-person-heart" style="color: #e76a35"></i>
         <span style="color: #1d2865;">Connection Request</span>
     </a>
-</li>
+</li> --}}
+
+
+
+<li class="nav-item">
+    <a class="nav-link collapsed" data-bs-target="#connection-nav" data-bs-toggle="collapse" href="#">
+        <i class="bi bi-person-heart" style="color: #e76a35"></i><span>Connection</span><i
+            class="bi bi-chevron-down ms-auto" style="color: #e76a35"></i>
+    </a>
+    <ul id="connection-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+        <li class="nav-item">
+            <a class="nav-link " href="{{ route('connection.connectionRequests') }}">
+                <i class="bi bi-person-heart" style="color: #e76a35"></i>
+                <span>Connection Request</span>
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link " href="{{ route('connection.myConnections') }}">
+                <i class="bi bi-gear-wide-connected" style="color: #e76a35"></i>
+                <span>My Connection</span>
+            </a>
+        </li>
+
+    </ul>
+</li><!-- End Tables Nav -->

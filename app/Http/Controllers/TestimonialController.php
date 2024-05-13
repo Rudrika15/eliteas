@@ -82,13 +82,15 @@ class TestimonialController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Testimonial $testimonial)
+    public function update(Request $request)
     {
         $request->validate([
             'circlePersonId' => 'required',
             'message' => 'required'
         ]);
 
+        $id = $request->id;
+        $testimonial = Testimonial::find($id);
         $testimonial->userId = Auth::user()->id;
         $testimonial->memberId = $request->circlePersonId;
         $testimonial->message = $request->message;

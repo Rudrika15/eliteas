@@ -31,16 +31,19 @@
 
     <!-- Floating Labels Form -->
     <form class="m-3 needs-validation" id="testimonialForm" enctype="multipart/form-data" method="post"
-        action="{{ route('testimonial.update', $testimonial->id) }}" novalidate>
+        action="{{ route('testimonial.update', $myTestimonial->id) }}" novalidate>
         @csrf
         <input type="hiddden" name="id" value="{{ $myTestimonial->id }}">
         @include('testimonialCircleMember')
-        
+
         <div class="row mb-3 ">
             <div class="col-md-12">
                 <div class="form-floating mt-3">
-                    <input type="hidden" id="circlePersonId" name="circlePersonId">
-                    <input type="text" class="form-control" id="circlePersonName" placeholder="Select Member" disabled>
+                    <input type="hidden" id="circlePersonId" name="circlePersonId"
+                        value="{{ old('circlePersonId', $myTestimonial->memberId) }}">
+                    <input type="text" class="form-control" id="circlePersonName" placeholder="Select Member"
+                        value="{{ old('circlePersonName', $myTestimonial->member->firstName . ' ' . $myTestimonial->member->lastName) }}"
+                        disabled>
                     <label for="meetingPersonName">Circle Member Name</label>
                     @error('circlePersonId')
                     <div class="invalid-tooltip">
@@ -49,11 +52,11 @@
                     @enderror
                 </div>
             </div>
-        
+
             <div class="col-md-12">
                 <div class="form-floating mt-3">
                     <textarea class="form-control @error('message') is-invalid @enderror" id="message" name="message"
-                        placeholder="Enter Message"></textarea>
+                        placeholder="Enter Message">{{ $myTestimonial->message }}</textarea>
                     <label for="message">Message</label>
                     @error('message')
                     <div class="invalid-tooltip">

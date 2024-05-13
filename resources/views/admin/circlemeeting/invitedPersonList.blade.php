@@ -34,7 +34,7 @@
             <table class="table mt-3">
                 <thead>
                     <tr>
-                        <th>Circle Meeting </th>
+                        <th>Circle Name </th>
                         <th>Invited By</th>
                         <th>Person Name</th>
                         <th>Person Email</th>
@@ -44,7 +44,7 @@
                 <tbody>
                     @foreach ($invitedPersonList as $invitedPersonListData)
                     <tr>
-                        <td>{{ $invitedPersonListData->meetingId ?? '-' }}</td>
+                        <td>{{ $invitedPersonListData->meeting->circle->circleName ?? '-' }}</td>
                         <td>{{ $invitedPersonListData->user->member->firstName ?? '-' }} {{
                             $invitedPersonListData->user->member->lastName ?? '-' }}</td>
                         <td>{{ $invitedPersonListData->personName ?? '-' }}</td>

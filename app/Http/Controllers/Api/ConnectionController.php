@@ -56,6 +56,7 @@ class ConnectionController extends Controller
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
+
     public function myConnections(Request $request)
     {
         try {
@@ -138,6 +139,18 @@ class ConnectionController extends Controller
             $connection->status = $request->input('action');
             $connection->save();
             return Utils::sendResponse(['message' => 'Connection Request Action done Successfully.'], 200);
+        } catch (\Throwable $th) {
+            return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
+        }
+    }
+
+    public function removeConnection(Request $request)
+    {
+        try {
+            $connection = Connection::find($request->input('connectionId'));
+            $connection->status = '';
+            $connection->save();
+            return Utils::sendResponse(['message' => 'Connection Removed Successfully.'], 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }

@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers\Api;
 
+use Carbon\Carbon;
+use App\Models\User;
 use App\Utils\Utils;
 use App\Models\Member;
 use Illuminate\Http\Request;
+use App\Models\BusinessAmount;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use App\Models\CircleMeetingMembersBusiness;
-use App\Models\User;
 
 class CircleMeetingMemberBusinessController extends Controller
 {
@@ -24,6 +26,20 @@ class CircleMeetingMemberBusinessController extends Controller
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
+    
+    public function paymentHistory(Request $request)
+    {
+        try {
+            $paymentHistory = BusinessAmount::where('status', 'Active')
+                ->where('circleMeetingMemberBusinessId')
+                ->orderBy('id', 'DESC')
+                ->get();
+            return Utils::sendResponse(['paymentHistory' => $paymentHistory], 'Circle Meeting Members Business Payment History retrieved successfully', 200);
+        } catch (\Throwable $th) {
+            return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
+        }
+    }
+
 
     public function view(Request $request, $id)
     {
@@ -94,8 +110,16 @@ class CircleMeetingMemberBusinessController extends Controller
             $busGiver->status = 'Active';
             $busGiver->save();
 
+            $businessAmount = new BusinessAmount();
+            $businessAmount->circleMeetingMemberBusinessId = $id;
+            $businessAmount->amount = $request->amount;
+            $businessAmount->date = Carbon::now()->toDateString();
+            $businessAmount->status = 'Active';
+            $businessAmount->save();
+
             return Utils::sendResponse([
                 'busGiver' => $busGiver,
+                'businessAmount' => $businessAmount,
                 'userId' => $user->id,
                 'profilePhoto' => $member->profilePhoto,
                 'firstName' => $user->firstName,

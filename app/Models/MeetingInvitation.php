@@ -24,4 +24,9 @@ class MeetingInvitation extends Model
     {
         return $this->hasOne(Training::class, 'id', 'meetingId');
     }
+
+    public function meeting()
+    {
+        return $this->hasOne(Schedule::class, 'id', 'meetingId');
+    }
 }

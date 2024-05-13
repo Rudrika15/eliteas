@@ -21,7 +21,7 @@ class ConnectionController extends Controller
         return response()->json(['message' => 'Connection request processed successfully']);
     }
 
-    public function myConnections()
+    public function connectionRequests()
     {
 
         $userId = Auth::user()->id;
@@ -31,8 +31,21 @@ class ConnectionController extends Controller
         })->with('members')
             ->get();
 
-        return view('connections', compact('connections'));
+        return view('admin.connection.connections', compact('connections'));
     }
+
+    public function myConnections()
+    {
+
+        $userId = Auth::user()->id;
+
+        $connections = Connection::whereHas('members', function ($query) use ($userId) {
+            $query->where('userId', $userId);
+        })->where('status', 'Accepted')->with('members')->get();
+
+        return view('admin.connection.myConnection', compact('connections'));
+    }
+
     public function accept($id)
     {
         $connection = Connection::find($id);

@@ -115,4 +115,44 @@
     </div>
 </div>
 
+
+
+<div class="card">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-5">
+            <h4 class="mb-0 mt-3 text-blue">Payment History</h4>
+            {{-- <a href="{{ route('busGiver.create') }}" class="btn btn-primary btn-sm mt-3">ADD</a> --}}
+        </div>
+        <hr class="mb-5">
+        <!-- Table with stripped rows -->
+        <table class="table datatable mb-5">
+            <thead>
+                <tr>
+                    {{-- <th>Business Giver</th> --}}
+                    <th>Amount</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    {{-- <th>Action</th> --}}
+                </tr>
+            </thead>
+            <tbody>
+                @if($paymentHistory->isNotEmpty())
+                @foreach ($paymentHistory as $paymentHistoryData)
+                <tr>
+                    <td>{{$paymentHistoryData->amount ?? '-'}}</td>
+                    <td>{{$paymentHistoryData->date ?? '-'}}</td>
+                    <td>{{$paymentHistoryData->status ?? '-'}}</td>
+                </tr>
+                @endforeach
+                @else
+                <tr>
+                    <td colspan="5">No payment history data available</td>
+                </tr>
+                @endif
+            </tbody>
+        </table>
+        <!-- End Table with stripped rows -->
+    </div>
+</div>
+
 @endsection
