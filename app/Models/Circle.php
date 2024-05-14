@@ -52,4 +52,9 @@ class Circle extends Model
     {
         return $this->hasMany(Member::class, 'circleId', 'id');
     }
+    
+    public function circleWiseMembers()
+    {
+        return $this->hasMany(Member::class, 'circleId', 'id');
+    }
 }

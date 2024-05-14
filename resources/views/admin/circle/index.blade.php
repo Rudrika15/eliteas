@@ -27,7 +27,8 @@
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h4 class="mb-0 mt-3">Circle</h4>
             <div class="">
-                <a href="{{ route('circle.create') }}" class="btn btn-bg-orange btn-sm mt-3 mr-2 "><i class="bi bi-plus-circle"></i></a>
+                <a href="{{ route('circle.create') }}" class="btn btn-bg-orange btn-sm mt-3 mr-2 "><i
+                        class="bi bi-plus-circle"></i></a>
                 <a href="{{ route('schedule.index') }}" class="btn btn-bg-blue btn-sm mt-3">All Meetings</a>
             </div>
         </div>
@@ -79,12 +80,17 @@
                         <td>{{$circleData->status}}</td>
                         <td>
 
-                            <a href="{{ route('meetings.by.circle', $circleData->id) }}" class="btn btn-bg-orange btn-sm">
+                            <a href="{{ route('meetings.by.circle', $circleData->id) }}"
+                                class="btn btn-bg-orange btn-sm">
                                 <i class="bi bi-eye"></i>
                             </a>
 
                             <a href="{{ route('circle.edit', $circleData->id) }}" class="btn btn-bg-blue btn-sm ">
                                 <i class="bi bi-pen"></i>
+                            </a>
+
+                            <a href="{{ route('circle.memberList', $circleData->id) }}" class="btn btn-info btn-sm ">
+                                <i class="bi bi-person-lines-fill"></i>
                             </a>
 
                             <a href="{{ route('circle.delete', $circleData->id) }}" class="btn btn-danger btn-sm ">

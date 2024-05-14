@@ -141,6 +141,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('circle/edit/{id?}', [CircleController::class, 'edit'])->name('circle.edit');
     Route::post('circle/update', [CircleController::class, 'update'])->name('circle.update');
     Route::get('circle/delete/{id?}', [CircleController::class, 'delete'])->name('circle.delete');
+    Route::get('circle/memberList/{id?}', [CircleController::class, 'memberList'])->name('circle.memberList');
+
 
     Route::get('/circlemember/index', [CircleMemberController::class, 'index'])->name('circlemember.index');
     Route::get('circlemember/show/{id?}', [CircleMemberController::class, 'show'])->name('circlemember.show');
@@ -250,6 +252,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('schedule/edit/{id?}', [ScheduleController::class, 'edit'])->name('schedule.edit');
     Route::post('schedule/update', [ScheduleController::class, 'update'])->name('schedule.update');
     Route::get('schedule/delete/{id?}', [ScheduleController::class, 'delete'])->name('schedule.delete');
+    Route::get('schedule/invitedList/{id?}', [ScheduleController::class, 'invitedList'])->name('schedule.invitedList');
 
     Route::get('/schedule/dashIndex', [ScheduleController::class, 'dashIndex'])->name('schedule.dashIndex');
     Route::get('/schedule/dashEdit/{id?}', [ScheduleController::class, 'dashEdit'])->name('schedule.dashEdit');
@@ -333,6 +336,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/connect', [ConnectionController::class, 'connect'])->name('connect');
     Route::get('/connections/connectionRequests', [ConnectionController::class, 'connectionRequests'])->name('connection.connectionRequests');
     Route::get('/connections/myConnections', [ConnectionController::class, 'myConnections'])->name('connection.myConnections');
-    Route::get('/connections/accept/{id}', [ConnectionController::class, 'accept'])->name('connection.accept');
-    Route::get('/connections/reject/{id}', [ConnectionController::class, 'reject'])->name('connection.reject');
+    Route::get('/connections/accept/{id?}', [ConnectionController::class, 'accept'])->name('connection.accept');
+    Route::get('/connections/reject/{id?}', [ConnectionController::class, 'reject'])->name('connection.reject');
+    Route::get('/connections/removeConnection/{id?}', [ConnectionController::class, 'removeConnection'])->name('connection.removeConnection');
+
 });

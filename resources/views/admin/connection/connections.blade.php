@@ -54,9 +54,9 @@
                             <td>
                                 @if ($connection->status == 'Pending')
                                     <a class="btn btn-sm btn-success"
-                                        href="{{ route('connection.accept', $connection->id) }}">Accept</a>
+                                        href="{{ route('connection.accept', $connection->id) }}"><i class="bi bi-check"></i></a>
                                     <a class="btn btn-sm btn-danger"
-                                        href="{{ route('connection.reject', $connection->id) }}">Reject</a>
+                                        href="{{ route('connection.reject', $connection->id) }}"><i class="bi bi-x"></i></a>
                                 @endif
                             </td>
 

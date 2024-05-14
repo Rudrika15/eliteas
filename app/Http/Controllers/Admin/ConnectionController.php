@@ -29,6 +29,7 @@ class ConnectionController extends Controller
         $connections = Connection::whereHas('members', function ($query) use ($userId) {
             $query->where('userId', $userId);
         })->with('members')
+            ->where('status', 'Pending')
             ->get();
 
         return view('admin.connection.connections', compact('connections'));
@@ -51,7 +52,7 @@ class ConnectionController extends Controller
         $connection = Connection::find($id);
         $connection->status = "Accepted";
         $connection->save();
-        return \redirect()->route('connection.index')
+        return \redirect()->route('connection.myConnections')
             ->with('success', 'Accepted Successfully');
     }
     public function reject($id)
@@ -59,7 +60,15 @@ class ConnectionController extends Controller
         $connection = Connection::find($id);
         $connection->status = "Rejected";
         $connection->save();
-        return \redirect()->route('connection.index')
+        return \redirect()->route('connection.myConnections')
             ->with('success', 'Rejected Successfully');
+    }
+
+    public function removeConnection($id)
+    {
+        $connection = Connection::find($id);
+        $connection->delete();
+        return \redirect()->route('connection.myConnections')
+            ->with('success', 'Connection Removed Succefully');
     }
 }

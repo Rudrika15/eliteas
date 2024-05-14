@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Schedule;
 use App\Models\Franchise;
 use Illuminate\Http\Request;
+use App\Models\MeetingInvitation;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
@@ -175,6 +176,18 @@ class ScheduleController extends Controller
             return redirect()->route('schedule.dashIndex')->with('success', 'Schedule details updated successfully.');
         } catch (\Exception $e) {
             return redirect()->route('schedule.dashIndex')->with('error', 'Failed to update Schedule details.');
+        }
+    }
+
+    public function invitedList(Request $request, $id)
+    {
+        try {
+            $schedules = Schedule::findOrFail($id);
+            $invitedPersonList = MeetingInvitation::where('meetingId', $id)->get();
+            return view('admin.schedule.invitedList', compact('schedules', 'invitedPersonList'));
+        } catch (\Throwable $th) {
+            throw $th;
+            return view('servererror');
         }
     }
 

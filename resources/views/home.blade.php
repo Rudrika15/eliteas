@@ -229,7 +229,7 @@
 {{-- Invited People Admin Side Start --}}
 
 @role('Admin')
-<div class="col-md-3">
+{{-- <div class="col-md-3">
     <div class="col-md-12">
         <div class="card-title"><b>Invited People List</b></div>
     </div>
@@ -260,7 +260,7 @@
             </div>
         </div>
     </div>
-</div>
+</div> --}}
 
 <!-- Bootstrap Modal -->
 <div class="modal fade" id="allInvitesModal" tabindex="-1" aria-labelledby="allInvitesModalLabel" aria-hidden="true">

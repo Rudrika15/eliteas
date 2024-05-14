@@ -4,15 +4,18 @@ namespace App\Http\Controllers\Admin;
 
 use Carbon\Carbon;
 use App\Models\City;
+use App\Models\State;
 use App\Models\Circle;
+use App\Models\Member;
+use App\Models\Country;
 use App\Models\Schedule;
 use App\Models\Franchise;
 use App\Models\CircleType;
+use App\Models\CircleMember;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
-use App\Models\Country;
-use App\Models\State;
+use App\Mail\MeetingInvitation;
 
 class CircleController extends Controller
 {
@@ -213,7 +216,7 @@ class CircleController extends Controller
             return view('servererror');
         }
     }
-    
+
     public function showByCircle(Request $request, $id)
     {
         try {
@@ -225,4 +228,18 @@ class CircleController extends Controller
             return view('servererror');
         }
     }
+
+    public function memberList(Request $request, $id)
+    {
+        try {
+            $circle = Circle::findOrFail($id);
+            $members = Member::where('circleId', $circle->id)->get();
+            return view('admin.circle.memberList', compact('circle', 'members'));
+        } catch (\Throwable $th) {
+            throw $th;
+            return view('servererror');
+        }
+    }
+
+   
 }

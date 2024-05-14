@@ -73,6 +73,10 @@
                     <td>{{$schedulesData->remarks}}</td>
                     <td>{{$schedulesData->status}}</td>
                     <td>
+                        <a href="{{ route('schedule.invitedList', $schedulesData->id) }}" class="btn btn-info btn-sm">
+                            <i class="bi bi-person-lines-fill"></i>
+                        </a>
+
                         <a href="{{ route('schedule.edit', $schedulesData->id) }}" class="btn btn-bg-blue btn-sm ">
                             <i class="bi bi-pen"></i>
                         </a>
@@ -80,6 +84,7 @@
                         <a href="{{ route('schedule.delete', $schedulesData->id) }}" class="btn btn-danger btn-sm">
                             <i class="bi bi-trash"></i>
                         </a>
+
                     </td>
                 </tr>
                 @endforeach

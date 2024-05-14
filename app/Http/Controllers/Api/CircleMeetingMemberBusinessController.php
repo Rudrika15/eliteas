@@ -18,32 +18,14 @@ class CircleMeetingMemberBusinessController extends Controller
     public function index(Request $request)
     {
         try {
-            // $busGivers = CircleMeetingMembersBusiness::with([
-            //     'users:id,firstName,lastName,email',
-            //     'members:userId,profilePhoto',
-            //     'businessAmounts' // Include business amounts relationship
-            // ])
-            //     ->where('status', 'Active')
-            //     ->orderByDesc('id')
-            //     ->get();
-
-
-            try {
-                $busGivers = CircleMeetingMembersBusiness::with([
-                    'users:id,firstName,lastName,email',
-                    'members' => function ($query) {
-                        $query->select('userId', 'profilePhoto'); // Select only required columns
-                    },
-                    'businessAmounts' // Include business amounts relationship
-                ])
+            $busGivers = CircleMeetingMembersBusiness::with([
+                'users:id,firstName,lastName,email',
+                'member:userId,profilePhoto',
+                'businessAmounts' // Include business amounts relationship
+            ])
                 ->where('status', 'Active')
-                    ->orderByDesc('id')
-                    ->get();
-            } catch (\Exception $e) {
-                // Handle any exceptions
-                // For example, log the error or return a response
-                return response()->json(['error' => $e->getMessage()], 500);
-            }
+                ->orderByDesc('id')
+                ->get();
 
 
 

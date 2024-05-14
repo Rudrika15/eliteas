@@ -86,9 +86,14 @@
                     <td>{{$meeting['data']->remarks}}</td>
                     <td>{{$meeting['data']->status}}</td>
                     <td>
+                        <a href="{{ route('schedule.invitedList', $meeting['data']->id) }}" class="btn btn-info btn-sm">
+                            <i class="bi bi-person-lines-fill"></i>
+                        </a>
+
                         <a href="{{ route('schedule.dashEdit', $meeting['data']->id) }}" class="btn btn-bg-blue btn-sm">
                             <i class="bi bi-pen"></i>
                         </a>
+
                         <a href="{{ route('schedule.delete', $meeting['data']->id) }}"
                             class="btn btn-danger btn-sm ">
                             <i class="bi bi-trash"></i>
