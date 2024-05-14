@@ -148,13 +148,19 @@ class ConnectionController extends Controller
     {
         try {
             $connection = Connection::find($request->input('connectionId'));
-            $connection->status = '';
-            $connection->save();
+
+            if (!$connection) {
+                return Utils::errorResponse(['error' => 'Connection not found.'], 'Not Found', 404);
+            }
+
+            $connection->delete();
+
             return Utils::sendResponse(['message' => 'Connection Removed Successfully.'], 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
+
 
     public function viewMemberProfile(Request $request)
     {

@@ -79,7 +79,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('circle-meeting-member-businesses', [CircleMeetingMemberBusinessController::class, 'index']);
     Route::get('circle-meeting-member-businesses/{id}', [CircleMeetingMemberBusinessController::class, 'view']);
     Route::post('circle-meeting-member-businesses/create', [CircleMeetingMemberBusinessController::class, 'create']);
-    Route::put('circle-meeting-member-businesses/{id}', [CircleMeetingMemberBusinessController::class, 'update']);
+    Route::post('circle-meeting-member-businesses/{id}', [CircleMeetingMemberBusinessController::class, 'update']);
     Route::delete('circle-meeting-member-businesses/{id}', [CircleMeetingMemberBusinessController::class, 'delete']);
 
     Route::get('circle-meeting-member-businesses/paymentHistory/{id}', [CircleMeetingMemberBusinessController::class, 'paymentHistory']);
@@ -192,5 +192,4 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('/connections/removeConnection', [ConnectionController::class, 'removeConnection']);
     Route::post('/connections/viewMemberProfile', [ConnectionController::class, 'viewMemberProfile']);
     Route::post('/connections/ConnectionsRequests', [ConnectionController::class, 'ConnectionsRequests']);
-    
 });

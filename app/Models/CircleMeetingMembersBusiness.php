@@ -31,10 +31,21 @@ class CircleMeetingMembersBusiness extends Model
         return $this->belongsTo(User::class, 'loginMemberId');
     }
 
+    public function users()
+    {
+        return $this->belongsTo(User::class, 'businessGiverId');
+    }
+
     // public function circleBusiness()
     // {
     //     return $this->belongsTo(BusinessAmount::class, 'id', 'circleMeetingMemberBusinessId');
     // }
+
+    public function businessAmounts()
+    {
+        return $this->hasMany(BusinessAmount::class, 'circleMeetingMemberBusinessId');
+    }
+
 
     
 }

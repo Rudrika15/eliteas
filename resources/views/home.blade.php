@@ -563,7 +563,7 @@
             var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
             var url = `{{ route('razorpay.payment.store') }}`;
             var trainingId = '{{ $nearestTraining->id ?? '-' }}';
-            var trainerId = '{{ $nearestTraining->trainersTrainings->user->id }}';
+            var trainerId = '{{ $nearestTraining->trainersTrainings->user->id ?? '-'}}';
             console.log('trainingId', trainingId);
             console.log('trainerId', trainerId);
             fetch(url, {

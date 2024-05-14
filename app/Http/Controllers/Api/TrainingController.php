@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use Carbon\Carbon;
 use App\Utils\Utils;
 use App\Models\Razorpay;
 use App\Models\Training;
@@ -19,7 +20,8 @@ class TrainingController extends Controller
         try {
             $trainings = Training::with('trainer')
             ->where('status', 'Active')
-            ->orderBy('id', 'DESC')
+            ->where('date', '>=', Carbon::now()->subDays(1))
+            // ->where('date', '>', now()->toDateString())
             ->get();
 
             return Utils::sendResponse(['trainings' => $trainings], 'Trainings retrieved successfully', 200);

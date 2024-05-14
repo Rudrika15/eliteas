@@ -18,14 +18,44 @@ class CircleMeetingMemberBusinessController extends Controller
     public function index(Request $request)
     {
         try {
-            $busGivers = CircleMeetingMembersBusiness::where('status', 'Active')
-                ->orderBy('id', 'DESC')
-                ->get();
+            // $busGivers = CircleMeetingMembersBusiness::with([
+            //     'users:id,firstName,lastName,email',
+            //     'members:userId,profilePhoto',
+            //     'businessAmounts' // Include business amounts relationship
+            // ])
+            //     ->where('status', 'Active')
+            //     ->orderByDesc('id')
+            //     ->get();
+
+
+            try {
+                $busGivers = CircleMeetingMembersBusiness::with([
+                    'users:id,firstName,lastName,email',
+                    'members' => function ($query) {
+                        $query->select('userId', 'profilePhoto'); // Select only required columns
+                    },
+                    'businessAmounts' // Include business amounts relationship
+                ])
+                ->where('status', 'Active')
+                    ->orderByDesc('id')
+                    ->get();
+            } catch (\Exception $e) {
+                // Handle any exceptions
+                // For example, log the error or return a response
+                return response()->json(['error' => $e->getMessage()], 500);
+            }
+
+
+
             return Utils::sendResponse(['busGivers' => $busGivers], 'Circle Meeting Members Business retrieved successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
+    
+
+
+
     
     public function paymentHistory(Request $request)
     {

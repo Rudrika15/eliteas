@@ -42,16 +42,22 @@ class CircleCallController extends Controller
                 return Utils::errorResponse(['error' => 'Member not found for the authenticated user'], 'Not Found', 404);
             }
 
-            $circleCalls = CircleCall::with('members')
-                ->with('meetingPerson')
+            // $circleCalls = CircleCall::with('members')
+            //     ->with('meetingPerson')
+            //     ->where('memberId', $member->id)
+            //     ->where('status', 'Active')
+            //     ->orderBy('id', 'DESC')
+            //     ->get();
+
+            $circleCalls = CircleCall::with('meetingPerson')
                 ->where('memberId', $member->id)
                 ->where('status', 'Active')
                 ->orderBy('id', 'DESC')
                 ->get();
 
-                // foreach ($circleCalls as $circleCall) {
-                //     $circleCall->meetingPersonId = $circleCall->member->firstName;
-                // }
+            // foreach ($circleCalls as $circleCall) {
+            //     $circleCall->meetingPersonId = $circleCall->member->firstName;
+            // }
 
 
             return Utils::sendResponse(['circleCalls' => $circleCalls], 'Circle Calls retrieved successfully', 200);
