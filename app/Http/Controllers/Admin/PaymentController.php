@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\AllPayments;
 use App\Models\MeetingInvitation;
 use App\Models\Razorpay;
 use App\Models\TrainingRegister;
@@ -28,6 +29,17 @@ class PaymentController extends Controller
         $register->trainerId = $request->input('trainerId');
         $register->save();
 
+        $allPayments = new AllPayments();
+        $allPayments->memberId = $register->userId;
+        $allPayments->amount = $payment->amount;
+        // $allPayments->paymentType = $request->input('paymentType'); //ask how to get paymentType - cash or cheque
+        $allPayments->paymentType = 'RazorPay'; //ask how to get paymentType - cash or cheque
+        // $allPayments->date = now()->format('d-m-Y');
+        $allPayments->date = $request->input('date');
+        $allPayments->paymentMode = 'Training Register';
+        $allPayments->remarks = $payment->r_payment_id;
+        $allPayments->save();
+
         return response()->json(['message' => 'Payment ID stored successfully'], 200);
     }
 
@@ -44,6 +56,7 @@ class PaymentController extends Controller
         $invitation->save();
         session()->forget('data');
         return redirect("/")->with("success","Payment done");
+
         // return response()->json(['message' => 'Payment done'], 200);
     }
 }

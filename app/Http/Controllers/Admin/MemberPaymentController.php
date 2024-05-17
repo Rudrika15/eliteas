@@ -5,10 +5,11 @@ namespace App\Http\Controllers\Admin;
 use App\Models\State;
 use App\Models\Member;
 use App\Models\Country;
+use App\Models\AllPayments;
 use Illuminate\Http\Request;
+use App\Models\MemberPayment;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
-use App\Models\MemberPayment;
 
 class MemberPaymentController extends Controller
 {
@@ -48,15 +49,29 @@ class MemberPaymentController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'stateName' => 'required',
+            // 'stateName' => 'required',
         ]);
         try {
             $payment = new MemberPayment();
-            $payment->countryId = $request->countryId;
-            $payment->paymentName = $request->paymentName;
+            $payment->memberId = $request->memberId;
+            $payment->paymentTypeId = $request->paymentTypeId;
+            $payment->amount = $request->amount;
+            $payment->gst = $request->gst;
             $payment->status = 'Active';
 
             $payment->save();
+
+            $payments = new AllPayments();
+            $payments->memberId = $payment->memberId;
+            $payments->paymentType = 'Razorpay';
+            $payments->amount = $payment->amount;
+            $payments->gst = $request->gst;
+            $payments->paymentMode = 'Membership Payment';
+            $payments->remarks = $payment->paymentId;
+            $payments->status = 'Active';
+            $payments->save();
+            
+
 
             return redirect()->route('state.index')->with('success', 'State Created Successfully!');
         } catch (\Throwable $th) {
