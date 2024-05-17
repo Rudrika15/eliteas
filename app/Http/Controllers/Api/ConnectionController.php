@@ -166,8 +166,14 @@ class ConnectionController extends Controller
     {
         try {
             $member = Member::where('id', $request->input('memberId'))
-                ->with('user', 'circle', 'billingAddress', 'contactDetails', 'topsProfile')
+                ->with('user', 'circle', 'billingAddress', 'contactDetails', 'topsProfile', 'connections')
                 ->first();
+
+            if ($member) {
+                // Determine the status of the connection
+                $status = $member->connections->isEmpty() ? null : $member->connections->first()->status;
+                $member->status = $status == 'Accepted' ? 'Connected' : ($status == 'Pending' ? 'Pending' : null);
+            }
 
             return Utils::sendResponse([
                 'message' => 'Member Profile',

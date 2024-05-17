@@ -41,13 +41,18 @@
             <tbody>
                 @foreach ($connections as $connection)
                 <tr>
-                    <td>{{ $connection->user->firstName ?? '-' }} {{ $connection->user->lastName ?? '-' }}</td>
+                    <td>{{ $connection->member->firstName }} {{ $connection->member->lastName ?? '-' }}</td>
                     <td>
-                        <span class="badge bg-success">{{ $connection->status }}</span>
+                        @if ($connection->status == 'Accepted')
+                        <span class="badge bg-success">Connected</span>
+                        {{-- @else
+                        <span class="badge bg-success">{{ $connection->status }}</span> --}}
+                        @endif
                     </td>
                     <td>
                         <a class="btn btn-sm btn-danger"
-                            href="{{ route('connection.removeConnection', $connection->id) }}">Remove Connection</a>
+                            href="{{ route('connection.removeConnection', $connection->id) }}"><i
+                                class="bi bi-x"></i></a>
                     </td>
 
                 </tr>

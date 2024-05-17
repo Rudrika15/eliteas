@@ -107,14 +107,14 @@
 
 
 
-    <footer id="footer" class="footer">
+    {{-- <footer id="footer" class="footer">
         <div class="copyright">
             &copy; Copyright <strong><span>FlipCode Solutions</span></strong>. All Rights Reserved
         </div>
         <div class="credits">
             Designed by <a href="#">FlipCode</a>
         </div>
-    </footer><!-- End Footer -->
+    </footer><!-- End Footer --> --}}
 
     <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
             class="bi bi-arrow-up-short"></i></a>
@@ -278,11 +278,11 @@
 
                     // Button Element
                     var buttonWrapper = document.createElement('div');
-                    buttonWrapper.classList.add('text-end');
+                    // buttonWrapper.classList.add('text-end');
 
                     var button = document.createElement('button');
-                    button.innerHTML = `<i class="bi bi-person-plus-fill"></i> Connect`;
-                    button.classList.add('btn', 'btn-primary', 'btn-sm');
+                    // button.innerHTML = `<i class="bi bi-person-plus-fill"></i> Connect`;
+                    // button.classList.add('btn', 'btn-primary', 'btn-sm');
 
                     // Add click event listener to the button
                     button.addEventListener('click', function() {
@@ -325,7 +325,7 @@
 
                     // Append card body and button wrapper to card element
                     cardElement.appendChild(cardBody);
-                    cardElement.appendChild(buttonWrapper);
+                    // cardElement.appendChild(buttonWrapper);
 
                     // Append card element to search results container
                     searchResultsElement.appendChild(cardElement);

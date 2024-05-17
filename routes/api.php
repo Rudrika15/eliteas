@@ -191,5 +191,5 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('/connections/requestAction', [ConnectionController::class, 'requestAction']);
     Route::post('/connections/removeConnection', [ConnectionController::class, 'removeConnection']);
     Route::post('/connections/viewMemberProfile', [ConnectionController::class, 'viewMemberProfile']);
-    Route::post('/connections/ConnectionsRequests', [ConnectionController::class, 'ConnectionsRequests']);
+    Route::get('/connections/ConnectionsRequests', [ConnectionController::class, 'ConnectionsRequests']);
 });

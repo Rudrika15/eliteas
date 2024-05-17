@@ -14,8 +14,8 @@ class Connection extends Model
     {
         return $this->belongsTo(User::class, 'userId', 'id');
     }
-    public function members()
+    public function member()
     {
-        return $this->hasMany(Member::class, 'id', 'memberId');
+        return $this->belongsTo(User::class, 'memberId', 'id');
     }
 }
