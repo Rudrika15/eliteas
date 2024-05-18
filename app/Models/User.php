@@ -72,5 +72,14 @@ class User extends Authenticatable
     {
         return $this->hasOne(Franchise::class, 'userId');
     }
+
+    public function user()
+    {
+        return $this->hasOne(Member::class, 'userId');
+    }
     
+    public function connections()
+    {
+        return $this->hasMany(Connection::class, 'userId', 'id');
+    }
 }

@@ -44,7 +44,7 @@
                     <td>{{ $connection->user->firstName ?? '-' }} {{ $connection->user->lastName ?? '-' }}</td>
                     <td>
                         @if ($connection->status == 'Pending')
-                        <span class="badge bg-info">{{ $connection->status }}</span>
+                        <span class="badge bg-warning">{{ $connection->status }}</span>
                         @elseif ($connection->status == 'Accepted')
                         <span class="badge bg-success">{{ $connection->status }}</span>
                         @else

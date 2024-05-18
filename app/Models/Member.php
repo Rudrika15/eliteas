@@ -75,6 +75,6 @@ class Member extends Model
 
     public function connections()
     {
-        return $this->hasMany(Connection::class, 'memberId', 'id');
+        return $this->hasMany(Connection::class, 'memberId', 'userId');
     }
 }

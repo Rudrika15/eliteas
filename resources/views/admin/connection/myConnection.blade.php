@@ -41,7 +41,17 @@
             <tbody>
                 @foreach ($connections as $connection)
                 <tr>
-                    <td>{{ $connection->member->firstName }} {{ $connection->member->lastName ?? '-' }}</td>
+                    {{-- <td>{{ $connection->member->firstName ?? '-' }} {{ $connection->member->lastName ?? '-' }}
+                        user-> {{ $connection->user->firstName ?? '-' }} {{ $connection->user->lastName ?? '-' }}</td>
+                    --}}
+                    <td>
+                        @foreach ($connections as $connection)
+                        <p>
+                            {{ $connection->connectedUser->firstName }} {{
+                            $connection->connectedUser->lastName }}
+                        </p>
+                        @endforeach
+                    </td>
                     <td>
                         @if ($connection->status == 'Accepted')
                         <span class="badge bg-success">Connected</span>

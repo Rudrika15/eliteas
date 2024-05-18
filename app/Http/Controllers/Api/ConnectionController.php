@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\User;
 use App\Utils\Utils;
 use App\Models\Member;
 use App\Models\Connection;
@@ -14,13 +15,20 @@ class ConnectionController extends Controller
     public function receivedConnectionsRequests(Request $request)
     {
         try {
-            $connections = Connection::where('userId', Auth::user()->id)
-                ->where('status', 'Pending')
-                ->with(['members' => function ($query) {
-                    $query->select('id', 'userId', 'firstName', 'lastName', 'profilePhoto')
-                        ->with(['user:id,email']);
-                }])->get();
+            $userId = Auth::user()->id;
 
+
+            $connections = Connection::where('memberId', $userId)
+            ->where('status', 'Pending')
+            ->with([
+                'user' => function ($query) {
+                    $query->select('id', 'email', 'firstName', 'lastName');
+                },
+                'members' => function ($query) {
+                    $query->select('id', 'userId', 'profilePhoto');
+                }
+            ])
+                ->get();
             // check if there are any connections
             if ($connections->isEmpty()) {
                 return Utils::sendResponse([], 'No pending connections requests', 200);
@@ -37,15 +45,18 @@ class ConnectionController extends Controller
 
             $userId = Auth::user()->id;
 
-            $connections = Connection::whereHas('members', function ($query) use ($userId) {
-                $query->where('userId', $userId);
-            })->where('status', 'Pending')
-                ->with(['members' => function ($query) {
-                    $query->select('id', 'userId', 'firstName', 'lastName', 'profilePhoto')
-                        ->with(['user:id,email']);
-                }])
-                ->get();
 
+            $connections = Connection::where('memberId', $userId)
+                ->where('status', 'Pending')
+                ->with([
+                    'user' => function ($query) {
+                        $query->select('id', 'email', 'firstName', 'lastName');
+                    },
+                    'members' => function ($query) {
+                        $query->select('id', 'userId','profilePhoto');
+                    }
+                ])
+                ->get();
             // check if there are any connections
             if ($connections->isEmpty()) {
                 return Utils::sendResponse([], 'No pending connections requests', 200);
@@ -60,13 +71,25 @@ class ConnectionController extends Controller
     public function myConnections(Request $request)
     {
         try {
-            $connections = Connection::where('userId', Auth::user()->id)
+            $userId = Auth::id();
+
+            // Fetch connections where the authenticated user is either the userId or memberId
+            $connections = Connection::where(function ($query) use ($userId) {
+                $query->where('userId', $userId)
+                    ->orWhere('memberId', $userId);
+            })
                 ->where('status', 'Accepted')
-                ->with(['members' => function ($query) {
-                    $query->select('id', 'userId', 'firstName', 'lastName', 'profilePhoto')
-                        ->with(['user:id,email']);
+                // ->with(['user:id,firstName,lastName,email', 'member:id,userId,profilePhoto'])
+                ->with(['member' => function ($query) {
+                    $query->select('id', 'userId', 'profilePhoto')
+                        ->with('user:id,email');
                 }])
                 ->get();
+
+            // Include connected user's details for convenience
+            // $connections->each(function ($connection) {
+            //     $connection->connectedUser = $connection->connected_user;
+            // });
             return Utils::sendResponse(['connections' => $connections], 'My Connections retrieved successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
@@ -103,19 +126,22 @@ class ConnectionController extends Controller
     {
         try {
             $find = $request->input('find');
-            $members = Member::where('firstName', 'like', '%' . $find . '%')
-                ->orWhere('lastName', 'like', '%' . $find . '%')
-                ->orWhereHas('circle', function ($q) use ($find) {
-                    $q->where('circleName', 'like', '%' . $find . '%');
-                })
-                ->with(['user', 'circle', 'connections' => function ($q) {
+            $members = User::whereHas('member', function ($q) use ($find) {
+                $q->where('firstName', 'like', '%' . $find . '%')
+                    ->orWhere('lastName', 'like', '%' . $find . '%')
+                    ->orWhereHas('circle', function ($q) use ($find) {
+                        $q->where('circleName', 'like', '%' . $find . '%');
+                    });
+            })
+                ->with(['member', 'member.circle', 'member.connections' => function ($q) {
                     $q->where('userId', Auth::user()->id);
                 }])
                 ->get()
                 ->map(function ($member) {
-                    $status = $member->connections->isEmpty() ? null : $member->connections->first()->status;
+                    $connection = $member->connections->first();
+                    $status = $connection ? $connection->status : null;
                     $member['status'] = $status == 'Accepted' ? 'Connected' : ($status == 'Pending' ? 'Pending' : null);
-                    unset($member['connections']);
+                    // unset($member['connections']);
                     return $member;
                 });
 
@@ -165,7 +191,8 @@ class ConnectionController extends Controller
     public function viewMemberProfile(Request $request)
     {
         try {
-            $member = Member::where('id', $request->input('memberId'))
+            
+            $member = Member::where('userId', $request->input('userId'))
                 ->with('user', 'circle', 'billingAddress', 'contactDetails', 'topsProfile', 'connections')
                 ->first();
 

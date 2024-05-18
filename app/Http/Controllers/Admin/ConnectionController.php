@@ -38,20 +38,26 @@ class ConnectionController extends Controller
 
     public function myConnections()
     {
+        $userId = Auth::id();
 
-        $userId = Auth::user()->id;
+        // Fetch connections where the authenticated user is either the userId or memberId
+        $connections = Connection::where(function ($query) use ($userId) {
+            $query->where('userId', $userId)
+                ->orWhere('memberId', $userId);
+        })
+        ->where('status', 'Accepted')
+        ->with(['user:id,firstName,lastName,email', 'member:id,firstName,lastName,email'])
+        ->get();
 
-        // $connections = Connection::whereHas('members', function ($query) use ($userId) {
-        //     $query->where('userId', $userId);
-        // })->where('status', 'Accepted')->with('members')->get();
-        $connections = Connection::where('userId', $userId)
-            ->with('member')
-            ->whereHas('member')
-            ->where('status', 'Accepted')
-            ->get();
+        // Include connected user's details for convenience
+        $connections->each(function ($connection) {
+            $connection->connectedUser = $connection->connected_user;
+        });
 
         return view('admin.connection.myConnection', compact('connections'));
     }
+
+
 
     public function accept($id)
     {
