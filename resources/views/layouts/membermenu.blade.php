@@ -52,4 +52,12 @@
         </li>
 
     </ul>
+
+    <li class="nav-item">
+        <a class="nav-link " href="{{ route('subscription.memberSubscription') }}">
+            <i class="bi bi-substack" style="color: #e76a35"></i>
+            <span class="text-blue">My Subscriptions</span>
+        </a>
+    </li>
+
 </li><!-- End Tables Nav -->

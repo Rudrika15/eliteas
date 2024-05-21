@@ -155,14 +155,12 @@ class HomeController extends Controller
     }
 
 
-    public function invitationPay($personName, $personEmail, $invitedPersonFirstName, $invitedPersonLastName, $amount)
+    public function invitationPay($firstName, $lastName, $amount)
     {
         $amounts =  $amount;
         $data = [
-            'personName' => $personName,
-            'personEmail' => $personEmail,
-            'invitedPersonFirstName' => $invitedPersonFirstName,
-            'invitedPersonLastName' => $invitedPersonLastName,
+            'firstName' => $firstName,
+            'lastName' => $lastName,
             'amount' => $amount
         ];
         if (!session()->has("data")) {

@@ -50,6 +50,7 @@ class MembershipTypeController extends Controller
         try {
             $membershipType = new MembershipType();
             $membershipType->membershipType = $request->membershipType;
+            $membershipType->amount = $request->amount;
 
 
             // $businessCategory->categoryIcon = $request->categoryIcon;
@@ -79,8 +80,8 @@ class MembershipTypeController extends Controller
     public function update(Request $request)
     {
         $this->validate($request, [
-            'id' => 'required|exists:membership_types,id',
-            'membershipType' => 'required|unique:membership_types,membershipType',
+            // 'id' => 'required|exists:membership_types,id',
+            // 'membershipType' => 'required|unique:membership_types,membershipType',
             // 'categoryIcon' => 'required',
         ]);
 
@@ -88,7 +89,7 @@ class MembershipTypeController extends Controller
             $membershipType = MembershipType::find($request->id);
 
             $membershipType->membershipType = $request->membershipType;
-
+            $membershipType->amount = $request->amount;
 
             $membershipType->status = 'Active';
             $membershipType->save();

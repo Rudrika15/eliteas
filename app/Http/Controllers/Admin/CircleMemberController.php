@@ -17,6 +17,7 @@ use App\Models\BillingAddress;
 use App\Models\ContactDetails;
 use App\Models\MembershipType;
 use App\Mail\WelcomeMemberEmail;
+use App\Mail\MemberSubscription;
 use App\Models\BusinessCategory;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\URL;
@@ -70,6 +71,7 @@ class CircleMemberController extends Controller
             return view('servererror');
         }
     }
+
 
     public function store(Request $request)
     {
@@ -159,7 +161,9 @@ class CircleMemberController extends Controller
             // $member->receiveUpdates = $request->receiveUpdates;
             // $member->shareRevenue = $request->shareRevenue;
             // $member->membershipStatus = $request->membershipStatus;
+            $membershipType = MembershipType::findOrFail($request->membershipType);
             $member->membershipType = $request->membershipType;
+            $member->membershipAmount = $membershipType->amount;
             // $member->keyWords = $request->keyWords;
             $member->status = 'Active';
             $member->save();
@@ -237,8 +241,21 @@ class CircleMemberController extends Controller
             // $circlemember->status = 'Active';
             // $circlemember->save();
 
+            $amount = $member->membershipAmount;
 
-            Mail::to($user->email)->send(new WelcomeMemberEmail($user, $rowPassword));
+            $data = array(
+                'email' => $user->email,
+                'amount' => $amount
+            );
+
+            // // send the membersubscription mail
+            Mail::to($user->email)->send(new MemberSubscription($data));
+
+
+            // if payment success, send welcome email
+            if ($request->paymentStatus == 'success') {
+                Mail::to($user->email)->send(new WelcomeMemberEmail($user, $rowPassword));
+            }
             // Mail::to($user->email)->send(new WelcomeMemberEmail($user, $request->password));
 
 
@@ -249,6 +266,24 @@ class CircleMemberController extends Controller
             return view('servererror');
         }
     }
+
+    public function memberPayment($email, $amount)
+    {
+        $amounts =  $amount;
+        $data = [
+            'email' => $email,
+            'amount' => $amount
+        ];  
+        if (!session()->has("data")) {
+            session(["data" => $data]);
+        }
+
+
+        return view('admin.memberPayment', compact('data'));
+    }
+
+
+
 
 
     public function edit($id)
@@ -486,5 +521,4 @@ class CircleMemberController extends Controller
 
         return redirect()->back()->with('success', 'Role removed successfully.');
     }
-
 }

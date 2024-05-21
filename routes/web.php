@@ -30,7 +30,9 @@ use App\Http\Controllers\Admin\CircleMeetingMembersController;
 use App\Http\Controllers\Admin\CircleMemberActivityController;
 use App\Http\Controllers\Admin\CircleMeetingMemberBusinessController;
 use App\Http\Controllers\Admin\CircleMeetingMemberReferenceController;
+use App\Http\Controllers\Admin\MembershipSubscriptionsController;
 use App\Http\Controllers\Admin\ConnectionController;
+use App\Http\Controllers\Admin\MembershipSubscriptionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -220,6 +222,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('members/update/{id?}', [MemberController::class, 'update'])->name('members.update');
     Route::get('members/delete/{id?}', [MemberController::class, 'delete'])->name('members.delete');
 
+
+
     Route::get('/refGiver/index', [CircleMeetingMemberReferenceController::class, 'index'])->name('refGiver.index');
     Route::get('refGiver/show/{id?}', [CircleMeetingMemberReferenceController::class, 'show'])->name('refGiver.show');
     Route::get('refGiver/create', [CircleMeetingMemberReferenceController::class, 'create'])->name('refGiver.create');
@@ -340,4 +344,12 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/connections/reject/{id?}', [ConnectionController::class, 'reject'])->name('connection.reject');
     Route::get('/connections/removeConnection/{id?}', [ConnectionController::class, 'removeConnection'])->name('connection.removeConnection');
 
+    Route::get('/member-subscription', [MembershipSubscriptionController::class, 'index'])->name('subscription.memberSubscription');
+
+
 });
+
+
+    Route::get('/memberPayment/{email?}/{amount?}', [CircleMemberController::class, 'memberPayment'])->name('memberPayment');
+
+    Route::post('/membership-payment', [PaymentController::class, 'membershipPayment'])->name('razorpay.payment.membershipPayment');

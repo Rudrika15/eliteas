@@ -34,6 +34,7 @@
             <thead>
                 <tr>
                     <th>Membership Type</th>
+                    <th>Amount</th>
                     <th>Status</th>
                     <th>Action</th>
                 </tr>
@@ -42,7 +43,8 @@
                 @foreach ($membershipType as $membershipTypeData)
                 <tr>
                     <td>{{$membershipTypeData->membershipType ?? '-'}}</td>
-                    <td>{{$membershipTypeData->status}}</td>
+                    <td>{{$membershipTypeData->amount ?? '-'}}</td>
+                    <td>{{$membershipTypeData->status ?? '-'}}</td>
                     <td>
                         <a href="{{ route('membershipType.edit', $membershipTypeData->id) }}"
                             class="btn btn-bg-blue btn-sm">
