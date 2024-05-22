@@ -104,7 +104,6 @@
                             "color": "#012e6f"
                         }
                     };
-
                     console.log(options);
                     var rzp = new Razorpay(options);
                     rzp.open();
@@ -116,7 +115,7 @@
             var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
             var url = `{{ route('razorpay.payment.membershipPayment') }}`;
             var email = "{{ request('email') }}";
-
+            var membershipType = $('#membershipType').val();
             fetch(url, {
                 method: 'POST',
                 headers: {
@@ -134,10 +133,13 @@
                 Swal.fire({
                     icon: 'success',
                     title: 'Success',
-                    text: 'Payment ID stored successfully',
+                    text: 'Your Payment is Successfull',
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        window.location.reload();
+                        window.location.href = "{{ route('login') }}";
+                        // or
+                        // window.location.href = "{{ route('home') }}";
+                        // window.location.reload();
                     }
                 });
             })

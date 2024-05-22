@@ -75,6 +75,8 @@ class CircleMemberController extends Controller
 
     public function store(Request $request)
     {
+        // return $request;
+
         $this->validate($request, [
             'title' => 'required',
             'circleId' => 'required',
@@ -161,11 +163,11 @@ class CircleMemberController extends Controller
             // $member->receiveUpdates = $request->receiveUpdates;
             // $member->shareRevenue = $request->shareRevenue;
             // $member->membershipStatus = $request->membershipStatus;
-            $membershipType = MembershipType::findOrFail($request->membershipType);
             $member->membershipType = $request->membershipType;
+            $membershipType = MembershipType::findOrFail($request->membershipType);
             $member->membershipAmount = $membershipType->amount;
             // $member->keyWords = $request->keyWords;
-            $member->status = 'Active';
+            $member->status = 'Active'; 
             $member->save();
 
             // Create and save TopsProfile
@@ -252,10 +254,10 @@ class CircleMemberController extends Controller
             Mail::to($user->email)->send(new MemberSubscription($data));
 
 
-            // if payment success, send welcome email
-            if ($request->paymentStatus == 'success') {
-                Mail::to($user->email)->send(new WelcomeMemberEmail($user, $rowPassword));
-            }
+            // // if payment success, send welcome email
+            // if ($request->paymentStatus == 'success') {
+            //     Mail::to($user->email)->send(new WelcomeMemberEmail($user, $rowPassword));
+            // }
             // Mail::to($user->email)->send(new WelcomeMemberEmail($user, $request->password));
 
 

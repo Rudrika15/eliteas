@@ -7,12 +7,17 @@ use Razorpay\Api\Api;
 use App\Models\Razorpay;
 use App\Models\AllPayments;
 use Illuminate\Http\Request;
+use App\Mail\WelcomeMemberEmail;
 use App\Models\TrainingRegister;
 use App\Models\MeetingInvitation;
-use App\Models\MemberSubscription;
+use App\Models\MemberSubscriptions;
+use App\Models\MembershipType;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use App\Models\Member;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class PaymentController extends Controller
 {
@@ -87,17 +92,22 @@ class PaymentController extends Controller
             }
 
             // Store MemberSubscription
-            $subscription = new MemberSubscription();
+            $subscription = new MemberSubscriptions();
             $subscription->userId = $user->id;
             $subscription->paymentId = $payment->r_payment_id;
-            if ($request->membershipType == 'Monthly') {
-                $subscription->validity = now()->addMonths(1)->format('Y-m-d');
-            } elseif ($request->membershipType == 'Year') {
-                $subscription->validity = now()->addYear(1)->format('Y-m-d');
-            } else {
-                $subscription->validity = "null";
+
+            // Get the member
+            $member = Member::where('userId', $user->id)->first();
+            if ($member->membershipType == 'Monthly') {
+                $subscription->validity = now()->addMonth()->format('Y-m-d');
             }
-            $subscription->membershipType = $request->membershipType;
+            if ($member->membershipType == 'Yearly') {
+                $subscription->validity = Carbon::now()->addDay('365')->format('Y-m-d');
+                // now()->addYear()->format('Y-m-d');
+            }
+
+            $subscription->membershipType = $member->membershipType;
+
             $subscription->status = 'Active';
             $subscription->save();
 
@@ -117,6 +127,11 @@ class PaymentController extends Controller
             // Debugging: Confirm AllPayments save
             Log::info('All payments saved:', $allPayments->toArray());
 
+            // Send welcome email to user after successful payment
+            $user = User::where('email', $payment->user_email)->first();
+            $rowPassword = $user->password;
+            Mail::to($user->email)->send(new WelcomeMemberEmail($user, $rowPassword));
+
             return response()->json(['success' => true, 'message' => 'Payment processed successfully']);
         } catch (\Exception $e) {
             // Debugging: Log the exception
@@ -124,4 +139,13 @@ class PaymentController extends Controller
             return response()->json(['error' => 'Failed to process payment'], 500);
         }
     }
+
+
+    public function allPayments()
+    {
+        $payments = AllPayments::where('status' , 'Active')->get();
+        return view('admin.paymentHistory.index', compact('payments'));
+    }
+
+
 }

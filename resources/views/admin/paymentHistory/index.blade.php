@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('header', 'Subscriptions')
+@section('header', 'Payment History')
 @section('content')
 
 {{-- Message --}}
@@ -21,11 +21,10 @@
     <strong>Error !</strong> {{ session('error') }}
 </div>
 @endif
-@role('Member')
 <div class="card">
     <div class="card-body">
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <h4 class="mb-0 mt-3">My Subscriptions</h4>
+            <h4 class="mb-0 mt-3">All Payments</h4>
             {{-- <a href="{{ route('country.create') }}" class="btn btn-bg-orange btn-sm mt-3"><i
                     class="bi bi-plus-circle"></i></a> --}}
         </div>
@@ -34,26 +33,31 @@
         <table class="table datatable">
             <thead>
                 <tr>
-                    <th>Membership Type</th>
+                    <th>Member Name</th>
+                    <th>Payment Mode</th>
+                    <th>Date</th>
+                    <th>Payment Type</th>
                     <th>Amount</th>
-                    <th>Validity</th>
+                    <th>Payment ID</th>
                     <th>Status</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach ($subscriptions as $subscritptionsData)
+                @foreach ($payments as $paymentsData)
                 <tr>
-                    <td>{{$subscritptionsData->membershipType ?? '-'}}</td>
-                    <td>{{$subscritptionsData->allPayments->amount ?? '-'}}</td>
-                    <td>{{$subscritptionsData->validity ?? '-'}}</td>
-                    <td>{{$subscritptionsData->status}}</td>
+                    <td>{{$paymentsData->user->firstName ?? '-'}} {{$paymentsData->user->lastName ?? '-'}}</td>
+                    <td>{{$paymentsData->paymentType ?? '-'}}</td>
+                    <td>{{$paymentsData->date ?? '-'}}</td>
+                    <td>{{$paymentsData->paymentMode}}</td>
+                    <td>{{$paymentsData->amount}}</td>
+                    <td>{{$paymentsData->remarks}}</td>
+                    <td>{{$paymentsData->status}}</td>
                 </tr>
                 @endforeach
             </tbody>
         </table>
         <!-- End Table with stripped rows -->
     </div>
-    @endrole
 
 
 

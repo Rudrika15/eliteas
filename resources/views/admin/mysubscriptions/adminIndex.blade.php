@@ -21,11 +21,10 @@
     <strong>Error !</strong> {{ session('error') }}
 </div>
 @endif
-
 <div class="card">
     <div class="card-body">
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <h4 class="mb-0 mt-3">My Subscriptions</h4>
+            <h4 class="mb-0 mt-3">All Subscriptions</h4>
             {{-- <a href="{{ route('country.create') }}" class="btn btn-bg-orange btn-sm mt-3"><i
                     class="bi bi-plus-circle"></i></a> --}}
         </div>
@@ -34,6 +33,7 @@
         <table class="table datatable">
             <thead>
                 <tr>
+                    <th>Name</th>
                     <th>Membership Type</th>
                     <th>Amount</th>
                     <th>Validity</th>
@@ -41,16 +41,39 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($subscriptions as $subscritptionsData)
+                @foreach ($allSubscriptions as $subscritptionsData)
                 <tr>
+                    <td>{{$subscritptionsData->user->firstName ?? '-'}} {{$subscritptionsData->user->lastName ?? '-'}}</td>
                     <td>{{$subscritptionsData->membershipType ?? '-'}}</td>
                     <td>{{$subscritptionsData->allPayments->amount ?? '-'}}</td>
                     <td>{{$subscritptionsData->validity ?? '-'}}</td>
-                    <td>{{$subscritptionsData->status}}</td>
+                    <td>{{$subscritptionsData->status ?? '-'}}</td>
                 </tr>
                 @endforeach
             </tbody>
         </table>
         <!-- End Table with stripped rows -->
     </div>
+
+
     @endsection
+
+
+
+
+
+<div class="card">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="mb-0 mt-3">All Subscriptions</h4>
+            {{-- <a href="{{ route('country.create') }}" class="btn btn-bg-orange btn-sm mt-3"><i
+                    class="bi bi-plus-circle"></i></a> --}}
+        </div>
+
+        <!-- Table with stripped rows -->
+        
+        <!-- End Table with stripped rows -->
+    </div>
+
+
+

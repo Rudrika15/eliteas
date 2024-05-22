@@ -263,14 +263,14 @@
 </li>
 
 <li class="nav-item">
-    <a class="nav-link " href="{{ route('franchise.index') }}">
+    <a class="nav-link " href="{{ route('allPayments.index') }}">
         <i class="bi bi-currency-rupee" style="color: #e76a35"></i>
         <span style="color: #1d2856">Payment History</span>
     </a>
 </li>
 
 <li class="nav-item">
-        <a class="nav-link " href="{{ route('subscription.memberSubscription') }}">
+        <a class="nav-link " href="{{ route('subscription.memberSubscription.admin') }}">
             <i class="bi bi-substack" style="color: #e76a35"></i>
             <span class="text-blue">Member Subscriptions</span>
         </a>

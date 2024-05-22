@@ -345,6 +345,10 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/connections/removeConnection/{id?}', [ConnectionController::class, 'removeConnection'])->name('connection.removeConnection');
 
     Route::get('/member-subscription', [MembershipSubscriptionController::class, 'index'])->name('subscription.memberSubscription');
+    Route::get('/member-subscription-all', [MembershipSubscriptionController::class, 'memberData'])->name('subscription.memberSubscription.admin');
+
+    //admin side activity membership status changed
+    Route::get('/allPayments', [PaymentController::class, 'allPayments'])->name('allPayments.index');
 
 
 });
