@@ -349,7 +349,8 @@ Route::group(['middleware' => ['auth']], function () {
 
     //admin side activity membership status changed
     Route::get('/allPayments', [PaymentController::class, 'allPayments'])->name('allPayments.index');
-
+    
+    
 
 });
 
