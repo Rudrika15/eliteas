@@ -100,6 +100,9 @@
                                         <div class="d-grid">
                                             <button type="submit" class="btn btn-primary">Login</button>
                                         </div>
+                                        <div class="mt-3 text-center">
+                                            <a href="{{ route('otp.request') }}">Login with OTP</a>
+                                        </div>
 
                                         @if (Route::has('password.request'))
                                             <div class="mt-3 text-center">
@@ -117,7 +120,6 @@
                                 <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/ -->
                                 Designed by <a href="https://flipcodesolutions.com/" target="_blank">FlipCode
                                     Solutions</a>
-
                             </div>
 
                         </div>

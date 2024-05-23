@@ -33,6 +33,7 @@ use App\Http\Controllers\Admin\CircleMeetingMemberReferenceController;
 use App\Http\Controllers\Admin\MembershipSubscriptionsController;
 use App\Http\Controllers\Admin\ConnectionController;
 use App\Http\Controllers\Admin\MembershipSubscriptionController;
+use App\Http\Controllers\Auth\OTPLoginController;
 
 /*
 |--------------------------------------------------------------------------
@@ -349,10 +350,42 @@ Route::group(['middleware' => ['auth']], function () {
 
     //admin side activity membership status changed
     Route::get('/allPayments', [PaymentController::class, 'allPayments'])->name('allPayments.index');
-    
+
+    //login with otp
+
+    // Route::get('/loginWithMobile', [OtpController::class, 'loginWithOtp'])->name('loginWithOtp.mobile');
+    // Route::get('/loginWithOtp', [OtpController::class, 'loginWithOtp'])->name('loginWithOtp.otp');
+
+   
+
+    // Route to show the password reset request form
+    // Route::get('/password/reset', [OTPLoginController::class, 'showResetForm'])->name('forget.password.get');
     
 
 });
+
+//Login with otp
+
+// Route::get('/otp-login', [OTPLoginController::class, 'showLoginForm'])->name('otp.login.form');
+// // Route to handle OTP login form submission
+// Route::post('/otp-login', [OTPLoginController::class, 'OTPlogin'])->name('otp.login');
+// // Route to resend the OTP
+// Route::get('/resend-otp', [OTPLoginController::class, 'resendOTP'])->name('resend.otp');
+
+
+
+//login with otp
+
+// web.php
+Route::get('otp/request', [OTPLoginController::class, 'showOTPRequestForm'])->name('otp.request');
+Route::post('otp/request', [OTPLoginController::class, 'sendOTP']);
+Route::get('otp/verify', [OTPLoginController::class, 'showOTPVerificationForm'])->name('otp.verify');
+Route::post('otp/verify', [OTPLoginController::class, 'verifyOTP']);
+Route::post('otp/resend', [OTPLoginController::class, 'resendOTP'])->name('otp.resend');
+
+
+
+
 
 
     Route::get('/memberPayment/{email?}/{amount?}', [CircleMemberController::class, 'memberPayment'])->name('memberPayment');

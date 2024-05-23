@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-    <title>Login</title>
+    <title>Login with OTP</title>
     <meta content="" name="description">
     <meta content="" name="keywords">
 
@@ -16,7 +16,7 @@
     <!-- Google Fonts -->
     <link href="https://fonts.gstatic.com" rel="preconnect">
     <link
-        href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
+        href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i"
         rel="stylesheet">
 
     <!-- Vendor CSS Files -->
@@ -27,29 +27,28 @@
     <link href="{{ asset('vendor/remixicon/remixicon.css') }}" rel="stylesheet" />
     <link href="{{ asset('vendor/simple-datatables/style.css') }}" rel="stylesheet" />
 
-
     <!-- Template Main CSS File -->
     <link href="{{ asset('css/style.css') }}" rel="stylesheet" />
 
     <!-- =======================================================
-  * Template Name: NiceAdmin
-  * Updated: Jan 29 2024 with Bootstrap v5.3.2
-  * Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
-  * Author: BootstrapMade.com
-  * License: https://bootstrapmade.com/license/
-  ======================================================== -->
+    * Template Name: NiceAdmin
+    * Updated: Jan 29 2024 with Bootstrap v5.3.2
+    * Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
+    * Author: BootstrapMade.com
+    * License: https://bootstrapmade.com/license/
+    ======================================================== -->
 </head>
 
 <body>
 
     <main>
         <div class="container">
-
-            <section class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
+            <section
+                class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
                 <div class="container">
                     <div class="row justify-content-center">
                         <div class="col-lg-4 col-md-6 d-flex flex-column align-items-center justify-content-center">
-            
+
                             <div class="d-flex justify-content-center py-4">
                                 <a href="index.html" class="main-logo d-flex align-items-center">
                                     <img src="{{ asset('img/logo2.jpg') }}" alt=""
@@ -60,53 +59,55 @@
 
                             <div class="card mb-3" style="width: 20rem;">
                                 <div class="card-body">
-                                    <h5 class="card-title text-center pb-0 fs-4">Login</h5>
-                                    {{-- <p class="text-center small">Enter your email & password to login</p> --}}
+                                    <h5 class="card-title text-center pb-0 fs-4">Verify OTP</h5>
+                                    {{-- <p class="text-center small">Enter your phone number to request OTP</p> --}}
 
-                                    <form method="POST" action="{{ route('login') }}" class="needs-validation w-100"
-                                        novalidate>
+                                    <!-- OTP Request Form -->
+                                    {{-- <form action="{{ route('otp.request') }}" method="post"
+                                        class="needs-validation w-100" novalidate>
                                         @csrf
-
                                         <div class="mb-3 form-floating">
-                                            <input id="email" type="email"
-                                                class="form-control @error('email') is-invalid @enderror" name="email"
-                                                value="{{ old('email') }}" required autocomplete="email" autofocus>
-                                            <label for="email">Email Address</label>
-                                            @error('email')
-                                                <span class="invalid-feedback" role="alert">
-                                                    <strong>{{ $message }}</strong>
-                                                </span>
+                                            <input type="text" id="phone" name="phone"
+                                                class="form-control @error('phone') is-invalid @enderror" required
+                                                autocomplete="phone" autofocus>
+                                            <label for="phone">Phone Number</label>
+                                            @error('phone')
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
                                             @enderror
                                         </div>
-
-                                        <div class="mb-3 form-floating">
-                                            <input id="password" type="password"
-                                                class="form-control @error('password') is-invalid @enderror"
-                                                name="password" required autocomplete="current-password">
-                                            <label for="password">Password</label>
-                                            @error('password')
-                                                <span class="invalid-feedback" role="alert">
-                                                    <strong>{{ $message }}</strong>
-                                                </span>
-                                            @enderror
-                                        </div>
-
-                                        <div class="mb-3 form-check">
-                                            <input type="checkbox" class="form-check-input" name="remember"
-                                                id="remember" {{ old('remember') ? 'checked' : '' }}>
-                                            <label class="form-check-label" for="remember">Remember Me</label>
-                                        </div>
-
                                         <div class="d-grid">
-                                            <button type="submit" class="btn btn-primary">Login</button>
+                                            <button type="submit" class="btn btn-primary">Send OTP</button>
                                         </div>
+                                    </form> --}}
+                                    <!-- End OTP Request Form -->
 
-                                        @if (Route::has('password.request'))
-                                            <div class="mt-3 text-center">
-                                                <a href="{{ route('forget.password.get') }}">Forgot Your Password?</a>
-                                            </div>
-                                        @endif
+                                    <!-- OTP Verification Form -->
+                                    <form action="{{ route('otp.verify') }}" method="post"
+                                        class="needs-validation w-100 mt-3" novalidate>
+                                        @csrf
+                                        <div class="mb-3 form-floating">
+                                            <input type="text" id="otp" name="otp" class="form-control" required>
+                                            <label for="otp">Enter OTP</label>
+                                        </div>
+                                        <input type="hidden" name="phone" value="{{ session('phone') }}">
+                                        <div class="d-grid">
+                                            <button type="submit" class="btn btn-primary">Verify OTP</button>
+                                        </div>
                                     </form>
+                                    <!-- End OTP Verification Form -->
+
+                                    <!-- Resend OTP Form -->
+                                    <form action="{{ route('otp.resend') }}" method="post" class="w-100 mt-3">
+                                        @csrf
+                                        <input type="hidden" name="phone" value="{{ session('phone') }}">
+                                        <div class="d-grid">
+                                            <button type="submit" class="btn btn-secondary">Resend OTP</button>
+                                        </div>
+                                    </form>
+                                    <!-- End Resend OTP Form -->
+
                                 </div>
                             </div>
 
@@ -117,36 +118,22 @@
                                 <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/ -->
                                 Designed by <a href="https://flipcodesolutions.com/" target="_blank">FlipCode
                                     Solutions</a>
-
                             </div>
 
                         </div>
                     </div>
                 </div>
-
             </section>
-
         </div>
-    </main><!-- End #main -->
-
-    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
-            class="bi bi-arrow-up-short"></i></a>
+    </main>
 
     <!-- Vendor JS Files -->
-
-    <script src="{{ asset('vendor/apexcharts/apexcharts.min.js') }}"></script>
     <script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-    <script src="{{ asset('vendor/chart.js/chart.umd.js') }}"></script>
-    <script src="{{ asset('vendor/echarts/echarts.min.js') }}"></script>
-    <script src="{{ asset('vendor/quill/quill.min.js') }}"></script>
     <script src="{{ asset('vendor/simple-datatables/simple-datatables.js') }}"></script>
     <script src="{{ asset('vendor/tinymce/tinymce.min.js') }}"></script>
-    <script src="{{ asset('vendor/php-email-form/validate.js') }}"></script>
-
 
     <!-- Template Main JS File -->
     <script src="{{ asset('js/main.js') }}"></script>
-
 </body>
 
 </html>

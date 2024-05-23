@@ -21,6 +21,7 @@ use App\Http\Controllers\Api\CircleMeetingMembersController;
 use App\Http\Controllers\Api\CircleMeetingMemberBusinessController;
 use App\Http\Controllers\Api\CircleMeetingMemberReferenceController;
 use App\Http\Controllers\Api\ConnectionController;
+use App\Http\Controllers\Api\OTPLoginController;
 use App\Http\Controllers\Api\TestimonialController;
 
 /*
@@ -49,6 +50,13 @@ Route::post('/forgot-password', [ForgetPasswordController::class, 'forgotPasswor
 // Route::post('/reset-password', [ForgetPasswordController::class, 'resetPassword']);
 
 // Route::post('circle-meeting-member-references-create', [CircleMeetingMemberReferenceController::class, 'create']);
+//Login with otp
+
+Route::post('/send-otp', [OTPLoginController::class, 'sendOTP'])->name('send_otp');
+
+// Route for verifying OTP
+Route::post('/verify-otp', [OTPLoginController::class, 'verifyOTP'])->name('verify_otp');
+
 
 
 Route::group(['middleware' => 'auth:sanctum'], function () {
