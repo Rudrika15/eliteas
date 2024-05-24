@@ -45,6 +45,14 @@ class OTPLoginController extends Controller
                     "smstype" => $smstype,
                 );
 
+                // Send the POST request with cURL
+                $ch = curl_init('http://sms.hspsms.com/sendSMS');
+                curl_setopt($ch, CURLOPT_POST, true);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                $response = curl_exec($ch);
+                curl_close($ch);
+
                 // Send the POST request with Laravel HTTP client
                 $response = Http::post('http://sms.hspsms.com/sendSMS', $data);
 
@@ -92,7 +100,15 @@ class OTPLoginController extends Controller
 
             if ($user && $otpRecord && Carbon::parse($otpRecord->time)->addMinutes(10)->isFuture()) {
                 Auth::login($user);
-                return Utils::sendResponse([], 'OTP verification successful', 200);
+                return Utils::sendResponse([
+                    'user' => $user->only([
+                        'id',
+                        'firstName',
+                        'lastName',
+                        'email',
+                        'contactNo',
+                    ])
+                ], 'OTP verification successful', 200);
             }
 
             return Utils::errorResponse(['otp' => 'Invalid OTP or phone number, or OTP has expired.'], 'OTP verification failed', 400);

@@ -350,6 +350,12 @@ Route::group(['middleware' => ['auth']], function () {
 
     //admin side activity membership status changed
     Route::get('/allPayments', [PaymentController::class, 'allPayments'])->name('allPayments.index');
+    
+    //user side activity membership status changed
+    Route::get('/my-allPayments', [PaymentController::class, 'myAllPayments'])->name('myAllPayments.index');
+
+    //dashboard
+    Route::get('/pending-payments', [PaymentController::class, 'pendingPayments'])->name('pendingPayments.index');
 
     //login with otp
 

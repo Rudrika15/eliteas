@@ -5,12 +5,15 @@ use Illuminate\Http\Request;
 use App\Mail\MeetingInvitation;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\LoginController;
-// use App\Http\Controllers\Api\CircleMeetingMemberBusinessController;
 use App\Http\Controllers\Api\CircleController;
+use App\Http\Controllers\Api\OTPLoginController;
 use App\Http\Controllers\Api\TrainingController;
 use App\Http\Controllers\Api\FranchiseController;
+use App\Http\Controllers\Api\MyPaymentController;
 use App\Http\Controllers\Api\CircleCallController;
 use App\Http\Controllers\Api\CircleTypeController;
+use App\Http\Controllers\Api\ConnectionController;
+use App\Http\Controllers\Api\TestimonialController;
 use App\Http\Controllers\Api\CircleMemberController;
 use App\Http\Controllers\Api\CircleMeetingController;
 use App\Http\Controllers\Api\TrainerMasterController;
@@ -18,11 +21,11 @@ use App\Http\Controllers\Api\ForgetPasswordController;
 use App\Http\Controllers\Api\BusinessCategoryController;
 use App\Http\Controllers\Api\MeetingInvitationController;
 use App\Http\Controllers\Api\CircleMeetingMembersController;
+use App\Http\Controllers\Api\MembershipSubscriptionController;
 use App\Http\Controllers\Api\CircleMeetingMemberBusinessController;
 use App\Http\Controllers\Api\CircleMeetingMemberReferenceController;
-use App\Http\Controllers\Api\ConnectionController;
-use App\Http\Controllers\Api\OTPLoginController;
-use App\Http\Controllers\Api\TestimonialController;
+
+// use App\Http\Controllers\Api\CircleMeetingMemberBusinessController;
 
 /*
 |--------------------------------------------------------------------------
@@ -203,5 +206,12 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     // Route::get('/connections/myConnection', [ConnectionController::class, 'myConnection']);
     
+    //Membership History
+
+    Route::get('/membership-history', [MembershipSubscriptionController::class, 'MembershipHistory']);
+
+    // My Payment History
+
+    Route::get('/my-payment-history', [MyPaymentController::class, 'myPaymentHistory']);
 
 });

@@ -189,6 +189,7 @@
                     @enderror
                 </div>
             </div>
+
             <div class="col-md-6 mt-3">
                 <div class="form-floating">
                     <select class="form-select @error('membershipType') is-invalid @enderror" id="membershipType"
@@ -206,6 +207,21 @@
                     </div>
                     @enderror
                 </div>
+
+                <div class="col-md-6 mt-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="sendMail" name="sendMail" value="1">
+                        <label class="form-check-label" for="sendMail">
+                            Send Mail
+                        </label>
+                    </div>
+                    @error('sendMail')
+                    <div class="invalid-tooltip">
+                        {{ $message }}
+                    </div>
+                    @enderror
+                </div>
+
             </div>
             </div>
         </div>

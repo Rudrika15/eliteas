@@ -146,6 +146,17 @@ class PaymentController extends Controller
         $payments = AllPayments::where('status' , 'Active')->get();
         return view('admin.paymentHistory.index', compact('payments'));
     }
-
-
+    
+    public function myAllPayments()
+    {
+        $myAllPayments = AllPayments::where('status', 'Active')
+        ->where('memberId', auth()->id())
+        ->get();
+        return view('admin.paymentHistory.userIndex', compact('myAllPayments'));
+    }
+    
+    public function pendingPayments()
+    {
+        return view('pendingPayments');
+    }
 }

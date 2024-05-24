@@ -60,7 +60,7 @@ class OTPLoginController extends Controller
 
                 // Save OTP and time
                 $time = Carbon::now();
-                $otpRecord = Otp::where('mobileno', $request->phone)->first();
+                $otpRecord = Otp::where('mobileNo', $request->phone)->first();
 
                 if ($otpRecord) {
                     // Update existing OTP record

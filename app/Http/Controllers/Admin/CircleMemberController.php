@@ -84,7 +84,7 @@ class CircleMemberController extends Controller
             'lastName' => 'required',
             'email' => 'required|unique:users,email',
             'gender' => 'required',
-            'mobileNo' => 'required',
+            'mobileNo' => 'required|unique:users,contactNo',
             'username' => 'required|unique:members,username',
             // Add validation rules for other fields if necessary
         ]);
@@ -250,8 +250,15 @@ class CircleMemberController extends Controller
                 'amount' => $amount
             );
 
+            if ($request->has('sendMail')) {
+                // send the membersubscription mail
+                Mail::to($user->email)->send(new MemberSubscription($data));
+
+            }
+            
+
             // // send the membersubscription mail
-            Mail::to($user->email)->send(new MemberSubscription($data));
+            // Mail::to($user->email)->send(new MemberSubscription($data));
 
 
             // // if payment success, send welcome email

@@ -201,11 +201,27 @@
 
 
 
+    @role('Admin')
     <div class="row">
         <div class="col-md-4">
             <div class="card">
-                @role('Admin')
                 <div class="card-header"><b>Upcoming Circle Meetings</b></div>
+
+                <div class="card-body">
+                    @if (session('status'))
+                    <div class="alert alert-success" role="alert">
+                        {{ session('status') }}
+                    </div>
+                    @endif
+                    {{-- <h2>{{ $count }}</h2> --}}
+                    <a href="{{ route('schedule.dashIndex') }}" class="btn btn-bg-blue btn-md btn-sm">View Details</a>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header"><b>Pending Payments</b></div>
 
                 <div class="card-body">
                     @if (session('status'))
@@ -215,14 +231,14 @@
                     @endif
 
                     {{-- <h2>{{ $count }}</h2> --}}
-                    <a href="{{ route('schedule.dashIndex') }}" class="btn btn-bg-blue btn-md btn-sm">View Details</a>
+                    <a href="{{ route('pendingPayments.index') }}" class="btn btn-bg-blue btn-md btn-sm">View Details</a>
 
                 </div>
-                @endrole
             </div>
         </div>
     </div>
 </div>
+@endrole
 
 
 

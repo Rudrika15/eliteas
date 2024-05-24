@@ -59,5 +59,11 @@
             <span class="text-blue">My Subscriptions</span>
         </a>
     </li>
+    <li class="nav-item">
+        <a class="nav-link " href="{{ route('myAllPayments.index') }}">
+            <i class="bi bi-currency-rupee" style="color: #e76a35"></i>
+            <span class="text-blue">My Payment History</span>
+        </a>
+    </li>
 
 </li><!-- End Tables Nav -->
