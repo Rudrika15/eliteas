@@ -215,7 +215,6 @@
                     @endif
                     {{-- <h2>{{ $count }}</h2> --}}
                     <a href="{{ route('schedule.dashIndex') }}" class="btn btn-bg-blue btn-md btn-sm">View Details</a>
-
                 </div>
             </div>
         </div>
