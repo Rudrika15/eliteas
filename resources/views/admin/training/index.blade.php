@@ -82,7 +82,7 @@
                         <td>{{$trainingData->fees}}</td>
                         <td>{{$trainingData->meetingLink}}</td>
                         <td>{{$trainingData->venue ?? '-'}}</td>
-                        <td>{{$trainingData->date ?? '-'}}</td>
+                        <td>{{ \Carbon\Carbon::parse($trainingData->date)->format('d-m-Y') ?? '-' }}</td>
                         <td>{{$trainingData->time ?? '-'}}</td>
                         <td>{{$trainingData->status ?? '-'}}</td>
                         <td>

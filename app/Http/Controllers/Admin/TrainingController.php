@@ -102,7 +102,7 @@ class TrainingController extends Controller
         try {
             // $training = Training::find($id);
             $training = Training::where('id', $id)->first();
-            
+
             $trainer = TrainerMaster::where('status', 'Active')->get();
 
             return view('admin.training.edit', compact('training', 'trainer'));
@@ -117,12 +117,21 @@ class TrainingController extends Controller
     {
         // Validate the incoming request
         $validatedData = $request->validate([
-
+            
         ]);
 
         // Update the fields with validated data
         $training = Training::findOrFail($id);
-        $training->update($validatedData);
+        $training->title = $request->title;
+        $training->fees = $request->fees;
+        $training->type = $request->type;
+        $training->meetingLink = $request->meetingLink;
+        $training->venue = $request->venue;
+        $training->date = $request->date;
+        $training->time = $request->time;
+        $training->duration = $request->duration;
+        $training->note = $request->note;
+        $training->update();
 
         // Add trainers to the Training_trainers table if present in the request
         $trainers = [

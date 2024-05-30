@@ -34,6 +34,7 @@
             <thead>
                 <tr>
                     <th>Name</th>
+                    <th>Email</th>
                     <th>Status</th>
                     <th>Action</th>
                 </tr>
@@ -47,11 +48,12 @@
                     <td>
                         @foreach ($connections as $connection)
                         <p>
-                            {{ $connection->connectedUser->firstName }} {{
-                            $connection->connectedUser->lastName }}
+                            {{ $connection->connectedUser->firstName ?? '-'}} {{
+                            $connection->connectedUser->lastName ?? '-'}}
                         </p>
-                        @endforeach
                     </td>
+                    <td>{{$connection->connectedUser->email ?? '-'}}</td>
+                    @endforeach
                     <td>
                         @if ($connection->status == 'Accepted')
                         <span class="badge bg-success">Connected</span>

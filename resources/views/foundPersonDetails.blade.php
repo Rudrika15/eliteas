@@ -364,22 +364,23 @@
                                     @if (!$connection)
                                     <form action="{{ route('connect') }}" id="connectForm" method="POST">
                                         @csrf
-                                        <input type="hidden" value="{{ $member->user->id }}" name="memberId" id="">
+                                        <input type="hiddden" value="{{ $member->user->id }}" name="memberId" id="">
                                         <button type="submit" class="btn btn-bg-blue shadow-none">Connect &nbsp;<i
                                                 class="bi bi-person-plus-fill"></i></button>
                                     </form>
+
                                     @elseif ($connection->status == 'Accepted')
                                     <button type="button" class="btn btn-bg-blue shadow-none">Connected &nbsp;<i
                                             class="bi bi-check-circle-fill"></i></button>
+
                                     @elseif ($connection->status == 'Rejected')
                                     <button type="submit" class="btn btn-bg-blue shadow-none">Connect &nbsp;<i
                                             class="bi bi-person-plus-fill"></i></button>
+
                                     @else
                                     <button type="button" class="btn btn-bg-blue shadow-none">Requested &nbsp;<i
                                             class="bi bi-clock"></i></button>
                                     @endif
-
-
 
                                     {{-- <button class="btn btn-outline-primary">Message</button> --}}
                                 </div>

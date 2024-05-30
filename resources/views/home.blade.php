@@ -128,71 +128,71 @@
                 </div>
             </div>
         </div>
-    </div>
 
-    <div class="row">
-        <div class="col-md-12">
-            <div class="card-title"><b>Upcoming Training Workshops</b></div>
-            <div class="card border-0 shadow workshopCard">
-                @if ($nearestTraining)
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-10">
-                            <h4 class="card-title">{{ $nearestTraining->title }}</h4>
-                        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card-title"><b>Upcoming Training Workshops</b></div>
+                <div class="card border-0 shadow workshopCard">
+                    @if ($nearestTraining)
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-10">
+                                <h4 class="card-title">{{ $nearestTraining->title }}</h4>
+                            </div>
 
-                        <div class="col-md-2 pt-3 text-muted text-end">
-                            {{ \Carbon\Carbon::parse($nearestTraining->date)->format('j M Y') }} <br>
-                            {{ $nearestTraining->time }}
+                            <div class="col-md-2 pt-3 text-muted text-end">
+                                {{ \Carbon\Carbon::parse($nearestTraining->date)->format('j M Y') }} <br>
+                                {{ $nearestTraining->time }}
+                            </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-8 mt-4">
-                            <p>
-                                <small class="fw-italic text-muted pt-2 fw-italic">
-                                    {{ $nearestTraining->trainersTrainings->user->firstName ?? '-' }}
-                                    {{ $nearestTraining->trainersTrainings->user->lastName ?? '-' }}
-                                </small>
-                                <br>
-                                <small class="text-muted">
-                                    {{ $nearestTraining->trainersTrainings->user->email ?? '-' }}
-                                </small>
-                            </p>
-                        </div>
-                        <div class="col-md-4">
-                            @if (count($findRegister) == 0)
-                            @if ($nearestTraining->fees == 0)
-                            <h5 class="text-muted text-end me-4 pt-5">Free</h5>
-                            <button type="button" class="btn btn-bg-blue btn-md" data-bs-toggle="modal"
-                                data-bs-target="#staticBackdrop">
-                                Register
-                            </button>
-                            @else
-                            <h5 class="text-muted text-end me-4 pt-3"> ₹
-                                {{ $nearestTraining->fees }}
-                            </h5>
-                            <div class="d-flex justify-content-end">
-                                <button type="button" class="btn btn-bg-blue btn-md " data-bs-toggle="modal"
+                        <div class="row">
+                            <div class="col-md-8 mt-4">
+                                <p>
+                                    <small class="fw-italic text-muted pt-2 fw-italic">
+                                        {{ $nearestTraining->trainersTrainings->user->firstName ?? '-' }}
+                                        {{ $nearestTraining->trainersTrainings->user->lastName ?? '-' }}
+                                    </small>
+                                    <br>
+                                    <small class="text-muted">
+                                        {{ $nearestTraining->trainersTrainings->user->email ?? '-' }}
+                                    </small>
+                                </p>
+                            </div>
+                            <div class="col-md-4">
+                                @if (count($findRegister) == 0)
+                                @if ($nearestTraining->fees == 0)
+                                <h5 class="text-muted text-end me-4 pt-5">Free</h5>
+                                <button type="button" class="btn btn-bg-blue btn-md" data-bs-toggle="modal"
                                     data-bs-target="#staticBackdrop">
-                                    Join Now
+                                    Register
                                 </button>
+                                @else
+                                <h5 class="text-muted text-end me-4 pt-3"> ₹
+                                    {{ $nearestTraining->fees }}
+                                </h5>
+                                <div class="d-flex justify-content-end">
+                                    <button type="button" class="btn btn-bg-blue btn-md " data-bs-toggle="modal"
+                                        data-bs-target="#staticBackdrop">
+                                        Join Now
+                                    </button>
+                                </div>
+                                @endif
+                                @else
+                                <div class="ps-5 ms-5">
+                                    <strong> <span class="text-success">Already Joined</span> </strong>
+                                </div>
+                                @endif
                             </div>
-                            @endif
-                            @else
-                            <div class="ps-5 ms-5">
-                                <strong> <span class="text-success">Already Joined</span> </strong>
-                            </div>
-                            @endif
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    @else
-    <div class="row">
-        <div class="col-md-12">
-            <p class="mt-3 text-muted text-center"> <b> No Training Workshop for now. </b></p>
+        @else
+        <div class="row">
+            <div class="col-md-12">
+                <p class="mt-3 text-muted text-center"> <b> No Training Workshop for now. </b></p>
+            </div>
         </div>
     </div>
     @endif
@@ -214,7 +214,8 @@
                     </div>
                     @endif
                     {{-- <h2>{{ $count }}</h2> --}}
-                    <a href="{{ route('schedule.dashIndex') }}" class="btn btn-bg-blue btn-md btn-sm">View Details</a>
+                    <a href="{{ route('schedule.dashIndex') }}" class="btn btn-bg-blue btn-md btn-sm">View
+                        Details</a>
                 </div>
             </div>
         </div>
@@ -230,7 +231,8 @@
                     @endif
 
                     {{-- <h2>{{ $count }}</h2> --}}
-                    <a href="{{ route('pendingPayments.index') }}" class="btn btn-bg-blue btn-md btn-sm">View Details</a>
+                    <a href="{{ route('pendingPayments.index') }}" class="btn btn-bg-blue btn-md btn-sm">View
+                        Details</a>
 
                 </div>
             </div>
@@ -360,7 +362,8 @@
                             <h3>{{ $testimonial->sender->firstName . ' ' . $testimonial->sender->lastName }}
                             </h3>
                             <p class="text-center text-muted text-wrap p-testimonial-message"><i
-                                    class="bi bi-quote text-dark" style="font-size: 20px;"></i>{{ $testimonial->message
+                                    class="bi bi-quote text-dark" style="font-size: 20px;"></i>{{
+                                $testimonial->message
                                 }}<i class="bi bi-quote text-dark"
                                     style="font-size: 20px;display:inline-block;transform:rotate(180deg);"></i>
                             </p>

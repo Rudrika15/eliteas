@@ -90,9 +90,14 @@ class HomeController extends Controller
                 ->with('circle.members')
                 ->with('circle.franchise')
                 ->where('status', 'Active')
-                ->where('date', '>=', \today())->first();
+                ->where('date', '>=', \today())
+                ->first();
 
-            $meeting->date = Carbon::parse($meeting->date);
+            if ($meeting) {
+                $meeting->date = Carbon::parse($meeting->date);
+            } else {
+                return view('home', ['meeting' => 'No meeting found for now']);
+            }
 
             $myInvites = MeetingInvitation::where('invitedMemberId', Auth::user()->id)
                 ->where('meetingId', $meeting->id)
@@ -205,7 +210,7 @@ class HomeController extends Controller
 
             // Find connection based on the authenticated user's ID and member ID
             $connection = Connection::where('userId', $aid)
-                ->where('memberId', $id)
+                ->orWhere('memberId', $aid)
                 ->first();
 
             // Alternatively, if you want to get all connections related to the authenticated user:

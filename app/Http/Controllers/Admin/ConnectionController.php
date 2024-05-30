@@ -14,10 +14,19 @@ class ConnectionController extends Controller
         $memberId = $request->input('memberId');
         $userId = Auth::user()->id;
 
-        $connection = new Connection();
-        $connection->memberId = $memberId;
-        $connection->userId = $userId;
-        $connection->save();
+        // $connection = Connection::where('memberId', $memberId)
+        //     ->orWhere('userId', $userId)
+        //     ->first();
+            
+        //     if ($connection) {
+
+        //         return response()->json(['message' => 'You are already sent']);
+        //     }
+            
+            $connection = new Connection();
+            $connection->memberId = $memberId;
+            $connection->userId = $userId;
+            $connection->save();
         return response()->json(['message' => 'Connection request sent successfully']);
     }
 
@@ -46,7 +55,7 @@ class ConnectionController extends Controller
                 ->orWhere('memberId', $userId);
         })
         ->where('status', 'Accepted')
-        ->with(['user:id,firstName,lastName,email', 'member:id,firstName,lastName,email'])
+        ->with(['user:id,firstName,lastName,email'])
         ->get();
 
         // Include connected user's details for convenience
