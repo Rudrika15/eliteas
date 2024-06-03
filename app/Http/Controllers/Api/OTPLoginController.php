@@ -86,7 +86,7 @@ class OTPLoginController extends Controller
     }
 
     // Verify OTP
-    public function verifyOTP(Request $request)
+public function verifyOTP(Request $request)
     {
         $request->validate([
             'phone' => 'required',
@@ -100,6 +100,7 @@ class OTPLoginController extends Controller
 
             if ($user && $otpRecord && Carbon::parse($otpRecord->time)->addMinutes(10)->isFuture()) {
                 Auth::login($user);
+                $token = $user->createToken('AuthToken')->plainTextToken; // Generate auth token
                 return Utils::sendResponse([
                     'user' => $user->only([
                         'id',
@@ -107,7 +108,8 @@ class OTPLoginController extends Controller
                         'lastName',
                         'email',
                         'contactNo',
-                    ])
+                    ]),
+                    'token' => $token // Include auth token in the response
                 ], 'OTP verification successful', 200);
             }
 

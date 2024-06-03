@@ -24,6 +24,7 @@ class MyPaymentController extends Controller
                 'message' => 'Payments retrieved successfully'
             ], 200);
         } catch (\Throwable $th) {
+            // throw $th;
             // Log the error for debugging
             Log::error('Error retrieving payments:', ['error' => $th->getMessage()]);
 

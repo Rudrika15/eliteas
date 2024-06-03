@@ -34,6 +34,6 @@ class Training extends Model
 
     public function trainersTrainings()
     {
-        return $this->belongsTo(TrainingTrainers::class, 'id');
+        return $this->belongsTo(TrainingTrainers::class, 'id', 'trainingId');
     }
 }

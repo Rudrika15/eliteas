@@ -151,4 +151,6 @@ class TrainingController extends Controller
             return response()->json(['error' => 'Error Registering Training'], 500);
         }
     }
+
+    
 }

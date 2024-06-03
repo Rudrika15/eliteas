@@ -133,6 +133,7 @@
             <div class="col-md-12">
                 <div class="card-title"><b>Upcoming Training Workshops</b></div>
                 <div class="card border-0 shadow workshopCard">
+                    {{-- {{$nearestTraining}} --}}
                     @if ($nearestTraining)
                     <div class="card-body">
                         <div class="row">

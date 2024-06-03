@@ -136,14 +136,14 @@ class ConnectionController extends Controller
                 ->with(['member', 'member.circle', 'member.connections' => function ($q) {
                     $q->where('userId', Auth::user()->id);
                 }])
-                ->get()
-                ->map(function ($member) {
-                    $connection = $member->connections->first();
-                    $status = $connection ? $connection->status : null;
-                    $member['status'] = $status == 'Accepted' ? 'Connected' : ($status == 'Pending' ? 'Pending' : null);
-                    // unset($member['connections']);
-                    return $member;
-                });
+                ->get();
+                // ->map(function ($member) {
+                //     $connection = $member->connections->first();
+                //     $status = $connection ? $connection->status : null;
+                //     $member['status'] = $status == 'Accepted' ? 'Connected' : ($status == 'Pending' ? 'Pending' : null);
+                //     // unset($member['connections']);
+                //     return $member;
+                // });
 
             $message = "Search results for '$find'";
 

@@ -52,12 +52,14 @@ class HomeController extends Controller
         $currentDate = Carbon::now()->toDateString();
 
         $currentDate = Carbon::now();
+
         $nearestTraining = Training::where('status', 'Active')
             ->whereDate('date', '>=', $currentDate)
             ->whereHas('trainers.user')
             ->with('trainers.user')
             ->whereHas('trainersTrainings.user')
-            ->with('trainersTrainings.user')
+            // ->with('trainersTrainings.user')
+            // ->whereNotNull('data') // Add this line to filter out records where 'data' is not null
             ->orderBy('date', 'asc')
             ->first();
 
