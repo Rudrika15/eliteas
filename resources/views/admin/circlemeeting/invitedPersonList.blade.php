@@ -25,7 +25,7 @@
 <div class="card">
     <div class="card-body">
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <h4 class="mb-0 mt-3">Circle Meeting Invited Person List</h4>
+            <h4 class="card-title">Circle Meeting Invited Person List</h4>
             {{-- <a href="{{ route('circlemeeting.create') }}" class="btn btn-primary btn-sm mt-3">ADD</a> --}}
         </div>
         

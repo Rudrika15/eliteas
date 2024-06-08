@@ -25,7 +25,7 @@
 <div class="card">
     <div class="card-body">
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <h4 class="mb-0 mt-3">Circle Member</h4>
+            <h4 class="card-title">Circle Member</h4>
             <a href="{{ route('circlemember.create') }}" class="btn btn-bg-orange btn-sm mt-3"><i
                     class="bi bi-plus-circle"></i></a>
         </div>
@@ -123,7 +123,7 @@
                                         <div class="modal-body">
                                             <form action="{{ route('assign.role') }}" method="POST">
                                                 @csrf
-                                                <input type="hiddden" name="memberId"
+                                                <input type="hidden" name="memberId"
                                                     value="{{ $circlememberData->id }}">
                                                 <select name="roleId" class="form-select">
                                                     <option value="">Select Role</option>
@@ -161,7 +161,7 @@
                                         <div class="modal-body">
                                             <form action="{{ route('remove.role') }}" method="POST">
                                                 @csrf
-                                                <input type="hiddden" name="memberId"
+                                                <input type="hidden" name="memberId"
                                                     value="{{ $circlememberData->id }}">
                                                 <select name="roleId" class="form-select">
                                                     <option value="">Select Role</option>

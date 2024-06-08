@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AttendanceController;
 use Illuminate\Support\Facades\Auth;
 
 use Illuminate\Support\Facades\Route;
@@ -357,16 +358,17 @@ Route::group(['middleware' => ['auth']], function () {
     //dashboard
     Route::get('/pending-payments', [PaymentController::class, 'pendingPayments'])->name('pendingPayments.index');
 
-    //login with otp
-
-    // Route::get('/loginWithMobile', [OtpController::class, 'loginWithOtp'])->name('loginWithOtp.mobile');
-    // Route::get('/loginWithOtp', [OtpController::class, 'loginWithOtp'])->name('loginWithOtp.otp');
-
-   
-
     // Route to show the password reset request form
     // Route::get('/password/reset', [OTPLoginController::class, 'showResetForm'])->name('forget.password.get');
     
+    // Attendance
+
+    Route::get('/attendance/takeAttendance/{id?}', [AttendanceController::class, 'takeAttendance'])->name('attendance.takeAttendance');
+    Route::get('/attendance/store', [AttendanceController::class, 'store'])->name('attendance.store');
+    
+    Route::get('/attendance/meetingSchedules', [AttendanceController::class, 'meetingSchedules'])->name('attendance.meetingSchedules');
+    Route::get('/attendance/list', [AttendanceController::class, 'list'])->name('attendance.list');
+
 
 });
 

@@ -25,7 +25,7 @@
 <div class="card">
     <div class="card-body">
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <h4 class="mb-0 mt-3">Connection Requests</h4>
+            <h4 class="card-title">Connection Requests</h4>
 
         </div>
 

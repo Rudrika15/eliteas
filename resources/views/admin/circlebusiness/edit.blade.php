@@ -26,7 +26,7 @@
 <div class="card">
     <div class="card-body">
         <div class="d-flex justify-content-between align-items-center mt-3 mb-5">
-            <h4 class="text-blue">Circle Member Business</h4>
+            <h4 class="card-title">Circle Member Business</h4>
             <a href="{{ route('busGiver.index') }}" class="btn btn-bg-blue btn-sm">BACK</a>
         </div>
         <hr class="mb-5">

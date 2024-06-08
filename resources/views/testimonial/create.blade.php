@@ -27,7 +27,7 @@
     <div class="card">
         <div class="card-body">
             <div class="d-flex justify-content-between align-items-center mb-5">
-                <h4 class="text-blue ">Create Testimonial</h4>
+                <h4 class="card-title">Create Testimonial</h4>
                 <a href="{{ route('testimonial.index') }}" class="btn btn-bg-blue btn-sm">BACK</a>
             </div>
             <hr class="mb-5">

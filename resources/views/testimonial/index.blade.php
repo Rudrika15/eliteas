@@ -25,7 +25,7 @@
 <div class="card">
     <div class="card-body">
         <div class="d-flex justify-content-between align-items-center mb-5">
-            <h4 class="mb-0 mt-3 text-blue">My Testimonials</h4>
+            <h4 class="card-title">My Testimonials</h4>
             <a href="{{ route('testimonial.create') }}" class="btn btn-bg-orange btn-sm mt-3"><i
                     class="bi bi-plus-circle"></i></a>
         </div>

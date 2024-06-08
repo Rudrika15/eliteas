@@ -27,7 +27,7 @@
     <div class="card">
         <div class="card-body">
             <div class="d-flex justify-content-between align-items-center mb-5">
-                <h4 class="mb-0 mt-3 text-blue">Reference Giver</h4>
+                <h4 class="card-title">Reference Giver</h4>
                 <a href="{{ route('refGiver.create') }}" class="btn btn-bg-orange btn-sm mt-3"><i class="bi bi-plus-circle"></i></a>
             </div>
             <hr>

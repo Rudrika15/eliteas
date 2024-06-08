@@ -109,7 +109,7 @@
 <div class="card">
     <div class="card-body">
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <h4 class="mb-0 mt-2 text-blue">1:1 Meeting</h4>
+            <h4 class="card-title">1:1 Meeting</h4>
         </div>
         <hr class="mb-3">
         <!-- Responsive Table -->
@@ -144,7 +144,7 @@
 <div class="card">
     <div class="card-body">
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <h4 class="mb-0 mt-2 text-blue">Reference Giver</h4>
+            <h4 class="card-title-0 mt-2 text-blue">Reference Giver</h4>
         </div>
         <hr class="mb-3">
         <!-- Responsive Table -->
@@ -186,7 +186,7 @@
 <div class="card">
     <div class="card-body">
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <h4 class="mb-0 mt-2 text-blue">Business Giver</h4>
+            <h4 class="card-title-0 mt-2 text-blue">Business Giver</h4>
         </div>
         <hr class="mb-3">
         <!-- Responsive Table -->
@@ -224,7 +224,7 @@
 <div class="card">
     <div class="card-body">
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <h4 class="mb-0 mt-2 text-blue">Testimonial</h4>
+            <h4 class="card-title-0 mt-2 text-blue">Testimonial</h4>
         </div>
         <hr class="mb-3">
         <!-- Responsive Table -->

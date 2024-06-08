@@ -24,7 +24,7 @@
 <div class="card">
     <div class="card-body">
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <h2 class="mt-3">Role Management</h2>
+            <h2 class="mt-3 card-title">Role Management</h2>
             @can('role-create')
             <a class="btn btn-bg-orange btn-sm mt-3" href="{{ route('roles.create') }}">
                 <i class="bi bi-plus-circle"></i>

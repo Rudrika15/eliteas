@@ -32,7 +32,7 @@
     <div class="card">
         <div class="card-body">
             <div class="d-flex justify-content-between align-items-center mb-5">
-                <h4 class="text-blue">Circle Meeting Member Refference</h4>
+                <h4 class="card-title">Circle Meeting Member Refference</h4>
                 <a href="{{ route('refGiver.index') }}" class="btn btn-bg-blue btn-sm ">BACK</a>
             </div>
             <hr class="mb-5">

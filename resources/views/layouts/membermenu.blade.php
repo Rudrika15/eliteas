@@ -66,4 +66,13 @@
         </a>
     </li>
 
+    @if(Auth::user()->hasRole('Attendance Handler'))
+    <li class="nav-item">
+        <a class="nav-link " href="{{ route('attendance.meetingSchedules') }}">
+            <i class="bi bi-person-video2" style="color: #e76a35"></i>
+            <span class="text-blue">C M Attendances</span>
+        </a>
+    </li>
+    @endif
+
 </li><!-- End Tables Nav -->

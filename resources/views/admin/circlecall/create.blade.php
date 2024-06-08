@@ -24,7 +24,7 @@
 
     <div class="card">
         <div class="card-body d-flex justify-content-between align-items-center">
-            <h5 class="card-title text-blue">Create 1:1 Meeting</h5>
+            <h5 class="card-title">Create 1:1 Meeting</h5>
             <a href="{{ route('circlecall.index') }}" class="btn btn-bg-orange btn-sm">BACK</a>
         </div>
         <hr>
