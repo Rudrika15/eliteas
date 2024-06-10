@@ -9,9 +9,16 @@ class CircleMeetingsAttendances extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'userId',
+        'personName',
+        'circleId',
+        'meetingId',
+        // Other fillable fields here
+    ];
 
-    // public function user()
-    // {
-    //     return $this->belongsTo(User::class, 'memberId' , 'id');
-    // }
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'userId' , 'id');
+    }
 }

@@ -352,6 +352,10 @@ Route::group(['middleware' => ['auth']], function () {
     //admin side activity membership status changed
     Route::get('/allPayments', [PaymentController::class, 'allPayments'])->name('allPayments.index');
     
+    //circle admin payment history
+    Route::get('/circleAdminPayment', [PaymentController::class, 'circleAdminPaymentHistory'])->name('circleAdminPaymentHistory.index');
+
+
     //user side activity membership status changed
     Route::get('/my-allPayments', [PaymentController::class, 'myAllPayments'])->name('myAllPayments.index');
 
@@ -364,10 +368,13 @@ Route::group(['middleware' => ['auth']], function () {
     // Attendance
 
     Route::get('/attendance/takeAttendance/{id?}', [AttendanceController::class, 'takeAttendance'])->name('attendance.takeAttendance');
-    Route::get('/attendance/store', [AttendanceController::class, 'store'])->name('attendance.store');
+    Route::get('/attendance/invitedAttendance/{id?}', [AttendanceController::class, 'invitedAttendance'])->name('attendance.invitedAttendance');
+    Route::post('/attendance/attendanceStore', [AttendanceController::class, 'attendanceStore'])->name('attendance.attendanceStore');
+    Route::post('/attendance/invitedAttendanceStore', [AttendanceController::class, 'invitedAttendanceStore'])->name('attendance.invitedAttendanceStore');
+    
     
     Route::get('/attendance/meetingSchedules', [AttendanceController::class, 'meetingSchedules'])->name('attendance.meetingSchedules');
-    Route::get('/attendance/list', [AttendanceController::class, 'list'])->name('attendance.list');
+    Route::get('/attendance/attendanceList/{id?}', [AttendanceController::class, 'attendanceList'])->name('attendance.attendanceList');
 
 
 });

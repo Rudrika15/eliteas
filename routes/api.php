@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AttendanceController;
 use App\Models\CircleMember;
 use Illuminate\Http\Request;
 use App\Mail\MeetingInvitation;
@@ -213,5 +214,14 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     // My Payment History
 
     Route::get('/my-payment-history', [MyPaymentController::class, 'myPaymentHistory']);
+
+    // Attendance Api
+
+        Route::get('/attendance/memberAttendance/{id}', [AttendanceController::class, 'memberAttendance']);
+        Route::get('/attendance/invitedAttendance/{id}', [AttendanceController::class, 'invitedAttendance']);
+        Route::get('/attendance/meeting-schedules', [AttendanceController::class, 'meetingSchedules']);
+        Route::get('/attendance/attendance-list', [AttendanceController::class, 'attendanceList']);
+        Route::post('/attendance/attendance-store', [AttendanceController::class, 'attendanceStore']);
+        Route::post('/attendance/invited-store', [AttendanceController::class, 'invitedAttendanceStore']);
 
 });

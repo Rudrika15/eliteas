@@ -75,4 +75,13 @@
     </li>
     @endif
 
+    @if(Auth::user()->hasRole('Circle Admin'))
+    <li class="nav-item">
+        <a class="nav-link " href="{{ route('circleAdminPaymentHistory.index') }}">
+            <i class="bi bi-cash-stack" style="color: #e76a35"></i>
+            <span class="text-blue">All Member Payment History</span>
+        </a>
+    </li>
+    @endif
+
 </li><!-- End Tables Nav -->

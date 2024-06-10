@@ -2,9 +2,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\City;
-use App\Models\State;
-use App\Models\Country;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
@@ -21,11 +18,35 @@ class AttendanceController extends Controller
 
             $circleMembers = $user->member->circle->members;
 
-            $meetingId = Schedule::find($request->id)->id;
-            
-            $meetingInvitations = MeetingInvitation::where('meetingId', $meetingId)->get();
+            $meetingId = $request->id;
 
-            return view('admin.attendance.index', compact('circleMembers', 'meetingInvitations', 'meetingId'));
+            $circleId = Schedule::where('id', $meetingId)->first()->circleId;
+
+            $meetingInvitations = MeetingInvitation::where('meetingId', $meetingId)
+                ->get();
+
+            return view('admin.attendance.index', compact('circleMembers', 'meetingInvitations', 'meetingId', 'circleId'));
+        } catch (\Throwable $th) {
+            throw $th;
+            // Optionally log the error or handle it
+            return view('servererror'); // Ensure this view exists
+        }
+    }
+    public function invitedAttendance(Request $request)
+    {
+        try {
+            $user = auth()->user();
+
+            $circleMembers = $user->member->circle->members;
+
+            $meetingId = $request->id;
+
+            $circleId = Schedule::where('id', $meetingId)->first()->circleId;
+
+            $meetingInvitations = MeetingInvitation::where('meetingId', $meetingId)
+                ->get();
+
+            return view('admin.attendance.invitedIndex', compact('circleMembers', 'meetingInvitations', 'meetingId', 'circleId'));
         } catch (\Throwable $th) {
             throw $th;
             // Optionally log the error or handle it
@@ -50,106 +71,70 @@ class AttendanceController extends Controller
         }
     }
 
-
-
-    //For show single data
-    public function view(Request $request, $id)
+    public function attendanceList(Request $request)
     {
         try {
+            $user = auth()->user();
 
-            $city = City::findOrFail($id);
-            return response()->json($city);
-        } catch (\Throwable $th) {
-            throw $th;
-            return view('servererror');
-        }
-    }
-    public function create()
-    {
-        try {
-            $countries = Country::where('status', '!=', 'Deleted')->get();
-            $states = State::where('status', '!=', 'Deleted')->get();
-            $city = City::with('country')
-                ->with('state')
+            $attendanceList = CircleMeetingsAttendances::where('circleId', auth()->user()->member->circle->id)
                 ->get();
-            return view('admin.city.create', compact('countries', 'states', 'city'));
+
+            return view('admin.attendance.attendanceList', compact('attendanceList'));
         } catch (\Throwable $th) {
             throw $th;
             return view('servererror');
         }
     }
 
-    public function store(Request $request)
+
+    public function attendanceStore(Request $request)
     {
-        $this->validate($request, [
-            'cityName' => 'required',
+        return $request->validate([
+            'userId' => 'array',
+            'userId.*' => 'integer|exists:users,id',
+            // 'personName' => 'array',
+            'circleId' => 'required|integer|exists:circles,id',
+            'meetingId' => 'required|integer|exists:schedules,id',
         ]);
-        try {
-            $city = new City();
-            $city->countryId = $request->countryId;
-            $city->stateId = $request->stateId;
-            $city->cityName = $request->cityName;
-            $city->amount = $request->amount;
-            $city->memberAmount = $request->memberAmount;
-            $city->status = 'Active';
 
-            $city->save();
+        $userIds = $request->input('userId', []);
+        $circleId = $request->circleId;
+        $meetingId = $request->meetingId;
 
-            return redirect()->route('city.create')->with('success', 'City Created Successfully!');
-        } catch (\Throwable $th) {
-            throw $th;
-            return view('servererror');
+        foreach ($userIds as $index => $userId) {
+            $attendance = new CircleMeetingsAttendances();
+            $attendance->userId = $userId ?? null;
+            $attendance->circleId = $circleId;
+            $attendance->meetingId = $meetingId;
+            $attendance->status = 'Present';
+            $attendance->save();
         }
+
+        return redirect()->route('attendance.meetingSchedules')->with('success', 'Attendance successfully recorded.');
     }
 
-    public function edit($id)
+    public function invitedAttendanceStore(Request $request)
     {
-        try {
-            $city = City::find($id);
-            $states = State::where('status', '!=', 'Deleted')->get();
-            $countries = Country::where('status', '!=', 'Deleted')->get();
-            return view('admin.city.edit', compact('countries', 'states', 'city'));
-        } catch (\Throwable $th) {
-            throw $th;
-            return view('servererror');
-        }
-    }
-
-    public function update(Request $request)
-    {
-        $this->validate($request, [
-            'cityName' => 'required',
-
+        $request->validate([
+            'personName' => 'array',
+            'personName.*' => 'string',
+            'circleId' => 'required|integer|exists:circles,id',
+            'meetingId' => 'required|integer|exists:schedules,id',
         ]);
-        try {
-            $id = $request->id;
-            $city = City::find($id);
-            $city->countryId = $request->countryId;
-            $city->stateId = $request->stateId;
-            $city->cityName = $request->cityName;
-            $city->amount = $request->amount;
-            $city->memberAmount = $request->memberAmount;
-            $city->status = 'Active';
 
-            $city->save();
+        $personNames = $request->input('personName', []);
+        $circleId = $request->circleId;
+        $meetingId = $request->meetingId;
 
-
-            return redirect()->route('city.index')->with('success', 'City Updated Successfully!');
-        } catch (\Throwable $th) {
-            throw $th;
-            return view('servererror');
+        foreach ($personNames as $personName) {
+            $attendance = new CircleMeetingsAttendances();
+            $attendance->circleId = $circleId;
+            $attendance->meetingId = $meetingId;
+            $attendance->name = $personName ?? null;
+            $attendance->status = 'Present';
+            $attendance->save();
         }
-    }
 
-    function delete($id)
-    {
-        try {
-            $city = City::find($id);
-            $city->status = "Deleted";
-            $city->save();
-            return redirect()->route('city.index')->with('success', 'City Deleted Successfully!');
-        } catch (\Throwable $th) {
-            return view('servererror');
-        }
+        return redirect()->route('attendance.meetingSchedules')->with('success', 'Attendance successfully recorded.');
     }
 }

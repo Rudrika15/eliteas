@@ -2,20 +2,21 @@
 
 namespace App\Http\Controllers\admin;
 
+use Carbon\Carbon;
 use App\Models\User;
 use Razorpay\Api\Api;
+use App\Models\Circle;
+use App\Models\Member;
 use App\Models\Razorpay;
 use App\Models\AllPayments;
 use Illuminate\Http\Request;
+use App\Models\MembershipType;
 use App\Mail\WelcomeMemberEmail;
 use App\Models\TrainingRegister;
 use App\Models\MeetingInvitation;
 use App\Models\MemberSubscriptions;
-use App\Models\MembershipType;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
-use App\Models\Member;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 
@@ -143,18 +144,37 @@ class PaymentController extends Controller
 
     public function allPayments()
     {
-        $payments = AllPayments::where('status' , 'Active')->get();
+        $payments = AllPayments::where('status', 'Active')->get();
         return view('admin.paymentHistory.index', compact('payments'));
     }
-    
+
+    public function circleAdminPaymentHistory()
+    {
+        // Get current authenticated user
+        $user = auth()->user();
+
+        // Find circle of the user
+        $circleId = $user->member->circle->id;
+
+        // Retrieve only payments where memberId matches circleId
+        $payments = AllPayments::where('status', 'Active')
+            ->where('memberId', $circleId)
+            ->get();
+
+        return view('admin.paymentHistory.circleAdminPaymentHistory', compact('payments'));
+    }
+
+
+
+
     public function myAllPayments()
     {
         $myAllPayments = AllPayments::where('status', 'Active')
-        ->where('memberId', auth()->id())
-        ->get();
+            ->where('memberId', auth()->id())
+            ->get();
         return view('admin.paymentHistory.userIndex', compact('myAllPayments'));
     }
-    
+
     public function pendingPayments()
     {
         return view('pendingPayments');

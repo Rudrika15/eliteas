@@ -43,7 +43,10 @@
                         <a href="{{ route('attendance.takeAttendance', $scheduleData->id) }}" class="btn btn-bg-orange">
                             <i class="bi bi-person-check"></i>
                         </a>
-                        <a href="{{ route('attendance.list', $scheduleData->id) }}" class="btn btn-bg-blue">
+                        <a href="{{ route('attendance.invitedAttendance', $scheduleData->id) }}" class="btn btn-bg-blue">
+                            <i class="bi bi-person-fill-check"></i>
+                        </a>
+                        <a href="{{ route('attendance.attendanceList', $scheduleData->id) }}" class="btn btn-bg-orange">
                             <i class="bi bi-person-fill"></i>
                         </a>
                     </td>
