@@ -17,6 +17,7 @@ use App\Models\MeetingInvitation;
 use App\Models\MemberSubscriptions;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use App\Mail\MembershipRenewed;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 
@@ -150,21 +151,23 @@ class PaymentController extends Controller
 
     public function circleAdminPaymentHistory()
     {
-        // Get current authenticated user
         $user = auth()->user();
 
-        // Find circle of the user
         $circleId = $user->member->circle->id;
 
-        // Retrieve only payments where memberId matches circleId
+        $circleMembers = Member::where('circleId', $circleId)->pluck('userId')->toArray();
+
         $payments = AllPayments::where('status', 'Active')
-            ->where('memberId', $circleId)
+            ->whereIn('memberId', $circleMembers)
             ->get();
+        // return $circleMembersIds = $circleMembers->pluck('id')->toArray();
+
+        // $payments = AllPayments::where('status', 'Active')
+        //     // ->where('memberId', $circleId)
+        //     ->get();
 
         return view('admin.paymentHistory.circleAdminPaymentHistory', compact('payments'));
     }
-
-
 
 
     public function myAllPayments()
@@ -178,5 +181,28 @@ class PaymentController extends Controller
     public function pendingPayments()
     {
         return view('pendingPayments');
+    }
+
+
+    public function renewMembership($userId)
+    {
+        $user = User::find($userId);
+
+        if (!$user) {
+            return response()->json(['message' => 'User not found!'], 404);
+        }
+
+        // Add your logic to renew the membership here
+        // Example: extend membership validity by one year
+        // $subscription = $user->subscription;
+        // $subscription->validity = \Carbon\Carbon::now()->addYear();
+        // $subscription->save();
+
+        // Send an email to the user
+        Mail::to($user->email)->send(new MembershipRenewed($user));
+
+        session()->flash('success', 'Membership renewal email sent!');
+        return redirect()->back();
+
     }
 }

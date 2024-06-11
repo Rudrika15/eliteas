@@ -362,9 +362,13 @@ Route::group(['middleware' => ['auth']], function () {
     //dashboard
     Route::get('/pending-payments', [PaymentController::class, 'pendingPayments'])->name('pendingPayments.index');
 
-    // Route to show the password reset request form
-    // Route::get('/password/reset', [OTPLoginController::class, 'showResetForm'])->name('forget.password.get');
-    
+    //send mail to user for renew membership
+    // Route::get('/renewMembership/{id?}', [PaymentController::class, 'renewMembership'])->name('renewMembership.mail');
+    // routes/web.php
+    // Route::post('/renew-membership/{userId}', 'MembershipController@renewMembership')->name('renewMembership.mail');
+
+    Route::post('/renew-membership/{userId}', [PaymentController::class, 'renewMembership'])->name('renewMembership.mail');
+
     // Attendance
 
     Route::get('/attendance/takeAttendance/{id?}', [AttendanceController::class, 'takeAttendance'])->name('attendance.takeAttendance');
@@ -375,6 +379,8 @@ Route::group(['middleware' => ['auth']], function () {
     
     Route::get('/attendance/meetingSchedules', [AttendanceController::class, 'meetingSchedules'])->name('attendance.meetingSchedules');
     Route::get('/attendance/attendanceList/{id?}', [AttendanceController::class, 'attendanceList'])->name('attendance.attendanceList');
+
+
 
 
 });

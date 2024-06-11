@@ -6,31 +6,44 @@
 {{-- Message --}}
 @if (Session::has('success'))
 <div class="alert alert-success alert-dismissible" role="alert">
-    <button type="button" class="close" data-dismiss="alert">
-        {{-- <i class="fa fa-times"></i> --}}
-    </button>
-    <strong>Success !</strong> {{ session('success') }}
+    <button type="button" class="close" data-dismiss="alert"></button>
+    <strong>Success!</strong> {{ session('success') }}
 </div>
 @endif
 
 @if (Session::has('error'))
 <div class="alert alert-danger alert-dismissible" role="alert">
-    <button type="button" class="close" data-dismiss="alert">
-        {{-- <i class="fa fa-times"></i> --}}
-    </button>
-    <strong>Error !</strong> {{ session('error') }}
+    <button type="button" class="close" data-dismiss="alert"></button>
+    <strong>Error!</strong> {{ session('error') }}
 </div>
 @endif
+
 <div class="card">
     <div class="card-body">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h4 class="card-title">All Subscriptions</h4>
-            {{-- <a href="{{ route('country.create') }}" class="btn btn-bg-orange btn-sm mt-3"><i
-                    class="bi bi-plus-circle"></i></a> --}}
+            <div class="d-flex align-items-center mb-3">
+                <div class="d-flex flex-column small">
+                    <span class="badge bg-danger me-1 mt-2">Validity of Membership - Expired</span>
+                    <span class="badge bg-warning me-1 mt-2">Validity of Membership - Expiring Soon</span>
+                    <span class="badge bg-success me-1 mt-2">Validity of Membership - Valid</span>
+                </div>
+            </div>
         </div>
 
-        <!-- Table with stripped rows -->
-        <table class="table datatable">
+        <div class="d-flex align-items-center mb-3">
+            <small class="text-muted me-1"><strong>Filter By:</strong></small>
+            <div class="d-flex align-items-center">
+                <select name="membershipType" id="membershipType" class="form-select form-select-sm">
+                    <option value="" selected>Select Membership</option>
+                    <option value="Monthly">Monthly</option>
+                    <option value="Yearly">Yearly</option>
+                    <option value="LifeTime">LifeTime</option>
+                </select>
+            </div>
+        </div>
+
+        <table class="table datatable" id="subscriptionsTable">
             <thead>
                 <tr>
                     <th>Name</th>
@@ -38,42 +51,65 @@
                     <th>Amount</th>
                     <th>Validity</th>
                     <th>Status</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach ($allSubscriptions as $subscritptionsData)
+                @foreach ($allSubscriptions as $subscriptionData)
                 <tr>
-                    <td>{{$subscritptionsData->user->firstName ?? '-'}} {{$subscritptionsData->user->lastName ?? '-'}}</td>
-                    <td>{{$subscritptionsData->membershipType ?? '-'}}</td>
-                    <td>{{$subscritptionsData->allPayments->amount ?? '-'}}</td>
-                    <td>{{$subscritptionsData->validity ?? '-'}}</td>
-                    <td>{{$subscritptionsData->status ?? '-'}}</td>
+                    <td>{{ $subscriptionData->user->firstName ?? '-' }} {{ $subscriptionData->user->lastName ?? '-' }}
+                    </td>
+                    <td>{{ $subscriptionData->membershipType ?? '-' }}</td>
+                    <td>{{ $subscriptionData->allPayments->amount ?? '-' }}</td>
+                    <td>
+                        @php
+                        $validityDate = \Carbon\Carbon::parse($subscriptionData->validity);
+                        $today = \Carbon\Carbon::now();
+                        $warningThreshold = $today->copy()->addDays(10);
+                        @endphp
+                        <span
+                            class="badge {{ $validityDate->isPast() ? 'bg-danger' : ($validityDate->between($today, $warningThreshold) ? 'bg-warning' : 'bg-success') }}">
+                            {{ $subscriptionData->validity ? $validityDate->format('d-M-Y') : '-' }}
+                        </span>
+                    </td>
+                    <td>{{ $subscriptionData->status ?? '-' }}</td>
+                    <td>
+                        <form action="{{ route('renewMembership.mail', $subscriptionData->userId) }}" method="POST"
+                            class="d-inline">
+                            @csrf
+                            <button type="submit" class="btn btn-bg-blue btn-sm">
+                                <i class="bi bi-envelope"></i>
+                            </button>
+                        </form>
+                    </td>
                 </tr>
                 @endforeach
             </tbody>
         </table>
-        <!-- End Table with stripped rows -->
     </div>
+</div>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const membershipTypeSelect = document.getElementById('membershipType');
+        const table = document.getElementById('subscriptionsTable');
+        const rows = table.getElementsByTagName('tr');
 
-    @endsection
+        membershipTypeSelect.addEventListener('change', function() {
+            const selectedType = this.value;
 
+            for (let i = 1; i < rows.length; i++) {
+                const cells = rows[i].getElementsByTagName('td');
+                const membershipType = cells[1].innerText;
 
+                if (selectedType === "" || membershipType === selectedType) {
+                    rows[i].style.display = '';
+                } else {
+                    rows[i].style.display = 'none';
+                }
+            }
+        });
+    });
+</script>
 
-
-
-<div class="card">
-    <div class="card-body">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h4 class="mb-0 mt-3">All Subscriptions</h4>
-            {{-- <a href="{{ route('country.create') }}" class="btn btn-bg-orange btn-sm mt-3"><i
-                    class="bi bi-plus-circle"></i></a> --}}
-        </div>
-
-        <!-- Table with stripped rows -->
-        
-        <!-- End Table with stripped rows -->
-    </div>
-
-
-
+@endsection

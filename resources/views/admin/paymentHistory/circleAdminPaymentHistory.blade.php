@@ -46,9 +46,9 @@
                 @foreach ($payments as $paymentsData)
                 <tr>
                     <td>{{$paymentsData->user->firstName ?? '-'}} {{$paymentsData->user->lastName ?? '-'}}</td>
-                    <td>{{$paymentsData->paymentType ?? '-'}}</td>
+                    {{-- <td>{{$paymentsData->paymentType ?? '-'}}</td> --}}
                     <td>{{$paymentsData->date ?? '-'}}</td>
-                    {{-- <td>{{$paymentsData->paymentMode}}</td> --}}
+                    <td>{{$paymentsData->paymentMode}}</td>
                     <td>{{$paymentsData->amount}}</td>
                     {{-- <td>{{$paymentsData->remarks}}</td> --}}
                     <td>{{$paymentsData->status}}</td>

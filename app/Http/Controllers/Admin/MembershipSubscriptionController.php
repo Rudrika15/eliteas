@@ -50,6 +50,5 @@ class MembershipSubscriptionController extends Controller
     //     }
     // }
 
-
 }
 
