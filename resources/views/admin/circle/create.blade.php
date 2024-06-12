@@ -49,7 +49,7 @@
             <div class="col-md-6 mt-3">
                 <div class="form-floating">
                     <select class="form-select @error('country') is-invalid @enderror" id="country" name="country">
-                        <option value="">Select Country</option>
+                        <option value="" selected disabled>Select Country</option>
                         @foreach ($countries as $country)
                         <option value="{{ $country->id }}">{{ $country->countryName }}</option>
                         @endforeach
@@ -65,7 +65,7 @@
             <div class="col-md-6 mt-3">
                 <div class="form-floating">
                     <select class="form-select @error('state') is-invalid @enderror" id="state" name="state">
-                        <option value="">Select State</option>
+                        <option value="" selected disabled>Select State</option>
                         @foreach ($states as $state)
                         <option value="{{ $state->id }}">{{ $state->stateName }}</option>
                         @endforeach
@@ -81,7 +81,7 @@
             <div class="col-md-6 mt-3">
                 <div class="form-floating">
                     <select class="form-select @error('cityId') is-invalid @enderror" id="cityId" name="cityId">
-                        <option value="">Select City</option>
+                        <option value="" selected disabled>Select City</option>
                         @foreach ($cities as $city)
                         <option value="{{ $city->id }}">{{ $city->cityName }}</option>
                         @endforeach
