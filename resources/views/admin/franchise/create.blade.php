@@ -82,9 +82,6 @@
                     <select class="form-select @error('stateId') is-invalid @enderror" id="stateId" name="stateId"
                         required>
                         <option value="" selected disabled>Select State</option>
-                        @foreach ($states as $stateData)
-                        <option value="{{ $stateData->id }}">{{ $stateData->stateName }}</option>
-                        @endforeach
                     </select>
                     @error('stateId')
                     <div class="invalid-tooltip">
@@ -98,9 +95,6 @@
                     <select class="form-select @error('cityId') is-invalid @enderror" id="cityId" name="cityId"
                         required>
                         <option value="" selected disabled>Select City</option>
-                        @foreach ($cities as $city)
-                        <option value="{{ $city->id }}">{{ $city->cityName }}</option>
-                        @endforeach
                     </select>
                     @error('cityId')
                     <div class="invalid-tooltip">
@@ -148,33 +142,6 @@
                 </div>
             </div>
         </div>
-        {{-- <div class="row mb-3">
-            <div class="col-md-6">
-                <div class="form-floating">
-                    <input type="password" class="form-control @error('password') is-invalid @enderror" id="password"
-                        name="password" placeholder="Password" required>
-                    <label for="password">Password</label>
-                    @error('password')
-                    <div class="invalid-tooltip">
-                        {{ $message }}
-                    </div>
-                    @enderror
-                </div>
-            </div>
-
-            <div class="col-md-6">
-                <div class="form-floating">
-                    <input type="password" class="form-control @error('confirm-password') is-invalid @enderror"
-                        id="confirm-password" name="confirm-password" placeholder="Confirm Password" required>
-                    <label for="confirm-password">Confirm Password</label>
-                    @error('confirm-password')
-                    <div class="invalid-tooltip">
-                        {{ $message }}
-                    </div>
-                    @enderror
-                </div>
-            </div>
-        </div> --}}
         <div class="text-center">
             <button type="submit" class="btn btn-bg-blue">Submit</button>
             <button type="reset" class="btn btn-bg-orange">Reset</button>
@@ -186,8 +153,14 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     $(document).ready(function() {
+        // Initialize state and city dropdowns to be empty on page load
+        $('#stateId').html('<option value="">Select State</option>');
+        $('#cityId').html('<option value="">Select City</option>');
+
+        // Handle country change event
         $('#countryId').change(function() {
             var countryId = $(this).val();
+            console.log('Country selected: ', countryId);
             if (countryId) {
                 $.ajax({
                     url: '{{ route('get.states') }}', // Replace with your route for fetching states
@@ -197,18 +170,26 @@
                         _token: '{{ csrf_token() }}'
                     },
                     success: function(data) {
-                        $('#stateId').html(data);
-                        $('#cityId').html('<option value="">Select City</option>');
+                        console.log('States data: ', data);
+                        $('#stateId').html('<option value="">Select State</option>'); // Default option
+                        $('#stateId').append(data); // Append states to dropdown
+                        $('#cityId').html('<option value="">Select City</option>'); // Reset city dropdown
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error fetching states: ', error);
                     }
                 });
             } else {
+                console.log('No country selected, resetting state and city dropdowns');
                 $('#stateId').html('<option value="">Select State</option>');
                 $('#cityId').html('<option value="">Select City</option>');
             }
         });
 
+        // Handle state change event
         $('#stateId').change(function() {
             var stateId = $(this).val();
+            console.log('State selected: ', stateId);
             if (stateId) {
                 $.ajax({
                     url: '{{ route('get.cities') }}', // Replace with your route for fetching cities
@@ -218,14 +199,21 @@
                         _token: '{{ csrf_token() }}'
                     },
                     success: function(data) {
-                        $('#cityId').html(data);
+                        console.log('Cities data: ', data);
+                        $('#cityId').html('<option value="">Select City</option>'); // Default option
+                        $('#cityId').append(data); // Append cities to dropdown
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error fetching cities: ', error);
                     }
                 });
             } else {
+                console.log('No state selected, resetting city dropdown');
                 $('#cityId').html('<option value="">Select City</option>');
             }
         });
     });
+
 </script>
 
 @endsection

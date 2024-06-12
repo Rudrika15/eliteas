@@ -64,11 +64,11 @@ class FranchiseController extends Controller
             'firstName' => 'required',
             'lastName' => 'required',
             'email' => 'required|email|unique:users',
-            
+
         ]);
 
         try {
-           $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()';
+            $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()';
             $password = '';
             $length = 8;
             for ($i = 0; $i < $length; $i++) {
@@ -76,7 +76,7 @@ class FranchiseController extends Controller
             }
 
             $rowPassword = $password;
-            
+
             $user = new User;
             $user->firstName = $request->firstName;
             $user->lastName = $request->lastName;
@@ -182,29 +182,59 @@ class FranchiseController extends Controller
         }
     }
 
+    // public function getStates(Request $request)
+    // {
+    //     $countryId = $request->input('countryId');
+    //     $states = State::where('countryId', $countryId)->get();
+
+    //     $options = '<option value="">Select State</option>';
+    //     foreach ($states as $state) {
+    //         $options .= '<option value="' . $state->id . '">' . $state->stateName . '</option>';
+    //     }
+
+    //     return $options;
+    // }
+
+    // public function getCities(Request $request)
+    // {
+    //     $stateId = $request->input('stateId');
+    //     $cities = City::where('stateId', $stateId)->get();
+
+    //     $options = '<option value="">Select City</option>';
+    //     foreach ($cities as $city) {
+    //         $options .= '<option value="' . $city->id . '">' . $city->cityName . '</option>';
+    //     }
+
+    //     return $options;
+    // }
+
+
+    // Example Laravel Controller Method
     public function getStates(Request $request)
     {
-        $countryId = $request->input('countryId');
+        $countryId = $request->countryId;
         $states = State::where('countryId', $countryId)->get();
 
         $options = '<option value="">Select State</option>';
         foreach ($states as $state) {
             $options .= '<option value="' . $state->id . '">' . $state->stateName . '</option>';
         }
-
-        return $options;
+        return response()->json($options);
     }
+
 
     public function getCities(Request $request)
     {
-        $stateId = $request->input('stateId');
+        $stateId = $request->stateId;
+
         $cities = City::where('stateId', $stateId)->get();
 
         $options = '<option value="">Select City</option>';
+
         foreach ($cities as $city) {
             $options .= '<option value="' . $city->id . '">' . $city->cityName . '</option>';
         }
 
-        return $options;
+        return response()->json($options);
     }
 }

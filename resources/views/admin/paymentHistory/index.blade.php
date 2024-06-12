@@ -29,7 +29,20 @@
                     class="bi bi-plus-circle"></i></a> --}}
         </div>
 
-        <!-- Table with stripped rows -->
+
+        <div class="d-flex align-items-center mb-3">
+            <small class="text-muted me-1"><strong>Filter By:</strong></small>
+            <div class="d-flex align-items-center">
+                <select name="membershipType" id="membershipType" class="form-select form-select-sm">
+                    <option value="" selected>Select Membership</option>
+                    <option value="Monthly">Monthly</option>
+                    <option value="Yearly">Yearly</option>
+                    <option value="LifeTime">LifeTime</option>
+                </select>
+            </div>
+        </div>
+
+
         <table class="table datatable">
             <thead>
                 <tr>
@@ -59,6 +72,27 @@
         <!-- End Table with stripped rows -->
     </div>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+        const membershipTypeSelect = document.getElementById('membershipType');
+        const table = document.getElementById('subscriptionsTable');
+        const rows = table.getElementsByTagName('tr');
 
+        membershipTypeSelect.addEventListener('change', function() {
+            const selectedType = this.value;
+
+            for (let i = 1; i < rows.length; i++) {
+                const cells = rows[i].getElementsByTagName('td');
+                const membershipType = cells[1].innerText;
+
+                if (selectedType === "" || membershipType === selectedType) {
+                    rows[i].style.display = '';
+                } else {
+                    rows[i].style.display = 'none';
+                }
+            }
+        });
+    });
+    </script>
 
     @endsection

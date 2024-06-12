@@ -240,6 +240,4 @@ class CircleController extends Controller
             return view('servererror');
         }
     }
-
-   
 }
