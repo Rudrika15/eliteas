@@ -22,6 +22,8 @@ use App\Models\BusinessCategory;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
+use App\Models\MemberSubscriptions;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 
@@ -167,7 +169,7 @@ class CircleMemberController extends Controller
             $membershipType = MembershipType::findOrFail($request->membershipType);
             $member->membershipAmount = $membershipType->amount;
             // $member->keyWords = $request->keyWords;
-            $member->status = 'Active'; 
+            $member->status = 'Active';
             $member->save();
 
             // Create and save TopsProfile
@@ -236,6 +238,23 @@ class CircleMemberController extends Controller
             $billing->status = 'Active';
             $billing->save();
 
+
+            $paymentId = $request->has('offlinePayment') ? 'Offline' : $request->paymentId;
+            $payment = new MemberSubscriptions();
+            $payment->userId = $user->id;
+            $payment->paymentId = $paymentId;
+            $payment->membershipType = $member->membershipType;
+            if ($member->membershipType == 'Monthly') {
+                $payment->validity = now()->addMonth()->format('Y-m-d');
+            }
+            if ($member->membershipType == 'Yearly') {
+                $payment->validity = Carbon::now()->addDay('365')->format('Y-m-d');
+                // now()->addYear()->format('Y-m-d');
+            }
+            $payment->status = 'Active';
+            $payment->save();
+
+
             // Now, create and save the circle member
             // $circlemember = new CircleMember();
             // $circlemember->circleId = $request->circleId;
@@ -253,9 +272,8 @@ class CircleMemberController extends Controller
             if ($request->has('sendMail')) {
                 // send the membersubscription mail
                 Mail::to($user->email)->send(new MemberSubscription($data));
-
             }
-            
+
 
             // // send the membersubscription mail
             // Mail::to($user->email)->send(new MemberSubscription($data));
@@ -282,7 +300,7 @@ class CircleMemberController extends Controller
         $data = [
             'email' => $email,
             'amount' => $amount
-        ];  
+        ];
         if (!session()->has("data")) {
             session(["data" => $data]);
         }
