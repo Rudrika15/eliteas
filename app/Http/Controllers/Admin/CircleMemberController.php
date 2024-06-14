@@ -22,7 +22,9 @@ use App\Models\BusinessCategory;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
+use App\Models\AllPayments;
 use App\Models\MemberSubscriptions;
+use App\Models\Razorpay;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -87,7 +89,7 @@ class CircleMemberController extends Controller
             'email' => 'required|unique:users,email',
             'gender' => 'required',
             'mobileNo' => 'required|unique:users,contactNo',
-            'username' => 'required|unique:members,username',
+            // 'username' => 'required|unique:members,username',
             // Add validation rules for other fields if necessary
         ]);
 
@@ -254,6 +256,22 @@ class CircleMemberController extends Controller
             $payment->status = 'Active';
             $payment->save();
 
+            // $rPayment = new Razorpay();
+            // $rPayment->r_payment_id = $payment->paymentId;
+            // $rPayment->user_email = $user->email;
+            // $rPayment->amount = $member->membershipAmount;
+            // $rPayment->save();
+
+            // $allPayments = new AllPayments();
+            // $allPayments->memberId = $user->id;
+            // $allPayments->amount = $rPayment->amount;
+            // $allPayments->paymentType = 'Offline'; // Assume RazorPay for this example
+            // $allPayments->date = now()->format('Y-m-d');
+            // $allPayments->paymentMode = 'Membership Subscription';
+            // $allPayments->remarks = $payment->paymentId;
+            // $allPayments->save();
+
+            // Payments store code
 
             // Now, create and save the circle member
             // $circlemember = new CircleMember();
@@ -263,11 +281,24 @@ class CircleMemberController extends Controller
             // $circlemember->save();
 
             $amount = $member->membershipAmount;
+            $amount = $request->discountedPrice;
 
-            $data = array(
-                'email' => $user->email,
-                'amount' => $amount
-            );
+            // return $amount = $request->discountedPrice;
+
+            // if ($request->has('discountedPrice')) {
+            //     $data = array(
+            //         'email' => $user->email,
+            //         'amount' => $request->input('discountedPrice'),
+            //         'membershipType' => $member->membershipType
+            //     );
+            // } else {
+
+            {
+                $data = array(
+                    'email' => $user->email,
+                    'amount' => $amount
+                );
+            }
 
             if ($request->has('sendMail')) {
                 // send the membersubscription mail

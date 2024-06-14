@@ -208,6 +208,20 @@
                     @enderror
                 </div>
 
+                {{-- <div class="col-md-6 mt-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="sendMail" name="sendMail" value="1">
+                        <label class="form-check-label" for="sendMail">
+                            Send Mail
+                        </label>
+                    </div>
+                    @error('sendMail')
+                    <div class="invalid-tooltip">
+                        {{ $message }}
+                    </div>
+                    @enderror
+                </div> --}}
+
                 <div class="col-md-9 mt-3">
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" id="sendMail" name="sendMail" value="1">
@@ -239,67 +253,13 @@
                 </div>
                 <script>
                     function toggleValue(element) {
-                        if(element.checked) {
-                            document.getElementById('paymentId').value = 'Offline';
-                        } else {
-                            document.getElementById('paymentId').value = '';
-                        }
-                    }
+                                        if(element.checked) {
+                                            document.getElementById('paymentId').value = 'Offline';
+                                        } else {
+                                            document.getElementById('paymentId').value = '';
+                                        }
+                                    }
                 </script>
-
-                <!-- Modal -->
-                <div class="modal fade" id="paymentStatusModel" tabindex="-1" role="dialog"
-                    aria-labelledby="paymentStatusModelLabel" aria-hidden="true">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="paymentStatusModelLabel">Payment Status Model</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="form-group">
-                                    {{-- <input type="hidden" class="form-control" id="userId" name="userId"
-                                        value="{{$userId}}"> --}}
-                                </div>
-                                <div class="form-group">
-                                    <label for="paymentId" class="col-form-label">Payment ID:</label>
-                                    <input type="text" class="form-control" id="paymentId" name="paymentId">
-                                </div>
-                                <div class="form-group">
-                                    <label for="paymentStatus" class="col-form-label">Payment Status:</label>
-                                    <input type="text" class="form-control" id="paymentStatus" name="paymentStatus">
-                                </div>
-                                <div class="form-group">
-                                    <label for="validity" class="col-form-label">Validity:</label>
-                                    <input type="date" class="form-control" id="validity" name="validity">
-                                </div>
-                                <div class="form-group">
-                                    <label for="membershipType" class="col-form-label">Membership Type:</label>
-                                    <select class="form-control" id="membershipType" name="membershipType">
-                                        <option value="Monthly">Monthly</option>
-                                        <option value="Yearly">Yearly</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <script>
-                    function toggleModal() {
-                        if(document.getElementById('paymentStatus').checked) {
-                            $('#paymentStatusModel').modal('show');
-                        } else {
-                            $('#paymentStatusModel').modal('hide');
-                        }
-                    }
-                </script>
-
 
             </div>
         </div>
