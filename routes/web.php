@@ -155,6 +155,9 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('circlemember/edit/{id?}', [CircleMemberController::class, 'edit'])->name('circlemember.edit');
     Route::post('circlemember/update/{id?}', [CircleMemberController::class, 'update'])->name('circlemember.update');
     Route::get('circlemember/delete/{id?}', [CircleMemberController::class, 'delete'])->name('circlemember.delete');
+    Route::post('/get-membership-amount', [CircleMemberController::class, 'getMembershipAmount'])->name('get.membership.amount');
+
+
 
     //member activity
     Route::get('circlemember/activity/{id?}', [CircleMemberActivityController::class, 'activity'])->name('circlemember.activity');
@@ -409,6 +412,6 @@ Route::post('otp/resend', [OTPLoginController::class, 'resendOTP'])->name('otp.r
 
 
 
-    Route::get('/memberPayment/{email?}/{amount?}', [CircleMemberController::class, 'memberPayment'])->name('memberPayment');
+    Route::get('/memberPayment/{paymentData}', [CircleMemberController::class, 'memberPayment'])->name('memberPayment');
 
     Route::post('/membership-payment', [PaymentController::class, 'membershipPayment'])->name('razorpay.payment.membershipPayment');

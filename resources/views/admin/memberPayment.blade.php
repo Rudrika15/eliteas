@@ -54,20 +54,39 @@
     }
 </style>
 
+{{-- {{ $data['email'] }}
+{{ $data['amount'] }}
+{{ $data['totalAmount'] }}
+{{ $data['originalAmount'] }} --}}
+
 <body>
-    @if (Session::has('data'))
+    {{-- @if (Session::has('data')) --}}
     <div class="container mt-5">
         <div class="card-container p-4">
-            <p>The payable amount is for</p>
-            <h3 class="card-title" id="amount">₹ {{ session('data')['amount'] }}</h3>
+            {{-- <p>The payable amount for {{$data ["membershipType"]}} Membership is</p> --}}
+            <p>The Payable Amount for Membership is</p>
+            <h3 class="card-title" id="amount">₹ {{ $data ["amount"] }}</h3>
             <button type="button" class="btn btn-pay pay">Pay Now</button>
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h5 class="card-title"><b style="color: red;"> Please! </b> Wait Until Payment Is Successful..</h5>
+                    <p class="card-title"><b style="color: green;">You get Confirmation in just 10 Seconds.</b></p>
+                    <p class="card-title"><b> <b style="color: red;"> Please </b> Do not Referesh or Close The Page.</b>
+                    </p>
+                </div>
+            </div>
         </div>
+
+
     </div>
-    @endif
+    {{-- @endif --}}
 
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    {{-- {{$data ["email"]}}
+    {{$data ["amount"]}} --}}
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -114,7 +133,7 @@
         function storePaymentId(paymentId = '', amount = '') {
             var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
             var url = `{{ route('razorpay.payment.membershipPayment') }}`;
-            var email = "{{ request('email') }}";
+            var email = "{{ $data['email'] }}";
             var membershipType = $('#membershipType').val();
             fetch(url, {
                 method: 'POST',

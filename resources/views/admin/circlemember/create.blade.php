@@ -22,7 +22,6 @@
 </div>
 @endif
 
-
 <div class="card">
     <div class="card-body d-flex justify-content-between align-items-center">
         <h5 class="card-title">Create Circle Member</h5>
@@ -40,7 +39,9 @@
                         id="circleId">
                         <option value="" selected disabled> Select Circle </option>
                         @foreach ($circle as $circleData)
-                        <option value="{{ $circleData->id }}">{{ $circleData->circleName }}</option>
+                        <option value="{{ $circleData->id }}" {{ old('circleId')==$circleData->id ? 'selected' : '' }}>
+                            {{ $circleData->circleName }}
+                        </option>
                         @endforeach
                     </select>
                     @error('circleId')
@@ -68,36 +69,17 @@
                     @enderror
                 </div>
             </div>
-            {{-- <div class="col-md-6">
-                <div class="form-floating">
-                    <select class="form-control" data-error='Circle Field is required' required name="memberId"
-                        id="memberId">
-                        <option value="" selected disabled> Select Member </option>
-                        @foreach ($member as $memberData)
-                        <option value="{{ $memberData->id }}">{{ $memberData->firstName }} {{ $memberData->lastName }}
-                        </option>
-                        @endforeach
-                    </select>
-                    @error('memberId')
-                    <div class="invalid-tooltip">
-                        {{ $message }}
-                    </div>
-                    @enderror
-                </div>
-            </div> --}}
-
         </div>
-
-
 
         <div class="row">
             <div class="col-md-6 mt-3">
                 <div class="form-floating">
-                    <select class="form-select @error('title') is-invalid @enderror" id="title" name="title">
+                    <select class="form-select @error('title') is-invalid @enderror" id="title" name="title" {{
+                        old('title') ? 'value="' . old('title') . '"' : '' }}>
                         <option value="" selected disabled>Select Title</option>
-                        <option value="Mr.">Mr.</option>
-                        <option value="Ms.">Ms.</option>
-                        <option value="Mrs.">Mrs.</option>
+                        <option value="Mr." {{ old('title')==='Mr.' ? 'selected' : '' }}>Mr.</option>
+                        <option value="Ms." {{ old('title')==='Ms.' ? 'selected' : '' }}>Ms.</option>
+                        <option value="Mrs." {{ old('title')==='Mrs.' ? 'selected' : '' }}>Mrs.</option>
                     </select>
                     <label for="title">Title</label>
                     @error('title')
@@ -111,7 +93,7 @@
             <div class="col-md-6 mt-3">
                 <div class="form-floating">
                     <input type="text" class="form-control @error('firstName') is-invalid @enderror" id="firstName"
-                        name="firstName" placeholder="First Name">
+                        name="firstName" placeholder="First Name" value="{{ old('firstName') }}">
                     <label for="firstName">First Name</label>
                     @error('firstName')
                     <div class="invalid-tooltip">
@@ -123,7 +105,7 @@
             <div class="col-md-6 mt-3">
                 <div class="form-floating">
                     <input type="text" class="form-control @error('lastName') is-invalid @enderror" id="lastName"
-                        name="lastName" placeholder="Last Name">
+                        name="lastName" placeholder="Last Name" value="{{ old('lastName') }}">
                     <label for="lastName">Last Name</label>
                     @error('lastName')
                     <div class="invalid-tooltip">
@@ -134,27 +116,15 @@
             </div>
             <div class="col-md-6 mt-3">
                 <div class="form-floating">
-                    <input type="text" class="form-control @error('username') is-invalid @enderror" id="username"
-                        name="username" placeholder="User Name">
-                    <label for="username">User Name</label>
-                    @error('username')
-                    <div class="invalid-tooltip">
-                        {{ $message }}
-                    </div>
-                    @enderror
-                </div>
-            </div>
-            <div class="col-md-6 mt-3">
-                <div class="form-floating">
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" name="gender" id="gender" value="male" checked>
-                        <label class="form-check-label" for="gender">
+                        <input class="form-check-input" type="radio" name="gender" id="genderMale" value="male" checked>
+                        <label class="form-check-label" for="genderMale">
                             Male
                         </label>
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" name="gender" id="gender" value="female" checked>
-                        <label class="form-check-label" for="gender">
+                        <input class="form-check-input" type="radio" name="gender" id="genderFemale" value="female">
+                        <label class="form-check-label" for="genderFemale">
                             Female
                         </label>
                     </div>
@@ -168,7 +138,7 @@
             <div class="col-md-6 mt-3">
                 <div class="form-floating">
                     <input type="email" class="form-control @error('email') is-invalid @enderror" id="email"
-                        name="email" placeholder="Email">
+                        name="email" placeholder="Email" value="{{ old('email') }}">
                     <label for="email">Email</label>
                     @error('email')
                     <div class="invalid-tooltip">
@@ -180,7 +150,7 @@
             <div class="col-md-6 mt-3">
                 <div class="form-floating">
                     <input type="text" class="form-control @error('mobileNo') is-invalid @enderror" id="mobileNo"
-                        name="mobileNo" placeholder="Mobile No">
+                        name="mobileNo" placeholder="Mobile No" value="{{ old('mobileNo') }}">
                     <label for="mobileNo">Mobile No</label>
                     @error('mobileNo')
                     <div class="invalid-tooltip">
@@ -193,84 +163,205 @@
             <div class="col-md-6 mt-3">
                 <div class="form-floating">
                     <select class="form-select @error('membershipType') is-invalid @enderror" id="membershipType"
-                        name="membershipType">
+                        name="membershipType" onchange="fetchMembershipAmount(this.value)">
                         <option value="" selected disabled>Select Membership Type</option>
                         @foreach($membershipType as $membershipTypeData)
                         <option value="{{ $membershipTypeData->id }}">{{ $membershipTypeData->membershipType }}
+                            {{ old('membershipType') }}
                         </option>
                         @endforeach
                     </select>
-                    {{-- <label for="businessCategory">Business Category</label> --}}
+                    <label for="membershipType">Membership Type</label>
                     @error('membershipType')
                     <div class="invalid-tooltip">
                         {{ $message }}
                     </div>
                     @enderror
                 </div>
-
-                {{-- <div class="col-md-6 mt-3">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="sendMail" name="sendMail" value="1">
-                        <label class="form-check-label" for="sendMail">
-                            Send Mail
-                        </label>
-                    </div>
-                    @error('sendMail')
-                    <div class="invalid-tooltip">
-                        {{ $message }}
-                    </div>
-                    @enderror
-                </div> --}}
-
-                <div class="col-md-9 mt-3">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="sendMail" name="sendMail" value="1">
-                        <label class="form-check-label" for="sendMail">
-                            Send Mail <b>(If Payment is not Received)</b>
-                        </label>
-                    </div>
-                    @error('sendMail')
-                    <div class="invalid-tooltip">
-                        {{ $message }}
-                    </div>
-                    @enderror
-                </div>
-
-                <div class="col-md-6 mt-3">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="paymentStatus" name="paymentStatus"
-                            value="1" onchange="toggleValue(this)">
-                        <label class="form-check-label" for="paymentStatus">
-                            Payment Recieved
-                        </label>
-                    </div>
-                    @error('paymentStatus')
-                    <div class="invalid-tooltip">
-                        {{ $message }}
-                    </div>
-                    @enderror
-                    <input type="hidden" id="paymentId" name="paymentId" value="">
-                </div>
-                <script>
-                    function toggleValue(element) {
-                                        if(element.checked) {
-                                            document.getElementById('paymentId').value = 'Offline';
-                                        } else {
-                                            document.getElementById('paymentId').value = '';
-                                        }
-                                    }
-                </script>
-
             </div>
-        </div>
+
+            <div class="col-md-6 mt-3">
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="membershipAmount" name="membershipAmount"
+                        placeholder="Membership Amount" readonly>
+                    <label for="membershipAmount">Membership Amount</label>
+                </div>
+            </div>
+
+            <div class="col-md-6 mt-3">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="discountAmount" name="discountAmount" value="1"
+                        onchange="toggleDiscountAmount(this)">
+                    <label class="form-check-label" for="discountAmount">
+                        Discount Amount
+                    </label>
+                </div>
+            </div>
+
+            <div class="col-md-12 mt-3" id="discountedAmountContainer" style="display:none;">
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="discountedAmount" name="discountedAmount"
+                        placeholder="Discounted Amount" value="{{ old('discountedAmount') }}">
+                    <label for="discountedAmount">Discounted Amount</label>
+                </div>
+            </div>
+
+            <div class="col-md-6 mt-3">
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="totalAmount" name="totalAmount"
+                        placeholder="Total Amount" readonly>
+                    <label for="totalAmount">Total Amount</label>
+                </div>
+            </div>
+
+            <div class="col-md-9 mt-3">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="sendMail" name="sendMail" value="1">
+                    <label class="form-check-label" for="sendMail">
+                        Send Mail <b>(If Payment is not Received)</b>
+                    </label>
+                </div>
+                @error('sendMail')
+                <div class="invalid-tooltip">
+                    {{ $message }}
+                </div>
+                @enderror
+            </div>
+
+            <div class="col-md-6 mt-3">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="paymentModeCheck" name="paymentModeCheck"
+                        value="1" onchange="togglePaymentMode(this)">
+                    <label class="form-check-label" for="paymentModeCheck">
+                        Select Payment Mode
+                    </label>
+                </div>
+            </div>
+
+            <div class="col-md-6 mt-3" id="paymentModeContainer" style="display:none;">
+                <div class="form-floating">
+                    <select class="form-select @error('paymentMode') is-invalid @enderror" id="paymentMode"
+                        name="paymentMode">
+                        <option value="" selected disabled>Select Payment Mode</option>
+                        <option value="cash">Cash</option>
+                        <option value="cheque">Cheque</option>
+                        <option value="neft">NEFT</option>
+                        <option value="rtgs">RTGS</option>
+                    </select>
+                    <label for="paymentMode">Payment Mode</label>
+                    @error('paymentMode')
+                    <div class="invalid-tooltip">
+                        {{ $message }}
+                    </div>
+                    @enderror
+                </div>
+            </div>
+
+            <div class="col-md-3 mt-3">
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="date" name="date" placeholder="Date" readonly
+                        value="{{ date('Y-m-d') }}">
+                    <label for="date">Date</label>
+                    @error('date')
+                    <div class="invalid-tooltip">
+                        {{ $message }}
+                    </div>
+                    @enderror
+                </div>
+            </div>
+            <div class="d-flex justify-content-center mt-3">
+                <button type="submit" class="btn btn-sm btn-success">SUBMIT</button>
+            </div>
+    </form><!-- End floating Labels Form -->
+</div>
 </div>
 
-<div class="text-center mt-3">
-    <button type="submit" class="btn btn-bg-blue">Submit</button>
-    <button type="reset" class="btn btn-bg-orange">Reset</button>
-</div>
-</form><!-- End floating Labels Form -->
-</div>
+<script>
+    function toggleDiscountAmount(checkbox) {
+        var discountedAmountContainer = document.getElementById('discountedAmountContainer');
+        discountedAmountContainer.style.display = checkbox.checked ? 'block' : 'none';
+
+        // Calculate total amount when discount amount changes
+        calculateTotalAmount();
+    }
+
+    function calculateTotalAmount() {
+        var membershipAmount = parseFloat(document.getElementById('membershipAmount').value) || 0;
+        var discountedAmount = parseFloat(document.getElementById('discountedAmount').value) || 0;
+
+        var totalAmount = membershipAmount - discountedAmount;
+
+        // Update the total amount field
+        document.getElementById('totalAmount').value = totalAmount.toFixed(2); // Assuming you want to display it as a decimal
+    }
+</script>
+
+<script>
+    // Add event listener for membership amount change (assuming it changes based on selection)
+    document.getElementById('membershipType').addEventListener('change', function() {
+        // Fetch membership amount when membership type changes
+        fetchMembershipAmount(this.value);
+    });
+
+    // Add event listener for discounted amount change
+    document.getElementById('discountedAmount').addEventListener('input', function() {
+        // Recalculate total amount whenever discounted amount changes
+        calculateTotalAmount();
+    });
+</script>
+
+<script>
+    function fetchMembershipAmount(membershipTypeId) {
+        if (membershipTypeId) {
+            $.ajax({
+                url: '{{ route('get.membership.amount') }}', // Update with your actual route for fetching the membership amount
+                type: 'POST',
+                data: {
+                    membershipTypeId: membershipTypeId,
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function(data) {
+                    $('#membershipAmount').val(data.amount);
+                },
+                error: function() {
+                    $('#membershipAmount').val('');
+                }
+            });
+        } else {
+            $('#membershipAmount').val('');
+        }
+    }
+</script>
+
+<script>
+    function toggleDiscountAmount(checkbox) {
+        var discountedAmountContainer = document.getElementById('discountedAmountContainer');
+        discountedAmountContainer.style.display = checkbox.checked ? 'block' : 'none';
+    }
+
+    function togglePaymentMode(checkbox) {
+        var paymentModeContainer = document.getElementById('paymentModeContainer');
+        paymentModeContainer.style.display = checkbox.checked ? 'block' : 'none';
+    }
+
+    (function () {
+        'use strict'
+
+        var forms = document.querySelectorAll('.needs-validation')
+
+        Array.prototype.slice.call(forms)
+            .forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
+                    form.classList.add('was-validated')
+                }, false)
+            })
+    })()
+</script>
+
 <script>
     function previewPhoto(event) {
     var input = event.target;

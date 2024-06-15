@@ -12,12 +12,15 @@ class WelcomeMemberEmail extends Mailable
     use Queueable, SerializesModels;
 
     public $user;
-    public $password;
+    // public $password;
+    public $contactNo;
 
-    public function __construct($user, $password)
+
+    public function __construct($user, $contactNo)
     {
         $this->user = $user;
-        $this->password = $password;
+        $this->contactNo = $contactNo;
+        // $this->password = $password;
     }
 
     public function build()
@@ -26,7 +29,8 @@ class WelcomeMemberEmail extends Mailable
             ->subject('Welcome to UBN! '.$this->user->firstName)
             ->with([
                 'username' => $this->user->email,
-                'password' => $this->password,
+                // 'password' => $this->password,
+                'contactNo' => $this->contactNo,
             ]);
     }
 }

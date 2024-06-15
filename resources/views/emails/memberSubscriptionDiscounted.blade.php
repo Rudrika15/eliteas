@@ -45,6 +45,12 @@
 
 <body>
 
+{{-- {{ $data['email'] }}
+{{ $data['amount'] }}
+{{ $data['totalAmount'] }}
+{{ $data['originalAmount'] }} --}}
+
+
 
     <div class="container">
         <h1>Subscription Payment</h1>
@@ -52,17 +58,16 @@
         {{-- <span>{{ $data['amount'] }}</span> --}}
         @php
 
-
-
         @endphp
-        <p>You are now Member of <b style="color: #0056b3">UBN</b> </p>
-        <p>Please Pay the following amount.</p>
-        <p>After <b style="color: green">Successfull!</b> Payment You got your Login Details in another Email
-        </p>
+        <p>You are now a Member of <b style="color: #0056b3">UBN</b></p>
+        <p>Congratulations! You have received a Discount on your {{ $data['membershipType'] }} membership subscription.</p>
+        <p>The Original amount of your Membership is <strike style="color: red">₹ {{ $data['originalAmount'] }}</strike> <br> And after discount payable amount is <b style="color: green">₹ {{ $data['amount'] }}</b> </p>
+        <p>Please pay the following discounted amount.</p>
+        <p>After a <b style="color: green">Successful!</b> payment, you will receive your login details in another
+            email.</p>
         <p>Thank you.</p>
 
-        <p> Click here to pay joining fees: <b style="color: royalblue"> ₹ {{ $data['amount'] }} </b></p>
-
+        <p>Click here to pay the joining fees: <b style="color: royalblue">₹ {{ $data['amount'] }}</b></p>
         {{-- <form action="{{route('invitationPay')}}" target="_blank" method="post">
             @csrf
             <input type="hidden" name="personName" value="{{ $data['personName'] }}" />
@@ -73,10 +78,11 @@
             <input type="submit" class="btn btn-primary " value="Pay Now" />
         </form> --}}
         @php
-        $paymentData = ["amount" => $data['amount'], "email" => $data['email']];
+        $paymentData = ["amount" => $data['amount'], "email" => $data['email'], "totalAmount" => $data['totalAmount'], "originalAmount" => $data['originalAmount'], "membershipType" => $data['membershipType'] ];
         @endphp
 
-        <a href="{{ route('memberPayment', Crypt::encrypt($paymentData)) }}" class="btn btn-primary ">Pay Now</a>
+        <button type="button" class="btn btn-primary" onclick="window.location.href='{{ route('memberPayment', Crypt::encrypt($paymentData)) }}'" class="btn btn-primary w-100">Pay Now</button>
+        {{-- <a href="{{ route('memberPayment', Crypt::encrypt($paymentData)) }}" class="btn btn-primary ">Pay Now</a> --}}
 
 
 

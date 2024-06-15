@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Mail\MembershipRenewed;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Mail;
 
 class PaymentController extends Controller
@@ -94,7 +95,7 @@ class PaymentController extends Controller
             }
 
             // Store MemberSubscription
-            $subscription = new MemberSubscriptions();
+            $subscription = MemberSubscriptions::firstOrNew(['userId' => $user->id]);
             $subscription->userId = $user->id;
             $subscription->paymentId = $payment->r_payment_id;
 
@@ -107,6 +108,8 @@ class PaymentController extends Controller
                 $subscription->validity = Carbon::now()->addDay('365')->format('Y-m-d');
                 // now()->addYear()->format('Y-m-d');
             }
+
+            // $subscription->date = $request->paymentDate;
 
             $subscription->membershipType = $member->membershipType;
 
@@ -125,14 +128,14 @@ class PaymentController extends Controller
             $allPayments->paymentMode = 'Membership Subscription';
             $allPayments->remarks = $payment->r_payment_id;
             $allPayments->save();
-
+// Crypt::encrypt($allPayments->toArray());
             // Debugging: Confirm AllPayments save
             Log::info('All payments saved:', $allPayments->toArray());
 
             // Send welcome email to user after successful payment
             $user = User::where('email', $payment->user_email)->first();
-            $rowPassword = $user->password;
-            Mail::to($user->email)->send(new WelcomeMemberEmail($user, $rowPassword));
+            $contactNo = $user->contactNo;
+            Mail::to($user->email)->send(new WelcomeMemberEmail($user, $contactNo));
 
             return response()->json(['success' => true, 'message' => 'Payment processed successfully']);
         } catch (\Exception $e) {
@@ -203,6 +206,5 @@ class PaymentController extends Controller
 
         session()->flash('success', 'Membership renewal email sent!');
         return redirect()->back();
-
     }
 }
