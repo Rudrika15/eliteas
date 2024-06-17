@@ -45,10 +45,11 @@
 
 <body>
 
-{{-- {{ $data['email'] }}
-{{ $data['amount'] }}
-{{ $data['totalAmount'] }}
-{{ $data['originalAmount'] }} --}}
+    {{-- {{ $data['email'] }}
+    {{ $data['amount'] }}
+    {{ $data['totalAmount'] }}
+    {{ $data['originalAmount'] }} --}}
+    {{-- {{ $data['membershipType'] }} --}}
 
 
 
@@ -60,8 +61,14 @@
 
         @endphp
         <p>You are now a Member of <b style="color: #0056b3">UBN</b></p>
-        <p>Congratulations! You have received a Discount on your {{ $data['membershipType'] }} membership subscription.</p>
-        <p>The Original amount of your Membership is <strike style="color: red">₹ {{ $data['originalAmount'] }}</strike> <br> And after discount payable amount is <b style="color: green">₹ {{ $data['amount'] }}</b> </p>
+        {{-- <p>Congratulations! You have received a Discount on your {{ $data['membershipType'] }} membership
+            subscription.</p> --}}
+        <p>Congratulations! You have received a Discount on your Membership Subscription.</p>
+        <p>The Original amount of your Membership is <b style="color: red">₹ {{ $data['originalAmount']
+                }}</b>
+            <br> And after discount payable amount is <b><strike style="color: red">₹ {{ $data['originalAmount']
+                    }}</strike></b> <b style="color: green">₹ {{ $data['amount'] }}</b>
+        </p>
         <p>Please pay the following discounted amount.</p>
         <p>After a <b style="color: green">Successful!</b> payment, you will receive your login details in another
             email.</p>
@@ -78,11 +85,14 @@
             <input type="submit" class="btn btn-primary " value="Pay Now" />
         </form> --}}
         @php
-        $paymentData = ["amount" => $data['amount'], "email" => $data['email'], "totalAmount" => $data['totalAmount'], "originalAmount" => $data['originalAmount'], "membershipType" => $data['membershipType'] ];
+        $paymentData = ["amount" => $data['amount'], "email" => $data['email'], "totalAmount" => $data['totalAmount'],
+        "originalAmount" => $data['originalAmount'], "membershipType" => $data['membershipType'] ];
         @endphp
 
-        <button type="button" class="btn btn-primary" onclick="window.location.href='{{ route('memberPayment', Crypt::encrypt($paymentData)) }}'" class="btn btn-primary w-100">Pay Now</button>
-        {{-- <a href="{{ route('memberPayment', Crypt::encrypt($paymentData)) }}" class="btn btn-primary ">Pay Now</a> --}}
+        {{-- <button type="button" class="btn btn-primary"
+            onclick="window.location.href='{{ route('memberPayment', Crypt::encrypt($paymentData)) }}'"
+            class="btn btn-primary w-100">Pay Now</button> --}}
+        <a href="{{ route('memberPayment', Crypt::encrypt($paymentData)) }}" class="btn btn-primary ">Pay Now</a>
 
 
 

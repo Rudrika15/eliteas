@@ -101,6 +101,10 @@
                             <a href="{{ route('circlemember.delete') }}" class="btn btn-danger btn-sm">
                                 <i class="bi bi-trash"></i>
                             </a>
+                            <a href="{{ route('circlemember.edit', $circlememberData->id) }}"
+                                class="btn btn-bg-blue btn-sm">
+                                <i class="bi bi-envelope"></i>
+                            </a>
                         </td>
                         <td>
                             <button type="button" class="btn btn-bg-blue btn-sm" data-bs-toggle="modal"

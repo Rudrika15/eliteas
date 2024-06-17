@@ -190,8 +190,6 @@ class CircleMemberController extends Controller
                 Mail::to($user->email)->send(new MemberSubscription($data));
             }
 
-
-
             return redirect()->route('circlemember.index')->with('success', 'Circle Member Created Successfully!');
         } catch (\Throwable $th) {
             throw $th;

@@ -37,7 +37,7 @@
                 <div class="form-floating">
                     <select class="form-select" data-error='Circle Field is required' required name="circleId"
                         id="circleId">
-                        <option value="" selected disabled> Select Circle </option>
+                        <option value="" selected disabled>Select Circle</option>
                         @foreach ($circle as $circleData)
                         <option value="{{ $circleData->id }}" {{ old('circleId')==$circleData->id ? 'selected' : '' }}>
                             {{ $circleData->circleName }}
@@ -61,8 +61,61 @@
                         </option>
                         @endforeach
                     </select>
-                    {{-- <label for="businessCategory">Business Category</label> --}}
                     @error('businessCategory')
+                    <div class="invalid-tooltip">
+                        {{ $message }}
+                    </div>
+                    @enderror
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mt-3">
+                <div class="form-floating">
+                    <input type="text" class="form-control @error('firstName') is-invalid @enderror" id="firstName"
+                        name="firstName" placeholder="First Name" value="{{ old('firstName') }}">
+                    <label for="firstName">First Name</label>
+                    @error('firstName')
+                    <div class="invalid-tooltip">
+                        {{ $message }}
+                    </div>
+                    @enderror
+                </div>
+            </div>
+            <div class="col-md-6 mt-3">
+                <div class="form-floating">
+                    <input type="text" class="form-control @error('lastName') is-invalid @enderror" id="lastName"
+                        name="lastName" placeholder="Last Name" value="{{ old('lastName') }}">
+                    <label for="lastName">Last Name</label>
+                    @error('lastName')
+                    <div class="invalid-tooltip">
+                        {{ $message }}
+                    </div>
+                    @enderror
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mt-3">
+                <div class="form-floating">
+                    <input type="email" class="form-control @error('email') is-invalid @enderror" id="email"
+                        name="email" placeholder="Email" value="{{ old('email') }}">
+                    <label for="email">Email</label>
+                    @error('email')
+                    <div class="invalid-tooltip">
+                        {{ $message }}
+                    </div>
+                    @enderror
+                </div>
+            </div>
+            <div class="col-md-6 mt-3">
+                <div class="form-floating">
+                    <input type="text" class="form-control @error('mobileNo') is-invalid @enderror" id="mobileNo"
+                        name="mobileNo" placeholder="Mobile No" value="{{ old('mobileNo') }}">
+                    <label for="mobileNo">Mobile No</label>
+                    @error('mobileNo')
                     <div class="invalid-tooltip">
                         {{ $message }}
                     </div>
@@ -89,33 +142,8 @@
                     @enderror
                 </div>
             </div>
-
             <div class="col-md-6 mt-3">
-                <div class="form-floating">
-                    <input type="text" class="form-control @error('firstName') is-invalid @enderror" id="firstName"
-                        name="firstName" placeholder="First Name" value="{{ old('firstName') }}">
-                    <label for="firstName">First Name</label>
-                    @error('firstName')
-                    <div class="invalid-tooltip">
-                        {{ $message }}
-                    </div>
-                    @enderror
-                </div>
-            </div>
-            <div class="col-md-6 mt-3">
-                <div class="form-floating">
-                    <input type="text" class="form-control @error('lastName') is-invalid @enderror" id="lastName"
-                        name="lastName" placeholder="Last Name" value="{{ old('lastName') }}">
-                    <label for="lastName">Last Name</label>
-                    @error('lastName')
-                    <div class="invalid-tooltip">
-                        {{ $message }}
-                    </div>
-                    @enderror
-                </div>
-            </div>
-            <div class="col-md-6 mt-3">
-                <div class="form-floating">
+                <div class="form-check">
                     <div class="form-check">
                         <input class="form-check-input" type="radio" name="gender" id="genderMale" value="male" checked>
                         <label class="form-check-label" for="genderMale">
@@ -135,31 +163,10 @@
                     @enderror
                 </div>
             </div>
-            <div class="col-md-6 mt-3">
-                <div class="form-floating">
-                    <input type="email" class="form-control @error('email') is-invalid @enderror" id="email"
-                        name="email" placeholder="Email" value="{{ old('email') }}">
-                    <label for="email">Email</label>
-                    @error('email')
-                    <div class="invalid-tooltip">
-                        {{ $message }}
-                    </div>
-                    @enderror
-                </div>
-            </div>
-            <div class="col-md-6 mt-3">
-                <div class="form-floating">
-                    <input type="text" class="form-control @error('mobileNo') is-invalid @enderror" id="mobileNo"
-                        name="mobileNo" placeholder="Mobile No" value="{{ old('mobileNo') }}">
-                    <label for="mobileNo">Mobile No</label>
-                    @error('mobileNo')
-                    <div class="invalid-tooltip">
-                        {{ $message }}
-                    </div>
-                    @enderror
-                </div>
-            </div>
+        </div>
 
+        
+        <div class="row">
             <div class="col-md-6 mt-3">
                 <div class="form-floating">
                     <select class="form-select @error('membershipType') is-invalid @enderror" id="membershipType"
@@ -179,7 +186,6 @@
                     @enderror
                 </div>
             </div>
-
             <div class="col-md-6 mt-3">
                 <div class="form-floating">
                     <input type="text" class="form-control" id="membershipAmount" name="membershipAmount"
@@ -187,7 +193,9 @@
                     <label for="membershipAmount">Membership Amount</label>
                 </div>
             </div>
+        </div>
 
+        <div class="row">
             <div class="col-md-6 mt-3">
                 <div class="form-check">
                     <input class="form-check-input" type="checkbox" id="discountAmount" name="discountAmount" value="1"
@@ -197,15 +205,16 @@
                     </label>
                 </div>
             </div>
-
-            <div class="col-md-12 mt-3" id="discountedAmountContainer" style="display:none;">
+            <div class="col-md-6 mt-3" id="discountedAmountContainer" style="display:none;">
                 <div class="form-floating">
                     <input type="text" class="form-control" id="discountedAmount" name="discountedAmount"
                         placeholder="Discounted Amount" value="{{ old('discountedAmount') }}">
                     <label for="discountedAmount">Discounted Amount</label>
                 </div>
             </div>
+        </div>
 
+        <div class="row">
             <div class="col-md-6 mt-3">
                 <div class="form-floating">
                     <input type="text" class="form-control" id="totalAmount" name="totalAmount"
@@ -213,8 +222,22 @@
                     <label for="totalAmount">Total Amount</label>
                 </div>
             </div>
+            <div class="col-md-6 mt-3">
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="date" name="date" placeholder="Date" readonly
+                        value="{{ date('Y-m-d') }}">
+                    <label for="date">Date</label>
+                    @error('date')
+                    <div class="invalid-tooltip">
+                        {{ $message }}
+                    </div>
+                    @enderror
+                </div>
+            </div>
+        </div>
 
-            <div class="col-md-9 mt-3">
+        <div class="row">
+            <div class="col-md-6 mt-3">
                 <div class="form-check">
                     <input class="form-check-input" type="checkbox" id="sendMail" name="sendMail" value="1">
                     <label class="form-check-label" for="sendMail">
@@ -227,7 +250,6 @@
                 </div>
                 @enderror
             </div>
-
             <div class="col-md-6 mt-3">
                 <div class="form-check">
                     <input class="form-check-input" type="checkbox" id="paymentModeCheck" name="paymentModeCheck"
@@ -237,8 +259,10 @@
                     </label>
                 </div>
             </div>
+        </div>
 
-            <div class="col-md-6 mt-3" id="paymentModeContainer" style="display:none;">
+        <div class="row" id="paymentModeContainer" style="display:none;">
+            <div class="col-md-6 mt-3">
                 <div class="form-floating">
                     <select class="form-select @error('paymentMode') is-invalid @enderror" id="paymentMode"
                         name="paymentMode">
@@ -256,23 +280,13 @@
                     @enderror
                 </div>
             </div>
+        </div>
 
-            <div class="col-md-3 mt-3">
-                <div class="form-floating">
-                    <input type="text" class="form-control" id="date" name="date" placeholder="Date" readonly
-                        value="{{ date('Y-m-d') }}">
-                    <label for="date">Date</label>
-                    @error('date')
-                    <div class="invalid-tooltip">
-                        {{ $message }}
-                    </div>
-                    @enderror
-                </div>
-            </div>
-            <div class="d-flex justify-content-center mt-3">
-                <button type="submit" class="btn btn-sm btn-success">SUBMIT</button>
-            </div>
-    </form><!-- End floating Labels Form -->
+        <div class="text-center mt-3">
+            <button type="submit" class="btn btn-bg-blue">Submit</button>
+            <button type="reset" class="btn btn-bg-orange">Reset</button>
+        </div>
+    </form>
 </div>
 </div>
 
