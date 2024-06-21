@@ -101,6 +101,7 @@ class ScheduleController extends Controller
 
             $schedules->venue = $request->venue;
             $schedules->meetingTime = $request->meetingTime;
+            $schedules->date = $request->date;
             $schedules->remarks = $request->remarks;
             $schedules->save();
 
@@ -190,7 +191,4 @@ class ScheduleController extends Controller
             return view('servererror');
         }
     }
-
-
-
 }

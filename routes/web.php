@@ -166,7 +166,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/remove-role', [CircleMemberController::class, 'removeRole'])->name('remove.role');
 
 
-    
+
     Route::get('/circlemeeting/index', [CircleMeetingController::class, 'index'])->name('circlemeeting.index');
     Route::get('circlemeeting/show/{id?}', [CircleMeetingController::class, 'show'])->name('circlemeeting.show');
     Route::get('circlemeeting/create', [CircleMeetingController::class, 'create'])->name('circlemeeting.create');
@@ -218,6 +218,9 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::get('/meetings/{circle}', [CircleController::class, 'showByCircle'])->name('meetings.by.circle');
 
+    // Route::post('/schedule/generate/{circle}', 'CircleController@generateMeetings')->name('schedule.generate');
+
+    Route::post('/schedule/generate2/{circle}', [CircleController::class, 'generateMeetings'])->name('schedule.generate');
 
     Route::get('/members/index', [MemberController::class, 'index'])->name('members.index');
     Route::get('members/show/{id?}', [MemberController::class, 'show'])->name('members.show');
@@ -327,20 +330,20 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('testimonial/destroy{id}', [TestimonialController::class, 'destroy'])->name('testimonial.destroy');
     Route::get('testimonial/archives', [TestimonialController::class, 'archives'])->name('testimonial.archives');
     Route::get('testimonial/restore/{id}', [TestimonialController::class, 'restore'])->name('testimonial.restore');
-    
+
     Route::get('/trainingRegister/{trainingId?}/{trainerId?}', [HomeController::class, 'trainingRegister'])->name('training.register');
     Route::get('/invitationPay/{personName?}/{personEmail?}/{invitedPersonFirstName?}/{invitedPersonLastName?}/{amount?}', [HomeController::class, 'invitationPay'])->name('invitationPay');
     // Route::post('/invitationPay', [HomeController::class, 'invitationPay'])->name('invitationPay');
-    
+
     // Invited Prople List
     Route::get('/invitedPersonList', [CircleMeetingController::class, 'invitedPersonList'])->name('invitedPersonList');
-    
-    
+
+
     // global search 
     Route::get('/search', [HomeController::class, 'findMember'])->name('search');
     Route::get('/searchQuery', [HomeController::class, 'search'])->name('searchQuery');
     Route::get('/foundPersonDetails/{id}', [HomeController::class, 'foundPersonDetails'])->name('foundPersonDetails');
-    
+
     // connections
     Route::post('/connect', [ConnectionController::class, 'connect'])->name('connect');
     Route::get('/connections/connectionRequests', [ConnectionController::class, 'connectionRequests'])->name('connection.connectionRequests');
@@ -354,7 +357,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     //admin side activity membership status changed
     Route::get('/allPayments', [PaymentController::class, 'allPayments'])->name('allPayments.index');
-    
+
     //circle admin payment history
     Route::get('/circleAdminPayment', [PaymentController::class, 'circleAdminPaymentHistory'])->name('circleAdminPaymentHistory.index');
 
@@ -378,14 +381,10 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/attendance/invitedAttendance/{id?}', [AttendanceController::class, 'invitedAttendance'])->name('attendance.invitedAttendance');
     Route::post('/attendance/attendanceStore', [AttendanceController::class, 'attendanceStore'])->name('attendance.attendanceStore');
     Route::post('/attendance/invitedAttendanceStore', [AttendanceController::class, 'invitedAttendanceStore'])->name('attendance.invitedAttendanceStore');
-    
-    
+
+
     Route::get('/attendance/meetingSchedules', [AttendanceController::class, 'meetingSchedules'])->name('attendance.meetingSchedules');
     Route::get('/attendance/attendanceList/{id?}', [AttendanceController::class, 'attendanceList'])->name('attendance.attendanceList');
-
-
-
-
 });
 
 //Login with otp
@@ -412,6 +411,6 @@ Route::post('otp/resend', [OTPLoginController::class, 'resendOTP'])->name('otp.r
 
 
 
-    Route::get('/memberPayment/{paymentData}', [CircleMemberController::class, 'memberPayment'])->name('memberPayment');
+Route::get('/memberPayment/{paymentData}', [CircleMemberController::class, 'memberPayment'])->name('memberPayment');
 
-    Route::post('/membership-payment', [PaymentController::class, 'membershipPayment'])->name('razorpay.payment.membershipPayment');
+Route::post('/membership-payment', [PaymentController::class, 'membershipPayment'])->name('razorpay.payment.membershipPayment');

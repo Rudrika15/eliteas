@@ -77,4 +77,9 @@ class Member extends Model
     {
         return $this->hasMany(Connection::class, 'memberId', 'userId');
     }
+
+    public function mType()
+    {
+        return $this->belongsTo(MembershipType::class, 'membershipType', 'id');
+    }
 }

@@ -63,6 +63,7 @@ class CircleController extends Controller
     }
 
     public function store(Request $request)
+
     {
         $this->validate($request, [
             'circleName' => 'required|unique:circles',
@@ -72,8 +73,6 @@ class CircleController extends Controller
             'meetingDay' => 'required',
             'numberOfMeetings' => 'required',
             'weekNo' => 'required|array', // Ensure weekNo is an array
-            'start_date' => 'required|date',
-            'end_date' => 'required|date|after:start_date'
         ]);
 
         try {
@@ -82,25 +81,25 @@ class CircleController extends Controller
             $circle->franchiseId = $request->franchiseId;
             $circle->cityId = $request->cityId;
             $circle->circletypeId = $request->circletypeId;
-            $circle->meetingDay = $request->meetingDay;
+            $circle->meetingDay = $request->input('meetingDay');
             $circle->numberOfMeetings = $request->numberOfMeetings;
             $circle->weekNo = json_encode($request->weekNo); // Serialize the array of week numbers
-            $circle->start_date = $request->start_date;
-            $circle->end_date = $request->end_date;
             $circle->status = 'Active';
             $circle->save();
 
             // Logic for creating scheduled meetings
-            $startDate = Carbon::parse($request->start_date);
-            $endDate = Carbon::parse($request->end_date);
+            $currentDate = Carbon::now();
             $weekNumbers = json_decode($circle->weekNo); // Fetch week numbers from the Circle model
             $meetingDay = $circle->meetingDay; // Fetch meeting day from the Circle model
 
-            $currentDate = $startDate->copy()->startOfMonth();
-            while ($currentDate <= $endDate) {
+            // Function to schedule meetings for a given month
+            $scheduleMeetingsForMonth = function ($date) use ($circle, $weekNumbers, $meetingDay) {
+                $startOfMonth = $date->copy()->startOfMonth();
+                $futureMeetingFound = false; // Flag to check if any future meetings are found
+
                 foreach ($weekNumbers as $weekNumber) {
                     // Find the first occurrence of the meeting day in this month
-                    $firstOccurrence = $currentDate->copy()->firstOfMonth();
+                    $firstOccurrence = $startOfMonth->copy()->firstOfMonth();
                     while ($firstOccurrence->dayOfWeek != $meetingDay) {
                         $firstOccurrence->addDay();
                     }
@@ -118,24 +117,36 @@ class CircleController extends Controller
                         $meetingDate = $firstOccurrence->copy()->addWeeks(3);
                     }
 
-                    // Ensure the resulting meeting day is within the month
-                    if ($meetingDate->month != $firstOccurrence->month) {
-                        // If the resulting meeting day is in the next month, reset to the first occurrence of the meeting day
-                        $meetingDate = $firstOccurrence->copy()->addMonths(1);
-                        while ($meetingDate->dayOfWeek != $meetingDay) {
-                            $meetingDate->addDay();
+                    // Ensure the resulting meeting day is within the month and in the future
+                    if ($meetingDate && $meetingDate->month == $startOfMonth->month) {
+                        if ($meetingDate->isFuture()) {
+                            $futureMeetingFound = true; // Future meeting found
+                            $schedule = new Schedule();
+                            $schedule->circleId = $circle->id;
+                            $schedule->day = $meetingDate->dayOfWeek; // Store the day of the week
+                            $schedule->date = $meetingDate->format('Y-m-d');
+                            $schedule->save();
                         }
                     }
-
-                    if ($meetingDate && $meetingDate->lte($endDate)) {
-                        $schedule = new Schedule();
-                        $schedule->circleId = $circle->id;
-                        $schedule->day = $meetingDate->dayOfWeek; // Store the day of the week
-                        $schedule->date = $meetingDate->format('Y-m-d');
-                        $schedule->save();
-                    }
                 }
-                $currentDate->addMonth();
+
+                return $futureMeetingFound;
+            };
+
+            // Check if any future meetings can be scheduled for the current month
+            $futureMeetingsScheduled = $scheduleMeetingsForMonth($currentDate);
+
+            // If no future meetings were scheduled for the current month, schedule for the next month
+            if (!$futureMeetingsScheduled) {
+                $nextMonth = $currentDate->copy()->addMonth();
+                $scheduleMeetingsForMonth($nextMonth);
+            } else {
+                // Check if the current month is almost over
+                if ($currentDate->day > 20) {
+                    // Schedule meetings for the next month
+                    $nextMonth = $currentDate->copy()->addMonth();
+                    $scheduleMeetingsForMonth($nextMonth);
+                }
             }
 
             return redirect()->route('circle.index')->with('success', 'Circle Created Successfully!');
@@ -144,8 +155,6 @@ class CircleController extends Controller
             return view('servererror');
         }
     }
-
-
 
 
 
@@ -235,6 +244,93 @@ class CircleController extends Controller
             $circle = Circle::findOrFail($id);
             $members = Member::where('circleId', $circle->id)->get();
             return view('admin.circle.memberList', compact('circle', 'members'));
+        } catch (\Throwable $th) {
+            throw $th;
+            return view('servererror');
+        }
+    }
+
+    ///generate new meetings
+
+    public function generateMeetings(Request $request, $circleId)
+    {
+        try {
+            $circle = Circle::findOrFail($circleId);
+
+            // Logic for creating scheduled meetings
+            $currentDate = Carbon::now();
+            $weekNumbers = json_decode($circle->weekNo); // Fetch week numbers from the Circle model
+            $meetingDay = $circle->meetingDay; // Fetch meeting day from the Circle model
+
+            // Function to schedule meetings for a given month
+            $scheduleMeetingsForMonth = function ($date) use ($circle, $weekNumbers, $meetingDay) {
+                $startOfMonth = $date->copy()->startOfMonth();
+                $futureMeetingFound = false; // Flag to check if any future meetings are found
+
+                foreach ($weekNumbers as $weekNumber) {
+                    // Find the first occurrence of the meeting day in this month
+                    $firstOccurrence = $startOfMonth->copy()->firstOfMonth();
+                    while ($firstOccurrence->dayOfWeek != $meetingDay) {
+                        $firstOccurrence->addDay();
+                    }
+
+                    $meetingDate = null; // Initialize $meetingDate variable
+
+                    // Check which week number is selected and calculate meeting dates accordingly
+                    if ($weekNumber === 'Week 1') {
+                        $meetingDate = $firstOccurrence->copy();
+                    } elseif ($weekNumber === 'Week 2') {
+                        $meetingDate = $firstOccurrence->copy()->addWeek();
+                    } elseif ($weekNumber === 'Week 3') {
+                        $meetingDate = $firstOccurrence->copy()->addWeeks(2);
+                    } elseif ($weekNumber === 'Week 4') {
+                        $meetingDate = $firstOccurrence->copy()->addWeeks(3);
+                    } elseif ($weekNumber === 'Week 5') {
+                        $meetingDate = $firstOccurrence->copy()->addWeeks(4);
+                    }
+
+                    if ($meetingDate && $meetingDate->greaterThan($date)) {
+                        // Check if meeting already exists for this date
+                        $existingMeeting = Schedule::where('circleId', $circle->id)
+                            ->whereDate('date', $meetingDate->format('Y-m-d'))
+                            ->first();
+
+                        if (!$existingMeeting) {
+                            Schedule::create([
+                                'circleId' => $circle->id,
+                                'day' => $meetingDate->dayOfWeek, // Store day of week (0 = Sunday, ..., 6 = Saturday)
+                                'date' => $meetingDate,
+                                'venue' => null,
+                                'meetingTime' => null, // Example time
+                                'remarks' => null,
+                                'status' => 'Active',
+                            ]);
+
+                            $futureMeetingFound = true;
+                        }
+                    }
+                }
+
+                return $futureMeetingFound;
+            };
+
+            // Generate meetings for the month
+            $futureMeetingsFound = false;
+            $currentMonth = $currentDate->month;
+            $currentYear = $currentDate->year;
+            $startDate = Carbon::createFromDate($currentYear, $currentMonth, 1)->startOfMonth()->addMonth();
+            $endDate = Carbon::createFromDate($currentYear, $currentMonth, $currentDate->daysInMonth)->endOfMonth();
+
+            while (!$futureMeetingsFound) {
+                $futureMeetingsFound = $scheduleMeetingsForMonth($startDate);
+                $startDate->addMonth();
+            }
+
+            if ($futureMeetingsFound) {
+                return redirect()->back()->with('success', 'Meetings for the next month have been generated.');
+            } else {
+                return redirect()->back()->with('error', 'Meetings for the next month have already been generated.');
+            }
         } catch (\Throwable $th) {
             throw $th;
             return view('servererror');

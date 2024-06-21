@@ -235,7 +235,7 @@
 
 
 
-<div class="row">
+{{-- <div class="row">
     <div class="col-md-6 mt-3">
         <div class="form-floating">
             <input type="date" class="form-control @error('start_date') is-invalid @enderror" id="start_date"
@@ -263,7 +263,7 @@
             </div>
             @enderror
         </div>
-    </div>
+    </div> --}}
 </div>
 
 <div class="text-center mt-3">
@@ -275,50 +275,40 @@
 </form><!-- End floating Labels Form -->
 </div>
 
-
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     $(document).ready(function() {
-            $('input[name="weekNo[]"]').change(function() {
-                var checkedCount = $('input[name="weekNo[]"]:checked').length;
-                if (checkedCount >= 2) {
-                    $('input[name="weekNo[]"]:not(:checked)').prop('disabled', true);
-                } else {
-                    $('input[name="weekNo[]"]').prop('disabled', false);
-                }
-            });
+        // Function to enable/disable checkboxes based on the number of checked checkboxes
+        function updateWeekNoCheckboxes() {
+            var checkedCount = $('input[name="weekNo[]"]:checked').length;
+            if (checkedCount >= 2) {
+                $('input[name="weekNo[]"]:not(:checked)').prop('disabled', true);
+            } else {
+                $('input[name="weekNo[]"]').prop('disabled', false);
+            }
+        }
 
-            $('#circletypeId').change(function() {
-                var circleType = $('#circletypeId').val();
-                console.log('circle type id', circleType);
-                if (circleType === '1') {
-                    $('input[name="weekNo[]"]').prop('disabled', false);
-                    var checkedCount = $('input[name="weekNo[]"]:checked').length;
-                    console.log('checkedCount', checkedCount);
-                    if (checkedCount >= 2) {
-                        $('input[name="weekNo[]"]:not(:checked)').prop('disabled', true);
-                    }
-                } else if (circleType === '4') {
-                    $('input[name="weekNo[]"]').prop('disabled', false);
-                    var checkedCount = $('input[name="weekNo[]"]:checked').length;
-                    if (checkedCount >= 1) {
-                        $('input[name="weekNo[]"]:not(:checked)').prop('disabled', true);
-                    }
-                } else if (circleType === '2') {
-                    $('input[name="weekNo[]"]').prop('disabled', false);
-                    $('input[name="weekNo[]"]').change(function() {
-                        var checkedCount = $('input[name="weekNo[]"]:checked').length;
-                        if (checkedCount >= 1) {
-                            $('input[name="weekNo[]"]:not(:checked)').prop('disabled', true);
-                        } else {
-                            $('input[name="weekNo[]"]').prop('disabled', false);
-                        }
-                    });
-                }
-            }).trigger('change'); // Triggering the change event to set initial state
+        // Initial call to set the correct state of checkboxes
+        updateWeekNoCheckboxes();
+
+        // Event listener for changes on weekNo checkboxes
+        $('input[name="weekNo[]"]').change(function() {
+            updateWeekNoCheckboxes();
         });
-</script>
 
+        // Event listener for changes on circletypeId select
+        $('#circletypeId').change(function() {
+            var circleType = $('#circletypeId').val();
+            console.log('circle type id', circleType);
+
+            // Enable all checkboxes when circle type changes
+            $('input[name="weekNo[]"]').prop('disabled', false);
+
+            // Call the function to update the state of checkboxes based on the number of checked checkboxes
+            updateWeekNoCheckboxes();
+        }).trigger('change'); // Trigger the change event to set initial state
+    });
+</script>
 
 <script>
     $(document).ready(function() {

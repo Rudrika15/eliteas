@@ -6,19 +6,19 @@
 {{-- Message --}}
 @if (Session::has('success'))
 <div class="alert alert-success alert-dismissible" role="alert">
-    <button type="button" class="close" data-dismiss="alert">
-        {{-- <i class="fa fa-times"></i> --}}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
     </button>
-    <strong>Success !</strong> {{ session('success') }}
+    <strong>Success!</strong> {{ session('success') }}
 </div>
 @endif
 
 @if (Session::has('error'))
 <div class="alert alert-danger alert-dismissible" role="alert">
-    <button type="button" class="close" data-dismiss="alert">
-        {{-- <i class="fa fa-times"></i> --}}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
     </button>
-    <strong>Error !</strong> {{ session('error') }}
+    <strong>Error!</strong> {{ session('error') }}
 </div>
 @endif
 
@@ -28,6 +28,18 @@
             <h4 class="card-title">Meetings</h4>
             <a href="{{ route('circle.index') }}" class="btn btn-bg-orange btn-sm mt-3">BACK</a>
         </div>
+
+        <!-- Generate Meetings Button -->
+        <div class="d-flex justify-content-end mb-3">
+            <form action="{{ route('schedule.generate', $circle->id) }}" method="POST">
+                @csrf
+                <button type="submit" class="btn btn-bg-blue">
+                    <i class="bi bi-calendar-plus"></i> <!-- Bootstrap Icon for Calendar Plus -->
+                    Generate Meetings for Next Month
+                </button>
+            </form>
+        </div>
+        <!-- End Generate Meetings Button -->
 
         <!-- Table with stripped rows -->
         <table class="table datatable">
@@ -92,4 +104,6 @@
         </table>
         <!-- End Table with stripped rows -->
     </div>
-    @endsection
+</div>
+
+@endsection

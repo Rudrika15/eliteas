@@ -61,7 +61,7 @@
             <div class="col-md-6 mt-3">
                 <div class="form-floating">
                     <input type="date" class="form-control @error('date') is-invalid @enderror" id="date" name="date"
-                        placeholder="Date" value="{{ $schedules->date }}" readonly>
+                        placeholder="Date" value="{{ $schedules->date }}">
                     <label for="date">Date</label>
                     @error('date')
                     <div class="invalid-tooltip">
