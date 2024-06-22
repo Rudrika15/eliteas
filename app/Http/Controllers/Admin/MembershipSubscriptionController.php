@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use App\Models\membershipType;
-use App\Http\Controllers\Controller;
 use App\Models\MemberSubscriptions;
+use App\Exports\SubscriptionsExport;
+use App\Http\Controllers\Controller;
+use Maatwebsite\Excel\Facades\Excel;
 
 class MembershipSubscriptionController extends Controller
 {
@@ -20,7 +22,7 @@ class MembershipSubscriptionController extends Controller
             return view('servererror');
         }
     }
-    
+
     public function memberData(Request $request)
     {
         try {
@@ -50,5 +52,11 @@ class MembershipSubscriptionController extends Controller
     //     }
     // }
 
-}
 
+    public function exportSubscriptions(Request $request)
+    {
+        $membershipType = $request->input('membershipType');
+
+        return Excel::download(new SubscriptionsExport($membershipType), 'subscriptions.xlsx');
+    }
+}

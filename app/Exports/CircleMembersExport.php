@@ -18,10 +18,22 @@ class CircleMembersExport implements FromCollection, WithHeadings
 
     public function collection()
     {
-        return Member::where('circleId', $this->circleId)
-            ->select('circleId', 'firstName', 'lastName', 'businessCategoryId', 'membershipType')
+        return Member::where('members.circleId', $this->circleId)
+            ->join('users', 'users.id', '=', 'members.userId')
+            ->join('circles', 'circles.id', '=', 'members.circleId')
+            ->join('business_categories', 'business_categories.id', '=', 'members.businessCategoryId')
+            ->select(
+                'circles.circleName as CircleName',
+                // 'members.circleId as CircleId',
+                'members.firstName as FirstName',
+                'members.lastName as LastName',
+                'business_categories.categoryName as BusinessCategoryName',
+                'members.membershipType as MembershipType',
+                'users.contactNo as ContactNo'
+            )
             ->get();
     }
+
 
     public function headings(): array
     {
@@ -31,6 +43,7 @@ class CircleMembersExport implements FromCollection, WithHeadings
             'Last Name',
             'Business Category ID',
             'Membership Type',
+            'Contact No'
         ];
     }
 }

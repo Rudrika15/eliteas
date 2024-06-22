@@ -41,6 +41,11 @@
                     <option value="LifeTime">LifeTime</option>
                 </select>
             </div>
+            <form action="{{ route('subscriptions.export') }}" method="POST" id="exportForm" class="ms-3">
+                @csrf
+                <input type="hidden" name="membershipType" id="exportMembershipType">
+                <button type="submit" class="btn btn-bg-blue btn-sm">Download Excel</button>
+            </form>
         </div>
 
         <table class="table datatable" id="subscriptionsTable">
@@ -94,9 +99,12 @@
         const membershipTypeSelect = document.getElementById('membershipType');
         const table = document.getElementById('subscriptionsTable');
         const rows = table.getElementsByTagName('tr');
+        const exportForm = document.getElementById('exportForm');
+        const exportMembershipType = document.getElementById('exportMembershipType');
 
         membershipTypeSelect.addEventListener('change', function() {
             const selectedType = this.value;
+            exportMembershipType.value = selectedType; // Set the selected type in the hidden input
 
             for (let i = 1; i < rows.length; i++) {
                 const cells = rows[i].getElementsByTagName('td');

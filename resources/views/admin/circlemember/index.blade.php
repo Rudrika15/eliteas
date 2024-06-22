@@ -29,22 +29,25 @@
             <a href="{{ route('circlemember.create') }}" class="btn btn-bg-orange btn-sm mt-3"><i
                     class="bi bi-plus-circle"></i></a>
         </div>
-
-    <div class="d-flex justify-content-end mb-3">
-        <form action="{{ route('circlemember.export') }}" method="GET">
-            <div class="d-flex align-items-center">
-                <select name="circleId" id="circleId" class="form-select me-3">
-                    <option value="">Select Circle</option>
-                    @foreach ($circle as $circleData)
-                    <option value="{{ $circleData->id }}">{{ $circleData->circleName }}</option>
-                    @endforeach
-                </select>
-                <button type="submit" class="btn btn-success btn-sm">
+        <div class="d-flex justify-content-end mb-3">
+            <div class="btn-group" role="group">
+                {{-- <button type="button" class="btn btn-primary btn-sm me-2 disabled">
                     <i class="bi bi-file-earmark-excel"></i> Download Excel
-                </button>
+                </button> --}}
+                <form action="{{ route('circlemember.export') }}" method="GET" class="d-flex align-items-center">
+                    <h6 class=""><b>Download Member List:</b></h6>
+                    <select name="circleId" id="circleId" class="form-select me-3">
+                        <option value="">Select Circle</option>
+                        @foreach ($circle as $circleData)
+                        <option value="{{ $circleData->id }}">{{ $circleData->circleName }}</option>
+                        @endforeach
+                    </select>
+                    <button type="submit" class="btn btn-success btn-sm">
+                        <i class="bi bi-filetype-xls"></i>
+                    </button>
+                </form>
             </div>
-        </form>
-    </div>
+        </div>
 
         <!-- Dropdown for filtering by Circle and Category side by side -->
 
@@ -163,8 +166,7 @@
                             {{-- //remove role --}}
 
                             <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal"
-                                data-bs-target="#removeRoleModal{{ $circlememberData->id }}"><i
-                                    class="bi bi-trash"></i>
+                                data-bs-target="#removeRoleModal{{ $circlememberData->id }}"><i class="bi bi-trash"></i>
                             </button>
                             {{-- Modal --}}
 
