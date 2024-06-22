@@ -385,6 +385,11 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::get('/attendance/meetingSchedules', [AttendanceController::class, 'meetingSchedules'])->name('attendance.meetingSchedules');
     Route::get('/attendance/attendanceList/{id?}', [AttendanceController::class, 'attendanceList'])->name('attendance.attendanceList');
+
+    //export excel file
+    Route::get('circlemember/export', [CircleMemberController::class, 'export'])->name('circlemember.export');
+    
+
 });
 
 //Login with otp

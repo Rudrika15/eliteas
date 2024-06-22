@@ -30,6 +30,22 @@
                     class="bi bi-plus-circle"></i></a>
         </div>
 
+    <div class="d-flex justify-content-end mb-3">
+        <form action="{{ route('circlemember.export') }}" method="GET">
+            <div class="d-flex align-items-center">
+                <select name="circleId" id="circleId" class="form-select me-3">
+                    <option value="">Select Circle</option>
+                    @foreach ($circle as $circleData)
+                    <option value="{{ $circleData->id }}">{{ $circleData->circleName }}</option>
+                    @endforeach
+                </select>
+                <button type="submit" class="btn btn-success btn-sm">
+                    <i class="bi bi-file-earmark-excel"></i> Download Excel
+                </button>
+            </div>
+        </form>
+    </div>
+
         <!-- Dropdown for filtering by Circle and Category side by side -->
 
         <div class="d-flex align-items-center mb-3">

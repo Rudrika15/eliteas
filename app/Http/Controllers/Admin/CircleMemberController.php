@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers\Admin;
 
+use Carbon\Carbon;
 use App\Models\City;
 use App\Models\User;
 use App\Models\State;
 use App\Models\Circle;
 use App\Models\Member;
 use App\Models\Country;
+use App\Models\Razorpay;
 use App\Models\CircleCall;
+use App\Models\AllPayments;
 use App\Models\TopsProfile;
 use Illuminate\Support\Str;
 use App\Models\CircleMember;
@@ -16,20 +19,19 @@ use Illuminate\Http\Request;
 use App\Models\BillingAddress;
 use App\Models\ContactDetails;
 use App\Models\MembershipType;
-use App\Mail\WelcomeMemberEmail;
 use App\Mail\MemberSubscription;
-use App\Mail\MemberSubscriptionDiscount;
+use App\Mail\WelcomeMemberEmail;
 use App\Models\BusinessCategory;
 use Spatie\Permission\Models\Role;
-use Illuminate\Support\Facades\URL;
-use App\Http\Controllers\Controller;
-use App\Models\AllPayments;
 use App\Models\MemberSubscriptions;
-use App\Models\Razorpay;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\URL;
+use App\Exports\CircleMembersExport;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Crypt;
+use App\Mail\MemberSubscriptionDiscount;
 
 class CircleMemberController extends Controller
 {
@@ -464,4 +466,11 @@ class CircleMemberController extends Controller
 
         return redirect()->back()->with('success', 'Role removed successfully.');
     }
+
+    public function export(Request $request)
+    {
+        $circleId = $request->input('circleId');
+        return Excel::download(new CircleMembersExport($circleId), 'circle_members.xlsx');
+    }
+
 }
