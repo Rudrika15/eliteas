@@ -238,9 +238,78 @@
                 </div>
             </div>
         </div>
+
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <b>Meetings Leaderboard</b> 
+                    <i class="bi bi-bookmark-star" style="display: inline-block; float: right; color: rgb(255, 187, 0);"></i>
+                </div>
+
+                <div class="card-body">
+                    @if (session('status'))
+                    <div class="alert alert-success" role="alert">
+                        {{ session('status') }}
+                    </div>
+                    @endif
+
+                    {{-- <h2>{{ $count }}</h2> --}}
+                    <a href="{{ route('maxMeetings.index') }}" class="btn btn-bg-blue btn-md btn-sm">View
+                        Details</a>
+
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <b>Business Leaderboard</b>
+                    <i class="bi bi-bookmark-star" style="display: inline-block; float: right; color: rgb(255, 187, 0);"></i>
+                </div>
+        
+                <div class="card-body">
+                    @if (session('status'))
+                    <div class="alert alert-success" role="alert">
+                        {{ session('status') }}
+                    </div>
+                    @endif
+        
+                    {{-- <h2>{{ $count }}</h2> --}}
+                    <a href="{{ route('maxBusiness.index') }}" class="btn btn-bg-blue btn-md btn-sm">View
+                        Details</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <b>Reference Leaderboard</b>
+                    <i class="bi bi-bookmark-star" style="display: inline-block; float: right; color: rgb(255, 187, 0);"></i>
+                </div>
+        
+                <div class="card-body">
+                    @if (session('status'))
+                    <div class="alert alert-success" role="alert">
+                        {{ session('status') }}
+                    </div>
+                    @endif
+        
+                    {{-- <h2>{{ $count }}</h2> --}}
+                    <a href="{{ route('maxReference.index') }}" class="btn btn-bg-blue btn-md btn-sm">View
+                        Details</a>
+                </div>
+            </div>
+        </div>
+
+
     </div>
 </div>
 @endrole
+
 
 
 

@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('header', 'Franchise')
+@section('header', 'Schedule')
 @section('content')
 
 {{-- Message --}}
@@ -29,8 +29,22 @@
             <a href="{{ route('circle.index') }}" class="btn btn-bg-orange btn-sm mt-3">BACK</a>
         </div>
 
+        {{-- Filter Dropdown --}}
+        <div class="col-md-3 mb-3">
+            <div class="d-flex align-items-center">
+                <small class="text-muted me-3"><strong>Filter By:</strong></small>
+
+                <select id="circleFilter" class="form-select mt-3 me-3">
+                    <option value="">Select Circle</option>
+                    @foreach ($circles as $circleData)
+                    <option value="{{ $circleData->circleName }}">{{ $circleData->circleName }}</option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
+
         <!-- Table with stripped rows -->
-        <table class="table datatable">
+        <table class="table datatable" id="scheduleTable">
             <thead>
                 <tr>
                     <th>Circle Name</th>
@@ -46,7 +60,7 @@
             <tbody>
                 @foreach ($schedules as $schedulesData)
                 <tr>
-                    <td>{{$schedulesData->circle->circleName}}</td>
+                    <td class="circle-name">{{ $schedulesData->circle->circleName }}</td>
                     <td>
                         {{-- Display name based on meeting day --}}
                         @if($schedulesData->day == 0)
@@ -67,13 +81,13 @@
                         -
                         @endif
                     </td>
-                    <td>{{$schedulesData->date}}</td>
-                    <td>{{$schedulesData->venue}}</td>
-                    <td>{{$schedulesData->meetingTime}}</td>
-                    <td>{{$schedulesData->remarks}}</td>
-                    <td>{{$schedulesData->status}}</td>
+                    <td>{{ $schedulesData->date }}</td>
+                    <td>{{ $schedulesData->venue }}</td>
+                    <td>{{ $schedulesData->meetingTime }}</td>
+                    <td>{{ $schedulesData->remarks }}</td>
+                    <td>{{ $schedulesData->status }}</td>
                     <td>
-                        <a href="{{ route('schedule.edit', $schedulesData->id) }}" class="btn btn-bg-blue btn-sm ">
+                        <a href="{{ route('schedule.edit', $schedulesData->id) }}" class="btn btn-bg-blue btn-sm">
                             <i class="bi bi-pen"></i>
                         </a>
 
@@ -91,4 +105,22 @@
         </table>
         <!-- End Table with stripped rows -->
     </div>
-    @endsection
+</div>
+
+<script>
+    document.getElementById('circleFilter').addEventListener('change', function() {
+    var filterValue = this.value.toLowerCase();
+    var tableRows = document.querySelectorAll('#scheduleTable tbody tr');
+
+    tableRows.forEach(function(row) {
+        var circleName = row.querySelector('.circle-name').textContent.toLowerCase();
+        if (filterValue === "" || circleName.includes(filterValue)) {
+            row.style.display = "";
+        } else {
+            row.style.display = "none";
+        }
+    });
+});
+</script>
+
+@endsection

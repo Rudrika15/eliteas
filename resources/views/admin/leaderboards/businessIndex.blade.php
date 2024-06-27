@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('header', 'Trainer List')
+@section('header', 'Business Leaderboard')
 @section('content')
 
 {{-- Message --}}
@@ -21,34 +21,31 @@
     <strong>Error !</strong> {{ session('error') }}
 </div>
 @endif
-
 <div class="card">
     <div class="card-body">
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <h4 class="card-title">Trainer List</h4>
-            <a href="{{ route('trainersListExport.export') }}" class="btn btn-bg-orange">
-                <i class="bi bi-file-earmark-excel"></i> <!-- Bootstrap Icon for Excel File -->
-            </a>
+            <h4 class="card-title">Business Leaderboard</h4>
+            <a href="{{ route('home') }}" class="btn btn-bg-orange btn-sm ">Back</a>
         </div>
 
         <!-- Table with stripped rows -->
         <table class="table datatable">
             <thead>
                 <tr>
-                    <th>Training Name</th>
-                    <th>Date</th>
-                    <th>Trainer Name</th>
-                    {{-- <th>Status</th> --}}
+                    <th>Name of Member</th>
+                    {{-- <th>Circle Name</th> --}}
+                    <th>No of Business</th>
+                    <th>Amount</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach ($trainers as $trainerData)
+                @foreach ($busGiver as $busGiverData)
                 <tr>
-                    <td>{{$trainerData->training->title ?? '-'}}</td>
-                    <td>{{ \Carbon\Carbon::parse($trainerData->training->date)->format('d-m-y') ?? '-'}}</td>
-
-                    <td>{{$trainerData->user->firstName ?? '-'}} {{$trainerData->user->lastName ?? '-'}}</td>
-                    {{-- <td>{{$trainerData->status}}</td> --}}
+                    <td>{{ $busGiverData['user']->firstName  }} {{ $busGiverData['user']->lastName ?? '-' }} <i
+                            class="bi bi-trophy" style="color: gold;"></i></td>
+                    {{-- <td>{{ $busGiverData['user']->circle->circleName ?? '-' }}</td> --}}
+                    <td>{{ $busGiverData['count'] }}</td>
+                    <td>{{ $busGiverData['amount'] }}</td>
                 </tr>
                 @endforeach
             </tbody>

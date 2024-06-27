@@ -6,9 +6,11 @@ use App\Models\User;
 use App\Models\Franchise;
 use Illuminate\Http\Request;
 use App\Models\TrainerMaster;
-use App\Http\Controllers\Controller;
 use App\Models\TrainingTrainers;
+use App\Exports\TrainersListExport;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
+use Maatwebsite\Excel\Facades\Excel;
 
 class TrainerMasterController extends Controller
 {
@@ -175,4 +177,10 @@ class TrainerMasterController extends Controller
             return view('servererror');
         }
     }
+
+    //     public function trainerListExport()
+    // {
+    //     return Excel::download(new TrainersListExport, 'trainers.xlsx');
+    // }
+
 }

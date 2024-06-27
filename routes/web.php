@@ -1,8 +1,9 @@
 <?php
 
-use App\Http\Controllers\Admin\AttendanceController;
-use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Excel;
+use App\Exports\TrainersListExport;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\RoleController;
@@ -15,11 +16,15 @@ use App\Http\Controllers\Admin\CircleController;
 use App\Http\Controllers\Admin\MemberController;
 use App\Http\Controllers\Admin\CountryController;
 use App\Http\Controllers\Admin\PaymentController;
+use App\Http\Controllers\Auth\OTPLoginController;
 use App\Http\Controllers\Admin\ScheduleController;
 use App\Http\Controllers\Admin\TrainingController;
 use App\Http\Controllers\Admin\FranchiseController;
+use App\Http\Controllers\Admin\LeaderBoardController;
+use App\Http\Controllers\Admin\AttendanceController;
 use App\Http\Controllers\Admin\CircleCallController;
 use App\Http\Controllers\Admin\CircleTypeController;
+use App\Http\Controllers\Admin\ConnectionController;
 use App\Http\Controllers\Admin\CircleMemberController;
 use App\Http\Controllers\Admin\CircleMeetingController;
 use App\Http\Controllers\Admin\TrainerMasterController;
@@ -29,12 +34,10 @@ use App\Http\Controllers\Admin\BusinessCategoryController;
 use App\Http\Controllers\Admin\TrainingCategoryController;
 use App\Http\Controllers\Admin\CircleMeetingMembersController;
 use App\Http\Controllers\Admin\CircleMemberActivityController;
+use App\Http\Controllers\Admin\MembershipSubscriptionController;
+use App\Http\Controllers\Admin\MembershipSubscriptionsController;
 use App\Http\Controllers\Admin\CircleMeetingMemberBusinessController;
 use App\Http\Controllers\Admin\CircleMeetingMemberReferenceController;
-use App\Http\Controllers\Admin\MembershipSubscriptionsController;
-use App\Http\Controllers\Admin\ConnectionController;
-use App\Http\Controllers\Admin\MembershipSubscriptionController;
-use App\Http\Controllers\Auth\OTPLoginController;
 
 /*
 |--------------------------------------------------------------------------
@@ -389,6 +392,12 @@ Route::group(['middleware' => ['auth']], function () {
     //export excel file
     Route::get('circlemember/export', [CircleMemberController::class, 'export'])->name('circlemember.export');
     Route::post('/subscriptions/export', [MembershipSubscriptionController::class, 'exportSubscriptions'])->name('subscriptions.export');
+    // Route::get('trainers/export', [TrainerMasterController::class, 'trainerListExport'])->name('trainersListExport.export');
+
+    //leaderboard on dashboard
+    Route::get('/leaderboard/maxMeetings', [LeaderBoardController::class, 'maxMeetings'])->name('maxMeetings.index');
+    Route::get('/leaderboard/maxBusiness', [LeaderBoardController::class, 'maxBusiness'])->name('maxBusiness.index');
+    Route::get('/leaderboard/maxReference', [LeaderBoardController::class, 'maxReference'])->name('maxReference.index');
 });
 
 //Login with otp

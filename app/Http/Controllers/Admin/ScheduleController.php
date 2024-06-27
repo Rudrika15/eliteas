@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use DataTables;
 use App\Models\User;
+use App\Models\Circle;
 use App\Models\Schedule;
 use App\Models\Franchise;
 use Illuminate\Http\Request;
@@ -19,7 +20,8 @@ class ScheduleController extends Controller
         try {
 
             $schedules = Schedule::where('status', 'Active')->get();
-            return view('admin.schedule.index', compact('schedules'));
+            $circles = Circle::where('status', 'Active')->get();
+            return view('admin.schedule.index', compact('schedules','circles'));
         } catch (\Throwable $th) {
             throw $th;
             return view('servererror');
