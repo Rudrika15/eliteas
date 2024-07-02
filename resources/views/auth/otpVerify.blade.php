@@ -38,8 +38,9 @@
     * License: https://bootstrapmade.com/license/
     ======================================================== -->
 </head>
++
 
-<body>
+<body style="background-image: url('{{ asset('img/b2.jpg') }}'); background-size: cover; background-attachment: fixed;">
 
     <main>
         <div class="container">
@@ -52,68 +53,118 @@
                             <div class="d-flex justify-content-center py-4">
                                 <a href="index.html" class="main-logo d-flex align-items-center">
                                     <img src="{{ asset('img/logo2.jpg') }}" alt=""
-                                        style="background-color: #F5E9E2; mix-blend-mode: multiply; width: 150px; height:100px;">
+                                        style="background-color: transparent; mix-blend-mode: multiply; width: 150px; height:100px;">
                                     {{-- <span class="d-none d-lg-block">Elite</span> --}}
                                 </a>
                             </div><!-- End Logo -->
 
-                            <div class="card mb-3" style="width: 20rem;">
+                            <div class="card mb-3"
+                                style="width: 20rem; background-image: url({{ asset('img/b3.jpg') }});">
                                 <div class="card-body">
                                     <h5 class="card-title text-center pb-0 fs-4">Verify OTP</h5>
                                     {{-- <p class="text-center small">Enter your phone number to request OTP</p> --}}
-
-                                    <!-- OTP Request Form -->
-                                    {{-- <form action="{{ route('otp.request') }}" method="post"
-                                        class="needs-validation w-100" novalidate>
-                                        @csrf
-                                        <div class="mb-3 form-floating">
-                                            <input type="text" id="phone" name="phone"
-                                                class="form-control @error('phone') is-invalid @enderror" required
-                                                autocomplete="phone" autofocus>
-                                            <label for="phone">Phone Number</label>
-                                            @error('phone')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                            @enderror
-                                        </div>
-                                        <div class="d-grid">
-                                            <button type="submit" class="btn btn-primary">Send OTP</button>
-                                        </div>
-                                    </form> --}}
-                                    <!-- End OTP Request Form -->
 
                                     <!-- OTP Verification Form -->
                                     <form action="{{ route('otp.verify') }}" method="post"
                                         class="needs-validation w-100 mt-3" novalidate>
                                         @csrf
-                                        <div class="form-floating mb-3 custom-floating">
-                                            <input type="text" id="otp" name="otp" class="form-control" required
-                                                placeholder="Enter OTP" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" autocomplete="off" onkeyup="this.value=this.value.replace(/[^\d\*]/g,'')" onpaste="return false;" onkeypress="return isNumber(event)" style="-webkit-text-security: disc;" >
-                                                <label>Enter OTP</label>
+                                        <div class="form-group d-flex justify-content-between">
+                                            <input type="password" id="otp1" name="otp1"
+                                                class="form-control otp-input me-2" maxlength="1"
+                                                style="border-color: #1d2856; border-radius: 5px; padding: 10px; transition: all 0.3s ease-in-out;"
+                                                onfocus="this.style.border = '1px solid #1d2856'"
+                                                onmouseover="this.style.border = '1px solid #1d2856'"
+                                                onmouseout="this.style.border = '1px solid #1d2856'" required>
+                                            <input type="password" id="otp2" name="otp2"
+                                                class="form-control otp-input me-2" maxlength="1"
+                                                style="border-color: #1d2856; border-radius: 5px; padding: 10px; transition: all 0.3s ease-in-out;"
+                                                onfocus="this.style.border = '1px solid #1d2856'"
+                                                onmouseover="this.style.border = '1px solid #1d2856'"
+                                                onmouseout="this.style.border = '1px solid #1d2856'" required>
+                                            <input type="password" id="otp3" name="otp3"
+                                                class="form-control otp-input me-2" maxlength="1"
+                                                style="border-color: #1d2856; border-radius: 5px; padding: 10px; transition: all 0.3s ease-in-out;"
+                                                onfocus="this.style.border = '1px solid #1d2856'"
+                                                onmouseover="this.style.border = '1px solid #1d2856'"
+                                                onmouseout="this.style.border = '1px solid #1d2856'" required>
+                                            <input type="password" id="otp4" name="otp4"
+                                                class="form-control otp-input me-2" maxlength="1"
+                                                style="border-color: #1d2856; border-radius: 5px; padding: 10px; transition: all 0.3s ease-in-out;"
+                                                onfocus="this.style.border = '1px solid #1d2856'"
+                                                onmouseover="this.style.border = '1px solid #1d2856'"
+                                                onmouseout="this.style.border = '1px solid #1d2856'" required>
+                                            <input type="password" id="otp5" name="otp5"
+                                                class="form-control otp-input me-2" maxlength="1"
+                                                style="border-color: #1d2856; border-radius: 5px; padding: 10px; transition: all 0.3s ease-in-out;"
+                                                onfocus="this.style.border = '1px solid #1d2856'"
+                                                onmouseover="this.style.border = '1px solid #1d2856'"
+                                                onmouseout="this.style.border = '1px solid #1d2856'" required>
+                                            <input type="password" id="otp6" name="otp6" class="form-control otp-input"
+                                                maxlength="1"
+                                                style="border-color: #1d2856; border-radius: 5px; padding: 10px; transition: all 0.3s ease-in-out;"
+                                                onfocus="this.style.border = '1px solid #1d2856'"
+                                                onmouseover="this.style.border = '1px solid #1d2856'"
+                                                onmouseout="this.style.border = '1px solid #1d2856'" required>
                                         </div>
 
                                         @if ($errors->has('otp'))
-                                            <span class="invalid-feedback text-danger" role="alert">
-                                                <strong>Invalid OTP</strong>
-                                            </span>
+                                        <span class="invalid-feedback text-danger" role="alert">
+                                            <strong>Invalid OTP</strong>
+                                        </span>
                                         @endif
 
                                         <input type="hidden" name="phone" value="{{ session('phone') }}">
                                         <div class="d-grid">
-                                            <button type="submit" class="btn btn-bg-blue">Verify OTP</button>
+                                            <button type="submit" class="btn btn-bg-blue mt-3">Verify OTP</button>
                                         </div>
                                     </form>
 
                                     <script>
-                                        function isNumber(evt) {
-                                            evt = (evt) ? evt : window.event;
-                                            var charCode = (evt.which) ? evt.which : evt.keyCode;
-                                            if ((charCode > 31 && (charCode < 48 || charCode > 57)) && charCode !== 42) {
-                                                return false;
+                                        function moveFocus(current, nextFieldID) {
+                                            if (current.value.length >= 1) {
+                                                document.getElementById(nextFieldID).focus();
                                             }
-                                            return true;
                                         }
+
+                                        document.querySelectorAll('.otp-input').forEach((input, index, arr) => {
+                                            input.addEventListener('input', (e) => {
+                                                if (index < arr.length - 1 && e.target.value.length === 1) {
+                                                    arr[index + 1].focus();
+                                                }
+                                            });
+                                        });
+
+                                        document.querySelectorAll('.otp-input').forEach(input => {
+                                            input.addEventListener('keypress', function (e) {
+                                                if (!/[0-9]/.test(e.key)) {
+                                                    e.preventDefault();
+                                                }
+                                            });
+                                        });
+
+                                        // Countdown for Resend OTP
+                                        document.addEventListener('DOMContentLoaded', function() {
+                                            let countdownElement = document.getElementById('countdown');
+                                            let resendButton = document.getElementById('resendBtn');
+                                            let timer = 60;
+
+                                            function startCountdown() {
+                                                resendButton.disabled = true;
+                                                countdownElement.innerText = `Resend OTP in ${timer} Seconds...`;
+                                                let interval = setInterval(function() {
+                                                    timer--;
+                                                    countdownElement.innerText = `Resend OTP in ${timer} Seconds...`;
+                                                    if (timer <= 0) {
+                                                        clearInterval(interval);
+                                                        countdownElement.innerText = '';
+                                                        resendButton.disabled = false;
+                                                        timer = 60;
+                                                    }
+                                                }, 1000);
+                                            }
+
+                                            startCountdown();
+                                        });
                                     </script>
                                     <!-- End OTP Verification Form -->
 
@@ -122,8 +173,10 @@
                                         @csrf
                                         <input type="hidden" name="phone" value="{{ session('phone') }}">
                                         <div class="d-grid">
-                                            <button type="submit" class="btn btn-bg-orange">Resend OTP</button>
+                                            <button type="submit" class="btn btn-bg-orange" id="resendBtn">Resend
+                                                OTP</button>
                                         </div>
+                                        <p id="countdown" class="text-center mt-2"></p>
                                     </form>
                                     <!-- End Resend OTP Form -->
 
