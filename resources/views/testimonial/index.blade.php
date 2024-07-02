@@ -26,8 +26,10 @@
     <div class="card-body">
         <div class="d-flex justify-content-between align-items-center mb-5">
             <h4 class="card-title">My Testimonials</h4>
-            <a href="{{ route('testimonial.create') }}" class="btn btn-bg-orange btn-sm mt-3"><i
-                    class="bi bi-plus-circle"></i></a>
+            <a href="{{ route('testimonial.create') }}" class="btn btn-bg-orange btn-sm mt-3 btn-tooltip"><i
+                    class="bi bi-plus-circle"></i>
+                    <span class="btn-text">Add Testimonial</span>
+                </a>
         </div>
         <hr class="mb-5">
         <!-- Table with stripped rows -->
@@ -47,8 +49,9 @@
                     <td>{{ $myTestimonial->message ?? '' }}</td>
                     <td>{{ \Carbon\Carbon::parse($myTestimonial->date)->format('j M Y') }}</td>
                     <td>
-                        <a href="{{ route('testimonial.edit', $myTestimonial->id) }}" class="btn btn-primary btn-sm">
+                        <a href="{{ route('testimonial.edit', $myTestimonial->id) }}" class="btn btn-bg-blue btn-sm btn-tooltip">
                             <i class="bi bi-pen"></i>
+                            <span class="btn-text">Edit Testimonial</span>
                         </a>
                     </td>
                 </tr>
@@ -62,7 +65,7 @@
 <div class="card">
     <div class="card-body">
         <div class="d-flex justify-content-between align-items-center mb-5">
-            <h4 class="mb-0 mt-3 text-blue">Received Testimonials</h4>
+            <h4 class="card-title">Received Testimonials</h4>
         </div>
         <hr class="mb-5">
         <!-- Table with stripped rows -->

@@ -26,9 +26,8 @@
     <div class="card-body">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h4 class="card-title">My Connection</h4>
-
         </div>
-
+        <hr class="mb-5">
         <!-- Table with stripped rows -->
         <table class="table datatable">
             <thead>
@@ -62,9 +61,10 @@
                         @endif
                     </td>
                     <td>
-                        <a class="btn btn-sm btn-danger"
-                            href="{{ route('connection.removeConnection', $connection->id) }}"><i
-                                class="bi bi-x"></i></a>
+                        <a class="btn btn-sm btn-danger btn-tooltip"
+                            href="{{ route('connection.removeConnection', $connection->id) }}"><i class="bi bi-x"></i>
+                            <span class="btn-text">Remove Connection</span>
+                        </a>
                     </td>
 
                 </tr>

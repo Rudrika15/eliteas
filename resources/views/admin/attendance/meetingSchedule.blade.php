@@ -24,7 +24,8 @@
 
 <div class="card">
     <div class="card-body">
-        <h4 class="mb-0 mt-3">Scheduled Meetings</h4>
+        <h4 class="card-title">Scheduled Meetings</h4>
+        <hr class="mb-5">
         <table class="table datatable">
             <thead>
                 <tr>
@@ -40,14 +41,20 @@
                     <td>{{ \Carbon\Carbon::parse($scheduleData->date)->format('d-m-Y') }}</td>
                     <td>{{ \Carbon\Carbon::parse($scheduleData->date)->format('l') }}</td>
                     <td>
-                        <a href="{{ route('attendance.takeAttendance', $scheduleData->id) }}" class="btn btn-bg-orange">
+                        <a href="{{ route('attendance.takeAttendance', $scheduleData->id) }}"
+                            class="btn btn-bg-orange btn-tooltip">
                             <i class="bi bi-person-check"></i>
+                            <span class="btn-text">Take Internal Member Attendance</span>
                         </a>
-                        <a href="{{ route('attendance.invitedAttendance', $scheduleData->id) }}" class="btn btn-bg-blue">
+                        <a href="{{ route('attendance.invitedAttendance', $scheduleData->id) }}"
+                            class="btn btn-bg-blue btn-tooltip">
                             <i class="bi bi-person-fill-check"></i>
+                            <span class="btn-text">Take External People's Attendance</span>
                         </a>
-                        <a href="{{ route('attendance.attendanceList', $scheduleData->id) }}" class="btn btn-bg-orange">
+                        <a href="{{ route('attendance.attendanceList', $scheduleData->id) }}"
+                            class="btn btn-bg-orange btn-tooltip">
                             <i class="bi bi-person-fill"></i>
+                            <span class="btn-text">List of Attended Members</span>
                         </a>
                     </td>
                 </tr>

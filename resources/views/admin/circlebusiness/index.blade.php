@@ -51,8 +51,9 @@
                     <td>{{ \Carbon\Carbon::parse($busGiverData->date)->format('d-m-Y') ?? '-' }}</td>
                     <td>{{ $busGiverData->status }}</td>
                     <td>
-                        <a href="{{ route('busGiver.edit', $busGiverData->id) }}" class="btn btn-bg-orange btn-sm">
+                        <a href="{{ route('busGiver.edit', $busGiverData->id) }}" class="btn btn-bg-orange btn-sm btn-tooltip">
                             <i class="bi bi-plus"></i>
+                            <span class="btn-text">Add Business Amount</span>
                         </a>
 
                     </td>

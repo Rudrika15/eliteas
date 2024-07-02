@@ -1308,7 +1308,7 @@ input:-webkit-autofill:focus {
     background-color: transparent;
     color: #000; /* Text color for the floating label */
     /* padding: 0 5px; Optional: add some padding to the label */
-    transform: translateY(-50%) scale(0.85);
+    transform: translateY(-48%) scale(0.85);
 }
 
 .custom-floating label {
@@ -1319,4 +1319,40 @@ input:-webkit-autofill:focus {
 
 .form-floating .form-control:placeholder-shown ~ label {
     color: #6c757d; /* Color of the placeholder text */
+}
+
+/* custom-button-hover.css */
+
+.btn-tooltip {
+    position: relative;
+    text-decoration: none;
+    color: #fff;
+    transition: background-color 0.3s ease;
+}
+
+.btn-tooltip .bi {
+    vertical-align: text-bottom;
+}
+
+.btn-tooltip .btn-text {
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    padding: 0.5rem;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    font-size: 0.75rem;
+    text-align: center;
+    border-radius: 4px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 1;
+    /* Ensure tooltip is above other content */
+}
+
+.btn-tooltip:hover .btn-text {
+    opacity: 1;
 }

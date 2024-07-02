@@ -22,11 +22,19 @@
 </div>
 @endif
 
+{{-- <style>
+
+</style> --}}
+
+
 <div class="card">
     <div class="card-body">
         <div class="d-flex justify-content-between align-items-center mb-5">
             <h4 class="card-title">1:1 Meeting</h4>
-            <a href="{{ route('circlecall.create') }}" class="btn btn-bg-orange btn-sm mt-3"><i class="bi bi-plus-circle"></i></a>
+            <a href="{{ route('circlecall.create') }}" class="btn btn-bg-orange btn-sm mt-3 btn-tooltip">
+                <i class="bi bi-plus-circle"></i>
+                <span class="btn-text">Create Circle Call</span>
+            </a>
         </div>
         <hr class="mb-5">
         <!-- Table with stripped rows -->
@@ -53,12 +61,14 @@
                     <td>{{ $circlecallData->remarks ?? '-' }}</td>
                     <td>{{ $circlecallData->status }}</td>
                     <td>
-                        <a href="{{ route('circlecall.edit', $circlecallData->id) }}" class="btn btn-bg-blue btn-sm">
+                        <a href="{{ route('circlecall.edit', $circlecallData->id) }}"
+                            class="btn btn-bg-blue btn-sm btn-tooltip">
+                            <span class="btn-text">Edit Circle Call</span>
                             <i class="bi bi-pen"></i>
                         </a>
                         <a onclick="return confirm('Do You Want To Delete It')"
-                            href="{{ route('circlecall.delete', $circlecallData->id) }}"
-                            class="btn btn-danger btn-sm">
+                            href="{{ route('circlecall.delete', $circlecallData->id) }}" class="btn btn-danger btn-sm btn-tooltip">
+                            <span class="btn-text">Delete</span>
                             <i class="bi bi-trash"></i>
                         </a>
                     </td>

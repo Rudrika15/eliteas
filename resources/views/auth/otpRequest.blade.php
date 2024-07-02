@@ -72,7 +72,7 @@
                                                 class="form-control @error('phone') is-invalid @enderror" required
                                                 id="phone" name="phone" placeholder="Phone"
                                                 maxlength="10" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" required>
-                                            <label for="categoryName">Phone</label>
+                                            <label for="phone">Phone</label>
                                             @error('phone')
                                             <div class="invalid-tooltip">
                                                 {{ $message }}
@@ -81,7 +81,7 @@
                                         </div>
 
                                         <div class="d-grid mt-3">
-                                            <button type="submit" class="btn btn-primary">Send OTP</button>
+                                            <button type="submit" class="btn btn-bg-blue">Send OTP</button>
                                         </div>
                                     </form>
                                     <!-- End OTP Request Form -->

@@ -47,114 +47,104 @@
     </style>
 
     @role('Member')
-
     <div class="row">
         <div class="col-md-4">
-            <div class="card">
-                <div class="card-header">
-                    <b>Meetings Leaderboard</b>
-                    <i class="bi bi-bookmark-star"
-                        style="display: inline-block; float: right; color: rgb(255, 187, 0);"></i>
-                </div>
-
-                <div class="card-body">
-                    @if (session('status'))
-                    <div class="alert alert-success" role="alert">
-                        {{ session('status') }}
+            <a href="{{ route('maxMeetings.index') }}" class="card-link">
+                <div class="card">
+                    <div class="card-header">
+                        <b>Meetings Leaderboard</b>
+                        <i class="bi bi-bookmark-star"
+                            style="display: inline-block; float: right; color: rgb(255, 187, 0);"></i>
                     </div>
-                    @endif
-
-                    {{-- <h2>{{ $count }}</h2> --}}
-                    <a href="{{ route('maxMeetings.index') }}" class="btn btn-bg-blue btn-md btn-sm">View
-                        Details</a>
-
+                    <div class="card-body">
+                        @if (session('status'))
+                        <div class="alert alert-success" role="alert">
+                            {{ session('status') }}
+                        </div>
+                        @endif
+                    </div>
                 </div>
-            </div>
+            </a>
         </div>
 
         <div class="col-md-4">
-            <div class="card">
-                <div class="card-header">
-                    <b>Business Leaderboard</b>
-                    <i class="bi bi-bookmark-star"
-                        style="display: inline-block; float: right; color: rgb(255, 187, 0);"></i>
-                </div>
-
-                <div class="card-body">
-                    @if (session('status'))
-                    <div class="alert alert-success" role="alert">
-                        {{ session('status') }}
+            <a href="{{ route('maxBusiness.index') }}" class="card-link">
+                <div class="card">
+                    <div class="card-header">
+                        <b>Business Leaderboard</b>
+                        <i class="bi bi-bookmark-star"
+                            style="display: inline-block; float: right; color: rgb(255, 187, 0);"></i>
                     </div>
-                    @endif
-
-                    {{-- <h2>{{ $count }}</h2> --}}
-                    <a href="{{ route('maxBusiness.index') }}" class="btn btn-bg-blue btn-md btn-sm">View
-                        Details</a>
+                    <div class="card-body">
+                        @if (session('status'))
+                        <div class="alert alert-success" role="alert">
+                            {{ session('status') }}
+                        </div>
+                        @endif
+                        {{-- <h2>{{ $count }}</h2> --}}
+                    </div>
                 </div>
-            </div>
+            </a>
         </div>
 
         <div class="col-md-4">
-            <div class="card">
-                <div class="card-header">
-                    <b>Reference Leaderboard</b>
-                    <i class="bi bi-bookmark-star"
-                        style="display: inline-block; float: right; color: rgb(255, 187, 0);"></i>
-                </div>
-
-                <div class="card-body">
-                    @if (session('status'))
-                    <div class="alert alert-success" role="alert">
-                        {{ session('status') }}
+            <a href="{{ route('maxReference.index') }}" class="card-link">
+                <div class="card">
+                    <div class="card-header">
+                        <b>Reference Leaderboard</b>
+                        <i class="bi bi-bookmark-star"
+                            style="display: inline-block; float: right; color: rgb(255, 187, 0);"></i>
                     </div>
-                    @endif
-
-                    {{-- <h2>{{ $count }}</h2> --}}
-                    <a href="{{ route('maxReference.index') }}" class="btn btn-bg-blue btn-md btn-sm">View
-                        Details</a>
+                    <div class="card-body">
+                        @if (session('status'))
+                        <div class="alert alert-success" role="alert">
+                            {{ session('status') }}
+                        </div>
+                        @endif
+                        {{-- <h2>{{ $count }}</h2> --}}
+                    </div>
                 </div>
-            </div>
+            </a>
         </div>
 
         <div class="col-md-4">
-            <div class="card">
-                <div class="card-header">
-                    <b>Refferal Leaderboard</b>
-                    <i class="bi bi-bookmark-star"
-                        style="display: inline-block; float: right; color: rgb(255, 187, 0);"></i>
-                </div>
-
-                <div class="card-body">
-                    @if (session('status'))
-                    <div class="alert alert-success" role="alert">
-                        {{ session('status') }}
+            <a href="{{ route('maxRefferal.index') }}" class="card-link">
+                <div class="card">
+                    <div class="card-header">
+                        <b>Referral Leaderboard</b>
+                        <i class="bi bi-bookmark-star"
+                            style="display: inline-block; float: right; color: rgb(255, 187, 0);"></i>
                     </div>
-                    @endif
-
-                    {{-- <h2>{{ $count }}</h2> --}}
-                    <a href="{{ route('maxRefferal.index') }}" class="btn btn-bg-blue btn-md btn-sm">View
-                        Details</a>
+                    <div class="card-body">
+                        @if (session('status'))
+                        <div class="alert alert-success" role="alert">
+                            {{ session('status') }}
+                        </div>
+                        @endif
+                        {{-- <h2>{{ $count }}</h2> --}}
+                    </div>
                 </div>
-            </div>
+            </a>
         </div>
 
         <div class="col-md-4">
-            <div class="card">
-                <div class="card-header">
-                    <b>Visitors</b>
-                    <i class="bi bi-people" style="display: inline-block; float: right; color: rgb(255, 187, 0);"></i>
-                </div>
-                <div class="card-body">
-                    @if (session('status'))
-                    <div class="alert alert-success" role="alert">
-                        {{ session('status') }}
+            <a href="{{ route('maxVisitor.index') }}" class="card-link">
+                <div class="card">
+                    <div class="card-header">
+                        <b>Visitors</b>
+                        <i class="bi bi-people"
+                            style="display: inline-block; float: right; color: rgb(255, 187, 0);"></i>
                     </div>
-                    @endif
-                    {{-- <h2>{{ $count }}</h2> --}}
-                    <a href="{{ route('maxVisitor.index') }}" class="btn btn-bg-blue btn-md btn-sm">View
-                        Details</a>
+                    <div class="card-body">
+                        @if (session('status'))
+                        <div class="alert alert-success" role="alert">
+                            {{ session('status') }}
+                        </div>
+                        @endif
+                        {{-- <h2>{{ $count }}</h2> --}}
+                    </div>
                 </div>
-            </div>
+            </a>
         </div>
     </div>
 
@@ -217,7 +207,8 @@
                                         <tbody>
                                             @if ($myInvites->count() == 0)
                                             <tr>
-                                                <td colspan="2" class="text-muted text-center">No Invites for current
+                                                <td colspan="2" class="text-muted text-center">No Invites for
+                                                    current
                                                     meeting</td>
                                             </tr>
                                             @else
@@ -325,152 +316,143 @@
     @role('Admin')
     <div class="row">
         <div class="col-md-4">
-            <div class="card">
-                <div class="card-header"><b>Upcoming Circle Meetings</b></div>
-                <div class="card-body">
-                    @if (session('status'))
-                    <div class="alert alert-success" role="alert">
-                        {{ session('status') }}
+            <a href="{{ route('schedule.dashIndex') }}" class="card-link">
+                <div class="card">
+                    <div class="card-header">
+                        <b>Upcoming Circle Meetings</b>
+                        <i class="bi bi-calendar3"
+                            style="display: inline-block; float: right; color: rgb(255, 187, 0);"></i>
                     </div>
-                    @endif
-                    {{-- <h2>{{ $count }}</h2> --}}
-                    <a href="{{ route('schedule.dashIndex') }}" class="btn btn-bg-blue btn-md btn-sm">View
-                        Details</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-header"><b>Pending Payments</b></div>
-
-                <div class="card-body">
-                    @if (session('status'))
-                    <div class="alert alert-success" role="alert">
-                        {{ session('status') }}
+                    <div class="card-body">
+                        @if (session('status'))
+                        <div class="alert alert-success" role="alert">
+                            {{ session('status') }}
+                        </div>
+                        @endif
+                        {{-- <h2>{{ $count }}</h2> --}}
                     </div>
-                    @endif
-
-                    {{-- <h2>{{ $count }}</h2> --}}
-                    <a href="{{ route('pendingPayments.index') }}" class="btn btn-bg-blue btn-md btn-sm">View
-                        Details</a>
-
                 </div>
-            </div>
-        </div>
-
-
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-header">
-                    <b>Meetings Leaderboard</b>
-                    <i class="bi bi-bookmark-star"
-                        style="display: inline-block; float: right; color: rgb(255, 187, 0);"></i>
-                </div>
-
-                <div class="card-body">
-                    @if (session('status'))
-                    <div class="alert alert-success" role="alert">
-                        {{ session('status') }}
-                    </div>
-                    @endif
-
-                    {{-- <h2>{{ $count }}</h2> --}}
-                    <a href="{{ route('maxMeetings.index') }}" class="btn btn-bg-blue btn-md btn-sm">View
-                        Details</a>
-
-                </div>
-            </div>
-        </div>
-
-
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-header">
-                    <b>Business Leaderboard</b>
-                    <i class="bi bi-bookmark-star"
-                        style="display: inline-block; float: right; color: rgb(255, 187, 0);"></i>
-                </div>
-
-                <div class="card-body">
-                    @if (session('status'))
-                    <div class="alert alert-success" role="alert">
-                        {{ session('status') }}
-                    </div>
-                    @endif
-
-                    {{-- <h2>{{ $count }}</h2> --}}
-                    <a href="{{ route('maxBusiness.index') }}" class="btn btn-bg-blue btn-md btn-sm">View
-                        Details</a>
-                </div>
-            </div>
+            </a>
         </div>
 
         <div class="col-md-4">
-            <div class="card">
-                <div class="card-header">
-                    <b>Reference Leaderboard</b>
-                    <i class="bi bi-bookmark-star"
-                        style="display: inline-block; float: right; color: rgb(255, 187, 0);"></i>
-                </div>
-
-                <div class="card-body">
-                    @if (session('status'))
-                    <div class="alert alert-success" role="alert">
-                        {{ session('status') }}
+            <a href="{{ route('pendingPayments.index') }}" class="card-link">
+                <div class="card">
+                    <div class="card-header">
+                        <b>Pending Payments</b>
+                        <i class="bi bi-credit-card"
+                            style="display: inline-block; float: right; color: rgb(255, 187, 0);"></i>
                     </div>
-                    @endif
-
-                    {{-- <h2>{{ $count }}</h2> --}}
-                    <a href="{{ route('maxReference.index') }}" class="btn btn-bg-blue btn-md btn-sm">View
-                        Details</a>
+                    <div class="card-body">
+                        @if (session('status'))
+                        <div class="alert alert-success" role="alert">
+                            {{ session('status') }}
+                        </div>
+                        @endif
+                        {{-- <h2>{{ $count }}</h2> --}}
+                    </div>
                 </div>
-            </div>
+            </a>
         </div>
 
         <div class="col-md-4">
-            <div class="card">
-                <div class="card-header">
-                    <b>Refferal Leaderboard</b>
-                    <i class="bi bi-bookmark-star"
-                        style="display: inline-block; float: right; color: rgb(255, 187, 0);"></i>
-                </div>
-
-                <div class="card-body">
-                    @if (session('status'))
-                    <div class="alert alert-success" role="alert">
-                        {{ session('status') }}
+            <a href="{{ route('maxMeetings.index') }}" class="card-link">
+                <div class="card">
+                    <div class="card-header">
+                        <b>Meetings Leaderboard</b>
+                        <i class="bi bi-bookmark-star"
+                            style="display: inline-block; float: right; color: rgb(255, 187, 0);"></i>
                     </div>
-                    @endif
-
-                    {{-- <h2>{{ $count }}</h2> --}}
-                    <a href="{{ route('maxRefferal.index') }}" class="btn btn-bg-blue btn-md btn-sm">View
-                        Details</a>
+                    <div class="card-body">
+                        @if (session('status'))
+                        <div class="alert alert-success" role="alert">
+                            {{ session('status') }}
+                        </div>
+                        @endif
+                    </div>
                 </div>
-            </div>
+            </a>
         </div>
 
         <div class="col-md-4">
-            <div class="card">
-                <div class="card-header">
-                    <b>Visitors</b>
-                    <i class="bi bi-people" style="display: inline-block; float: right; color: rgb(255, 187, 0);"></i>
-                </div>
-
-                <div class="card-body">
-                    @if (session('status'))
-                    <div class="alert alert-success" role="alert">
-                        {{ session('status') }}
+            <a href="{{ route('maxBusiness.index') }}" class="card-link">
+                <div class="card">
+                    <div class="card-header">
+                        <b>Business Leaderboard</b>
+                        <i class="bi bi-bookmark-star"
+                            style="display: inline-block; float: right; color: rgb(255, 187, 0);"></i>
                     </div>
-                    @endif
-
-                    {{-- <h2>{{ $count }}</h2> --}}
-                    <a href="{{ route('maxVisitor.index') }}" class="btn btn-bg-blue btn-md btn-sm">View
-                        Details</a>
+                    <div class="card-body">
+                        @if (session('status'))
+                        <div class="alert alert-success" role="alert">
+                            {{ session('status') }}
+                        </div>
+                        @endif
+                        {{-- <h2>{{ $count }}</h2> --}}
+                    </div>
                 </div>
-            </div>
+            </a>
         </div>
 
+        <div class="col-md-4">
+            <a href="{{ route('maxReference.index') }}" class="card-link">
+                <div class="card">
+                    <div class="card-header">
+                        <b>Reference Leaderboard</b>
+                        <i class="bi bi-bookmark-star"
+                            style="display: inline-block; float: right; color: rgb(255, 187, 0);"></i>
+                    </div>
+                    <div class="card-body">
+                        @if (session('status'))
+                        <div class="alert alert-success" role="alert">
+                            {{ session('status') }}
+                        </div>
+                        @endif
+                        {{-- <h2>{{ $count }}</h2> --}}
+                    </div>
+                </div>
+            </a>
+        </div>
 
+        <div class="col-md-4">
+            <a href="{{ route('maxRefferal.index') }}" class="card-link">
+                <div class="card">
+                    <div class="card-header">
+                        <b>Referral Leaderboard</b>
+                        <i class="bi bi-bookmark-star"
+                            style="display: inline-block; float: right; color: rgb(255, 187, 0);"></i>
+                    </div>
+                    <div class="card-body">
+                        @if (session('status'))
+                        <div class="alert alert-success" role="alert">
+                            {{ session('status') }}
+                        </div>
+                        @endif
+                        {{-- <h2>{{ $count }}</h2> --}}
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-4">
+            <a href="{{ route('maxVisitor.index') }}" class="card-link">
+                <div class="card">
+                    <div class="card-header">
+                        <b>Visitors</b>
+                        <i class="bi bi-people"
+                            style="display: inline-block; float: right; color: rgb(255, 187, 0);"></i>
+                    </div>
+                    <div class="card-body">
+                        @if (session('status'))
+                        <div class="alert alert-success" role="alert">
+                            {{ session('status') }}
+                        </div>
+                        @endif
+                        {{-- <h2>{{ $count }}</h2> --}}
+                    </div>
+                </div>
+            </a>
+        </div>
     </div>
 </div>
 @endrole
@@ -717,28 +699,25 @@
                     @if (!auth()->user()->hasRole('Admin'))
                     <input type="hidden" name="meetingId" id="meetingId" value="{{ $meeting->id }}">
                     <div class="mb-3">
-                        <label for="personName" class="form-label">Name</label><span class="text-danger">*</span>
-                        <input type="text" class="form-control" name="personName" id="personName">
+                        <label for="personName" class="form-label">Name</label>
+                        <input type="text" class="form-control" name="personName" id="personName" required>
                         <span class="error-message text-danger"></span> <!-- Error message placeholder -->
                     </div>
                     <div class="mb-3">
-                        <label for="personEmail" class="form-label">Email address</label><span
-                            class="text-danger">*</span>
+                        <label for="personEmail" class="form-label">Email address</label>
                         <input type="email" class="form-control" name="personEmail" id="personEmail"
-                            aria-describedby="emailHelp">
+                            aria-describedby="emailHelp" required>
                         <span class="error-message text-danger"></span> <!-- Error message placeholder -->
                     </div>
                     <div class="mb-3">
-                        <label for="personContact" class="form-label">Contact Number</label><span
-                            class="text-danger">*</span>
+                        <label for="personContact" class="form-label">Contact Number</label>
                         <input type="tel" class="form-control" name="personContact" id="personContact"
-                            pattern="[0-9]{10}">
+                            pattern="[0-9]{10}" required>
                         <span class="error-message text-danger"></span> <!-- Error message placeholder -->
                     </div>
                     <div class="mb-3">
-                        <label for="personBusiness" class="form-label">Business Category</label><span
-                            class="text-danger">*</span>
-                        <select name="  businessCategoryId" class="form-select" id="personBusiness">
+                        <label for="personBusiness" class="form-label">Business Category</label>
+                        <select name="  businessCategoryId" class="form-select" id="personBusiness" required>
                             <option value="" disabled selected>--Select Business Category--</option>
                             @foreach ($businessCategory as $category)
                             <option value="{{ $category->id }}"><img

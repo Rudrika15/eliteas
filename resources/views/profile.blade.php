@@ -25,7 +25,7 @@
 
 <div class="card">
     <div class="card-body d-flex justify-content-between align-items-center">
-        <h5 class="card-title">Your Profile</h5>
+        <h5 class="card-title">My Profile</h5>
     </div>
 
     <!-- Floating Labels Form -->
@@ -1342,8 +1342,8 @@
                 </div>
             </div>
             <div class="text-center mt-3">
-                <button type="submit" class="btn btn-primary">Submit</button>
-                <button type="reset" class="btn btn-secondary">Reset</button>
+                <button type="submit" class="btn btn-bg-blue">Submit</button>
+                {{-- <button type="reset" class="btn btn-bg-orange">Reset</button> --}}
             </div>
     </form><!-- End floating Labels Form -->
 </div>

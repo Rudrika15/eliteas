@@ -88,14 +88,33 @@
                                         class="needs-validation w-100 mt-3" novalidate>
                                         @csrf
                                         <div class="form-floating mb-3 custom-floating">
-                                            <input type="password" id="otp" name="otp" class="form-control" required
-                                                placeholder="Enter OTP">
+                                            <input type="text" id="otp" name="otp" class="form-control" required
+                                                placeholder="Enter OTP" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" autocomplete="off" onkeyup="this.value=this.value.replace(/[^\d\*]/g,'')" onpaste="return false;" onkeypress="return isNumber(event)" style="-webkit-text-security: disc;" >
+                                                <label>Enter OTP</label>
                                         </div>
+
+                                        @if ($errors->has('otp'))
+                                            <span class="invalid-feedback text-danger" role="alert">
+                                                <strong>Invalid OTP</strong>
+                                            </span>
+                                        @endif
+
                                         <input type="hidden" name="phone" value="{{ session('phone') }}">
                                         <div class="d-grid">
-                                            <button type="submit" class="btn btn-primary">Verify OTP</button>
+                                            <button type="submit" class="btn btn-bg-blue">Verify OTP</button>
                                         </div>
                                     </form>
+
+                                    <script>
+                                        function isNumber(evt) {
+                                            evt = (evt) ? evt : window.event;
+                                            var charCode = (evt.which) ? evt.which : evt.keyCode;
+                                            if ((charCode > 31 && (charCode < 48 || charCode > 57)) && charCode !== 42) {
+                                                return false;
+                                            }
+                                            return true;
+                                        }
+                                    </script>
                                     <!-- End OTP Verification Form -->
 
                                     <!-- Resend OTP Form -->
@@ -103,7 +122,7 @@
                                         @csrf
                                         <input type="hidden" name="phone" value="{{ session('phone') }}">
                                         <div class="d-grid">
-                                            <button type="submit" class="btn btn-secondary">Resend OTP</button>
+                                            <button type="submit" class="btn btn-bg-orange">Resend OTP</button>
                                         </div>
                                     </form>
                                     <!-- End Resend OTP Form -->

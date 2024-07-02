@@ -216,13 +216,15 @@
                         <li>
                             <hr class="dropdown-divider">
                         </li>
-
+                        @role('Member')
                         <li>
                             <a class="dropdown-item d-flex align-items-center" href="{{ route('member') }}">
                                 <i class="bi bi-person"></i>
                                 <span>My Profile</span>
                             </a>
                         </li>
+                        @endrole
+
                         <li>
                             <hr class="dropdown-divider">
                         </li>
