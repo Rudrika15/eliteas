@@ -80,7 +80,7 @@
                         @endphp
                         {{$dayName}}
                     </td>
-                    <td>{{$meeting['data']->date}}</td>
+                    <td>{{ \Carbon\Carbon::parse($meeting['data']->date)->format('d-m-Y') }}</td>
                     <td>{{$meeting['data']->venue}}</td>
                     <td>{{$meeting['data']->meetingTime}}</td>
                     <td>{{$meeting['data']->remarks}}</td>

@@ -16,7 +16,7 @@
     <!-- Google Fonts -->
     <link href="https://fonts.gstatic.com" rel="preconnect">
     <link
-        href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
+        href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i"
         rel="stylesheet">
 
     <!-- Vendor CSS Files -->
@@ -66,18 +66,21 @@
                                     <form action="{{ route('otp.request') }}" method="post"
                                         class="needs-validation w-100" novalidate>
                                         @csrf
-                                        <div class="mb-3 form-floating">
-                                            <input type="text" id="phone" name="phone"
+
+                                        <div class="form-floating mt-3 custom-floating">
+                                            <input type="tel" pattern="[0-9]{10}"
                                                 class="form-control @error('phone') is-invalid @enderror" required
-                                                autocomplete="phone" autofocus>
-                                            <label for="phone">Phone Number</label>
+                                                id="phone" name="phone" placeholder="Phone"
+                                                maxlength="10" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" required>
+                                            <label for="categoryName">Phone</label>
                                             @error('phone')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
+                                            <div class="invalid-tooltip">
+                                                {{ $message }}
+                                            </div>
                                             @enderror
                                         </div>
-                                        <div class="d-grid">
+
+                                        <div class="d-grid mt-3">
                                             <button type="submit" class="btn btn-primary">Send OTP</button>
                                         </div>
                                     </form>
@@ -99,4 +102,21 @@
                 </div>
             </section>
         </div>
-    </main
+    </main>
+
+    <!-- Vendor JS Files -->
+    <script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('vendor/php-email-form/validate.js') }}"></script>
+    <script src="{{ asset('vendor/quill/quill.min.js') }}"></script>
+    <script src="{{ asset('vendor/simple-datatables/simple-datatables.js') }}"></script>
+    <script src="{{ asset('vendor/tinymce/tinymce.min.js') }}"></script>
+    <script src="{{ asset('vendor/chart.js/chart.min.js') }}"></script>
+    <script src="{{ asset('vendor/apexcharts/apexcharts.min.js') }}"></script>
+    <script src="{{ asset('vendor/echarts/echarts.min.js') }}"></script>
+
+    <!-- Template Main JS File -->
+    <script src="{{ asset('js/main.js') }}"></script>
+
+</body>
+
+</html>

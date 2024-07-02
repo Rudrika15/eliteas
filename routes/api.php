@@ -25,6 +25,7 @@ use App\Http\Controllers\Api\CircleMeetingMembersController;
 use App\Http\Controllers\Api\MembershipSubscriptionController;
 use App\Http\Controllers\Api\CircleMeetingMemberBusinessController;
 use App\Http\Controllers\Api\CircleMeetingMemberReferenceController;
+use App\Http\Controllers\Api\LeaderBoardController;
 
 // use App\Http\Controllers\Api\CircleMeetingMemberBusinessController;
 
@@ -223,5 +224,13 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::get('/attendance/attendance-list', [AttendanceController::class, 'attendanceList']);
         Route::post('/attendance/attendance-store', [AttendanceController::class, 'attendanceStore']);
         Route::post('/attendance/invited-store', [AttendanceController::class, 'invitedAttendanceStore']);
+
+    //dashboard leaderboard apis
+
+    Route::get('/leaderboards/max-meetings', [LeaderBoardController::class, 'maxMeetings']);
+    Route::get('/leaderboards/max-business', [LeaderBoardController::class, 'maxBusiness']);
+    Route::get('/leaderboards/max-reference', [LeaderBoardController::class, 'maxReference']);
+    Route::get('/leaderboards/max-referral', [LeaderBoardController::class, 'maxRefferal']);
+    Route::get('/leaderboards/max-visitor', [LeaderBoardController::class, 'maxVisitor']);
 
 });

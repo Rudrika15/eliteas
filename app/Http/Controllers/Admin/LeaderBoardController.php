@@ -113,4 +113,55 @@ class LeaderBoardController extends Controller
             return view('servererror');
         }
     }
+
+
+    public function maxRefferal(Request $request)
+    {
+        try {
+            // $previousMonth = Carbon::now()->subMonth()->month;
+            // $previousYear = Carbon::now()->subMonth()->year;
+
+            // $refGiver = CircleMeetingMembersReference::where('status', 'Active')
+            //     ->whereYear('created_at', $previousYear)
+            //     ->whereMonth('created_at', $previousMonth)
+            //     ->get();
+
+            // $refGiver = $refGiver->groupBy('referenceGiverId')->map(function ($group) {
+            //     return [
+            //         'user' => $group->first()->refGiverName,
+            //         'count' => $group->count()
+            //     ];
+            // })->sortByDesc('count');
+
+            return view('admin.leaderboards.refferalIndex');
+        } catch (\Throwable $th) {
+            throw $th;
+            return view('servererror');
+        }
+    }
+
+    public function maxVisitor(Request $request)
+    {
+        try {
+            // $previousMonth = Carbon::now()->subMonth()->month;
+            // $previousYear = Carbon::now()->subMonth()->year;
+
+            // $refGiver = CircleMeetingMembersReference::where('status', 'Active')
+            //     ->whereYear('created_at', $previousYear)
+            //     ->whereMonth('created_at', $previousMonth)
+            //     ->get();
+
+            // $refGiver = $refGiver->groupBy('referenceGiverId')->map(function ($group) {
+            //     return [
+            //         'user' => $group->first()->refGiverName,
+            //         'count' => $group->count()
+            //     ];
+            // })->sortByDesc('count');
+
+            return view('admin.leaderboards.visitorIndex');
+        } catch (\Throwable $th) {
+            throw $th;
+            return view('servererror');
+        }
+    }
 }

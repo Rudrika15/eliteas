@@ -398,6 +398,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/leaderboard/maxMeetings', [LeaderBoardController::class, 'maxMeetings'])->name('maxMeetings.index');
     Route::get('/leaderboard/maxBusiness', [LeaderBoardController::class, 'maxBusiness'])->name('maxBusiness.index');
     Route::get('/leaderboard/maxReference', [LeaderBoardController::class, 'maxReference'])->name('maxReference.index');
+    Route::get('/leaderboard/maxRefferal', [LeaderBoardController::class, 'maxRefferal'])->name('maxRefferal.index');
+    Route::get('/leaderboard/maxVisitor', [LeaderBoardController::class, 'maxVisitor'])->name('maxVisitor.index');
 });
 
 //Login with otp

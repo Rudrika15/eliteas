@@ -87,9 +87,9 @@
                                     <form action="{{ route('otp.verify') }}" method="post"
                                         class="needs-validation w-100 mt-3" novalidate>
                                         @csrf
-                                        <div class="mb-3 form-floating">
-                                            <input type="text" id="otp" name="otp" class="form-control" required>
-                                            <label for="otp">Enter OTP</label>
+                                        <div class="form-floating mb-3 custom-floating">
+                                            <input type="password" id="otp" name="otp" class="form-control" required
+                                                placeholder="Enter OTP">
                                         </div>
                                         <input type="hidden" name="phone" value="{{ session('phone') }}">
                                         <div class="d-grid">

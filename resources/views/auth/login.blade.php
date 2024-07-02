@@ -43,24 +43,27 @@
 <body>
 
     <main>
-        <div class="container">
-
-            <section class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
+        <div class="" style="background-image: url('{{ asset('img/b2.jpg') }}');
+                                    background-size: 100% 100%;
+                                    background-position: center;">
+            <section
+                class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
                 <div class="container">
                     <div class="row justify-content-center">
                         <div class="col-lg-4 col-md-6 d-flex flex-column align-items-center justify-content-center">
-            
+
                             <div class="d-flex justify-content-center py-4">
-                                <a href="index.html" class="main-logo d-flex align-items-center">
+                                <a href="#" class="main-logo d-flex align-items-center">
                                     <img src="{{ asset('img/logo2.jpg') }}" alt=""
                                         style="background-color: #F5E9E2; mix-blend-mode: multiply; width: 150px; height:100px;">
                                     {{-- <span class="d-none d-lg-block">Elite</span> --}}
                                 </a>
                             </div><!-- End Logo -->
 
-                            <div class="card mb-3" style="width: 20rem;">
+                            <div class="card mb-3"
+                                style="width: 20rem; background-image: url({{ asset('img/b2.jpg') }});">
                                 <div class="card-body">
-                                    <h5 class="card-title text-center pb-0 fs-4"><b>Login</b></h5>
+                                    <h5 class="card-title text-center pb-0 fs-4 text-white mb-4">Login</h5>
                                     {{-- <p class="text-center small">Enter your email & password to login</p> --}}
 
                                     <form method="POST" action="{{ route('login') }}" class="needs-validation w-100"
@@ -71,11 +74,11 @@
                                             <input id="email" type="email"
                                                 class="form-control @error('email') is-invalid @enderror" name="email"
                                                 value="{{ old('email') }}" required autocomplete="email" autofocus>
-                                            <label for="email">Email Address</label>
+                                            <label for="email"><b>Email Address</b></label>
                                             @error('email')
-                                                <span class="invalid-feedback" role="alert">
-                                                    <strong>{{ $message }}</strong>
-                                                </span>
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
                                             @enderror
                                         </div>
 
@@ -83,31 +86,33 @@
                                             <input id="password" type="password"
                                                 class="form-control @error('password') is-invalid @enderror"
                                                 name="password" required autocomplete="current-password">
-                                            <label for="password">Password</label>
+                                            <label for="password"><b>Password</b></label>
                                             @error('password')
-                                                <span class="invalid-feedback" role="alert">
-                                                    <strong>{{ $message }}</strong>
-                                                </span>
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
                                             @enderror
                                         </div>
 
                                         <div class="mb-3 form-check">
                                             <input type="checkbox" class="form-check-input" name="remember"
                                                 id="remember" {{ old('remember') ? 'checked' : '' }}>
-                                            <label class="form-check-label" for="remember">Remember Me</label>
+                                            <label class="form-check-label text-white" for="remember">Remember
+                                                Me</label>
                                         </div>
 
                                         <div class="d-grid">
-                                            <button type="submit" class="btn btn-bg-blue">Login</button>
+                                            <button type="submit" class="btn btn-primary ">Login</button>
                                         </div>
                                         <div class="mt-3 text-center">
-                                            <a href="{{ route('otp.request') }}">Login with OTP</a>
+                                            <a href="{{ route('otp.request') }}" class="text-white">Login with OTP</a>
                                         </div>
 
                                         @if (Route::has('password.request'))
-                                            <div class="mt-3 text-center">
-                                                <a href="{{ route('forget.password.get') }}">Forgot Your Password?</a>
-                                            </div>
+                                        <div class="mt-3 text-center">
+                                            <a href="{{ route('forget.password.get') }}" class="text-white">Forgot Your
+                                                Password ?</a>
+                                        </div>
                                         @endif
                                     </form>
                                 </div>
@@ -118,8 +123,8 @@
                                 <!-- You can delete the links only if you purchased the pro version. -->
                                 <!-- Licensing information: https://bootstrapmade.com/license/ -->
                                 <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/ -->
-                                Designed by <a href="https://flipcodesolutions.com/" target="_blank">FlipCode
-                                    Solutions</a>
+                                Designed by <a href="https://flipcodesolutions.com/" target="_blank"
+                                    class="text-black"><b>Aspireotech Solutions</b></a>
                             </div>
 
                         </div>
