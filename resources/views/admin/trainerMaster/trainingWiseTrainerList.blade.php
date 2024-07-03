@@ -26,34 +26,36 @@
     <div class="card-body">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h4 class="card-title">Trainer List</h4>
-            <a href="{{ route('trainersListExport.export') }}" class="btn btn-bg-orange">
-                <i class="bi bi-file-earmark-excel"></i> <!-- Bootstrap Icon for Excel File -->
+            {{-- <a href="{{ route('trainersListExport.export') }}" class="btn btn-bg-orange"> --}}
+                {{-- <i class="bi bi-file-earmark-excel"></i> <!-- Bootstrap Icon for Excel File --> --}}
             </a>
         </div>
 
         <!-- Table with stripped rows -->
-        <table class="table datatable">
-            <thead>
-                <tr>
-                    <th>Training Name</th>
-                    <th>Date</th>
-                    <th>Trainer Name</th>
-                    {{-- <th>Status</th> --}}
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($trainers as $trainerData)
-                <tr>
-                    <td>{{$trainerData->training->title ?? '-'}}</td>
-                    <td>{{ \Carbon\Carbon::parse($trainerData->training->date)->format('d-m-y') ?? '-'}}</td>
+        <div class="table-responsive">
+            <table class="table datatable">
+                <thead>
+                    <tr>
+                        <th>Training Name</th>
+                        <th>Date</th>
+                        <th>Trainer Name</th>
+                        {{-- <th>Status</th> --}}
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($trainers as $trainerData)
+                    <tr>
+                        <td>{{$trainerData->training->title ?? '-'}}</td>
+                        <td>{{ \Carbon\Carbon::parse($trainerData->training->date)->format('d-m-y') ?? '-'}}</td>
 
-                    <td>{{$trainerData->user->firstName ?? '-'}} {{$trainerData->user->lastName ?? '-'}}</td>
-                    {{-- <td>{{$trainerData->status}}</td> --}}
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
-        <!-- End Table with stripped rows -->
+                        <td>{{$trainerData->user->firstName ?? '-'}} {{$trainerData->user->lastName ?? '-'}}</td>
+                        {{-- <td>{{$trainerData->status}}</td> --}}
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+            <!-- End Table with stripped rows -->
+        </div>
     </div>
 </div>
 @endsection

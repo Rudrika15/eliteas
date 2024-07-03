@@ -22,48 +22,55 @@
 </div>
 @endif
 
-<div class="card">
-    <div class="card-body">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h4 class="card-title">Membership Type</h4>
-            <a href="{{ route('membershipType.create') }}" class="btn btn-bg-orange btn-sm mt-3"><i class="bi bi-plus-circle"></i></a>
+
+<div class="container">
+    <div class="card">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="card-title">Membership Type</h4>
+                <a href="{{ route('membershipType.create') }}" class="btn btn-bg-orange btn-sm mt-3"><i
+                        class="bi bi-plus-circle"></i></a>
+            </div>
+
+            <!-- Table with stripped rows -->
+            <div class="table-responsive">
+                <table class="table datatable">
+                    <thead>
+                        <tr>
+                            <th>Membership Type</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($membershipType as $membershipTypeData)
+                        <tr>
+                            <td>{{$membershipTypeData->membershipType ?? '-'}}</td>
+                            <td>{{$membershipTypeData->amount ?? '-'}}</td>
+                            <td>{{$membershipTypeData->status ?? '-'}}</td>
+                            <td>
+                                <a href="{{ route('membershipType.edit', $membershipTypeData->id) }}"
+                                    class="btn btn-bg-blue btn-sm">
+                                    <i class="bi bi-pen"></i>
+                                </a>
+
+                                {{-- <a href="{{ route('franchise.show', $franchiseData->id) }}" class="btn btn-info">
+                                    <i class="bi bi-eye"></i>
+                                </a> --}}
+
+                                <a href="{{ route('membershipType.delete', $membershipTypeData->id) }}"
+                                    class="btn btn-danger btn-sm">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+                <!-- End Table with stripped rows -->
+            </div>
         </div>
-
-        <!-- Table with stripped rows -->
-        <table class="table datatable">
-            <thead>
-                <tr>
-                    <th>Membership Type</th>
-                    <th>Amount</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($membershipType as $membershipTypeData)
-                <tr>
-                    <td>{{$membershipTypeData->membershipType ?? '-'}}</td>
-                    <td>{{$membershipTypeData->amount ?? '-'}}</td>
-                    <td>{{$membershipTypeData->status ?? '-'}}</td>
-                    <td>
-                        <a href="{{ route('membershipType.edit', $membershipTypeData->id) }}"
-                            class="btn btn-bg-blue btn-sm">
-                            <i class="bi bi-pen"></i>
-                        </a>
-
-                        {{-- <a href="{{ route('franchise.show', $franchiseData->id) }}" class="btn btn-info">
-                            <i class="bi bi-eye"></i>
-                        </a> --}}
-
-                        <a href="{{ route('membershipType.delete', $membershipTypeData->id) }}"
-                            class="btn btn-danger btn-sm">
-                            <i class="bi bi-trash"></i>
-                        </a>
-                    </td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
-        <!-- End Table with stripped rows -->
     </div>
-    @endsection
+</div>
+@endsection

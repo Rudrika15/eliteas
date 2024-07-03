@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('header', 'Conections')
+@section('header', 'Connections')
 @section('content')
 
 {{-- Message --}}
@@ -26,44 +26,44 @@
     <div class="card-body">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h4 class="card-title">Connection Requests</h4>
-
         </div>
 
         <!-- Table with stripped rows -->
-        <table class="table datatable">
-            <thead>
-                <tr>
-                    <th>Requested By</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($connections as $connection)
-                <tr>
-                    <td>{{ $connection->user->firstName ?? '-' }} {{ $connection->user->lastName ?? '-' }}</td>
-                    <td>
-                        @if ($connection->status == 'Pending')
-                        <span class="badge bg-warning">{{ $connection->status }}</span>
-                        @elseif ($connection->status == 'Accepted')
-                        <span class="badge bg-success">{{ $connection->status }}</span>
-                        @else
-                        <span class="badge bg-danger">{{ $connection->status }}</span>
-                        @endif
-                    </td>
-                    <td>
-                        @if ($connection->status == 'Pending')
-                        <a class="btn btn-sm btn-success" href="{{ route('connection.accept', $connection->id) }}"><i
-                                class="bi bi-check"></i></a>
-                        <a class="btn btn-sm btn-danger" href="{{ route('connection.reject', $connection->id) }}"><i
-                                class="bi bi-x"></i></a>
-                        @endif
-                    </td>
-
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
+        <div class="table-responsive">
+            <table class="table datatable">
+                <thead>
+                    <tr>
+                        <th>Requested By</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($connections as $connection)
+                    <tr>
+                        <td>{{ $connection->user->firstName ?? '-' }} {{ $connection->user->lastName ?? '-' }}</td>
+                        <td>
+                            @if ($connection->status == 'Pending')
+                            <span class="badge bg-warning">{{ $connection->status }}</span>
+                            @elseif ($connection->status == 'Accepted')
+                            <span class="badge bg-success">{{ $connection->status }}</span>
+                            @else
+                            <span class="badge bg-danger">{{ $connection->status }}</span>
+                            @endif
+                        </td>
+                        <td>
+                            @if ($connection->status == 'Pending')
+                            <a class="btn btn-sm btn-success"
+                                href="{{ route('connection.accept', $connection->id) }}"><i class="bi bi-check"></i></a>
+                            <a class="btn btn-sm btn-danger" href="{{ route('connection.reject', $connection->id) }}"><i
+                                    class="bi bi-x"></i></a>
+                            @endif
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
         <!-- End Table with stripped rows -->
     </div>
 </div>

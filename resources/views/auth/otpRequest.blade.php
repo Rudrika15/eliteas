@@ -42,7 +42,9 @@
 <body>
 
     <main>
-        <div class="container">
+        <div class="" style="background-image: url('{{ asset('img/b2.jpg') }}');
+                                                    background-size: 100% 100%;
+                                                    background-position: center;">
             <section
                 class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
                 <div class="container">
@@ -57,7 +59,7 @@
                                 </a>
                             </div><!-- End Logo -->
 
-                            <div class="card mb-3" style="width: 20rem;">
+                            <div class="card mb-3" style="width: 20rem; background-color: rgba(255, 255, 255, 0.4);">
                                 <div class="card-body">
                                     <h5 class="card-title text-center pb-0 fs-4">Request OTP</h5>
                                     {{-- <p class="text-center small">Enter your phone number to request OTP</p> --}}
@@ -67,14 +69,15 @@
                                         class="needs-validation w-100" novalidate>
                                         @csrf
 
-                                        <div class="form-floating mt-3 custom-floating">
+                                        <div class="form-floating mt-3 custom-floating" style="background-color: transparent;">
                                             <input type="tel" pattern="[0-9]{10}"
                                                 class="form-control @error('phone') is-invalid @enderror" required
-                                                id="phone" name="phone" placeholder="Phone"
-                                                maxlength="10" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" required>
-                                            <label for="phone">Phone</label>
+                                                id="phone" name="phone" placeholder="Phone" maxlength="10"
+                                                oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+                                                required>
+                                            <label for="phone" style="background-color: transparent;">Phone</label>
                                             @error('phone')
-                                            <div class="invalid-tooltip">
+                                            <div class="invalid-tooltip" style="background-color: transparent;">
                                                 {{ $message }}
                                             </div>
                                             @enderror

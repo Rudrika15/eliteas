@@ -48,7 +48,7 @@
                                     background-position: center;">
             <section
                 class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
-                <div class="container">
+                <div class="container res-box">
                     <div class="row justify-content-center">
                         <div class="col-lg-4 col-md-6 d-flex flex-column align-items-center justify-content-center">
 
@@ -60,7 +60,7 @@
                                 </a>
                             </div><!-- End Logo -->
 
-                            <div class="card mb-3"
+                            <div class="card mb-3 res-box"
                                 style="width: 20rem; background-image: url({{ asset('img/b2.jpg') }});">
                                 <div class="card-body">
                                     <h5 class="card-title text-center pb-0 fs-4 text-white mb-4">Login</h5>

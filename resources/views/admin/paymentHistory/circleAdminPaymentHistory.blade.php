@@ -21,7 +21,8 @@
     <strong>Error !</strong> {{ session('error') }}
 </div>
 @endif
-<div class="card-responsive">
+
+<div class="card">
     <div class="card-body">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h4 class="card-title">All Payments</h4>
@@ -30,35 +31,36 @@
         </div>
 
         <!-- Table with stripped rows -->
-        <table class="table datatable table-responsive">
-            <thead>
-                <tr>
-                    <th>Member Name</th>
-                    {{-- <th>Payment Mode</th> --}}
-                    <th>Date</th>
-                    <th>Payment Type</th>
-                    <th>Amount</th>
-                    {{-- <th>Payment ID</th> --}}
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($payments as $paymentsData)
-                <tr>
-                    <td>{{$paymentsData->user->firstName ?? '-'}} {{$paymentsData->user->lastName ?? '-'}}</td>
-                    {{-- <td>{{$paymentsData->paymentType ?? '-'}}</td> --}}
-                    <td>{{$paymentsData->date ?? '-'}}</td>
-                    <td>{{$paymentsData->paymentMode}}</td>
-                    <td>{{$paymentsData->amount}}</td>
-                    {{-- <td>{{$paymentsData->remarks}}</td> --}}
-                    <td>{{$paymentsData->status}}</td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
+        <div class="table-responsive">
+            <table class="table datatable">
+                <thead>
+                    <tr>
+                        <th>Member Name</th>
+                        {{-- <th>Payment Mode</th> --}}
+                        <th>Date</th>
+                        <th>Payment Type</th>
+                        <th>Amount</th>
+                        {{-- <th>Payment ID</th> --}}
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($payments as $payment)
+                    <tr>
+                        <td>{{ $payment->user->firstName ?? '-' }} {{ $payment->user->lastName ?? '-' }}</td>
+                        {{-- <td>{{ $payment->paymentType ?? '-' }}</td> --}}
+                        <td>{{ $payment->date ?? '-' }}</td>
+                        <td>{{ $payment->paymentMode }}</td>
+                        <td>{{ $payment->amount }}</td>
+                        {{-- <td>{{ $payment->remarks }}</td> --}}
+                        <td>{{ $payment->status }}</td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
         <!-- End Table with stripped rows -->
     </div>
+</div>
 
-
-
-    @endsection
+@endsection

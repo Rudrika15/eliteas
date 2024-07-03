@@ -21,6 +21,7 @@
     <strong>Error !</strong> {{ session('error') }}
 </div>
 @endif
+
 @role('Member')
 <div class="card">
     <div class="card-body">
@@ -31,30 +32,31 @@
         </div>
 
         <!-- Table with stripped rows -->
-        <table class="table datatable">
-            <thead>
-                <tr>
-                    <th>Membership Type</th>
-                    <th>Amount</th>
-                    <th>Validity</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($subscriptions as $subscritptionsData)
-                <tr>
-                    <td>{{$subscritptionsData->membershipType ?? '-'}}</td>
-                    <td>{{$subscritptionsData->allPayments->amount ?? '-'}}</td>
-                    <td>{{$subscritptionsData->validity ?? '-'}}</td>
-                    <td>{{$subscritptionsData->status}}</td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
+        <div class="table-responsive">
+            <table class="table datatable">
+                <thead>
+                    <tr>
+                        <th>Membership Type</th>
+                        <th>Amount</th>
+                        <th>Validity</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($subscriptions as $subscription)
+                    <tr>
+                        <td>{{ $subscription->membershipType ?? '-' }}</td>
+                        <td>{{ $subscription->allPayments->amount ?? '-' }}</td>
+                        <td>{{ $subscription->validity ?? '-' }}</td>
+                        <td>{{ $subscription->status }}</td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
         <!-- End Table with stripped rows -->
     </div>
-    @endrole
+</div>
+@endrole
 
-
-
-    @endsection
+@endsection

@@ -31,50 +31,53 @@
         </div>
 
         <!-- Table with stripped rows -->
-        <table class="table datatable">
-            <thead>
-                <tr>
-                    <th>No</th>
-                    <th>First Name</th>
-                    <th>Last Name</th>
-                    <th>Email</th>
-                    <th>Roles</th>
-                    <th width="280px">Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($data as $key => $user)
-                <tr>
-                    <td>{{ ++$i }}</td>
-                    <td>{{ $user->firstName }}</td>
-                    <td>{{ $user->lastName }}</td>
-                    <td>{{ $user->email }}</td>
-                    <td>
-                        @if (!empty($user->getRoleNames()))
-                        @foreach ($user->getRoleNames() as $v)
-                        <label class="badge bg-success">{{ $v }}</label>
-                        @endforeach
-                        @endif
-                    </td>
-                    <td>
-                        <a class="btn btn-bg-orange btn-sm" href="{{ route('users.show', $user->id) }}">
-                            <i class="bi bi-eye"></i>
-                        </a>
-                        <a class="btn btn-bg-blue btn-sm" href="{{ route('users.edit', $user->id) }}">
-                            <i class="bi bi-pencil"></i>
-                        </a>
-                        {!! Form::open(['method' => 'DELETE', 'route' => ['users.destroy', $user->id], 'style' =>
-                        'display:inline'])
-                        !!}
-                        <button type="submit" class="btn btn-danger btn-sm">
-                            <i class="bi bi-trash"></i>
-                        </button>
-                        {!! Form::close() !!}
-                    </td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
-        <!-- End Table with stripped rows -->
+        <div class="table-responsive">
+            <table class="table datatable">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Email</th>
+                        <th>Roles</th>
+                        <th width="280px">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($data as $key => $user)
+                    <tr>
+                        <td>{{ ++$i }}</td>
+                        <td>{{ $user->firstName }}</td>
+                        <td>{{ $user->lastName }}</td>
+                        <td>{{ $user->email }}</td>
+                        <td>
+                            @if (!empty($user->getRoleNames()))
+                            @foreach ($user->getRoleNames() as $v)
+                            <label class="badge bg-success">{{ $v }}</label>
+                            @endforeach
+                            @endif
+                        </td>
+                        <td>
+                            <a class="btn btn-bg-orange btn-sm" href="{{ route('users.show', $user->id) }}">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            <a class="btn btn-bg-blue btn-sm" href="{{ route('users.edit', $user->id) }}">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            {!! Form::open(['method' => 'DELETE', 'route' => ['users.destroy', $user->id], 'style' =>
+                            'display:inline'])
+                            !!}
+                            <button type="submit" class="btn btn-danger btn-sm">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                            {!! Form::close() !!}
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+            <!-- End Table with stripped rows -->
+        </div>
     </div>
-    @endsection
+</div>
+@endsection

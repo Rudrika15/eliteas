@@ -4,6 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    
     {{-- add csrf --}}
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
@@ -36,8 +37,8 @@
 
     <!-- Template Main CSS File -->
     <link href="{{ asset('css/style.css') }}" rel="stylesheet" />
-    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
-        crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"
+        integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
 
 
     <!-- =======================================================
@@ -64,8 +65,9 @@
 
         <div class="search-bar">
             <a class="search-form d-flex align-items-center" href="{{ route('search') }}">
-                <input type="text" name="query" placeholder="Search" title="Enter search keyword">
-                <button type="submit" title="Search"><i class="bi bi-search"></i></button>
+                <input type="text" name="query" placeholder="Click here to find People" title="Enter search keyword">
+                <button type="submit" title="Search"><i class="bi bi-search"></i>
+                </button>
             </a>
         </div><!-- End Search Bar -->
 
@@ -154,53 +156,51 @@
                 </li><!-- End Notification Nav -->
 
 
-                    <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
-                        <i class="bi bi-chat-left-text"></i>
-                        <span class="badge bg-success badge-number">3</span>
-                    </a><!-- End Messages Icon -->
+                <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
+                    <i class="bi bi-chat-left-text"></i>
+                    <span class="badge bg-success badge-number">3</span>
+                </a><!-- End Messages Icon -->
 
-                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow messages">
-                        <li class="dropdown-header">
-                            You have 3 new messages
-                            <a href="#"><span class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a>
-                        </li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
+                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow messages">
+                    <li class="dropdown-header">
+                        You have 3 new messages
+                        <a href="#"><span class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a>
+                    </li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
 
-                        <li class="message-item">
-                            <a href="#">
-                                <img src="public/img/messages-1.jpg" alt="" class="rounded-circle">
-                                <div>
-                                    <h4>Maria Hudson</h4>
-                                    <p>Velit asperiores et ducimus soluta repudiandae labore officia est ut...</p>
-                                    <p>4 hrs. ago</p>
-                                </div>
-                            </a>
-                        </li>
+                    <li class="message-item">
+                        <a href="#">
+                            <img src="public/img/messages-1.jpg" alt="" class="rounded-circle">
+                            <div>
+                                <h4>Maria Hudson</h4>
+                                <p>Velit asperiores et ducimus soluta repudiandae labore officia est ut...</p>
+                                <p>4 hrs. ago</p>
+                            </div>
+                        </a>
+                    </li>
 
 
-                        <li class="dropdown-footer">
-                            <a href="#">Show all messages</a>
-                        </li>
+                    <li class="dropdown-footer">
+                        <a href="#">Show all messages</a>
+                    </li>
 
-                    </ul><!-- End Messages Dropdown Items -->
+                </ul><!-- End Messages Dropdown Items -->
 
                 </li><!-- End Messages Nav --> --}}
 
                 <li class="nav-item dropdown pe-3">
 
-                    <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#"
-                        data-bs-toggle="dropdown">
+                    <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
                         @if (isset(Auth::user()->profile_photo))
-                            {{-- <img class="img-profile rounded-circle" src="{{url('public/img/logo.png')}}"> --}}
-                            <img class="img-profile rounded-circle" src="public/img/logo.png">
+                        {{-- <img class="img-profile rounded-circle" src="{{url('public/img/logo.png')}}"> --}}
+                        <img class="img-profile rounded-circle" src="public/img/logo.png">
                         @else
-                            <span
-                                class="rounded-circle text-center p-2 fs-5 badge logobadge d-inline-block text-light h-50"
-                                style="width: 38px !important;">
+                        <span class="rounded-circle text-center p-2 fs-5 badge logobadge d-inline-block text-light h-50"
+                            style="width: 38px !important;">
 
-                            </span>
+                        </span>
                         @endif
                         {{-- <span class="d-none d-md-block dropdown-toggle ps-2">{{Auth::user()->name}}</span> --}}
                         <span class="d-none d-md-block dropdown-toggle ps-2">Hello,
@@ -250,8 +250,7 @@
                         </li>
 
                         <li>
-                            <a class="dropdown-item d-flex align-items-center" href="{{ route('logout') }}"
-                                onclick="event.preventDefault();
+                            <a class="dropdown-item d-flex align-items-center" href="{{ route('logout') }}" onclick="event.preventDefault();
                             document.getElementById('logout-form').submit();">
                                 <i class="bi bi-box-arrow-right"></i>
                                 <span>Sign Out</span>
@@ -285,11 +284,11 @@
             <!-- End Charts Nav -->
 
             @role('Admin')
-                @include('layouts.adminmenu')
+            @include('layouts.adminmenu')
             @endrole
 
             @role('Member')
-                @include('layouts.membermenu')
+            @include('layouts.membermenu')
             @endrole
 
             <!-- End Tables Nav -->
@@ -308,7 +307,7 @@
 
         {{-- <div class="pagetitle">
             {{-- <h1>Dashboard</h1> --}}
-        {{-- <nav>
+            {{-- <nav>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="index.html">Home</a></li>
                     <li class="breadcrumb-item active">Dashboard</li>
@@ -378,24 +377,24 @@
     <!-- end -->
 
     @if (Session::get('success'))
-        <script>
-            Swal.fire({
+    <script>
+        Swal.fire({
                 icon: 'success',
                 title: "{{ Session::get('success') }}",
                 showConfirmButton: true,
 
             });
-        </script>
+    </script>
     @endif
 
     @if (Session::get('error'))
-        <script>
-            Swal.fire({
+    <script>
+        Swal.fire({
                 icon: 'error',
                 title: "{{ Session::get('error') }}",
                 showConfirmButton: true,
             });
-        </script>
+    </script>
     @endif
     <script src="{{ asset('vendor/apexcharts/apexcharts.min.js') }}"></script>
     <script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>

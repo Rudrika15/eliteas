@@ -9,7 +9,7 @@
     <button type="button" class="close" data-dismiss="alert">
         {{-- <i class="fa fa-times"></i> --}}
     </button>
-    <strong>Success !</strong> {{ session('success') }}
+    <strong>Success!</strong> {{ session('success') }}
 </div>
 @endif
 
@@ -18,28 +18,36 @@
     <button type="button" class="close" data-dismiss="alert">
         {{-- <i class="fa fa-times"></i> --}}
     </button>
-    <strong>Error !</strong> {{ session('error') }}
+    <strong>Error!</strong> {{ session('error') }}
 </div>
 @endif
 
-<div class="card">
-    <div class="card-body d-flex justify-content-between align-items-center">
-        <h5 class="card-title">Show Role</h5>
-        <a href="{{ route('roles.index') }}" class="btn btn-primary btn-sm">Back</a>
-    </div>
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="form-group mt-3">
-                <strong>Name:</strong>
-                {{ $role->name }}
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="mt-3 card-title">Show Role</h2>
+                <a class="btn btn-bg-orange mt-3" href="{{ route('roles.index') }}">
+                    Back
+                </a>
             </div>
-            <div class="form-group">
-                <strong>Permissions:</strong>
-                @if (!empty($rolePermissions))
-                @foreach ($rolePermissions as $v)
-                <label class="label label-success">{{ $v->name }},</label>
-                @endforeach
-                @endif
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="form-group mt-3">
+                        <strong>Name:</strong>
+                        <p>{{ $role->name }}</p>
+                    </div>
+                    <div class="form-group mt-3">
+                        <strong>Permissions:</strong>
+                        <div>
+                            @if (!empty($rolePermissions))
+                            @foreach ($rolePermissions as $v)
+                            <span class="badge bg-success">{{ $v->name }}</span>
+                            @endforeach
+                            @endif
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

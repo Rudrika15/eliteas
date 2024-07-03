@@ -22,7 +22,7 @@
 </div>
 @endif
 
-
+<div class="container">
 <div class="card">
     <div class="card-body d-flex justify-content-between align-items-center">
         <h5 class="card-title">Create Train Master</h5>
