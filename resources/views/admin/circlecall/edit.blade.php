@@ -72,26 +72,9 @@
 
                 <div class="col-md-6">
                     <div class="form-floating mt-3">
-                        <?php
-                            use Illuminate\Support\Carbon;
-                                    
-                            $nearestDate = $scheduleDate->min();
-                            $nearestDate = $nearestDate ? Carbon::parse($nearestDate)->subDay()->format('Y-m-d') : Carbon::now()->format('Y-m-d');
-                            // $startDate = Carbon::now()->subDay(15)->format('Y-m-d');
-                            // $nearestDate = '2024-04-24';
-                            // $startDate = $lastDate;
-                            
-                            ?>
-                            
-                        <input type="date" class="form-control @error('date') is-invalid @enderror" id="date"
-                            name="date" placeholder="Meeting Date" required min="{{ $lastDate }}"
-                            max="{{ $nearestDate }}" value="{{ old('date', $circlecall->date) }}">
+                        <input type="date" class="form-control" id="date" name="date"
+                            placeholder="Meeting Date" disabled value="{{ $circlecall->date }}">
                         <label for="date">Date</label>
-                        @error('date')
-                        <div class="invalid-tooltip">
-                            {{ $message }}
-                        </div>
-                        @enderror
                     </div>
                 </div>
 

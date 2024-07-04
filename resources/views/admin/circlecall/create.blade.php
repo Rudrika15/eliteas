@@ -41,7 +41,7 @@
                     <div class="form-floating mt-3">
                         <input type="hidden" id="meetingPersonId" name="meetingPersonId">
                         <input type="text" class="form-control" readonly id="meetingPersonName"
-                            placeholder="Select Member">
+                            placeholder="Select Member" disabled>
                         <label for="memberName">Meeting Person Name</label>
                         @error('memberId')
                             <div class="invalid-tooltip">

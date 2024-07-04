@@ -29,26 +29,29 @@
         </div>
 
         <!-- Table with stripped rows -->
-        <table class="table datatable">
-            <thead>
-                <tr>
-                    <th>Name of Member</th>
-                    <th>Circle Name</th>
-                    <th>Meeting Count</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($circlecalls as $circlecall)
-                <tr>
-                    <td>{{ $circlecall['member']->firstName ?? '-' }} {{ $circlecall['member']->lastName ?? '-' }} <i
-                            class="bi bi-trophy" style="color: gold;"></i></td>
-                    <td>{{ $circlecall['member']->circle->circleName ?? '-' }}</td>
-                    <td>{{ $circlecall['count'] }}</td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
-        <!-- End Table with stripped rows -->
+        <div class="table-responsive">
+            <table class="table datatable">
+                <thead>
+                    <tr>
+                        <th>Name of Member</th>
+                        <th>Circle Name</th>
+                        <th>Meeting Count</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($circlecalls as $circlecall)
+                    <tr>
+                        <td>{{ $circlecall['member']->firstName ?? '-' }} {{ $circlecall['member']->lastName ?? '-' }}
+                            <i class="bi bi-trophy" style="color: gold;"></i>
+                        </td>
+                        <td>{{ $circlecall['member']->circle->circleName ?? '-' }}</td>
+                        <td>{{ $circlecall['count'] }}</td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+            <!-- End Table with stripped rows -->
+        </div>
     </div>
 </div>
 @endsection

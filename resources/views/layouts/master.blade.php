@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
+<head > 
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     
@@ -58,7 +58,7 @@
         <div class="d-flex justify-content-between">
             <a href="#" class="logo">
                 {{-- <img src="assets/img/logo.png" alt=""> --}}
-                <img src="{{ asset('img/logo2.jpg') }}" alt="ELITEAs" class="d-none d-lg-block" width="100">
+                <img src="{{ asset('img/logo2.jpg') }}" alt="UBN" width="100">
             </a>
             <i class="bi bi-list toggle-sidebar-btn mt-2"></i>
         </div><!-- End Logo -->
@@ -199,16 +199,16 @@
                         @else
                         <span class="rounded-circle text-center p-2 fs-5 badge logobadge d-inline-block text-light h-50"
                             style="width: 38px !important;">
-
                         </span>
                         @endif
                         {{-- <span class="d-none d-md-block dropdown-toggle ps-2">{{Auth::user()->name}}</span> --}}
+                        <span class="d-md-none">Hello, {{ Auth::user()->firstName ?? '-' }}</span>
                         <span class="d-none d-md-block dropdown-toggle ps-2">Hello,
                             {{ Auth::user()->firstName ?? '-' }}</span>
                     </a><!-- End Profile Iamge Icon -->
 
                     <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
-                        <li class="dropdown-header">
+                        <li class="dropdown-header d-md-none">
                             {{-- <h6>{{Auth::user()->name}}</h6> --}}
                             <h6>{{ Auth::user()->firstName ?? '-' }}</h6>
                             {{-- <span>Web Designer</span> --}}

@@ -33,7 +33,7 @@
         <div class="card-body">
             <div class="d-flex justify-content-between align-items-center mb-5">
                 <h4 class="card-title">Circle Meeting Member Refference</h4>
-                <a href="{{ route('refGiver.index') }}" class="btn btn-bg-blue btn-sm ">BACK</a>
+                <a href="{{ route('refGiver.index') }}" class="btn btn-bg-orange btn-sm ">BACK</a>
             </div>
             <hr class="mb-5">
 
@@ -73,7 +73,7 @@
 
                     <!-- Searchable input field -->
                     <input type="text" class="form-control" id="meetingPersonName" name="memberName"
-                        placeholder="Select Member" readonly>
+                        placeholder="Select Member" readonly disabled>
                     <label for="memberName">Member Name</label>
                     @error('memberId')
                         <div class="invalid-tooltip">
@@ -87,7 +87,7 @@
                 <div class="">
                     <div class="form-floating mt-3">
                         <input type="text" class="form-control @error('contactNo') is-invalid @enderror"
-                            id="meetingPersonContact" placeholder="Contact No" readonly required>
+                            id="meetingPersonContact" placeholder="Contact No" readonly disabled required>
                         <label for="contactNo">Contact No</label>
                         @error('contactNo')
                             <div class="invalid-tooltip">
@@ -99,7 +99,7 @@
                 <div class="">
                     <div class="form-floating mt-3">
                         <input type="text" class="form-control @error('email') is-invalid @enderror"
-                            id="meetingPersonEmail" placeholder="email" required readonly>
+                            id="meetingPersonEmail" placeholder="email" required disabled readonly>
                         <label for="email">Email</label>
                         @error('email')
                             <div class="invalid-tooltip">

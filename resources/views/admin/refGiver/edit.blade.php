@@ -42,7 +42,7 @@
         <div class="card-body">
             <div class="d-flex justify-content-between align-items-center mb-5">
                 <h4 class="card-title">Edit Circle Meeting Member Refference</h4>
-                <a href="{{ route('refGiver.index') }}" class="btn btn-bg-blue btn-sm ">BACK</a>
+                <a href="{{ route('refGiver.index') }}" class="btn btn-bg-orange btn-sm ">BACK</a>
             </div>
             <hr class="mb-5">
 
@@ -84,7 +84,7 @@
                     <!-- Searchable input field -->
                     <input type="text" class="form-control" id="meetingPersonName" name="memberName"
                         placeholder="Select Member"
-                        value="{{ $refGiver->members->firstName . ' ' . $refGiver->members->lastName ?? '-' }}" readonly>
+                        value="{{ $refGiver->members->firstName . ' ' . $refGiver->members->lastName ?? '-' }}" readonly disabled>
                     <label for="memberName">Member Name</label>
                     @error('memberId')
                         <div class="invalid-tooltip">

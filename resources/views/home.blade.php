@@ -148,312 +148,325 @@
         </div>
     </div>
 
-
-    <div class="row">
-        @if ($meeting)
-        <div class="col-md-12">
-            <div class="card-title"><b>Upcoming Circle Meetings</b></div>
-            <div class="card border-0 shadow workshopCard">
-                <div class="card-body">
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            <h4 class="card-title">{{ $meeting->circle->circleName }}
-                                <span class="text-muted">( {{ $meeting->circle->city->cityName }} )</span>
-                            </h4>
-                        </div>
-                        <div class="col-md-6 pt-3 text-muted text-end">
-                            {{ $meeting->date->format('j M Y') }} <br>
-                            {{ $meeting->meetingTime }}
-                        </div>
-                    </div>
-                    <p>
-                        <small class="fw-italic text-muted pt-2 fw-italic">
-                            Total Members : {{ $meeting->circle->members->count() }}
-                        </small>
-                        <br>
-                        <small class="text-muted">
-                            Franchise Name : {{ $meeting->circle->franchise->franchiseName }}
-                        </small>
-                    </p>
-                    <div class="row">
-                        <div class="col-md-11 ps-3 card-title ">Invite people to join</div>
-                        <div class="col-md-1 mt-2 ">
-                            <button type="button" class="btn btn-bg-orange btn-sm mt-2" data-bs-toggle="modal"
-                                data-bs-target="#exampleModal">
-                                Invite
-                            </button>
-                        </div>
-                    </div>
-                    <div class="accordion">
-                        <div class="accordion-item ">
-                            <div class="accordion-header" id="headingSix">
-
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#collapseSix" aria-expanded="false" aria-controls="collapseSix">
-                                    <div class="card-title"> My Invites </div>
-                                </button>
-                            </div>
-
-                            <div id="collapseSix" class="accordion-collapse collapse" aria-labelledby="headingSix">
-                                <div class="accordion-body">
-                                    <table class="table table-border">
-                                        <thead>
-                                            <tr>
-                                                <th>Name</th>
-                                                <th>Email</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @if ($myInvites->count() == 0)
-                                            <tr>
-                                                <td colspan="2" class="text-muted text-center">No Invites for
-                                                    current
-                                                    meeting</td>
-                                            </tr>
-                                            @else
-                                            @foreach ($myInvites as $invite)
-                                            <tr>
-                                                <td><small class="text-muted">{{ $invite->personName }}</small></td>
-                                                <td><small class="text-muted">{{ $invite->personEmail }}</small>
-                                                </td>
-                                            </tr>
-                                            @endforeach
-                                            @endif
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-
-
-                </div>
-            </div>
-        </div>
-        @else
-        <div class="col-md-12">
-            <div class="alert alert-info" role="alert">
-                No upcoming circle meeting found
-            </div>
-        </div>
-        @endif
-
+    <div class="container-responsive">
         <div class="row">
+            @if ($meeting)
             <div class="col-md-12">
-                <div class="card-title"><b>Upcoming Training Workshops</b></div>
+                <div class="card-title"><b>Upcoming Circle Meetings</b></div>
                 <div class="card border-0 shadow workshopCard">
-                    {{-- {{$nearestTraining}} --}}
-                    @if ($nearestTraining)
                     <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-10">
-                                <h4 class="card-title">{{ $nearestTraining->title }}</h4>
-                            </div>
 
-                            <div class="col-md-2 pt-3 text-muted text-end">
-                                {{ \Carbon\Carbon::parse($nearestTraining->date)->format('j M Y') }} <br>
-                                {{ $nearestTraining->time }}
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h4 class="card-title">{{ $meeting->circle->circleName }}
+                                    <span class="text-muted">( {{ $meeting->circle->city->cityName }} )</span>
+                                </h4>
+                            </div>
+                            <div class="col-md-6 pt-3 text-muted text-end">
+                                {{ $meeting->date->format('j M Y') }} <br>
+                                {{ $meeting->meetingTime }}
                             </div>
                         </div>
+                        <p>
+                            <small class="fw-italic text-muted pt-2 fw-italic">
+                                Total Members : {{ $meeting->circle->members->count() }}
+                            </small>
+                            <br>
+                            <small class="text-muted">
+                                Franchise Name : {{ $meeting->circle->franchise->franchiseName }}
+                            </small>
+                        </p>
                         <div class="row">
-                            <div class="col-md-8 mt-4">
-                                <p>
-                                    <small class="fw-italic text-muted pt-2 fw-italic">
-                                        {{ $nearestTraining->trainersTrainings->user->firstName ?? '-' }}
-                                        {{ $nearestTraining->trainersTrainings->user->lastName ?? '-' }}
-                                    </small>
-                                    <br>
-                                    <small class="text-muted">
-                                        {{ $nearestTraining->trainersTrainings->user->email ?? '-' }}
-                                    </small>
-                                </p>
-                            </div>
-                            <div class="col-md-4">
-                                @if (count($findRegister) == 0)
-                                @if ($nearestTraining->fees == 0)
-                                <h5 class="text-muted text-end me-4 pt-5">Free</h5>
-                                <button type="button" class="btn btn-bg-blue btn-md" data-bs-toggle="modal"
-                                    data-bs-target="#staticBackdrop">
-                                    Register
+                            <div class="col-md-11 ps-3 card-title ">Invite people to join</div>
+                            <div class="col-md-1 mt-2 ">
+                                <button type="button" class="btn btn-bg-orange btn-sm mt-2" data-bs-toggle="modal"
+                                    data-bs-target="#exampleModal">
+                                    Invite
                                 </button>
-                                @else
-                                <h5 class="text-muted text-end me-4 pt-3"> ₹
-                                    {{ $nearestTraining->fees }}
-                                </h5>
-                                <div class="d-flex justify-content-end">
-                                    <button type="button" class="btn btn-bg-blue btn-md " data-bs-toggle="modal"
-                                        data-bs-target="#staticBackdrop">
-                                        Join Now
+                            </div>
+                        </div>
+                        <div class="accordion mt-3">
+                            <div class="accordion-item ">
+                                <div class="accordion-header" id="headingSix">
+
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#collapseSix" aria-expanded="false" aria-controls="collapseSix">
+                                        <div class="card-title"> My Invites </div>
                                     </button>
                                 </div>
-                                @endif
-                                @else
-                                <div class="ps-5 ms-5">
-                                    <strong> <span class="text-success">Already Joined</span> </strong>
+
+                                <div id="collapseSix" class="accordion-collapse collapse" aria-labelledby="headingSix">
+                                    <div class="accordion-body">
+                                        <div class="table-responsive">
+                                            <table class="table table-border">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Name</th>
+                                                        <th>Email</th>
+                                                        <th>Contact</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @if ($myInvites->count() == 0)
+                                                    <tr>
+                                                        <td colspan="2" class="text-muted text-center">No Invites for
+                                                            current
+                                                            meeting</td>
+                                                    </tr>
+                                                    @else
+                                                    @foreach ($myInvites as $invite)
+                                                    <tr>
+                                                        <td><small class="text-muted">{{ $invite->personName }}</small>
+                                                        </td>
+                                                        <td><small class="text-muted">{{ $invite->personEmail }}</small>
+                                                        <td><small class="text-muted">{{ $invite->personContact
+                                                                }}</small>
+                                                        </td>
+                                                    </tr>
+                                                    @endforeach
+                                                    @endif
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
                                 </div>
-                                @endif
                             </div>
                         </div>
+
+
                     </div>
                 </div>
             </div>
-        </div>
-        @else
-        <div class="row">
+            @else
             <div class="col-md-12">
-                <p class="mt-3 text-muted text-center"> <b> No Training Workshop for now. </b></p>
+                <div class="alert alert-info" role="alert">
+                    No upcoming circle meeting found
+                </div>
+            </div>
+            @endif
+        </div>
+    </div>
+
+
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card-title"><b>Upcoming Training Workshops</b></div>
+            <div class="card border-0 shadow workshopCard">
+                {{-- {{$nearestTraining}} --}}
+                @if ($nearestTraining)
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-10">
+                            <h4 class="card-title">{{ $nearestTraining->title }}</h4>
+                        </div>
+
+                        <div class="col-md-2 pt-3 text-muted text-end">
+                            <b>Date : </b> {{ \Carbon\Carbon::parse($nearestTraining->date)->format('j M Y')
+                            }} <br>
+                            <b>Time :</b> {{ $nearestTraining->time }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-8 mt-4">
+                            <p class="text-muted"><strong>Trainer Details:</strong><br>
+                                <small class="fw-italic text-muted pt-2 fw-italic">
+                                    {{ $nearestTraining->trainersTrainings->user->firstName ?? '-' }}
+                                    {{ $nearestTraining->trainersTrainings->user->lastName ?? '-' }}
+                                </small>
+                                <br>
+                                <small class="text-muted">
+                                    {{ $nearestTraining->trainersTrainings->user->email ?? '-' }}
+                                </small>
+                            </p>
+                        </div>
+                        <div class="col-md-4">
+                            @if (count($findRegister) == 0)
+                            @if ($nearestTraining->fees == 0)
+                            <h5 class="text-muted text-end me-4 pt-5">Free</h5>
+                            <button type="button" class="btn btn-bg-blue btn-md" data-bs-toggle="modal"
+                                data-bs-target="#staticBackdrop">
+                                Register
+                            </button>
+                            @else
+                            <h5 class="text-muted text-end me-4 pt-3"> ₹
+                                {{ $nearestTraining->fees }}
+                            </h5>
+                            <div class="d-flex justify-content-end">
+                                <button type="button" class="btn btn-bg-blue btn-md " data-bs-toggle="modal"
+                                    data-bs-target="#staticBackdrop">
+                                    Join Now
+                                </button>
+                            </div>
+                            @endif
+                            @else
+                            <div class="d-flex justify-content-end">
+                                <div class="ps-5 ms-5 mt-5">
+                                    <strong> <span class="text-success">Already Joined</span> </strong>
+                                </div>
+                            </div>
+                            @endif
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-    @endif
-    @endrole
-
-
-
-
-    @role('Admin')
+    @else
     <div class="row">
-        <div class="col-md-4">
-            <a href="{{ route('schedule.dashIndex') }}" class="card-link">
-                <div class="card">
-                    <div class="card-header">
-                        <b>Upcoming Circle Meetings</b>
-                        <i class="bi bi-calendar3"
-                            style="display: inline-block; float: right; color: rgb(255, 187, 0);"></i>
-                    </div>
-                    <div class="card-body">
-                        @if (session('status'))
-                        <div class="alert alert-success" role="alert">
-                            {{ session('status') }}
-                        </div>
-                        @endif
-                        {{-- <h2>{{ $count }}</h2> --}}
-                    </div>
-                </div>
-            </a>
-        </div>
-
-        <div class="col-md-4">
-            <a href="{{ route('pendingPayments.index') }}" class="card-link">
-                <div class="card">
-                    <div class="card-header">
-                        <b>Pending Payments</b>
-                        <i class="bi bi-credit-card"
-                            style="display: inline-block; float: right; color: rgb(255, 187, 0);"></i>
-                    </div>
-                    <div class="card-body">
-                        @if (session('status'))
-                        <div class="alert alert-success" role="alert">
-                            {{ session('status') }}
-                        </div>
-                        @endif
-                        {{-- <h2>{{ $count }}</h2> --}}
-                    </div>
-                </div>
-            </a>
-        </div>
-
-        <div class="col-md-4">
-            <a href="{{ route('maxMeetings.index') }}" class="card-link">
-                <div class="card">
-                    <div class="card-header">
-                        <b>Meetings Leaderboard</b>
-                        <i class="bi bi-bookmark-star"
-                            style="display: inline-block; float: right; color: rgb(255, 187, 0);"></i>
-                    </div>
-                    <div class="card-body">
-                        @if (session('status'))
-                        <div class="alert alert-success" role="alert">
-                            {{ session('status') }}
-                        </div>
-                        @endif
-                    </div>
-                </div>
-            </a>
-        </div>
-
-        <div class="col-md-4">
-            <a href="{{ route('maxBusiness.index') }}" class="card-link">
-                <div class="card">
-                    <div class="card-header">
-                        <b>Business Leaderboard</b>
-                        <i class="bi bi-bookmark-star"
-                            style="display: inline-block; float: right; color: rgb(255, 187, 0);"></i>
-                    </div>
-                    <div class="card-body">
-                        @if (session('status'))
-                        <div class="alert alert-success" role="alert">
-                            {{ session('status') }}
-                        </div>
-                        @endif
-                        {{-- <h2>{{ $count }}</h2> --}}
-                    </div>
-                </div>
-            </a>
-        </div>
-
-        <div class="col-md-4">
-            <a href="{{ route('maxReference.index') }}" class="card-link">
-                <div class="card">
-                    <div class="card-header">
-                        <b>Reference Leaderboard</b>
-                        <i class="bi bi-bookmark-star"
-                            style="display: inline-block; float: right; color: rgb(255, 187, 0);"></i>
-                    </div>
-                    <div class="card-body">
-                        @if (session('status'))
-                        <div class="alert alert-success" role="alert">
-                            {{ session('status') }}
-                        </div>
-                        @endif
-                        {{-- <h2>{{ $count }}</h2> --}}
-                    </div>
-                </div>
-            </a>
-        </div>
-
-        <div class="col-md-4">
-            <a href="{{ route('maxRefferal.index') }}" class="card-link">
-                <div class="card">
-                    <div class="card-header">
-                        <b>Referral Leaderboard</b>
-                        <i class="bi bi-bookmark-star"
-                            style="display: inline-block; float: right; color: rgb(255, 187, 0);"></i>
-                    </div>
-                    <div class="card-body">
-                        @if (session('status'))
-                        <div class="alert alert-success" role="alert">
-                            {{ session('status') }}
-                        </div>
-                        @endif
-                        {{-- <h2>{{ $count }}</h2> --}}
-                    </div>
-                </div>
-            </a>
-        </div>
-
-        <div class="col-md-4">
-            <a href="{{ route('maxVisitor.index') }}" class="card-link">
-                <div class="card">
-                    <div class="card-header">
-                        <b>Visitors</b>
-                        <i class="bi bi-people"
-                            style="display: inline-block; float: right; color: rgb(255, 187, 0);"></i>
-                    </div>
-                    <div class="card-body">
-                        @if (session('status'))
-                        <div class="alert alert-success" role="alert">
-                            {{ session('status') }}
-                        </div>
-                        @endif
-                        {{-- <h2>{{ $count }}</h2> --}}
-                    </div>
-                </div>
-            </a>
+        <div class="col-md-12">
+            <p class="mt-3 text-muted text-center"> <b> No Training Workshop for now. </b></p>
         </div>
     </div>
+</div>
+</div>
+</div>
+@endif
+@endrole
+
+
+
+
+@role('Admin')
+<div class="row">
+    <div class="col-md-4">
+        <a href="{{ route('schedule.dashIndex') }}" class="card-link">
+            <div class="card">
+                <div class="card-header">
+                    <b>Upcoming Circle Meetings</b>
+                    <i class="bi bi-calendar3"
+                        style="display: inline-block; float: right; color: rgb(255, 187, 0);"></i>
+                </div>
+                <div class="card-body">
+                    @if (session('status'))
+                    <div class="alert alert-success" role="alert">
+                        {{ session('status') }}
+                    </div>
+                    @endif
+                    {{-- <h2>{{ $count }}</h2> --}}
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-md-4">
+        <a href="{{ route('pendingPayments.index') }}" class="card-link">
+            <div class="card">
+                <div class="card-header">
+                    <b>Pending Payments</b>
+                    <i class="bi bi-credit-card"
+                        style="display: inline-block; float: right; color: rgb(255, 187, 0);"></i>
+                </div>
+                <div class="card-body">
+                    @if (session('status'))
+                    <div class="alert alert-success" role="alert">
+                        {{ session('status') }}
+                    </div>
+                    @endif
+                    {{-- <h2>{{ $count }}</h2> --}}
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-md-4">
+        <a href="{{ route('maxMeetings.index') }}" class="card-link">
+            <div class="card">
+                <div class="card-header">
+                    <b>Meetings Leaderboard</b>
+                    <i class="bi bi-bookmark-star"
+                        style="display: inline-block; float: right; color: rgb(255, 187, 0);"></i>
+                </div>
+                <div class="card-body">
+                    @if (session('status'))
+                    <div class="alert alert-success" role="alert">
+                        {{ session('status') }}
+                    </div>
+                    @endif
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-md-4">
+        <a href="{{ route('maxBusiness.index') }}" class="card-link">
+            <div class="card">
+                <div class="card-header">
+                    <b>Business Leaderboard</b>
+                    <i class="bi bi-bookmark-star"
+                        style="display: inline-block; float: right; color: rgb(255, 187, 0);"></i>
+                </div>
+                <div class="card-body">
+                    @if (session('status'))
+                    <div class="alert alert-success" role="alert">
+                        {{ session('status') }}
+                    </div>
+                    @endif
+                    {{-- <h2>{{ $count }}</h2> --}}
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-md-4">
+        <a href="{{ route('maxReference.index') }}" class="card-link">
+            <div class="card">
+                <div class="card-header">
+                    <b>Reference Leaderboard</b>
+                    <i class="bi bi-bookmark-star"
+                        style="display: inline-block; float: right; color: rgb(255, 187, 0);"></i>
+                </div>
+                <div class="card-body">
+                    @if (session('status'))
+                    <div class="alert alert-success" role="alert">
+                        {{ session('status') }}
+                    </div>
+                    @endif
+                    {{-- <h2>{{ $count }}</h2> --}}
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-md-4">
+        <a href="{{ route('maxRefferal.index') }}" class="card-link">
+            <div class="card">
+                <div class="card-header">
+                    <b>Referral Leaderboard</b>
+                    <i class="bi bi-bookmark-star"
+                        style="display: inline-block; float: right; color: rgb(255, 187, 0);"></i>
+                </div>
+                <div class="card-body">
+                    @if (session('status'))
+                    <div class="alert alert-success" role="alert">
+                        {{ session('status') }}
+                    </div>
+                    @endif
+                    {{-- <h2>{{ $count }}</h2> --}}
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-md-4">
+        <a href="{{ route('maxVisitor.index') }}" class="card-link">
+            <div class="card">
+                <div class="card-header">
+                    <b>Visitors</b>
+                    <i class="bi bi-people" style="display: inline-block; float: right; color: rgb(255, 187, 0);"></i>
+                </div>
+                <div class="card-body">
+                    @if (session('status'))
+                    <div class="alert alert-success" role="alert">
+                        {{ session('status') }}
+                    </div>
+                    @endif
+                    {{-- <h2>{{ $count }}</h2> --}}
+                </div>
+            </div>
+        </a>
+    </div>
+</div>
 </div>
 @endrole
 

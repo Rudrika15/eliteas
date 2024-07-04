@@ -29,26 +29,28 @@
         </div>
 
         <!-- Table with stripped rows -->
-        <table class="table datatable">
-            <thead>
-                <tr>
-                    <th>Name of Visitor</th>
-                    {{-- <th>Circle Name</th> --}}
-                    {{-- <th>No of Referral</th> --}}
-                </tr>
-            </thead>
-            <tbody>
-                {{-- @foreach ($refGiver as $refGiverData)
-                <tr>
-                    <td>{{ $refGiverData['user']->firstName }} {{ $refGiverData['user']->lastName ?? '-' }} <i
-                            class="bi bi-trophy" style="color: gold;"></i></td> --}}
-                    {{-- <td>{{ $refGiverData['user']->circle->circleName ?? '-' }}</td> --}}
-                    {{-- <td>{{ $refGiverData['count'] }}</td>
-                </tr>
-                @endforeach --}}
-            </tbody>
-        </table>
-        <!-- End Table with stripped rows -->
+        <div class="table-responsive">
+            <table class="table datatable">
+                <thead>
+                    <tr>
+                        <th>Name of Visitor</th>
+                        {{-- <th>Circle Name</th> --}}
+                        {{-- <th>No of Referral</th> --}}
+                    </tr>
+                </thead>
+                <tbody>
+                    {{-- @foreach ($refGiver as $refGiverData)
+                    <tr>
+                        <td>{{ $refGiverData['user']->firstName }} {{ $refGiverData['user']->lastName ?? '-' }} <i
+                                class="bi bi-trophy" style="color: gold;"></i></td> --}}
+                        {{-- <td>{{ $refGiverData['user']->circle->circleName ?? '-' }}</td> --}}
+                        {{-- <td>{{ $refGiverData['count'] }}</td>
+                    </tr>
+                    @endforeach --}}
+                </tbody>
+            </table>
+            <!-- End Table with stripped rows -->
+        </div>
     </div>
 </div>
 @endsection

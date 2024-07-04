@@ -101,20 +101,28 @@ class OTPLoginController extends Controller
     {
         $request->validate([
             'phone' => 'required',
-            'otp' => 'required'
+            'otp1' => 'required|digits:1',
+            'otp2' => 'required|digits:1',
+            'otp3' => 'required|digits:1',
+            'otp4' => 'required|digits:1',
+            'otp5' => 'required|digits:1',
+            'otp6' => 'required|digits:1'
         ]);
+
+        $otp = $request->otp1 . $request->otp2 . $request->otp3 . $request->otp4 . $request->otp5 . $request->otp6;
 
         // Fetch the user based on phone number
         $user = User::where('contactNo', $request->phone)->first();
-        $otpRecord = Otp::where('mobileNo', $request->phone)->where('otp', $request->otp)->first();
+        $otpRecord = Otp::where('mobileNo', $request->phone)->where('otp', $otp)->first();
 
         if ($user && $otpRecord && Carbon::parse($otpRecord->time)->addMinutes(10)->isFuture()) {
             Auth::login($user);
             return redirect()->intended('/'); // redirect to the intended page after login
         }
 
-        return back()->withErrors(['otp' => 'Invalid OTP or phone number, or OTP has expired.']);
+        return redirect()->route('otp.verify')->withErrors(['message' => 'Invalid OTP or OTP has expired.']);
     }
+
 
     // Resend OTP
     public function resendOTP(Request $request)

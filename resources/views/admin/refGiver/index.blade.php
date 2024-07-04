@@ -62,12 +62,34 @@
                                             <i class="bi bi-pen"></i>
                                             <span class="btn-text">Edit Reference Details</span>
                                         </a>
-                                        <a onclick="return confirm('Do You Want To Delete It')"
+                                        <a id="deleteRefGiver{{ $refGiverData->id }}"
                                             href="{{ route('refGiver.delete', $refGiverData->id) }}"
-                                            class="btn btn-danger btn-sm btn-tooltip">
+                                            class="btn btn-danger btn-sm btn-tooltip" data-toggle="tooltip"
+                                            data-placement="top" title="Delete Reference Giver">
                                             <i class="bi bi-trash"></i>
                                             <span class="btn-text">Delete</span>
                                         </a>
+
+                                        <script>
+                                            $(document).ready(function() {
+                                                $('#deleteRefGiver{{ $refGiverData->id }}').click(function(e) {
+                                                    e.preventDefault();
+                                                    Swal.fire({
+                                                        title: 'Are you sure?',
+                                                        text: "You won't be able to revert this!",
+                                                        icon: 'warning',
+                                                        showCancelButton: true,
+                                                        confirmButtonColor: '#1d2856',
+                                                        cancelButtonColor: '#d33',
+                                                        confirmButtonText: 'Yes, delete it!'
+                                                    }).then((result) => {
+                                                        if (result.isConfirmed) {
+                                                            window.location.href = $(this).attr('href');
+                                                        }
+                                                    });
+                                                });
+                                            });
+                                        </script>
                                     </td>
                                 </tr>
                                 @endforeach

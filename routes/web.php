@@ -414,7 +414,6 @@ Route::group(['middleware' => ['auth']], function () {
 
 //login with otp
 
-// web.php
 Route::get('otp/request', [OTPLoginController::class, 'showOTPRequestForm'])->name('otp.request');
 Route::post('otp/request', [OTPLoginController::class, 'sendOTP']);
 Route::get('otp/verify', [OTPLoginController::class, 'showOTPVerificationForm'])->name('otp.verify');

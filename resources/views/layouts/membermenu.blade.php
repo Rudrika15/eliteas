@@ -54,13 +54,13 @@
     </ul>
 
     <li class="nav-item">
-        <a class="nav-link " href="{{ route('subscription.memberSubscription') }}">
+        <a class="nav-link collapsed" href="{{ route('subscription.memberSubscription') }}">
             <i class="bi bi-substack" style="color: #e76a35"></i>
             <span class="text-blue">My Subscriptions</span>
         </a>
     </li>
     <li class="nav-item">
-        <a class="nav-link " href="{{ route('myAllPayments.index') }}">
+        <a class="nav-link collapsed" href="{{ route('myAllPayments.index') }}">
             <i class="bi bi-currency-rupee" style="color: #e76a35"></i>
             <span class="text-blue">My Payment History</span>
         </a>
@@ -68,7 +68,7 @@
 
     @if(Auth::user()->hasRole('Attendance Handler'))
     <li class="nav-item">
-        <a class="nav-link " href="{{ route('attendance.meetingSchedules') }}">
+        <a class="nav-link collapsed" href="{{ route('attendance.meetingSchedules') }}">
             <i class="bi bi-person-video2" style="color: #e76a35"></i>
             <span class="text-blue">C M Attendances</span>
         </a>
@@ -77,7 +77,7 @@
 
     @if(Auth::user()->hasRole('Circle Admin'))
     <li class="nav-item">
-        <a class="nav-link " href="{{ route('circleAdminPaymentHistory.index') }}">
+        <a class="nav-link collapsed" href="{{ route('circleAdminPaymentHistory.index') }}">
             <i class="bi bi-cash-stack" style="color: #e76a35"></i>
             <span class="text-blue">All Member Payment History</span>
         </a>
