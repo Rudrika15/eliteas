@@ -59,7 +59,7 @@
                             </div><!-- End Logo -->
 
                             <div class="card mb-3 res-box"
-                                style="width: 20rem; background-image: url('{{ asset('img/b2.jpg') }}');">
+                                style="width: 20rem; height: 100%; background-image: url('{{ asset('img/b2.jpg') }}'); background-size: cover; background-position: center;">
                                 <div class="card-body">
                                     <h5 class="card-title text-center pb-0 fs-4 text-white mb-4">Request OTP</h5>
 
@@ -85,7 +85,7 @@
                                         </div>
 
                                         <div class="d-grid mt-5">
-                                            <button type="submit" class="btn btn-primary">Send OTP</button>
+                                            <button type="submit" class="btn btn-bg-blue">Send OTP</button>
                                         </div>
                                     </form>
                                     <!-- End OTP Request Form -->
