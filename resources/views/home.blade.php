@@ -50,9 +50,9 @@
     <div class="row">
         <div class="col-md-4">
             <a href="{{ route('maxMeetings.index') }}" class="card-link">
-                <div class="card">
+                <div class="card shadow">
                     <div class="card-header">
-                        <b>Meetings Leaderboard</b>
+                        <b style="color: #1d2856;">Meetings Leaderboard</b>
                         <i class="bi bi-bookmark-star"
                             style="display: inline-block; float: right; color: rgb(255, 187, 0);"></i>
                     </div>
@@ -69,9 +69,9 @@
 
         <div class="col-md-4">
             <a href="{{ route('maxBusiness.index') }}" class="card-link">
-                <div class="card">
+                <div class="card shadow">
                     <div class="card-header">
-                        <b>Business Leaderboard</b>
+                        <b style="color: #1d2856;">Business Leaderboard</b>
                         <i class="bi bi-bookmark-star"
                             style="display: inline-block; float: right; color: rgb(255, 187, 0);"></i>
                     </div>
@@ -89,9 +89,9 @@
 
         <div class="col-md-4">
             <a href="{{ route('maxReference.index') }}" class="card-link">
-                <div class="card">
+                <div class="card shadow">
                     <div class="card-header">
-                        <b>Reference Leaderboard</b>
+                        <b style="color: #1d2856;">Reference Leaderboard</b>
                         <i class="bi bi-bookmark-star"
                             style="display: inline-block; float: right; color: rgb(255, 187, 0);"></i>
                     </div>
@@ -109,9 +109,9 @@
 
         <div class="col-md-4">
             <a href="{{ route('maxRefferal.index') }}" class="card-link">
-                <div class="card">
+                <div class="card shadow">
                     <div class="card-header">
-                        <b>Referral Leaderboard</b>
+                        <b style="color: #1d2856;">Referral Leaderboard</b>
                         <i class="bi bi-bookmark-star"
                             style="display: inline-block; float: right; color: rgb(255, 187, 0);"></i>
                     </div>
@@ -129,9 +129,9 @@
 
         <div class="col-md-4">
             <a href="{{ route('maxVisitor.index') }}" class="card-link">
-                <div class="card">
+                <div class="card shadow">
                     <div class="card-header">
-                        <b>Visitors</b>
+                        <b style="color: #1d2856;">Visitors</b>
                         <i class="bi bi-people"
                             style="display: inline-block; float: right; color: rgb(255, 187, 0);"></i>
                     </div>
@@ -198,7 +198,7 @@
                                 <div id="collapseSix" class="accordion-collapse collapse" aria-labelledby="headingSix">
                                     <div class="accordion-body">
                                         <div class="table-responsive">
-                                            <table class="table table-border">
+                                            <table class="table table-border datatable table-striped table-hover">
                                                 <thead>
                                                     <tr>
                                                         <th>Name</th>
@@ -331,9 +331,9 @@
 <div class="row">
     <div class="col-md-4">
         <a href="{{ route('schedule.dashIndex') }}" class="card-link">
-            <div class="card">
+            <div class="card shadow">
                 <div class="card-header">
-                    <b>Upcoming Circle Meetings</b>
+                    <b style="color: #1d2856;">Upcoming Circle Meetings</b>
                     <i class="bi bi-calendar3"
                         style="display: inline-block; float: right; color: rgb(255, 187, 0);"></i>
                 </div>
@@ -351,9 +351,9 @@
 
     <div class="col-md-4">
         <a href="{{ route('pendingPayments.index') }}" class="card-link">
-            <div class="card">
+            <div class="card shadow">
                 <div class="card-header">
-                    <b>Pending Payments</b>
+                    <b style="color: #1d2856;">Pending Payments</b>
                     <i class="bi bi-credit-card"
                         style="display: inline-block; float: right; color: rgb(255, 187, 0);"></i>
                 </div>
@@ -371,9 +371,9 @@
 
     <div class="col-md-4">
         <a href="{{ route('maxMeetings.index') }}" class="card-link">
-            <div class="card">
+            <div class="card shadow">
                 <div class="card-header">
-                    <b>Meetings Leaderboard</b>
+                    <b style="color: #1d2856;">Meetings Leaderboard</b>
                     <i class="bi bi-bookmark-star"
                         style="display: inline-block; float: right; color: rgb(255, 187, 0);"></i>
                 </div>
@@ -390,9 +390,9 @@
 
     <div class="col-md-4">
         <a href="{{ route('maxBusiness.index') }}" class="card-link">
-            <div class="card">
+            <div class="card shadow">
                 <div class="card-header">
-                    <b>Business Leaderboard</b>
+                    <b style="color: #1d2856;">Business Leaderboard</b>
                     <i class="bi bi-bookmark-star"
                         style="display: inline-block; float: right; color: rgb(255, 187, 0);"></i>
                 </div>
@@ -410,9 +410,9 @@
 
     <div class="col-md-4">
         <a href="{{ route('maxReference.index') }}" class="card-link">
-            <div class="card">
+            <div class="card shadow">
                 <div class="card-header">
-                    <b>Reference Leaderboard</b>
+                    <b style="color: #1d2856;">Reference Leaderboard</b>
                     <i class="bi bi-bookmark-star"
                         style="display: inline-block; float: right; color: rgb(255, 187, 0);"></i>
                 </div>
@@ -430,9 +430,9 @@
 
     <div class="col-md-4">
         <a href="{{ route('maxRefferal.index') }}" class="card-link">
-            <div class="card">
+            <div class="card shadow">
                 <div class="card-header">
-                    <b>Referral Leaderboard</b>
+                    <b style="color: #1d2856;">Referral Leaderboard</b>
                     <i class="bi bi-bookmark-star"
                         style="display: inline-block; float: right; color: rgb(255, 187, 0);"></i>
                 </div>
@@ -450,9 +450,9 @@
 
     <div class="col-md-4">
         <a href="{{ route('maxVisitor.index') }}" class="card-link">
-            <div class="card">
+            <div class="card shadow">
                 <div class="card-header">
-                    <b>Visitors</b>
+                    <b style="color: #1d2856;">Visitors</b>
                     <i class="bi bi-people" style="display: inline-block; float: right; color: rgb(255, 187, 0);"></i>
                 </div>
                 <div class="card-body">
@@ -725,7 +725,7 @@
                     <div class="mb-3">
                         <label for="personContact" class="form-label">Contact Number</label>
                         <input type="tel" class="form-control" name="personContact" id="personContact"
-                            pattern="[0-9]{10}" required>
+                            pattern="[0-9]{10}" maxlength="10" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" required>
                         <span class="error-message text-danger"></span> <!-- Error message placeholder -->
                     </div>
                     <div class="mb-3">

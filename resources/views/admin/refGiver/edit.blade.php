@@ -185,7 +185,7 @@
                             <input type="text"
                                 class="form-control @error('contactNo') is-invalid @enderror selectedMemberContact"
                                 id="contactPersonContact" name="contactNo" value="{{ $refGiver->contactNo }}"
-                                placeholder="Contact No">
+                                placeholder="Contact No" maxlength="10" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" >
                             <label for="contactNo">Contact No</label>
                             @error('contactNo')
                                 <div class="invalid-tooltip">

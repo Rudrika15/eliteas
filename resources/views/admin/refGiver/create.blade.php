@@ -170,7 +170,7 @@
                         <div class="form-floating mt-3">
                             <input type="text"
                                 class="form-control @error('contactNo') is-invalid @enderror selectedMemberContact"
-                                id="contactPersonContact" name="contactNo" placeholder="Contact No">
+                                id="contactPersonContact" name="contactNo" placeholder="Contact No" maxlength="10" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" >
                             <label for="contactNo">Contact No</label>
                             @error('contactNo')
                                 <div class="invalid-tooltip">

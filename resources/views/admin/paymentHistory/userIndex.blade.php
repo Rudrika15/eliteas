@@ -32,7 +32,7 @@
 
         <!-- Table with stripped rows -->
         <div class="table-responsive">
-            <table class="table datatable">
+            <table class="table datatable table-striped table-hover">
                 <thead>
                     <tr>
                         <th>Payment Mode</th>

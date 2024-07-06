@@ -25,7 +25,7 @@
 <div class="card">
     <div class="card-body">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h4 class="card-title">1:1 Meeting</h4>
+            <h4 class="card-title">Add Past 1:1 Meeting Data</h4>
             <a href="{{ route('circlecall.create') }}" class="btn btn-bg-orange btn-sm mt-3 btn-tooltip">
                 <i class="bi bi-plus-circle"></i>
                 <span class="btn-text">Create Circle Call</span>
@@ -34,7 +34,7 @@
         <hr class="mb-4">
         <!-- Table with stripped rows -->
         <div class="table-responsive">
-            <table class="table table-striped table-hover mb-4">
+            <table class="table datatable table-striped table-hover mb-4">
                 <thead>
                     <tr>
                         <th>Meeting Person</th>
@@ -60,8 +60,7 @@
                                 <span class="btn-text">Edit Circle Call</span>
                                 <i class="bi bi-pen"></i>
                             </a>
-                            <a onclick="return confirm('Do You Want To Delete It')"
-                                href="{{ route('circlecall.delete', $circlecallData->id) }}"
+                            <a href="{{ route('circlecall.delete', $circlecallData->id) }}"
                                 class="btn btn-danger btn-sm btn-tooltip">
                                 <span class="btn-text">Delete</span>
                                 <i class="bi bi-trash"></i>

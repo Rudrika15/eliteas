@@ -103,7 +103,7 @@ class CircleCallController extends Controller
             ->get();
         return response()->json($members);
     }
-    
+
     function getMember(Request $request): JsonResponse
     {
         $query = $request->input('q');
@@ -176,13 +176,6 @@ class CircleCallController extends Controller
 
     public function store(Request $request)
     {
-        // return $request;
-        $this->validate($request, [
-            'meetingPersonId' => 'required',
-            'meetingPlace' => 'required',
-            'date' => 'required',
-            'remarks' => 'required',
-        ]);
         try {
             $circlecall = new CircleCall();
             $circlecall->memberId = Auth::user()->id;
@@ -192,7 +185,6 @@ class CircleCallController extends Controller
             $circlecall->remarks = $request->remarks;
             $circlecall->status = 'Active';
 
-
             $circlecall->save();
 
             return redirect()->route('circlecall.index')->with('success', 'Circle Call Created Successfully!');
@@ -201,6 +193,7 @@ class CircleCallController extends Controller
             return view('servererror');
         }
     }
+
 
     public function edit($id)
     {
@@ -231,18 +224,9 @@ class CircleCallController extends Controller
 
     public function update(Request $request)
     {
-        // return $request->all();
-        $this->validate($request, [
-            // 'memberId' => 'required',
-            'meetingPersonId' => 'required',
-            'meetingPlace' => 'required',
-            'remarks' => 'required',
-        ]);
-
         try {
             $id = $request->id;
             $circlecall = CircleCall::find($id);
-            // $circlecall->memberId = $request->memberId;
             $circlecall->meetingPersonId = $request->meetingPersonId;
             $circlecall->meetingPlace = $request->meetingPlace;
             $circlecall->remarks = $request->remarks;
@@ -250,13 +234,13 @@ class CircleCallController extends Controller
 
             $circlecall->save();
 
-
             return redirect()->route('circlecall.index')->with('success', 'Circle Call Updated Successfully!');
         } catch (\Throwable $th) {
             throw $th;
             return view('servererror');
         }
     }
+
 
     function delete($id)
     {

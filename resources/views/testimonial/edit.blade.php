@@ -33,7 +33,7 @@
     <form class="m-3 needs-validation" id="testimonialForm" enctype="multipart/form-data" method="post"
         action="{{ route('testimonial.update', $myTestimonial->id) }}" novalidate>
         @csrf
-        <input type="hiddden" name="id" value="{{ $myTestimonial->id }}">
+        <input type="hidden" name="id" value="{{ $myTestimonial->id }}">
         @include('testimonialCircleMember')
 
         <div class="row mb-3 ">

@@ -34,11 +34,12 @@
     <link href="{{ asset('vendor/simple-datatables/style.css') }}" rel="stylesheet" />
     <!-- Template Main CSS File -->
     <link href="{{ asset('css/style.css') }}" rel="stylesheet" />
-    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
-        crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"
+        integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
 </head>
 
 <body class="" style=" mix-blend-mode: multiply;">
+{{-- <body class="" style=" mix-blend-mode: multiply; background: linear-gradient(to right, #1d2856, #e76a35);"> --}}
     <header>
         <!-- place navbar here -->
     </header>
@@ -46,17 +47,28 @@
 
         <div class="pt-5 px-3">
             <div class="row">
-                <div class="col-md-1">
-                    <img src="{{ asset('img/logo2.jpg') }}" alt="ELITEAs" class="d-none d-lg-block pb-2"
-                        width="100">
+                <div class="col-md-1 d-flex justify-content-center align-items-center">
+                    <img src="{{ asset('img/logo4.png') }}" alt="UBN" class="pb-2" width="100"
+                        style="max-width: 100%; height: auto;">
                 </div>
-                <div class="col-md-11 pt-3">
-                    <input type="text" name="query" id="searchInput"
-                        placeholder="Enter circle name or member name..." class="form-control"
-                        title="Enter search keyword">
+                <div class="col-md-10 pt-3">
+                    <input type="text" name="query" id="searchInput" placeholder="Enter circle name or member name..."
+                        class="form-control" title="Enter search keyword">
+                </div>
+                <div class="col-md-1 d-flex justify-content-center align-items-center mb-4">
+                    <a href="{{ route('home') }}" class="btn btn-bg-orange btn-sm">BACK</a>
                 </div>
             </div>
 
+            <style>
+                @media (max-width: 768px) {
+                    .col-md-1 {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                    }
+                }
+            </style>
         </div>
         <div class="container pt-5">
             <h3 class="text-muted mb-3">
@@ -66,7 +78,17 @@
             <div class="">
                 <div id="searchResults">
                 </div>
+                {{-- @auth
+                <div class="mb-3">
+                    You are logged in as {{ Auth::user()->id }}
+                </div>
+                @endauth
 
+                @guest
+                <div class="mb-3">
+                    You are not logged in
+                </div>
+                @endguest --}}
 
             </div>
         </div>
@@ -343,24 +365,24 @@
     <!-- end -->
 
     @if (Session::get('success'))
-        <script>
-            Swal.fire({
+    <script>
+        Swal.fire({
                 icon: 'success',
                 title: "{{ Session::get('success') }}",
                 showConfirmButton: true,
 
             });
-        </script>
+    </script>
     @endif
 
     @if (Session::get('error'))
-        <script>
-            Swal.fire({
+    <script>
+        Swal.fire({
                 icon: 'error',
                 title: "{{ Session::get('error') }}",
                 showConfirmButton: true,
             });
-        </script>
+    </script>
     @endif
 </body>
 

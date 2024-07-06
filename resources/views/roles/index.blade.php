@@ -33,42 +33,45 @@
         </div>
 
         <!-- Table with stripped rows -->
-        <table class="table datatable">
-            <thead>
-                <tr>
-                    <th>No</th>
-                    <th>Name</th>
-                    <th width="280px">Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($roles as $key => $role)
-                <tr>
-                    <td>{{ ++$i }}</td>
-                    <td>{{ $role->name }}</td>
-                    <td>
-                        <a class="btn btn-bg-orange btn-sm" href="{{ route('roles.show', $role->id) }}">
-                            <i class="bi bi-eye"></i>
-                        </a>
-                        @can('role-edit')
-                        <a class="btn btn-bg-blue btn-sm" href="{{ route('roles.edit', $role->id) }}">
-                            <i class="bi bi-pen"></i>
-                        </a>
-                        @endcan
-                        @can('role-delete')
-                        {!! Form::open(['method' => 'DELETE', 'route' => ['roles.destroy', $role->id], 'style' =>
-                        'display:inline'])
-                        !!}
-                        <button type="submit" class="btn btn-danger btn-sm">
-                            <i class="bi bi-trash"></i>
-                        </button>
-                        {!! Form::close() !!}
-                        @endcan
-                    </td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
+        <div class="table-responsive">
+            <table class="table datatable table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Name</th>
+                        <th width="280px">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($roles as $key => $role)
+                    <tr>
+                        <td>{{ ++$i }}</td>
+                        <td>{{ $role->name }}</td>
+                        <td>
+                            <a class="btn btn-bg-orange btn-sm" href="{{ route('roles.show', $role->id) }}">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            @can('role-edit')
+                            <a class="btn btn-bg-blue btn-sm" href="{{ route('roles.edit', $role->id) }}">
+                                <i class="bi bi-pen"></i>
+                            </a>
+                            @endcan
+                            @can('role-delete')
+                            {!! Form::open(['method' => 'DELETE', 'route' => ['roles.destroy', $role->id], 'style' =>
+                            'display:inline'])
+                            !!}
+                            <button type="submit" class="btn btn-danger btn-sm">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                            {!! Form::close() !!}
+                            @endcan
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
         <!-- End Table with stripped rows -->
     </div>
-    @endsection
+</div>
+@endsection

@@ -26,14 +26,14 @@
     <div class="card-body">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h4 class="card-title">Trainer List</h4>
-            {{-- <a href="{{ route('trainersListExport.export') }}" class="btn btn-bg-orange"> --}}
+            <a href="{{ route('home') }}" class="btn btn-bg-orange btn-sm">Back
                 {{-- <i class="bi bi-file-earmark-excel"></i> <!-- Bootstrap Icon for Excel File --> --}}
             </a>
         </div>
 
         <!-- Table with stripped rows -->
         <div class="table-responsive">
-            <table class="table datatable">
+            <table class="table datatable table-striped table-hover">
                 <thead>
                     <tr>
                         <th>Training Name</th>

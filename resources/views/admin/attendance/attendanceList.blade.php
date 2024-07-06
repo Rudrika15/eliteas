@@ -27,7 +27,7 @@
         <h5 class="card-title">Attendance List</h5>
         <a href="{{ route('attendance.meetingSchedules') }}" class="btn btn-bg-orange btn-sm">BACK</a>
     </div>
-    <table class="table datatable">
+    <table class="table datatable table-striped table-hover">
         <thead>
             <tr>
                 <th>Attended Person Name</th>

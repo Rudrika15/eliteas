@@ -186,9 +186,10 @@ class HomeController extends Controller
     public function search(Request $request)
     {
         $query = $request->input('query');
-        $members = Member::where('firstName', 'like', '%' . $query . '%')
+        $members = Member::where('userId', '!=', Auth::user()->id)
+            ->where('firstName', 'like', '%' . $query . '%')
             ->orWhere('lastName', 'like', '%' . $query . '%')
-            ->orWhereHas('circle', function ($q) use ($query) {
+            ->whereHas('circle', function ($q) use ($query) {
                 $q->where('circleName', 'like', '%' . $query . '%');
             })
             ->with('user', 'circle')

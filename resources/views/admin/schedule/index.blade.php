@@ -45,7 +45,7 @@
 
         <!-- Table with stripped rows -->
         <div class="table-responsive">
-            <table class="table datatable" id="scheduleTable">
+            <table class="table datatable table-striped table-hover" id="scheduleTable">
                 <thead>
                     <tr>
                         <th>Circle Name</th>

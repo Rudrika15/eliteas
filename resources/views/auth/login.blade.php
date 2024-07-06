@@ -102,7 +102,7 @@
                                         </div>
 
                                         <div class="d-grid">
-                                            <button type="submit" class="btn btn-primary ">Login</button>
+                                            <button type="submit" class="btn btn-bg-blue ">Login</button>
                                         </div>
                                         <div class="mt-3 text-center">
                                             <a href="{{ route('otp.request') }}" class="text-white">Login with OTP</a>

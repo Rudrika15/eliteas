@@ -33,7 +33,7 @@
 
         <!-- Table with stripped rows -->
         <div class="table-responsive">
-            <table class="table datatable">
+            <table class="table datatable table-striped table-hover">
                 <thead>
                     <tr>
                         <th>Membership Type</th>
@@ -47,7 +47,17 @@
                     <tr>
                         <td>{{ $subscription->membershipType ?? '-' }}</td>
                         <td>{{ $subscription->allPayments->amount ?? '-' }}</td>
-                        <td>{{ $subscription->validity ?? '-' }}</td>
+                        <td>
+                            @php
+                            $validityDate = $subscription->validity ? \Carbon\Carbon::parse($subscription->validity) :
+                            null;
+                            @endphp
+                            <span class="badge
+                                {{ $validityDate && $validityDate->isPast() ? 'bg-danger' : ($validityDate ? 'bg-success' : 'bg-secondary') }}
+                                ">
+                                {{ $validityDate ? $validityDate->format('d-M-Y') : '-' }}
+                            </span>
+                        </td>
                         <td>{{ $subscription->status }}</td>
                     </tr>
                     @endforeach

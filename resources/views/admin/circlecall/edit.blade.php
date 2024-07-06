@@ -6,22 +6,17 @@
 {{-- Message --}}
 @if (Session::has('success'))
 <div class="alert alert-success alert-dismissible" role="alert">
-    <button type="button" class="close" data-dismiss="alert">
-        {{-- <i class="fa fa-times"></i> --}}
-    </button>
-    <strong>Success !</strong> {{ session('success') }}
+    <button type="button" class="close" data-dismiss="alert"></button>
+    <strong>Success!</strong> {{ session('success') }}
 </div>
 @endif
 
 @if (Session::has('error'))
 <div class="alert alert-danger alert-dismissible" role="alert">
-    <button type="button" class="close" data-dismiss="alert">
-        {{-- <i class="fa fa-times"></i> --}}
-    </button>
-    <strong>Error !</strong> {{ session('error') }}
+    <button type="button" class="close" data-dismiss="alert"></button>
+    <strong>Error!</strong> {{ session('error') }}
 </div>
 @endif
-
 
 <div class="card">
     <div class="card-body d-flex justify-content-between align-items-center">
@@ -35,17 +30,16 @@
         @csrf
         <input type="hidden" name="id" value="{{ $circlecall->id }}">
 
-
         @include('circleMemberMaster')
 
         <div class="row mb-3 mt-3">
             <div class="col-md-12">
                 <div class="form-floating mt-3">
                     <input type="hidden" id="meetingPersonId" name="meetingPersonId"
-                        value="{{ $circlecall->meetingPersonId }}">
+                    value="{{ $circlecall->meetingPersonId }}">
                     <input type="text" class="form-control" readonly id="meetingPersonName" placeholder="Select Member"
-                        value="{{ $circlecall->meetingPerson->firstName }} {{ $circlecall->meetingPerson->lastName }}">
-                    <label for="memberName">Meeting Person Name</label>
+                    value="{{ $circlecall->meetingPerson->firstName }} {{ $circlecall->meetingPerson->lastName }}">
+                    <label for="memberName" style="background-color: transparent;">Meeting Person Name</label>
                     @error('memberId')
                     <div class="invalid-tooltip">
                         {{ $message }}
@@ -53,46 +47,87 @@
                     @enderror
                 </div>
             </div>
-
         </div>
 
-        {{-- <div class="row mb-3"> --}}
-            {{-- <div class="col-md-6"> --}}
-                <div class="form-floating mt-3">
-                    <input type="text" class="form-control @error('meetingPlace') is-invalid @enderror"
-                        id="meetingPlace" name="meetingPlace" placeholder="Meeeting Place Name"
-                        value="{{ $circlecall->meetingPlace }}" required>
-                    <label for="meetingPlace">Meeting Place Name</label>
-                    @error('meetingPlace')
-                    <div class="invalid-tooltip">
-                        {{ $message }}
-                    </div>
-                    @enderror
-                </div>
+        <div class="form-floating mt-3">
+            <input type="text" class="form-control @error('meetingPlace') is-invalid @enderror" id="meetingPlace"
+                name="meetingPlace" placeholder="Meeting Place Name" value="{{ $circlecall->meetingPlace }}" required>
+            <label for="meetingPlace">Meeting Place Name</label>
+            @error('meetingPlace')
+            <div class="invalid-tooltip">
+                {{ $message }}
+            </div>
+            @enderror
+        </div>
 
-                <div class="col-md-6">
-                    <div class="form-floating mt-3">
-                        <input type="date" class="form-control" id="date" name="date"
-                            placeholder="Meeting Date" disabled value="{{ $circlecall->date }}">
-                        <label for="date">Date</label>
-                    </div>
-                </div>
+        <div class="col-md-6">
+            <div class="form-floating mt-3">
+                <input type="date" class="form-control" id="date" name="date" placeholder="Meeting Date" disabled
+                    value="{{ $circlecall->date }}">
+                <label for="date">Date</label>
+            </div>
+        </div>
 
-                <div class="form-floating mt-3">
-                    <input type="text" class="form-control @error('remarks') is-invalid @enderror" id="remarks"
-                        name="remarks" placeholder="Remarks" value="{{ $circlecall->remarks }}" required>
-                    <label for="remarks">Remarks</label>
-                    @error('remarks')
-                    <div class="invalid-tooltip">
-                        {{ $message }}
-                    </div>
-                    @enderror
-                </div>
-                <div class="text-center mt-5 ">
-                    <button type="submit" class="btn btn-bg-blue">Submit</button>
-                    <button type="reset" class="btn btn-bg-orange">Reset</button>
-                </div>
+        <div class="form-floating mt-3">
+            <input type="text" class="form-control @error('remarks') is-invalid @enderror" id="remarks" name="remarks"
+                placeholder="Remarks" value="{{ $circlecall->remarks }}" required>
+            <label for="remarks">Remarks</label>
+            @error('remarks')
+            <div class="invalid-tooltip">
+                {{ $message }}
+            </div>
+            @enderror
+        </div>
 
+        <div class="text-center mt-5">
+            <button type="submit" class="btn btn-bg-blue">Submit</button>
+            <button type="reset" class="btn btn-bg-orange">Reset</button>
+        </div>
     </form><!-- End floating Labels Form -->
 </div>
+
+@endsection
+
+@section('scripts')
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+<script>
+    $(document).ready(function () {
+            $('#callForm').validate({
+                rules: {
+                    meetingPersonId: {
+                        required: true
+                    },
+                    meetingPlace: {
+                        required: true
+                    },
+                    remarks: {
+                        required: true
+                    }
+                },
+                messages: {
+                    meetingPersonId: {
+                        required: "Please select a meeting person."
+                    },
+                    meetingPlace: {
+                        required: "Please enter the meeting place."
+                    },
+                    remarks: {
+                        required: "Please enter remarks."
+                    }
+                },
+                errorElement: 'div',
+                errorPlacement: function (error, element) {
+                    error.addClass('invalid-tooltip');
+                    element.closest('.form-floating').append(error);
+                },
+                highlight: function (element, errorClass, validClass) {
+                    $(element).addClass('is-invalid').removeClass('is-valid');
+                },
+                unhighlight: function (element, errorClass, validClass) {
+                    $(element).addClass('is-valid').removeClass('is-invalid');
+                }
+            });
+        });
+</script>
 @endsection

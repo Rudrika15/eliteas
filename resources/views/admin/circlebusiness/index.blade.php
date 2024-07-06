@@ -3,7 +3,7 @@
 @section('title', 'UBN - Circle Business')
 @section('content')
 
-{{-- Message --}}
+{{-- Message
 @if (Session::has('success'))
 <div class="alert alert-success alert-block">
     <button type="button" class="close" data-dismiss="alert">×</button>
@@ -16,7 +16,7 @@
     <button type="button" class="close" data-dismiss="alert">×</button>
     <strong>Error !</strong> {{ session('error') }}
 </div>
-@endif
+@endif --}}
 
 <div class="container">
     <div class="row">
@@ -30,7 +30,7 @@
                     <hr class="mb-5">
                     <!-- Table with stripped rows -->
                     <div class="table-responsive mt-5">
-                        <table class="table datatable mb-5">
+                        <table class="table datatable table-striped table-hover mb-5">
                             <thead>
                                 <tr>
                                     <th>Business Giver</th>

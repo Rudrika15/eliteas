@@ -50,7 +50,7 @@
             </div>
 
             <div class="table-responsive">
-                <table class="table datatable" id="subscriptionsTable">
+                <table class="table datatable table-striped table-hover" id="subscriptionsTable">
                     <thead>
                         <tr>
                             <th>Name</th>

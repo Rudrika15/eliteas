@@ -7,7 +7,7 @@
 <div id="loader" class="loader"></div>
 
 {{-- Message --}}
-@if (Session::has('success'))
+{{-- @if (Session::has('success'))
 <div class="alert alert-success alert-dismissible" role="alert">
     <button type="button" class="close" data-dismiss="alert"></button>
     <strong>Success!</strong> {{ session('success') }}
@@ -19,7 +19,7 @@
     <button type="button" class="close" data-dismiss="alert"></button>
     <strong>Error!</strong> {{ session('error') }}
 </div>
-@endif
+@endif --}}
 
 <div class="container">
     <div class="row">
@@ -36,7 +36,7 @@
                     <hr class="mb-5">
                     <!-- Table with stripped rows -->
                     <div class="table-responsive mt-5">
-                        <table class="table datatable mb-5">
+                        <table class="table datatable table-striped table-hover mb-5">
                             <thead>
                                 <tr>
                                     <th>Circle Member</th>
@@ -51,7 +51,7 @@
                                     <td>{{ $myTestimonial->receiver->firstName ?? '' }} {{
                                         $myTestimonial->receiver->lastName ?? '' }}</td>
                                     <td>{{ $myTestimonial->message ?? '' }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($myTestimonial->date)->format('j M Y') }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($myTestimonial->uploadedDate)->format('d-m-Y') ?? '' }}
                                     <td>
                                         <a href="{{ route('testimonial.edit', $myTestimonial->id) }}"
                                             class="btn btn-bg-blue btn-sm btn-tooltip">
@@ -80,7 +80,7 @@
                     <hr class="mb-5">
                     <!-- Table with stripped rows -->
                     <div class="table-responsive mt-5">
-                        <table class="table datatable mb-5">
+                        <table class="table datatable table-striped table-hover mb-5">
                             <thead>
                                 <tr>
                                     <th>Circle Member</th>

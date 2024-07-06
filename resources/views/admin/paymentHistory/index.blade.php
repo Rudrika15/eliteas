@@ -45,7 +45,7 @@
             </div>
 
             <div class="table-responsive">
-                <table class="table datatable">
+                <table class="table datatable table-striped table-hover">
                     <thead>
                         <tr>
                             <th>Member Name</th>
@@ -54,7 +54,7 @@
                             <th>Payment Type</th>
                             <th>Amount</th>
                             <th>Payment ID</th>
-                            <th>Status</th>
+                            {{-- <th>Status</th> --}}
                         </tr>
                     </thead>
                     <tbody>
@@ -66,7 +66,7 @@
                             <td>{{$paymentsData->paymentMode}}</td>
                             <td>{{$paymentsData->amount}}</td>
                             <td>{{$paymentsData->remarks}}</td>
-                            <td>{{$paymentsData->status}}</td>
+                            {{-- <td>{{$paymentsData->status}}</td> --}}
                         </tr>
                         @endforeach
                     </tbody>

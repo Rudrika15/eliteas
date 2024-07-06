@@ -31,7 +31,7 @@
 
         <!-- Table with stripped rows -->
         <div class="table-responsive">
-            <table class="table mt-3">
+            <table class="table mt-3 datatable table-striped table-hover">
                 <thead>
                     <tr>
                         <th>Invited By</th>

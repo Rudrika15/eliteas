@@ -20,10 +20,13 @@
 
 <div class="card">
     <div class="card-body">
-        <h4 class="card-title">Circle Meeting Attendance</h4>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="card-title">Circle Meeting Attendance</h4>
+            <a href="{{ route('home') }}" class="btn btn-bg-orange btn-sm ">Back</a>
+        </div>
         <hr class="mb-5">
         <div class="table-responsive">
-            <table class="table datatable">
+            <table class="table datatable table-striped table-hover">
                 <thead>
                     <tr>
                         <th>Meeting Date</th>

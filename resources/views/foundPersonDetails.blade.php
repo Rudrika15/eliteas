@@ -234,794 +234,849 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" />
     <link href="{{ asset('vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet" />
-    <style type="text/css">
-        body {
-            margin-top: 20px;
-            color: #1a202c;
-            text-align: left;
-            background-color: #e2e8f0;
-        }
 
-        .main-body {
-            padding: 15px;
-        }
+    <div class="pt-3 px-3">
+        <div class="row">
+            <div class="d-flex justify-content-center align-items-center">
+                <img src="{{ asset('img/logo4.png') }}" alt="UBN" class="pb-2" width="100"
+                    style="max-width: 100%; height: auto;">
+            </div>
+        </div>
 
-        .card {
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .1), 0 1px 2px 0 rgba(0, 0, 0, .06);
-        }
+        <style>
+            @media (max-width: 768px) {
+                .col-md-1 {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                }
+            }
 
-        .card {
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            min-width: 0;
-            word-wrap: break-word;
-            background-color: #fff;
-            background-clip: border-box;
-            border: 0 solid rgba(0, 0, 0, .125);
-            border-radius: .25rem;
-        }
+            /* Styles for screens less than 768px wide */
+            @media (max-width: 767px) {
+                .back-btn3 {
+                    display: none;
+                }
 
-        .card-body {
-            flex: 1 1 auto;
-            min-height: 1px;
-            padding: 1rem;
-        }
+                .back-btn2 {
+                    display: inline-block;
+                }
+            }
 
-        .gutters-sm {
-            margin-right: -8px;
-            margin-left: -8px;
-        }
+            /* Styles for screens 768px wide and up */
+            @media (min-width: 768px) {
+                .back-btn3 {
+                    display: inline-block;
+                }
 
-        .gutters-sm>.col,
-        .gutters-sm>[class*=col-] {
-            padding-right: 8px;
-            padding-left: 8px;
-        }
+                .back-btn2 {
+                    display: none;
+                }
+            }
+        </style>
 
-        .mb-3,
-        .my-3 {
-            margin-bottom: 1rem !important;
-        }
 
-        .bg-gray-300 {
-            background-color: #e2e8f0;
-        }
 
-        .h-100 {
-            height: 100% !important;
-        }
 
-        .shadow-none {
-            box-shadow: none !important;
-        }
+        <style type="text/css">
+            body {
+                margin-top: 20px;
+                color: #1a202c;
+                text-align: left;
+                background-color: #e2e8f0;
+            }
 
-        .btn-bg-orange {
-            background-color: #e76a35 !important;
-            color: white !important;
-        }
+            .main-body {
+                padding: 15px;
+            }
 
-        .btn-bg-blue {
-            background-color: #1d2856 !important;
-            color: white !important;
-        }
+            .card {
+                box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .1), 0 1px 2px 0 rgba(0, 0, 0, .06);
+            }
 
-        /* text-icon colors */
-        .text-orange {
-            color: #e76a35 !important;
-        }
+            .card {
+                position: relative;
+                display: flex;
+                flex-direction: column;
+                min-width: 0;
+                word-wrap: break-word;
+                background-color: #fff;
+                background-clip: border-box;
+                border: 0 solid rgba(0, 0, 0, .125);
+                border-radius: .25rem;
+            }
 
-        .text-blue {
-            color: #1d2856;
-        }
-    </style>
+            .card-body {
+                flex: 1 1 auto;
+                min-height: 1px;
+                padding: 1rem;
+            }
+
+            .gutters-sm {
+                margin-right: -8px;
+                margin-left: -8px;
+            }
+
+            .gutters-sm>.col,
+            .gutters-sm>[class*=col-] {
+                padding-right: 8px;
+                padding-left: 8px;
+            }
+
+            .mb-3,
+            .my-3 {
+                margin-bottom: 1rem !important;
+            }
+
+            .bg-gray-300 {
+                background-color: #e2e8f0;
+            }
+
+            .h-100 {
+                height: 100% !important;
+            }
+
+            .shadow-none {
+                box-shadow: none !important;
+            }
+
+            .btn-bg-orange {
+                background-color: #e76a35 !important;
+                color: white !important;
+            }
+
+            .btn-bg-blue {
+                background-color: #1d2856 !important;
+                color: white !important;
+            }
+
+            /* text-icon colors */
+            .text-orange {
+                color: #e76a35 !important;
+            }
+
+            .text-blue {
+                color: #1d2856;
+            }
+        </style>
 </head>
 
-<body>
-    <div class="container">
-        <div class="main-body">
+<body class="">
+    {{--
 
-            {{-- <nav aria-label="breadcrumb" class="main-breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-                    <li class="breadcrumb-item"><a href="javascript:void(0)">User</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">User Profile</li>
-                </ol>
-            </nav> --}}
+    <body class="" style=" mix-blend-mode: multiply; background: linear-gradient(to right, #1d2856, #e76a35);"> --}}
+        <div class="container">
+            <div class="main-body">
 
-            <div class="row gutters-sm">
-                <div class="col-md-4 mb-3">
-                    <div class="card ">
-                        <div class="card-body">
-                            <div class="d-flex flex-column align-items-center text-center">
-                                @php
-                                $profilePhoto = $member->profilePhoto;
-                                @endphp
+                {{-- <nav aria-label="breadcrumb" class="main-breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                        <li class="breadcrumb-item"><a href="javascript:void(0)">User</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">User Profile</li>
+                    </ol>
+                </nav> --}}
 
-                                @if ($profilePhoto && file_exists(public_path('ProfilePhoto/' . $profilePhoto)))
-                                <img src="{{ asset('ProfilePhoto/' . $profilePhoto) }}" alt="ProfilePhoto"
-                                    class="rounded-circle" width="150">
-                                @else
-                                <img src="{{ asset('ProfilePhoto/profile.png') }}" alt="ProfilePhoto"
-                                    class="rounded-circle" width="100">
-                                @endif
-                                <div class="mt-3">
-                                    <h4 class="text-blue">{{ $member->title . ' ' . $member->displayName }}</h4>
+                <div class="row gutters-sm">
+                    <div class="col-md-4 mb-3">
+                        <div class="card ">
+                            <div class="card-body">
+                                <div class="d-flex flex-column align-items-center text-center">
+                                    @php
+                                    $profilePhoto = $member->profilePhoto;
+                                    @endphp
 
-                                    <p class="text-secondary d-flex justify-content-center mb-1">{{ $member->skills }}
-                                        &#x2022 {{ $member->suffix }}
-                                        &#x2022 {{ $member->gender }}
-                                        &#x2022 {{ $member->industry }}
+                                    @if ($profilePhoto && file_exists(public_path('ProfilePhoto/' . $profilePhoto)))
+                                    <img src="{{ asset('ProfilePhoto/' . $profilePhoto) }}" alt="ProfilePhoto"
+                                        class="rounded-circle" width="150">
+                                    @else
+                                    <img src="{{ asset('ProfilePhoto/profile.png') }}" alt="ProfilePhoto"
+                                        class="rounded-circle" width="100">
+                                    @endif
+                                    <div class="mt-3">
+                                        <h4 class="text-blue">{{ $member->title . ' ' . $member->displayName }}</h4>
 
-                                    </p>
+                                        <p class="text-secondary d-flex justify-content-center mb-1">{{ $member->skills
+                                            }}
+                                            &#x2022 {{ $member->suffix }}
+                                            &#x2022 {{ $member->gender }}
+                                            &#x2022 {{ $member->industry }}
 
-                                    <p class="text-muted font-size-sm">
-                                        {{ $member->contactDetails->addressLine1 ?? '-' }}
-                                        {{ $member->contactDetails->addressLine2 ?? '-' }}
-                                        {{ $member->contactDetails->city ?? '-' }} ,
-                                        {{ $member->contactDetails->state ?? '-' }}
-                                    </p>
-                                    @if (!$connection)
-                                    <form action="{{ route('connect') }}" id="connectForm" method="POST">
-                                        @csrf
-                                        <input type="hiddden" value="{{ $member->user->id }}" name="memberId" id="">
+                                        </p>
+
+                                        <p class="text-muted font-size-sm">
+                                            {{ $member->contactDetails->addressLine1 ?? '-' }}
+                                            {{ $member->contactDetails->addressLine2 ?? '-' }}
+                                            {{ $member->contactDetails->city ?? '-' }} ,
+                                            {{ $member->contactDetails->state ?? '-' }}
+                                        </p>
+                                        @if (!$connection)
+                                        <form action="{{ route('connect') }}" id="connectForm" method="POST">
+                                            @csrf
+                                            <input type="hidden" value="{{ $member->user->id }}" name="memberId" id="">
+                                            <button type="submit" class="btn btn-bg-blue shadow-none">Connect &nbsp;<i
+                                                    class="bi bi-person-plus-fill"></i></button>
+                                        </form>
+
+                                        @elseif ($connection->status == 'Accepted')
+                                        <button type="button" class="btn btn-bg-blue shadow-none">Connected &nbsp;<i
+                                                class="bi bi-check-circle-fill"></i></button>
+
+                                        @elseif ($connection->status == 'Rejected')
                                         <button type="submit" class="btn btn-bg-blue shadow-none">Connect &nbsp;<i
                                                 class="bi bi-person-plus-fill"></i></button>
-                                    </form>
 
-                                    @elseif ($connection->status == 'Accepted')
-                                    <button type="button" class="btn btn-bg-blue shadow-none">Connected &nbsp;<i
-                                            class="bi bi-check-circle-fill"></i></button>
-
-                                    @elseif ($connection->status == 'Rejected')
-                                    <button type="submit" class="btn btn-bg-blue shadow-none">Connect &nbsp;<i
-                                            class="bi bi-person-plus-fill"></i></button>
-
-                                    @else
-                                    <button type="button" class="btn btn-bg-blue shadow-none">Requested &nbsp;<i
-                                            class="bi bi-clock"></i></button>
-                                    @endif
-
-                                    {{-- <button class="btn btn-outline-primary">Message</button> --}}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card mt-3">
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
-                                <h6 class="mb-0"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                        stroke-linecap="round" stroke-linejoin="round"
-                                        class="feather feather-globe mr-2 icon-inline">
-                                        <circle cx="12" cy="12" r="10"></circle>
-                                        <line x1="2" y1="12" x2="22" y2="12"></line>
-                                        <path
-                                            d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z">
-                                        </path>
-                                    </svg>Website</h6>
-                                <span class="text-secondary">{{ $member->webSite }}</span>
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
-                                <h6 class="mb-0"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                        stroke-linecap="round" stroke-linejoin="round"
-                                        class="feather feather-github mr-2 icon-inline">
-                                        <path
-                                            d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22">
-                                        </path>
-                                    </svg>Github</h6>
-                                <span class="text-secondary"></span>
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
-                                <h6 class="mb-0"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                        stroke-linecap="round" stroke-linejoin="round"
-                                        class="feather feather-twitter mr-2 icon-inline text-info">
-                                        <path
-                                            d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z">
-                                        </path>
-                                    </svg>Twitter</h6>
-                                <span class="text-secondary"></span>
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
-                                <h6 class="mb-0"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                        stroke-linecap="round" stroke-linejoin="round"
-                                        class="feather feather-instagram mr-2 icon-inline text-danger">
-                                        <rect x="2" y="2" width="20" height="20" rx="5" ry="5">
-                                        </rect>
-                                        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                                        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-                                    </svg>Instagram</h6>
-                                <span class="text-secondary"></span>
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
-                                <h6 class="mb-0"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                        stroke-linecap="round" stroke-linejoin="round"
-                                        class="feather feather-facebook mr-2 icon-inline text-primary">
-                                        <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z">
-                                        </path>
-                                    </svg>Facebook</h6>
-                                <span class="text-secondary"></span>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-md-8">
-                    {{-- <div class="card mb-3">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-sm-3">
-                                    <h6 class="mb-0">Full Name</h6>
-                                </div>
-                                <div class="col-sm-9 text-secondary">
-                                    {{ $member->firstName ?? '-' }} {{ $member->lastName }}
-                                </div>
-                            </div>
-                            <hr>
-                            <div class="row">
-                                <div class="col-sm-3">
-                                    <h6 class="mb-0">Email</h6>
-                                </div>
-                                <div class="col-sm-9 text-secondary">
-                                    {{ $member->contactDetails->email ?? '-' }}
-                                </div>
-
-                            </div>
-                            <hr>
-
-                            <div class="row">
-                                <div class="col-sm-3">
-                                    <h6 class="mb-0">Company Name</h6>
-                                </div>
-                                <div class="col-sm-9 text-secondary">
-                                    {{ $member->companyName }}
-                                </div>
-                            </div>
-                            <hr>
-                            <div class="row">
-                                <div class="col-sm-3">
-                                    <h6 class="mb-0">Language</h6>
-                                </div>
-                                <div class="col-sm-9 text-secondary">
-                                    {{ $member->language }}
-                                </div>
-                            </div>
-                            <hr>
-                            <div class="row">
-                                <div class="col-sm-3">
-                                    <h6 class="mb-0">Phone</h6>
-                                </div>
-                                <div class="col-sm-9 text-secondary">
-                                    {{ $member->contactDetails->phone ?? '-' }}
-                                </div>
-                            </div>
-                            <hr>
-                            <div class="row">
-                                <div class="col-sm-3">
-                                    <h6 class="mb-0">Mobile No</h6>
-                                </div>
-                                <div class="col-sm-9 text-secondary">
-                                    {{ $member->contactDetails->mobileNo ?? '-' }}
-                                </div>
-                            </div>
-
-                            <hr>
-                            <div class="row">
-                                <div class="col-sm-3">
-                                    <h6 class="mb-0">Billing Address</h6>
-                                </div>
-                                <div class="col-sm-9 text-secondary">
-                                    {{ $member->billingAddress->bAddressLine1 ?? '-' }}
-                                    {{ $member->billingAddress->bAddressLine2 ?? '-' }} <br>
-                                    {{ $member->billingAddress->bCity ?? '-' }}
-                                    {{ $member->billingAddress->bState ?? '-' }}
-                                    {{ $member->billingAddress->bPinCode ?? '-' }}
-                                </div>
-                            </div>
-
-                        </div>
-                    </div> --}}
-
-
-                    {{-- <div class="row gutters-sm"> --}}
-                        {{-- <div class="col-lg-6 col-sm-6 mb-3"> --}}
-                            {{-- <div class="accordion " id="accordionExample">
-                                <!-- Accordion Item 1 -->
-                                <div class="accordion-item">
-                                    <h2 class="accordion-header" id="headingOne">
-                                        <button class="accordion-button collapsed shadow-none" type="button"
-                                            data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true"
-                                            aria-controls="collapseOne">
-                                            My Bios
-                                        </button>
-                                    </h2>
-                                    <div id="collapseOne" class="accordion-collapse collapse"
-                                        aria-labelledby="headingOne" data-bs-parent="#accordionExample">
-                                        <div class="accordion-body">
-                                            <div class="card shadow">
-                                                <div class="card-body">
-                                                    <h4 class="card-title text-orange text-center">My Bios</h4>
-                                                    <hr>
-                                                    <ul class="list-unstyled">
-                                                        <li><b> Years In Business : </b>
-                                                            {{ $member->topsProfile->yearsInBusiness ?? '-' }}</li>
-                                                        <hr>
-                                                        <li><b> Previous Types Of Jobs : </b>
-                                                            {{ $member->topsProfile->prevJobs ?? '-' }}</li>
-                                                        <hr>
-                                                        <li><b> Spouse : </b> {{ $member->topsProfile->spouse ?? '-' }}
-                                                        </li>
-                                                        <hr>
-                                                        <li><b> Childrens : </b> {{ $member->topsProfile->children ??
-                                                            '-' }}
-                                                        </li>
-                                                        <hr>
-                                                        <li><b> Pets : </b> {{ $member->topsProfile->pets ?? '-' }}</li>
-                                                        <hr>
-                                                        <li><b> Hobbies & Interests : </b>
-                                                            {{ $member->topsProfile->hobbiesInterests ?? '-' }}</li>
-                                                        <hr>
-                                                        <li><b> City Of Residence : </b>
-                                                            {{ $member->topsProfile->cityofRes ?? '-' }}</li>
-                                                        <hr>
-                                                        <li><b> Years In City : </b>
-                                                            {{ $member->topsProfile->yearsInCity ?? '-' }}</li>
-                                                        <hr>
-                                                        <li><b> My Burning Desire : </b>
-                                                            {{ $member->topsProfile->myBurningDesire ?? '-' }}</li>
-                                                        <hr>
-                                                        <li><b> Something No One Here Knows About Me : </b>
-                                                            {{ $member->topsProfile->dontKnowAboutMe ?? '-' }}</li>
-                                                        <hr>
-                                                        <li><b> My Key To Success : </b>
-                                                            {{ $member->topsProfile->mKeyToSuccess ?? '-' }}</li>
-                                                        <hr>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Accordion Item 2 -->
-                                <div class="accordion-item">
-                                    <h2 class="accordion-header" id="headingTwo">
-                                        <button class="accordion-button collapsed shadow-none" type="button"
-                                            data-bs-toggle="collapse" data-bs-target="#collapseTwo"
-                                            aria-expanded="false" aria-controls="collapseTwo">
-                                            Tops Profile
-                                        </button>
-                                    </h2>
-                                    <div id="collapseTwo" class="accordion-collapse collapse"
-                                        aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
-                                        <div class="accordion-body">
-                                            <div class="card">
-                                                <div class="card-body">
-                                                    <h4 class="card-title text-orange text-center">Tops Profile</h4>
-                                                    <hr>
-                                                    <ul class="list-unstyled">
-                                                        <li><b> Ideal Referral : </b>
-                                                            {{ $member->topsProfile->idealRef ?? '-' }}</li>
-                                                        <li><b> Top Product : </b>
-                                                            {{ $member->topsProfile->topProduct ?? '-' }}</li>
-                                                        <li><b> Top Problem Solved : </b>
-                                                            {{ $member->topsProfile->topProblemSolved ?? '-' }}</li>
-                                                        <li><b> My Fav. BNI Story : </b>
-                                                            {{ $member->topsProfile->myFavBniStory ?? '-' }}</li>
-                                                        <li><b> My Ideal Ref. Partner : </b>
-                                                            {{ $member->topsProfile->myIdealRefPartner ?? '-' }}</li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Accordion Item 3 -->
-                                <div class="accordion-item">
-                                    <h2 class="accordion-header" id="headingThree">
-                                        <button class="accordion-button collapsed shadow-none" type="button"
-                                            data-bs-toggle="collapse" data-bs-target="#collapseThree"
-                                            aria-expanded="false" aria-controls="collapseThree">
-                                            Gains Profile
-                                        </button>
-                                    </h2>
-                                    <div id="collapseThree" class="accordion-collapse collapse"
-                                        aria-labelledby="headingThree" data-bs-parent="#accordionExample">
-                                        <div class="accordion-body">
-                                            <div class="card">
-                                                <div class="card-body">
-                                                    <h4 class="card-title text-orange text-center">Gains Profile</h4>
-                                                    <hr>
-                                                    <ul class="list-unstyled">
-                                                        <li><b> Goals : </b> {{ $member->goals ?? '-' }}</li>
-                                                        <li><b> Accomplishment : </b> {{ $member->accomplishment ?? '-'
-                                                            }}</li>
-                                                        <li><b> Interests : </b> {{ $member->interests ?? '-' }}</li>
-                                                        <li><b> Networks : </b> {{ $member->networks ?? '-' }}</li>
-                                                        <li><b> Skills : </b> {{ $member->skills ?? '-' }}</li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        @else
+                                        <button type="button" class="btn btn-bg-blue shadow-none">Requested &nbsp;<i
+                                                class="bi bi-clock"></i></button>
+                                        @endif
+                                        <a href="javascript:history.back()"
+                                            class="btn btn-bg-orange back-btn2 ">Back</a>
+                                        {{-- <button class="btn btn-outline-primary">Message</button> --}}
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div> --}}
-                    <div class="card ">
-                        <div class="card-body">
-                            <!-- Nav tabs -->
-                            <ul class="nav nav-tabs" id="myTabs" role="tablist">
-                                <li class="nav-item" role="presentation">
-                                    <button class="nav-link active text-blue" id="profile-tab" data-bs-toggle="tab"
-                                        data-bs-target="#profile" type="button" role="tab" aria-controls="profile"
-                                        aria-selected="true">My Profile</button>
+                        <div class="card mt-3">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+                                    <h6 class="mb-0"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round"
+                                            class="feather feather-globe mr-2 icon-inline">
+                                            <circle cx="12" cy="12" r="10"></circle>
+                                            <line x1="2" y1="12" x2="22" y2="12"></line>
+                                            <path
+                                                d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z">
+                                            </path>
+                                        </svg>Website</h6>
+                                    <span class="text-secondary">{{ $member->webSite }}</span>
                                 </li>
-                                <li class="nav-item" role="presentation">
-                                    <button class="nav-link  text-blue" id="bios-tab" data-bs-toggle="tab"
-                                        data-bs-target="#bios" type="button" role="tab" aria-controls="bios"
-                                        aria-selected="true">My Bios</button>
+                                <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+                                    <h6 class="mb-0"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round"
+                                            class="feather feather-github mr-2 icon-inline">
+                                            <path
+                                                d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22">
+                                            </path>
+                                        </svg>Github</h6>
+                                    <span class="text-secondary"></span>
                                 </li>
-                                <li class="nav-item" role="presentation">
-                                    <button class="nav-link text-blue" id="tops-tab" data-bs-toggle="tab"
-                                        data-bs-target="#tops" type="button" role="tab" aria-controls="tops"
-                                        aria-selected="false">Tops Profile</button>
+                                <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+                                    <h6 class="mb-0"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round"
+                                            class="feather feather-twitter mr-2 icon-inline text-info">
+                                            <path
+                                                d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z">
+                                            </path>
+                                        </svg>Twitter</h6>
+                                    <span class="text-secondary"></span>
                                 </li>
-                                <li class="nav-item" role="presentation">
-                                    <button class="nav-link text-blue" id="gains-tab" data-bs-toggle="tab"
-                                        data-bs-target="#gains" type="button" role="tab" aria-controls="gains"
-                                        aria-selected="false">Gains Profile</button>
+                                <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+                                    <h6 class="mb-0"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round"
+                                            class="feather feather-instagram mr-2 icon-inline text-danger">
+                                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5">
+                                            </rect>
+                                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                                            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                                        </svg>Instagram</h6>
+                                    <span class="text-secondary"></span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+                                    <h6 class="mb-0"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round"
+                                            class="feather feather-facebook mr-2 icon-inline text-primary">
+                                            <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z">
+                                            </path>
+                                        </svg>Facebook</h6>
+                                    <span class="text-secondary"></span>
                                 </li>
                             </ul>
-                            <!-- Tab panes -->
-                            <div class="tab-content" id="myTabsContent">
-                                <div class="tab-pane fade active show " id="profile" role="tabpanel"
-                                    aria-labelledby="profile-tab">
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        {{-- <div class="card mb-3">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <h6 class="mb-0">Full Name</h6>
+                                    </div>
+                                    <div class="col-sm-9 text-secondary">
+                                        {{ $member->firstName ?? '-' }} {{ $member->lastName }}
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <h6 class="mb-0">Email</h6>
+                                    </div>
+                                    <div class="col-sm-9 text-secondary">
+                                        {{ $member->contactDetails->email ?? '-' }}
+                                    </div>
+
+                                </div>
+                                <hr>
+
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <h6 class="mb-0">Company Name</h6>
+                                    </div>
+                                    <div class="col-sm-9 text-secondary">
+                                        {{ $member->companyName }}
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <h6 class="mb-0">Language</h6>
+                                    </div>
+                                    <div class="col-sm-9 text-secondary">
+                                        {{ $member->language }}
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <h6 class="mb-0">Phone</h6>
+                                    </div>
+                                    <div class="col-sm-9 text-secondary">
+                                        {{ $member->contactDetails->phone ?? '-' }}
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <h6 class="mb-0">Mobile No</h6>
+                                    </div>
+                                    <div class="col-sm-9 text-secondary">
+                                        {{ $member->contactDetails->mobileNo ?? '-' }}
+                                    </div>
+                                </div>
+
+                                <hr>
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <h6 class="mb-0">Billing Address</h6>
+                                    </div>
+                                    <div class="col-sm-9 text-secondary">
+                                        {{ $member->billingAddress->bAddressLine1 ?? '-' }}
+                                        {{ $member->billingAddress->bAddressLine2 ?? '-' }} <br>
+                                        {{ $member->billingAddress->bCity ?? '-' }}
+                                        {{ $member->billingAddress->bState ?? '-' }}
+                                        {{ $member->billingAddress->bPinCode ?? '-' }}
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div> --}}
+
+
+                        {{-- <div class="row gutters-sm"> --}}
+                            {{-- <div class="col-lg-6 col-sm-6 mb-3"> --}}
+                                {{-- <div class="accordion " id="accordionExample">
+                                    <!-- Accordion Item 1 -->
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="headingOne">
+                                            <button class="accordion-button collapsed shadow-none" type="button"
+                                                data-bs-toggle="collapse" data-bs-target="#collapseOne"
+                                                aria-expanded="true" aria-controls="collapseOne">
+                                                My Bios
+                                            </button>
+                                        </h2>
+                                        <div id="collapseOne" class="accordion-collapse collapse"
+                                            aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                                            <div class="accordion-body">
+                                                <div class="card shadow">
+                                                    <div class="card-body">
+                                                        <h4 class="card-title text-orange text-center">My Bios</h4>
+                                                        <hr>
+                                                        <ul class="list-unstyled">
+                                                            <li><b> Years In Business : </b>
+                                                                {{ $member->topsProfile->yearsInBusiness ?? '-' }}</li>
+                                                            <hr>
+                                                            <li><b> Previous Types Of Jobs : </b>
+                                                                {{ $member->topsProfile->prevJobs ?? '-' }}</li>
+                                                            <hr>
+                                                            <li><b> Spouse : </b> {{ $member->topsProfile->spouse ?? '-'
+                                                                }}
+                                                            </li>
+                                                            <hr>
+                                                            <li><b> Childrens : </b> {{ $member->topsProfile->children
+                                                                ??
+                                                                '-' }}
+                                                            </li>
+                                                            <hr>
+                                                            <li><b> Pets : </b> {{ $member->topsProfile->pets ?? '-' }}
+                                                            </li>
+                                                            <hr>
+                                                            <li><b> Hobbies & Interests : </b>
+                                                                {{ $member->topsProfile->hobbiesInterests ?? '-' }}</li>
+                                                            <hr>
+                                                            <li><b> City Of Residence : </b>
+                                                                {{ $member->topsProfile->cityofRes ?? '-' }}</li>
+                                                            <hr>
+                                                            <li><b> Years In City : </b>
+                                                                {{ $member->topsProfile->yearsInCity ?? '-' }}</li>
+                                                            <hr>
+                                                            <li><b> My Burning Desire : </b>
+                                                                {{ $member->topsProfile->myBurningDesire ?? '-' }}</li>
+                                                            <hr>
+                                                            <li><b> Something No One Here Knows About Me : </b>
+                                                                {{ $member->topsProfile->dontKnowAboutMe ?? '-' }}</li>
+                                                            <hr>
+                                                            <li><b> My Key To Success : </b>
+                                                                {{ $member->topsProfile->mKeyToSuccess ?? '-' }}</li>
+                                                            <hr>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Accordion Item 2 -->
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="headingTwo">
+                                            <button class="accordion-button collapsed shadow-none" type="button"
+                                                data-bs-toggle="collapse" data-bs-target="#collapseTwo"
+                                                aria-expanded="false" aria-controls="collapseTwo">
+                                                Tops Profile
+                                            </button>
+                                        </h2>
+                                        <div id="collapseTwo" class="accordion-collapse collapse"
+                                            aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                                            <div class="accordion-body">
+                                                <div class="card">
+                                                    <div class="card-body">
+                                                        <h4 class="card-title text-orange text-center">Tops Profile</h4>
+                                                        <hr>
+                                                        <ul class="list-unstyled">
+                                                            <li><b> Ideal Referral : </b>
+                                                                {{ $member->topsProfile->idealRef ?? '-' }}</li>
+                                                            <li><b> Top Product : </b>
+                                                                {{ $member->topsProfile->topProduct ?? '-' }}</li>
+                                                            <li><b> Top Problem Solved : </b>
+                                                                {{ $member->topsProfile->topProblemSolved ?? '-' }}</li>
+                                                            <li><b> My Fav. BNI Story : </b>
+                                                                {{ $member->topsProfile->myFavBniStory ?? '-' }}</li>
+                                                            <li><b> My Ideal Ref. Partner : </b>
+                                                                {{ $member->topsProfile->myIdealRefPartner ?? '-' }}
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Accordion Item 3 -->
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="headingThree">
+                                            <button class="accordion-button collapsed shadow-none" type="button"
+                                                data-bs-toggle="collapse" data-bs-target="#collapseThree"
+                                                aria-expanded="false" aria-controls="collapseThree">
+                                                Gains Profile
+                                            </button>
+                                        </h2>
+                                        <div id="collapseThree" class="accordion-collapse collapse"
+                                            aria-labelledby="headingThree" data-bs-parent="#accordionExample">
+                                            <div class="accordion-body">
+                                                <div class="card">
+                                                    <div class="card-body">
+                                                        <h4 class="card-title text-orange text-center">Gains Profile
+                                                        </h4>
+                                                        <hr>
+                                                        <ul class="list-unstyled">
+                                                            <li><b> Goals : </b> {{ $member->goals ?? '-' }}</li>
+                                                            <li><b> Accomplishment : </b> {{ $member->accomplishment ??
+                                                                '-'
+                                                                }}</li>
+                                                            <li><b> Interests : </b> {{ $member->interests ?? '-' }}
+                                                            </li>
+                                                            <li><b> Networks : </b> {{ $member->networks ?? '-' }}</li>
+                                                            <li><b> Skills : </b> {{ $member->skills ?? '-' }}</li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> --}}
+                        <div class="card ">
+                            <div class="card-body">
+                                <a href="javascript:history.back()"
+                                    class="btn btn-bg-orange back-btn3 float-end">Back</a>
+                                <!-- Nav tabs -->
+                                <ul class="nav nav-tabs" id="myTabs" role="tablist">
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link active text-blue" id="profile-tab" data-bs-toggle="tab"
+                                            data-bs-target="#profile" type="button" role="tab" aria-controls="profile"
+                                            aria-selected="true">My Profile</button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link  text-blue" id="bios-tab" data-bs-toggle="tab"
+                                            data-bs-target="#bios" type="button" role="tab" aria-controls="bios"
+                                            aria-selected="true">My Bios</button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link text-blue" id="tops-tab" data-bs-toggle="tab"
+                                            data-bs-target="#tops" type="button" role="tab" aria-controls="tops"
+                                            aria-selected="false">Tops Profile</button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link text-blue" id="gains-tab" data-bs-toggle="tab"
+                                            data-bs-target="#gains" type="button" role="tab" aria-controls="gains"
+                                            aria-selected="false">Gains Profile</button>
+                                    </li>
+                                </ul>
+                                <!-- Tab panes -->
+                                <div class="tab-content" id="myTabsContent">
+                                    <div class="tab-pane fade active show " id="profile" role="tabpanel"
+                                        aria-labelledby="profile-tab">
+                                        <!-- Bios Content -->
+                                        <div class="card shadow-none">
+                                            <div class="card-body">
+                                                <!-- Your content for My Bios goes here -->
+                                                <h4 class="card-title text-orange text-center">My Profile</h4>
+                                                <hr>
+                                                {{-- <ul class="list-unstyled"> --}}
+                                                    <div class="row">
+                                                        <div class="col-sm-3">
+                                                            <h6 class="mb-0">Full Name</h6>
+                                                        </div>
+                                                        <div class="col-sm-9 text-secondary">
+                                                            {{ $member->firstName ?? '-' }} {{ $member->lastName }}
+                                                        </div>
+                                                    </div>
+                                                    <hr>
+                                                    <div class="row">
+                                                        <div class="col-sm-3">
+                                                            <h6 class="mb-0">Email</h6>
+                                                        </div>
+                                                        <div class="col-sm-9 text-secondary">
+                                                            {{ $member->contactDetails->email ?? '-' }}
+                                                        </div>
+
+                                                    </div>
+                                                    <hr>
+
+                                                    <div class="row">
+                                                        <div class="col-sm-3">
+                                                            <h6 class="mb-0">Company Name</h6>
+                                                        </div>
+                                                        <div class="col-sm-9 text-secondary">
+                                                            {{ $member->companyName }}
+                                                        </div>
+                                                    </div>
+                                                    <hr>
+                                                    <div class="row">
+                                                        <div class="col-sm-3">
+                                                            <h6 class="mb-0">Language</h6>
+                                                        </div>
+                                                        <div class="col-sm-9 text-secondary">
+                                                            {{ $member->language }}
+                                                        </div>
+                                                    </div>
+                                                    <hr>
+                                                    <div class="row">
+                                                        <div class="col-sm-3">
+                                                            <h6 class="mb-0">Phone</h6>
+                                                        </div>
+                                                        <div class="col-sm-9 text-secondary">
+                                                            {{ $member->contactDetails->phone ?? '-' }}
+                                                        </div>
+                                                    </div>
+                                                    <hr>
+                                                    <div class="row">
+                                                        <div class="col-sm-3">
+                                                            <h6 class="mb-0">Mobile No</h6>
+                                                        </div>
+                                                        <div class="col-sm-9 text-secondary">
+                                                            {{ $member->contactDetails->mobileNo ?? '-' }}
+                                                        </div>
+                                                    </div>
+
+                                                    <hr>
+                                                    <div class="row">
+                                                        <div class="col-sm-3">
+                                                            <h6 class="mb-0">Billing Address</h6>
+                                                        </div>
+                                                        <div class="col-sm-9 text-secondary">
+                                                            {{ $member->billingAddress->bAddressLine1 ?? '-' }}
+                                                            {{ $member->billingAddress->bAddressLine2 ?? '-' }} <br>
+                                                            {{ $member->billingAddress->bCity ?? '-' }}
+                                                            {{ $member->billingAddress->bState ?? '-' }}
+                                                            {{ $member->billingAddress->bPinCode ?? '-' }}
+                                                        </div>
+                                                        {{--
+                                                </ul> --}}
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade " id="bios" role="tabpanel" aria-labelledby="bios-tab">
                                     <!-- Bios Content -->
                                     <div class="card shadow-none">
                                         <div class="card-body">
                                             <!-- Your content for My Bios goes here -->
-                                            <h4 class="card-title text-orange text-center">My Profile</h4>
+                                            <h4 class="card-title text-orange text-center">My Bios</h4>
                                             <hr>
                                             {{-- <ul class="list-unstyled"> --}}
                                                 <div class="row">
                                                     <div class="col-sm-3">
-                                                        <h6 class="mb-0">Full Name</h6>
+                                                        <h6 class="mb-0">Years In Business</h6>
                                                     </div>
                                                     <div class="col-sm-9 text-secondary">
-                                                        {{ $member->firstName ?? '-' }} {{ $member->lastName }}
+                                                        {{ $member->topsProfile->yearsInBusiness ?? '-' }}
                                                     </div>
                                                 </div>
                                                 <hr>
                                                 <div class="row">
                                                     <div class="col-sm-3">
-                                                        <h6 class="mb-0">Email</h6>
+                                                        <h6 class="mb-0">Previous Types Of Jobs</h6>
                                                     </div>
                                                     <div class="col-sm-9 text-secondary">
-                                                        {{ $member->contactDetails->email ?? '-' }}
+                                                        {{ $member->topsProfile->prevJobs ?? '-' }}
+                                                    </div>
+                                                </div>
+                                                <hr>
+                                                <div class="row">
+                                                    <div class="col-sm-3">
+                                                        <h6 class="mb-0">Spouse</h6>
+                                                    </div>
+                                                    <div class="col-sm-9 text-secondary">
+                                                        {{ $member->topsProfile->spouse ?? '-' }}
+                                                    </div>
+                                                </div>
+                                                <hr>
+                                                <div class="row">
+                                                    <div class="col-sm-3">
+                                                        <h6 class="mb-0">Childrens </h6>
+                                                    </div>
+                                                    <div class="col-sm-9 text-secondary">
+                                                        {{ $member->topsProfile->children ?? '-' }}
+                                                    </div>
+                                                </div>
+                                                <hr>
+                                                <div class="row">
+                                                    <div class="col-sm-3">
+                                                        <h6 class="mb-0">Pets </h6>
+                                                    </div>
+                                                    <div class="col-sm-9 text-secondary">
+                                                        {{ $member->topsProfile->pets ?? '-' }}
+                                                    </div>
+                                                </div>
+                                                <hr>
+                                                <div class="row">
+                                                    <div class="col-sm-3">
+                                                        <h6 class="mb-0">Hobbies & Interests </h6>
+                                                    </div>
+                                                    <div class="col-sm-9 text-secondary">
+                                                        {{ $member->topsProfile->hobbiesInterests ?? '-' }}
+                                                    </div>
+                                                </div>
+                                                <hr>
+                                                <div class="row">
+                                                    <div class="col-sm-3">
+                                                        <h6 class="mb-0">City Of Residence </h6>
+                                                    </div>
+                                                    <div class="col-sm-9 text-secondary">
+                                                        {{ $member->topsProfile->cityofRes ?? '-' }}
+                                                    </div>
+                                                </div>
+                                                <hr>
+                                                <div class="row">
+                                                    <div class="col-sm-3">
+                                                        <h6 class="mb-0">Years In City </h6>
+                                                    </div>
+                                                    <div class="col-sm-9 text-secondary">
+                                                        {{ $member->topsProfile->yearsInCity ?? '-' }}
+                                                    </div>
+                                                </div>
+                                                {{--
+                                                <hr>
+                                                <div class="row">
+                                                    <div class="col-sm-3">
+                                                        <h6 class="mb-0">My Burning Desire </h6>
+                                                    </div>
+                                                    <div class="col-sm-9 text-secondary">
+                                                        {{ $member->topsProfile->myBurningDesire ?? '-' }}
+                                                    </div>
+                                                </div>
+                                                <hr>
+                                                <div class="row">
+                                                    <div class="col-sm-3">
+                                                        <h6 class="mb-0"> Something No One Here Knows About Me </h6>
+                                                    </div>
+                                                    <div class="col-sm-9 text-secondary">
+                                                        {{ $member->topsProfile->dontKnowAboutMe ?? '-' }}
+                                                    </div>
+                                                </div>
+                                                <hr>
+                                                <div class="row">
+                                                    <div class="col-sm-3">
+                                                        <h6 class="mb-0"> My Key To Success </h6>
+                                                    </div>
+                                                    <div class="col-sm-9 text-secondary">
+                                                        {{ $member->topsProfile->mKeyToSuccess ?? '-' }}
+                                                    </div>
+                                                </div> --}}
+
+                                                {{--
+                                            </ul> --}}
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="tops" role="tabpanel" aria-labelledby="tops-tab">
+                                    <!-- Tops Profile Content -->
+                                    <div class="card shadow-none">
+                                        <div class="card-body">
+                                            <!-- Your content for Tops Profile goes here -->
+                                            <h4 class="card-title text-orange text-center">Tops Profile</h4>
+                                            <hr>
+                                            {{-- <ul class="list-unstyled"> --}}
+                                                <div class="row">
+                                                    <div class="col-sm-3">
+                                                        <h6 class="mb-0"> Ideal Referral </h6>
+                                                    </div>
+                                                    <div class="col-sm-9 text-secondary">
+                                                        {{ $member->topsProfile->idealRef ?? '-' }}
                                                     </div>
 
                                                 </div>
                                                 <hr>
+                                                <div class="row">
+                                                    <div class="col-sm-3">
+                                                        <h6 class="mb-0"> Top Product </h6>
+                                                    </div>
+                                                    <div class="col-sm-9 text-secondary">
+                                                        {{ $member->topsProfile->topProduct ?? '-' }}
+                                                    </div>
+                                                </div>
+                                                <hr>
+                                                <div class="row">
+                                                    <div class="col-sm-3">
+                                                        <h6 class="mb-0"> My Fav. BNI Story </h6>
+                                                    </div>
+                                                    <div class="col-sm-9 text-secondary">
+                                                        {{ $member->topsProfile->myFavBniStory ?? '-' }}
+                                                    </div>
+                                                </div>
+                                                <hr>
+                                                <div class="row">
+                                                    <div class="col-sm-3">
+                                                        <h6 class="mb-0"> My Ideal Ref. Partner </h6>
+                                                    </div>
+                                                    <div class="col-sm-9 text-secondary">
+                                                        {{ $member->topsProfile->myIdealRefPartner ?? '-' }}
+                                                    </div>
+                                                </div>
+                                                <hr>
+                                                <div class="row">
+                                                    <div class="col-sm-3">
+                                                        <h6 class="mb-0"> Top Problem Solved </h6>
+                                                    </div>
+                                                    <div class="col-sm-9 text-secondary">
+                                                        {{ $member->topsProfile->topProblemSolved ?? '-' }}
+                                                    </div>
+                                                </div>
 
-                                                <div class="row">
-                                                    <div class="col-sm-3">
-                                                        <h6 class="mb-0">Company Name</h6>
-                                                    </div>
-                                                    <div class="col-sm-9 text-secondary">
-                                                        {{ $member->companyName }}
-                                                    </div>
-                                                </div>
-                                                <hr>
-                                                <div class="row">
-                                                    <div class="col-sm-3">
-                                                        <h6 class="mb-0">Language</h6>
-                                                    </div>
-                                                    <div class="col-sm-9 text-secondary">
-                                                        {{ $member->language }}
-                                                    </div>
-                                                </div>
-                                                <hr>
-                                                <div class="row">
-                                                    <div class="col-sm-3">
-                                                        <h6 class="mb-0">Phone</h6>
-                                                    </div>
-                                                    <div class="col-sm-9 text-secondary">
-                                                        {{ $member->contactDetails->phone ?? '-' }}
-                                                    </div>
-                                                </div>
-                                                <hr>
-                                                <div class="row">
-                                                    <div class="col-sm-3">
-                                                        <h6 class="mb-0">Mobile No</h6>
-                                                    </div>
-                                                    <div class="col-sm-9 text-secondary">
-                                                        {{ $member->contactDetails->mobileNo ?? '-' }}
-                                                    </div>
-                                                </div>
+                                                {{--
+                                            </ul> --}}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="gains" role="tabpanel" aria-labelledby="gains-tab">
+                                    <!-- Gains Profile Content -->
+                                    <div class="card shadow-none">
+                                        <div class="card-body">
+                                            <!-- Your content for Gains Profile goes here -->
+                                            <h4 class="card-title text-orange text-center">Gains Profile</h4>
+                                            <hr>
 
+                                            {{-- <ul class="list-unstyled"> --}}
+                                                <div class="row">
+                                                    <div class="col-sm-3">
+                                                        <h6 class="mb-0"> Goals </h6>
+                                                    </div>
+                                                    <div class="col-sm-9 text-secondary">
+                                                        {{ $member->goals ?? '-' }}
+                                                    </div>
+                                                </div>
                                                 <hr>
                                                 <div class="row">
                                                     <div class="col-sm-3">
-                                                        <h6 class="mb-0">Billing Address</h6>
+                                                        <h6 class="mb-0"> Accomplishment </h6>
                                                     </div>
                                                     <div class="col-sm-9 text-secondary">
-                                                        {{ $member->billingAddress->bAddressLine1 ?? '-' }}
-                                                        {{ $member->billingAddress->bAddressLine2 ?? '-' }} <br>
-                                                        {{ $member->billingAddress->bCity ?? '-' }}
-                                                        {{ $member->billingAddress->bState ?? '-' }}
-                                                        {{ $member->billingAddress->bPinCode ?? '-' }}
+                                                        {{ $member->accomplishment ?? '-' }}
                                                     </div>
-                                                    {{--
+                                                </div>
+                                                <hr>
+                                                <div class="row">
+                                                    <div class="col-sm-3">
+                                                        <h6 class="mb-0"> Interests </h6>
+                                                    </div>
+                                                    <div class="col-sm-9 text-secondary">
+                                                        {{ $member->interests ?? '-' }}
+                                                    </div>
+                                                </div>
+                                                <hr>
+                                                <div class="row">
+                                                    <div class="col-sm-3">
+                                                        <h6 class="mb-0"> Networks </h6>
+                                                    </div>
+                                                    <div class="col-sm-9 text-secondary">
+                                                        {{ $member->networks ?? '-' }}
+                                                    </div>
+                                                </div>
+                                                <hr>
+                                                <div class="row">
+                                                    <div class="col-sm-3">
+                                                        <h6 class="mb-0"> Skills </h6>
+                                                    </div>
+                                                    <div class="col-sm-9 text-secondary">
+                                                        {{ $member->skills ?? '-' }}
+                                                    </div>
+                                                </div>
+                                                {{--
                                             </ul> --}}
 
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="tab-pane fade " id="bios" role="tabpanel" aria-labelledby="bios-tab">
-                                <!-- Bios Content -->
-                                <div class="card shadow-none">
-                                    <div class="card-body">
-                                        <!-- Your content for My Bios goes here -->
-                                        <h4 class="card-title text-orange text-center">My Bios</h4>
-                                        <hr>
-                                        {{-- <ul class="list-unstyled"> --}}
-                                            <div class="row">
-                                                <div class="col-sm-3">
-                                                    <h6 class="mb-0">Years In Business</h6>
-                                                </div>
-                                                <div class="col-sm-9 text-secondary">
-                                                    {{ $member->topsProfile->yearsInBusiness ?? '-' }}
-                                                </div>
-                                            </div>
-                                            <hr>
-                                            <div class="row">
-                                                <div class="col-sm-3">
-                                                    <h6 class="mb-0">Previous Types Of Jobs</h6>
-                                                </div>
-                                                <div class="col-sm-9 text-secondary">
-                                                    {{ $member->topsProfile->prevJobs ?? '-' }}
-                                                </div>
-                                            </div>
-                                            <hr>
-                                            <div class="row">
-                                                <div class="col-sm-3">
-                                                    <h6 class="mb-0">Spouse</h6>
-                                                </div>
-                                                <div class="col-sm-9 text-secondary">
-                                                    {{ $member->topsProfile->spouse ?? '-' }}
-                                                </div>
-                                            </div>
-                                            <hr>
-                                            <div class="row">
-                                                <div class="col-sm-3">
-                                                    <h6 class="mb-0">Childrens </h6>
-                                                </div>
-                                                <div class="col-sm-9 text-secondary">
-                                                    {{ $member->topsProfile->children ?? '-' }}
-                                                </div>
-                                            </div>
-                                            <hr>
-                                            <div class="row">
-                                                <div class="col-sm-3">
-                                                    <h6 class="mb-0">Pets </h6>
-                                                </div>
-                                                <div class="col-sm-9 text-secondary">
-                                                    {{ $member->topsProfile->pets ?? '-' }}
-                                                </div>
-                                            </div>
-                                            <hr>
-                                            <div class="row">
-                                                <div class="col-sm-3">
-                                                    <h6 class="mb-0">Hobbies & Interests </h6>
-                                                </div>
-                                                <div class="col-sm-9 text-secondary">
-                                                    {{ $member->topsProfile->hobbiesInterests ?? '-' }}
-                                                </div>
-                                            </div>
-                                            <hr>
-                                            <div class="row">
-                                                <div class="col-sm-3">
-                                                    <h6 class="mb-0">City Of Residence </h6>
-                                                </div>
-                                                <div class="col-sm-9 text-secondary">
-                                                    {{ $member->topsProfile->cityofRes ?? '-' }}
-                                                </div>
-                                            </div>
-                                            <hr>
-                                            <div class="row">
-                                                <div class="col-sm-3">
-                                                    <h6 class="mb-0">Years In City </h6>
-                                                </div>
-                                                <div class="col-sm-9 text-secondary">
-                                                    {{ $member->topsProfile->yearsInCity ?? '-' }}
-                                                </div>
-                                            </div>
-                                            {{--
-                                            <hr>
-                                            <div class="row">
-                                                <div class="col-sm-3">
-                                                    <h6 class="mb-0">My Burning Desire </h6>
-                                                </div>
-                                                <div class="col-sm-9 text-secondary">
-                                                    {{ $member->topsProfile->myBurningDesire ?? '-' }}
-                                                </div>
-                                            </div>
-                                            <hr>
-                                            <div class="row">
-                                                <div class="col-sm-3">
-                                                    <h6 class="mb-0"> Something No One Here Knows About Me </h6>
-                                                </div>
-                                                <div class="col-sm-9 text-secondary">
-                                                    {{ $member->topsProfile->dontKnowAboutMe ?? '-' }}
-                                                </div>
-                                            </div>
-                                            <hr>
-                                            <div class="row">
-                                                <div class="col-sm-3">
-                                                    <h6 class="mb-0"> My Key To Success </h6>
-                                                </div>
-                                                <div class="col-sm-9 text-secondary">
-                                                    {{ $member->topsProfile->mKeyToSuccess ?? '-' }}
-                                                </div>
-                                            </div> --}}
 
-                                            {{--
-                                        </ul> --}}
 
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="tab-pane fade" id="tops" role="tabpanel" aria-labelledby="tops-tab">
-                                <!-- Tops Profile Content -->
-                                <div class="card shadow-none">
-                                    <div class="card-body">
-                                        <!-- Your content for Tops Profile goes here -->
-                                        <h4 class="card-title text-orange text-center">Tops Profile</h4>
-                                        <hr>
-                                        {{-- <ul class="list-unstyled"> --}}
-                                            <div class="row">
-                                                <div class="col-sm-3">
-                                                    <h6 class="mb-0"> Ideal Referral </h6>
-                                                </div>
-                                                <div class="col-sm-9 text-secondary">
-                                                    {{ $member->topsProfile->idealRef ?? '-' }}
-                                                </div>
-
-                                            </div>
-                                            <hr>
-                                            <div class="row">
-                                                <div class="col-sm-3">
-                                                    <h6 class="mb-0"> Top Product </h6>
-                                                </div>
-                                                <div class="col-sm-9 text-secondary">
-                                                    {{ $member->topsProfile->topProduct ?? '-' }}
-                                                </div>
-                                            </div>
-                                            <hr>
-                                            <div class="row">
-                                                <div class="col-sm-3">
-                                                    <h6 class="mb-0"> My Fav. BNI Story </h6>
-                                                </div>
-                                                <div class="col-sm-9 text-secondary">
-                                                    {{ $member->topsProfile->myFavBniStory ?? '-' }}
-                                                </div>
-                                            </div>
-                                            <hr>
-                                            <div class="row">
-                                                <div class="col-sm-3">
-                                                    <h6 class="mb-0"> My Ideal Ref. Partner </h6>
-                                                </div>
-                                                <div class="col-sm-9 text-secondary">
-                                                    {{ $member->topsProfile->myIdealRefPartner ?? '-' }}
-                                                </div>
-                                            </div>
-                                            <hr>
-                                            <div class="row">
-                                                <div class="col-sm-3">
-                                                    <h6 class="mb-0"> Top Problem Solved </h6>
-                                                </div>
-                                                <div class="col-sm-9 text-secondary">
-                                                    {{ $member->topsProfile->topProblemSolved ?? '-' }}
-                                                </div>
-                                            </div>
-
-                                            {{--
-                                        </ul> --}}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="tab-pane fade" id="gains" role="tabpanel" aria-labelledby="gains-tab">
-                                <!-- Gains Profile Content -->
-                                <div class="card shadow-none">
-                                    <div class="card-body">
-                                        <!-- Your content for Gains Profile goes here -->
-                                        <h4 class="card-title text-orange text-center">Gains Profile</h4>
-                                        <hr>
-
-                                        {{-- <ul class="list-unstyled"> --}}
-                                            <div class="row">
-                                                <div class="col-sm-3">
-                                                    <h6 class="mb-0"> Goals </h6>
-                                                </div>
-                                                <div class="col-sm-9 text-secondary">
-                                                    {{ $member->goals ?? '-' }}
-                                                </div>
-                                            </div>
-                                            <hr>
-                                            <div class="row">
-                                                <div class="col-sm-3">
-                                                    <h6 class="mb-0"> Accomplishment </h6>
-                                                </div>
-                                                <div class="col-sm-9 text-secondary">
-                                                    {{ $member->accomplishment ?? '-' }}
-                                                </div>
-                                            </div>
-                                            <hr>
-                                            <div class="row">
-                                                <div class="col-sm-3">
-                                                    <h6 class="mb-0"> Interests </h6>
-                                                </div>
-                                                <div class="col-sm-9 text-secondary">
-                                                    {{ $member->interests ?? '-' }}
-                                                </div>
-                                            </div>
-                                            <hr>
-                                            <div class="row">
-                                                <div class="col-sm-3">
-                                                    <h6 class="mb-0"> Networks </h6>
-                                                </div>
-                                                <div class="col-sm-9 text-secondary">
-                                                    {{ $member->networks ?? '-' }}
-                                                </div>
-                                            </div>
-                                            <hr>
-                                            <div class="row">
-                                                <div class="col-sm-3">
-                                                    <h6 class="mb-0"> Skills </h6>
-                                                </div>
-                                                <div class="col-sm-9 text-secondary">
-                                                    {{ $member->skills ?? '-' }}
-                                                </div>
-                                            </div>
-                                            {{--
-                                        </ul> --}}
-
-                                    </div>
-                                </div>
-                            </div>
                         </div>
-
-
-                        {{--
-                    </div> --}}
-
-                    {{--
-                </div> --}}
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-    </div>
-    {{-- <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script> --}}
-    {{-- <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-    --}}
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- Bootstrap JavaScript Libraries -->
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
-        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous">
-    </script>
+        {{-- <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script> --}}
+        {{-- <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js">
+        </script>
+        --}}
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <!-- Bootstrap JavaScript Libraries -->
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+            integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous">
+        </script>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
-        integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous">
-    </script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+            integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous">
+        </script>
 
-    <script>
-        // JavaScript to handle form submission
+        <script>
+            // JavaScript to handle form submission
                 document.addEventListener('DOMContentLoaded', function() {
                     var connectForm = document.getElementById('connectForm');
                     if (connectForm) {
@@ -1067,8 +1122,8 @@
                         });
                     }
                 });
-    </script>
+        </script>
 
-</body>
+    </body>
 
 </html>

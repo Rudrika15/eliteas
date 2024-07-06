@@ -250,7 +250,16 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('busGiver/store', [CircleMeetingMemberBusinessController::class, 'store'])->name('busGiver.store');
     Route::get('busGiver/edit/{id?}', [CircleMeetingMemberBusinessController::class, 'edit'])->name('busGiver.edit');
     Route::post('busGiver/update/{id?}', [CircleMeetingMemberBusinessController::class, 'update'])->name('busGiver.update');
+    Route::post('busGiver/update/{id?}', [CircleMeetingMemberBusinessController::class, 'update'])->name('busGiver.update');
+    // Route::post('busGiver/paymentUpdate/{id?}', [CircleMeetingMemberBusinessController::class, 'paymentUpdate'])->name('busGiver.paymentUpdate');
     Route::get('busGiver/delete/{id?}', [CircleMeetingMemberBusinessController::class, 'delete'])->name('busGiver.delete');
+
+    // web.php
+    Route::get('/busGiver/paymentUpdate/{id}', [CircleMeetingMemberBusinessController::class, 'editPayment'])->name('busGiver.updatePayment');
+    Route::post('/busGiver/paymentUpdate/{id}', [CircleMeetingMemberBusinessController::class, 'updatePayment'])->name('busGiver.paymentUpdate.save');
+
+
+
 
     Route::get('/meetingmember/index', [CircleMeetingMembersController::class, 'index'])->name('meetingmember.index');
     Route::get('meetingmember/show/{id?}', [CircleMeetingMembersController::class, 'show'])->name('meetingmember.show');

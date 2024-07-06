@@ -26,11 +26,11 @@
         <div class="card-body">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h4 class="card-title">Testmonial</h4>
-                {{-- <a href="{{route('')}}" class="btn mt-3 btn-sm" style="background-color: #e76a35">Archives</a> --}}
+                <a href="{{ route('testimonials.indexAdmin') }}" class="btn btn-bg-orange btn-sm mt-3">Back</a>
             </div>
 
             <!-- Table with stripped rows -->
-            <table class="table datatable">
+            <table class="table datatable table-striped table-hover">
                 <thead>
                     <tr>
                         <th>Testimonial Giver</th>

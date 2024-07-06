@@ -27,7 +27,7 @@
         <div class="card-body">
             <div class="d-flex justify-content-between align-items-center mt-3 mb-5">
                 <h4 class="card-title">Circle Member Business</h4>
-                <a href="{{ route('busGiver.index') }}" class="btn btn-bg-blue btn-sm">BACK</a>
+                <a href="{{ route('busGiver.index') }}" class="btn btn-bg-orange btn-sm">BACK</a>
             </div>
             <hr class="mb-5">
             <!-- Floating Labels Form -->
@@ -84,8 +84,8 @@
                 </div> --}}
                 <div class="">
                     <div class="form-floating mt-3">
-                        <input type="text" class="form-control @error('contactNo') is-invalid @enderror" id="amount"
-                            name="amount" placeholder="Amount" required>
+                        <input type="number" class="form-control @error('amount') is-invalid @enderror" id="amount"
+                            name="amount" placeholder="Amount" required oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
                         <label for="amount">Amount</label>
                         @error('amount')
                             <div class="invalid-tooltip">

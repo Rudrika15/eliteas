@@ -32,7 +32,7 @@
                     <hr>
                     <!-- Table with stripped rows -->
                     <div class="table-responsive mt-5">
-                        <table class="table datatable mb-5">
+                        <table class="table datatable table-striped table-hover mb-5">
                             <thead>
                                 <tr>
                                     <th>Member Name</th>

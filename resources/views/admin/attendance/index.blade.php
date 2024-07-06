@@ -33,7 +33,7 @@
         <input type="hidden" name="circleId" value="{{ $circleId }}">
         <input type="hidden" name="meetingId" value="{{ $meetingId }}">
 
-        <table class="table datatable">
+        <table class="table datatable table-striped table-hover">
             <thead>
                 <tr>
                     <th width="5%">No</th>
