@@ -69,7 +69,7 @@
                                         {{ $errors->first('message') }}
                                     </div>
                                     @endif
-
+        
                                     <!-- OTP Verification Form -->
                                     <form action="{{ route('otp.verify') }}" method="post"
                                         class="needs-validation w-100 mt-3" novalidate>
@@ -113,11 +113,11 @@
                                                 onmouseout="this.style.border = '1px solid #1d2856'" required>
                                         </div>
 
-                                        @if ($errors->has('otp'))
+                                        {{-- @if ($errors->has('otp'))
                                         <span class="invalid-feedback text-danger" role="alert">
                                             <strong>Invalid OTP</strong>
                                         </span>
-                                        @endif
+                                        @endif --}}
 
                                         <input type="hidden" name="phone" value="{{ session('phone') }}">
                                         <div class="d-grid">

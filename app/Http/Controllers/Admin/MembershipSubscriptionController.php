@@ -15,13 +15,29 @@ class MembershipSubscriptionController extends Controller
     {
         try {
             $userId = $request->user()->id;
-            $subscriptions = MemberSubscriptions::where('userId', $userId)->where('status', 'Active')->get();
+            $subscriptions = MemberSubscriptions::where('userId', $userId)
+                ->where('status', 'Active')
+                ->with('allPayments') // Ensure allPayments relationship is loaded
+                ->get()
+                ->map(function ($subscription) {
+                    // Check if allPayments is a collection and format the amounts
+                    if ($subscription->allPayments instanceof \Illuminate\Support\Collection) {
+                        $subscription->allPayments->transform(function ($payment) {
+                            $payment->amount = isset($payment->amount) ? number_format($payment->amount, 2) : '-';
+                            return $payment;
+                        });
+                    }
+                    return $subscription;
+                });
+
             return view('admin.mysubscriptions.index', compact('subscriptions', 'userId'));
         } catch (\Throwable $th) {
             throw $th;
             return view('servererror');
         }
     }
+
+
 
     public function memberData(Request $request)
     {

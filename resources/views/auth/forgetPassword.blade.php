@@ -60,7 +60,8 @@
                             <div class="card mb-3 res-box p-3"
                                 style="width: 20rem; height: 23rem; background-image: url({{ asset('img/b2.jpg') }}); background-size: cover;">
                                 <div class="card-body">
-                                    <h5 class="card-title text-center mt-4 pb-0 fs-4 text-white mb-4">Forgot Password ?</h5>
+                                    <h5 class="card-title text-center mt-4 pb-0 fs-4 text-white mb-4">Forgot Password ?
+                                    </h5>
                                     <p class="text-center text-white small mt-3">You can reset your password here.</p>
 
                                     @if (Session::has('message'))
@@ -99,7 +100,8 @@
                                 <!-- You can delete the links only if you purchased the pro version. -->
                                 <!-- Licensing information: https://bootstrapmade.com/license/ -->
                                 <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/ -->
-                                Designed by <a href="https://flipcodesolutions.com/" target="_blank" class="text-black"><b>Aspireotech
+                                Designed by <a href="https://flipcodesolutions.com/" target="_blank"
+                                    class="text-black"><b>Aspireotech
                                         Solutions</b></a>
                             </div>
 

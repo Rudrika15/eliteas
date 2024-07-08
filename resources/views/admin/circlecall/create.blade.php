@@ -2,6 +2,7 @@
 
 @section('title', 'UBN - 1:1 Meeting')
 @section('content')
+
 {{-- Message --}}
 @if (Session::has('success'))
 <div class="alert alert-success alert-dismissible" role="alert">
@@ -16,6 +17,7 @@
     <strong>Error!</strong> {{ session('error') }}
 </div>
 @endif
+
 
 <div class="card">
     <div class="card-body d-flex justify-content-between align-items-center">
@@ -32,10 +34,15 @@
         <div class="row mb-3 mt-3">
             <div class="col-md-6">
                 <div class="form-floating mt-3">
-                    <input type="hidden" id="meetingPersonId" name="meetingPersonId">
-                    <input type="text" class="form-control" readonly id="meetingPersonName" placeholder="Select Member"
-                        disabled>
+                    <input type="hidden" id="meetingPersonId" name="meetingPersonId" required>
+                    <input type="text" class="form-control @error('meetingPersonId') is-invalid @enderror"
+                        readonly id="meetingPersonName" placeholder="Select Member" disabled required>
                     <label for="memberName">Meeting Person Name</label>
+                    @error('meetingPersonId')
+                        <div class="invalid-tooltip">
+                            This field is required.
+                        </div>
+                    @enderror
                 </div>
             </div>
 

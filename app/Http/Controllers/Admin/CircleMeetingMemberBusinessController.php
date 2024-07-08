@@ -22,13 +22,20 @@ class CircleMeetingMemberBusinessController extends Controller
             $busGiver = CircleMeetingMembersBusiness::where('loginMemberId', Auth::user()->id)
                 ->where('status', 'Active')
                 ->orderBy('id', 'DESC')
-                ->get();
+                ->get()
+                ->map(function ($item) {
+                    // Format the amount with commas
+                    $item->amount = isset($item->amount) ? number_format($item->amount, 2) : '-';
+                    return $item;
+                });
+
             return view('admin.circlebusiness.index', compact('busGiver'));
         } catch (\Throwable $th) {
             throw $th;
             return view('servererror');
         }
     }
+
 
 
     //For show single data
@@ -142,7 +149,7 @@ class CircleMeetingMemberBusinessController extends Controller
         ]);
 
         $payment = BusinessAmount::findOrFail($id);
-        if($request->amount) {
+        if ($request->amount) {
             $payment->amount += $request->amount;
         } else {
             $payment->amount -= $request->removeAmount;

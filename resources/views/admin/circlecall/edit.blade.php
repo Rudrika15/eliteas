@@ -4,7 +4,7 @@
 @section('content')
 
 {{-- Message --}}
-@if (Session::has('success'))
+{{-- @if (Session::has('success'))
 <div class="alert alert-success alert-dismissible" role="alert">
     <button type="button" class="close" data-dismiss="alert"></button>
     <strong>Success!</strong> {{ session('success') }}
@@ -16,7 +16,7 @@
     <button type="button" class="close" data-dismiss="alert"></button>
     <strong>Error!</strong> {{ session('error') }}
 </div>
-@endif
+@endif --}}
 
 <div class="card">
     <div class="card-body d-flex justify-content-between align-items-center">
@@ -36,13 +36,15 @@
             <div class="col-md-12">
                 <div class="form-floating mt-3">
                     <input type="hidden" id="meetingPersonId" name="meetingPersonId"
-                    value="{{ $circlecall->meetingPersonId }}">
-                    <input type="text" class="form-control" readonly id="meetingPersonName" placeholder="Select Member"
-                    value="{{ $circlecall->meetingPerson->firstName }} {{ $circlecall->meetingPerson->lastName }}">
-                    <label for="memberName" style="background-color: transparent;">Meeting Person Name</label>
-                    @error('memberId')
+                        value="{{ $circlecall->meetingPersonId }}" required>
+
+                    <input type="text" class="form-control " readonly id="meetingPersonName" placeholder="Select Member"
+                        value="{{ $circlecall->meetingPerson->firstName }} {{ $circlecall->meetingPerson->lastName }}"
+                        disabled required>
+                    <label for="memberName">Meeting Person Name</label>
+                    @error('meetingPersonId')
                     <div class="invalid-tooltip">
-                        {{ $message }}
+                        This field is required.
                     </div>
                     @enderror
                 </div>

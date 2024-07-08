@@ -55,7 +55,7 @@ class TestimonialController extends Controller
         $testimonial->status = 'Active';
         $testimonial->uploadedDate = Carbon::now()->toDateString();
         $testimonial->save();
-        return view('testimonial.create')->with("success", "message");
+        return redirect()->route('testimonial.index')->with("success", "Testimonial uploaded successfully.");
     }
 
     /**
@@ -95,7 +95,7 @@ class TestimonialController extends Controller
         $testimonial->memberId = $request->circlePersonId;
         $testimonial->message = $request->message;
         $testimonial->status = 'Active';
-        $testimonial->uploadedDate = Carbon::now()->toDateString();
+        // $testimonial->uploadedDate = Carbon::now()->toDateString();
         $testimonial->save();
         return redirect()->route('testimonial.index')->with("success", "Testimonial updated successfully.");
     }

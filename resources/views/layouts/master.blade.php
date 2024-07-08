@@ -67,7 +67,7 @@
 
         <div class="search-bar">
             <a class="search-form d-flex align-items-center" href="{{ route('search') }}">
-                <input type="text" name="query" placeholder="Click here to find People" title="Enter search keyword">
+                <input type="text" name="query" placeholder="Click here to find & connect with People" title="Enter search keyword">
                 <button type="submit" title="Search"><i class="bi bi-search"></i>
                 </button>
             </a>

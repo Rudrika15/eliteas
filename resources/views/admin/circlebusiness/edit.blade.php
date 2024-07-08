@@ -132,7 +132,7 @@
                     {{-- <th>Business Giver</th> --}}
                     <th>Amount</th>
                     <th>Date</th>
-                    <th>Status</th>
+                    {{-- <th>Status</th> --}}
                     <th>Action</th>
                 </tr>
             </thead>
@@ -141,15 +141,15 @@
                 @foreach ($paymentHistory as $paymentHistoryData)
                 <tr>
                     <td>{{$paymentHistoryData->amount ?? '-'}}</td>
-                    <td>{{$paymentHistoryData->date ?? '-'}}</td>
-                    <td>{{$paymentHistoryData->status ?? '-'}}</td>
+                    <td>{{ \Carbon\Carbon::parse($paymentHistoryData->date)->format('d-m-Y') ?? '-' }}</td>
+                    {{-- <td>{{$paymentHistoryData->status ?? '-'}}</td> --}}
                     <td><a href="{{ route('busGiver.updatePayment', $paymentHistoryData->id) }}"
                             class="btn btn-bg-blue btn-sm"><i class="bi bi-pen"></i></a></td>
                 </tr>
                 @endforeach
                 @else
                 <tr>
-                    <td colspan="5">No payment history data available</td>
+                    <td colspan="5" class="text-center">No payment history data available</td>
                 </tr>
                 @endif
             </tbody>

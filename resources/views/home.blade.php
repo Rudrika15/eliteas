@@ -148,7 +148,7 @@
         </div>
     </div>
 
-    <div class="container-responsive">
+    <div class="container-responsive">.
         <div class="row">
             @if ($meeting)
             <div class="col-md-12">

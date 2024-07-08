@@ -55,7 +55,7 @@
                     <input type="text" name="query" id="searchInput" placeholder="Enter circle name or member name..."
                         class="form-control" title="Enter search keyword">
                 </div>
-                <div class="col-md-1 d-flex justify-content-center align-items-center mb-4">
+                <div class="col-md-1 d-flex justify-content-center align-items-center mb-3">
                     <a href="{{ route('home') }}" class="btn btn-bg-orange btn-sm">BACK</a>
                 </div>
             </div>

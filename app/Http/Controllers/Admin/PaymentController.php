@@ -128,7 +128,7 @@ class PaymentController extends Controller
             $allPayments->paymentMode = 'Membership Subscription';
             $allPayments->remarks = $payment->r_payment_id;
             $allPayments->save();
-// Crypt::encrypt($allPayments->toArray());
+            // Crypt::encrypt($allPayments->toArray());
             // Debugging: Confirm AllPayments save
             Log::info('All payments saved:', $allPayments->toArray());
 
@@ -148,38 +148,64 @@ class PaymentController extends Controller
 
     public function allPayments()
     {
-        $payments = AllPayments::where('status', 'Active')->get();
-        return view('admin.paymentHistory.index', compact('payments'));
+        try {
+            $payments = AllPayments::where('status', 'Active')
+                ->get()
+                ->map(function ($payment) {
+                    $payment->amount = isset($payment->amount) ? number_format($payment->amount, 2) : '-';
+                    return $payment;
+                });
+
+            return view('admin.paymentHistory.index', compact('payments'));
+        } catch (\Throwable $th) {
+            throw $th;
+            return view('servererror');
+        }
     }
+
 
     public function circleAdminPaymentHistory()
     {
-        $user = auth()->user();
+        try {
+            $user = auth()->user();
+            $circleId = $user->member->circle->id;
+            $circleMembers = Member::where('circleId', $circleId)->pluck('userId')->toArray();
 
-        $circleId = $user->member->circle->id;
+            $payments = AllPayments::where('status', 'Active')
+                ->whereIn('memberId', $circleMembers)
+                ->get()
+                ->map(function ($payment) {
+                    $payment->amount = isset($payment->amount) ? number_format($payment->amount, 2) : '-';
+                    return $payment;
+                });
 
-        $circleMembers = Member::where('circleId', $circleId)->pluck('userId')->toArray();
-
-        $payments = AllPayments::where('status', 'Active')
-            ->whereIn('memberId', $circleMembers)
-            ->get();
-        // return $circleMembersIds = $circleMembers->pluck('id')->toArray();
-
-        // $payments = AllPayments::where('status', 'Active')
-        //     // ->where('memberId', $circleId)
-        //     ->get();
-
-        return view('admin.paymentHistory.circleAdminPaymentHistory', compact('payments'));
+            return view('admin.paymentHistory.circleAdminPaymentHistory', compact('payments'));
+        } catch (\Throwable $th) {
+            throw $th;
+            return view('servererror');
+        }
     }
+
 
 
     public function myAllPayments()
     {
-        $myAllPayments = AllPayments::where('status', 'Active')
-            ->where('memberId', auth()->id())
-            ->get();
-        return view('admin.paymentHistory.userIndex', compact('myAllPayments'));
+        try {
+            $myAllPayments = AllPayments::where('status', 'Active')
+                ->where('memberId', auth()->id())
+                ->get()
+                ->map(function ($payment) {
+                    $payment->amount = isset($payment->amount) ? number_format($payment->amount) : '-';
+                    return $payment;
+                });
+
+            return view('admin.paymentHistory.userIndex', compact('myAllPayments'));
+        } catch (\Throwable $th) {
+            throw $th;
+            return view('servererror');
+        }
     }
+
 
     public function pendingPayments()
     {

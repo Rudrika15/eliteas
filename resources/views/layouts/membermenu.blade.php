@@ -55,7 +55,7 @@
 
     <li class="nav-item">
         <a class="nav-link collapsed" href="{{ route('subscription.memberSubscription') }}">
-            <i class="bi bi-substack" style="color: #e76a35"></i>
+            <i class="bi bi-star-fill" style="color: #e76a35"></i>
             <span class="text-blue">My Subscriptions</span>
         </a>
     </li>

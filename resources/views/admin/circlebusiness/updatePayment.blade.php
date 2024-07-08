@@ -15,9 +15,9 @@
             @csrf
             <div class="">
 
-                <input type="hiddden" name="businessAmountId" id="businessAmountId" value="{{ $payment->id }}">
+                <input type="hidden" name="businessAmountId" id="businessAmountId" value="{{ $payment->id }}">
 
-                <input type="hiddden" name="circleMeetingMemberBusinessId" id="circleMeetingMemberBusinessId"
+                <input type="hidden" name="circleMeetingMemberBusinessId" id="circleMeetingMemberBusinessId"
                     value="{{ $payment->circleMeetingMemberBusinessId }}">
 
 

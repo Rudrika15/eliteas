@@ -2,17 +2,18 @@
 
 namespace App\Http\Controllers\Admin;
 
+use Carbon\Carbon;
+use App\Models\User;
+use App\Models\Circle;
 use App\Models\Member;
+use App\Models\Schedule;
 use App\Models\CircleCall;
 use App\Models\CircleMember;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-use App\Models\Circle;
-use App\Models\Schedule;
-use App\Models\User;
-use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class CircleCallController extends Controller
 {
@@ -176,6 +177,17 @@ class CircleCallController extends Controller
 
     public function store(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'meetingPersonId' => 'required',
+            'meetingPlace' => 'required',
+            'date' => 'required',
+            'remarks' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
         try {
             $circlecall = new CircleCall();
             $circlecall->memberId = Auth::user()->id;

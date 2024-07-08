@@ -36,7 +36,7 @@ class ProfileController extends Controller
 
             return view('profile', compact('member', 'country', 'states', 'city', 'contactDetails', 'billing', 'tops'));
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
             // In case of an error, redirect to servererror view
             return view('servererror');
         }
@@ -154,7 +154,7 @@ class ProfileController extends Controller
 
             return redirect()->route('home')->with('success', 'Profile Updated Successfully!');
         } catch (Throwable $th) {
-            throw $th;
+            // throw $th;
             return view('servererror');
         }
     }

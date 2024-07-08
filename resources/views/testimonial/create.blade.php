@@ -28,7 +28,7 @@
         <div class="card-body">
             <div class="d-flex justify-content-between align-items-center mb-5">
                 <h4 class="card-title">Create Testimonial</h4>
-                <a href="{{ route('testimonial.index') }}" class="btn btn-bg-blue btn-sm">BACK</a>
+                <a href="{{ route('testimonial.index') }}" class="btn btn-bg-orange btn-sm">BACK</a>
             </div>
             <hr class="mb-5">
             <form class="m-3 needs-validation" id="circlecallForm" enctype="multipart/form-data" method="post"
@@ -42,13 +42,13 @@
                 <div class="row mb-3 ">
                     <div class="col-md-12">
                         <div class="form-floating mt-3">
-                            <input type="hidden" id="circlePersonId" name="circlePersonId">
-                            <input type="text" class="form-control" id="circlePersonName" placeholder="Select Member"
-                                disabled>
+                            <input type="hidden" id="circlePersonId" name="circlePersonId" required>
+                            <input type="text" class="form-control @error('circlePersonId') is-invalid @enderror"
+                                id="circlePersonName" placeholder="Select Member" required disabled>
                             <label for="meetingPersonName">Circle Member Name</label>
                             @error('circlePersonId')
                                 <div class="invalid-tooltip">
-                                    {{ $message }}
+                                    This field is required.
                                 </div>
                             @enderror
                         </div>
