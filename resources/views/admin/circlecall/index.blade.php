@@ -4,7 +4,7 @@
 @section('content')
 
 {{-- Message --}}
-@if (Session::has('success'))
+{{-- @if (Session::has('success'))
 <div class="alert alert-success alert-dismissible" role="alert">
     <button type="button" class="close" data-dismiss="alert">
         <span aria-hidden="true">&times;</span>
@@ -20,7 +20,7 @@
     </button>
     <strong>Error!</strong> {{ session('error') }}
 </div>
-@endif
+@endif --}}
 
 <div class="card">
     <div class="card-body">
@@ -60,11 +60,28 @@
                                 <span class="btn-text">Edit Circle Call</span>
                                 <i class="bi bi-pen"></i>
                             </a>
-                            <a href="{{ route('circlecall.delete', $circlecallData->id) }}"
-                                class="btn btn-danger btn-sm btn-tooltip">
+                            <button class="btn btn-danger btn-sm btn-tooltip"
+                                onclick="deleteRow('{{ route('circlecall.delete', $circlecallData->id) }}')">
                                 <span class="btn-text">Delete</span>
                                 <i class="bi bi-trash"></i>
-                            </a>
+                            </button>
+                            <script>
+                                function deleteRow(url) {
+                                    Swal.fire({
+                                        title: 'Are you sure?',
+                                        text: "You won't be able to revert this!",
+                                        icon: 'warning',
+                                        showCancelButton: true,
+                                        confirmButtonColor: '#1d2856',
+                                        cancelButtonColor: '#d33',
+                                        confirmButtonText: 'Yes, delete it!'
+                                    }).then((result) => {
+                                        if (result.isConfirmed) {
+                                            window.location.href = url;
+                                        }
+                                    })
+                                }
+                            </script>
                         </td>
                     </tr>
                     @endforeach
@@ -74,4 +91,8 @@
         <!-- End Table with stripped rows -->
     </div>
 </div>
+
+
+
+
 @endsection

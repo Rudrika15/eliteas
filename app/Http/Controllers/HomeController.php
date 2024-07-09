@@ -124,41 +124,46 @@ class HomeController extends Controller
         return redirect()->back()->with('success', 'Training Registered Successfully');
     }
 
-    public  function invitation(Request $request)
+    public function invitation(Request $request)
     {
-        $request->validate([
-            'personName' => 'required',
-            'personEmail' => 'required',
-            'personContact' => 'required',
-            'businessCategoryId' => 'required',
-        ]);
+        try {
+            $request->validate([
+                'personName' => 'required',
+                'personEmail' => 'required',
+                'personContact' => 'required|max:10',
+                'businessCategoryId' => 'required',
+            ]);
 
-        $invitation = new MeetingInvitation();
-        $invitation->meetingId = $request->meetingId;
-        $invitation->invitedMemberId = Auth::user()->id;
-        $invitation->personName = $request->personName;
-        $invitation->personEmail = $request->personEmail;
-        $invitation->personContact = $request->personContact;
-        $invitation->businessCategoryId = $request->businessCategoryId;
-        $invitation->save();
+            $invitation = new MeetingInvitation();
+            $invitation->meetingId = $request->meetingId;
+            $invitation->invitedMemberId = Auth::user()->id;
+            $invitation->personName = $request->personName;
+            $invitation->personEmail = $request->personEmail;
+            $invitation->personContact = $request->personContact;
+            $invitation->businessCategoryId = $request->businessCategoryId;
+            $invitation->save();
 
-        $fees = Schedule::where('id', $request->meetingId)->with('circle.city')->first();
-        $personName = $request->personName;
-        $personEmail = $request->personEmail;
-        $invitedPerson = User::where('id', Auth::user()->id)->first();
-        $invitedPersonFirstName = $invitedPerson->firstName;
-        $invitedPersonLastName = $invitedPerson->lastName;
-        $amount = $fees->circle->city->amount;
-        $data = [
-            'personName' => $personName,
-            'personEmail' => $personEmail,
-            'invitedPersonFirstName' => $invitedPersonFirstName,
-            'invitedPersonLastName' => $invitedPersonLastName,
-            'amount' => $amount
-        ];
 
-        Mail::to($request->personEmail)->send(new MailMeetingInvitation($data));
-        return redirect()->back()->with('success', 'Invitation Sent Successfully');
+            $fees = Schedule::where('id', $request->meetingId)->with('circle.city')->first();
+            $personName = $request->personName;
+            $personEmail = $request->personEmail;
+            $invitedPerson = User::where('id', Auth::user()->id)->first();
+            $invitedPersonFirstName = $invitedPerson->firstName;
+            $invitedPersonLastName = $invitedPerson->lastName;
+            $amount = $fees->circle->city->amount;
+            $data = [
+                'personName' => $personName,
+                'personEmail' => $personEmail,
+                'invitedPersonFirstName' => $invitedPersonFirstName,
+                'invitedPersonLastName' => $invitedPersonLastName,
+                'amount' => $amount
+            ];
+
+            Mail::to($request->personEmail)->send(new MailMeetingInvitation($data));
+            return redirect()->back()->with('success', 'Invitation Sent Successfully');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'An error occurred while sending the invitation. Please try again.');
+        }
     }
 
 

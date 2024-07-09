@@ -4,7 +4,7 @@
 @section('content')
 
 {{-- Message --}}
-@if (Session::has('success'))
+{{-- @if (Session::has('success'))
 <div class="alert alert-success alert-dismissible" role="alert">
     <button type="button" class="close" data-dismiss="alert"></button>
     <strong>Success!</strong> {{ session('success') }}
@@ -16,7 +16,7 @@
     <button type="button" class="close" data-dismiss="alert"></button>
     <strong>Error!</strong> {{ session('error') }}
 </div>
-@endif
+@endif --}}
 
 
 <div class="card">
@@ -49,8 +49,11 @@
             <div class="col-md-6">
                 <div class="form-floating mt-3">
                     <input type="text" class="form-control" id="meetingPlace" name="meetingPlace"
-                        placeholder="Meeting Place Name" required>
+                        placeholder="Meeting Place Name" pattern="[A-Za-z\s]+" required
+                        oninvalid="this.setCustomValidity('Please enter correct details.')"
+                        oninput="setCustomValidity('')">
                     <label for="meetingPlace">Meeting Place Name</label>
+                    <span class="error-message text-danger"></span> <!-- Error message placeholder -->
                 </div>
             </div>
 

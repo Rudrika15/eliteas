@@ -726,8 +726,21 @@
                         <label for="personContact" class="form-label">Contact Number</label>
                         <input type="tel" class="form-control" name="personContact" id="personContact"
                             pattern="[0-9]{10}" maxlength="10" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" required>
-                        <span class="error-message text-danger"></span> <!-- Error message placeholder -->
+                        <span class="error-message text-danger" id="phoneError" style="display:none;">
+                            Please enter correct number
+                        </span> <!-- Error message placeholder -->
                     </div>
+
+                    <script>
+                        document.getElementById("personContact").addEventListener("input", function(e) {
+                            var x = document.getElementById("personContact").value;
+                            if (x.length == 10) {
+                                document.getElementById("phoneError").style.display = "none";
+                            } else {
+                                document.getElementById("phoneError").style.display = "block";
+                            }
+                        });
+                    </script>
                     <div class="mb-3">
                         <label for="personBusiness" class="form-label">Business Category</label>
                         <select name="  businessCategoryId" class="form-select" id="personBusiness" required>

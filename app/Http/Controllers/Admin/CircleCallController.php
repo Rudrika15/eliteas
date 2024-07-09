@@ -179,7 +179,7 @@ class CircleCallController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'meetingPersonId' => 'required',
-            'meetingPlace' => 'required',
+            'meetingPlace' => 'required|regex:/^([a-zA-Z]+)(\s[a-zA-Z]+)*$/',
             'date' => 'required',
             'remarks' => 'required',
         ]);

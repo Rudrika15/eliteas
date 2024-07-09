@@ -16,7 +16,7 @@
     <!-- Google Fonts -->
     <link href="https://fonts.gstatic.com" rel="preconnect">
     <link
-        href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
+        href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i"
         rel="stylesheet">
 
     <!-- Vendor CSS Files -->
@@ -57,8 +57,8 @@
                                 </a>
                             </div><!-- End Logo -->
 
-                            <div class="card mb-3 res-box p-3"
-                                style="width: 20rem; height: 23rem; background-image: url({{ asset('img/b2.jpg') }}); background-size: cover;">
+                            <div class="card mb-3 res-box p-3 bg-cover"
+                                style="background-image: url({{ asset('img/b2.jpg') }});">
                                 <div class="card-body">
                                     <h5 class="card-title text-center mt-4 pb-0 fs-4 text-white mb-4">Forgot Password ?
                                     </h5>
@@ -96,26 +96,34 @@
                             </div>
 
                             <div class="credits">
-                                <!-- All the links in the footer should remain intact. -->
-                                <!-- You can delete the links only if you purchased the pro version. -->
-                                <!-- Licensing information: https://bootstrapmade.com/license/ -->
-                                <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/ -->
                                 Designed by <a href="https://flipcodesolutions.com/" target="_blank"
-                                    class="text-black"><b>Aspireotech
-                                        Solutions</b></a>
+                                    class="text-black"><b>Aspireotech Solutions</b></a>
                             </div>
-
                         </div>
                     </div>
                 </div>
-
             </section>
-
         </div>
     </main><!-- End #main -->
 
     <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
             class="bi bi-arrow-up-short"></i></a>
+
+
+    <script>
+        .bg - cover {
+                background - size: cover;
+                background - position: center;
+            }
+
+            .alert - success {
+                // width: 100%;
+                text - align: center;
+                margin - top: 10 px;
+            }
+    </script>
+
+
 
     <!-- Vendor JS Files -->
     <script src="{{ asset('vendor/apexcharts/apexcharts.min.js') }}"></script>
