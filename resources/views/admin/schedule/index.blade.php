@@ -45,7 +45,7 @@
 
         <!-- Table with stripped rows -->
         <div class="table-responsive">
-            <table class="table datatable table-striped table-hover" id="scheduleTable">
+            <table class="table table-striped table-hover" id="scheduleTable">
                 <thead>
                     <tr>
                         <th>Circle Name</th>
@@ -104,6 +104,9 @@
                     @endforeach
                 </tbody>
             </table>
+            <div class="d-flex justify-content-end" style="color: #1d3268">
+                {!! $schedules->links() !!}
+            </div>
             <!-- End Table with stripped rows -->
         </div>
     </div>

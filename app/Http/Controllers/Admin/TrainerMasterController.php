@@ -50,9 +50,17 @@ class TrainerMasterController extends Controller
     public function store(Request $request)
     {
         // Validate the request
-        $this->validate($request, [
-            // Add validation rules for your fields if needed
-        ]);
+        $validate = [];
+        if ($request->type == 'externalMember') {
+            $validate = [
+                'firstName' => 'required',
+                'lastName' => 'required',
+                'email' => 'required|email|unique:users,email',
+                'contactNo' => 'required|unique:users,contactNo',
+            ];
+        }
+
+        $this->validate($request, $validate);
 
         try {
             if ($request->type == 'externalMember') { // Change from 'group' to 'type'
@@ -93,7 +101,6 @@ class TrainerMasterController extends Controller
                 $trainer->type = $request->type; // Change from 'group' to 'type'
                 $trainer->status = 'Active';
                 $trainer->save();
-
             }
 
             return redirect()->route('trainer.index')->with('success', 'Trainer Created Successfully!');
@@ -118,38 +125,38 @@ class TrainerMasterController extends Controller
     }
 
     public function update(Request $request, $id)
-{
-    // Validate the request
-    $this->validate($request, [
-        // Add validation rules for your fields if needed
-    ]);
+    {
+        // Validate the request
+        $this->validate($request, [
+            // Add validation rules for your fields if needed
+        ]);
 
-    try {
-        
-        // Find the user by ID
-        $user = User::find($request->trainerId);
-        if (!$user) {
-            return redirect()->back()->with('error', 'User not found.');
+        try {
+
+            // Find the user by ID
+            $user = User::find($request->trainerId);
+            if (!$user) {
+                return redirect()->back()->with('error', 'User not found.');
+            }
+
+            // Find the TrainerMaster by user ID
+            $trainer = TrainerMaster::where('userId', $user->id)->first();
+            if (!$trainer) {
+                return redirect()->back()->with('error', 'Trainer details not found.');
+            }
+
+            // Update the TrainerMaster details
+            $trainer->type = $request->type;
+            // Update other TrainerMaster fields if needed
+            $trainer->save();
+
+            return redirect()->route('trainer.index')->with('success', 'Trainer Updated Successfully!');
+        } catch (\Throwable $th) {
+            throw $th;
+            // Log the error or handle it gracefully
+            return view('servererror');
         }
-
-        // Find the TrainerMaster by user ID
-        $trainer = TrainerMaster::where('userId', $user->id)->first();
-        if (!$trainer) {
-            return redirect()->back()->with('error', 'Trainer details not found.');
-        }
-
-        // Update the TrainerMaster details
-        $trainer->type = $request->type;
-        // Update other TrainerMaster fields if needed
-        $trainer->save();
-
-        return redirect()->route('trainer.index')->with('success', 'Trainer Updated Successfully!');
-    } catch (\Throwable $th) {
-        throw $th;
-        // Log the error or handle it gracefully
-        return view('servererror');
     }
-}
 
 
 
@@ -170,7 +177,7 @@ class TrainerMasterController extends Controller
     public function trainingWiseTrainerList(Request $request)
     {
         try {
-            $trainers = TrainingTrainers::where('status', 'Active')->get();
+            $trainers = TrainingTrainers::where('status', 'Active')->paginate(10);
             return view('admin.trainerMaster.trainingWiseTrainerList', compact('trainers'));
         } catch (\Throwable $th) {
             throw $th;

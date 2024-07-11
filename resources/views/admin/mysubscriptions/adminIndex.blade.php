@@ -4,7 +4,7 @@
 @section('content')
 
 {{-- Message --}}
-@if (Session::has('success'))
+{{-- @if (Session::has('success'))
 <div class="alert alert-success alert-dismissible" role="alert">
     <button type="button" class="close" data-dismiss="alert"></button>
     <strong>Success!</strong> {{ session('success') }}
@@ -16,7 +16,7 @@
     <button type="button" class="close" data-dismiss="alert"></button>
     <strong>Error!</strong> {{ session('error') }}
 </div>
-@endif
+@endif --}}
 
 <div class="container">
     <div class="card">
@@ -45,7 +45,7 @@
                 <form action="{{ route('subscriptions.export') }}" method="POST" id="exportForm" class="ms-3">
                     @csrf
                     <input type="hidden" name="membershipType" id="exportMembershipType">
-                    <button type="submit" class="btn btn-bg-blue btn-sm">Download Excel</button>
+                    {{-- <button type="submit" class="btn btn-bg-blue btn-sm">Download Excel</button> --}}
                 </form>
             </div>
 
@@ -94,6 +94,9 @@
                         @endforeach
                     </tbody>
                 </table>
+                <div class="d-flex justify-content-end" style="color: #1d3268">
+                    {!! $allSubscriptions->links() !!}
+                </div>
             </div>
         </div>
     </div>

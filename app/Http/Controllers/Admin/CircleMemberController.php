@@ -39,10 +39,10 @@ class CircleMemberController extends Controller
     {
         try {
             // $member = Member::findOrFail($user->id);
-            $member = Member::whereHas('circle')->with('circle')->whereHas('contactDetails')->with('contactDetails')->with('user')->with('topsProfile')->with('billingAddress')->get();
-            $circle = Circle::where('status', 'Active')->get();
-            $bCategory = BusinessCategory::where('status', 'Active')->get();
-            $roles = Role::whereNotIn('name', ['Admin', 'Member', 'Trainer', 'Franchise '])->get();
+            $member = Member::whereHas('circle')->with('circle')->whereHas('contactDetails')->with('contactDetails')->with('user')->with('topsProfile')->with('billingAddress')->paginate(10);
+            $circle = Circle::where('status', 'Active')->paginate(10);
+            $bCategory = BusinessCategory::where('status', 'Active')->paginate(10);
+            $roles = Role::whereNotIn('name', ['Admin', 'Member', 'Trainer', 'Franchise '])->paginate(10);
             return view('admin.circlemember.index', compact('member', 'roles', 'circle', 'bCategory'));
         } catch (\Throwable $th) {
             throw $th;
@@ -419,7 +419,7 @@ class CircleMemberController extends Controller
         try {
             $circlecall = CircleCall::where('status', 'Active')
                 ->where('memberId', 'userId')
-                ->get();
+                ->paginate(10);
             return view('admin.circlemember.activity', compact('circlecall'));
         } catch (\Throwable $th) {
             throw $th;

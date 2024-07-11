@@ -22,7 +22,7 @@ class TrainingController extends Controller
             $training = Training::with('trainer')
                 ->where('status', 'Active')
                 ->orderBy('id', 'DESC')
-                ->get();
+                ->paginate(10);
 
             return view('admin.training.index', compact('training'));
         } catch (\Throwable $th) {

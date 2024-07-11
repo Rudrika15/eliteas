@@ -150,7 +150,7 @@ class PaymentController extends Controller
     {
         try {
             $payments = AllPayments::where('status', 'Active')
-                ->get()
+                ->paginate(10)
                 ->map(function ($payment) {
                     $payment->amount = isset($payment->amount) ? number_format($payment->amount, 2) : '-';
                     return $payment;
@@ -158,7 +158,7 @@ class PaymentController extends Controller
 
             return view('admin.paymentHistory.index', compact('payments'));
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
             return view('servererror');
         }
     }
@@ -173,7 +173,7 @@ class PaymentController extends Controller
 
             $payments = AllPayments::where('status', 'Active')
                 ->whereIn('memberId', $circleMembers)
-                ->get()
+                ->paginate(10)
                 ->map(function ($payment) {
                     $payment->amount = isset($payment->amount) ? number_format($payment->amount, 2) : '-';
                     return $payment;
@@ -181,7 +181,7 @@ class PaymentController extends Controller
 
             return view('admin.paymentHistory.circleAdminPaymentHistory', compact('payments'));
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
             return view('servererror');
         }
     }
@@ -201,7 +201,7 @@ class PaymentController extends Controller
 
             return view('admin.paymentHistory.userIndex', compact('myAllPayments'));
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
             return view('servererror');
         }
     }

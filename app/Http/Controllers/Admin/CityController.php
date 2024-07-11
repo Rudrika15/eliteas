@@ -18,7 +18,7 @@ class CityController extends Controller
                 ->with('state')
                 ->where('status', 'Active')
                 ->orderBy('id', 'DESC')
-                ->get();
+                ->paginate(10);
             return view('admin.city.index', compact('city'));
         } catch (\Throwable $th) {
             throw $th;

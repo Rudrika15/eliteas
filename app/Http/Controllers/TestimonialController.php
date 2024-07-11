@@ -16,8 +16,8 @@ class TestimonialController extends Controller
      */
     public function index()
     {
-        $testimonials = Testimonial::where('memberId', Auth::user()->member->id)->with('sender')->get();
-        $myTestimonials = Testimonial::where('userId', Auth::user()->id)->with('receiver')->get();
+        $testimonials = Testimonial::where('memberId', Auth::user()->member->id)->with('sender')->paginate(10);
+        $myTestimonials = Testimonial::where('userId', Auth::user()->id)->with('receiver')->paginate(10);
         // return Auth::user()->member->id;
         // return $testimonials;
         return view('testimonial.index', ["testimonials" => $testimonials, 'myTestimonials' => $myTestimonials]);
@@ -25,7 +25,7 @@ class TestimonialController extends Controller
 
     public function indexAdmin()
     {
-        $testimonials = Testimonial::all();
+        $testimonials = Testimonial::paginate(10);
 
         return view('admin.testimonial.index', compact('testimonials'));
     }
@@ -111,7 +111,7 @@ class TestimonialController extends Controller
     }
     public function archives()
     {
-        $testimonials = Testimonial::onlyTrashed()->get();
+        $testimonials = Testimonial::onlyTrashed()->paginate(10);
         return view('admin.testimonial.archives', \compact('testimonials'));
     }
     public function restore($id)

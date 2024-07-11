@@ -28,13 +28,13 @@
         <div class="card-body">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h4 class="card-title">Membership Type</h4>
-                <a href="{{ route('membershipType.create') }}" class="btn btn-bg-orange btn-sm mt-3"><i
+                <a href="{{ route('membershipType.create') }}" class="btn btn-bg-orange btn-sm mt-2"><i
                         class="bi bi-plus-circle"></i></a>
             </div>
 
             <!-- Table with stripped rows -->
             <div class="table-responsive">
-                <table class="table datatable table-striped table-hover">
+                <table class="table table-striped table-hover">
                     <thead>
                         <tr>
                             <th>Membership Type</th>
@@ -68,6 +68,9 @@
                         @endforeach
                     </tbody>
                 </table>
+                <div class="d-flex justify-content-end" style="color: #1d3268">
+                    {!! $membershipType->links() !!}
+                </div>
                 <!-- End Table with stripped rows -->
             </div>
         </div>

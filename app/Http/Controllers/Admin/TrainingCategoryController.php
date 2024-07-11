@@ -11,7 +11,7 @@ class TrainingCategoryController extends Controller
     public function index(Request $request)
     {
         try {
-            $trainingCategory = TrainingCategory::where('status', 'Active')->get();
+            $trainingCategory = TrainingCategory::where('status', 'Active')->paginate(10);
             return view('admin.trainingcategory.index', compact('trainingCategory'));
         } catch (\Throwable $th) {
             throw $th;

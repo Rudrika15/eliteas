@@ -97,7 +97,7 @@
                 <div class="">
                     <div class="form-floating mt-3">
                         <input type="date" class="form-control @error('date') is-invalid @enderror" id="date"
-                            name="date" placeholder="date" required>
+                            name="date" placeholder="date" required max="{{ Carbon::now()->format('Y-m-d') }}">
                         <label for="date">Date</label>
                         @error('date')
                             <div class="invalid-tooltip">

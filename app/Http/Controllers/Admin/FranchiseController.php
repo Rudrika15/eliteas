@@ -22,7 +22,7 @@ class FranchiseController extends Controller
     {
         try {
             $user = User::all();
-            $franchises = Franchise::where('status', 'Active')->get();
+            $franchises = Franchise::where('status', 'Active')->paginate(10);
             return view('admin.franchise.index', compact('franchises', 'user'));
         } catch (\Throwable $th) {
             throw $th;

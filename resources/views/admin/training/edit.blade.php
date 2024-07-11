@@ -36,98 +36,90 @@
         <input type="hidden" name="id" value="{{ $training->id }}">
 
         <div class="row">
-            <div class="col-md-6">
-                {{-- Trainer 1 --}}
-                <h5><b>Trainer 1</b></h5>
-                <hr>
-                <div class="row">
-                    <div class="col-md-12">
-                        <!-- Trainer selection -->
-                        <div class="form-check">
-                            <input class="form-check-input trainer-radio" type="radio" name="groupMember" id="internalMember"
-                                value="internalMember" {{ $training->trainers[0]->type == 'internalMember' ? 'checked' : '' }}>
-                            <label class="form-check-label" for="internalMember">Internal</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input trainer-radio" type="radio" name="groupMember" id="externalMember"
-                                value="externalMember" {{ $training->trainers[0]->type == 'externalMember' ? '' : 'checked' }}>
-                            <label class="form-check-label" for="externalMember">External</label>
-                        </div>
-        
-                        <!-- Member selection -->
-                        <div class="member-list" id="memberListDropdownMember">
-                            @include('TrainerPerson1')
-                            <input type="hidden" name="trainerId" id="trainerId" @if($training->trainers[0] &&
-                            $training->trainers[0]->type ==
-                            'internalMember') value="{{$training->trainers[0]->userId}}" @endif>
-                            <input type="text" class="form-control mt-3" id="trainerName" name="memberName"
-                                placeholder="Select Trainer Internal" readonly>
-                        </div>
-                        <div class="external-trainer-list" id="memberListInputMember" style="display:none;">
-                            @include('TrainerPerson1External')
-                            <input type="hidden" name="externalTrainerId" id="externalTrainerId"
-                                value="{{$training->trainers[0]->userId}}">
-                            <input type="text" class="form-control mt-3" id="trainerNameExternal" name="trainerNameExternal"
-                                placeholder="Trainer Name External"
-                                value="{{$training->trainers[0]->user->firstName}} {{$training->trainers[0]->user->lastName}}"
-                                readonly>
-                        </div>
-        
-                        <!-- Contact details -->
-                        <input type="text" class="form-control mt-3" id="trainerContact" name="contactNo"
-                            placeholder="Contact No" readonly value="{{$training->trainers[0]->user->contactNo}}">
-                        <input type="text" class="form-control mt-3" id="trainerEmail" name="email" placeholder="Email"
-                            value="{{$training->trainers[0]->user->email}}" readonly>
-                    </div>
+    <div class="col-md-6">
+        {{-- Trainer 1 --}}
+        <h5><b>Trainer 1</b></h5>
+        <hr>
+        <div class="row">
+            <div class="col-md-12">
+                <!-- Trainer selection -->
+                <div class="form-check">
+                    <input class="form-check-input trainer-radio" type="radio" name="groupMember" id="internalMember" value="internalMember"
+                        {{ $training->trainers[0]->type == 'internalMember' ? 'checked' : '' }}>
+                    <label class="form-check-label" for="internalMember">Internal</label>
                 </div>
-            </div>
-            <div class="col-md-6">
-                {{-- Trainer 2 --}}
-                <h5><b>Trainer 2</b></h5>
-                <hr>
-                <div class="row">
-                    <div class="col-md-12">
-                        <!-- Trainer selection -->
-                        <div class="form-check">
-                            <input class="form-check-input trainer-radio" type="radio" name="group" id="internal"
-                                value="internal" {{ $training->trainers[0]->type == 'internal' ? 'checked' : '' }}>
-                            <label class="form-check-label" for="internal">Internal</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input trainer-radio" type="radio" name="group" id="external"
-                                value="external" {{ $training->trainers[0]->type == 'external' ? '' : 'checked' }}>
-                            <label class="form-check-label" for="external">External</label>
-                        </div>
-        
-                        <!-- Member selection -->
-                        <div class="member-list" id="memberListDropdown" style="display:none;">
-                            @include('TrainerPerson2')
-                            <input type="hidden" name="trainerId2" id="trainerId2" @if($training->trainers[1] &&
-                            $training->trainers[1]->type == 'internalMember') value="{{$training->trainers[1]->userId}}" @endif>
-                            <input type="text" class="form-control mt-3" id="trainerName2" name="trainerNameInternal"
-                                placeholder="Trainer Name Internal"
-                                value=" {{$training->trainers[1]->user->firstName}} {{$training->trainers[1]->user->lastName}}"
-                                readonly @if($training->trainers[1] && $training->trainers[1]->type == 'internalMember') @endif>
-                        </div>
-                        <div class="member-list" id="memberListInput" style="display:none;">
-                            @include('TrainerPerson2External')
-                            <input type="hidden" name="externalTrainerId2" id="externalTrainerId2"
-                                value="{{$training->trainers[1]->userId}}">
-                            <input type="text" class="form-control mt-3" id="trainerNameExternal2" name="trainerNameExternal2"
-                                placeholder="Trainer Name External"
-                                value="{{$training->trainers[1]->user->firstName}} {{$training->trainers[1]->user->lastName}}"
-                                readonly>
-                        </div>
-        
-                        <!-- Contact details -->
-                        <input type="text" class="form-control mt-3" id="trainerContact2" name="contactNo2"
-                            placeholder="Contact No" readonly value="{{$training->trainers[1]->user->contactNo}}">
-                        <input type="text" class="form-control mt-3" id="trainerEmail2" name="email2" placeholder="Email"
-                            value="{{$training->trainers[1]->user->email}}" readonly>
-                    </div>
+                <div class="form-check">
+                    <input class="form-check-input trainer-radio" type="radio" name="groupMember" id="externalMember" value="externalMember"
+                        {{ $training->trainers[0]->type == 'externalMember' ? '' : 'checked' }}>
+                    <label class="form-check-label" for="externalMember">External</label>
                 </div>
+
+                <!-- Member selection -->
+                <div class="member-list" id="memberListDropdownMember">
+                    @include('TrainerPerson1')
+                    <input type="hidden" name="trainerId" id="trainerId" @if($training->trainers[0] && $training->trainers[0]->type == 'internalMember') value="{{$training->trainers[0]->userId}}" @endif>
+                    <input type="text" class="form-control mt-3" id="trainerName" name="memberName" placeholder="Select Trainer Internal" readonly>
+                </div>
+                <div class="external-trainer-list" id="memberListInputMember" style="display:none;">
+                    @include('TrainerPerson1External')
+                    <input type="hidden" name="externalTrainerId" id="externalTrainerId" value="{{$training->trainers[0]->userId}}">
+                    <input type="text" class="form-control mt-3" id="trainerNameExternal" name="trainerNameExternal" placeholder="Trainer Name External"
+                        value="{{$training->trainers[0]->user->firstName}} {{$training->trainers[0]->user->lastName}}" readonly>
+                </div>
+
+                <!-- Contact details -->
+                <input type="text" class="form-control mt-3" id="trainerContact" name="contactNo" placeholder="Contact No" readonly value="{{$training->trainers[0]->user->contactNo}}">
+                <input type="text" class="form-control mt-3" id="trainerEmail" name="email" placeholder="Email" value="{{$training->trainers[0]->user->email}}" readonly>
             </div>
         </div>
+    </div>
+
+    <div class="col-md-6">
+        {{-- Trainer 2 --}}
+        @if(isset($training->trainers[1]))
+            <h5><b>Trainer 2</b></h5>
+            <hr>
+            <div class="row">
+                <div class="col-md-12">
+                    <!-- Trainer selection -->
+                    <div class="form-check">
+                        <input class="form-check-input trainer-radio" type="radio" name="group" id="internal" value="internal"
+                            {{ $training->trainers[1]->type == 'internal' ? 'checked' : '' }}>
+                        <label class="form-check-label" for="internal">Internal</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input trainer-radio" type="radio" name="group" id="external" value="external"
+                            {{ $training->trainers[1]->type == 'external' ? '' : 'checked' }}>
+                        <label class="form-check-label" for="external">External</label>
+                    </div>
+
+                    <!-- Member selection -->
+                    <div class="member-list" id="memberListDropdown" style="display:none;">
+                        @include('TrainerPerson2')
+                        <input type="hidden" name="trainerId2" id="trainerId2" @if($training->trainers[1] && $training->trainers[1]->type == 'internalMember') value="{{$training->trainers[1]->userId}}" @endif>
+                        <input type="text" class="form-control mt-3" id="trainerName2" name="trainerNameInternal" placeholder="Trainer Name Internal"
+                            value=" {{$training->trainers[1]->user->firstName}} {{$training->trainers[1]->user->lastName}}" readonly>
+                    </div>
+                    <div class="member-list" id="memberListInput" style="display:none;">
+                        @include('TrainerPerson2External')
+                        <input type="hidden" name="externalTrainerId2" id="externalTrainerId2" value="{{$training->trainers[1]->userId}}">
+                        <input type="text" class="form-control mt-3" id="trainerNameExternal2" name="trainerNameExternal2" placeholder="Trainer Name External"
+                            value="{{$training->trainers[1]->user->firstName}} {{$training->trainers[1]->user->lastName}}" readonly>
+                    </div>
+
+                    <!-- Contact details -->
+                    <input type="text" class="form-control mt-3" id="trainerContact2" name="contactNo2" placeholder="Contact No" readonly value="{{$training->trainers[1]->user->contactNo}}">
+                    <input type="text" class="form-control mt-3" id="trainerEmail2" name="email2" placeholder="Email" value="{{$training->trainers[1]->user->email}}" readonly>
+                </div>
+            </div>
+        @else
+            <h5><b>Trainer 2</b></h5>
+            <hr>
+            <p>No Trainer 2 data available.</p>
+        @endif
+    </div>
+</div>
+
         
         {{-- Training Details --}}
         <div class="accordion-item mt-3">

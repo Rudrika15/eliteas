@@ -11,7 +11,7 @@ class BusinessCategoryController extends Controller
     public function index(Request $request)
     {
         try {
-            $businessCategory = BusinessCategory::where('status', 'Active')->get();
+            $businessCategory = BusinessCategory::where('status', 'Active')->paginate(10);
             return view('admin.businesscategory.index', compact('businessCategory'));
         } catch (\Throwable $th) {
             throw $th;

@@ -98,7 +98,7 @@
             <div class="">
                 <div class="form-floating mt-3">
                     <input type="date" class="form-control @error('date') is-invalid @enderror" id="date" name="date"
-                        placeholder="date" required value="{{ old('date', $busGiver->date) }}">
+                        placeholder="date" required max="{{ date('Y-m-d') }}" value="{{ old('date', $busGiver->date) }}">
                     <label for="date">Date</label>
                     @error('date')
                     <div class="invalid-tooltip">

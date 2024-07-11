@@ -30,6 +30,10 @@
     <!-- Template Main CSS File -->
     <link href="{{ asset('css/style.css') }}" rel="stylesheet" />
 
+
+   
+
+
     <!-- =======================================================
       * Template Name: NiceAdmin
       * Updated: Jan 29 2024 with Bootstrap v5.3.2
@@ -65,8 +69,8 @@
                                     <p class="text-center text-white small mt-3">You can reset your password here.</p>
 
                                     @if (Session::has('message'))
-                                    <div class="alert alert-success" role="alert">
-                                        {{ Session::get('message') }}
+                                    <div class="alert alert-success d-flex align-items-center justify-content-center" role="alert">
+                                        <span class="w-100 text-center">{{ Session::get('message') }}</span>
                                     </div>
                                     @endif
 

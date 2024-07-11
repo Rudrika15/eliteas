@@ -4,10 +4,10 @@
 @section('content')
 
 {{-- Message --}}
-@if (Session::has('success'))
+{{-- @if (Session::has('success'))
 <div class="alert alert-success alert-dismissible" role="alert">
     <button type="button" class="close" data-dismiss="alert">
-        {{-- <i class="fa fa-times"></i> --}}
+        <i class="fa fa-times"></i>
     </button>
     <strong>Success !</strong> {{ session('success') }}
 </div>
@@ -16,11 +16,11 @@
 @if (Session::has('error'))
 <div class="alert alert-danger alert-dismissible" role="alert">
     <button type="button" class="close" data-dismiss="alert">
-        {{-- <i class="fa fa-times"></i> --}}
+        <i class="fa fa-times"></i>
     </button>
     <strong>Error !</strong> {{ session('error') }}
 </div>
-@endif
+@endif --}}
 
 <div class="container">
     <div class="card">
@@ -32,17 +32,17 @@
             </div>
 
 
-            <div class="d-flex align-items-center mb-3">
+            {{-- <div class="d-flex align-items-center mb-3">
                 <small class="text-muted me-1"><strong>Filter By:</strong></small>
                 <div class="d-flex align-items-center">
-                    <select name="membershipType" id="membershipType" class="form-select form-select-sm">
-                        <option value="" selected>Select Membership</option>
-                        <option value="Monthly">Monthly</option>
-                        <option value="Yearly">Yearly</option>
+                    <select name="paymentType" id="paymentType" class="form-select form-select-sm">
+                        <option value="" selected>Select Payment Type</option>
+                        <option value="Member Subscription">Member Subscription</option>
+                        <option value="Training Register">Training Register</option>
                         <option value="LifeTime">LifeTime</option>
                     </select>
                 </div>
-            </div>
+            </div> --}}
 
             <div class="table-responsive">
                 <table class="table datatable table-striped table-hover">
@@ -77,20 +77,20 @@
     </div>
 </div>
 
-<script>
+{{-- <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const membershipTypeSelect = document.getElementById('membershipType');
+        const paymentTypeSelect = document.getElementById('paymentType');
         const table = document.getElementById('subscriptionsTable');
         const rows = table.getElementsByTagName('tr');
 
-        membershipTypeSelect.addEventListener('change', function() {
+        paymentTypeSelect.addEventListener('change', function() {
             const selectedType = this.value;
 
             for (let i = 1; i < rows.length; i++) {
                 const cells = rows[i].getElementsByTagName('td');
-                const membershipType = cells[1].innerText;
+                const paymentType = cells[1].innerText;
 
-                if (selectedType === "" || membershipType === selectedType) {
+                if (selectedType === "" || paymentType === selectedType) {
                     rows[i].style.display = '';
                 } else {
                     rows[i].style.display = 'none';
@@ -98,6 +98,6 @@
             }
         });
     });
-</script>
+</script> --}}
 
 @endsection

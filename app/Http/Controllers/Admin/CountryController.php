@@ -11,7 +11,7 @@ class CountryController extends Controller
     public function index(Request $request)
     {
         try {
-            $country = Country::where('status', 'Active')->get();
+            $country = Country::where('status', 'Active')->paginate(10);
             return view('admin.country.index', compact('country'));
         } catch (\Throwable $th) {
             // throw $th;

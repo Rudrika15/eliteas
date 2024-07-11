@@ -76,6 +76,9 @@
                         @endforeach
                     </tbody>
                 </table>
+                <div class="d-flex justify-content-end" style="color: #1d3268">
+                    {!! $city->links() !!}
+                </div>
                 <!-- End Table with stripped rows -->
             </div>
         </div>

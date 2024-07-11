@@ -24,7 +24,7 @@ class UserController extends Controller
     {
         $data = User::whereHas('roles', function ($q) {
             $q->whereIn('name', ['Admin', 'LT', 'Support']);
-        })->latest()->paginate(5);
+        })->latest()->paginate(10);
 
         return view('users.index', compact('data'))
             ->with('i', ($request->input('page', 1) - 1) * 5);

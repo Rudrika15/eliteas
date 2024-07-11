@@ -27,7 +27,7 @@ class CircleController extends Controller
                 ->with('franchise')
                 ->where('status', 'Active')
                 ->orderBy('id', 'DESC')
-                ->get();
+                ->paginate(10);
             return view('admin.circle.index', compact('circle'));
         } catch (\Throwable $th) {
             throw $th;
@@ -176,31 +176,28 @@ class CircleController extends Controller
         }
     }
 
+
     public function update(Request $request)
     {
+        // return request()->all();
         $this->validate($request, [
-            'circleName' => 'required|unique:circles,circleName,' . $request->id,
-            'cityId' => 'required',
+            // 'circleName' => 'required|unique:circles,circleName,' . $request->id,
             'franchiseId' => 'required',
             'circletypeId' => 'required',
             'meetingDay' => 'required',
-            // 'meetingTime' => 'required',
-            'weekNo' => 'required|array', // Ensure weekNo is an array
-            'start_date' => 'required',
-            'end_date' => 'required',
+            'numberOfMeetings' => 'required',
+            // 'weekNo' => 'required|array', // Ensure weekNo is an array
         ]);
 
         try {
             $id = $request->id;
-            $circle = Circle::find($id);
+            $circle = Circle::findOrFail($id);
             $circle->circleName = $request->circleName;
-            $circle->cityId = $request->cityId;
             $circle->franchiseId = $request->franchiseId;
+            $circle->cityId = $request->cityId;
             $circle->circletypeId = $request->circletypeId;
-            $circle->meetingDay = $request->meetingDay;
-            // $circle->meetingTime = $request->meetingTime;
-            $circle->start_date = $request->start_date;
-            $circle->end_date = $request->end_date;
+            $circle->meetingDay = $request->input('meetingDay');
+            $circle->numberOfMeetings = $request->numberOfMeetings;
             $circle->weekNo = json_encode($request->weekNo); // Serialize the array of week numbers
             $circle->status = 'Active';
             $circle->save();
@@ -230,7 +227,7 @@ class CircleController extends Controller
     {
         try {
             $circle = Circle::findOrFail($id);
-            $schedules = Schedule::where('circleId', $circle->id)->get();
+            $schedules = Schedule::where('circleId', $circle->id)->paginate(10);
             return view('admin.circle.show', compact('circle', 'schedules'));
         } catch (\Throwable $th) {
             throw $th;
@@ -242,7 +239,7 @@ class CircleController extends Controller
     {
         try {
             $circle = Circle::findOrFail($id);
-            $members = Member::where('circleId', $circle->id)->get();
+            $members = Member::where('circleId', $circle->id)->paginate(10);
             return view('admin.circle.memberList', compact('circle', 'members'));
         } catch (\Throwable $th) {
             throw $th;

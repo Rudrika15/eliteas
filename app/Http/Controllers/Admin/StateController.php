@@ -16,7 +16,7 @@ class StateController extends Controller
 
             $state = State::with('country')
                 ->where('status', 'Active')
-                ->get();
+                ->paginate(10);
 
             return view('admin.state.index', compact('state'));
         } catch (\Throwable $th) {

@@ -28,14 +28,16 @@
     <form class="m-3 needs-validation" id="circleForm" enctype="multipart/form-data" method="post"
         action="{{ route('circle.update', $circle->id) }}" novalidate>
         @csrf
-        @method('PUT')
+        @method('POST')
+
+        <input type="hidden" name="id" value="{{ $circle->id }}">
 
         <div class="row mb-3">
             <div class="col-md-6">
                 <div class="form-floating mt-3">
                     <input type="text" class="form-control @error('circleName') is-invalid @enderror" id="circleName"
-                        name="circleName" placeholder="Circle Name" required
-                        value="{{ old('circleName', $circle->circleName) }}">
+                        name="circleName" placeholder="Circle Name"
+                        value="{{ old('circleName', $circle->circleName) }}" readonly>
                     <label for="circleName">Circle Name</label>
                     @error('circleName')
                     <div class="invalid-tooltip">
@@ -97,7 +99,7 @@
             </div>
             <div class="col-md-6 mt-3">
                 <div class="form-floating">
-                    <select class="form-control" required name="franchiseId" id="franchiseId">
+                    <select class="form-control" name="franchiseId" id="franchiseId">
                         <option value="" selected disabled> Select Franchise</option>
                         @foreach ($franchise as $franchiseData)
                         <option value="{{ $franchiseData->id }}" {{ $circle->franchiseId == $franchiseData->id ?
@@ -114,7 +116,7 @@
             </div>
             <div class="col-md-6 mt-3">
                 <div class="form-floating">
-                    <select class="form-control" required name="circletypeId" id="circletypeId">
+                    <select class="form-control" name="circletypeId" id="circletypeId">
                         <option value="" selected disabled> Select Circle Type</option>
                         @foreach ($circletype as $circletypeData)
                         <option value="{{ $circletypeData->id }}" {{ $circle->circletypeId == $circletypeData->id ?

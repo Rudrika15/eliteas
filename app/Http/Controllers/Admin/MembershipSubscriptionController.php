@@ -18,7 +18,7 @@ class MembershipSubscriptionController extends Controller
             $subscriptions = MemberSubscriptions::where('userId', $userId)
                 ->where('status', 'Active')
                 ->with('allPayments') // Ensure allPayments relationship is loaded
-                ->get()
+                ->paginate(10)
                 ->map(function ($subscription) {
                     // Check if allPayments is a collection and format the amounts
                     if ($subscription->allPayments instanceof \Illuminate\Support\Collection) {
@@ -42,7 +42,7 @@ class MembershipSubscriptionController extends Controller
     public function memberData(Request $request)
     {
         try {
-            $allSubscriptions = MemberSubscriptions::where('status', 'Active')->get();
+            $allSubscriptions = MemberSubscriptions::where('status', 'Active')->paginate(10);
             return view('admin.mysubscriptions.adminIndex', compact('allSubscriptions'));
         } catch (\Throwable $th) {
             throw $th;

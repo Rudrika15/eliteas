@@ -3,25 +3,6 @@
 @section('header', 'Circle')
 @section('content')
 
-{{-- Message --}}
-@if (Session::has('success'))
-<div class="alert alert-success alert-dismissible" role="alert">
-    <button type="button" class="close" data-dismiss="alert">
-        {{-- <i class="fa fa-times"></i> --}}
-    </button>
-    <strong>Success !</strong> {{ session('success') }}
-</div>
-@endif
-
-@if (Session::has('error'))
-<div class="alert alert-danger alert-dismissible" role="alert">
-    <button type="button" class="close" data-dismiss="alert">
-        {{-- <i class="fa fa-times"></i> --}}
-    </button>
-    <strong>Error !</strong> {{ session('error') }}
-</div>
-@endif
-
 
 <div class="card">
     <div class="card-body d-flex justify-content-between align-items-center">
@@ -39,6 +20,8 @@
                     <input type="text" class="form-control @error('circleName') is-invalid @enderror" id="circleName"
                         name="circleName" placeholder="Circle Name" required>
                     <label for="circleName">Circle Name</label>
+                    <small class="form-text text-muted"><span style="color:red">* Note: Fill Up Carefully, You can't
+                            Change Circle Name after Submit.</span></small>
                     @error('circleName')
                     <div class="invalid-tooltip">
                         {{ $message }}
