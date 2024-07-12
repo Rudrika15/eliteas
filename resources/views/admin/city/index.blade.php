@@ -27,8 +27,9 @@
         <div class="card-body">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h4 class="card-title">City</h4>
-                <a href="{{ route('city.create') }}" class="btn btn-bg-orange btn-sm mt-3"><i
-                        class="bi bi-plus-circle"></i></a>
+                <a href="{{ route('city.create') }}" class="btn btn-bg-orange btn-sm mt-3 btn-tooltip"><i
+                        class="bi bi-plus-circle"></i>
+                    <span class="btn-text">Add City</span></a>
             </div>
 
             <!-- Table with stripped rows -->
@@ -55,8 +56,10 @@
                             <td>{{$cityData->memberAmount}}</td>
                             <td>{{$cityData->status}}</td>
                             <td>
-                                <a href="{{ route('city.edit', $cityData->id) }}" class="btn btn-bg-blue btn-sm">
+                                <a href="{{ route('city.edit', $cityData->id) }}"
+                                    class="btn btn-bg-blue btn-sm btn-tooltip">
                                     <i class="bi bi-pen"></i>
+                                    <span class="btn-text">Edit</span>
                                 </a>
 
                                 {{-- <a href="{{ route('franchise.show', $franchiseData->id) }}" class="btn btn-info">
@@ -67,8 +70,10 @@
                                     style="display: inline;">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm">
-                                        <i class="bi bi-trash"></i> <!-- Icon for delete -->
+                                    <button type="submit" class="btn btn-danger btn-sm btn-tooltip">
+                                        <i class="bi bi-trash"></i>
+                                        <span class="btn-text">Delete</span>
+                                        <!-- Icon for delete -->
                                     </button>
                                 </form>
                             </td>

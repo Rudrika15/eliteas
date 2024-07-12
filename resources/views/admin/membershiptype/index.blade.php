@@ -28,8 +28,9 @@
         <div class="card-body">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h4 class="card-title">Membership Type</h4>
-                <a href="{{ route('membershipType.create') }}" class="btn btn-bg-orange btn-sm mt-2"><i
-                        class="bi bi-plus-circle"></i></a>
+                <a href="{{ route('membershipType.create') }}" class="btn btn-bg-orange btn-sm mt-2 btn-tooltip"><i
+                        class="bi bi-plus-circle"></i>
+                    <span class="btn-text">Add Membership Type</span></a>
             </div>
 
             <!-- Table with stripped rows -->
@@ -51,8 +52,9 @@
                             <td>{{$membershipTypeData->status ?? '-'}}</td>
                             <td>
                                 <a href="{{ route('membershipType.edit', $membershipTypeData->id) }}"
-                                    class="btn btn-bg-blue btn-sm">
+                                    class="btn btn-bg-blue btn-sm btn-tooltip">
                                     <i class="bi bi-pen"></i>
+                                    <span class="btn-text">Edit</span>
                                 </a>
 
                                 {{-- <a href="{{ route('franchise.show', $franchiseData->id) }}" class="btn btn-info">
@@ -60,8 +62,9 @@
                                 </a> --}}
 
                                 <a href="{{ route('membershipType.delete', $membershipTypeData->id) }}"
-                                    class="btn btn-danger btn-sm">
+                                    class="btn btn-danger btn-sm btn-tooltip">
                                     <i class="bi bi-trash"></i>
+                                    <span class="btn-text">Delete</span>
                                 </a>
                             </td>
                         </tr>

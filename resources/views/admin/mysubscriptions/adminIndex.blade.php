@@ -85,8 +85,9 @@
                                 <form action="{{ route('renewMembership.mail', $subscriptionData->userId) }}"
                                     method="POST" class="d-inline">
                                     @csrf
-                                    <button type="submit" class="btn btn-bg-blue btn-sm">
+                                    <button type="submit" class="btn btn-bg-blue btn-sm btn-tooltip">
                                         <i class="bi bi-envelope"></i>
+                                        <span class="btn-text">Send Mail</span>
                                     </button>
                                 </form>
                             </td>

@@ -87,16 +87,19 @@
                         <td>{{$schedulesData->status}}</td>
                         <td>
                             <a href="{{ route('schedule.invitedList', $schedulesData->id) }}"
-                                class="btn btn-info btn-sm">
+                                class="btn btn-info btn-sm btn-tooltip">
                                 <i class="bi bi-person-lines-fill"></i>
+                                <span class="btn-text">View Invited Peoples</span>
                             </a>
 
-                            <a href="{{ route('schedule.edit', $schedulesData->id) }}" class="btn btn-bg-blue btn-sm ">
+                            <a href="{{ route('schedule.edit', $schedulesData->id) }}" class="btn btn-bg-blue btn-sm btn-tooltip">
                                 <i class="bi bi-pen"></i>
+                                <span class="btn-text">Edit</span>
                             </a>
 
-                            <a href="{{ route('schedule.delete', $schedulesData->id) }}" class="btn btn-danger btn-sm">
+                            <a href="{{ route('schedule.delete', $schedulesData->id) }}" class="btn btn-danger btn-tooltip btn-sm">
                                 <i class="bi bi-trash"></i>
+                                <span class="btn-text">Delete</span>
                             </a>
 
                         </td>

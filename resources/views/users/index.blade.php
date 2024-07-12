@@ -25,8 +25,9 @@
     <div class="card-body">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h2 class="mt-3 card-title">Users Management</h2>
-            <a class="btn btn-bg-orange mt-3" href="{{ route('users.create') }}">
+            <a class="btn btn-bg-orange mt-3 btn-sm btn-tooltip" href="{{ route('users.create') }}">
                 <i class="bi bi-person-plus"></i>
+                <span class="btn-text">Add User</span>
             </a>
         </div>
 
@@ -58,17 +59,20 @@
                             @endif
                         </td>
                         <td>
-                            <a class="btn btn-bg-orange btn-sm" href="{{ route('users.show', $user->id) }}">
+                            <a class="btn btn-bg-orange btn-sm btn-tooltip" href="{{ route('users.show', $user->id) }}">
                                 <i class="bi bi-eye"></i>
+                                <span class="btn-text">View User Details</span>
                             </a>
-                            <a class="btn btn-bg-blue btn-sm" href="{{ route('users.edit', $user->id) }}">
+                            <a class="btn btn-bg-blue btn-sm btn-tooltip" href="{{ route('users.edit', $user->id) }}">
                                 <i class="bi bi-pencil"></i>
+                                <span class="btn-text">Edit User</span>
                             </a>
                             {!! Form::open(['method' => 'DELETE', 'route' => ['users.destroy', $user->id], 'style' =>
                             'display:inline'])
                             !!}
-                            <button type="submit" class="btn btn-danger btn-sm">
+                            <button type="submit" class="btn btn-danger btn-sm btn-tooltip">
                                 <i class="bi bi-trash"></i>
+                                <span class="btn-text">Delete User</span>
                             </button>
                             {!! Form::close() !!}
                         </td>

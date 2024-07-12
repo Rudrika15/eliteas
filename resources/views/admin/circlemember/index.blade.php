@@ -3,34 +3,16 @@
 @section('header', 'Circle')
 @section('content')
 
-{{-- Message --}}
-{{-- @if (Session::has('success'))
-<div class="alert alert-success alert-dismissible" role="alert">
-    <button type="button" class="close" data-dismiss="alert">
-        <i class="fa fa-times"></i>
-    </button>
-    <strong>Success!</strong> {{ session('success') }}
-</div>
-@endif
-
-@if (Session::has('error'))
-<div class="alert alert-danger alert-dismissible" role="alert">
-    <button type="button" class="close" data-dismiss="alert">
-        <i class="fa fa-times"></i>
-    </button>
-    <strong>Error!</strong> {{ session('error') }}
-</div>
-@endif --}}
-
-
 
 <div class="container">
     <div class="card">
         <div class="card-body">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h4 class="card-title">Circle Member</h4>
-                <a href="{{ route('circlemember.create') }}" class="btn btn-bg-orange btn-sm mt-3"><i
-                        class="bi bi-plus-circle"></i></a>
+                <a href="{{ route('circlemember.create') }}" class="btn btn-bg-orange btn-sm mt-3 btn-tooltip"><i
+                        class="bi bi-plus-circle"></i>
+                    <span class="btn-text">Add Member</span>
+                </a>
             </div>
             <div class="d-flex justify-content-end mb-3">
                 <div class="btn-group" role="group">
@@ -45,8 +27,9 @@
                             <option value="{{ $circleData->id }}">{{ $circleData->circleName }}</option>
                             @endforeach
                         </select>
-                        <button type="submit" class="btn btn-success btn-sm">
+                        <button type="submit" class="btn btn-success btn-sm btn-tooltip">
                             <i class="bi bi-filetype-xls"></i>
+                            <span class="btn-text">Download Excel</span>
                         </button>
                     </form>
                 </div>
@@ -113,15 +96,18 @@
                             </td>
                             <td>
                                 <a href="{{ route('circlemember.activity', $circlememberData->id) }}"
-                                    class="btn btn-bg-orange btn-sm">
+                                    class="btn btn-bg-orange btn-sm btn-tooltip">
                                     <i class="bi bi-info-circle"></i>
+                                    <span class="btn-text">Activity</span>
                                 </a>
                                 <a href="{{ route('circlemember.edit', $circlememberData->id) }}"
-                                    class="btn btn-bg-blue btn-sm">
+                                    class="btn btn-bg-blue btn-sm btn-tooltip">
                                     <i class="bi bi-pen"></i>
+                                    <span class="btn-text">Edit</span>
                                 </a>
-                                <a href="{{ route('circlemember.delete') }}" class="btn btn-danger btn-sm">
+                                <a href="{{ route('circlemember.delete') }}" class="btn btn-danger btn-sm btn-tooltip">
                                     <i class="bi bi-trash"></i>
+                                    <span class="btn-text">Delete</span>
                                 </a>
                                 {{-- <a href="{{ route('circlemember.edit', $circlememberData->id) }}"
                                     class="btn btn-bg-blue btn-sm">
@@ -129,9 +115,10 @@
                                 </a> --}}
                             </td>
                             <td>
-                                <button type="button" class="btn btn-bg-blue btn-sm" data-bs-toggle="modal"
+                                <button type="button" class="btn btn-bg-blue btn-sm btn-tooltip" data-bs-toggle="modal"
                                     data-bs-target="#assignRoleModal{{ $circlememberData->id }}"><i
                                         class="bi bi-person-plus"></i>
+                                    <span class="btn-text">Assign Role</span>
                                 </button>
 
                                 {{-- Modal --}}
@@ -169,9 +156,10 @@
 
                                 {{-- //remove role --}}
 
-                                <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal"
+                                <button type="button" class="btn btn-danger btn-sm btn-tooltip" data-bs-toggle="modal"
                                     data-bs-target="#removeRoleModal{{ $circlememberData->id }}"><i
                                         class="bi bi-trash"></i>
+                                    <span class="btn-text">Remove Role</span>
                                 </button>
                                 {{-- Modal --}}
 
@@ -211,8 +199,8 @@
                     </tbody>
                 </table>
                 <div class="d-flex justify-content-end" style="color: #1d3268">
-                                {!! $member->links() !!}
-                            </div>
+                    {!! $member->links() !!}
+                </div>
                 <!-- End Table with stripped rows -->
             </div>
         </div>

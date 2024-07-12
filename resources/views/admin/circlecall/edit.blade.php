@@ -33,7 +33,7 @@
         @include('circleMemberMaster')
 
         <div class="row mb-3 mt-3">
-            <div class="col-md-12">
+            <div class="col-md-6">
                 <div class="form-floating mt-3">
                     <input type="hidden" id="meetingPersonId" name="meetingPersonId"
                         value="{{ $circlecall->meetingPersonId }}" required>
@@ -49,41 +49,46 @@
                     @enderror
                 </div>
             </div>
-        </div>
 
-        <div class="form-floating mt-3">
-            <input type="text" class="form-control @error('meetingPlace') is-invalid @enderror" id="meetingPlace"
-                name="meetingPlace" placeholder="Meeting Place Name" value="{{ $circlecall->meetingPlace }}" required>
-            <label for="meetingPlace">Meeting Place Name</label>
-            @error('meetingPlace')
-            <div class="invalid-tooltip">
-                {{ $message }}
+            <div class="col-md-6">
+                <div class="form-floating mt-3">
+                    <input type="text" class="form-control @error('meetingPlace') is-invalid @enderror" id="meetingPlace"
+                        name="meetingPlace" placeholder="Meeting Place Name" value="{{ $circlecall->meetingPlace }}"
+                        required>
+                    <label for="meetingPlace">Meeting Place Name</label>
+                    @error('meetingPlace')
+                    <div class="invalid-tooltip">
+                        {{ $message }}
+                    </div>
+                    @enderror
+                </div>
             </div>
-            @enderror
-        </div>
 
-        <div class="col-md-6">
-            <div class="form-floating mt-3">
-                <input type="date" class="form-control" id="date" name="date" placeholder="Meeting Date" disabled
-                    value="{{ $circlecall->date }}">
-                <label for="date">Date</label>
+            <div class="col-md-6">
+                <div class="form-floating mt-3">
+                    <input type="date" class="form-control" id="date" name="date" placeholder="Meeting Date" disabled
+                        value="{{ $circlecall->date }}">
+                    <label for="date">Date</label>
+                </div>
             </div>
-        </div>
 
-        <div class="form-floating mt-3">
-            <input type="text" class="form-control @error('remarks') is-invalid @enderror" id="remarks" name="remarks"
-                placeholder="Remarks" value="{{ $circlecall->remarks }}" required>
-            <label for="remarks">Remarks</label>
-            @error('remarks')
-            <div class="invalid-tooltip">
-                {{ $message }}
+            <div class="col-md-6">
+                <div class="form-floating mt-3">
+                    <input type="text" class="form-control @error('remarks') is-invalid @enderror" id="remarks"
+                        name="remarks" placeholder="Remarks" value="{{ $circlecall->remarks }}" required>
+                    <label for="remarks">Remarks</label>
+                    @error('remarks')
+                    <div class="invalid-tooltip">
+                        {{ $message }}
+                    </div>
+                    @enderror
+                </div>
             </div>
-            @enderror
         </div>
 
         <div class="text-center mt-5">
             <button type="submit" class="btn btn-bg-blue">Submit</button>
-            <button type="reset" class="btn btn-bg-orange">Reset</button>
+            {{-- <button type="reset" class="btn btn-bg-orange">Reset</button> --}}
         </div>
     </form><!-- End floating Labels Form -->
 </div>

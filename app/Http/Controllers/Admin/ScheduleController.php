@@ -21,12 +21,27 @@ class ScheduleController extends Controller
 
             $schedules = Schedule::where('status', 'Active')->paginate(10);
             $circles = Circle::where('status', 'Active')->paginate(10);
-            return view('admin.schedule.index', compact('schedules','circles'));
+            return view('admin.schedule.index', compact('schedules', 'circles'));
         } catch (\Throwable $th) {
             throw $th;
             return view('servererror');
         }
     }
+
+    public function filter(Request $request)
+    {
+        $circle = $request->input('circle');
+        $schedules = Schedule::with('circle')
+            ->when($circle, function ($query, $circle) {
+                return $query->whereHas('circle', function ($query) use ($circle) {
+                    $query->where('circleName', 'like', '%' . $circle . '%');
+                });
+            })
+            ->get();
+
+        return response()->json(['schedules' => $schedules]);
+    }
+
 
     public function show(Request $request, $id)
     {

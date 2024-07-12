@@ -124,7 +124,7 @@ class HomeController extends Controller
         return redirect()->back()->with('success', 'Training Registered Successfully');
     }
 
-    public function invitation(Request $request)
+public function invitation(Request $request)
     {
         try {
             $request->validate([
@@ -134,15 +134,16 @@ class HomeController extends Controller
                 'businessCategoryId' => 'required',
             ]);
 
-            $invitation = new MeetingInvitation();
-            $invitation->meetingId = $request->meetingId;
-            $invitation->invitedMemberId = Auth::user()->id;
-            $invitation->personName = $request->personName;
-            $invitation->personEmail = $request->personEmail;
-            $invitation->personContact = $request->personContact;
-            $invitation->businessCategoryId = $request->businessCategoryId;
-            $invitation->save();
-
+            if (strlen($request->personContact) <= 10) {
+                $invitation = new MeetingInvitation();
+                $invitation->meetingId = $request->meetingId;
+                $invitation->invitedMemberId = Auth::user()->id;
+                $invitation->personName = $request->personName;
+                $invitation->personEmail = $request->personEmail;
+                $invitation->personContact = $request->personContact;
+                $invitation->businessCategoryId = $request->businessCategoryId;
+                $invitation->save();
+            }
 
             $fees = Schedule::where('id', $request->meetingId)->with('circle.city')->first();
             $personName = $request->personName;
@@ -159,8 +160,11 @@ class HomeController extends Controller
                 'amount' => $amount
             ];
 
-            Mail::to($request->personEmail)->send(new MailMeetingInvitation($data));
-            return redirect()->back()->with('success', 'Invitation Sent Successfully');
+            if (isset($invitation)) {
+                Mail::to($request->personEmail)->send(new MailMeetingInvitation($data));
+                return redirect()->back()->with('success', 'Invitation Sent Successfully');
+            }
+            return redirect()->back()->with('error', 'Please Enter Correct Number');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'An error occurred while sending the invitation. Please try again.');
         }

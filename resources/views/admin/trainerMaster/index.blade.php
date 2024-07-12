@@ -7,8 +7,10 @@
     <div class="card-body">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h4 class="card-title">Trainer Master</h4>
-            <a href="{{ route('trainer.create') }}" class="btn btn-bg-orange btn-sm mt-3"><i
-                    class="bi bi-plus-circle"></i></a>
+            <a href="{{ route('trainer.create') }}" class="btn btn-bg-orange btn-sm mt-3 btn-tooltip"><i
+                    class="bi bi-plus-circle"></i>
+                    <span class="btn-text">Add Trainer</span>
+                </a>
         </div>
 
         <!-- Table with stripped rows -->
@@ -19,7 +21,7 @@
                         <th>Trainer Name</th>
                         <th>Type</th>
                         <th>Contact No</th>
-                        <th>status</th>
+                        {{-- <th>Status</th> --}}
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -34,15 +36,16 @@
                             @endif
                         </td>
                         <td>{{$trainerData->users->contactNo ?? $trainerData->externalMemberContact ?? '-'}} </td>
-                        <td>{{$trainerData->status}}</td>
+                        {{-- <td>{{$trainerData->status}}</td> --}}
 
                         <td>
                             {{-- <a href="{{ route('trainer.edit', $trainerData->id) }}" class="btn btn-primary btn-sm">
                                 <i class="bi bi-pen"></i>
                             </a> --}}
 
-                            <a href="{{ route('trainer.delete', $trainerData->id) }}" class="btn btn-danger btn-sm">
+                            <a href="{{ route('trainer.delete', $trainerData->id) }}" class="btn btn-danger btn-sm btn-tooltip">
                                 <i class="bi bi-trash"></i>
+                                <span class="btn-text">Delete</span>
                             </a>
 
                         </td>

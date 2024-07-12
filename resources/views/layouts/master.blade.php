@@ -36,11 +36,12 @@
 
     <!-- Template Main CSS File -->
     <link href="{{ asset('css/style.css') }}" rel="stylesheet" />
-    
+
 
 
     <script src="https://code.jquery.com/jquery-3.7.1.js"
         integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+
 
 
     <!-- =======================================================
@@ -67,7 +68,8 @@
 
         <div class="search-bar">
             <a class="search-form d-flex align-items-center" href="{{ route('search') }}">
-                <input type="text" name="query" placeholder="Click here to find & connect with People" title="Enter search keyword">
+                <input type="text" name="query" placeholder="Click here to find & connect with People"
+                    title="Enter search keyword">
                 <button type="submit" title="Search"><i class="bi bi-search"></i>
                 </button>
             </a>

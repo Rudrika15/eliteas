@@ -160,6 +160,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('circlemember/delete/{id?}', [CircleMemberController::class, 'delete'])->name('circlemember.delete');
     Route::post('/get-membership-amount', [CircleMemberController::class, 'getMembershipAmount'])->name('get.membership.amount');
 
+    //filter
+    Route::get('/circlemember/filter', [CircleMemberController::class, 'filter'])->name('circlemember.filter');
 
 
     //member activity
@@ -282,7 +284,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/schedule/dashEdit/{id?}', [ScheduleController::class, 'dashEdit'])->name('schedule.dashEdit');
     Route::post('/schedule/dashUpdate', [ScheduleController::class, 'dashUpdate'])->name('schedule.dashUpdate');
 
-
+    Route::get('/schedules/filter', [ScheduleController::class, 'filter'])->name('schedule.filter');
 
     //Profile Update
 

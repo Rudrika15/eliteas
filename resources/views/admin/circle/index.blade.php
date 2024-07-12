@@ -28,8 +28,9 @@
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h4 class="card-title">Circle</h4>
                 <div class="">
-                    <a href="{{ route('circle.create') }}" class="btn btn-bg-orange btn-sm mt-3 mr-2 "><i
-                            class="bi bi-plus-circle"></i></a>
+                    <a href="{{ route('circle.create') }}" class="btn btn-bg-orange btn-sm mt-3 mr-2 btn-tooltip"><i
+                            class="bi bi-plus-circle"></i>
+                        <span class="btn-text">Create Circle</span></a>
                     <a href="{{ route('schedule.index') }}" class="btn btn-bg-blue btn-sm mt-3">All Meetings</a>
                 </div>
             </div>
@@ -82,21 +83,25 @@
                             <td>
 
                                 <a href="{{ route('meetings.by.circle', $circleData->id) }}"
-                                    class="btn btn-bg-orange btn-sm">
+                                    class="btn btn-bg-orange btn-sm btn-tooltip">
                                     <i class="bi bi-eye"></i>
+                                    <span class="btn-text">View Circle Meetings</span>
                                 </a>
 
-                                <a href="{{ route('circle.edit', $circleData->id) }}" class="btn btn-bg-blue btn-sm ">
+                                <a href="{{ route('circle.edit', $circleData->id) }}" class="btn btn-bg-blue btn-sm btn-tooltip">
                                     <i class="bi bi-pen"></i>
+                                    <span class="btn-text">Edit</span>
                                 </a>
 
                                 <a href="{{ route('circle.memberList', $circleData->id) }}"
-                                    class="btn btn-info btn-sm ">
+                                    class="btn btn-info btn-sm btn-tooltip">
                                     <i class="bi bi-person-lines-fill"></i>
+                                    <span class="btn-text">View Members</span>
                                 </a>
 
-                                <a href="{{ route('circle.delete', $circleData->id) }}" class="btn btn-danger btn-sm ">
+                                <a href="{{ route('circle.delete', $circleData->id) }}" class="btn btn-danger btn-sm btn-tooltip">
                                     <i class="bi bi-trash"></i>
+                                    <span class="btn-text">Delete</span>
                                 </a>
 
                             </td>

@@ -27,8 +27,9 @@
         <div class="card-body">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h4 class="card-title">State</h4>
-                <a href="{{ route('state.create') }}" class="btn btn-bg-orange btn-sm mt-3"><i
-                        class="bi bi-plus-circle"></i></a>
+                <a href="{{ route('state.create') }}" class="btn btn-bg-orange btn-sm mt-3 btn-tooltip"><i
+                        class="bi bi-plus-circle"></i>
+                    <span class="btn-text">Add State</span></a>
             </div>
 
             <!-- Table with stripped rows -->
@@ -49,16 +50,18 @@
                             <td>{{$stateData->stateName}}</td>
                             <td>{{$stateData->status}}</td>
                             <td>
-                                <a href="{{ route('state.edit', $stateData->id) }}" class="btn btn-bg-blue btn-sm">
+                                <a href="{{ route('state.edit', $stateData->id) }}" class="btn btn-bg-blue btn-sm btn-tooltip">
                                     <i class="bi bi-pen"></i>
+                                    <span class="btn-text">Edit</span>
                                 </a>
 
                                 {{-- <a href="{{ route('franchise.show', $franchiseData->id) }}" class="btn btn-info">
                                     <i class="bi bi-eye"></i>
                                 </a> --}}
 
-                                <a href="{{ route('state.delete', $stateData->id) }}" class="btn btn-danger btn-sm">
+                                <a href="{{ route('state.delete', $stateData->id) }}" class="btn btn-danger btn-sm btn-tooltip">
                                     <i class="bi bi-trash"></i>
+                                    <span class="btn-text">Delete</span>
                                 </a>
                             </td>
                         </tr>

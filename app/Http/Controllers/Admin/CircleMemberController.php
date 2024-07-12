@@ -49,6 +49,34 @@ class CircleMemberController extends Controller
             return view('servererror');
         }
     }
+
+    //filter data
+    public function filter(Request $request)
+    {
+        $circleId = $request->get('circleId');
+        $categoryId = $request->get('categoryId');
+        $membershipType = $request->get('membershipType');
+
+        $query = CircleMember::query();
+
+        if ($circleId) {
+            $query->where('circleId', $circleId);
+        }
+
+        if ($categoryId) {
+            $query->where('categoryId', $categoryId);
+        }
+
+        if ($membershipType) {
+            $query->where('membershipType', $membershipType);
+        }
+
+        $members = $query->with(['circle', 'bCategory', 'user.roles'])->get();
+
+        return response()->json($members);
+    }
+
+
     //For show single data
     public function view(Request $request, $id)
     {
@@ -472,5 +500,4 @@ class CircleMemberController extends Controller
         $circleId = $request->input('circleId');
         return Excel::download(new CircleMembersExport($circleId), 'circle_members.xlsx');
     }
-
 }

@@ -4,7 +4,7 @@
 @section('content')
 
 {{-- Message --}}
-@if (Session::has('success'))
+{{-- @if (Session::has('success'))
 <div class="alert alert-success alert-dismissible" role="alert">
     <button type="button" class="close" data-dismiss="alert">&times;</button>
     <strong>Success!</strong> {{ session('success') }}
@@ -16,14 +16,16 @@
     <button type="button" class="close" data-dismiss="alert">&times;</button>
     <strong>Error!</strong> {{ session('error') }}
 </div>
-@endif
+@endif --}}
 
 <div class="card">
     <div class="card-body">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h4 class="card-title">Franchise</h4>
-            <a href="{{ route('franchise.create') }}" class="btn btn-bg-orange btn-sm mt-3"><i
-                    class="bi bi-plus-circle"></i></a>
+            <a href="{{ route('franchise.create') }}" class="btn btn-bg-orange btn-sm mt-3 btn-tooltip"><i
+                    class="bi bi-plus-circle"></i>
+                <span class="btn-text">Add Franchise</span>
+                </a>
         </div>
 
         <!-- Table with stripped rows -->
@@ -51,8 +53,9 @@
                         <td>
                             {{-- <div class="btn-group" role="group"> --}}
                                 <a href="{{ route('franchise.edit', $franchiseData->id) }}"
-                                    class="btn btn-bg-blue btn-sm">
+                                    class="btn btn-bg-blue btn-sm btn-tooltip">
                                     <i class="bi bi-pen"></i>
+                                    <span class="btn-text">Edit Franchise</span>
                                 </a>
 
                                 {{-- <a href="{{ route('franchise.show', $franchiseData->id) }}" class="btn btn-info">
@@ -60,10 +63,12 @@
                                 </a> --}}
 
                                 <a href="{{ route('franchise.delete', $franchiseData->id) }}"
-                                    class="btn btn-danger btn-sm">
+                                    class="btn btn-danger btn-sm btn-tooltip">
                                     <i class="bi bi-trash"></i>
+                                    <span class="btn-text">Delete</span>
                                 </a>
-                            {{-- </div> --}}
+                                {{--
+                            </div> --}}
                         </td>
                     </tr>
                     @endforeach

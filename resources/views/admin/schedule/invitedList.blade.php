@@ -26,7 +26,7 @@
     <div class="card-body">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h4 class="card-title">Circle Meeting Invited Person List</h4>
-            {{-- <a href="{{ route('circlemeeting.create') }}" class="btn btn-primary btn-sm mt-3">ADD</a> --}}
+            <a href="{{ URL::previous() }}" class="btn btn-bg-orange btn-sm mt-2">Back</a>
         </div>
 
         <!-- Table with stripped rows -->

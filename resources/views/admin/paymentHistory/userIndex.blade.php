@@ -47,7 +47,7 @@
                         <td>{{ $payment->paymentType ?? '-' }}</td>
                         <td>{{ \Carbon\Carbon::parse($payment->date)->format('d-m-Y') ?? '-' }}</td>
                         <td>{{ $payment->paymentMode ?? '-' }}</td>
-                        <td>{{ $payment->amount ?? '-' }}</td>
+                        <td>{{ number_format($payment->amount, 2, '.', ',') ?? '-' }}</td>
                     </tr>
                     @endforeach
                 </tbody>

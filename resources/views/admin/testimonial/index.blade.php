@@ -27,8 +27,10 @@
         <div class="card-body">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h4 class="card-title">Testimonial</h4>
-                <a href="{{ route('testimonial.archives') }}" class="btn btn-bg-orange mt-3 btn-sm"><i
-                        class="bi bi-archive"></i></a>
+                <a href="{{ route('testimonial.archives') }}" class="btn btn-bg-orange mt-3 btn-sm btn-tooltip"><i
+                        class="bi bi-archive"></i>
+                    <span class="btn-text">Archives</span>
+                </a>
             </div>
 
             <!-- Table with stripped rows -->
@@ -40,7 +42,7 @@
                             <th>Testimonial Taker</th>
                             <th>Message</th>
                             <th>Date</th>
-                            <th>Status</th>
+                            {{-- <th>Status</th> --}}
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -52,13 +54,15 @@
                             <td>{{ $testimonialData->member->firstName ?? '-' }} {{ $testimonialData->member->lastName
                                 ?? '-' }}</td>
                             <td>{{ $testimonialData->message ?? '-' }}</td>
-                            <td>{{ \Carbon\Carbon::parse($testimonialData->date)->format('j M Y') }}</td>
-                            <td>{{ $testimonialData->status ?? '-' }}</td>
+                            <td>{{ $testimonialData->uploadedDate ? \Carbon\Carbon::parse($testimonialData->uploadedDate)->format('d-m-Y') : '-' }}</td>
+                            {{-- <td>{{ $testimonialData->status ?? '-' }}</td> --}}
                             <td>
                                 <a href="{{ route('testimonial.destroy', $testimonialData->id) }}"
                                     onclick="return confirm('Do You Want To Delete It ?')"
-                                    class="btn btn-danger btn-sm justify-content-center align-items-center"><i
-                                        class="bi bi-trash"></i></a>
+                                    class="btn btn-danger btn-sm justify-content-center align-items-center btn-tooltip"><i
+                                        class="bi bi-trash"></i>
+                                    <span class="btn-text">Delete</span>
+                                </a>
                             </td>
                         </tr>
                         @endforeach

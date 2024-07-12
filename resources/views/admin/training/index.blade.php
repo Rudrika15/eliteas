@@ -26,7 +26,9 @@
     <div class="card-body">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h4 class="card-title">Trainings</h4>
-            <a href="{{ route('training.create') }}" class="btn btn-bg-orange btn-sm mt-3"><i class="bi bi-plus-circle"></i></a>
+            <a href="{{ route('training.create') }}" class="btn btn-bg-orange btn-sm mt-3 btn-tooltip"><i class="bi bi-plus-circle"></i>
+            <span class="btn-text">Create Training</span>
+            </a>
         </div>
 
         <!-- Table with stripped rows -->
@@ -43,7 +45,7 @@
                         <th>Venue</th>
                         <th>Date</th>
                         <th>Time</th>
-                        <th>Status</th>
+                        {{-- <th>Status</th> --}}
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -84,10 +86,11 @@
                         <td>{{$trainingData->venue ?? '-'}}</td>
                         <td>{{ \Carbon\Carbon::parse($trainingData->date)->format('d-m-Y') ?? '-' }}</td>
                         <td>{{$trainingData->time ?? '-'}}</td>
-                        <td>{{$trainingData->status ?? '-'}}</td>
+                        {{-- <td>{{$trainingData->status ?? '-'}}</td> --}}
                         <td>
-                            <a href="{{ route('training.edit', $trainingData->id) }}" class="btn btn-bg-blue btn-sm">
+                            <a href="{{ route('training.edit', $trainingData->id) }}" class="btn btn-bg-blue btn-sm btn-tooltip">
                                 <i class="bi bi-pen"></i>
+                                <span class="btn-text">Edit</span>
                             </a>
 
                             {{-- <a href="{{ route('franchise.show', $franchiseData->id) }}" class="btn btn-info">
@@ -95,8 +98,9 @@
                             </a> --}}
 
                             <a href="{{ route('training.delete', $trainingData->id) }}"
-                                class="btn btn-danger btn-sm">
+                                class="btn btn-danger btn-sm btn-tooltip">
                                 <i class="bi bi-trash"></i>
+                                <span class="btn-text">Delete</span>
                             </a>
 
 
