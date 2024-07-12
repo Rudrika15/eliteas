@@ -4,10 +4,10 @@
 @section('content')
 
 {{-- Message --}}
-@if (Session::has('success'))
+{{-- @if (Session::has('success'))
 <div class="alert alert-success alert-dismissible" role="alert">
     <button type="button" class="close" data-dismiss="alert">
-        {{-- <i class="fa fa-times"></i> --}}
+        <i class="fa fa-times"></i>
     </button>
     <strong>Success !</strong> {{ session('success') }}
 </div>
@@ -16,11 +16,11 @@
 @if (Session::has('error'))
 <div class="alert alert-danger alert-dismissible" role="alert">
     <button type="button" class="close" data-dismiss="alert">
-        {{-- <i class="fa fa-times"></i> --}}
+        <i class="fa fa-times"></i>
     </button>
     <strong>Error !</strong> {{ session('error') }}
 </div>
-@endif
+@endif --}}
 
 <div class="card">
     <div class="card-body d-flex justify-content-between align-items-center">
@@ -54,7 +54,7 @@
             <div class="col-md-6">
                 <div class="form-floating">
                     <select class="form-select @error('businessCategory') is-invalid @enderror" id="businessCategory"
-                        name="businessCategory">
+                        name="businessCategory" required>
                         <option value="" selected disabled>Select Business Category</option>
                         @foreach($businessCategory as $businessCategoryData)
                         <option value="{{ $businessCategoryData->id }}">{{ $businessCategoryData->categoryName }}
@@ -74,7 +74,7 @@
             <div class="col-md-6 mt-3">
                 <div class="form-floating">
                     <input type="text" class="form-control @error('firstName') is-invalid @enderror" id="firstName"
-                        name="firstName" placeholder="First Name" value="{{ old('firstName') }}">
+                        name="firstName" placeholder="First Name" required value="{{ old('firstName') }}">
                     <label for="firstName">First Name</label>
                     @error('firstName')
                     <div class="invalid-tooltip">
@@ -86,7 +86,7 @@
             <div class="col-md-6 mt-3">
                 <div class="form-floating">
                     <input type="text" class="form-control @error('lastName') is-invalid @enderror" id="lastName"
-                        name="lastName" placeholder="Last Name" value="{{ old('lastName') }}">
+                        name="lastName" placeholder="Last Name" required value="{{ old('lastName') }}">
                     <label for="lastName">Last Name</label>
                     @error('lastName')
                     <div class="invalid-tooltip">
@@ -101,7 +101,7 @@
             <div class="col-md-6 mt-3">
                 <div class="form-floating">
                     <input type="email" class="form-control @error('email') is-invalid @enderror" id="email"
-                        name="email" placeholder="Email" value="{{ old('email') }}">
+                        name="email" placeholder="Email" required value="{{ old('email') }}">
                     <label for="email">Email</label>
                     @error('email')
                     <div class="invalid-tooltip">
@@ -113,13 +113,21 @@
             <div class="col-md-6 mt-3">
                 <div class="form-floating">
                     <input type="text" class="form-control @error('mobileNo') is-invalid @enderror" id="mobileNo"
-                        name="mobileNo" placeholder="Mobile No" value="{{ old('mobileNo') }}">
+                        name="mobileNo" placeholder="Mobile No" value="{{ old('mobileNo') }}"
+                        pattern="[6-9]{10}" oninput="if(this.value.length > 10) this.value = this.value.slice(0,10); this.value = this.value.replace(/[^6-9]/g, '').replace(/(\..*)\./g, '$1');"
+                        oninvalid="this.setCustomValidity('Please enter a valid 10-digit mobile number');"
+                        oninput="this.setCustomValidity('')">
                     <label for="mobileNo">Mobile No</label>
                     @error('mobileNo')
                     <div class="invalid-tooltip">
                         {{ $message }}
                     </div>
                     @enderror
+                    @if ($errors->has('mobileNo') && $errors->first('mobileNo') == 'Please enter a valid 10-digit mobile number')
+                        <div class="invalid-tooltip" style="color: red;">
+                            {{ $errors->first('mobileNo') }}
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -128,7 +136,7 @@
             <div class="col-md-6 mt-3">
                 <div class="form-floating">
                     <select class="form-select @error('title') is-invalid @enderror" id="title" name="title" {{
-                        old('title') ? 'value="' . old('title') . '"' : '' }}>
+                        old('title') ? 'value="' . old('title') . '"' : '' }} required>
                         <option value="" selected disabled>Select Title</option>
                         <option value="Mr." {{ old('title')==='Mr.' ? 'selected' : '' }}>Mr.</option>
                         <option value="Ms." {{ old('title')==='Ms.' ? 'selected' : '' }}>Ms.</option>
@@ -146,13 +154,13 @@
                 <div class="form-check">
                     <div class="form-check">
                         <input class="form-check-input" type="radio" name="gender" id="genderMale" value="male" checked>
-                        <label class="form-check-label" for="genderMale">
+                        <label class="form-check-label" for="genderMale" @required(true)>
                             Male
                         </label>
                     </div>
                     <div class="form-check">
                         <input class="form-check-input" type="radio" name="gender" id="genderFemale" value="female">
-                        <label class="form-check-label" for="genderFemale">
+                        <label class="form-check-label" for="genderFemale" @required(true)>
                             Female
                         </label>
                     </div>
@@ -165,12 +173,12 @@
             </div>
         </div>
 
-        
+
         <div class="row">
             <div class="col-md-6 mt-3">
                 <div class="form-floating">
                     <select class="form-select @error('membershipType') is-invalid @enderror" id="membershipType"
-                        name="membershipType" onchange="fetchMembershipAmount(this.value)">
+                        name="membershipType" onchange="fetchMembershipAmount(this.value)" required>
                         <option value="" selected disabled>Select Membership Type</option>
                         @foreach($membershipType as $membershipTypeData)
                         <option value="{{ $membershipTypeData->id }}">{{ $membershipTypeData->membershipType }}
@@ -196,15 +204,17 @@
         </div>
 
         <div class="row">
+            <!-- Discount Amount Checkbox -->
             <div class="col-md-6 mt-3">
                 <div class="form-check">
                     <input class="form-check-input" type="checkbox" id="discountAmount" name="discountAmount" value="1"
-                        onchange="toggleDiscountAmount(this)">
+                        onchange="toggleFields(this)">
                     <label class="form-check-label" for="discountAmount">
                         Discount Amount
                     </label>
                 </div>
             </div>
+            <!-- Discounted Amount Input -->
             <div class="col-md-6 mt-3" id="discountedAmountContainer" style="display:none;">
                 <div class="form-floating">
                     <input type="text" class="form-control" id="discountedAmount" name="discountedAmount"
@@ -212,16 +222,17 @@
                     <label for="discountedAmount">Discounted Amount</label>
                 </div>
             </div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-6 mt-3">
+            <!-- Total Amount Input -->
+            <div class="col-md-6 mt-3" id="totalAmountContainer" style="display:none;">
                 <div class="form-floating">
                     <input type="text" class="form-control" id="totalAmount" name="totalAmount"
                         placeholder="Total Amount" readonly>
                     <label for="totalAmount">Total Amount</label>
                 </div>
             </div>
+        </div>
+        <div class="row">
+
             <div class="col-md-6 mt-3">
                 <div class="form-floating">
                     <input type="text" class="form-control" id="date" name="date" placeholder="Date" readonly
@@ -348,10 +359,22 @@
 </script>
 
 <script>
-    function toggleDiscountAmount(checkbox) {
-        var discountedAmountContainer = document.getElementById('discountedAmountContainer');
-        discountedAmountContainer.style.display = checkbox.checked ? 'block' : 'none';
+    function toggleFields(checkbox) {
+    var discountedAmountContainer = document.getElementById('discountedAmountContainer');
+    var totalAmountContainer = document.getElementById('totalAmountContainer');
+    
+    console.log("Checkbox checked: ", checkbox.checked);
+    console.log("Discounted Amount Container: ", discountedAmountContainer);
+    console.log("Total Amount Container: ", totalAmountContainer);
+
+    if (checkbox.checked) {
+        discountedAmountContainer.style.display = 'block';
+        totalAmountContainer.style.display = 'block';
+    } else {
+        discountedAmountContainer.style.display = 'none';
+        totalAmountContainer.style.display = 'none';
     }
+}
 
     function togglePaymentMode(checkbox) {
         var paymentModeContainer = document.getElementById('paymentModeContainer');

@@ -725,7 +725,9 @@
                     <div class="mb-3">
                         <label for="personContact" class="form-label">Contact Number</label>
                         <input type="tel" class="form-control" name="personContact" id="personContact"
-                            pattern="[0-9]{10}" maxlength="10" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" required>
+                            pattern="[6-9]{10}" maxlength="10"
+                            oninput="if(this.value.length > 10) this.value = this.value.slice(0,10); this.value = this.value.replace(/[^6-9]/g, '').replace(/(\..*)\./g, '$1');"
+                            required>
                         <span class="error-message text-danger" id="phoneError" style="display:none;">
                             Please enter correct number
                         </span> <!-- Error message placeholder -->

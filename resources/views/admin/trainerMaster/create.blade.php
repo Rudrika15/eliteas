@@ -118,8 +118,11 @@
 
             <div class="col-md-6">
                 <div class="form-floating mt-3">
-                    <input type="text" class="form-control @error('contactNo') is-invalid @enderror" id="contactNo"
-                        name="contactNo" placeholder="Contact No">
+                    <input type="text" class="form-control @error('contactNo') is-invalid @enderror" id="contactNo" name="contactNo"
+                        placeholder="Contact No" value="{{ old('contactNo') }}" pattern="[6-9]{10}"
+                        oninput="if(this.value.length > 10) this.value = this.value.slice(0,10); this.value = this.value.replace(/[^6-9]/g, '').replace(/(\..*)\./g, '$1');"
+                        oninvalid="this.setCustomValidity('Please enter a valid 10-digit mobile number');"
+                        oninput="this.setCustomValidity('')">
                     <label for="contactNo">Contact No</label>
                     @error('contactNo')
                     <div class="invalid-tooltip">

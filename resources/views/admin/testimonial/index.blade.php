@@ -4,10 +4,10 @@
 @section('content')
 
 {{-- Message --}}
-@if (Session::has('success'))
+{{-- @if (Session::has('success'))
 <div class="alert alert-success alert-dismissible" role="alert">
     <button type="button" class="close" data-dismiss="alert">
-        {{-- <i class="fa fa-times"></i> --}}
+        <i class="fa fa-times"></i>
     </button>
     <strong>Success !</strong> {{ session('success') }}
 </div>
@@ -16,11 +16,11 @@
 @if (Session::has('error'))
 <div class="alert alert-danger alert-dismissible" role="alert">
     <button type="button" class="close" data-dismiss="alert">
-        {{-- <i class="fa fa-times"></i> --}}
+        <i class="fa fa-times"></i>
     </button>
     <strong>Error !</strong> {{ session('error') }}
 </div>
-@endif
+@endif --}}
 
 <div class="container">
     <div class="card">
@@ -54,11 +54,11 @@
                             <td>{{ $testimonialData->member->firstName ?? '-' }} {{ $testimonialData->member->lastName
                                 ?? '-' }}</td>
                             <td>{{ $testimonialData->message ?? '-' }}</td>
-                            <td>{{ $testimonialData->uploadedDate ? \Carbon\Carbon::parse($testimonialData->uploadedDate)->format('d-m-Y') : '-' }}</td>
+                            <td>{{ $testimonialData->uploadedDate ?
+                                \Carbon\Carbon::parse($testimonialData->uploadedDate)->format('d-m-Y') : '-' }}</td>
                             {{-- <td>{{ $testimonialData->status ?? '-' }}</td> --}}
                             <td>
                                 <a href="{{ route('testimonial.destroy', $testimonialData->id) }}"
-                                    onclick="return confirm('Do You Want To Delete It ?')"
                                     class="btn btn-danger btn-sm justify-content-center align-items-center btn-tooltip"><i
                                         class="bi bi-trash"></i>
                                     <span class="btn-text">Delete</span>

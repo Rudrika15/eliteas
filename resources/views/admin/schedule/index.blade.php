@@ -4,7 +4,7 @@
 @section('content')
 
 {{-- Message --}}
-@if (Session::has('success'))
+{{-- @if (Session::has('success'))
 <div class="alert alert-success alert-dismissible" role="alert">
     <button type="button" class="close" data-dismiss="alert"></button>
     <strong>Success!</strong> {{ session('success') }}
@@ -16,7 +16,7 @@
     <button type="button" class="close" data-dismiss="alert"></button>
     <strong>Error!</strong> {{ session('error') }}
 </div>
-@endif
+@endif --}}
 
 <div class="card">
     <div class="card-body">
@@ -72,11 +72,11 @@
                                 <i class="bi bi-pen"></i>
                                 <span class="btn-text">Edit</span>
                             </a>
-                            <a href="{{ route('schedule.delete', $schedulesData->id) }}"
+                            {{-- <a href="{{ route('schedule.delete', $schedulesData->id) }}"
                                 class="btn btn-danger btn-sm btn-tooltip">
                                 <i class="bi bi-trash"></i>
                                 <span class="btn-text">Delete</span>
-                            </a>
+                            </a> --}}
                         </td>
                     </tr>
                     @endforeach

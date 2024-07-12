@@ -25,7 +25,7 @@
             <a href="{{ route('franchise.create') }}" class="btn btn-bg-orange btn-sm mt-3 btn-tooltip"><i
                     class="bi bi-plus-circle"></i>
                 <span class="btn-text">Add Franchise</span>
-                </a>
+            </a>
         </div>
 
         <!-- Table with stripped rows -->
@@ -63,10 +63,36 @@
                                 </a> --}}
 
                                 <a href="{{ route('franchise.delete', $franchiseData->id) }}"
-                                    class="btn btn-danger btn-sm btn-tooltip">
+                                    class="btn btn-danger btn-sm btn-tooltip justify-content-center align-items-center"
+                                    onclick="event.preventDefault();deleteFranchise(this);">
                                     <i class="bi bi-trash"></i>
                                     <span class="btn-text">Delete</span>
                                 </a>
+
+                                <script>
+                                    function deleteFranchise(element){
+                                                                Swal.fire({
+                                                                    title: 'Are you sure?',
+                                                                    text: "Do you want to delete this franchise?",
+                                                                    icon: 'warning',
+                                                                    showCancelButton: true,
+                                                                    confirmButtonColor: '#3085d6',
+                                                                    cancelButtonColor: '#d33',
+                                                                    confirmButtonText: 'Yes, delete it!'
+                                                                }).then((result) => {
+                                                                    if (result.isConfirmed) {
+                                                                        window.location.href = element.href;
+                                                                        Swal.fire(
+                                                                            'Deleted!',
+                                                                            'Franchise has been Deleted.',
+                                                                            'success'
+                                                                        )
+                                                                    }
+                                                                })
+                                                            }
+                                </script>
+
+
                                 {{--
                             </div> --}}
                         </td>

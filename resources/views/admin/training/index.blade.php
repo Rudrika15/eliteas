@@ -81,7 +81,7 @@
                         </td> --}}
                         {{-- <td>{{$trainingData->user->firstName ?? '-'}} {{$trainingData->user->lastName ?? '-'}}</td> --}}
                         <td>{{$trainingData->type ?? '-'}}</td>
-                        <td>{{$trainingData->fees}}</td>
+                        <td>{{ number_format($trainingData->fees, 2, '.', ',') }}</td>
                         <td>{{$trainingData->meetingLink}}</td>
                         <td>{{$trainingData->venue ?? '-'}}</td>
                         <td>{{ \Carbon\Carbon::parse($trainingData->date)->format('d-m-Y') ?? '-' }}</td>

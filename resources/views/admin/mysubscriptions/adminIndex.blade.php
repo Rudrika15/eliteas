@@ -57,7 +57,7 @@
                             <th>Membership Type</th>
                             <th>Amount</th>
                             <th>Validity</th>
-                            <th>Status</th>
+                            {{-- <th>Status</th> --}}
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -68,7 +68,7 @@
                                 '-' }}
                             </td>
                             <td>{{ $subscriptionData->membershipType ?? '-' }}</td>
-                            <td>{{ $subscriptionData->allPayments->amount ?? '-' }}</td>
+                            <td>{{ number_format($subscriptionData->allPayments->amount ?? 0, 2) ?? '-'}}</td>
                             <td>
                                 @php
                                 $validityDate = \Carbon\Carbon::parse($subscriptionData->validity);
@@ -80,7 +80,7 @@
                                     {{ $subscriptionData->validity ? $validityDate->format('d-M-Y') : '-' }}
                                 </span>
                             </td>
-                            <td>{{ $subscriptionData->status ?? '-' }}</td>
+                            {{-- <td>{{ $subscriptionData->status ?? '-' }}</td> --}}
                             <td>
                                 <form action="{{ route('renewMembership.mail', $subscriptionData->userId) }}"
                                     method="POST" class="d-inline">

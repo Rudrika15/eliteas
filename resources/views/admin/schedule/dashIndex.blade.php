@@ -4,10 +4,10 @@
 @section('content')
 
 {{-- Message --}}
-@if (Session::has('success'))
+{{-- @if (Session::has('success'))
 <div class="alert alert-success alert-dismissible" role="alert">
     <button type="button" class="close" data-dismiss="alert">
-        {{-- <i class="fa fa-times"></i> --}}
+        <i class="fa fa-times"></i>
     </button>
     <strong>Success !</strong> {{ session('success') }}
 </div>
@@ -16,11 +16,11 @@
 @if (Session::has('error'))
 <div class="alert alert-danger alert-dismissible" role="alert">
     <button type="button" class="close" data-dismiss="alert">
-        {{-- <i class="fa fa-times"></i> --}}
+        <i class="fa fa-times"></i>
     </button>
     <strong>Error !</strong> {{ session('error') }}
 </div>
-@endif
+@endif --}}
 
 <div class="card">
     <div class="card-body">
@@ -32,7 +32,7 @@
         </div>
 
         <!-- Table with stripped rows -->
-        <table class="table datatable table-striped table-hover">
+        <table class="table table-striped table-hover">
             <thead>
                 <tr>
                     <th>Circle Name</th>
@@ -41,7 +41,7 @@
                     <th>Venue</th>
                     <th>Time</th>
                     <th>Remarks</th>
-                    <th>Status</th>
+                    {{-- <th>Status</th> --}}
                     <th>Action</th>
                 </tr>
             </thead>
@@ -86,20 +86,23 @@
                     <td>{{$meeting['data']->venue}}</td>
                     <td>{{$meeting['data']->meetingTime}}</td>
                     <td>{{$meeting['data']->remarks}}</td>
-                    <td>{{$meeting['data']->status}}</td>
+                    {{-- <td>{{$meeting['data']->status}}</td> --}}
                     <td>
-                        <a href="{{ route('schedule.invitedList', $meeting['data']->id) }}" class="btn btn-info btn-sm">
+                        <a href="{{ route('schedule.invitedList', $meeting['data']->id) }}" class="btn btn-info btn-sm btn-tooltip">
                             <i class="bi bi-person-lines-fill"></i>
+                            <span class="btn-text">View Invited Peoples</span>
                         </a>
 
-                        <a href="{{ route('schedule.dashEdit', $meeting['data']->id) }}" class="btn btn-bg-blue btn-sm">
+                        <a href="{{ route('schedule.dashEdit', $meeting['data']->id) }}" class="btn btn-bg-blue btn-sm btn-tooltip">
                             <i class="bi bi-pen"></i>
+                            <span class="btn-text">Edit</span>
                         </a>
 
-                        <a href="{{ route('schedule.delete', $meeting['data']->id) }}"
-                            class="btn btn-danger btn-sm ">
+                        {{-- <a href="{{ route('schedule.delete', $meeting['data']->id) }}"
+                            class="btn btn-danger btn-sm btn-tooltip">
                             <i class="bi bi-trash"></i>
-                        </a>
+                            <span class="btn-text">Delete</span>
+                        </a> --}}
                     </td>
                 </tr>
                 @endforeach

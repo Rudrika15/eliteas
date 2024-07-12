@@ -56,7 +56,7 @@ class TrainerMasterController extends Controller
                 'firstName' => 'required',
                 'lastName' => 'required',
                 'email' => 'required|email|unique:users,email',
-                'contactNo' => 'required|unique:users,contactNo',
+                'contactNo' => 'required|unique:users,contactNo|max:10',
             ];
         }
 

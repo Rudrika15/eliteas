@@ -3,24 +3,6 @@
 @section('header', 'My Payment History')
 @section('content')
 
-{{-- Message --}}
-@if (Session::has('success'))
-<div class="alert alert-success alert-dismissible" role="alert">
-    <button type="button" class="close" data-dismiss="alert">
-        {{-- <i class="fa fa-times"></i> --}}
-    </button>
-    <strong>Success !</strong> {{ session('success') }}
-</div>
-@endif
-
-@if (Session::has('error'))
-<div class="alert alert-danger alert-dismissible" role="alert">
-    <button type="button" class="close" data-dismiss="alert">
-        {{-- <i class="fa fa-times"></i> --}}
-    </button>
-    <strong>Error !</strong> {{ session('error') }}
-</div>
-@endif
 
 <div class="card">
     <div class="card-body">
@@ -45,7 +27,7 @@
                     @foreach ($myAllPayments as $payment)
                     <tr>
                         <td>{{ $payment->paymentType ?? '-' }}</td>
-                        <td>{{ \Carbon\Carbon::parse($payment->date)->format('d-m-Y') ?? '-' }}</td>
+                        <td>{{ $payment->date ? date('d-m-Y', strtotime($payment->date)) : '-' }}</td>
                         <td>{{ $payment->paymentMode ?? '-' }}</td>
                         <td>{{ number_format($payment->amount, 2, '.', ',') ?? '-' }}</td>
                     </tr>

@@ -105,10 +105,10 @@
                                     <i class="bi bi-pen"></i>
                                     <span class="btn-text">Edit</span>
                                 </a>
-                                <a href="{{ route('circlemember.delete') }}" class="btn btn-danger btn-sm btn-tooltip">
+                                {{-- <a href="{{ route('circlemember.delete') }}" class="btn btn-danger btn-sm btn-tooltip">
                                     <i class="bi bi-trash"></i>
                                     <span class="btn-text">Delete</span>
-                                </a>
+                                </a> --}}
                                 {{-- <a href="{{ route('circlemember.edit', $circlememberData->id) }}"
                                     class="btn btn-bg-blue btn-sm">
                                     <i class="bi bi-envelope"></i>
