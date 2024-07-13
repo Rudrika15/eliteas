@@ -77,7 +77,9 @@ class CircleCallController extends Controller
     {
         $query = $request->input('q');
 
-        $circles = Circle::where('circleName', 'LIKE', '%' . $query . '%')->get();
+        $circles = Circle::where('circleName', 'LIKE', '%' . $query . '%')
+            ->where('status', 'Active') // Add condition to get only active circles
+            ->get();
 
         $userCircle = Member::where('userId', Auth::user()->id)->with('circle')->first();
 

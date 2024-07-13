@@ -27,8 +27,8 @@
 
         {{-- Filter Dropdown --}}
         <div class="col-md-3 mb-3">
-            <div class="d-flex align-items-center">
-                <small class="text-muted me-3"><strong>Filter By:</strong></small>
+            <div class="align-items-center">
+                <small class=" me-3"><strong>Filter By:</strong></small>
                 <select id="circleFilter" class="form-select mt-3 me-3">
                     <option value="">Select Circle</option>
                     @foreach ($circles as $circleData)

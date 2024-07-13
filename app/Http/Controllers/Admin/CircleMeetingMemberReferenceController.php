@@ -23,7 +23,7 @@ class CircleMeetingMemberReferenceController extends Controller
                 ->with('members')
                 ->with('refGiverName')
                 ->where('referenceGiverId', Auth::user()->id)
-                ->get();
+                ->paginate(10);
             return view('admin.refGiver.index', compact('refGiver'));
         } catch (\Throwable $th) {
             throw $th;

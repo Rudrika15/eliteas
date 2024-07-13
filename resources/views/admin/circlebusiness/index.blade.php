@@ -48,8 +48,8 @@
                                         $busGiverData->businessGiver->lastName ?? '-' }}</td>
                                     {{-- <td>{{ $busGiverData->loginMember->firstName . ' ' .
                                         $busGiverData->loginMember->lastName ?? '-' }}</td> --}}
-                                        <td>{{ \Carbon\Carbon::parse($busGiverData->date)->format('d-m-Y') ?? '-' }}</td>
-                                        <td>{{ $busGiverData->amount ?? '-' }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($busGiverData->date)->format('d-m-Y') ?? '-' }}</td>
+                                    <td>{{ $busGiverData->amount ?? '-' }}</td>
                                     {{-- <td>{{ $busGiverData->status }}</td> --}}
                                     <td>
                                         <a href="{{ route('busGiver.edit', $busGiverData->id) }}"
@@ -62,6 +62,9 @@
                                 @endforeach
                             </tbody>
                         </table>
+                        {{-- <div class="d-flex justify-content-end" style="color: #1d3268">
+                            {!! $busGiver->links() !!}
+                        </div> --}}
                         <!-- End Table with stripped rows -->
                     </div>
                 </div>

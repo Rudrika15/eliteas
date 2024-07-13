@@ -113,8 +113,8 @@
             <div class="col-md-6 mt-3">
                 <div class="form-floating">
                     <input type="text" class="form-control @error('mobileNo') is-invalid @enderror" id="mobileNo"
-                        name="mobileNo" placeholder="Mobile No" value="{{ old('mobileNo') }}"
-                        pattern="[6-9]{10}" oninput="if(this.value.length > 10) this.value = this.value.slice(0,10); this.value = this.value.replace(/[^6-9]/g, '').replace(/(\..*)\./g, '$1');"
+                        name="mobileNo" placeholder="Mobile No" value="{{ old('mobileNo') }}" pattern="[0-9]{10}"
+                        oninput="if(this.value.length > 10) this.value = this.value.slice(0,10); this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');"
                         oninvalid="this.setCustomValidity('Please enter a valid 10-digit mobile number');"
                         oninput="this.setCustomValidity('')">
                     <label for="mobileNo">Mobile No</label>
@@ -123,10 +123,11 @@
                         {{ $message }}
                     </div>
                     @enderror
-                    @if ($errors->has('mobileNo') && $errors->first('mobileNo') == 'Please enter a valid 10-digit mobile number')
-                        <div class="invalid-tooltip" style="color: red;">
-                            {{ $errors->first('mobileNo') }}
-                        </div>
+                    @if ($errors->has('mobileNo') && $errors->first('mobileNo') == 'Please enter a valid 10-digit mobile
+                    number')
+                    <div class="invalid-tooltip" style="color: red;">
+                        {{ $errors->first('mobileNo') }}
+                    </div>
                     @endif
                 </div>
             </div>

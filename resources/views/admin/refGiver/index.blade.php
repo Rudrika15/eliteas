@@ -32,7 +32,7 @@
                     <hr>
                     <!-- Table with stripped rows -->
                     <div class="table-responsive mt-5">
-                        <table class="table datatable table-striped table-hover mb-5">
+                        <table class="table table-striped table-hover mb-5">
                             <thead>
                                 <tr>
                                     <th>Member Name</th>
@@ -95,6 +95,9 @@
                                 @endforeach
                             </tbody>
                         </table>
+                        <div class="d-flex justify-content-end" style="color: #1d3268">
+                            {!! $refGiver->links() !!}
+                        </div>
                     </div>
                     <!-- End Table with stripped rows -->
                 </div>
