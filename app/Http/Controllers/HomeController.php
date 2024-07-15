@@ -124,7 +124,7 @@ class HomeController extends Controller
         return redirect()->back()->with('success', 'Training Registered Successfully');
     }
 
-public function invitation(Request $request)
+    public function invitation(Request $request)
     {
         try {
             $request->validate([
@@ -225,10 +225,13 @@ public function invitation(Request $request)
                 ->orWhere('memberId', $aid)
                 ->first();
 
+            $memberStatus = Connection::where('memberId', $member->userId)
+                ->first();
+
             // Alternatively, if you want to get all connections related to the authenticated user:
             // $connections = Connection::where('userId', $aid)->get();
 
-            return view('foundPersonDetails', compact('member', 'connection'));
+            return view('foundPersonDetails', compact('member', 'connection', 'memberStatus'));
         } catch (\Throwable $th) {
             // In case of an error, redirect to servererror view
             return view('servererror');

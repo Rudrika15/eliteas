@@ -9,8 +9,8 @@
             <h4 class="card-title">Trainer Master</h4>
             <a href="{{ route('trainer.create') }}" class="btn btn-bg-orange btn-sm mt-3 btn-tooltip"><i
                     class="bi bi-plus-circle"></i>
-                    <span class="btn-text">Add Trainer</span>
-                </a>
+                <span class="btn-text">Add Trainer</span>
+            </a>
         </div>
 
         <!-- Table with stripped rows -->
@@ -43,7 +43,8 @@
                                 <i class="bi bi-pen"></i>
                             </a> --}}
 
-                            <a href="{{ route('trainer.delete', $trainerData->id) }}" class="btn btn-danger btn-sm btn-tooltip">
+                            <a href="{{ route('trainer.delete', $trainerData->id) }}"
+                                class="btn btn-danger btn-sm btn-tooltip">
                                 <i class="bi bi-trash"></i>
                                 <span class="btn-text">Delete</span>
                             </a>
@@ -53,7 +54,7 @@
                     @endforeach
                 </tbody>
             </table>
-            <div class="d-flex justify-content-end" style="color: #1d3268">
+            <div class="d-flex justify-content-end custom-pagination">
                 {!! $trainer->links() !!}
             </div>
         </div>

@@ -30,7 +30,7 @@
 
         <!-- Table with stripped rows -->
         <div class="table-responsive">
-            <table class="table datatable table-striped table-hover">
+            <table class="table table-striped table-hover">
                 <thead>
                     <tr>
                         <th>Requested By</th>
@@ -63,6 +63,9 @@
                     @endforeach
                 </tbody>
             </table>
+            <div class="d-flex justify-content-end custom-pagination">
+                {!! $connections->links() !!}
+            </div>
         </div>
         <!-- End Table with stripped rows -->
     </div>

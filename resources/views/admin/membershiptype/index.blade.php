@@ -71,7 +71,7 @@
                         @endforeach
                     </tbody>
                 </table>
-                <div class="d-flex justify-content-end" style="color: #1d3268">
+                <div class="d-flex justify-content-end custom-pagination">
                     {!! $membershipType->links() !!}
                 </div>
                 <!-- End Table with stripped rows -->

@@ -32,7 +32,7 @@
         </div>
 
         <!-- Table with stripped rows -->
-        <table class="table table-striped table-hover">
+        <table class="table datatable table-striped table-hover">
             <thead>
                 <tr>
                     <th>Circle Name</th>

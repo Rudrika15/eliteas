@@ -786,10 +786,12 @@
                             </div>
                             <div class="col-md-6 mt-3">
                                 <div class="form-floating">
-                                    <select class="form-select @error('bCity') is-invalid @enderror" id="bCity" name="bCity">
+                                    <select class="form-select @error('bCity') is-invalid @enderror" id="bCity"
+                                        name="bCity">
                                         <option value="">Select City</option>
                                         @foreach ($city as $cityData)
-                                            <option value="{{ $cityData->id }}" {{ old('bCity')==$cityData->id ? 'selected' : '' }}>{{ $cityData->cityName }}</option>
+                                        <option value="{{ $cityData->id }}" {{ old('bCity')==$cityData->id ? 'selected'
+                                            : '' }}>{{ $cityData->cityName }}</option>
                                         @endforeach
                                     </select>
                                     <label for="bCity">City</label>
@@ -806,9 +808,8 @@
                                         name="bState">
                                         <option value="" selected disabled>Select State</option>
                                         @foreach ($states as $state)
-                                        <option value="{{ $state->id }}" {{ $billing->bState == $state->id ? 'selected'
-                                            : '' }}>{{ $state->stateName }}
-                                        </option>
+                                        <option value="{{ $state->id }}" {{ isset($billing) && $billing->bState ==
+                                            $state->id ? 'selected' : '' }}>{{ $state->stateName }}</option>
                                         @endforeach
                                     </select>
                                     @error('bState')
@@ -824,8 +825,9 @@
                                         name="bCountry">
                                         <option value="" selected disabled>Select Country</option>
                                         @foreach ($country as $countryData)
-                                        <option value="{{ $countryData->id }}" {{ $billing->bCountry == $countryData->id ? 'selected'
-                                            : '' }}>{{ $countryData->countryName }}
+                                        <option value="{{ $countryData->id }}" {{ isset($billing->bCountry) &&
+                                            $billing->bCountry == $countryData->id ? 'selected' : '' }}>
+                                            {{ $countryData->countryName }}
                                         </option>
                                         @endforeach
                                     </select>
@@ -898,8 +900,8 @@
                                         name="city">
                                         <option value="">Select City</option>
                                         @foreach ($city as $cityData)
-                                        <option value="{{ $cityData->id }}" {{ $contactDetails->city ==
-                                            $cityData->id ? 'selected' : '' }}>
+                                        <option value="{{ $cityData->id }}" {{ isset($contactDetails->city) &&
+                                            $contactDetails->city == $cityData->id ? 'selected' : '' }}>
                                             {{ $cityData->name }}
                                         </option>
                                         @endforeach
@@ -918,8 +920,8 @@
                                         name="state">
                                         <option value="">Select State</option>
                                         @foreach ($states as $stateData)
-                                        <option value="{{ $stateData->id }}" {{ $contactDetails->state ==
-                                            $stateData->id ? 'selected' : '' }}>
+                                        <option value="{{ $stateData->id }}" {{ isset($contactDetails->state) &&
+                                            $contactDetails->state == $stateData->id ? 'selected' : '' }}>
                                             {{ $stateData->name }}
                                         </option>
                                         @endforeach
@@ -937,8 +939,8 @@
                                         name="country">
                                         <option value="">Select Country</option>
                                         @foreach ($country as $countryData)
-                                        <option value="{{ $countryData->id }}" {{ $contactDetails->country ==
-                                            $countryData->id ? 'selected' : '' }}>
+                                        <option value="{{ $countryData->id }}" {{ isset($contactDetails->country) &&
+                                            $contactDetails->country == $countryData->id ? 'selected' : '' }}>
                                             {{ $countryData->countryName }}
                                         </option>
                                         @endforeach

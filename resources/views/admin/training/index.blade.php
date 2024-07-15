@@ -26,8 +26,9 @@
     <div class="card-body">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h4 class="card-title">Trainings</h4>
-            <a href="{{ route('training.create') }}" class="btn btn-bg-orange btn-sm mt-3 btn-tooltip"><i class="bi bi-plus-circle"></i>
-            <span class="btn-text">Create Training</span>
+            <a href="{{ route('training.create') }}" class="btn btn-bg-orange btn-sm mt-3 btn-tooltip"><i
+                    class="bi bi-plus-circle"></i>
+                <span class="btn-text">Create Training</span>
             </a>
         </div>
 
@@ -79,7 +80,8 @@
                             echo implode(', ', $externalTrainerNames) ?: '-';
                             @endphp
                         </td> --}}
-                        {{-- <td>{{$trainingData->user->firstName ?? '-'}} {{$trainingData->user->lastName ?? '-'}}</td> --}}
+                        {{-- <td>{{$trainingData->user->firstName ?? '-'}} {{$trainingData->user->lastName ?? '-'}}</td>
+                        --}}
                         <td>{{$trainingData->type ?? '-'}}</td>
                         <td>{{ number_format($trainingData->fees, 2, '.', ',') }}</td>
                         <td>{{$trainingData->meetingLink}}</td>
@@ -88,7 +90,8 @@
                         <td>{{$trainingData->time ?? '-'}}</td>
                         {{-- <td>{{$trainingData->status ?? '-'}}</td> --}}
                         <td>
-                            <a href="{{ route('training.edit', $trainingData->id) }}" class="btn btn-bg-blue btn-sm btn-tooltip">
+                            <a href="{{ route('training.edit', $trainingData->id) }}"
+                                class="btn btn-bg-blue btn-sm btn-tooltip">
                                 <i class="bi bi-pen"></i>
                                 <span class="btn-text">Edit</span>
                             </a>
@@ -117,7 +120,7 @@
                     @endforeach
                 </tbody>
             </table>
-            <div class="d-flex justify-content-end" style="color: #1d3268">
+            <div class="d-flex justify-content-end custom-pagination">
                 {!! $training->links() !!}
             </div>
             <!-- End Table with stripped rows -->

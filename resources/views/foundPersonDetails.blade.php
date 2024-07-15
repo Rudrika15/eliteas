@@ -409,7 +409,7 @@
                                             {{ $member->contactDetails->city ?? '-' }} ,
                                             {{ $member->contactDetails->state ?? '-' }}
                                         </p>
-                                        @if (!$connection)
+                                        @if (!$memberStatus)
                                         <form action="{{ route('connect') }}" id="connectForm" method="POST">
                                             @csrf
                                             <input type="hidden" value="{{ $member->user->id }}" name="memberId" id="">
@@ -417,11 +417,11 @@
                                                     class="bi bi-person-plus-fill"></i></button>
                                         </form>
 
-                                        @elseif ($connection->status == 'Accepted')
+                                        @elseif ($memberStatus->status == 'Accepted')
                                         <button type="button" class="btn btn-bg-blue shadow-none">Connected &nbsp;<i
                                                 class="bi bi-check-circle-fill"></i></button>
 
-                                        @elseif ($connection->status == 'Rejected')
+                                        @elseif ($memberStatus->status == 'Rejected')
                                         <button type="submit" class="btn btn-bg-blue shadow-none">Connect &nbsp;<i
                                                 class="bi bi-person-plus-fill"></i></button>
 

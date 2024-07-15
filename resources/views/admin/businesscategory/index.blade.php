@@ -29,8 +29,8 @@
                 <h4 class="card-title">Business Category</h4>
                 <a href="{{ route('bCategory.create') }}" class="btn btn-bg-orange btn-sm mt-3 btn-tooltip"><i
                         class="bi bi-plus-circle"></i>
-                <span class="btn-text">Add Business Category</span>
-                    </a>
+                    <span class="btn-text">Add Business Category</span>
+                </a>
             </div>
 
             <!-- Table with stripped rows -->
@@ -87,7 +87,7 @@
                         @endforeach
                     </tbody>
                 </table>
-                <div class="d-flex justify-content-end" style="color: #1d3268">
+                <div class="d-flex justify-content-end custom-pagination">
                     {!! $businessCategory->links() !!}
                 </div>
                 <!-- End Table with stripped rows -->

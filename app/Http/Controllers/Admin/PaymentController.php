@@ -149,19 +149,22 @@ class PaymentController extends Controller
     public function allPayments()
     {
         try {
+            // Fetch paginated results
             $payments = AllPayments::where('status', 'Active')
-                ->paginate(10)
-                ->map(function ($payment) {
-                    $payment->amount = isset($payment->amount) ? number_format($payment->amount, 2) : '-';
-                    return $payment;
-                });
+                ->paginate(10);
+
+            // Transform amounts after pagination
+            $payments->getCollection()->transform(function ($payment) {
+                $payment->amount = isset($payment->amount) ? number_format($payment->amount, 2) : '-';
+                return $payment;
+            });
 
             return view('admin.paymentHistory.index', compact('payments'));
         } catch (\Throwable $th) {
-            // throw $th;
             return view('servererror');
         }
     }
+
 
 
     public function circleAdminPaymentHistory()
@@ -171,33 +174,36 @@ class PaymentController extends Controller
             $circleId = $user->member->circle->id;
             $circleMembers = Member::where('circleId', $circleId)->pluck('userId')->toArray();
 
+            // Fetch paginated results
             $payments = AllPayments::where('status', 'Active')
                 ->whereIn('memberId', $circleMembers)
-                ->paginate(10)
-                ->map(function ($payment) {
-                    $payment->amount = isset($payment->amount) ? number_format($payment->amount, 2) : '-';
-                    return $payment;
-                });
+                ->paginate(10);
+
+            // Transform amounts after pagination
+            foreach ($payments as $payment) {
+                $payment->amount = isset($payment->amount) ? number_format($payment->amount, 2) : '-';
+            }
 
             return view('admin.paymentHistory.circleAdminPaymentHistory', compact('payments'));
         } catch (\Throwable $th) {
-            // throw $th;
             return view('servererror');
         }
     }
 
 
-
     public function myAllPayments()
     {
         try {
+            // Fetch paginated results
             $myAllPayments = AllPayments::where('status', 'Active')
                 ->where('memberId', auth()->id())
-                ->get()
-                ->map(function ($payment) {
-                    $payment->amount = isset($payment->amount) ? number_format($payment->amount) : '-';
-                    return $payment;
-                });
+
+                ->paginate(10);
+
+            // Transform amounts after pagination
+            foreach ($myAllPayments as $payment) {
+                $payment->amount = isset($payment->amount) ? number_format($payment->amount, 2) : '-';
+            }
 
             return view('admin.paymentHistory.userIndex', compact('myAllPayments'));
         } catch (\Throwable $th) {
@@ -205,6 +211,7 @@ class PaymentController extends Controller
             return view('servererror');
         }
     }
+
 
 
     public function pendingPayments()

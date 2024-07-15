@@ -95,7 +95,7 @@
                         @endforeach
                     </tbody>
                 </table>
-                <div class="d-flex justify-content-end" style="color: #1d3268">
+                <div class="d-flex justify-content-end custom-pagination">
                     {!! $allSubscriptions->links() !!}
                 </div>
             </div>

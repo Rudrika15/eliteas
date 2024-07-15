@@ -1375,3 +1375,37 @@ input:-webkit-autofill:focus {
         overflow-x: auto;
     }
 }
+
+/* custom css for ppagination links  */
+
+/* Add these styles to your CSS file */
+.custom-pagination .pagination a {
+    color: #1d3268;
+    /* Change this to your desired text color */
+}
+
+.custom-pagination .pagination a:hover {
+    color: #ff0000;
+    /* Change this to your desired hover text color */
+}
+
+.custom-pagination .pagination .page-item.active .page-link {
+    background-color: #e76a35;
+    /* Change this to your desired active background color */
+    border-color: #e76a35;
+    /* Change this to match the active background color */
+    color: white;
+    /* Change this to your desired active text color */
+}
+
+.custom-pagination .pagination .page-link {
+    background-color: #f8f9fa;
+    /* Change this to your desired background color */
+    border-color: #dee2e6;
+    /* Change this to your desired border color */
+}
+
+.custom-pagination .pagination .page-link:hover {
+    background-color: #e9ecef;
+    /* Change this to your desired hover background color */
+}

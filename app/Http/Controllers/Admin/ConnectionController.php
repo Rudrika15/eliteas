@@ -17,16 +17,16 @@ class ConnectionController extends Controller
         // $connection = Connection::where('memberId', $memberId)
         //     ->orWhere('userId', $userId)
         //     ->first();
-            
+
         //     if ($connection) {
 
         //         return response()->json(['message' => 'You are already sent']);
         //     }
-            
-            $connection = new Connection();
-            $connection->memberId = $memberId;
-            $connection->userId = $userId;
-            $connection->save();
+
+        $connection = new Connection();
+        $connection->memberId = $memberId;
+        $connection->userId = $userId;
+        $connection->save();
         return response()->json(['message' => 'Connection request sent successfully']);
     }
 
@@ -40,7 +40,7 @@ class ConnectionController extends Controller
             $query->where('memberId', $userId);
         })->with('member')
             ->where('status', 'Pending')
-            ->get();
+            ->paginate(10);
 
         return view('admin.connection.connections', compact('connections'));
     }
@@ -54,9 +54,9 @@ class ConnectionController extends Controller
             $query->where('userId', $userId)
                 ->orWhere('memberId', $userId);
         })
-        ->where('status', 'Accepted')
-        ->with(['user:id,firstName,lastName,email'])
-        ->get();
+            ->where('status', 'Accepted')
+            ->with(['user:id,firstName,lastName,email'])
+            ->paginate(10);
 
         // Include connected user's details for convenience
         $connections->each(function ($connection) {
@@ -70,6 +70,7 @@ class ConnectionController extends Controller
 
     public function accept($id)
     {
+        // return $id;
         $connection = Connection::find($id);
         $connection->status = "Accepted";
         $connection->save();

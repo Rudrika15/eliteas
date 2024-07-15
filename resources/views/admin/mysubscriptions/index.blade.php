@@ -4,10 +4,10 @@
 @section('content')
 
 {{-- Message --}}
-@if (Session::has('success'))
+{{-- @if (Session::has('success'))
 <div class="alert alert-success alert-dismissible" role="alert">
     <button type="button" class="close" data-dismiss="alert">
-        {{-- <i class="fa fa-times"></i> --}}
+        <i class="fa fa-times"></i>
     </button>
     <strong>Success !</strong> {{ session('success') }}
 </div>
@@ -16,11 +16,11 @@
 @if (Session::has('error'))
 <div class="alert alert-danger alert-dismissible" role="alert">
     <button type="button" class="close" data-dismiss="alert">
-        {{-- <i class="fa fa-times"></i> --}}
+        <i class="fa fa-times"></i>
     </button>
     <strong>Error !</strong> {{ session('error') }}
 </div>
-@endif
+@endif --}}
 
 @role('Member')
 <div class="card">
@@ -63,7 +63,7 @@
                     @endforeach
                 </tbody>
             </table>
-            <div class="d-flex justify-content-end" style="color: #1d3268">
+            <div class="d-flex justify-content-end custom-pagination">
                 {!! $subscriptions->links() !!}
             </div>
         </div>

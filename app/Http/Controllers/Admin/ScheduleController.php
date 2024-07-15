@@ -201,7 +201,7 @@ class ScheduleController extends Controller
     {
         try {
             $schedules = Schedule::findOrFail($id);
-            $invitedPersonList = MeetingInvitation::where('meetingId', $id)->get();
+            $invitedPersonList = MeetingInvitation::where('meetingId', $id)->paginate(10);
             return view('admin.schedule.invitedList', compact('schedules', 'invitedPersonList'));
         } catch (\Throwable $th) {
             throw $th;

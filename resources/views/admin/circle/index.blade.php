@@ -88,7 +88,8 @@
                                     <span class="btn-text">View Circle Meetings</span>
                                 </a>
 
-                                <a href="{{ route('circle.edit', $circleData->id) }}" class="btn btn-bg-blue btn-sm btn-tooltip">
+                                <a href="{{ route('circle.edit', $circleData->id) }}"
+                                    class="btn btn-bg-blue btn-sm btn-tooltip">
                                     <i class="bi bi-pen"></i>
                                     <span class="btn-text">Edit</span>
                                 </a>
@@ -99,7 +100,8 @@
                                     <span class="btn-text">View Members</span>
                                 </a>
 
-                                <a href="{{ route('circle.delete', $circleData->id) }}" class="btn btn-danger btn-sm btn-tooltip">
+                                <a href="{{ route('circle.delete', $circleData->id) }}"
+                                    class="btn btn-danger btn-sm btn-tooltip">
                                     <i class="bi bi-trash"></i>
                                     <span class="btn-text">Delete</span>
                                 </a>
@@ -109,7 +111,7 @@
                         @endforeach
                     </tbody>
                 </table>
-                <div class="d-flex justify-content-end" style="color: #1d3268">
+                <div class="d-flex justify-content-end custom-pagination">
                     {!! $circle->links() !!}
                 </div>
             </div>

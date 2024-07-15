@@ -5,6 +5,7 @@ use App\Exports\TrainersListExport;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
@@ -20,11 +21,11 @@ use App\Http\Controllers\Auth\OTPLoginController;
 use App\Http\Controllers\Admin\ScheduleController;
 use App\Http\Controllers\Admin\TrainingController;
 use App\Http\Controllers\Admin\FranchiseController;
-use App\Http\Controllers\Admin\LeaderBoardController;
 use App\Http\Controllers\Admin\AttendanceController;
 use App\Http\Controllers\Admin\CircleCallController;
 use App\Http\Controllers\Admin\CircleTypeController;
 use App\Http\Controllers\Admin\ConnectionController;
+use App\Http\Controllers\Admin\LeaderBoardController;
 use App\Http\Controllers\Admin\CircleMemberController;
 use App\Http\Controllers\Admin\CircleMeetingController;
 use App\Http\Controllers\Admin\TrainerMasterController;
@@ -70,6 +71,20 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('roles', RoleController::class);
     Route::resource('users', UserController::class);
 
+    Route::get('view', function() {
+        Artisan::call('view:clear');
+        return redirect()->back();
+    });
+
+    Route::get('cache', function() {
+        Artisan::call('cache:clear');
+        return redirect()->back();
+    });
+
+    Route::get('route', function() {
+        Artisan::call('route:clear');
+        return redirect()->back();
+    });
 
     Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
     Route::get('/franchise/index', [FranchiseController::class, 'index'])->name('franchise.index');

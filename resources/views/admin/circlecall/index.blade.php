@@ -34,7 +34,7 @@
         <hr class="mb-4">
         <!-- Table with stripped rows -->
         <div class="table-responsive">
-            <table class="table datatable table-striped table-hover mb-4">
+            <table class="table table-striped table-hover mb-4">
                 <thead>
                     <tr>
                         <th>Meeting Person</th>
@@ -87,6 +87,9 @@
                     @endforeach
                 </tbody>
             </table>
+            <div class="d-flex justify-content-end" style="color: #1d3268">
+                {!! $circlecall->links() !!}
+            </div>
         </div>
         <!-- End Table with stripped rows -->
     </div>

@@ -22,19 +22,20 @@ class CircleMeetingMemberBusinessController extends Controller
             $busGiver = CircleMeetingMembersBusiness::where('loginMemberId', Auth::user()->id)
                 ->where('status', 'Active')
                 ->orderBy('id', 'DESC')
-                ->get()
-                ->map(function ($item) {
-                    // Format the amount with commas
-                    $item->amount = isset($item->amount) ? number_format($item->amount, 2) : '-';
-                    return $item;
-                });
+                ->paginate(10);
+
+            // Format the amount with commas
+            $busGiver->transform(function ($item) {
+                $item->amount = isset($item->amount) ? number_format($item->amount, 2) : '-';
+                return $item;
+            });
 
             return view('admin.circlebusiness.index', compact('busGiver'));
         } catch (\Throwable $th) {
-            throw $th;
             return view('servererror');
         }
     }
+
 
 
 

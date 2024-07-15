@@ -18,24 +18,24 @@ class MembershipSubscriptionController extends Controller
             $subscriptions = MemberSubscriptions::where('userId', $userId)
                 ->where('status', 'Active')
                 ->with('allPayments') // Ensure allPayments relationship is loaded
-                ->paginate(10)
-                ->map(function ($subscription) {
-                    // Check if allPayments is a collection and format the amounts
-                    if ($subscription->allPayments instanceof \Illuminate\Support\Collection) {
-                        $subscription->allPayments->transform(function ($payment) {
-                            $payment->amount = isset($payment->amount) ? number_format($payment->amount, 2) : '-';
-                            return $payment;
-                        });
-                    }
-                    return $subscription;
-                });
+                ->paginate(10);
+
+            // Format the amounts for allPayments relationship
+            foreach ($subscriptions as $subscription) {
+                if ($subscription->allPayments instanceof \Illuminate\Support\Collection) {
+                    $subscription->allPayments->transform(function ($payment) {
+                        $payment->amount = isset($payment->amount) ? number_format($payment->amount, 2) : '-';
+                        return $payment;
+                    });
+                }
+            }
 
             return view('admin.mysubscriptions.index', compact('subscriptions', 'userId'));
         } catch (\Throwable $th) {
-            throw $th;
             return view('servererror');
         }
     }
+
 
 
 

@@ -14,7 +14,7 @@
 
         <!-- Table with stripped rows -->
         <div class="table-responsive">
-            <table class="table datatable table-striped table-hover">
+            <table class="table table-striped table-hover">
                 <thead>
                     <tr>
                         <th>Payment Mode</th>
@@ -34,6 +34,9 @@
                     @endforeach
                 </tbody>
             </table>
+            <div class="d-flex justify-content-end custom-pagination">
+                {!! $myAllPayments->links() !!}
+            </div>
         </div>
         <!-- End Table with stripped rows -->
     </div>

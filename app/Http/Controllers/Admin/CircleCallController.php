@@ -25,7 +25,7 @@ class CircleCallController extends Controller
                 ->with('meetingPerson')
                 ->where('status', 'Active')
                 ->orderBy('id', 'DESC')
-                ->get();
+                ->paginate(10);
             return view('admin.circlecall.index', compact('circlecall'));
         } catch (\Throwable $th) {
             throw $th;

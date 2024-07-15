@@ -48,7 +48,8 @@
                             <td>{{$countryData->countryName}}</td>
                             <td>{{$countryData->status}}</td>
                             <td>
-                                <a href="{{ route('country.edit', $countryData->id) }}" class="btn btn-bg-blue btn-sm btn-tooltip">
+                                <a href="{{ route('country.edit', $countryData->id) }}"
+                                    class="btn btn-bg-blue btn-sm btn-tooltip">
                                     <i class="bi bi-pen"></i>
                                     <span class="btn-text">Edit</span>
                                 </a>
@@ -57,7 +58,8 @@
                                     <i class="bi bi-eye"></i>
                                 </a> --}}
 
-                                <a href="{{ route('country.delete', $countryData->id) }}" class="btn btn-danger btn-sm btn-tooltip">
+                                <a href="{{ route('country.delete', $countryData->id) }}"
+                                    class="btn btn-danger btn-sm btn-tooltip">
                                     <i class="bi bi-trash"></i>
                                     <span class="btn-text">Delete</span>
                                 </a>
@@ -66,7 +68,7 @@
                         @endforeach
                     </tbody>
                 </table>
-                <div class="d-flex justify-content-end" style="color: #1d3268">
+                <div class="d-flex justify-content-end custom-pagination">
                     {!! $country->links() !!}
                 </div>
                 <!-- End Table with stripped rows -->

@@ -34,7 +34,7 @@
 
             <!-- Table with stripped rows -->
             <div class="table-responsive">
-                <table class="table datatable table-striped table-hover">
+                <table class="table table-striped table-hover">
                     <thead>
                         <tr>
                             <th>Country Name</th>
@@ -81,7 +81,7 @@
                         @endforeach
                     </tbody>
                 </table>
-                <div class="d-flex justify-content-end" style="color: #1d3268">
+                <div class="d-flex justify-content-end custom-pagination">
                     {!! $city->links() !!}
                 </div>
                 <!-- End Table with stripped rows -->
