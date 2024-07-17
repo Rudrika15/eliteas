@@ -53,7 +53,6 @@
                                 <a href="#" class="main-logo d-flex align-items-center">
                                     <img src="{{ asset('img/logo2.jpg') }}" alt=""
                                         style="mix-blend-mode: multiply; width: 150px; height:100px;">
-                                    {{-- <span class="d-none d-lg-block">Elite</span> --}}
                                 </a>
                             </div><!-- End Logo -->
 
@@ -61,7 +60,6 @@
                                 style="width: 20rem; height: 100%; background-image: url('{{ asset('img/b2.jpg') }}'); background-size: cover; background-position: center;">
                                 <div class="card-body">
                                     <h5 class="card-title text-center text-white pb-0 fs-4 mt-5">Verify OTP</h5>
-                                    {{-- <p class="text-center small">Enter your phone number to request OTP</p> --}}
 
                                     <!-- Display Error Message -->
                                     @if ($errors->has('message'))
@@ -69,7 +67,7 @@
                                         {{ $errors->first('message') }}
                                     </div>
                                     @endif
-        
+
                                     <!-- OTP Verification Form -->
                                     <form action="{{ route('otp.verify') }}" method="post"
                                         class="needs-validation w-100 mt-3" novalidate>
@@ -113,13 +111,7 @@
                                                 onmouseout="this.style.border = '1px solid #1d2856'" required>
                                         </div>
 
-                                        {{-- @if ($errors->has('otp'))
-                                        <span class="invalid-feedback text-danger" role="alert">
-                                            <strong>Invalid OTP</strong>
-                                        </span>
-                                        @endif --}}
-
-                                        <input type="hidden" name="phone" value="{{ session('phone') }}">
+                                        <input type="hidden" name="phone" value="{{ old('phone', session('phone')) }}">
                                         <div class="d-grid">
                                             <button type="submit" class="btn btn-bg-blue mt-3">Verify OTP</button>
                                         </div>
@@ -128,14 +120,14 @@
                                     <!-- Resend OTP Form -->
                                     <form action="{{ route('otp.resend') }}" method="post" class="w-100 mt-3">
                                         @csrf
-                                        <input type="hidden" name="phone" value="{{ session('phone') }}">
+                                        <input type="hidden" name="phone" value="{{ old('phone', session('phone')) }}">
                                         <div class="d-grid">
-                                            <button type="submit" class="btn btn-bg-orange" id="resendBtn">Resend
-                                                OTP</button>
+                                            <button type="submit" class="btn btn-bg-orange" id="resendBtn"
+                                                disabled>Resend OTP</button>
                                         </div>
-                                        <p id="countdown" class="text-center mt-2"></p>
+                                        <p class="text-center text-white mt-2" id="countdown">Resend OTP in 60
+                                            Seconds...</p>
                                     </form>
-                                    <!-- End Resend OTP Form -->
 
                                 </div>
                             </div>
@@ -146,8 +138,7 @@
                                 <!-- Licensing information: https://bootstrapmade.com/license/ -->
                                 <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/ -->
                                 Designed by <a href="https://flipcodesolutions.com/" target="_blank"
-                                    class="text-black"><b>Aspireotech
-                                        Solutions</b></a>
+                                    class="text-black"><b>Aspireotech Solutions</b></a>
                             </div>
 
                         </div>

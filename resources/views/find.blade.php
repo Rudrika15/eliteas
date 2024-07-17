@@ -39,88 +39,104 @@
 </head>
 
 <body class="" style=" mix-blend-mode: multiply;">
-{{-- <body class="" style=" mix-blend-mode: multiply; background: linear-gradient(to right, #1d2856, #e76a35);"> --}}
-    <header>
-        <!-- place navbar here -->
-    </header>
-    <main>
+    {{--
 
-        <div class="pt-5 px-3">
-            <div class="row">
-                <div class="col-md-1 d-flex justify-content-center align-items-center">
-                    <img src="{{ asset('img/logo4.png') }}" alt="UBN" class="pb-2" width="100"
-                        style="max-width: 100%; height: auto;">
-                </div>
-                <div class="col-md-10 pt-3">
-                    <input type="text" name="query" id="searchInput" placeholder="Enter circle name or member name..."
-                        class="form-control" title="Enter search keyword">
-                </div>
-                <div class="col-md-1 d-flex justify-content-center align-items-center mb-3">
-                    <a href="{{ route('home') }}" class="btn btn-bg-orange btn-sm">BACK</a>
-                </div>
-            </div>
+    <body class="" style=" mix-blend-mode: multiply; background: linear-gradient(to right, #1d2856, #e76a35);"> --}}
+        <header>
+            <!-- place navbar here -->
+        </header>
+        <main>
 
-            <style>
-                @media (max-width: 768px) {
-                    .col-md-1 {
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
+            <div class="pt-5 px-3">
+                <div class="row d-flex justify-content-center align-items-center">
+                    <div class="col-md-1">
+                        <img src="{{ asset('img/logo4.png') }}" alt="UBN" class="pb-2" width="100"
+                            style="max-width: 100%; height: auto;">
+                    </div>
+                    <div class="col-md-10">
+                        <input type="text" name="query" id="searchInput"
+                            placeholder="Enter circle name or member name..." class="form-control"
+                            title="Enter search keyword">
+                    </div>
+                    <div class="col-auto">
+                        <a href="{{ route('home') }}" class="btn btn-bg-orange btn-sm">BACK</a>
+                    </div>
+                    <style>
+                        @media (max-width: 425px) {
+                            .col-auto {
+                                margin-top: 30px;
+                            }
+                        }
+
+                        @media (max-width: 786px) {
+                            .col-auto {
+                                margin-top: 10px;
+                            }
+                        }
+                    </style>
+                </div>
+
+                <style>
+                    @media (max-width: 768px) {
+                        .col-md-1 {
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                        }
                     }
-                }
-            </style>
-        </div>
-        <div class="container pt-5">
-            <h3 class="text-muted mb-3">
-                <div class="searchText"> </div>
-            </h3>
-
-            <div class="">
-                <div id="searchResults">
-                </div>
-                {{-- @auth
-                <div class="mb-3">
-                    You are logged in as {{ Auth::user()->id }}
-                </div>
-                @endauth
-
-                @guest
-                <div class="mb-3">
-                    You are not logged in
-                </div>
-                @endguest --}}
-
+                </style>
             </div>
-        </div>
-    </main>
-    <br>
-    {{-- <div id="memberModal" class="modal">
-        <div class="model-dialog">
-            <div class="modal-content">
-                <span class="close">&times;</span>
-                <div id="modalContent"></div> <!-- This is the element to display member details -->
-            </div>
-        </div>
-    </div> --}}
+            <div class="container pt-5">
+                <h3 class="text-muted mb-3">
+                    <div class="searchText"> </div>
+                </h3>
 
+                <div class="">
+                    <div id="searchResults">
+                    </div>
+                    {{-- @auth
+                    <div class="mb-3">
+                        You are logged in as {{ Auth::user()->id }}
+                    </div>
+                    @endauth
 
+                    @guest
+                    <div class="mb-3">
+                        You are not logged in
+                    </div>
+                    @endguest --}}
 
-    {{-- <div class="modal" id="memberModal">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modal-title"></h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div id="modalContent"></div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary close" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
-        </div>
-    </div> --}}
+        </main>
+        <br>
+        {{-- <div id="memberModal" class="modal">
+            <div class="model-dialog">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <div id="modalContent"></div> <!-- This is the element to display member details -->
+                </div>
+            </div>
+        </div> --}}
+
+
+
+        {{-- <div class="modal" id="memberModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modal-title"></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="modalContent"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary close" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div> --}}
 
 
 
@@ -129,47 +145,47 @@
 
 
 
-    {{-- <footer id="footer" class="footer">
-        <div class="copyright">
-            &copy; Copyright <strong><span>FlipCode Solutions</span></strong>. All Rights Reserved
-        </div>
-        <div class="credits">
-            Designed by <a href="#">FlipCode</a>
-        </div>
-    </footer><!-- End Footer --> --}}
+        {{-- <footer id="footer" class="footer">
+            <div class="copyright">
+                &copy; Copyright <strong><span>FlipCode Solutions</span></strong>. All Rights Reserved
+            </div>
+            <div class="credits">
+                Designed by <a href="#">FlipCode</a>
+            </div>
+        </footer><!-- End Footer --> --}}
 
-    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
-            class="bi bi-arrow-up-short"></i></a>
+        <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+                class="bi bi-arrow-up-short"></i></a>
 
-    <!-- Vendor JS Files -->
-
-
-
-    <script src="{{ asset('vendor/apexcharts/apexcharts.min.js') }}"></script>
-    <script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-    <script src="{{ asset('vendor/chart.js/chart.umd.js') }}"></script>
-    <script src="{{ asset('vendor/echarts/echarts.min.js') }}"></script>
-    <script src="{{ asset('vendor/quill/quill.min.js') }}"></script>
-    <script src="{{ asset('vendor/simple-datatables/simple-datatables.js') }}"></script>
-    <script src="{{ asset('vendor/tinymce/tinymce.min.js') }}"></script>
-    <script src="{{ asset('vendor/php-email-form/validate.js') }}"></script>
+        <!-- Vendor JS Files -->
 
 
-    <!-- Template Main JS File -->
-    <script src="{{ asset('js/main.js') }}"></script>
 
-    <!-- Bootstrap JavaScript Libraries -->
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
-        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous">
-    </script>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
-        integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous">
-    </script>
+        <script src="{{ asset('vendor/apexcharts/apexcharts.min.js') }}"></script>
+        <script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+        <script src="{{ asset('vendor/chart.js/chart.umd.js') }}"></script>
+        <script src="{{ asset('vendor/echarts/echarts.min.js') }}"></script>
+        <script src="{{ asset('vendor/quill/quill.min.js') }}"></script>
+        <script src="{{ asset('vendor/simple-datatables/simple-datatables.js') }}"></script>
+        <script src="{{ asset('vendor/tinymce/tinymce.min.js') }}"></script>
+        <script src="{{ asset('vendor/php-email-form/validate.js') }}"></script>
 
 
-    <script>
-        // Paste your JavaScript code here
+        <!-- Template Main JS File -->
+        <script src="{{ asset('js/main.js') }}"></script>
+
+        <!-- Bootstrap JavaScript Libraries -->
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+            integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous">
+        </script>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+            integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous">
+        </script>
+
+
+        <script>
+            // Paste your JavaScript code here
         // Declare a variable to hold the timeout ID
         var timeoutId;
 
@@ -356,34 +372,34 @@
                 console.error('Invalid response format or missing data');
             }
         }
-    </script>
+        </script>
 
 
-    <!-- sweetalert -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+        <!-- sweetalert -->
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 
-    <!-- end -->
+        <!-- end -->
 
-    @if (Session::get('success'))
-    <script>
-        Swal.fire({
+        @if (Session::get('success'))
+        <script>
+            Swal.fire({
                 icon: 'success',
                 title: "{{ Session::get('success') }}",
                 showConfirmButton: true,
 
             });
-    </script>
-    @endif
+        </script>
+        @endif
 
-    @if (Session::get('error'))
-    <script>
-        Swal.fire({
+        @if (Session::get('error'))
+        <script>
+            Swal.fire({
                 icon: 'error',
                 title: "{{ Session::get('error') }}",
                 showConfirmButton: true,
             });
-    </script>
-    @endif
-</body>
+        </script>
+        @endif
+    </body>
 
 </html>

@@ -84,6 +84,28 @@
                     </a>
                 </li><!-- End Search Icon-->
 
+
+                {{-- <li class="nav-item d-block dg-lg" style="display: none;">
+                    <a class="nav-link nav-icon search-bar-toggle" href="#">
+                        <i class="bi bi-search"></i>
+                    </a>
+                </li><!-- End Search Icon-->
+                <style>
+                    @media (min-width: 1024px) {
+                        .nav-item.d-block.dg-lg-none {
+                            display: block;
+                        }
+                    }
+
+                    @media (max-width: 1024px) {
+                        .nav-item.d-block.dg-lg-none {
+                            display: none;
+                        }
+                    }
+                </style> --}}
+
+
+
                 {{-- <li class="nav-item dropdown">
 
                     <a class="nav-link nav-icon " href="#" data-bs-toggle="dropdown">

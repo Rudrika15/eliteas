@@ -120,8 +120,15 @@ class OTPLoginController extends Controller
             return redirect()->intended('/'); // redirect to the intended page after login
         }
 
-        return redirect()->route('otp.verify')->withErrors(['message' => 'Invalid OTP or OTP has expired.']);
+        // Return the view with errors if OTP is invalid or expired
+        return view('auth.otpVerify')->withErrors(['message' => 'Invalid OTP or OTP has expired.'])->with('phone', $request->phone);
     }
+
+
+    // public function showVerifyOtpForm(Request $request)
+    // {
+    //     return view('auth.otpVerify')->withErrors(['message' => 'Invalid OTP or OTP has expired.'])->with('phone', $request->phone);
+    // }
 
 
     // Resend OTP

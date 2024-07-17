@@ -447,6 +447,9 @@ Route::post('otp/verify', [OTPLoginController::class, 'verifyOTP']);
 Route::post('otp/resend', [OTPLoginController::class, 'resendOTP'])->name('otp.resend');
 
 
+// Route::post('/otp/verify', [OTPLoginController::class, 'verifyOTP'])->name('otp.verify');
+// Route::post('/otp/resend', [OTPLoginController::class, 'resendOTP'])->name('otp.resend');
+// Route::get('/otp/verify', [OTPLoginController::class, 'showVerifyOtpForm'])->name('otp.showVerifyOtpForm');
 
 
 

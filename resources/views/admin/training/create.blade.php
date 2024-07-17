@@ -57,8 +57,8 @@
                     <div class="form-floating mt-3">
                         <input type="hidden" name="trainerId" id="trainerId">
                         <input type="text" class="form-control" id="trainerName" name="memberName"
-                            placeholder="Select Member" readonly>
-                        <label for="trainerName">Select Internal Trainer</label>
+                            placeholder="Select Member">
+                        <label for="trainerName">Select Member</label>
                     </div>
                 </div>
                 <div class="external-trainer-list" id="memberListInputMember" style="display:none;">
@@ -66,7 +66,7 @@
                     <div class="form-floating mt-3">
                         <input type="hidden" name="externalTrainerId" id="externalTrainerId">
                         <input type="text" class="form-control" id="trainerNameExternal" name="trainerNameExternal"
-                            placeholder="Trainer Name External" readonly>
+                            placeholder="Trainer Name External">
                         <label for="trainerNameExternal">Trainer Name External</label>
                     </div>
                 </div>
@@ -74,11 +74,11 @@
                 <!-- Contact details -->
                 <div class="form-floating mt-3">
                     <input type="text" class="form-control" id="trainerContact" name="contactNo"
-                        placeholder="Contact No" readonly>
+                        placeholder="Contact No">
                     <label for="trainerContact">Contact No</label>
                 </div>
                 <div class="form-floating mt-3">
-                    <input type="text" class="form-control" id="trainerEmail" name="email" placeholder="Email" readonly>
+                    <input type="text" class="form-control" id="trainerEmail" name="email" placeholder="Email">
                     <label for="trainerEmail">Email</label>
                 </div>
             </div>
@@ -105,7 +105,7 @@
                     <input type="hidden" name="trainerId2" id="trainerId2">
                     <div class="form-floating mt-3">
                         <input type="text" class="form-control" id="trainerName2" name="trainerNameInternal"
-                            placeholder="Trainer Name Internal" readonly>
+                            placeholder="Trainer Name Internal">
                         <label for="trainerName2">Trainer Name Internal</label>
                     </div>
                 </div>
@@ -114,7 +114,7 @@
                     <input type="hidden" name="externalTrainerId2" id="externalTrainerId2">
                     <div class="form-floating mt-3">
                         <input type="text" class="form-control" id="trainerNameExternal2" name="trainerNameExternal2"
-                            placeholder="Trainer Name External" readonly>
+                            placeholder="Trainer Name External">
                         <label for="trainerNameExternal2">Trainer Name External</label>
                     </div>
                 </div>
@@ -122,11 +122,11 @@
                 <!-- Contact details -->
                 <div class="form-floating mt-3">
                     <input type="text" class="form-control" id="trainerContact2" name="contactNo2"
-                        placeholder="Contact No" readonly>
+                        placeholder="Contact No">
                     <label for="trainerContact2">Contact No</label>
                 </div>
                 <div class="form-floating mt-3">
-                    <input type="text" class="form-control" id="trainerEmail2" name="email2" placeholder="Email" readonly>
+                    <input type="text" class="form-control" id="trainerEmail2" name="email2" placeholder="Email">
                     <label for="trainerEmail2">Email</label>
                 </div>
             </div>
@@ -146,41 +146,49 @@
                         <div class="col-md-12">
                             <div class="row">
                                 <div class="col-md-6">
-                                    <input type="text" class="form-control mt-3" id="title" name="title" placeholder="Title" required>
+                                    <input type="text" class="form-control mt-3" id="title" name="title"
+                                        placeholder="Title">
                                 </div>
                                 <div class="col-md-6">
-                                    <input type="number" class="form-control mt-3" id="fees" name="fees" placeholder="Fees" required>
+                                    <input type="text" class="form-control mt-3" id="fees" name="fees"
+                                        placeholder="Fees">
                                 </div>
                                 <div class="col-md-6">
-                                    <select class="form-select mt-3" id="type" name="type" required>
+                                    <select class="form-select mt-3" id="type" name="type">
                                         <option value="" selected disabled>Select Meeting Type</option>
                                         <option value="Online">Online</option>
                                         <option value="Offline">Offline</option>
                                     </select>
                                 </div>
                                 <div class="col-md-6">
-                                    <input type="text" class="form-control mt-3" id="meetingLink" name="meetingLink" placeholder="Meeting Link" style="display:none;" required>
+                                    <input type="text" class="form-control mt-3" id="meetingLink" name="meetingLink"
+                                        placeholder="Meeting Link" style="display:none;">
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-6">
-                                    <input type="text" class="form-control mt-3" id="venue" name="venue" placeholder="Venue" style="display:none;" required>
+                                    <input type="text" class="form-control mt-3" id="venue" name="venue"
+                                        placeholder="Venue" style="display:none;">
                                 </div>
                                 <div class="col-md-6">
-                                    <input type="date" class="form-control mt-3" id="date" name="date" placeholder="Date" min="{{ date('Y-m-d') }}" required>
+                                    <input type="date" class="form-control mt-3" id="date" name="date"
+                                        placeholder="Date">
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-6">
-                                    <input type="time" class="form-control mt-3" id="time" name="time" placeholder="Time" required>
+                                    <input type="time" class="form-control mt-3" id="time" name="time"
+                                        placeholder="Time">
                                 </div>
                                 <div class="col-md-6">
-                                    <input type="text" class="form-control mt-3" id="duration" name="duration" placeholder="Duration" required>
+                                    <input type="text" class="form-control mt-3" id="duration" name="duration"
+                                        placeholder="Duration">
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-12">
-                                    <textarea class="form-control mt-3" id="note" name="note" placeholder="Note" rows="3"></textarea>
+                                    <textarea class="form-control mt-3" id="note" name="note" placeholder="Note"
+                                        rows="3"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -192,7 +200,7 @@
 
         <div class="text-center mt-3">
             <button type="submit" class="btn btn-bg-blue">Submit</button>
-            {{-- <button type="reset" class="btn btn-bg-orange">Reset</button> --}}
+            <button type="reset" class="btn btn-bg-orange">Reset</button>
         </div>
     </form>
 </div>
@@ -320,7 +328,7 @@
     });
 </script>
 
-    
+
 
 
 @endsection

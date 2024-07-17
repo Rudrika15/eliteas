@@ -58,7 +58,7 @@ class TrainingController extends Controller
     {
         // Validate the incoming request
         $request->validate([]);
-
+        // return request();
         // Create Training record
         $training = new Training();
         $training->title = $request->title;
