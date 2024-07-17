@@ -77,6 +77,7 @@ class CircleMemberController extends Controller
     }
 
 
+    
     //For show single data
     public function view(Request $request, $id)
     {
@@ -189,8 +190,8 @@ class CircleMemberController extends Controller
             $payment->membershipType = $member->membershipType;
             $payment->paymentMode = $request->has('paymentMode') ? $request->paymentMode : 'Online';
 
-            if ($member->membershipType == 'Monthly') {
-                $payment->validity = now()->addMonth()->format('d-m-Y');
+            if ($member->membershipType == 'Prestige Lifetime') {
+                $payment->validity = now()->addYears(5)->format('d-m-Y');
             } elseif ($member->membershipType == 'Yearly') {
                 $payment->validity = now()->addYear()->format('d-m-Y');
             }

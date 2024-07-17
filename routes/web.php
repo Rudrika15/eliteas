@@ -177,7 +177,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     //filter
     Route::get('/circlemember/filter', [CircleMemberController::class, 'filter'])->name('circlemember.filter');
-
+    
 
     //member activity
     Route::get('circlemember/activity/{id?}', [CircleMemberActivityController::class, 'activity'])->name('circlemember.activity');
