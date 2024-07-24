@@ -66,7 +66,7 @@ class CircleController extends Controller
 
     {
         $this->validate($request, [
-            'circleName' => 'required|unique:circles',
+            'circleName' => 'required|unique:circles', 
             'franchiseId' => 'required',
             'cityId' => 'required',
             'circletypeId' => 'required',
