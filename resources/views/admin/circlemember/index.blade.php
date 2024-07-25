@@ -55,11 +55,18 @@
                 </select>
 
                 <select name="membershipType" id="membershipType" class="form-select mt-3">
+                    <option value="">Select MembershipType</option>
+                    @foreach ($membershipType as $membershipTypeData)
+                    <option value="{{$membershipTypeData->id}}">{{$membershipTypeData->membershipType}}</option>
+                    @endforeach
+                </select>
+
+                {{-- <select name="membershipType" id="membershipType" class="form-select mt-3">
                     <option value="" selected>Select Membership</option>
                     <option value="Monthly">Monthly</option>
                     <option value="Yearly">Yearly</option>
                     <option value="LifeTime">LifeTime</option>
-                </select>
+                </select> --}}
             </div>
 
 
@@ -142,7 +149,7 @@
                                                         <option value="">Select Role</option>
                                                         @foreach($roles as $role)
                                                         @if (!in_array($role->name, ['Franchise Admin', 'Member',
-                                                        'Admin']))
+                                                        'Admin', 'Trainer']))
                                                         <option value="{{ $role->id }}">{{ $role->name }}</option>
                                                         @endif
                                                         @endforeach

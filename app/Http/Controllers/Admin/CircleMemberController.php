@@ -40,10 +40,12 @@ class CircleMemberController extends Controller
         try {
             // $member = Member::findOrFail($user->id);
             $member = Member::whereHas('circle')->with('circle')->whereHas('contactDetails')->with('contactDetails')->with('user')->with('topsProfile')->with('billingAddress')->paginate(10);
-            $circle = Circle::where('status', 'Active')->paginate(10);
-            $bCategory = BusinessCategory::where('status', 'Active')->paginate(10);
-            $roles = Role::whereNotIn('name', ['Admin', 'Member', 'Trainer', 'Franchise '])->paginate(10);
-            return view('admin.circlemember.index', compact('member', 'roles', 'circle', 'bCategory'));
+            $circle = Circle::where('status', 'Active')->get();
+            $bCategory = BusinessCategory::where('status', 'Active')->get();
+            // $roles = Role::whereNotIn('name', ['Admin', 'Member', 'Trainer', 'Franchise '])->paginate(10);
+            $roles = Role::all();
+            $membershipType = MembershipType::where('status', 'Active')->get();
+            return view('admin.circlemember.index', compact('member', 'roles', 'circle', 'bCategory','membershipType'));
         } catch (\Throwable $th) {
             throw $th;
             return view('servererror');
@@ -57,7 +59,7 @@ class CircleMemberController extends Controller
         $categoryId = $request->get('categoryId');
         $membershipType = $request->get('membershipType');
 
-        $query = CircleMember::query();
+        $query = Member::query();
 
         if ($circleId) {
             $query->where('circleId', $circleId);
@@ -77,12 +79,12 @@ class CircleMemberController extends Controller
     }
 
 
-    
+
     //For show single data
     public function view(Request $request, $id)
     {
         try {
-            $circlemember = CircleMember::findOrFail($id);
+            $circlemember = Member::findOrFail($id);
             return response()->json($circlemember);
         } catch (\Throwable $th) {
             // throw $th;
@@ -458,22 +460,32 @@ class CircleMemberController extends Controller
 
     public function assignRole(Request $request)
     {
-        // Validate the incoming request
-        $request->validate([
-            'memberId' => 'required|exists:circle_members,id',
-            'roleId' => 'required|exists:roles,id',
-        ]);
 
-        // Find the circle member
-        $member = CircleMember::findOrFail($request->memberId);
+        // return $request();
 
-        // Find the role
-        $role = Role::findOrFail($request->roleId);
+        try {
+            // Validate the incoming request
+            $request->validate([
+                'memberId' => 'required|exists:members,id',
+                'roleId' => 'required|exists:roles,id',
+            ]);
 
-        // Attach the role to the user (assuming the relationship is defined)
-        $member->user->roles()->attach($role);
+            // Find the circle member
+            //   return  $member = CircleMember::findOrFail($request->memberId);
 
-        return redirect()->back()->with('success', 'Role assigned successfully.');
+            $member = Member::where('id', $request->memberId)->first();
+
+            // Find the role
+            $role = Role::findOrFail($request->roleId);
+
+            // Attach the role to the user (assuming the relationship is defined)
+            $member->user->roles()->attach($role);
+
+            return redirect()->back()->with('success', 'Role assigned successfully.');
+        } catch (\Throwable $th) {
+            throw $th;
+            return view('servererror');
+        }
     }
 
     public function removeRole(Request $request)
@@ -485,7 +497,9 @@ class CircleMemberController extends Controller
         ]);
 
         // Find the circle member
-        $member = CircleMember::findOrFail($request->memberId);
+        // $member = CircleMember::findOrFail($request->memberId);
+
+        $member = Member::where('id', $request->memberId)->first();
 
         // Find the role
         $role = Role::findOrFail($request->roleId);

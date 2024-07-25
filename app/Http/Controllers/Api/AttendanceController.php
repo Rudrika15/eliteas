@@ -80,6 +80,9 @@ class AttendanceController extends Controller
     public function attendanceStore(Request $request)
     {
         try {
+
+            
+
             $validatedData = $request->validate([
                 'userId' => 'array',
                 'userId.*' => 'integer|exists:users,id',

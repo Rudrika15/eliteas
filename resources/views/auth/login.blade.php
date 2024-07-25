@@ -43,7 +43,7 @@
 <body>
 
     <main>
-        <div class="" style="background-image: url('{{ asset('img/b2.jpg') }}');
+        <div class="" style="background-image: url('{{ asset('img/b4.jpg') }}');
                                     background-size: 100% 100%;
                                     background-position: center;">
             <section
