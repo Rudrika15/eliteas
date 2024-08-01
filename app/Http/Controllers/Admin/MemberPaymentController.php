@@ -24,27 +24,27 @@ class MemberPaymentController extends Controller
             return view('servererror');
         }
     }
-    //For show single data
-    public function view(Request $request, $id)
-    {
-        try {
-            $payment = MemberPayment::with('country')->findOrFail($id);
-            return response()->json($payment);
-        } catch (\Throwable $th) {
-            throw $th;
-            return view('servererror');
-        }
-    }
-    public function create()
-    {
-        try {
-            $member = Member::where('status', '!=', 'Deleted')->get();
-            return view('admin.state.create', compact('member'));
-        } catch (\Throwable $th) {
-            throw $th;
-            return view('servererror');
-        }
-    }
+    // //For show single data
+    // public function view(Request $request, $id)
+    // {
+    //     try {
+    //         $payment = MemberPayment::with('country')->findOrFail($id);
+    //         return response()->json($payment);
+    //     } catch (\Throwable $th) {
+    //         throw $th;
+    //         return view('servererror');
+    //     }
+    // }
+    // public function create()
+    // {
+    //     try {
+    //         $member = Member::where('status', '!=', 'Deleted')->get();
+    //         return view('admin.state.create', compact('member'));
+    //     } catch (\Throwable $th) {
+    //         throw $th;
+    //         return view('servererror');
+    //     }
+    // }
 
     public function store(Request $request)
     {

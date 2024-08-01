@@ -124,7 +124,7 @@
                                 <!-- Licensing information: https://bootstrapmade.com/license/ -->
                                 <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/ -->
                                 Designed by <a href="https://flipcodesolutions.com/" target="_blank"
-                                    class="text-black"><b>Aspireotech Solutions</b></a>
+                                    class="text-white"><b>Aspireotech Solutions</b></a>
                             </div>
 
                         </div>

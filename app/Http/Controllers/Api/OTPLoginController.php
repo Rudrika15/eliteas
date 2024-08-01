@@ -27,6 +27,7 @@ class OTPLoginController extends Controller
             if ($user) {
                 $apiKey = urlencode('0c5ff664-819f-48f1-a22c-d5894e9fba3b');
                 // Generate OTP
+                // $otp = 123456;
                 $otp = random_int(100000, 999999);
                 $numbers = $request->phone;
                 $sender = urlencode('DGSAPI');

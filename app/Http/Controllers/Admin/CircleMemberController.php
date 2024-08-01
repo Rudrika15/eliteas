@@ -194,7 +194,7 @@ class CircleMemberController extends Controller
 
             if ($member->membershipType == 'Prestige Lifetime') {
                 $payment->validity = now()->addYears(5)->format('d-m-Y');
-            } elseif ($member->membershipType == 'Yearly') {
+            } elseif ($member->membershipType == 'Supreme - Yearly') {
                 $payment->validity = now()->addYear()->format('d-m-Y');
             }
 
