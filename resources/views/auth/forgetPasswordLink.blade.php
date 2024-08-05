@@ -34,8 +34,7 @@
 
 <body>
     <main>
-        <div class=""
-            style="background-image: url('{{ asset('img/b2.jpg') }}'); background-size: cover; background-position: center;">
+        <div class="">
             <section
                 class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
                 <div class="container res-box">

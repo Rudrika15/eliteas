@@ -270,11 +270,18 @@
 </li>
 
 <li class="nav-item">
-        <a class="nav-link collapsed" href="{{ route('subscription.memberSubscription.admin') }}">
-            <i class="bi bi-substack" style="color: #e76a35"></i>
-            <span class="text-blue">Member Subscriptions</span>
-        </a>
-    </li>
+    <a class="nav-link collapsed" href="{{ route('subscription.memberSubscription.admin') }}">
+        <i class="bi bi-substack" style="color: #e76a35"></i>
+        <span class="text-blue">Member Subscriptions</span>
+    </a>
+</li>
+
+<li class="nav-item">
+    <a class="nav-link collapsed" href="{{ route('visitor.index') }}">
+        <i class="bi bi-people" style="color: #e76a35"></i>
+        <span class="text-blue">Visitors</span>
+    </a>
+</li>
 
 
 

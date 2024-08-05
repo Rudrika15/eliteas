@@ -43,9 +43,7 @@
 <body>
 
     <main>
-        <div class="" style="background-image: url('{{ asset('img/b4.jpg') }}');
-                                    background-size: 100% 100%;
-                                    background-position: center;">
+        <div class="">
             <section
                 class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
                 <div class="container res-box">
@@ -95,8 +93,9 @@
                                         </div>
 
                                         <div class="mb-3 form-check">
-                                            <input type="checkbox" class="form-check-input {{ old('remember') ? 'is-valid' : '' }}" name="remember"
-                                                id="remember" {{ old('remember') ? 'checked' : '' }}>
+                                            <input type="checkbox"
+                                                class="form-check-input {{ old('remember') ? 'is-valid' : '' }}"
+                                                name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
                                             <label class="form-check-label text-white" for="remember">Remember
                                                 Me</label>
                                         </div>
@@ -124,7 +123,7 @@
                                 <!-- Licensing information: https://bootstrapmade.com/license/ -->
                                 <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/ -->
                                 Designed by <a href="https://flipcodesolutions.com/" target="_blank"
-                                    class="text-white"><b>Aspireotech Solutions</b></a>
+                                    class="text-muted"><b>Aspireotech Solutions</b></a>
                             </div>
 
                         </div>

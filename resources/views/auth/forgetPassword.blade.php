@@ -31,7 +31,7 @@
     <link href="{{ asset('css/style.css') }}" rel="stylesheet" />
 
 
-   
+
 
 
     <!-- =======================================================
@@ -46,8 +46,7 @@
 <body>
 
     <main>
-        <div class=""
-            style="background-image: url('{{ asset('img/b2.jpg') }}'); background-size: 100% 100%; background-position: center;">
+        <div class="">
             <section
                 class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
                 <div class="container res-box">
@@ -69,7 +68,8 @@
                                     <p class="text-center text-white small mt-3">You can reset your password here.</p>
 
                                     @if (Session::has('message'))
-                                    <div class="alert alert-success d-flex align-items-center justify-content-center" role="alert">
+                                    <div class="alert alert-success d-flex align-items-center justify-content-center"
+                                        role="alert">
                                         <span class="w-100 text-center">{{ Session::get('message') }}</span>
                                     </div>
                                     @endif

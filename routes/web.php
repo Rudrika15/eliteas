@@ -30,6 +30,7 @@ use App\Http\Controllers\Admin\CircleMemberController;
 use App\Http\Controllers\Admin\CircleMeetingController;
 use App\Http\Controllers\Admin\TrainerMasterController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\visitor\VisitorFormController;
 use App\Http\Controllers\Admin\MembershipTypeController;
 use App\Http\Controllers\Admin\BusinessCategoryController;
 use App\Http\Controllers\Admin\TrainingCategoryController;
@@ -63,7 +64,8 @@ Route::post('forget-password', [ForgotPasswordController::class, 'submitForgetPa
 Route::get('reset-password/{token}', [ForgotPasswordController::class, 'showResetPasswordForm'])->name('reset.password.get');
 Route::post('reset-password', [ForgotPasswordController::class, 'submitResetPasswordForm'])->name('reset.password.post');
 
-
+Route::get('visitor-form', [VisitorFormController::class, 'visitorForm'])->name('visitor.form');
+Route::post('visitor-form-store', [VisitorFormController::class, 'store'])->name('visitor.form.store');
 
 
 Auth::routes();
@@ -426,6 +428,14 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/leaderboard/maxReference', [LeaderBoardController::class, 'maxReference'])->name('maxReference.index');
     Route::get('/leaderboard/maxRefferal', [LeaderBoardController::class, 'maxRefferal'])->name('maxRefferal.index');
     Route::get('/leaderboard/maxVisitor', [LeaderBoardController::class, 'maxVisitor'])->name('maxVisitor.index');
+
+    //visitors
+
+    Route::get('/visitor-index', [VisitorFormController::class, 'index'])->name('visitor.index');
+
+
+
+
 });
 
 //Login with otp

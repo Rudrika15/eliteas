@@ -80,7 +80,8 @@
                             -
                             @endif
                         </td>
-                        <td>{{$schedulesData->date}}</td>
+                        <td>{{ \Carbon\Carbon::parse($schedulesData->date)->format('d-m-Y') }}</td>
+                        {{-- <td>{{$schedulesData->date}}</td> --}}
                         <td>{{$schedulesData->venue}}</td>
                         <td>{{$schedulesData->meetingTime}}</td>
                         <td>{{$schedulesData->remarks}}</td>
