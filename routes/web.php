@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\MemberController;
 use App\Http\Controllers\Admin\CountryController;
 use App\Http\Controllers\Admin\PaymentController;
 use App\Http\Controllers\Auth\OTPLoginController;
+use App\Http\Controllers\Admin\LocationController;
 use App\Http\Controllers\Admin\ScheduleController;
 use App\Http\Controllers\Admin\TrainingController;
 use App\Http\Controllers\Admin\FranchiseController;
@@ -73,21 +74,24 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('roles', RoleController::class);
     Route::resource('users', UserController::class);
 
-        Route::get('view', function() {
-            Artisan::call('view:clear');
-            return redirect()->back();
-        });
+    Route::get('view', function () {
+        Artisan::call('view:clear');
+        return redirect()->back();
+    });
 
-        Route::get('cache', function() {
-            Artisan::call('cache:clear');
-            return redirect()->back();
-        });
+    Route::get('cache', function () {
+        Artisan::call('cache:clear');
+        return redirect()->back();
+    });
 
-        Route::get('route', function() {
-            Artisan::call('route:clear');
-            return redirect()->back();
-        });
+    Route::get('route', function () {
+        Artisan::call('route:clear');
+        return redirect()->back();
+    });
 
+
+    Route::post('/save-location', [LocationController::class, 'saveLocation']);
+    
     Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
     Route::get('/franchise/index', [FranchiseController::class, 'index'])->name('franchise.index');
     Route::get('franchise/show/{id?}', [FranchiseController::class, 'show'])->name('franchise.show');
@@ -179,7 +183,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     //filter
     Route::get('/circlemember/filter', [CircleMemberController::class, 'filter'])->name('circlemember.filter');
-    
+
 
     //member activity
     Route::get('circlemember/activity/{id?}', [CircleMemberActivityController::class, 'activity'])->name('circlemember.activity');
@@ -434,6 +438,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/visitor-index', [VisitorFormController::class, 'index'])->name('visitor.index');
 
 
+    //location
 
 
 });

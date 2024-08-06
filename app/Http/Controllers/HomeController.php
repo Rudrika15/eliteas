@@ -257,4 +257,13 @@ class HomeController extends Controller
 
         return redirect()->back()->with('error', 'Connection request rejected');
     }
+
+
+    public function userDetails()
+    {
+        // $ip = '103.226.226.86'; //For static IP address get
+        $ip = request()->ip(); //Dynamic IP address get
+        $ipData = \Location::get($ip);
+        return view('location', compact('ipData'));
+    }
 }
