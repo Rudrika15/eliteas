@@ -216,6 +216,34 @@
 
                 </li><!-- End Messages Nav --> --}}
 
+
+                @role('Admin')
+                <li class="nav-item pe-3">
+                    <a class="nav-link" href="{{ url('/visitor-form') }}"
+                        style="color: #1d3268; padding: 10px; border-radius: 5px; background-color: rgba(29, 50, 102, 0.2);">
+                        <b>Visitor Form</b>
+                    </a>
+                </li>
+                @endrole
+
+                {{-- @role('member') --}}
+                @if ( Auth::user()->userStatus == 'Online')
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <span class="badge rounded-pill bg-success"
+                            style="font-size: 12px;padding: 5px 10px;color: #fff;display: inline-block;margin-top: 5px;">Online</span>
+                    </a>
+                </li>
+                @else
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <span class="badge rounded-pill bg-danger"
+                            style="font-size: 12px;padding: 5px 10px;color: #fff;display: inline-block;margin-top: 5px;">Offline</span>
+                    </a>
+                </li>
+                @endif
+                {{-- @endrole --}}
+
                 <li class="nav-item dropdown pe-3">
 
                     <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
