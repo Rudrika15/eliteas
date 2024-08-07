@@ -39,13 +39,13 @@ class CircleMemberController extends Controller
     {
         try {
             // $member = Member::findOrFail($user->id);
-            $member = Member::whereHas('circle')->with('circle')->whereHas('contactDetails')->with('contactDetails')->with('user')->with('topsProfile')->with('billingAddress')->paginate(10);
+            $member = Member::whereHas('circle')->where('status', 'Active')->with('circle')->whereHas('contactDetails')->where('status', 'Active')->with('contactDetails')->with('user')->where('status', 'Active')->with('topsProfile')->with('billingAddress')->paginate(10);
             $circle = Circle::where('status', 'Active')->get();
             $bCategory = BusinessCategory::where('status', 'Active')->get();
             // $roles = Role::whereNotIn('name', ['Admin', 'Member', 'Trainer', 'Franchise '])->paginate(10);
             $roles = Role::all();
             $membershipType = MembershipType::where('status', 'Active')->get();
-            return view('admin.circlemember.index', compact('member', 'roles', 'circle', 'bCategory','membershipType'));
+            return view('admin.circlemember.index', compact('member', 'roles', 'circle', 'bCategory', 'membershipType'));
         } catch (\Throwable $th) {
             throw $th;
             return view('servererror');
@@ -94,7 +94,7 @@ class CircleMemberController extends Controller
     public function create()
     {
         try {
-            $businessCategory = BusinessCategory::where('status', 'Active')->get();
+            $businessCategory = BusinessCategory::where('status', 'Active')->orderBy('categoryName', 'asc')->get();
             $circle = Circle::where('status', 'Active')->get();
             $member = Member::where('status', 'Active')->get();
             $countries = Country::where('status', 'Active')->get();
@@ -185,6 +185,7 @@ class CircleMemberController extends Controller
             // Determine paymentId
             $paymentId = $request->has('paymentModeCheck') ? 'At Office' : $request->paymentId;
 
+            // return $member->membershipType;
             // Create and save MemberSubscriptions
             $payment = new MemberSubscriptions();
             $payment->userId = $user->id;
@@ -192,9 +193,9 @@ class CircleMemberController extends Controller
             $payment->membershipType = $member->membershipType;
             $payment->paymentMode = $request->has('paymentMode') ? $request->paymentMode : 'Online';
 
-            if ($member->membershipType == 'Prestige Lifetime') {
+            if ($member->membershipType == 2) {
                 $payment->validity = now()->addYears(5)->format('d-m-Y');
-            } elseif ($member->membershipType == 'Supreme - Yearly') {
+            } elseif ($member->membershipType == 1) {
                 $payment->validity = now()->addYear()->format('d-m-Y');
             }
 
@@ -202,6 +203,17 @@ class CircleMemberController extends Controller
 
             $payment->status = 'Active';
             $payment->save();
+
+
+            $allPayments = new AllPayments();
+            $allPayments->memberId = $member->userId;
+            $allPayments->amount = $member->membershipAmount;
+            $allPayments->paymentType = 'Offline'; // Assume RazorPay for this example
+            $allPayments->date = now()->format('Y-m-d');
+            $allPayments->paymentMode = 'Membership Subscription';
+            $allPayments->remarks = 'Payment Mode is Offline';
+            $allPayments->save();
+
 
             $amount = $member->membershipAmount;
 
@@ -431,16 +443,34 @@ class CircleMemberController extends Controller
     }
 
 
-    function delete($id)
+    public function delete($id)
     {
+
         try {
-            $circlemember = CircleMember::find($id);
+            $circlemember = Member::find($id);
+            $user = User::find($circlemember->userId);
             $circlemember->status = "Deleted";
+            $user->status = "Deleted";
             $circlemember->save();
+            $user->save();
+
+            // Update other tables also
+            $contact = ContactDetails::where('memberId', $id)->first();
+            $contact->status = "Deleted";
+            $contact->save();
+
+            $billing = BillingAddress::where('memberId', $id)->first();
+            $billing->status = "Deleted";
+            $billing->save();
+
+            $tops = TopsProfile::where('memberId', $id)->first();
+            $tops->status = "Deleted";
+            $tops->save();
+
 
             return redirect()->route('circlemember.index')->with('success', 'Circle Member Deleted Successfully!');
         } catch (\Throwable $th) {
-            // throw $th;
+            throw $th;
             return view('servererror');
         }
     }

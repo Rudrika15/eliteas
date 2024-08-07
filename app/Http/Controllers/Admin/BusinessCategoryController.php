@@ -45,7 +45,7 @@ class BusinessCategoryController extends Controller
     {
         $this->validate($request, [
             'categoryName' => 'required|unique:business_categories,categoryName',
-            'categoryIcon' => 'required',
+            // 'categoryIcon' => 'required',
         ]);
 
         try {

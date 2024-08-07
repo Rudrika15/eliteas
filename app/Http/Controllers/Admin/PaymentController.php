@@ -100,12 +100,12 @@ class PaymentController extends Controller
             $subscription->paymentId = $payment->r_payment_id;
 
             // Get the member
-            $member = Member::where('userId', $user->id)->first();
-            if ($member->membershipType == 'Monthly') {
-                $subscription->validity = now()->addMonth()->format('Y-m-d');
+                $member = Member::where('userId', $user->id)->first();
+            if ($member->membershipType == 'Supreme - Yearly') {
+                $subscription->validity = now()->addYear()->format('Y-m-d');
             }
-            if ($member->membershipType == 'Yearly') {
-                $subscription->validity = Carbon::now()->addDay('365')->format('Y-m-d');
+            if ($member->membershipType == 'Prestige Lifetime') {
+                $subscription->validity = Carbon::now()->addYear('5')->format('Y-m-d');
                 // now()->addYear()->format('Y-m-d');
             }
 

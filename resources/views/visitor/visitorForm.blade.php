@@ -149,7 +149,9 @@
 
 
 
-                                                <h5 class="text-center mb-4">Please Fill the Form</h5>
+                                                <h5 class="text-center mb-4" style="color: #1d3268;"><b>Please Fill the
+                                                        Form</b></h5>
+                                                {{-- <h5 class="text-center mb-4">Please Fill the Form</h5> --}}
                                                 <form method="POST" action="{{ route('visitor.form.store') }}"
                                                     class="needs-validation w-100 form-card" novalidate>
                                                     @csrf
@@ -185,15 +187,27 @@
                                                         <div class="form-group col-sm-6 flex-column d-flex">
                                                             <label class="form-control-label px-3">Mobile No<span
                                                                     class="text-danger">*</span></label>
-                                                            <input type="text" id="mobileNo" name="mobileNo"
+                                                            {{-- <input type="tel" id="mobileNo" name="mobileNo" --}}
+                                                                <input type="text" id="mobileNo" name="mobileNo"
                                                                 value="{{ old('mobileNo') }}"
                                                                 class="form-control @error('mobileNo') is-invalid @enderror"
+                                                                oninput="if(this.value.length > 10) this.value = this.value.slice(0,10); this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');"
+                                                                pattern="[0-9]{10}"
+                                                                oninvalid="this.setCustomValidity('Please enter a valid 10-digit mobile number');"
+                                                                oninput="this.setCustomValidity('')"
                                                                 onblur="validate(3)">
                                                             @error('mobileNo')
                                                             <span class="invalid-feedback" role="alert">
                                                                 <strong>{{ $message }}</strong>
                                                             </span>
                                                             @enderror
+                                                            @if ($errors->has('mobileNo') && $errors->first('mobileNo')
+                                                            == 'Please enter a valid 10-digit mobile number')
+                                                            <span class="invalid-feedback" role="alert"
+                                                                style="color: red;">
+                                                                <strong>{{ $errors->first('mobileNo') }}</strong>
+                                                            </span>
+                                                            @endif
                                                         </div>
                                                         <div class="form-group col-sm-6 flex-column d-flex">
                                                             <label class="form-control-label px-3">Business Name<span
@@ -271,7 +285,7 @@
                                                     <div class="row justify-content-center">
                                                         <div class="form-group col-sm-3">
                                                             <button type="submit"
-                                                                class="btn-sm btn-primary">Submit</button>
+                                                                class="btn-sm btn-bg-blue"><b>Submit</b></button>
                                                         </div>
                                                     </div>
                                                 </form>
@@ -289,8 +303,8 @@
         v4 = document.getElementById("businessName");
         v5 = document.getElementById("businessCategory");
         v6 = document.getElementById("product");
-        v6 = document.getElementById("networkingGroup");
-        v6 = document.getElementById("circleMeet");
+        v7 = document.getElementById("networkingGroup");
+        v8 = document.getElementById("circleMeet");
         
         flag1 = true;
         flag2 = true;
@@ -298,6 +312,8 @@
         flag4 = true;
         flag5 = true;
         flag6 = true;
+        flag7 = true;
+        flag8 = true;
         
         if(val>=1 || val==0) {
         if(v1.value == "") {
@@ -360,8 +376,28 @@
         flag6 = true;
         }
         }
+        if(val>=7 || val==0) {
+        if(v7.value == "") {
+        v7.style.borderColor = "red";
+        flag7 = false;
+        }
+        else {
+        v7.style.borderColor = "green";
+        flag7 = true;
+        }
+        }
+        if(val>=8 || val==0) {
+        if(v8.value == "") {
+        v8.style.borderColor = "red";
+        flag8 = false;
+        }
+        else {
+        v8.style.borderColor = "green";
+        flag8 = true;
+        }
+        }
         
-        flag = flag1 && flag2 && flag3 && flag4 && flag5 && flag6;
+        flag = flag1 && flag2 && flag3 && flag4 && flag5 && flag6 && flag7 && flag8;
         
         return flag;
         }
