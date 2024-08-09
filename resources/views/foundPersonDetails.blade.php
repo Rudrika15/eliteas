@@ -359,6 +359,168 @@
                 color: #1d2856;
             }
         </style>
+
+        <style>
+            /* Modal styling */
+            .modal {
+                display: none;
+                position: fixed;
+                z-index: 1;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                overflow: auto;
+                background-color: rgba(0, 0, 0, 0.4);
+            }
+
+            .modal-content {
+                background-color: #fefefe;
+                margin: 5% auto;
+                padding: 20px;
+                border: 1px solid #888;
+                width: 90%;
+                max-width: 600px;
+                border-radius: 10px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            }
+
+            .close {
+                color: #aaa;
+                float: right;
+                font-size: 28px;
+                font-weight: bold;
+                display: none;
+            }
+
+            .close:hover,
+            .close:focus {
+                color: black;
+                text-decoration: none;
+                cursor: pointer;
+            }
+
+            .memberName {
+                font-weight: bold;
+                font-size: 18px;
+                margin-bottom: 10px;
+
+            }
+
+            .chat-container {
+                display: flex;
+                flex-direction: column;
+                height: 400px;
+                border: 1px solid #ddd;
+                border-radius: 10px;
+                background-color: #fff;
+                overflow: hidden;
+            }
+
+            .chat-box {
+                flex: 1;
+                padding: 10px;
+                overflow-y: scroll;
+                margin-bottom: 10px;
+                background-color: #f9f9f9;
+                scrollbar-width: none;
+                /* For Firefox */
+            }
+
+            .chat-box::-webkit-scrollbar {
+                display: none;
+                /* For Chrome, Safari, and Edge */
+            }
+
+            .input-container {
+                display: flex;
+                padding: 10px;
+                border-top: 1px solid #ddd;
+                background-color: #fff;
+            }
+
+            #chatInput {
+                flex: 1;
+                padding: 10px;
+                border: 1px solid #ddd;
+                border-radius: 20px;
+                margin-right: 10px;
+                box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+            }
+
+            #sendButton {
+                padding: 10px 20px;
+                background-color: #4CAF50;
+                color: white;
+                border: none;
+                border-radius: 20px;
+                cursor: pointer;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            }
+
+            #sendButton:hover {
+                background-color: #45a049;
+            }
+
+            .message {
+                padding: 10px;
+                margin: 5px 0;
+                border-radius: 20px;
+                max-width: 75%;
+                word-wrap: break-word;
+                position: relative;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+                font-size: 10px;
+            }
+
+            .sender {
+                background-color: #1d3268;
+                color: white;
+                text-align: right;
+                margin-left: auto;
+                border-radius: 20px 20px 0 20px;
+            }
+
+            .receiver {
+                background-color: #e76a35;
+                color: white;
+                text-align: left;
+                margin-right: auto;
+                border-radius: 20px 20px 20px 0;
+            }
+
+            /* Optional: add a small triangle for speech bubble effect */
+            .message::after {
+                content: "";
+                position: absolute;
+                border-width: 10px;
+                border-style: solid;
+            }
+
+            .sender::after {
+                border-color: #1d3268 transparent transparent transparent;
+                /* right: -15px; */
+                top: 10px;
+                border-width: 10px 15px 10px 0;
+            }
+
+            .receiver::after {
+                border-color: #e76a35 transparent transparent transparent;
+                left: -5px;
+                top: 10px;
+                border-width: 10px 0 10px 15px;
+            }
+        </style>
+
+        {{-- <script>
+            document.addEventListener('DOMContentLoaded', function() {
+        var memberIdElement = document.getElementById('memberId');
+        console.log('Member ID Element:', memberIdElement);
+        if (memberIdElement) {
+            console.log('Member ID Value:', memberIdElement.value);
+        }
+    });
+        </script> --}}
 </head>
 
 <body class="">
@@ -412,7 +574,8 @@
                                         @if (!$memberStatus)
                                         <form action="{{ route('connect') }}" id="connectForm" method="POST">
                                             @csrf
-                                            <input type="hidden" value="{{ $member->user->id }}" name="memberId" id="">
+                                            <input type="hidden" value="{{ $member->user->id }}" name="memberId"
+                                                id="memberId">
                                             <button type="submit" class="btn btn-bg-blue shadow-none">Connect &nbsp;<i
                                                     class="bi bi-person-plus-fill"></i></button>
                                         </form>
@@ -431,72 +594,43 @@
                                         @endif
                                         <a href="javascript:history.back()"
                                             class="btn btn-bg-orange back-btn2 ">Back</a>
-                                        {{-- <button class="btn btn-outline-primary">Message</button> --}}
                                     </div>
+                                    <div class="mt-3">
+                                        <button id="messageButton" class="btn btn-bg-orange">Message</button>
+                                    </div>
+                                    {{-- <div class="mt-3">
+                                        <a href="{{ route('chat.index') }}" class="btn btn-bg-orange">Message</a>
+                                    </div> --}}
+
+                                    <!-- Message Button -->
+                                    {{-- <button id="messageButton">Message</button> --}}
+
+                                    <!-- Chat Modal -->
+                                    <div id="chatModal" class="modal">
+                                        <div class="modal-content">
+                                            <span class="close">&times;</span>
+                                            <div class="member-image">
+                                                <img src="{{ asset('ProfilePhoto/' . $profilePhoto) }}" alt="profilePhoto"
+                                                    width="50px" height="50px" class="rounded-circle" >
+                                            </div>
+                                            <span class="memberName">{{ $member->user->firstName }} {{
+                                                $member->user->lastName }}</span>
+                                            <div class="chat-container">
+                                                <div id="chatBox" class="chat-box"></div>
+                                                <div class="input-container">
+                                                    <input type="hidden" value="{{ $member->user->id }}" name="memberId"
+                                                        id="memberId">
+                                                    <input type="text" id="chatInput" placeholder="Type a message...">
+                                                    <button id="sendButton">Send</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                 </div>
                             </div>
                         </div>
-                        <div class="card mt-3">
-                            <ul class="list-group list-group-flush">
-                                <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
-                                    <h6 class="mb-0"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                            stroke-linecap="round" stroke-linejoin="round"
-                                            class="feather feather-globe mr-2 icon-inline">
-                                            <circle cx="12" cy="12" r="10"></circle>
-                                            <line x1="2" y1="12" x2="22" y2="12"></line>
-                                            <path
-                                                d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z">
-                                            </path>
-                                        </svg>Website</h6>
-                                    <span class="text-secondary">{{ $member->webSite }}</span>
-                                </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
-                                    <h6 class="mb-0"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                            stroke-linecap="round" stroke-linejoin="round"
-                                            class="feather feather-github mr-2 icon-inline">
-                                            <path
-                                                d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22">
-                                            </path>
-                                        </svg>Github</h6>
-                                    <span class="text-secondary"></span>
-                                </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
-                                    <h6 class="mb-0"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                            stroke-linecap="round" stroke-linejoin="round"
-                                            class="feather feather-twitter mr-2 icon-inline text-info">
-                                            <path
-                                                d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z">
-                                            </path>
-                                        </svg>Twitter</h6>
-                                    <span class="text-secondary"></span>
-                                </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
-                                    <h6 class="mb-0"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                            stroke-linecap="round" stroke-linejoin="round"
-                                            class="feather feather-instagram mr-2 icon-inline text-danger">
-                                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5">
-                                            </rect>
-                                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                                            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-                                        </svg>Instagram</h6>
-                                    <span class="text-secondary"></span>
-                                </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
-                                    <h6 class="mb-0"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                            stroke-linecap="round" stroke-linejoin="round"
-                                            class="feather feather-facebook mr-2 icon-inline text-primary">
-                                            <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z">
-                                            </path>
-                                        </svg>Facebook</h6>
-                                    <span class="text-secondary"></span>
-                                </li>
-                            </ul>
-                        </div>
+
                     </div>
                     <div class="col-md-8">
                         {{-- <div class="card mb-3">
@@ -712,6 +846,7 @@
                             <div class="card-body">
                                 <a href="javascript:history.back()"
                                     class="btn btn-bg-orange back-btn3 float-end">Back</a>
+
                                 <!-- Nav tabs -->
                                 <ul class="nav nav-tabs" id="myTabs" role="tablist">
                                     <li class="nav-item" role="presentation">
@@ -734,6 +869,19 @@
                                             data-bs-target="#gains" type="button" role="tab" aria-controls="gains"
                                             aria-selected="false">Gains Profile</button>
                                     </li>
+
+                                    {{-- {{$member->user->id}} --}}
+
+                                    <li class="nav-item ms-3 mb-3">
+                                        <span
+                                            class="badge rounded-pill {{ $member->user->userStatus == 'Online' ? 'bg-success' : 'bg-danger' }}"
+                                            style="font-size: 12px;padding: 5px 10px;color: #fff;display: inline-block;margin-top: 5px;">
+                                            {{$member->title}}{{ $member->user->firstName }} {{
+                                            $member->user->userStatus == 'Online' ? 'is Online' : 'is Offline' }}
+                                        </span>
+                                        </a>
+                                    </li>
+
                                 </ul>
                                 <!-- Tab panes -->
                                 <div class="tab-content" id="myTabsContent">
@@ -1074,6 +1222,125 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
             integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous">
         </script>
+
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+        <script>
+            // Get elements
+            console.log('Getting elements');
+            var modal = document.getElementById("chatModal");
+            var btn = document.getElementById("messageButton");
+            var span = document.getElementsByClassName("close")[0];
+            var chatBox = document.getElementById("chatBox");
+            var chatInput = document.getElementById("chatInput");
+            var sendButton = document.getElementById("sendButton");
+            console.log('Got elements');
+        
+            // Open the modal
+            btn.onclick = function() {
+                console.log('Button clicked');
+                modal.style.display = "block";
+                console.log('Modal displayed');
+                fetchMessages();  // Fetch messages when the modal is opened
+            }
+        
+            // Close the modal
+            span.onclick = function() {
+                console.log('Close button clicked');
+                modal.style.display = "none";
+                console.log('Modal hidden');
+            }
+        
+            // Close the modal when clicking outside of it
+            window.onclick = function(event) {
+                console.log('Window clicked');
+                if (event.target == modal) {
+                    console.log('Modal clicked');
+                    modal.style.display = "none";
+                    console.log('Modal hidden');
+                }
+            }
+        
+            // Handle sending a message
+            sendButton.onclick = function() {
+                console.log('Send button clicked');
+                sendMessage();
+            }
+        
+            chatInput.addEventListener("keypress", function(event) {
+                console.log('Key pressed');
+                if (event.key === "Enter") {
+                    console.log('Enter key pressed');
+                    sendMessage();
+                }
+            });
+        
+    function fetchMessages() {
+
+        const authCheck = `{{Auth::user()->id}}`;
+        console.log("authCheckl",authCheck);
+        
+
+    $.get('/get-messages', function(messages) {
+     console.log('Got messages');
+     chatBox.innerHTML = ''; // Clear existing messages
+     messages.forEach(function(message) {
+         var messageElement = document.createElement("div");
+         if (message.senderId == authCheck) {
+             messageElement.className = "message sender"; // Sender's message
+         } else if (message.receiverId == authCheck) {
+             messageElement.className = "message receiver"; // Receiver's message
+         }
+         messageElement.textContent = message.content;
+         chatBox.appendChild(messageElement);
+     });
+     chatBox.scrollTop = chatBox.scrollHeight; // Scroll to the bottom
+ }).fail(function(jqXHR, textStatus, errorThrown) {
+     console.error('Error fetching messages: ', textStatus, errorThrown);
+ });
+
+}
+
+function sendMessage() {
+    console.log('Sending message');
+    var message = chatInput.value.trim();
+    var memberIdElement = document.getElementById('memberId');
+    
+    console.log('Checking for memberId element:', memberIdElement);
+    if (!memberIdElement) {
+        console.error('Element with ID "memberId" not found');
+        alert('Member ID is missing. Cannot send message.');
+        return;
+    }
+
+    var receiverId = memberIdElement.value;
+    console.log('Receiver ID:', receiverId);
+
+    if (message && receiverId) {
+        $.post('/send-message', {
+            message: message,
+            userId: receiverId,
+            _token: '{{ csrf_token() }}'
+        }).done(function(response) {
+            console.log('Message sent: ' + response.status);
+            if (response.status === 'Message sent') {
+                var messageElement = document.createElement("div");
+                messageElement.className = "message sender"; // Sender's message
+                messageElement.textContent = message;
+                chatBox.appendChild(messageElement);
+                chatInput.value = "";
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
+        }).fail(function(jqXHR, textStatus, errorThrown) {
+            console.error('Error sending message: ', textStatus, errorThrown);
+        });
+    }
+}
+
+
+
+        </script>
+
 
         <script>
             // JavaScript to handle form submission

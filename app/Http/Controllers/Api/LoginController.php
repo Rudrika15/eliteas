@@ -176,6 +176,7 @@ class LoginController extends Controller
             $member->title = $request->input('title', $member->title);
             $member->firstName = $request->input('firstName', $member->firstName);
             $member->lastName = $request->input('lastName', $member->lastName);
+            $member->username = $request->input('username', $member->username);
             $member->suffix = $request->input('suffix', $member->suffix);
             $member->displayName = $request->input('displayName', $member->displayName);
             $member->gender = $request->input('gender', $member->gender);
@@ -291,17 +292,19 @@ class LoginController extends Controller
     public function memberUpdate(Request $request)
     {
 
-        $user = Auth::user();
 
+        $user = Auth::user();
+        return $user;
 
         $member = Member::where('userId', $user->id)->first();
-        
+
         if (!$member) {
             return Utils::errorResponse(['error' => 'Member not found'], 404);
         }
         $member->title = $request->input('title', $member->title);
         $member->firstName = $request->input('firstName', $member->firstName);
         $member->lastName = $request->input('lastName', $member->lastName);
+        // $member->username = $request->input('username', $member->username);
         $member->suffix = $request->input('suffix', $member->suffix);
         $member->displayName = $request->input('displayName', $member->displayName);
         $member->gender = $request->input('gender', $member->gender);
@@ -362,8 +365,4 @@ class LoginController extends Controller
 
         return Utils::sendResponse([$member, 'message' => 'Member Profile data updated successfully'], 200);
     }
-    
-
-
-
 }

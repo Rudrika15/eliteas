@@ -19,15 +19,15 @@ class ConnectionController extends Controller
 
 
             $connections = Connection::where('memberId', $userId)
-            ->where('status', 'Pending')
-            ->with([
-                'user' => function ($query) {
-                    $query->select('id', 'email', 'firstName', 'lastName');
-                },
-                'members' => function ($query) {
-                    $query->select('id', 'userId', 'profilePhoto');
-                }
-            ])
+                ->where('status', 'Pending')
+                ->with([
+                    'user' => function ($query) {
+                        $query->select('id', 'email', 'firstName', 'lastName');
+                    },
+                    'members' => function ($query) {
+                        $query->select('id', 'userId', 'profilePhoto');
+                    }
+                ])
                 ->get();
             // check if there are any connections
             if ($connections->isEmpty()) {
@@ -53,7 +53,7 @@ class ConnectionController extends Controller
                         $query->select('id', 'email', 'firstName', 'lastName');
                     },
                     'members' => function ($query) {
-                        $query->select('id', 'userId','profilePhoto');
+                        $query->select('id', 'userId', 'profilePhoto');
                     }
                 ])
                 ->get();
@@ -112,6 +112,7 @@ class ConnectionController extends Controller
             $connections = new Connection();
             $connections->memberId = $memberId;
             $connections->userId = $userId;
+            $connections->status = 'Pending';
             $connections->save();
 
             return Utils::sendResponse([$memberId => $connections, 'message' => 'Connection Request sent Successfully'], 200);
@@ -137,13 +138,13 @@ class ConnectionController extends Controller
                     $q->where('userId', Auth::user()->id);
                 }])
                 ->get();
-                // ->map(function ($member) {
-                //     $connection = $member->connections->first();
-                //     $status = $connection ? $connection->status : null;
-                //     $member['status'] = $status == 'Accepted' ? 'Connected' : ($status == 'Pending' ? 'Pending' : null);
-                //     // unset($member['connections']);
-                //     return $member;
-                // });
+            // ->map(function ($member) {
+            //     $connection = $member->connections->first();
+            //     $status = $connection ? $connection->status : null;
+            //     $member['status'] = $status == 'Accepted' ? 'Connected' : ($status == 'Pending' ? 'Pending' : null);
+            //     // unset($member['connections']);
+            //     return $member;
+            // });
 
             $message = "Search results for '$find'";
 
@@ -191,7 +192,7 @@ class ConnectionController extends Controller
     public function viewMemberProfile(Request $request)
     {
         try {
-            
+
             $member = Member::where('userId', $request->input('userId'))
                 ->with('user', 'circle', 'billingAddress', 'contactDetails', 'topsProfile', 'connections')
                 ->first();
@@ -204,6 +205,7 @@ class ConnectionController extends Controller
 
             return Utils::sendResponse([
                 'message' => 'Member Profile',
+                'connectionStatus ' => $member ? $member->connections->first() : null,
                 'member' => $member
             ], 200);
         } catch (\Throwable $th) {

@@ -13,6 +13,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\CityController;
 use App\Http\Controllers\Admin\StateController;
 use App\Http\Controllers\TestimonialController;
+use App\Http\Controllers\Admin\ChatController;
 use App\Http\Controllers\Admin\CircleController;
 use App\Http\Controllers\Admin\MemberController;
 use App\Http\Controllers\Admin\CountryController;
@@ -91,7 +92,7 @@ Route::group(['middleware' => ['auth']], function () {
 
 
     Route::post('/save-location', [LocationController::class, 'saveLocation']);
-    
+
     Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
     Route::get('/franchise/index', [FranchiseController::class, 'index'])->name('franchise.index');
     Route::get('franchise/show/{id?}', [FranchiseController::class, 'show'])->name('franchise.show');
@@ -436,6 +437,13 @@ Route::group(['middleware' => ['auth']], function () {
     //visitors
 
     Route::get('/visitor-index', [VisitorFormController::class, 'index'])->name('visitor.index');
+
+    //chat
+    // Route::get('/chat-index', [ChatController::class, 'index'])->name('chat.index');
+    // routes/web.php
+
+    Route::post('/send-message', [ChatController::class, 'sendMessage']);
+    Route::get('/get-messages', [ChatController::class, 'getMessages']);
 
 
     //location
