@@ -450,7 +450,7 @@
 
             #sendButton {
                 padding: 10px 20px;
-                background-color: #4CAF50;
+                background-color: #e76a35;
                 color: white;
                 border: none;
                 border-radius: 20px;
@@ -459,18 +459,23 @@
             }
 
             #sendButton:hover {
-                background-color: #45a049;
+                background-color: #1d3268;
             }
 
             .message {
                 padding: 10px;
                 margin: 5px 0;
                 border-radius: 20px;
-                max-width: 75%;
+                max-width: 80%;
+                /* Adjusts the maximum width of the message box */
                 word-wrap: break-word;
                 position: relative;
                 box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-                font-size: 10px;
+                font-size: 14px;
+                display: block;
+                /* Changed to block to ensure each message is on a new line */
+                clear: both;
+                /* Ensures messages don't appear on the same line */
             }
 
             .sender {
@@ -479,6 +484,8 @@
                 text-align: right;
                 margin-left: auto;
                 border-radius: 20px 20px 0 20px;
+                float: right;
+                /* Aligns sender messages to the right */
             }
 
             .receiver {
@@ -487,6 +494,8 @@
                 text-align: left;
                 margin-right: auto;
                 border-radius: 20px 20px 20px 0;
+                float: left;
+                /* Aligns receiver messages to the left */
             }
 
             /* Optional: add a small triangle for speech bubble effect */
@@ -595,9 +604,18 @@
                                         <a href="javascript:history.back()"
                                             class="btn btn-bg-orange back-btn2 ">Back</a>
                                     </div>
+                                    {{-- {{ $member->user->id }} {{ $member->user->id }} --}}
                                     <div class="mt-3">
+                                        {{-- <input type="hidden" value="{{ $member->user->id }}" name="memberId"
+                                            id="memberId"> --}}
+                                        {{-- @if($memberStatus->status == 'Accepted') --}}
                                         <button id="messageButton" class="btn btn-bg-orange">Message</button>
                                     </div>
+                                    {{-- @else --}}
+                                    {{-- <div class="mt-3">
+                                        <button id="messageButton" class="btn btn-bg-orange disabled">Message</button>
+                                    </div> --}}
+                                    {{-- @endif --}}
                                     {{-- <div class="mt-3">
                                         <a href="{{ route('chat.index') }}" class="btn btn-bg-orange">Message</a>
                                     </div> --}}
@@ -610,8 +628,9 @@
                                         <div class="modal-content">
                                             <span class="close">&times;</span>
                                             <div class="member-image">
-                                                <img src="{{ asset('ProfilePhoto/' . $profilePhoto) }}" alt="profilePhoto"
-                                                    width="50px" height="50px" class="rounded-circle" >
+                                                <img src="{{ asset('ProfilePhoto/' . $profilePhoto) }}"
+                                                    alt="profilePhoto" style="height:50px; width:50px;"
+                                                    class="rounded-circle">
                                             </div>
                                             <span class="memberName">{{ $member->user->firstName }} {{
                                                 $member->user->lastName }}</span>
@@ -1234,6 +1253,7 @@
             var chatBox = document.getElementById("chatBox");
             var chatInput = document.getElementById("chatInput");
             var sendButton = document.getElementById("sendButton");
+            var pollingInterval;
             console.log('Got elements');
         
             // Open the modal
@@ -1242,6 +1262,7 @@
                 modal.style.display = "block";
                 console.log('Modal displayed');
                 fetchMessages();  // Fetch messages when the modal is opened
+                startPolling();   // Start polling for new messages
             }
         
             // Close the modal
@@ -1249,6 +1270,7 @@
                 console.log('Close button clicked');
                 modal.style.display = "none";
                 console.log('Modal hidden');
+                stopPolling(); // Stop polling when the modal is closed
             }
         
             // Close the modal when clicking outside of it
@@ -1258,6 +1280,7 @@
                     console.log('Modal clicked');
                     modal.style.display = "none";
                     console.log('Modal hidden');
+                    stopPolling(); // Stop polling when clicking outside the modal
                 }
             }
         
@@ -1275,70 +1298,72 @@
                 }
             });
         
-    function fetchMessages() {
-
-        const authCheck = `{{Auth::user()->id}}`;
-        console.log("authCheckl",authCheck);
+            function fetchMessages() {
+                const authCheck = `{{Auth::user()->id}}`;
+                console.log("authCheck", authCheck);
         
-
-    $.get('/get-messages', function(messages) {
-     console.log('Got messages');
-     chatBox.innerHTML = ''; // Clear existing messages
-     messages.forEach(function(message) {
-         var messageElement = document.createElement("div");
-         if (message.senderId == authCheck) {
-             messageElement.className = "message sender"; // Sender's message
-         } else if (message.receiverId == authCheck) {
-             messageElement.className = "message receiver"; // Receiver's message
-         }
-         messageElement.textContent = message.content;
-         chatBox.appendChild(messageElement);
-     });
-     chatBox.scrollTop = chatBox.scrollHeight; // Scroll to the bottom
- }).fail(function(jqXHR, textStatus, errorThrown) {
-     console.error('Error fetching messages: ', textStatus, errorThrown);
- });
-
-}
-
-function sendMessage() {
-    console.log('Sending message');
-    var message = chatInput.value.trim();
-    var memberIdElement = document.getElementById('memberId');
-    
-    console.log('Checking for memberId element:', memberIdElement);
-    if (!memberIdElement) {
-        console.error('Element with ID "memberId" not found');
-        alert('Member ID is missing. Cannot send message.');
-        return;
-    }
-
-    var receiverId = memberIdElement.value;
-    console.log('Receiver ID:', receiverId);
-
-    if (message && receiverId) {
-        $.post('/send-message', {
-            message: message,
-            userId: receiverId,
-            _token: '{{ csrf_token() }}'
-        }).done(function(response) {
-            console.log('Message sent: ' + response.status);
-            if (response.status === 'Message sent') {
-                var messageElement = document.createElement("div");
-                messageElement.className = "message sender"; // Sender's message
-                messageElement.textContent = message;
-                chatBox.appendChild(messageElement);
-                chatInput.value = "";
-                chatBox.scrollTop = chatBox.scrollHeight;
+                $.get('/get-messages', function(messages) {
+                    console.log('Got messages');
+                    chatBox.innerHTML = ''; // Clear existing messages
+                    messages.forEach(function(message) {
+                        var messageElement = document.createElement("div");
+                        if (message.senderId == authCheck) {
+                            messageElement.className = "message sender"; // Sender's message
+                        } else if (message.receiverId == authCheck) {
+                            messageElement.className = "message receiver"; // Receiver's message
+                        }
+                        messageElement.textContent = message.content;
+                        chatBox.appendChild(messageElement);
+                    });
+                    chatBox.scrollTop = chatBox.scrollHeight; // Scroll to the bottom
+                }).fail(function(jqXHR, textStatus, errorThrown) {
+                    console.error('Error fetching messages: ', textStatus, errorThrown);
+                });
             }
-        }).fail(function(jqXHR, textStatus, errorThrown) {
-            console.error('Error sending message: ', textStatus, errorThrown);
-        });
-    }
-}
-
-
-
+        
+            function sendMessage() {
+                console.log('Sending message');
+                var message = chatInput.value.trim();
+                var memberIdElement = document.getElementById('memberId');
+        
+                console.log('Checking for memberId element:', memberIdElement);
+                if (!memberIdElement) {
+                    console.error('Element with ID "memberId" not found');
+                    alert('Member ID is missing. Cannot send message.');
+                    return;
+                }
+        
+                var receiverId = memberIdElement.value;
+                console.log('Receiver ID:', receiverId);
+        
+                if (message && receiverId) {
+                    $.post('/send-message', {
+                        message: message,
+                        userId: receiverId,
+                        _token: '{{ csrf_token() }}'
+                    }).done(function(response) {
+                        console.log('Message sent: ' + response.status);
+                        if (response.status === 'Message sent') {
+                            var messageElement = document.createElement("div");
+                            messageElement.className = "message sender"; // Sender's message
+                            messageElement.textContent = message;
+                            chatBox.appendChild(messageElement);
+                            chatInput.value = "";
+                            chatBox.scrollTop = chatBox.scrollHeight;
+                        }
+                    }).fail(function(jqXHR, textStatus, errorThrown) {
+                        console.error('Error sending message: ', textStatus, errorThrown);
+                    });
+                }
+            }
+        
+            function startPolling() {
+                pollingInterval = setInterval(fetchMessages, 1000); // Poll every 1 seconds
+            }
+        
+            function stopPolling() {
+                clearInterval(pollingInterval);
+            }
         </script>
 
 
