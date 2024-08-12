@@ -10,15 +10,16 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Admin\ChatController;
 use App\Http\Controllers\Admin\CityController;
 use App\Http\Controllers\Admin\StateController;
 use App\Http\Controllers\TestimonialController;
-use App\Http\Controllers\Admin\ChatController;
 use App\Http\Controllers\Admin\CircleController;
 use App\Http\Controllers\Admin\MemberController;
 use App\Http\Controllers\Admin\CountryController;
 use App\Http\Controllers\Admin\PaymentController;
 use App\Http\Controllers\Auth\OTPLoginController;
+use App\Http\Controllers\PrivacyPolicyController;
 use App\Http\Controllers\Admin\LocationController;
 use App\Http\Controllers\Admin\ScheduleController;
 use App\Http\Controllers\Admin\TrainingController;
@@ -449,6 +450,7 @@ Route::group(['middleware' => ['auth']], function () {
     //location
 
 
+
 });
 
 //Login with otp
@@ -474,7 +476,8 @@ Route::post('otp/resend', [OTPLoginController::class, 'resendOTP'])->name('otp.r
 // Route::post('/otp/resend', [OTPLoginController::class, 'resendOTP'])->name('otp.resend');
 // Route::get('/otp/verify', [OTPLoginController::class, 'showVerifyOtpForm'])->name('otp.showVerifyOtpForm');
 
-
+//privacypolicy
+Route::get('/privacy-policy', [PrivacyPolicyController::class, 'index']);
 
 
 Route::get('/memberPayment/{paymentData}', [CircleMemberController::class, 'memberPayment'])->name('memberPayment');

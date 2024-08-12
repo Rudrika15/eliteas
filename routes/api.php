@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\ApiController;
 use App\Http\Controllers\Api\AttendanceController;
 use App\Models\CircleMember;
 use Illuminate\Http\Request;
@@ -20,12 +21,14 @@ use App\Http\Controllers\Api\CircleMeetingController;
 use App\Http\Controllers\Api\TrainerMasterController;
 use App\Http\Controllers\Api\ForgetPasswordController;
 use App\Http\Controllers\Api\BusinessCategoryController;
+use App\Http\Controllers\Api\ChatController;
 use App\Http\Controllers\Api\MeetingInvitationController;
 use App\Http\Controllers\Api\CircleMeetingMembersController;
 use App\Http\Controllers\Api\MembershipSubscriptionController;
 use App\Http\Controllers\Api\CircleMeetingMemberBusinessController;
 use App\Http\Controllers\Api\CircleMeetingMemberReferenceController;
 use App\Http\Controllers\Api\LeaderBoardController;
+use App\Http\Controllers\Api\LocationController;
 
 // use App\Http\Controllers\Api\CircleMeetingMemberBusinessController;
 
@@ -49,10 +52,12 @@ use App\Http\Controllers\Api\LeaderBoardController;
 
 // login
 Route::post('/login', [LoginController::class, 'login']);
+Route::post('v1/login', [LoginController::class, 'login']);
 
 //forgot password
 Route::post('/forgot-password', [ForgetPasswordController::class, 'forgotPassword']);
 // Route::post('/reset-password', [ForgetPasswordController::class, 'resetPassword']);
+
 
 // Route::post('circle-meeting-member-references-create', [CircleMeetingMemberReferenceController::class, 'create']);
 //Login with otp
@@ -207,7 +212,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/connections/ConnectionsRequests', [ConnectionController::class, 'ConnectionsRequests']);
 
     // Route::get('/connections/myConnection', [ConnectionController::class, 'myConnection']);
-    
+
     //Membership History
 
     Route::get('/membership-history', [MembershipSubscriptionController::class, 'MembershipHistory']);
@@ -218,12 +223,12 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     // Attendance Api
 
-        Route::get('/attendance/memberAttendance/{id}', [AttendanceController::class, 'memberAttendance']);
-        Route::get('/attendance/invitedAttendance/{id}', [AttendanceController::class, 'invitedAttendance']);
-        Route::get('/attendance/meeting-schedules', [AttendanceController::class, 'meetingSchedules']);
-        Route::get('/attendance/attendance-list', [AttendanceController::class, 'attendanceList']);
-        Route::post('/attendance/attendance-store', [AttendanceController::class, 'attendanceStore']);
-        Route::post('/attendance/invited-store', [AttendanceController::class, 'invitedAttendanceStore']);
+    Route::get('/attendance/memberAttendance/{id}', [AttendanceController::class, 'memberAttendance']);
+    Route::get('/attendance/invitedAttendance/{id}', [AttendanceController::class, 'invitedAttendance']);
+    Route::get('/attendance/meeting-schedules', [AttendanceController::class, 'meetingSchedules']);
+    Route::get('/attendance/attendance-list', [AttendanceController::class, 'attendanceList']);
+    Route::post('/attendance/attendance-store', [AttendanceController::class, 'attendanceStore']);
+    Route::post('/attendance/invited-store', [AttendanceController::class, 'invitedAttendanceStore']);
 
     //dashboard leaderboard apis
 
@@ -233,4 +238,41 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/leaderboards/max-referral', [LeaderBoardController::class, 'maxRefferal']);
     Route::get('/leaderboards/max-visitor', [LeaderBoardController::class, 'maxVisitor']);
 
+
+    //location
+    Route::get('/userLocation/index', [LocationController::class, 'index']);
+    Route::get('/user/userLocation', [LocationController::class, 'userLocation']);
+
+    //chat
+    Route::get('/chat/sendMessage', [ChatController::class, 'sendMessage']);
+    Route::get('/chat/getMessages', [ChatController::class, 'getMessages']);
+
+    //suggested members
+    Route::get('/category-wise-member-index', [CircleMemberController::class, 'categoryWiseMember']);
+
+
+    //new api v1
+    //lead board 
+    Route::get('v1/leaderboards/max-meetings', [ApiController::class, 'maxMeetings']);
+    Route::get('v1/leaderboards/max-business', [ApiController::class, 'maxBusiness']);
+    Route::get('v1/leaderboards/max-reference', [ApiController::class, 'maxReference']);
+    Route::get('v1/leaderboards/max-referral', [ApiController::class, 'maxRefferal']);
+    Route::get('v1/leaderboards/max-visitor', [ApiController::class, 'maxVisitor']);
+
+    //Upcoming Workshop
+    Route::get('v1/trainings-index', [ApiController::class, 'index']);
+
+    //Personal Details update
+    Route::get('v1/user/profile', [ApiController::class, 'profile']);
+    Route::post('v1/user/member/update', [ApiController::class, 'memberUpdate']);
+    Route::post('v1/user/member/updateBillingAddress', [ApiController::class, 'billingAddressUpdate']);
+    Route::post('v1/user/member/updateContactDetails', [ApiController::class, 'contactDetailsUpdate']);
+    Route::post('v1/user/member/updateTopsProfile', [ApiController::class, 'topsProfileUpdate']);
+
+    //Circle Member List
+    Route::get('v1/circle-wise-member-index', [ApiController::class, 'circleWiseMember']);
+    // Route::get('v1/circle-member-index', [ApiController::class, 'iindex']);
+
+    //Category Wise Member
+    Route::get('v1/category-wise-member-index', [ApiController::class, 'categoryWiseMember']);
 });

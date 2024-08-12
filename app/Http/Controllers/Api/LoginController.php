@@ -294,7 +294,7 @@ class LoginController extends Controller
 
 
         $user = Auth::user();
-        return $user;
+
 
         $member = Member::where('userId', $user->id)->first();
 
@@ -358,7 +358,7 @@ class LoginController extends Controller
         $member->showSocialLinks = $request->input('showSocialLinks', $member->showSocialLinks);
         $member->receiveUpdates = $request->input('receiveUpdates', $member->receiveUpdates);
         $member->shareRevenue = $request->input('shareRevenue', $member->shareRevenue);
-        // Continue updating other fields...
+        
 
         $member->save();
 

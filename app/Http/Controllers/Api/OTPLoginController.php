@@ -87,7 +87,7 @@ class OTPLoginController extends Controller
     }
 
     // Verify OTP
-public function verifyOTP(Request $request)
+    public function verifyOTP(Request $request)
     {
         $request->validate([
             'phone' => 'required',
@@ -95,6 +95,23 @@ public function verifyOTP(Request $request)
         ]);
 
         try {
+            // Check for demo credentials
+            if ($request->phone === '8347305637' && $request->otp === '123456') {
+                $demoUser = User::where('contactNo', $request->phone)->first();
+                Auth::login($demoUser);
+                $token = $demoUser->createToken('AuthToken')->plainTextToken;
+                return Utils::sendResponse([
+                    'user' => $demoUser->only([
+                        'id',
+                        'firstName',
+                        'lastName',
+                        'email',
+                        'contactNo',
+                    ]),
+                    'token' => $token
+                ], 'Demo OTP verification successful', 200);
+            }
+
             // Fetch the user based on phone number
             $user = User::where('contactNo', $request->phone)->first();
             $otpRecord = Otp::where('mobileNo', $request->phone)->where('otp', $request->otp)->first();

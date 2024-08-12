@@ -29,6 +29,19 @@ class CircleMemberController extends Controller
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
+    // public function iindex(Request $request)
+    // {
+    //     try {
+    //         $circleMembers = CircleMember::with('circle')
+    //             ->with('member')
+    //             ->where('status', 'Active')
+    //             ->orderBy('id', 'DESC')
+    //             ->get();
+    //         return Utils::sendResponse(['circleMembers' => $circleMembers], 'Circle members retrieved successfully', 200);
+    //     } catch (\Throwable $th) {
+    //         return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
+    //     }
+    // }
 
     public function show(Request $request, $id)
     {
@@ -179,7 +192,7 @@ class CircleMemberController extends Controller
     // {
     //     try {
 
-            
+
     //     } catch (\Throwable $th) {
     //         return Utils::errorResponse([
     //             'error' => $th->getMessage()
@@ -225,6 +238,62 @@ class CircleMemberController extends Controller
 
             // You can return data using Utils::sendResponse for API response
             return Utils::sendResponse($circlesData, 'Data retrieved successfully', 200);
+        } catch (\Throwable $th) {
+            // Handle exceptions and return error response
+            return Utils::errorResponse([
+                'error' => $th->getMessage()
+            ], 'Internal Server Error', 500);
+        }
+    }
+
+    public function categoryWiseMember(Request $request)
+    {
+        try {
+            $categoryData = []; // Initialize the array to hold business category data
+            $data = []; // Initialize the array to hold member data
+
+            // Check if the user is authenticated
+            if (!auth()->check()) {
+                return Utils::errorResponse([], 'Unauthorized', 401);
+            }
+
+            // Get authenticated user
+            $user = auth()->user();
+
+            // Get user's memberId and businessCategoryId
+            $authMemberId = $user->member->id; // Assuming the user has a related member
+            $authBusinessCategoryId = $user->member->businessCategoryId; // Assuming 'businessCategoryId' exists on 'members' table
+
+            // Fetch members who belong to the same business category as the authenticated user
+            $members = Member::where('businessCategoryId', $authBusinessCategoryId)->get();
+
+            foreach ($members as $member) {
+                // Fetch the category for the current member
+                $businessCategory = BusinessCategory::find($member->businessCategoryId); // Fetching the related category object
+
+                if ($businessCategory && $businessCategory->status === 'Active') {
+                    // Populate the category data only once
+                    if (empty($categoryData)) {
+                        $categoryData = [
+                            'businessCategoryId' => $businessCategory->id,
+                            'businessCategoryName' => $businessCategory->categoryName,
+                            'members' => [], // Initialize the members array inside categoryData
+                        ];
+                    }
+
+                    // Add member data to the members array within categoryData
+                    $categoryData['members'][] = [
+                        'authMemberId' => $authMemberId,
+                        'memberId' => $member->id,
+                        'firstName' => $member->firstName,
+                        'lastName' => $member->lastName,
+                        // Add any other fields you need here
+                    ];
+                }
+            }
+
+            // Return the consolidated category data array, which includes member data
+            return Utils::sendResponse($categoryData, 'Data retrieved successfully', 200);
         } catch (\Throwable $th) {
             // Handle exceptions and return error response
             return Utils::errorResponse([

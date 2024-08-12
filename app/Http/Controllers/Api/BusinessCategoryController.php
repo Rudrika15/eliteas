@@ -19,4 +19,5 @@ class BusinessCategoryController extends Controller
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
+    
 }
