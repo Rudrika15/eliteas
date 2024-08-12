@@ -29,7 +29,13 @@ class ChatController extends Controller
             $message->content = encrypt($request->message);
             $message->save();
 
-            return Utils::sendResponse(['message' => $message], 'Message sent successfully', 200);
+            $decryptedMessage = decrypt($message->content);
+            $response = [
+                'message' => $decryptedMessage,
+                'senderId' => $authId,
+                'receiverId' => $request->userId,
+            ];
+            return Utils::sendResponse($response, 'Message sent successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }

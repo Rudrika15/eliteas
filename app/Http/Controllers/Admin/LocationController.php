@@ -17,15 +17,25 @@ class LocationController extends Controller
             'longitude' => 'required|numeric',
         ]);
 
-        // Assuming you have a Location model and the authenticated user is related to the location
+        // Get the authenticated user
         $user = Auth::user();
 
-        // Save the location data to the database
-        $location = new Location();
-        $location->userId = $user->id; // Use snake_case for column names
-        $location->latitude = $validated['latitude'];
-        $location->longitude = $validated['longitude'];
-        $location->save();
+        // Check if a location for the current user already exists
+        $location = Location::where('userId', $user->id)->first();
+
+        if ($location) {
+            // If the location exists, update the latitude and longitude
+            $location->latitude = $validated['latitude'];
+            $location->longitude = $validated['longitude'];
+            $location->save();
+        } else {
+            // If no location exists, create a new one
+            $location = new Location();
+            $location->userId = $user->id; // Use snake_case for column names
+            $location->latitude = $validated['latitude'];
+            $location->longitude = $validated['longitude'];
+            $location->save();
+        }
 
         return response()->json(['message' => 'Location saved successfully'], 200);
     }

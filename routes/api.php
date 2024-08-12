@@ -244,7 +244,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/user/userLocation', [LocationController::class, 'userLocation']);
 
     //chat
-    Route::get('/chat/sendMessage', [ChatController::class, 'sendMessage']);
+    Route::post('/chat/sendMessage', [ChatController::class, 'sendMessage']);
     Route::get('/chat/getMessages', [ChatController::class, 'getMessages']);
 
     //suggested members
