@@ -52,7 +52,7 @@ use App\Http\Controllers\Api\LocationController;
 
 // login
 Route::post('/login', [LoginController::class, 'login']);
-Route::post('v1/login', [LoginController::class, 'login']);
+Route::post('v1/login', [ApiController::class, 'login']);
 
 //forgot password
 Route::post('/forgot-password', [ForgetPasswordController::class, 'forgotPassword']);
@@ -259,6 +259,9 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('v1/leaderboards/max-referral', [ApiController::class, 'maxRefferal']);
     Route::get('v1/leaderboards/max-visitor', [ApiController::class, 'maxVisitor']);
 
+
+    Route::get('v1/leaderboards/get-max-data', [ApiController::class, 'getMaxData']);
+
     //Upcoming Workshop
     Route::get('v1/trainings-index', [ApiController::class, 'index']);
 
@@ -275,4 +278,21 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     //Category Wise Member
     Route::get('v1/category-wise-member-index', [ApiController::class, 'categoryWiseMember']);
+
+    //allMembers
+    Route::get('v1/member-index', [ApiController::class, 'allMembers']);
+
+    //getMaxdata
+    Route::get('v1/get-max-data', [ApiController::class, 'getMaxData']);
+    
+    //getMaxdata of User
+    Route::get('v1/get-max-data-user', [ApiController::class, 'getMaxDataUser']);
+
+    Route::get('v1/max-meetings-user', [ApiController::class, 'maxMeetingsUser']);
+    Route::get('v1/max-business-user', [ApiController::class, 'maxBusinessUser']);
+    Route::get('v1/max-reference-user', [ApiController::class, 'maxReferenceUser']);
+    Route::get('v1/max-referral-user', [ApiController::class, 'maxRefferalUser']);
+    Route::get('v1/max-visitor-user', [ApiController::class, 'maxVisitorUser']);
+
+    
 });

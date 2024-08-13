@@ -65,7 +65,7 @@
             </a>
             <i class="bi bi-list toggle-sidebar-btn mt-2"></i>
         </div><!-- End Logo -->
-
+        <!-- Start Search Bar -->
         <div class="search-bar">
             <a class="search-form d-flex align-items-center" href="{{ route('search') }}">
                 <input type="text" name="query" placeholder="Click here to find & connect with People"

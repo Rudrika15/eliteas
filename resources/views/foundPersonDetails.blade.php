@@ -604,22 +604,18 @@
                                         <a href="javascript:history.back()"
                                             class="btn btn-bg-orange back-btn2 ">Back</a>
                                     </div>
-                                    {{-- {{ $member->user->id }} {{ $member->user->id }} --}}
+                                    {{-- {{ $member->user->id }} {{ $member->user->id }} {{$memberStatus->status}} --}}
                                     <div class="mt-3">
-                                        {{-- <input type="hidden" value="{{ $member->user->id }}" name="memberId"
-                                            id="memberId"> --}}
-                                        {{-- @if($memberStatus->status == 'Accepted') --}}
+                                        <input type="hidden" value="{{ $member->user->id }}" name="memberId"
+                                            id="memberId">
+                                        @if(!empty($memberStatus))
+                                        @if($memberStatus->status == 'Accepted')
                                         <button id="messageButton" class="btn btn-bg-orange">Message</button>
-                                    </div>
-                                    {{-- @else --}}
-                                    {{-- <div class="mt-3">
+                                        @endif
+                                        @else
                                         <button id="messageButton" class="btn btn-bg-orange disabled">Message</button>
-                                    </div> --}}
-                                    {{-- @endif --}}
-                                    {{-- <div class="mt-3">
-                                        <a href="{{ route('chat.index') }}" class="btn btn-bg-orange">Message</a>
-                                    </div> --}}
-
+                                        @endif
+                                    </div>
                                     <!-- Message Button -->
                                     {{-- <button id="messageButton">Message</button> --}}
 

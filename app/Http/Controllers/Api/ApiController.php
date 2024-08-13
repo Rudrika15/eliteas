@@ -23,25 +23,29 @@ class ApiController extends Controller
 {
     public function login(Request $request)
     {
+        // Validate the input
         $validator = Validator::make($request->all(), [
             'email' => 'required|email',
             'password' => 'required',
         ]);
 
+        // Check if validation fails
         if ($validator->fails()) {
-            return Utils::sendResponse($request->all(), 'Invalid Input');
+            return Utils::sendResponse(['errors' => $validator->errors()], 'Invalid Input', 422);
         }
 
+        // Attempt to authenticate the user
         if (Auth::attempt($request->only('email', 'password'))) {
-
             $user = Auth::user();
             $token = $user->createToken('authToken')->plainTextToken;
 
-            return Utils::sendResponse(['token' => $token, 'user' => $user], 'Success');
+            return Utils::sendResponse(['token' => $token, 'user' => $user], 'Success', 200);
         }
 
-        return Utils::sendResponse(['error' => 'Unauthorized'], 401);
+        // If authentication fails
+        return Utils::errorResponses(['error' => 'Unauthorize Access'], 'Email or Password does not match with our records', 401);
     }
+
 
     //lead board
     public function maxMeetings(Request $request)
@@ -50,12 +54,16 @@ class ApiController extends Controller
             $previousMonth = Carbon::now()->subMonth()->month;
             $previousYear = Carbon::now()->subMonth()->year;
 
-            $circlecalls = CircleCall::with(['member', 'meetingPerson'])
+            // Get CircleCall data with only the selected member fields
+            $circlecalls = CircleCall::with(['member' => function ($query) {
+                $query->select('id', 'userId', 'firstname', 'lastname', 'businesscategoryId', 'profilephoto');
+            }, 'meetingPerson'])
                 ->where('status', 'Active')
                 ->whereYear('date', $previousYear)
                 ->whereMonth('date', $previousMonth)
                 ->get();
 
+            // Group the results by memberId and count the meetings
             $circlecalls = $circlecalls->groupBy('memberId')->map(function ($group) {
                 return [
                     'member' => $group->first()->member,
@@ -72,6 +80,7 @@ class ApiController extends Controller
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
+
 
     public function maxBusiness(Request $request)
     {
@@ -156,6 +165,238 @@ class ApiController extends Controller
         }
     }
 
+    public function getMaxData(Request $request)
+    {
+        try {
+
+            $maxMeetings = $this->maxMeetings($request);
+
+            $maxBusiness = $this->maxBusiness($request);
+
+            $maxReference = $this->maxReference($request);
+
+            $maxRefferal = $this->maxRefferal($request);
+
+            $maxVisitor = $this->maxVisitor($request);
+
+            $response = [
+                'maxMeetings' => json_decode($maxMeetings->content(), true),
+                'maxBusiness' => json_decode($maxBusiness->content(), true),
+                'maxReference' => json_decode($maxReference->content(), true),
+                'maxRefferal' => json_decode($maxRefferal->content(), true),
+                'maxVisitor' => json_decode($maxVisitor->content(), true),
+            ];
+
+            return Utils::sendResponse($response, 'All data retrieved successfully', 200);
+        } catch (\Throwable $th) {
+            return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
+        }
+    }
+
+
+    //Max data for particular auth user 
+
+    public function maxMeetingsUser(Request $request)
+    {
+        try {
+            // Get the authenticated user
+            $authUser = Auth::user();
+
+            // Find the member with the authenticated user's ID
+            $member = Member::where('userId', $authUser->id)->first();
+            if (!$member) {
+                return Utils::sendResponse([], 'Member not found', 404);
+            }
+
+            // Get CircleCall data with only the selected member fields
+            $circlecalls = CircleCall::with(['member' => function ($query) {
+                $query->select('id', 'userId', 'firstname', 'lastname', 'businesscategoryId', 'profilephoto');
+            }, 'meetingPerson'])
+                ->where('status', 'Active')
+                ->where('memberId', $member->id) // Ensure data is for the member
+                ->get();
+
+            $circlecalls = $circlecalls->groupBy('memberId')->map(function ($group) {
+                return [
+                    'member' => $group->first()->member,
+                    'count' => $group->count()
+                ];
+            })->sortByDesc('count')->values();
+
+            return Utils::sendResponse(
+                ['circlecalls' => $circlecalls],
+                'Meeting data retrieved successfully',
+                200
+            );
+        } catch (\Throwable $th) {
+            return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
+        }
+    }
+
+
+
+    public function maxBusinessUser(Request $request)
+    {
+        try {
+            $authUser = Auth::user();
+
+            // Get the member associated with the authenticated user
+            $member = Member::where('userId', $authUser->id)->first();
+            if (!$member) {
+                return Utils::sendResponse([], 'Member not found', 404);
+            }
+
+            // Get CircleMeetingMembersBusiness data
+            $busGiver = CircleMeetingMembersBusiness::where('businessGiverId', $authUser->id)->get();
+
+            // Group and map the data to include user, amount, count, businessCategoryId, and circleId
+            $busGiver = $busGiver->groupBy('businessGiverId')->map(function ($group) use ($member) {
+                return [
+                    'user' => $group->first()->users,
+                    'amount' => $group->sum('amount'),
+                    'count' => $group->count(),
+                    'businessCategoryId' => $member->businessCategoryId,  // Include businessCategoryId
+                    'businessCategory' => $member->bCategory->categoryName,  // Include businessCategoryId
+                    'circleId' => $member->circleId,  // Include circleId
+                    'circle' => $member->circle->circleName,  // Include circleId
+                ];
+            })->sortByDesc('amount')->values();
+
+            return Utils::sendResponse(
+                ['busGiver' => $busGiver],
+                'Business data retrieved successfully',
+                200
+            );
+        } catch (\Throwable $th) {
+            return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
+        }
+    }
+
+
+
+
+    public function maxReferenceUser(Request $request)
+    {
+        try {
+            $authUser = Auth::user();
+
+            // Retrieve the member associated with the authenticated user
+            $member = Member::where('userId', $authUser->id)->first();
+            if (!$member) {
+                return Utils::sendResponse([], 'Member not found', 404);
+            }
+
+            // Get CircleMeetingMembersReference data
+            $refGiver = CircleMeetingMembersReference::where('status', 'Active')
+            ->where('referenceGiverId', $authUser->id) // Ensure data is for the member
+                ->get();
+
+            // Group and map the data to include user, count, businessCategoryId, and circleId
+            $refGiver = $refGiver->groupBy('referenceGiverId')->map(function ($group) use ($member) {
+                return [
+                    'user' => $group->first()->refGiverName,
+                    'count' => $group->count(),
+                    'businessCategoryId' => $member->businessCategoryId, // Include businessCategoryId
+                    'businessCategory' => $member->bcategory->categoryName, // Include businessCategoryId
+                    'circleId' => $member->circleId, // Include circleId
+                    'circle' => $member->circle->circleName, // Include circleId
+                ];
+            })->sortByDesc('count')->values();
+
+            return Utils::sendResponse(
+                ['refGiver' => $refGiver],
+                'Reference data retrieved successfully',
+                200
+            );
+        } catch (\Throwable $th) {
+            return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
+        }
+    }
+
+
+
+
+
+    public function maxRefferalUser(Request $request)
+    {
+        try {
+            $authUser = Auth::user();
+
+            // Find the member with the authenticated user's ID
+            $member = Member::where('userId', $authUser->id)->first();
+            if (!$member) {
+                return Utils::sendResponse([], 'Member not found', 404);
+            }
+
+            // Your existing logic here for referral data
+            // ...
+
+            return Utils::sendResponse(
+                [],
+                'Referral data retrieved successfully',
+                200
+            );
+        } catch (\Throwable $th) {
+            return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
+        }
+    }
+
+    public function maxVisitorUser(Request $request)
+    {
+        try {
+            $authUser = Auth::user();
+
+            // Find the member with the authenticated user's ID
+            $member = Member::where('userId', $authUser->id)->first();
+            if (!$member) {
+                return Utils::sendResponse([], 'Member not found', 404);
+            }
+
+            // Your existing logic here for visitor data
+            // ...
+
+            return Utils::sendResponse(
+                [],
+                'Visitor data retrieved successfully',
+                200
+            );
+        } catch (\Throwable $th) {
+            return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
+        }
+    }
+
+
+    public function getMaxDataUser(Request $request)
+    {
+        try {
+
+            $maxMeetingsUser = $this->maxMeetingsUser($request);
+
+            $maxBusinessUser = $this->maxBusinessUser($request);
+
+            $maxReferenceUser = $this->maxReferenceUser($request);
+
+            $maxRefferalUser = $this->maxRefferalUser($request);
+
+            $maxVisitorUser = $this->maxVisitorUser($request);
+
+            $response = [
+                'maxMeetings' => json_decode($maxMeetingsUser->content(), true),
+                'maxBusiness' => json_decode($maxBusinessUser->content(), true),
+                'maxReference' => json_decode($maxReferenceUser->content(), true),
+                'maxRefferal' => json_decode($maxRefferalUser->content(), true),
+                'maxVisitor' => json_decode($maxVisitorUser->content(), true),
+            ];
+
+            return Utils::sendResponse($response, 'All data retrieved successfully', 200);
+        } catch (\Throwable $th) {
+            return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
+        }
+    }
+
+
+
+
     //Upcoming Workshop
     public function index(Request $request)
     {
@@ -187,6 +428,19 @@ class ApiController extends Controller
             $contactDetails = ContactDetails::where('memberId', $member->id)->first();
             $topsProfile = TopsProfile::where('memberId', $member->id)->first();
 
+            // Create a separate object for businessCategoryId and circleId
+            $businessCategory = [
+                'businessCategoryId' => $member->businessCategoryId,
+                'businessCategory' => $member->bCategory->categoryName,
+            ];
+
+            $circle = [
+                'circleId' => $member->circleId,
+                'circle' => $member->circle->circleName,
+            ];
+
+
+
             // Return the data in your API response
             return response()->json([
                 'user' => $user,
@@ -194,14 +448,15 @@ class ApiController extends Controller
                 'billingAddress' => $billingAddress,
                 'contactDetails' => $contactDetails,
                 'topsProfile' => $topsProfile,
+                'businessCategory' => $businessCategory,
+                'circle' => $circle,
             ]);
         } else {
             // Handle the case where member record is not found
             return response()->json(['error' => 'Member not found'], 404);
         }
-        // return Utils::sendResponse($responseData, "Profile Data");
-
     }
+
 
     public function billingAddressUpdate(Request $request)
     {
@@ -432,7 +687,9 @@ class ApiController extends Controller
             $authBusinessCategoryId = $user->member->businessCategoryId; // Assuming 'businessCategoryId' exists on 'members' table
 
             // Fetch members who belong to the same business category as the authenticated user
-            $members = Member::where('businessCategoryId', $authBusinessCategoryId)->get();
+            $members = Member::where('businessCategoryId', $authBusinessCategoryId)
+                ->with('circle')
+                ->get();
 
             foreach ($members as $member) {
                 // Fetch the category for the current member
@@ -454,6 +711,9 @@ class ApiController extends Controller
                         'memberId' => $member->id,
                         'firstName' => $member->firstName,
                         'lastName' => $member->lastName,
+                        'profilePhoto' => $member->profilePhoto,
+                        'circle' => $member->circle->circleName,
+                        'companyName' => $member->companyName,
                         // Add any other fields you need here
                     ];
                 }
@@ -468,4 +728,27 @@ class ApiController extends Controller
             ], 'Internal Server Error', 500);
         }
     }
+
+    public function allMembers(Request $request)
+    {
+        try {
+            $allmembers = Member::where('status', 'Active')
+                ->with('user')
+                ->with('circle:id,circleName')
+                ->get();
+
+            return Utils::sendResponse(
+                ['allmembers' => $allmembers],
+                'All members retrieved successfully',
+                200
+            );
+        } catch (\Throwable $th) {
+            return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
+        }
+    }
+
+    //userwise Max data 
+
+
+
 }

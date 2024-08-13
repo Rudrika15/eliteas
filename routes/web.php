@@ -375,6 +375,7 @@ Route::group(['middleware' => ['auth']], function () {
     // Invited Prople List
     Route::get('/invitedPersonList', [CircleMeetingController::class, 'invitedPersonList'])->name('invitedPersonList');
 
+    
 
     // global search 
     Route::get('/search', [HomeController::class, 'findMember'])->name('search');
