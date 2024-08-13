@@ -56,7 +56,7 @@ class ApiController extends Controller
 
             // Get CircleCall data with only the selected member fields
             $circlecalls = CircleCall::with(['member' => function ($query) {
-                $query->select('id', 'userId', 'firstname', 'lastname', 'businesscategoryId', 'profilephoto');
+                $query->select('id', 'userId', 'firstname', 'lastname', 'businessCategoryId', 'circleId', 'profilephoto');
             }, 'meetingPerson'])
                 ->where('status', 'Active')
                 ->whereYear('date', $previousYear)
@@ -65,8 +65,19 @@ class ApiController extends Controller
 
             // Group the results by memberId and count the meetings
             $circlecalls = $circlecalls->groupBy('memberId')->map(function ($group) {
+                $member = $group->first()->member;
                 return [
-                    'member' => $group->first()->member,
+                    'member' => [
+                        'id' => $member->id,
+                        'userId' => $member->userId,
+                        'firstName' => $member->firstname,
+                        'lastName' => $member->lastname,
+                        'profilePhoto' => $member->profilephoto,
+                        'businessCategoryId' => $member->businessCategoryId,
+                        'businessCategory' => $member->bCategory->categoryName,
+                        'circleId' => $member->circleId,
+                        'circle' => $member->circle->circleName,
+                    ],
                     'count' => $group->count()
                 ];
             })->sortByDesc('count')->values();
@@ -94,10 +105,24 @@ class ApiController extends Controller
                 ->get();
 
             $busGiver = $busGiver->groupBy('businessGiverId')->map(function ($group) {
+                $user = $group->first()->users;
+                $member = $user->member()->select('circleId', 'businessCategoryId')->first();
+                $circle = Circle::find($member->circleId);
+                $businessCategory = BusinessCategory::find($member->businessCategoryId);
+
                 return [
-                    'user' => $group->first()->users,
+                    'user' => $user,
+                    'member' => $member,
                     'amount' => $group->sum('amount'),
-                    'count' => $group->count()
+                    'count' => $group->count(),
+                    'circle' => [
+                        'id' => $circle->id,
+                        'circleName' => $circle->circleName
+                    ],
+                    'businessCategory' => [
+                        'id' => $businessCategory->id,
+                        'categoryName' => $businessCategory->categoryName
+                    ]
                 ];
             })->sortByDesc('amount')->values();
 
@@ -288,7 +313,7 @@ class ApiController extends Controller
 
             // Get CircleMeetingMembersReference data
             $refGiver = CircleMeetingMembersReference::where('status', 'Active')
-            ->where('referenceGiverId', $authUser->id) // Ensure data is for the member
+                ->where('referenceGiverId', $authUser->id) // Ensure data is for the member
                 ->get();
 
             // Group and map the data to include user, count, businessCategoryId, and circleId
