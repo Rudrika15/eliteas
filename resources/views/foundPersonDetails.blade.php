@@ -563,61 +563,98 @@
                                     <img src="{{ asset('ProfilePhoto/profile.png') }}" alt="ProfilePhoto"
                                         class="rounded-circle" width="100">
                                     @endif
+
                                     <div class="mt-3">
                                         <h4 class="text-blue">{{ $member->title . ' ' . $member->displayName }}</h4>
 
-                                        <p class="text-secondary d-flex justify-content-center mb-1">{{ $member->skills
-                                            }}
-                                            &#x2022 {{ $member->suffix }}
-                                            &#x2022 {{ $member->gender }}
-                                            &#x2022 {{ $member->industry }}
+                                        <p class="text-secondary d-flex justify-content-center mb-1">
+                                            {{-- {{ $member->skills }} &#x2022 {{ $member->suffix }} &#x2022 --}}
+                                            {{ $member->gender }}
+                                            {{-- &#x2022 {{ $member->industry }} --}}
 
                                         </p>
 
                                         <p class="text-muted font-size-sm">
-                                            {{ $member->contactDetails->addressLine1 ?? '-' }}
-                                            {{ $member->contactDetails->addressLine2 ?? '-' }}
-                                            {{ $member->contactDetails->city ?? '-' }} ,
-                                            {{ $member->contactDetails->state ?? '-' }}
+                                            {{-- {{ $member->contactDetails->addressLine1 ?? '-' }} {{
+                                            $member->contactDetails->addressLine2 ?? '-' }} --}}
+                                            {{ $member->contactDetails->city ?? '-' }}, {{
+                                            $member->contactDetails->state ?? '-' }}
                                         </p>
-                                        @if (!$memberStatus)
-                                        <form action="{{ route('connect') }}" id="connectForm" method="POST">
-                                            @csrf
-                                            <input type="hidden" value="{{ $member->user->id }}" name="memberId"
-                                                id="memberId">
-                                            <button type="submit" class="btn btn-bg-blue shadow-none">Connect &nbsp;<i
-                                                    class="bi bi-person-plus-fill"></i></button>
-                                        </form>
 
-                                        @elseif ($memberStatus->status == 'Accepted')
-                                        <button type="button" class="btn btn-bg-blue shadow-none">Connected &nbsp;<i
-                                                class="bi bi-check-circle-fill"></i></button>
+                                        <div class="d-flex justify-content-center">
+                                            @if (!$memberStatus)
+                                            <form action="{{ route('connect') }}" id="connectForm" method="POST">
+                                                @csrf
+                                                <input type="hidden" value="{{ $member->user->id }}" name="memberId"
+                                                    id="memberId">
+                                                <button type="submit" class="btn btn-bg-blue shadow-none">Connect
+                                                    &nbsp;<i class="bi bi-person-plus-fill"></i></button>
+                                            </form>
 
-                                        @elseif ($memberStatus->status == 'Rejected')
-                                        <button type="submit" class="btn btn-bg-blue shadow-none">Connect &nbsp;<i
-                                                class="bi bi-person-plus-fill"></i></button>
+                                            @elseif ($memberStatus->status == 'Accepted')
+                                            <button type="button" class="btn btn-bg-blue shadow-none">Connected &nbsp;<i
+                                                    class="bi bi-check-circle-fill"></i></button>
 
-                                        @else
-                                        <button type="button" class="btn btn-bg-blue shadow-none">Requested &nbsp;<i
-                                                class="bi bi-clock"></i></button>
-                                        @endif
+                                            @elseif ($memberStatus->status == 'Rejected')
+                                            <form action="{{ route('connect') }}" id="connectForm" method="POST">
+                                                @csrf
+                                                <input type="hidden" value="{{ $member->user->id }}" name="memberId"
+                                                    id="memberId">
+                                                <button type="submit" class="btn btn-bg-blue shadow-none">Connect
+                                                    &nbsp;<i class="bi bi-person-plus-fill"></i></button>
+                                            </form>
+
+                                            @else
+                                            <button type="button" class="btn btn-bg-blue shadow-none">Requested &nbsp;<i
+                                                    class="bi bi-clock"></i></button>
+                                            @endif
+
+                                            @if(!empty($memberStatus) && $memberStatus->status == 'Accepted')
+                                            <button id="messageButton" class="btn btn-bg-orange ms-2">Message</button>
+                                            @else
+                                            <button id="messageButton"
+                                                class="btn btn-bg-orange ms-2 disabled">Message</button>
+                                            @endif
+
+                                            <style>
+                                                .logged-in {
+                                                    font-size: 24px;
+                                                    /* increase font size to make the dot larger */
+                                                    color: green;
+                                                    animation: blink 1s infinite;
+                                                    /* add blink animation */
+                                                }
+
+                                                .logged-out {
+                                                    font-size: 24px;
+                                                    /* increase font size to make the dot larger */
+                                                    color: red;
+                                                    animation: blink 1s infinite;
+                                                    /* add blink animation */
+                                                }
+
+                                                @keyframes blink {
+                                                    0% {
+                                                        opacity: 1;
+                                                    }
+
+                                                    50% {
+                                                        opacity: 0;
+                                                    }
+
+                                                    100% {
+                                                        opacity: 1;
+                                                    }
+                                                }
+                                            </style>
+
+                                        </div>
+
+
+
                                         <a href="javascript:history.back()"
-                                            class="btn btn-bg-orange back-btn2 ">Back</a>
+                                            class="btn btn-bg-orange back-btn2 mt-2">Back</a>
                                     </div>
-                                    {{-- {{ $member->user->id }} {{ $member->user->id }} {{$memberStatus->status}} --}}
-                                    <div class="mt-3">
-                                        <input type="hidden" value="{{ $member->user->id }}" name="memberId"
-                                            id="memberId">
-                                        @if(!empty($memberStatus))
-                                        @if($memberStatus->status == 'Accepted')
-                                        <button id="messageButton" class="btn btn-bg-orange">Message</button>
-                                        @endif
-                                        @else
-                                        <button id="messageButton" class="btn btn-bg-orange disabled">Message</button>
-                                        @endif
-                                    </div>
-                                    <!-- Message Button -->
-                                    {{-- <button id="messageButton">Message</button> --}}
 
                                     <!-- Chat Modal -->
                                     <div id="chatModal" class="modal">
@@ -627,9 +664,16 @@
                                                 <img src="{{ asset('ProfilePhoto/' . $profilePhoto) }}"
                                                     alt="profilePhoto" style="height:50px; width:50px;"
                                                     class="rounded-circle">
+                                                {{-- @if($member->user->userStatus == 'Online')
+                                                <span class="logged-in">●</span>
+                                                @else
+                                                <span class="logged-out">●</span>
+                                                @endif --}}
                                             </div>
                                             <span class="memberName">{{ $member->user->firstName }} {{
                                                 $member->user->lastName }}</span>
+
+
                                             <div class="chat-container">
                                                 <div id="chatBox" class="chat-box"></div>
                                                 <div class="input-container">
@@ -641,7 +685,6 @@
                                             </div>
                                         </div>
                                     </div>
-
                                 </div>
                             </div>
                         </div>
@@ -886,16 +929,32 @@
                                     </li>
 
                                     {{-- {{$member->user->id}} --}}
-
-                                    <li class="nav-item ms-3 mb-3">
+                                    <li class="nav-item badge-on ms-3 mb-3">
                                         <span
-                                            class="badge rounded-pill {{ $member->user->userStatus == 'Online' ? 'bg-success' : 'bg-danger' }}"
+                                            class="badge rounded-pill {{ $member->user->userStatus == 'Online' ? 'bg-success blink' : 'bg-danger' }}"
                                             style="font-size: 12px;padding: 5px 10px;color: #fff;display: inline-block;margin-top: 5px;">
                                             {{$member->title}}{{ $member->user->firstName }} {{
                                             $member->user->userStatus == 'Online' ? 'is Online' : 'is Offline' }}
                                         </span>
-                                        </a>
                                     </li>
+
+                                    <style>
+                                        .badge-on {
+                                            position: relative;
+                                            margin-left: 30% !important;
+                                        }
+/* 
+                                        .blink {
+                                            animation: blinker 1.5s linear infinite;
+                                        }
+
+                                        @keyframes blinker {
+                                            50% {
+                                                opacity: 0;
+                                            }
+                                        } */
+                                    </style>
+
 
                                 </ul>
                                 <!-- Tab panes -->

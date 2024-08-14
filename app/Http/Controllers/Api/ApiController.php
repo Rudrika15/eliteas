@@ -741,6 +741,7 @@ class ApiController extends Controller
                     // Add member data to the members array within categoryData
                     $categoryData['members'][] = [
                         'authMemberId' => $authMemberId,
+                        'userId' => $member->userId,
                         'memberId' => $member->id,
                         'firstName' => $member->firstName,
                         'lastName' => $member->lastName,
