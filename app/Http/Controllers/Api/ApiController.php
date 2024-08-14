@@ -106,7 +106,7 @@ class ApiController extends Controller
 
             $busGiver = $busGiver->groupBy('businessGiverId')->map(function ($group) {
                 $user = $group->first()->users;
-                $member = $user->member()->select('circleId', 'businessCategoryId')->first();
+                $member = $user->member()->select('circleId', 'businessCategoryId', 'profilePhoto')->first();
                 $circle = Circle::find($member->circleId);
                 $businessCategory = BusinessCategory::find($member->businessCategoryId);
 
@@ -117,7 +117,7 @@ class ApiController extends Controller
                     'count' => $group->count(),
                     'circle' => [
                         'id' => $circle->id,
-                        'circleName' => $circle->circleName
+                        'circleName ' => $circle->circleName
                     ],
                     'businessCategory' => [
                         'id' => $businessCategory->id,
@@ -133,24 +133,31 @@ class ApiController extends Controller
             );
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
-        }
+        }  
     }
 
     public function maxReference(Request $request)
     {
         try {
-            $previousMonth = Carbon::now()->subMonth()->month;
-            $previousYear = Carbon::now()->subMonth()->year;
-
+            // Retrieve all CircleMeetingMembersReference data with 'Active' status
             $refGiver = CircleMeetingMembersReference::where('status', 'Active')
-                ->whereYear('created_at', $previousYear)
-                ->whereMonth('created_at', $previousMonth)
-                ->get();
+            ->get();
 
+            // Group and map the data to include user, count, businessCategoryId, and circleId
             $refGiver = $refGiver->groupBy('referenceGiverId')->map(function ($group) {
+                // Retrieve the associated member based on referenceGiverId
+                $member = Member::where('userId', $group->first()->referenceGiverId)->first();
+
+                // If member is found, include their businessCategoryId and circleId
                 return [
                     'user' => $group->first()->refGiverName,
-                    'count' => $group->count()
+                    'count' => $group->count(),
+                    'businessCategoryId' => $member ? $member->businessCategoryId : null,
+                    'businessCategory' => $member ? $member->bcategory->categoryName : null,
+                    'circleId' => $member ? $member->circleId : null,
+                    'circle' => $member ? $member->circle->circleName : null,
+                    'profilePhoto' => $member ? $member->profilePhoto : null,
+                    
                 ];
             })->sortByDesc('count')->values();
 
@@ -163,6 +170,7 @@ class ApiController extends Controller
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
+
 
     public function maxRefferal(Request $request)
     {
@@ -772,7 +780,44 @@ class ApiController extends Controller
         }
     }
 
-    //userwise Max data 
+    //member by userId
+    public function getUserDetails(Request $request, $userId)
+    {
+        try {
+            // Fetch the member by user ID
+            $member = Member::where('userId', $userId)
+                ->with(['user', 'circle:id,circleName','bcategory:id,categoryName'])
+                ->first();
+
+            // If member is not found, return a not found response
+            if (!$member) {
+                return Utils::errorResponse(['error' => 'Member not found'], 'Not Found', 404);
+            }
+
+            // Fetch related data from other tables using memberId
+            $contactDetails = ContactDetails::where('memberId', $member->id)->first();
+            $topsProfile = TopsProfile::where('memberId', $member->id)->first();
+            $billingAddress = BillingAddress::where('memberId', $member->id)->first();
+
+            // Combine all the data into a single response
+            $userDetails = [
+                'member' => $member,
+                'contactDetails' => $contactDetails,
+                'topsProfile' => $topsProfile,
+                'billingAddress' => $billingAddress,
+            ];
+
+            return Utils::sendResponse(
+                ['userDetails' => $userDetails],
+                'User details retrieved successfully',
+                200
+            );
+        } catch (\Throwable $th) {
+            return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
+        }
+    }
+
+
 
 
 

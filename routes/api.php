@@ -284,7 +284,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     //getMaxdata
     Route::get('v1/get-max-data', [ApiController::class, 'getMaxData']);
-    
+
     //getMaxdata of User
     Route::get('v1/get-max-data-user', [ApiController::class, 'getMaxDataUser']);
 
@@ -294,5 +294,6 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('v1/max-referral-user', [ApiController::class, 'maxRefferalUser']);
     Route::get('v1/max-visitor-user', [ApiController::class, 'maxVisitorUser']);
 
-    
+    //userdata by id
+    Route::get('v1/user-details/{userId}', [ApiController::class, 'getUserDetails']);
 });
