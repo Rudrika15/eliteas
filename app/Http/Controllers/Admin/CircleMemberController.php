@@ -11,6 +11,7 @@ use App\Models\Member;
 use App\Models\Country;
 use App\Models\Razorpay;
 use App\Models\CircleCall;
+use App\Models\Connection;
 use App\Models\AllPayments;
 use App\Models\TopsProfile;
 use Illuminate\Support\Str;
@@ -162,6 +163,28 @@ class CircleMemberController extends Controller
 
             $member->status = 'Active';
             $member->save();
+
+            // Compare circleId and add connections
+            $matchedMembers = Member::where('circleId', $member->circleId)
+                ->where('userId', '!=', $member->userId) // Exclude the current member
+                ->get();
+
+
+            foreach ($matchedMembers as $matchedMember) {
+                // Create new connection entries
+                $connection = new Connection;
+                $connection->memberId = $member->userId;
+                $connection->userId = $matchedMember->userId;
+                $connection->status = 'Accepted';
+                $connection->save();
+
+                // // Create the reverse connection
+                // $reverseConnection = new Connection;
+                // $reverseConnection->memberId = $matchedMember->userId;
+                // $reverseConnection->userId = $member->userId;
+                // $reverseConnection->status = 'Accepted';
+                // $reverseConnection->save();
+            }
 
             // Create and save TopsProfile
             $tops = new TopsProfile();

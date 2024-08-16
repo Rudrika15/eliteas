@@ -375,7 +375,7 @@ Route::group(['middleware' => ['auth']], function () {
     // Invited Prople List
     Route::get('/invitedPersonList', [CircleMeetingController::class, 'invitedPersonList'])->name('invitedPersonList');
 
-    
+
 
     // global search 
     Route::get('/search', [HomeController::class, 'findMember'])->name('search');
@@ -439,6 +439,11 @@ Route::group(['middleware' => ['auth']], function () {
     //visitors
 
     Route::get('/visitor-index', [VisitorFormController::class, 'index'])->name('visitor.index');
+    Route::post('/visitor/update-remark', [VisitorFormController::class, 'updateRemark'])->name('visitor.updateRemark');
+
+
+
+
 
     //chat
     // Route::get('/chat-index', [ChatController::class, 'index'])->name('chat.index');

@@ -226,6 +226,7 @@ class HomeController extends Controller
                 ->first();
 
             $memberStatus = Connection::where('memberId', $member->userId)
+                ->orWhere('userId', $member->userId)
                 ->first();
             // Alternatively, if you want to get all connections related to the authenticated user:
             // $connections = Connection::where('userId', $aid)->get();

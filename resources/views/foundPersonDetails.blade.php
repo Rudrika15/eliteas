@@ -585,7 +585,7 @@
                                             @if (!$memberStatus)
                                             <form action="{{ route('connect') }}" id="connectForm" method="POST">
                                                 @csrf
-                                                <input type="hidden" value="{{ $member->user->id }}" name="memberId"
+                                                <input type="hiddden" value="{{ $member->user->id }}" name="memberId"
                                                     id="memberId">
                                                 <button type="submit" class="btn btn-bg-blue shadow-none">Connect
                                                     &nbsp;<i class="bi bi-person-plus-fill"></i></button>

@@ -3,33 +3,21 @@
 @section('header', 'Visitors')
 @section('content')
 
-{{-- Message --}}
-@if (Session::has('success'))
-<div class="alert alert-success alert-dismissible" role="alert">
-    <button type="button" class="close" data-dismiss="alert">
-        {{-- <i class="fa fa-times"></i> --}}
-    </button>
-    <strong>Success !</strong> {{ session('success') }}
-</div>
-@endif
 
-@if (Session::has('error'))
-<div class="alert alert-danger alert-dismissible" role="alert">
-    <button type="button" class="close" data-dismiss="alert">
-        {{-- <i class="fa fa-times"></i> --}}
-    </button>
-    <strong>Error !</strong> {{ session('error') }}
-</div>
-@endif
+<style>
+    .remark-field {
+        border: 1px solid #171212;
+        padding: 5px;
+        width: 100%;
+    }
+</style>
 
 <div class="container">
     <div class="card">
         <div class="card-body">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h4 class="card-title">Visitors</h4>
-                {{-- <a href="{{ route('country.create') }}" class="btn btn-bg-orange btn-sm mt-3 btn-tooltip"><i
-                        class="bi bi-plus-circle"></i>
-                    <span class="btn-text">Add Country</span></a> --}}
+
             </div>
 
             <!-- Table with stripped rows -->
@@ -45,6 +33,7 @@
                             <th>Networking Group</th>
                             <th>Circle Meet</th>
                             <th>Product / Service</th>
+                            <th>Remarks</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -58,6 +47,10 @@
                             <td>{{$visitor->networkingGroup}}</td>
                             <td>{{$visitor->circleMeet}}</td>
                             <td>{{$visitor->product}}</td>
+                            <td>
+                                <input type="text" class="form-control remark-field" data-id="{{ $visitor->id }}"
+                                    value="{{ $visitor->remarks }}">
+                            </td>
                         </tr>
                         @endforeach
                     </tbody>
@@ -70,4 +63,38 @@
         </div>
     </div>
 </div>
-@endsection
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    $(document).ready(function(){
+        $('.remark-field').on('blur', function(){
+            var visitorId = $(this).data('id');
+            var newRemark = $(this).val();
+
+            $.ajax({
+                url: '{{ route("visitor.updateRemark") }}',
+                method: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    id: visitorId,
+                    remarks: newRemark
+                },
+                
+                success: function(response) {
+                    if(response.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Remark updated successfully!',
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error updating remark!',
+                        });
+                    }
+                }
+            });
+        });
+    });
+</script>
+@endsection                                                                                                                                                                                                                                                                                                                   

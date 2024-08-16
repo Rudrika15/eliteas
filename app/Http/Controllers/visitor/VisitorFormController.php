@@ -61,4 +61,19 @@ class VisitorFormController extends Controller
             return view('servererror');
         }
     }
+
+    // VisitorsController.php
+
+    public function updateRemark(Request $request)
+    {
+        $visitor = VisitorsDetails::find($request->id);
+        if ($visitor) {
+            $visitor->remarks = $request->remarks;
+            $visitor->save();
+
+            return response()->json(['success' => true]);
+        }
+
+        return response()->json(['success' => false]);
+    }
 }
