@@ -175,6 +175,7 @@
             </a>
         </li> --}}
     </ul>
+</li>
 
 <li class="nav-item">
     <a class="nav-link collapsed" data-bs-target="#master-nav" data-bs-toggle="collapse" href="#">

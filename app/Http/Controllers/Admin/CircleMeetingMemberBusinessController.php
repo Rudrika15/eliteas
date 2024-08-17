@@ -30,7 +30,18 @@ class CircleMeetingMemberBusinessController extends Controller
                 return $item;
             });
 
-            return view('admin.circlebusiness.index', compact('busGiver'));
+            $busGiveByOther = CircleMeetingMembersBusiness::where('businessGiverId', Auth::user()->id)
+                ->where('status', 'Active')
+                ->orderBy('id', 'DESC')
+                ->paginate(10);
+
+            // Format the amount with commas
+            $busGiveByOther->transform(function ($item) {
+                $item->amount = isset($item->amount) ? number_format($item->amount, 2) : '-';
+                return $item;
+            });
+
+            return view('admin.circlebusiness.index', compact('busGiver', 'busGiveByOther'));
         } catch (\Throwable $th) {
             return view('servererror');
         }

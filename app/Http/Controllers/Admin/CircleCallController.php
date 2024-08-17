@@ -26,7 +26,14 @@ class CircleCallController extends Controller
                 ->where('status', 'Active')
                 ->orderBy('id', 'DESC')
                 ->paginate(10);
-            return view('admin.circlecall.index', compact('circlecall'));
+
+            $callWith = CircleCall::with('member')
+                ->where('meetingPersonId', Auth::user()->id)
+                ->with('member')
+                ->where('status', 'Active')
+                ->orderBy('id', 'DESC')
+                ->paginate(10);
+            return view('admin.circlecall.index', compact('circlecall', 'callWith'));
         } catch (\Throwable $th) {
             throw $th;
             return view('servererror');
@@ -201,7 +208,7 @@ class CircleCallController extends Controller
 
             $circlecall->save();
 
-            return redirect()->route('circlecall.index')->with('success', 'Circle Call Created Successfully!');
+            return redirect()->route('circlecall.index')->with('success', 'Data Added Successfully!');
         } catch (\Throwable $th) {
             throw $th;
             return view('servererror');

@@ -24,7 +24,7 @@
             <div class="card mt-3">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center mb-5">
-                        <h4 class="card-title">Circle Member Business</h4>
+                        <h4 class="card-title">Business Slip by Other</h4>
                         {{-- <a href="{{ route('busGiver.create') }}" class="btn btn-primary btn-sm mt-3">ADD</a> --}}
                     </div>
                     <hr class="mb-5">
@@ -64,6 +64,51 @@
                         </table>
                         <div class="d-flex justify-content-end" style="color: #1d3268">
                             {!! $busGiver->links() !!}
+                        </div>
+                        <!-- End Table with stripped rows -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- business give by other --}}
+
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div class="card mt-3">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-5">
+                        <h4 class="card-title">Business Slip by Me</h4>
+                        {{-- <a href="{{ route('busGiver.create') }}" class="btn btn-primary btn-sm mt-3">ADD</a> --}}
+                    </div>
+                    <hr class="mb-5">
+                    <!-- Table with stripped rows -->
+                    <div class="table-responsive mt-5">
+                        <table class="table table-striped table-hover mb-5">
+                            <thead>
+                                <tr>
+                                    <th>Member Name</th>
+                                    <th>Date</th>
+                                    <th>Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($busGiveByOther as $busGiveByOtherData)
+                                <tr>
+                                    <td>{{ $busGiveByOtherData->businessGiver->firstName . ' ' .
+                                        $busGiveByOtherData->businessGiver->lastName ?? '-' }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($busGiveByOtherData->date)->format('d-m-Y') ?? '-' }}
+                                    </td>
+                                    <td>{{ $busGiveByOtherData->amount ?? '-' }}</td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                        <div class="d-flex justify-content-end" style="color: #1d3268">
+                            {!! $busGiveByOther->links() !!}
                         </div>
                         <!-- End Table with stripped rows -->
                     </div>

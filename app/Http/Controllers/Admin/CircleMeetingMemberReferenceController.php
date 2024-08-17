@@ -24,7 +24,14 @@ class CircleMeetingMemberReferenceController extends Controller
                 ->with('refGiverName')
                 ->where('referenceGiverId', Auth::user()->id)
                 ->paginate(10);
-            return view('admin.refGiver.index', compact('refGiver'));
+
+            $referenceByOther = CircleMeetingMembersReference::where('status', 'Active')
+                ->orderBy('id', 'DESC')
+                ->with('members')
+                ->with('refGiverName')
+                ->where('memberId', Auth::user()->id)
+                ->paginate(10);
+            return view('admin.refGiver.index', compact('refGiver', 'referenceByOther'));
         } catch (\Throwable $th) {
             throw $th;
             return view('servererror');

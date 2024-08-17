@@ -67,8 +67,41 @@
                 {!! $connections->links() !!}
             </div>
         </div>
-        <!-- End Table with stripped rows -->
     </div>
 </div>
 
+
+
+<div class="card">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="card-title">My Circle Connections</h4>
+        </div>
+        <hr class="mb-5">
+        <!-- Table with stripped rows -->
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($myConnections as $myConnectionsData)
+                    <tr>
+                        <td>{{ $myConnectionsData->firstName ?? '-' }} {{ $myConnectionsData->lastName ?? '-' }}</td>
+                        <td>{{ $myConnectionsData->user->email ?? '-' }}</td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+            <div class="d-flex justify-content-end custom-pagination">
+                {!! $myConnections->links() !!}
+            </div>
+        </div>
+        <!-- End Table with stripped rows -->
+    </div>
+</div>
 @endsection

@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
+use App\Models\Member;
 use App\Models\Connection;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
 class ConnectionController extends Controller
@@ -45,6 +46,27 @@ class ConnectionController extends Controller
         return view('admin.connection.connections', compact('connections'));
     }
 
+    // public function myConnections()
+    // {
+    //     $userId = Auth::id();
+
+    //     // Fetch connections where the authenticated user is either the userId or memberId
+    //     $connections = Connection::where(function ($query) use ($userId) {
+    //         $query->where('userId', $userId)
+    //             ->orWhere('memberId', $userId);
+    //     })
+    //         ->where('status', 'Accepted')
+    //         ->with(['user:id,firstName,lastName,email'])
+    //         ->paginate(10);
+
+    //     // Include connected user's details for convenience
+    //     $connections->each(function ($connection) {
+    //         $connection->connectedUser = $connection->connected_user;
+    //     });
+
+    //     return view('admin.connection.myConnection', compact('connections'));
+    // }
+
     public function myConnections()
     {
         $userId = Auth::id();
@@ -63,7 +85,13 @@ class ConnectionController extends Controller
             $connection->connectedUser = $connection->connected_user;
         });
 
-        return view('admin.connection.myConnection', compact('connections'));
+        // Fetch circleId from member table based on the userId
+        $circleId = Member::where('userId', $userId)->pluck('circleId')->first();
+
+        // Fetch all members with the same circleId
+        $myConnections = Member::where('circleId', $circleId)->where('userId', '!=', $userId)->paginate(10);
+
+        return view('admin.connection.myConnection', compact('connections', 'myConnections'));
     }
 
 

@@ -23,7 +23,7 @@
             <div class="card mt-3">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center mb-5">
-                        <h4 class="card-title">Reference Giver</h4>
+                        <h4 class="card-title">Reference by Me</h4>
                         <a href="{{ route('refGiver.create') }}" class="btn btn-bg-orange btn-sm mt-3 btn-tooltip">
                             <i class="bi bi-plus-circle"></i>
                             <span class="btn-text">Add Reference Details</span>
@@ -97,6 +97,63 @@
                         </table>
                         <div class="d-flex justify-content-end" style="color: #1d3268">
                             {!! $refGiver->links() !!}
+                        </div>
+                    </div>
+                    <!-- End Table with stripped rows -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{{-- //ref by other --}}
+
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div class="card mt-3">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-5">
+                        <h4 class="card-title">Reference by Other</h4>
+                        {{-- <a href="{{ route('refGiver.create') }}" class="btn btn-bg-orange btn-sm mt-3 btn-tooltip">
+                            <i class="bi bi-plus-circle"></i>
+                            <span class="btn-text">Add Reference Details</span>
+                        </a> --}}
+                    </div>
+                    <hr>
+                    <!-- Table with stripped rows -->
+                    <div class="table-responsive mt-5">
+                        <table class="table table-striped table-hover mb-5">
+                            <thead>
+                                <tr>
+                                    <th>Member Name</th>
+                                    <th>Ex.Contact Name</th>
+                                    <th>Ex.Contact No</th>
+                                    <th>Ex.Email</th>
+                                    <th>Scale</th>
+                                    {{-- <th>Description</th> --}}
+                                    {{-- <th>Status</th> --}}
+                                    {{-- <th>Action</th> --}}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($referenceByOther as $referenceByOtherData)
+                                <tr>
+                                    <td>{{ $referenceByOtherData->refGiverName->firstName ?? '-' }}
+                                        {{ $referenceByOtherData->refGiverName->lastName ?? '-' }}</td>
+                                    <td>{{ $referenceByOtherData->contactName ?? '-' }}</td>
+                                    <td>{{ $referenceByOtherData->contactNo ?? '-' }}</td>
+                                    <td>{{ $referenceByOtherData->email ?? '-' }}</td>
+                                    <td>{{ $referenceByOtherData->scale ?? '-' }}</td>
+                                    {{-- <td>{{ $referenceByOther->description ?? '-' }}</td> --}}
+                                    {{-- <td>{{ $referenceByOther->status }}</td> --}}
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                        <div class="d-flex justify-content-end" style="color: #1d3268">
+                            {!! $referenceByOther->links() !!}
                         </div>
                     </div>
                     <!-- End Table with stripped rows -->

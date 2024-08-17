@@ -22,7 +22,7 @@ class LeaderBoardController extends Controller
                 ->where('status', 'Active')
                 ->whereYear('date', $previousYear)
                 ->whereMonth('date', $previousMonth)
-                ->get();
+                ->first();
 
             $circlecalls = $circlecalls->groupBy('memberId')->map(function ($group) {
                 return [

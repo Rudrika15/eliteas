@@ -2,30 +2,36 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\MeetingInvitation as MailMeetingInvitation;
-use App\Models\BillingAddress;
-use App\Models\BusinessCategory;
-use App\Models\City;
-use App\Models\MeetingInvitation;
-use App\Models\Member;
-use App\Models\Schedule;
-use App\Models\Testimonial;
-use App\Models\Training;
-use App\Models\TrainingRegister;
-use App\Models\User;
-use App\Models\Connection;
-use App\Models\ContactDetails;
-use App\Models\Country;
-use App\Models\State;
-use App\Models\TopsProfile;
-use App\Utils\Utils;
 use Carbon\Carbon;
-use Illuminate\Contracts\Session\Session;
+use App\Models\City;
+use App\Models\User;
+use App\Utils\Utils;
+use App\Models\State;
+use App\Models\Circle;
+use App\Models\Member;
+use App\Models\Country;
+use App\Models\Location;
+use App\Models\Schedule;
+use App\Models\Training;
+use App\Models\CircleCall;
+use App\Models\Connection;
+use App\Models\Testimonial;
+use App\Models\TopsProfile;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use App\Models\BillingAddress;
+use App\Models\ContactDetails;
+use App\Models\BusinessCategory;
+use App\Models\TrainingRegister;
+use App\Models\MeetingInvitation;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Contracts\Session\Session;
 use Illuminate\Support\Facades\Validator;
+use App\Models\CircleMeetingMembersBusiness;
+use App\Models\CircleMeetingMembersReference;
+use App\Mail\MeetingInvitation as MailMeetingInvitation;
 
 class HomeController extends Controller
 {
@@ -108,8 +114,77 @@ class HomeController extends Controller
 
             // Determine the table name based on the slug
 
+            //max 1:1 call
+            $previousMonth = Carbon::now()->subMonth()->month;
+            $previousYear = Carbon::now()->subMonth()->year;
 
-            return view('home', compact('count', 'nearestTraining', 'findRegister', 'testimonials', 'meeting', 'businessCategory', 'myInvites'));
+            $circlecalls = CircleCall::with(['member', 'meetingPerson'])
+                ->where('status', 'Active')
+                ->whereYear('date', $previousYear)
+                ->whereMonth('date', $previousMonth)
+                ->get();
+
+            $circlecalls = $circlecalls->groupBy('memberId')->map(function ($group) {
+                return [
+                    'member' => $group->first()->member,
+                    'count' => $group->count()
+                ];
+            })->sortByDesc('count');
+
+            //max business
+            $previousMonth = Carbon::now()->subMonth()->month;
+            $previousYear = Carbon::now()->subMonth()->year;
+
+            $busGiver = CircleMeetingMembersBusiness::where('status', 'Active')
+                ->whereYear('date', $previousYear)
+                ->whereMonth('date', $previousMonth)
+                ->get();
+
+            $busGiver = $busGiver->groupBy('businessGiverId')->map(function ($group) {
+                $user = $group->first()->users;
+                $member = $user->member()->select('circleId', 'businessCategoryId', 'profilePhoto')->first();
+                $circle = Circle::find($member->circleId);
+                $businessCategory = BusinessCategory::find($member->businessCategoryId);
+
+                return [
+                    'user' => $user,
+                    'member' => $member,
+                    'amount' => $group->sum('amount'),
+                    'count' => $group->count(),
+                    'circle' => [
+                        'id' => $circle->id,
+                        'circleName' => $circle->circleName,
+                    ],
+                    'businessCategory' => [
+                        'id' => $businessCategory->id,
+                        'categoryName' => $businessCategory->categoryName,
+                    ],
+                ];
+            })->sortByDesc('amount')->values();
+
+            //reference
+
+            // Retrieve all CircleMeetingMembersReference data with 'Active' status
+            $refGiver = CircleMeetingMembersReference::where('status', 'Active')->get();
+
+            // Group and map the data to include user, count, businessCategoryId, and circleId
+            $refGiver = $refGiver->groupBy('referenceGiverId')->map(function ($group) {
+                // Retrieve the associated member based on referenceGiverId
+                $member = Member::where('userId', $group->first()->referenceGiverId)->first();
+
+                // If member is found, include their businessCategoryId and circleId
+                return [
+                    'user' => $group->first()->refGiverName,
+                    'count' => $group->count(),
+                    'businessCategoryId' => $member ? $member->businessCategoryId : null,
+                    'businessCategory' => $member ? $member->bcategory->categoryName : null,
+                    'circleId' => $member ? $member->circleId : null,
+                    'circle' => $member ? $member->circle->circleName : null,
+                    'profilePhoto' => $member ? $member->profilePhoto : null,
+                ];
+            })->sortByDesc('count')->values();
+
+            return view('home', compact('count', 'circlecalls', 'busGiver', 'refGiver', 'nearestTraining', 'findRegister', 'testimonials', 'meeting', 'businessCategory', 'myInvites'));
         }
         return view('home', compact('count', 'nearestTraining',  'businessCategory', 'myInvites', 'findRegister'));
     }
