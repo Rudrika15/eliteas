@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title', 'UBN - 1:1 Meeting')
+@section('title', 'UBN - Business Meet')
 @section('content')
 
 {{-- Message --}}
@@ -21,7 +21,7 @@
 
 <div class="card">
     <div class="card-body d-flex justify-content-between align-items-center">
-        <h5 class="card-title">Create 1:1 Meeting</h5>
+        <h5 class="card-title">Create Business Meet</h5>
         <a href="{{ route('circlecall.index') }}" class="btn btn-bg-orange btn-sm">BACK</a>
     </div>
     <hr>
@@ -35,13 +35,13 @@
             <div class="col-md-6">
                 <div class="form-floating mt-3">
                     <input type="hidden" id="meetingPersonId" name="meetingPersonId" required>
-                    <input type="text" class="form-control @error('meetingPersonId') is-invalid @enderror"
-                        readonly id="meetingPersonName" placeholder="Select Member" disabled required>
+                    <input type="text" class="form-control @error('meetingPersonId') is-invalid @enderror" readonly
+                        id="meetingPersonName" placeholder="Select Member" disabled required>
                     <label for="memberName">Meeting Person Name</label>
                     @error('meetingPersonId')
-                        <div class="invalid-tooltip">
-                            This field is required.
-                        </div>
+                    <div class="invalid-tooltip">
+                        This field is required.
+                    </div>
                     @enderror
                 </div>
             </div>
@@ -64,9 +64,10 @@
                         
                         $nearestDate = $scheduleDate->min();
                         $nearestDate = $nearestDate ? Carbon::parse($nearestDate)->subDay()->format('Y-m-d') : Carbon::now()->format('Y-m-d');
+                        $selectedDate = request()->input('date') ?? (Carbon::now()->format('Y-m-d') == $nearestDate ? Carbon::now()->format('Y-m-d') : $nearestDate);
                         ?>
                     <input type="date" class="form-control" id="date" name="date" placeholder="Meeting Date" required
-                        min="{{ $lastDate }}" max="{{ $nearestDate }}">
+                        min="{{ $lastDate }}" max="{{ $nearestDate }}" value="{{ $selectedDate }}">
                     <label for="date">Date</label>
                 </div>
             </div>

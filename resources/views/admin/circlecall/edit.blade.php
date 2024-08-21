@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title', 'UBN - 1:1 Meeting')
+@section('title', 'UBN - Business Meet')
 @section('content')
 
 {{-- Message --}}
@@ -20,7 +20,7 @@
 
 <div class="card">
     <div class="card-body d-flex justify-content-between align-items-center">
-        <h5 class="card-title">Edit Call Meeting</h5>
+        <h5 class="card-title">Edit Business Meet</h5>
         <a href="{{ route('circlecall.index') }}" class="btn btn-bg-orange btn-sm">BACK</a>
     </div>
     <hr>

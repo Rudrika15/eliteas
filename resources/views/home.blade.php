@@ -59,24 +59,19 @@
         <div class="card-header">
             <b style="color: #1d2856; font-size:15px">Leader Board</b>
         </div>
-
         <div class="row row-cols-1 row-cols-md-3 g-4">
-            @if($circlecalls->isEmpty() && $busGiver->isEmpty() && $refGiver->isEmpty())
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-body text-center">
-                        <h5 class="card-title">No Data Found</h5>
-                        <p class="card-text">There is no data available at the moment.</p>
-                    </div>
-                </div>
-            </div>
-            @else
+            {{-- @if($circlecalls->isEmpty() && $busGiver->isEmpty() && $refGiver->isEmpty())
+            no data
+            @else --}}
+
             @foreach($circlecalls as $circlecall)
             <div class="col">
                 <div class="card">
+
                     <img src="{{ asset('ProfilePhoto/' . $circlecall['member']->profilePhoto) }}" class="card-img-top"
-                        alt="...">
-                    <div class="card-body">
+                        alt="..." style="width: 100%; height: 100%; object-fit: contain; aspect-ratio: 1/1;">
+
+                    <div class=" card-body">
                         <h5 class="card-title text-center">Max Business Meets</h5>
                         <p class="card-text text-center">
                             <span style="font-size: 18px; color: #e76a35; font-weight: bold;">
@@ -106,8 +101,8 @@
             <div class="col">
                 <div class="card">
                     <img src="{{ asset('ProfilePhoto/' . $busGiverData['member']->profilePhoto) }}" class="card-img-top"
-                        alt="Profile Photo">
-                    <div class="card-body">
+                        alt="Profile Photo" style="width: 100%; height: 100%; object-fit: contain; aspect-ratio: 1/1;">
+                    <div class=" card-body">
                         <h5 class="card-title text-center">Max Business Leader</h5>
                         <p class="card-text text-center">
                             <span style="font-size: 18px; color: #e76a35; font-weight: bold;">
@@ -136,13 +131,14 @@
                 </div>
             </div>
             @endforeach
-
+            {{-- @endif --}}
             {{-- Uncomment if needed --}}
             {{-- @foreach ($refGiver as $refGiverData)
             <div class="col">
                 <div class="card">
                     <img src="{{ asset('ProfilePhoto/' . $refGiverData['profilePhoto']) }}" class="card-img-top"
-                        alt="Profile Photo">
+                        alt="Profile Photo"
+                        style="width: 270px; height: 200px; object-fit: contain; aspect-ratio: 1/1;">
                     <div class="card-body">
                         <h5 class="card-title text-center">Top Reference Giver</h5>
                         <p class="card-text text-center">
@@ -174,7 +170,7 @@
                 </div>
             </div>
             @endforeach --}}
-            @endif
+
         </div>
 
 
@@ -281,7 +277,7 @@
             </div>
         </div> --}}
 
-        <div class="container-responsive">.
+        <div class="container-responsive">
             <div class="row">
                 @if ($meeting)
                 <div class="col-md-12">
@@ -374,8 +370,6 @@
                                     </div>
                                 </div>
                             </div>
-
-
                         </div>
                     </div>
                 </div>
