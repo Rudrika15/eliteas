@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('header', 'City')
+@section('title', 'Attendance')
 @section('content')
 
 {{-- Message --}}

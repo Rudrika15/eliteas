@@ -24,7 +24,7 @@
             <div class="card mt-3">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center mb-5">
-                        <h4 class="card-title">Business Slip by Other</h4>
+                        <h4 class="card-title">Business Slip Received</h4>
                         {{-- <a href="{{ route('busGiver.create') }}" class="btn btn-primary btn-sm mt-3">ADD</a> --}}
                     </div>
                     <hr class="mb-5">
@@ -38,7 +38,7 @@
                                     <th>Date</th>
                                     <th>Amount</th>
                                     {{-- <th>Status</th> --}}
-                                    <th>Action</th>
+                                    {{-- <th>Action</th> --}}
                                 </tr>
                             </thead>
                             <tbody>
@@ -51,13 +51,13 @@
                                     <td>{{ \Carbon\Carbon::parse($busGiverData->date)->format('d-m-Y') ?? '-' }}</td>
                                     <td>{{ $busGiverData->amount ?? '-' }}</td>
                                     {{-- <td>{{ $busGiverData->status }}</td> --}}
-                                    <td>
+                                    {{-- <td>
                                         <a href="{{ route('busGiver.edit', $busGiverData->id) }}"
                                             class="btn btn-bg-orange btn-sm btn-tooltip">
                                             <i class="bi bi-plus"></i>
                                             <span class="btn-text">Add Business Amount</span>
                                         </a>
-                                    </td>
+                                    </td> --}}
                                 </tr>
                                 @endforeach
                             </tbody>
@@ -81,7 +81,7 @@
             <div class="card mt-3">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center mb-5">
-                        <h4 class="card-title">Business Slip by Me</h4>
+                        <h4 class="card-title">Business Slip Given</h4>
                         {{-- <a href="{{ route('busGiver.create') }}" class="btn btn-primary btn-sm mt-3">ADD</a> --}}
                     </div>
                     <hr class="mb-5">
@@ -98,8 +98,8 @@
                             <tbody>
                                 @foreach ($busGiveByOther as $busGiveByOtherData)
                                 <tr>
-                                    <td>{{ $busGiveByOtherData->businessGiver->firstName . ' ' .
-                                        $busGiveByOtherData->businessGiver->lastName ?? '-' }}</td>
+                                    <td>{{ $busGiveByOtherData->loginMember->firstName . ' ' .
+                                        $busGiveByOtherData->loginMember->lastName ?? '-' }}</td>
                                     <td>{{ \Carbon\Carbon::parse($busGiveByOtherData->date)->format('d-m-Y') ?? '-' }}
                                     </td>
                                     <td>{{ $busGiveByOtherData->amount ?? '-' }}</td>

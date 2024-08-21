@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title', 'Edit Payment')
+@section('title', 'Business Slip')
 
 @section('content')
 <div class="card">

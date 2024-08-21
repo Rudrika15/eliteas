@@ -82,7 +82,7 @@ class ConnectionController extends Controller
                 // ->with(['user:id,firstName,lastName,email', 'member:id,userId,profilePhoto'])
                 ->with(['member' => function ($query) {
                     $query->select('id', 'userId', 'profilePhoto')
-                        ->with('user:id,email');
+                        ->with('user:id,email,firstName,lastName');
                 }])
                 ->get();
 

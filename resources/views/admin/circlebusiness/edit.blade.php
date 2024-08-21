@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title', 'UBN - Circle Business')
+@section('title', 'UBN - Business Slip')
 @section('content')
 
 {{-- Message --}}
@@ -98,7 +98,8 @@
             <div class="">
                 <div class="form-floating mt-3">
                     <input type="date" class="form-control @error('date') is-invalid @enderror" id="date" name="date"
-                        placeholder="date" required max="{{ date('Y-m-d') }}" value="{{ old('date', $busGiver->date) }}">
+                        placeholder="date" required max="{{ date('Y-m-d') }}"
+                        value="{{ old('date', $busGiver->date) }}">
                     <label for="date">Date</label>
                     @error('date')
                     <div class="invalid-tooltip">
@@ -121,7 +122,7 @@
 <div class="card">
     <div class="card-body">
         <div class="d-flex justify-content-between align-items-center mb-5">
-            <h4 class="mb-0 mt-3 text-blue">Payment History</h4>
+            <h4 class="mb-0 mt-3 text-blue">Business Slip Payment History</h4>
             {{-- <a href="{{ route('busGiver.create') }}" class="btn btn-primary btn-sm mt-3">ADD</a> --}}
         </div>
         <hr class="mb-5">

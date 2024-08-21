@@ -25,13 +25,19 @@ class CircleMeetingMemberReferenceController extends Controller
                 ->where('referenceGiverId', Auth::user()->id)
                 ->paginate(10);
 
-            $referenceByOther = CircleMeetingMembersReference::where('status', 'Active')
+            // $referenceByOther = CircleMeetingMembersReference::where('status', 'Active')
+            //     ->orderBy('id', 'DESC')
+            //     ->with('members')
+            //     ->with('refGiverName')
+            //     ->where('memberId', Auth::user()->id)
+            //     ->paginate(10);
+            
+            $busGiver = CircleMeetingMembersBusiness::where('loginMemberId', Auth::user()->id)
+                ->where('status', 'Active')
                 ->orderBy('id', 'DESC')
-                ->with('members')
-                ->with('refGiverName')
-                ->where('memberId', Auth::user()->id)
                 ->paginate(10);
-            return view('admin.refGiver.index', compact('refGiver', 'referenceByOther'));
+
+            return view('admin.refGiver.index', compact('refGiver', 'busGiver'));
         } catch (\Throwable $th) {
             throw $th;
             return view('servererror');

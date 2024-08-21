@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title', 'UBN - Referance Giver')
+@section('title', 'UBN - Referance')
 @section('content')
     <style>
         input[type=range]::-webkit-slider-thumb {

@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('header', 'My Payment History')
+@section('title', 'UBN - Payment History')
 @section('content')
 
 
@@ -30,6 +30,7 @@
                         <td>{{ $payment->date ? date('d-m-Y', strtotime($payment->date)) : '-' }}</td>
                         <td>{{ $payment->paymentMode ?? '-' }}</td>
                         <td>{{ number_format($payment->amount, 2, '.', ',') ?? '-' }}</td>
+                        {{-- <td>{{ number_format((float) $payment->amount, 2, '.', ',') ?? '-' }}</td> --}}
                     </tr>
                     @endforeach
                 </tbody>

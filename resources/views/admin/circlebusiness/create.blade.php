@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title', 'UBN - Circle Business')
+@section('title', 'UBN - Business Slip')
 @section('content')
 
     {{-- Message --}}

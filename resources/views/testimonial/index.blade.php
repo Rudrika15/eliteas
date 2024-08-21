@@ -21,58 +21,8 @@
 </div>
 @endif --}}
 
+{{-- Received Testimonial --}}
 <div class="container">
-    <div class="row">
-        <div class="col-12">
-            <div class="card mt-3">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center mb-5">
-                        <h4 class="card-title">My Testimonials</h4>
-                        <a href="{{ route('testimonial.create') }}" class="btn btn-bg-orange btn-sm mt-3 btn-tooltip">
-                            <i class="bi bi-plus-circle"></i>
-                            <span class="btn-text">Add Testimonial</span>
-                        </a>
-                    </div>
-                    <hr class="mb-5">
-                    <!-- Table with stripped rows -->
-                    <div class="table-responsive mt-5">
-                        <table class="table table-striped table-hover mb-5">
-                            <thead>
-                                <tr>
-                                    <th>Circle Member</th>
-                                    <th>Message</th>
-                                    <th>Date</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($myTestimonials as $myTestimonial)
-                                <tr>
-                                    <td>{{ $myTestimonial->receiver->firstName ?? '' }} {{
-                                        $myTestimonial->receiver->lastName ?? '' }}</td>
-                                    <td>{{ $myTestimonial->message ?? '' }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($myTestimonial->uploadedDate)->format('d-m-Y') ?? '' }}
-                                    <td>
-                                        <a href="{{ route('testimonial.edit', $myTestimonial->id) }}"
-                                            class="btn btn-bg-blue btn-sm btn-tooltip">
-                                            <i class="bi bi-pen"></i>
-                                            <span class="btn-text">Edit Testimonial</span>
-                                        </a>
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                        <div class="d-flex justify-content-end custom-pagination ">
-                            {!! $myTestimonials->links() !!}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    {{-- Received Testimonial --}}
     <div class="row">
         <div class="col-12">
             <div class="card mt-3">
@@ -112,6 +62,57 @@
         </div>
     </div>
 </div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card mt-3">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-5">
+                    <h4 class="card-title">Given Testimonials</h4>
+                    <a href="{{ route('testimonial.create') }}" class="btn btn-bg-orange btn-sm mt-3 btn-tooltip">
+                        <i class="bi bi-plus-circle"></i>
+                        <span class="btn-text">Add Testimonial</span>
+                    </a>
+                </div>
+                <hr class="mb-5">
+                <!-- Table with stripped rows -->
+                <div class="table-responsive mt-5">
+                    <table class="table table-striped table-hover mb-5">
+                        <thead>
+                            <tr>
+                                <th>Circle Member</th>
+                                <th>Message</th>
+                                <th>Date</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($myTestimonials as $myTestimonial)
+                            <tr>
+                                <td>{{ $myTestimonial->receiver->firstName ?? '' }} {{
+                                    $myTestimonial->receiver->lastName ?? '' }}</td>
+                                <td>{{ $myTestimonial->message ?? '' }}</td>
+                                <td>{{ \Carbon\Carbon::parse($myTestimonial->uploadedDate)->format('d-m-Y') ?? '' }}
+                                <td>
+                                    <a href="{{ route('testimonial.edit', $myTestimonial->id) }}"
+                                        class="btn btn-bg-blue btn-sm btn-tooltip">
+                                        <i class="bi bi-pen"></i>
+                                        <span class="btn-text">Edit Testimonial</span>
+                                    </a>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                    <div class="d-flex justify-content-end custom-pagination ">
+                        {!! $myTestimonials->links() !!}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 @endsection
 
 {{-- @section('styles')

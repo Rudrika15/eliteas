@@ -246,6 +246,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     //chat
     Route::post('/chat/sendMessage', [ChatController::class, 'sendMessage']);
     Route::get('/chat/getMessages', [ChatController::class, 'getMessages']);
+    Route::get('/chat/getList', [ChatController::class, 'getList']);
 
     //suggested members
     Route::get('/category-wise-member-index', [CircleMemberController::class, 'categoryWiseMember']);
@@ -296,4 +297,16 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     //userdata by id
     Route::get('v1/user-details/{userId}', [ApiController::class, 'getUserDetails']);
+
+    //connection
+
+    Route::get('v1/connections/receivedConnectionsRequests', [ConnectionController::class, 'receivedConnectionsRequests']);
+    Route::get('v1/connections/myConnections', [ConnectionController::class, 'myConnections']);
+    Route::post('v1/connections/sendRequest', [ConnectionController::class, 'sendRequest']);
+    Route::post('v1/connections/search', [ConnectionController::class, 'search']);
+    Route::post('v1/connections/requestAction', [ConnectionController::class, 'requestAction']);
+    Route::post('v1/connections/removeConnection', [ConnectionController::class, 'removeConnection']);
+    Route::post('v1/connections/viewMemberProfile', [ConnectionController::class, 'viewMemberProfile']);
+    Route::get('v1/connections/ConnectionsRequests', [ConnectionController::class, 'ConnectionsRequests']);
+
 });

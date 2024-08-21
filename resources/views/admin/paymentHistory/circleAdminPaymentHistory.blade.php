@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('header', 'Payment History')
+@section('title', 'UBN - Payment History')
 @section('content')
 
 <style>

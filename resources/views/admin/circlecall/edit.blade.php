@@ -3,21 +3,6 @@
 @section('title', 'UBN - Business Meet')
 @section('content')
 
-{{-- Message --}}
-{{-- @if (Session::has('success'))
-<div class="alert alert-success alert-dismissible" role="alert">
-    <button type="button" class="close" data-dismiss="alert"></button>
-    <strong>Success!</strong> {{ session('success') }}
-</div>
-@endif
-
-@if (Session::has('error'))
-<div class="alert alert-danger alert-dismissible" role="alert">
-    <button type="button" class="close" data-dismiss="alert"></button>
-    <strong>Error!</strong> {{ session('error') }}
-</div>
-@endif --}}
-
 <div class="card">
     <div class="card-body d-flex justify-content-between align-items-center">
         <h5 class="card-title">Edit Business Meet</h5>
@@ -52,9 +37,9 @@
 
             <div class="col-md-6">
                 <div class="form-floating mt-3">
-                    <input type="text" class="form-control @error('meetingPlace') is-invalid @enderror" id="meetingPlace"
-                        name="meetingPlace" placeholder="Meeting Place Name" value="{{ $circlecall->meetingPlace }}"
-                        required>
+                    <input type="text" class="form-control @error('meetingPlace') is-invalid @enderror"
+                        id="meetingPlace" name="meetingPlace" placeholder="Meeting Place Name"
+                        value="{{ $circlecall->meetingPlace }}" required>
                     <label for="meetingPlace">Meeting Place Name</label>
                     @error('meetingPlace')
                     <div class="invalid-tooltip">

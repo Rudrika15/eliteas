@@ -1,6 +1,5 @@
 @extends('layouts.master')
-
-@section('header', 'Subscriptions')
+@section('title', 'UBN - Subscriptions')
 @section('content')
 
 {{-- Message --}}

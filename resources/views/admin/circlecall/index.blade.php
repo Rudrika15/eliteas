@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title', 'UBN - Business Meetn')
+@section('title', 'UBN - Business Meet')
 @section('content')
 
 {{-- Message --}}

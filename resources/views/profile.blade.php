@@ -237,6 +237,34 @@
                                     @enderror
                                 </div>
                             </div>
+                            <div class="col-md-6 mt-3">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control @error('webSite') is-invalid @enderror"
+                                        id="webSite" name="webSite" value="{{ $member->webSite ?? '-' }}"
+                                        placeholder="webSite">
+                                    <label for="webSite">Website</label>
+                                    @error('webSite')
+                                    <div class="invalid-tooltip">
+                                        {{ $message }}
+                                    </div>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-6 mt-3">
+                                <div class="form-floating">
+                                    <input type="text"
+                                        class="form-control @error('businessCategory') is-invalid @enderror"
+                                        id="businessCategory" name="businessCategory"
+                                        value="{{ $member->bCategory->categoryName ?? '-' }}"
+                                        placeholder="businessCategory" readonly>
+                                    <label for="businessCategory">Business Category</label>
+                                    @error('businessCategory')
+                                    <div class="invalid-tooltip">
+                                        {{ $message }}
+                                    </div>
+                                    @enderror
+                                </div>
+                            </div>
 
                             {{-- <div class="col-md-6 mt-3">
                                 <div class="form-floating">
@@ -300,51 +328,42 @@
                                 </div>
                             </div> --}}
 
+
                             <div class="form-label-group mt-3">
-                                <label for="profilePhoto" class="fw-bold">Profile Photo <sup
-                                        class="text-danger">*</sup></label>
-                                <input type="file" class="form-control" id="profilePhoto" name="profilePhoto"
-                                    accept="image/*" onchange="previewPhoto(event, 'photoPreview')">
-                                <div style="width: 100px; height: 100px; position: relative;" class="mt-3">
-                                    <img id="photoPreview"
-                                        src="{{ asset('ProfilePhoto/' . ($member->profilePhoto ?? 'default.jpg')) }}"
-                                        style="width: 100%; height: 100%; object-fit: contain; aspect-ratio: 1/1;">
-                                </div>
-                                @error('profilePhoto')
-                                <span class="error">{{ $message }}</span>
-                                @enderror
-                            </div>
-
-                            <div class="col-md-6 mt-3">
-                                <div class="form-label-group mt-3">
-                                    <label for="companyLogo" class="fw-bold">Company Logo <sup
-                                            class="text-danger">*</sup></label>
-                                    <input type="file" class="form-control" id="companyLogo" name="companyLogo"
-                                        accept="image/*" onchange="previewPhoto(event, 'logoPreview')">
-                                    <div style="width: 100px; height: 100px; position: relative;" class="mt-3">
-                                        <img id="logoPreview"
-                                            src="{{ asset('CompanyLogo/' . ($member->companyLogo ?? 'default.jpg')) }}"
-                                            style="width: 100%; height: 100%; object-fit: contain; aspect-ratio: 1/1;">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-label-group mt-3">
+                                            <label for="profilePhoto" class="fw-bold">Profile Photo <sup
+                                                    class="text-danger">*</sup></label>
+                                            <input type="file" class="form-control" id="profilePhoto"
+                                                name="profilePhoto" accept="image/*"
+                                                onchange="previewPhoto(event, 'photoPreview')">
+                                            <div style="width: 100px; height: 100px; position: relative;" class="mt-3">
+                                                <img id="photoPreview"
+                                                    src="{{ asset('ProfilePhoto/' . ($member->profilePhoto ?? 'default.jpg')) }}"
+                                                    style="width: 100%; height: 100%; object-fit: contain; aspect-ratio: 1/1;">
+                                            </div>
+                                            @error('profilePhoto')
+                                            <span class="error">{{ $message }}</span>
+                                            @enderror
+                                        </div>
                                     </div>
-                                    @error('companyLogo')
-                                    <span class="error">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                            </div>
-
-
-
-                            <div class="col-md-6 mt-3">
-                                <div class="form-floating">
-                                    <input type="text" class="form-control @error('webSite') is-invalid @enderror"
-                                        id="webSite" name="webSite" value="{{ $member->webSite ?? '-' }}"
-                                        placeholder="webSite">
-                                    <label for="webSite">Website</label>
-                                    @error('webSite')
-                                    <div class="invalid-tooltip">
-                                        {{ $message }}
+                                    <div class="col-md-6">
+                                        <div class="form-label-group mt-3">
+                                            <label for="companyLogo" class="fw-bold">Company Logo <sup
+                                                    class="text-danger">*</sup></label>
+                                            <input type="file" class="form-control" id="companyLogo" name="companyLogo"
+                                                accept="image/*" onchange="previewPhoto(event, 'logoPreview')">
+                                            <div style="width: 100px; height: 100px; position: relative;" class="mt-3">
+                                                <img id="logoPreview"
+                                                    src="{{ asset('CompanyLogo/' . ($member->companyLogo ?? 'default.jpg')) }}"
+                                                    style="width: 100%; height: 100%; object-fit: contain; aspect-ratio: 1/1;">
+                                            </div>
+                                            @error('companyLogo')
+                                            <span class="error">{{ $message }}</span>
+                                            @enderror
+                                        </div>
                                     </div>
-                                    @enderror
                                 </div>
                             </div>
 

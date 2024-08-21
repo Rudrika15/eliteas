@@ -40,7 +40,7 @@
         <li class="nav-item">
             <a class="nav-link collapsed " href="{{ route('refGiver.index') }}">
                 <i class="bi bi-person  text-orange"></i>
-                <span class="text-blue">Reference</span>
+                <span class="text-blue">References</span>
             </a>
         </li>
         <li class="nav-item">

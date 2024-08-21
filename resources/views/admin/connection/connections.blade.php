@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('header', 'Connections')
+@section('title', 'UBN - Connections')
 @section('content')
 
 {{-- Message --}}

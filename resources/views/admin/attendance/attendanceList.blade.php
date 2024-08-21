@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('header', 'List')
+@section('title', 'UBN - Attendance')
 @section('content')
 
 <div class="card">

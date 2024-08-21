@@ -27,6 +27,32 @@ class ChatController extends Controller
         return response()->json(['status' => 'Message sent']);
     }
 
+    // public function getMessages()
+    // {
+    //     // Get the current authenticated user's ID
+    //     $userId = Auth::id();
+
+    //     // Fetch messages where the current user is either the sender or receiver, and they are communicating with each other
+    //     $messages = Message::where(function ($query) use ($userId) {
+    //         $query->where('senderId', $userId)
+    //             ->whereIn('receiverId', function ($subQuery) use ($userId) {
+    //                 $subQuery->select('senderId')->from('messages')->where('receiverId', $userId);
+    //             })
+    //             ->orWhere('receiverId', $userId)
+    //             ->whereIn('senderId', function ($subQuery) use ($userId) {
+    //                 $subQuery->select('receiverId')->from('messages')->where('senderId', $userId);
+    //             });
+    //     })
+    //         ->orderBy('created_at', 'asc')
+    //         ->get();
+
+    //     foreach ($messages as $key => $value) {
+    //         $messages[$key]->content = decrypt($value->content);
+    //     }
+
+    //     return response()->json($messages);
+    // }
+
     public function getMessages()
     {
         // Get the current authenticated user's ID
@@ -45,5 +71,3 @@ class ChatController extends Controller
         return response()->json($messages);
     }
 }
-
-

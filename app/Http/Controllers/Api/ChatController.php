@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\User;
+use App\Utils\Utils;
 use App\Models\Message;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use App\Utils\Utils;
 
 
 class ChatController extends Controller
@@ -56,6 +57,38 @@ class ChatController extends Controller
             }
 
             return Utils::sendResponse(['messages' => $messages], 'Messages retrieved successfully', 200);
+        } catch (\Throwable $th) {
+            return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
+        }
+    }
+
+    public function getList()
+    {
+        $userId = Auth::id();
+
+        try {
+            // Get distinct user IDs who sent messages to or received messages from the current user
+            $userIds = Message::where('senderId', $userId)
+                ->orWhere('receiverId', $userId)
+                ->get()
+                ->map(function ($message) use ($userId) {
+                    return $message->senderId == $userId ? $message->receiverId : $message->senderId;
+                })
+                ->unique()
+                ->values();
+
+            // Include also the users who have sent messages to the logged-in user
+            $userIdsFromSender = Message::where('receiverId', $userId)
+                ->pluck('senderId')
+                ->unique();
+
+            // Merge both lists of user IDs and remove duplicates
+            $allUserIds = $userIds->merge($userIdsFromSender)->unique();
+
+            // Fetch user names based on the unique user IDs
+            $listOfUser = User::whereIn('id', $allUserIds)->get(['id', 'firstName', 'lastName']);
+
+            return Utils::sendResponse(['listOfUser' => $listOfUser], 'List of users retrieved successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
