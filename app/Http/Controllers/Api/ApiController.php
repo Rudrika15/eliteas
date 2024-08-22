@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\User;
 use App\Utils\Utils;
 use App\Models\Circle;
 use App\Models\Member;
@@ -133,33 +134,60 @@ class ApiController extends Controller
             );
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
-        }  
+        }
     }
 
     public function maxReference(Request $request)
     {
         try {
             // Retrieve all CircleMeetingMembersReference data with 'Active' status
+            $previousMonth = Carbon::now()->subMonth()->month;
+            $previousYear = Carbon::now()->subMonth()->year;
+
             $refGiver = CircleMeetingMembersReference::where('status', 'Active')
-            ->get();
+                ->whereYear('created_at', $previousYear)
+                ->whereMonth('created_at', $previousMonth)
+                ->get()
+                ->groupBy('referenceGiverId')
+                ->map(function ($group) {
 
-            // Group and map the data to include user, count, businessCategoryId, and circleId
-            $refGiver = $refGiver->groupBy('referenceGiverId')->map(function ($group) {
-                // Retrieve the associated member based on referenceGiverId
-                $member = Member::where('userId', $group->first()->referenceGiverId)->first();
+                    $referenceGiverId = $group->first()->referenceGiverId ?? null;
 
-                // If member is found, include their businessCategoryId and circleId
-                return [
-                    'user' => $group->first()->refGiverName,
-                    'count' => $group->count(),
-                    'businessCategoryId' => $member ? $member->businessCategoryId : null,
-                    'businessCategory' => $member ? $member->bcategory->categoryName : null,
-                    'circleId' => $member ? $member->circleId : null,
-                    'circle' => $member ? $member->circle->circleName : null,
-                    'profilePhoto' => $member ? $member->profilePhoto : null,
-                    
-                ];
-            })->sortByDesc('count')->values();
+                    if ($referenceGiverId === null) {
+                        return null;
+                    }
+
+                    $user = User::find($referenceGiverId);
+
+                    // Only proceed if the user exists and is active (not deleted)
+                    if ($user && $user->status === 'Active') {
+                        $member = Member::where('userId', $referenceGiverId)->where('status', 'Active')->first();
+
+                        return [
+                            'user' => $user,
+                            'count' => $group->count(),
+                            'businessCategoryId' => $member ? $member->businessCategoryId : null,
+                            'businessCategory' => $member ? $member->bcategory->categoryName : null,
+                            'circleId' => $member ? $member->circleId : null,
+                            'circle' => $member ? $member->circle->circleName : null,
+                            'profilePhoto' => $member ? $member->profilePhoto : null,
+                        ];
+                    }
+
+                    return null;
+                })
+                ->filter()
+                ->sortByDesc('count')
+                ->first();
+
+            if (!$refGiver) {
+                // Return a message if no active users are found
+                return Utils::sendResponse(
+                    null,
+                    'No Reference Lead Board to show for now.',
+                    404
+                );
+            }
 
             return Utils::sendResponse(
                 ['refGiver' => $refGiver],
@@ -170,6 +198,7 @@ class ApiController extends Controller
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
+
 
 
     public function maxRefferal(Request $request)
@@ -722,6 +751,7 @@ class ApiController extends Controller
             // Fetch members who belong to the same business category as the authenticated user
             $members = Member::where('businessCategoryId', $authBusinessCategoryId)
                 ->with('circle')
+                ->where('status', 'Active')
                 ->get();
 
             foreach ($members as $member) {
@@ -787,7 +817,7 @@ class ApiController extends Controller
         try {
             // Fetch the member by user ID
             $member = Member::where('userId', $userId)
-                ->with(['user', 'circle:id,circleName','bcategory:id,categoryName'])
+                ->with(['user', 'circle:id,circleName', 'bcategory:id,categoryName'])
                 ->first();
 
             // If member is not found, return a not found response
@@ -817,9 +847,4 @@ class ApiController extends Controller
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
-
-
-
-
-
 }

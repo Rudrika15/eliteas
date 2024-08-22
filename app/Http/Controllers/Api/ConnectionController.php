@@ -194,13 +194,16 @@ class ConnectionController extends Controller
         try {
 
             $member = Member::where('userId', $request->input('userId'))
-                ->with('user', 'circle', 'billingAddress', 'contactDetails', 'topsProfile', 'connections')
+                ->with('user', 'circle', 'billingAddress', 'contactDetails', 'topsProfile', 'connections', 'bCategory')
                 ->first();
 
             if ($member) {
                 // Determine the status of the connection
                 $status = $member->connections->isEmpty() ? null : $member->connections->first()->status;
                 $member->status = $status == 'Accepted' ? 'Connected' : ($status == 'Pending' ? 'Pending' : null);
+
+                // Get businessCategoryName
+                $member->businessCategoryName = $member->bCategory ? $member->bCategory->categoryName : null;
             }
 
             return Utils::sendResponse([

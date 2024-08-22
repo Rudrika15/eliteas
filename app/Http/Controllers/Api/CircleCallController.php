@@ -71,6 +71,23 @@ class CircleCallController extends Controller
 
 
 
+
+    public function recievedBusinessMeet(Request $request)
+    {
+        try {
+            $callWith = CircleCall::with('member')
+                ->where('meetingPersonId', Auth::user()->id)
+                ->with('member')
+                ->where('status', 'Active')
+                ->orderBy('id', 'DESC');
+
+            return Utils::sendResponse(['callWith' => $callWith], 'Circle Call retrieved successfully', 200);
+        } catch (\Throwable $th) {
+            return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
+        }
+    }
+
+
     public function show(Request $request, $id)
     {
         try {

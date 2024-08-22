@@ -108,11 +108,11 @@
                                             <div class="d-grid">
                                                 <button type="submit" class="btn btn-bg-blue">Login</button>
                                             </div>
-                                            <div class="mt-3 text-center">
+                                            {{-- <div class="mt-3 text-center">
                                                 <a href="{{ route('otp.request') }}" class=""
                                                     style="color: #1d3268; font-weight: bold;">Login with
                                                     OTP</a>
-                                            </div>
+                                            </div> --}}
 
                                             @if (Route::has('password.request'))
                                             <div class="mt-3 text-center">

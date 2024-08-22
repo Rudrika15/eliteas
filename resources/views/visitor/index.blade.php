@@ -33,6 +33,8 @@
                             <th>Networking Group</th>
                             <th>Circle Meet</th>
                             <th>Product / Service</th>
+                            <th>Invited By</th>
+                            <th>Know about Us</th>
                             <th>Remarks</th>
                         </tr>
                     </thead>
@@ -47,6 +49,8 @@
                             <td>{{$visitor->networkingGroup}}</td>
                             <td>{{$visitor->circleMeet}}</td>
                             <td>{{$visitor->product}}</td>
+                            <td>{{$visitor->invitedBy}}</td>
+                            <td>{{$visitor->knowUs}}</td>
                             <td>
                                 <input type="text" class="form-control remark-field" data-id="{{ $visitor->id }}"
                                     value="{{ $visitor->remarks }}">
@@ -97,4 +101,4 @@
         });
     });
 </script>
-@endsection                                                                                                                                                                                                                                                                                                                   
+@endsection

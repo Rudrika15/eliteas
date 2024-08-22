@@ -284,6 +284,13 @@
     </a>
 </li>
 
+<li class="nav-item">
+    <a class="nav-link collapsed" href="{{ route('userList') }}">
+        <i class="bi bi-people" style="color: #e76a35"></i>
+        <span class="text-blue">User List</span>
+    </a>
+</li>
+
 
 
 

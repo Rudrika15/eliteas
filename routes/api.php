@@ -85,6 +85,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     // Circl 1:1 Call 
     Route::get('circlecalls-index', [CircleCallController::class, 'index']);
+    Route::get('circlecalls-recievedBusinessMeet-index', [CircleCallController::class, 'recievedBusinessMeet']);
     Route::get('circlecalls-view/{id}', [CircleCallController::class, 'view']);
     Route::post('circlecalls-create', [CircleCallController::class, 'create']);
     Route::post('circlecalls-update/{id}', [CircleCallController::class, 'update']);
@@ -95,6 +96,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     // Circle Meeting Business Giver
     Route::get('circle-meeting-member-businesses', [CircleMeetingMemberBusinessController::class, 'index']);
+    Route::get('circle-meeting-member-business-received-index', [CircleMeetingMemberBusinessController::class, 'recievedBus']);
     Route::get('circle-meeting-member-businesses/{id}', [CircleMeetingMemberBusinessController::class, 'view']);
     Route::post('circle-meeting-member-businesses/create', [CircleMeetingMemberBusinessController::class, 'create']);
     Route::post('circle-meeting-member-businesses/{id}', [CircleMeetingMemberBusinessController::class, 'update']);
@@ -104,6 +106,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     // Reference Giver
 
     Route::get('circle-meeting-member-references-index', [CircleMeetingMemberReferenceController::class, 'index']);
+    Route::get('circle-meeting-member-references-recieved-index', [CircleMeetingMemberReferenceController::class, 'receivedRef']);
     Route::get('circle-meeting-member-references/{id}', [CircleMeetingMemberReferenceController::class, 'view']);
     Route::post('circle-meeting-member-references-create', [CircleMeetingMemberReferenceController::class, 'create']);
     Route::post('circle-meeting-member-references-update/{id}', [CircleMeetingMemberReferenceController::class, 'update']);

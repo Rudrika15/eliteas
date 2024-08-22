@@ -32,6 +32,7 @@ use App\Http\Controllers\Admin\LeaderBoardController;
 use App\Http\Controllers\Admin\CircleMemberController;
 use App\Http\Controllers\Admin\CircleMeetingController;
 use App\Http\Controllers\Admin\TrainerMasterController;
+use App\Http\Controllers\Auth\ChangePasswordController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\visitor\VisitorFormController;
 use App\Http\Controllers\Admin\MembershipTypeController;
@@ -92,11 +93,17 @@ Route::group(['middleware' => ['auth']], function () {
     });
 
 
+    //change password
+    Route::get('change-password', [ChangePasswordController::class, 'showChangePasswordForm'])->name('changePasswordForm');
+    Route::post('change-password', [ChangePasswordController::class, 'changePassword'])->name('changePassword');
+
     Route::post('/save-location', [LocationController::class, 'saveLocation']);
 
+    Route::get('/user-list', [UserController::class, 'userList'])->name('userList');
+
     Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-    Route::get('/franchise/index', [FranchiseController::class, 'index'])->name('franchise.index');
     Route::get('franchise/show/{id?}', [FranchiseController::class, 'show'])->name('franchise.show');
+    Route::get('/franchise/index', [FranchiseController::class, 'index'])->name('franchise.index');
     Route::get('franchise/create', [FranchiseController::class, 'create'])->name('franchise.create');
     Route::post('franchise/store', [FranchiseController::class, 'store'])->name('franchise.store');
     Route::get('franchise/edit/{id?}', [FranchiseController::class, 'edit'])->name('franchise.edit');

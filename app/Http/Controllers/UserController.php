@@ -30,6 +30,13 @@ class UserController extends Controller
             ->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
+    public function userList(Request $request): View
+    {
+        $data = User::where('status', 'Active')->paginate(10);
+        return view('users.userList', compact('data'))
+            ->with('i', ($request->input('page', 1) - 1) * 5);
+    }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -159,20 +166,19 @@ class UserController extends Controller
             ->with('success', 'User deleted successfully');
     }
 
-    
-public function getUserRoles($userId)
-{
-    // Fetch user roles based on $userId
-    $user = User::find($userId);
 
-    if (!$user) {
-        return response()->json(['error' => 'User not found'], 404);
+    public function getUserRoles($userId)
+    {
+        // Fetch user roles based on $userId
+        $user = User::find($userId);
+
+        if (!$user) {
+            return response()->json(['error' => 'User not found'], 404);
+        }
+
+        // Assuming user roles are stored in a roles column or relation
+        $roles = $user->roles()->pluck('name')->toArray();
+
+        return response()->json($roles);
     }
-
-    // Assuming user roles are stored in a roles column or relation
-    $roles = $user->roles()->pluck('name')->toArray();
-
-    return response()->json($roles);
-}
-
 }

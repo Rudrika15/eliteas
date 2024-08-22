@@ -34,6 +34,19 @@ class CircleMeetingMemberBusinessController extends Controller
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
+
+    public function recievedBus(Request $request)
+    {
+        try {
+            $busRecieved = CircleMeetingMembersBusiness::where('businessGiverId', Auth::user()->id)
+                ->where('status', 'Active')
+                ->orderBy('id', 'DESC')
+                ->get();
+            return Utils::sendResponse(['busRecieved' => $busRecieved], 'Circle Meeting Members Business retrieved successfully', 200);
+        } catch (\Throwable $th) {
+            return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
+        }
+    }
     
 
 
@@ -70,6 +83,7 @@ class CircleMeetingMemberBusinessController extends Controller
             'loginMember' => 'required',
             'amount' => 'required',
             'date' => 'required',
+            'remarks' => 'required',
         ]);
 
         if ($validator->fails()) {

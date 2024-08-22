@@ -90,6 +90,7 @@ class CircleMeetingMemberBusinessController extends Controller
             $busGiver->loginMemberId = $request->loginMemberId;
             $busGiver->amount = $request->amount;
             $busGiver->date = $request->date;
+            $busGiver->remarks = $request->remarks;
             $busGiver->status = 'Active';
 
             $busGiver->save();

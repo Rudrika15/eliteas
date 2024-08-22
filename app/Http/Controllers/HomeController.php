@@ -164,25 +164,44 @@ class HomeController extends Controller
 
             //reference
 
-            // Retrieve all CircleMeetingMembersReference data with 'Active' status
-            $refGiver = CircleMeetingMembersReference::where('status', 'Active')->get();
+            $previousMonth = Carbon::now()->subMonth()->month;
+            $previousYear = Carbon::now()->subMonth()->year;
 
-            // Group and map the data to include user, count, businessCategoryId, and circleId
-            $refGiver = $refGiver->groupBy('referenceGiverId')->map(function ($group) {
-                // Retrieve the associated member based on referenceGiverId
-                $member = Member::where('userId', $group->first()->referenceGiverId)->first();
+            $refGiver = CircleMeetingMembersReference::where('status', 'Active')
+                ->whereYear('created_at', $previousYear)
+                ->whereMonth('created_at', $previousMonth)
+                ->get()
+                ->groupBy('referenceGiverId')
+                ->map(function ($group) {
 
-                // If member is found, include their businessCategoryId and circleId
-                return [
-                    'user' => $group->first()->refGiverName,
-                    'count' => $group->count(),
-                    'businessCategoryId' => $member ? $member->businessCategoryId : null,
-                    'businessCategory' => $member ? $member->bcategory->categoryName : null,
-                    'circleId' => $member ? $member->circleId : null,
-                    'circle' => $member ? $member->circle->circleName : null,
-                    'profilePhoto' => $member ? $member->profilePhoto : null,
-                ];
-            })->sortByDesc('count')->values();
+                    $referenceGiverId = $group->first()->referenceGiverId ?? null;
+
+                    if ($referenceGiverId === null) {
+                        return null;
+                    }
+
+                    $user = User::find($referenceGiverId);
+
+                    if ($user && $user->status === 'Active') {
+                        $member = Member::where('userId', $referenceGiverId)->where('status', 'Active')->first();
+
+                        return [
+                            'user' => $user,
+                            'count' => $group->count(),
+                            'businessCategoryId' => $member ? $member->businessCategoryId : null,
+                            'businessCategory' => $member ? $member->bcategory->categoryName : null,
+                            'circleId' => $member ? $member->circleId : null,
+                            'circle' => $member ? $member->circle->circleName : null,
+                            'profilePhoto' => $member ? $member->profilePhoto : null,
+                        ];
+                    }
+
+                    return null;
+                })
+                ->filter()
+                ->sortByDesc('count')
+                ->first();
+
 
             return view('home', compact('count', 'circlecalls', 'busGiver', 'refGiver', 'nearestTraining', 'findRegister', 'testimonials', 'meeting', 'businessCategory', 'myInvites'));
         }

@@ -56,13 +56,11 @@
 
     @role('Member')
     <div>
+        @if(count($circlecalls) > 0 || count($busGiver) > 0 || $refGiver)
         <div class="card-header">
             <b style="color: #1d2856; font-size:15px">Leader Board</b>
         </div>
         <div class="row row-cols-1 row-cols-md-3 g-4">
-            {{-- @if($circlecalls->isEmpty() && $busGiver->isEmpty() && $refGiver->isEmpty())
-            no data
-            @else --}}
 
             @foreach($circlecalls as $circlecall)
             <div class="col">
@@ -131,151 +129,46 @@
                 </div>
             </div>
             @endforeach
-            {{-- @endif --}}
-            {{-- Uncomment if needed --}}
-            {{-- @foreach ($refGiver as $refGiverData)
+            @if($refGiver)
             <div class="col">
                 <div class="card">
-                    <img src="{{ asset('ProfilePhoto/' . $refGiverData['profilePhoto']) }}" class="card-img-top"
-                        alt="Profile Photo"
+                    <img src="{{ asset('ProfilePhoto/' . ($refGiver['profilePhoto'] ?? 'default.jpg')) }}"
+                        class="card-img-top" alt="Profile Photo"
                         style="width: 270px; height: 200px; object-fit: contain; aspect-ratio: 1/1;">
                     <div class="card-body">
                         <h5 class="card-title text-center">Top Reference Giver</h5>
                         <p class="card-text text-center">
                             <span style="font-size: 18px; color: #e76a35; font-weight: bold;">
-                                {{ optional($refGiverData['user'])->firstName ?? 'N/A' }} {{
-                                optional($refGiverData['user'])->lastName ?? 'N/A' }}<br>
+                                {{ $refGiver['user']->firstName ?? 'N/A' }} {{ $refGiver['user']->lastName ?? 'N/A'
+                                }}<br>
                             </span>
                             <hr class="mx-auto" style="color: #e76a35; width: 30%;">
                         <div style="display: flex; justify-content: center;">
                             <span style="font-size: 14px; text-align: center;">
-                                <span style="color: #e76a35; font-weight: bold;">Circle: {{ $refGiverData['circle'] ??
-                                    'N/A'
+                                <span style="color: #e76a35; font-weight: bold;">Circle: {{ $refGiver['circle'] ?? 'N/A'
                                     }}</span><br>
                             </span>
                         </div>
                         <hr class="mx-auto" style="color: #e76a35; width: 30%;">
                         <div style="display: flex; justify-content: center;">
                             <span style="font-size: 12px; text-align: center;">
-                                <span style="color: #e76a35; font-weight: bold;">References Count: {{
-                                    $refGiverData['count'] ??
-                                    '0' }}</span><br>
+                                <span style="color: #e76a35; font-weight: bold;">References Count: {{ $refGiver['count']
+                                    ?? '0'
+                                    }}</span><br>
                                 <hr class="mx-auto" style="color: #e76a35; width: 30%;">
                                 <span style="color: #e76a35; font-weight: bold;">Business Category: {{
-                                    $refGiverData['businessCategory'] ?? 'N/A' }}</span><br>
+                                    $refGiver['businessCategory']
+                                    ?? 'N/A' }}</span><br>
                             </span>
                         </div>
                         </p>
                     </div>
                 </div>
             </div>
-            @endforeach --}}
+            @endif
 
         </div>
-
-
-        {{-- <div class="row">
-            <div class="col-md-4">
-                <a href="{{ route('maxMeetings.index') }}" class="card-link">
-                    <div class="card shadow">
-                        <div class="card-header">
-
-                            <i class="bi bi-bookmark-star"
-                                style="display: inline-block; float: right; color: rgb(255, 187, 0);"></i>
-                        </div>
-                        <div class="card-body">
-
-                            <img src="design.png" alt="design">
-
-                        </div>
-                    </div>
-                </a>
-            </div>
-
-            <div class="col-md-4">
-                <a href="{{ route('maxBusiness.index') }}" class="card-link">
-                    <div class="card shadow">
-                        <div class="card-header">
-                            <b style="color: #1d2856;">Business Leaderboard</b>
-                            <i class="bi bi-bookmark-star"
-                                style="display: inline-block; float: right; color: rgb(255, 187, 0);"></i>
-                        </div>
-                        <div class="card-body">
-                            @if (session('status'))
-                            <div class="alert alert-success" role="alert">
-                                {{ session('status') }}
-                            </div>
-                            @endif --}}
-                            {{-- <h2>{{ $count }}</h2> --}}
-                            {{--
-                        </div>
-                    </div>
-                </a>
-            </div> --}}
-
-            {{-- <div class="col-md-4">
-                <a href="{{ route('maxReference.index') }}" class="card-link">
-                    <div class="card shadow">
-                        <div class="card-header">
-                            <b style="color: #1d2856;">Reference Leaderboard</b>
-                            <i class="bi bi-bookmark-star"
-                                style="display: inline-block; float: right; color: rgb(255, 187, 0);"></i>
-                        </div>
-                        <div class="card-body">
-                            @if (session('status'))
-                            <div class="alert alert-success" role="alert">
-                                {{ session('status') }}
-                            </div>
-                            @endif --}}
-                            {{-- <h2>{{ $count }}</h2> --}}
-                            {{--
-                        </div>
-                    </div>
-                </a>
-            </div>
-
-            <div class="col-md-4">
-                <a href="{{ route('maxRefferal.index') }}" class="card-link">
-                    <div class="card shadow">
-                        <div class="card-header">
-                            <b style="color: #1d2856;">Referral Leaderboard</b>
-                            <i class="bi bi-bookmark-star"
-                                style="display: inline-block; float: right; color: rgb(255, 187, 0);"></i>
-                        </div>
-                        <div class="card-body">
-                            @if (session('status'))
-                            <div class="alert alert-success" role="alert">
-                                {{ session('status') }}
-                            </div>
-                            @endif --}}
-                            {{-- <h2>{{ $count }}</h2> --}}
-                            {{--
-                        </div>
-                    </div>
-                </a>
-            </div>
-
-            <div class="col-md-4">
-                <a href="{{ route('maxVisitor.index') }}" class="card-link">
-                    <div class="card shadow">
-                        <div class="card-header">
-                            <b style="color: #1d2856;">Visitors</b>
-                            <i class="bi bi-people"
-                                style="display: inline-block; float: right; color: rgb(255, 187, 0);"></i>
-                        </div>
-                        <div class="card-body">
-                            @if (session('status'))
-                            <div class="alert alert-success" role="alert">
-                                {{ session('status') }}
-                            </div>
-                            @endif --}}
-                            {{-- <h2>{{ $count }}</h2> --}}
-                            {{--
-                        </div>
-                    </div>
-                </a>
-            </div>
-        </div> --}}
+        @endif
 
         <div class="container-responsive">
             <div class="row">

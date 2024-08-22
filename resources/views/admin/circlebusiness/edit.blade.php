@@ -108,6 +108,19 @@
                     @enderror
                 </div>
             </div>
+            <div class="">
+                <div class="form-floating mt-3">
+                    <input type="remarks" class="form-control @error('remarks') is-invalid @enderror" id="remarks" name="remarks"
+                        placeholder="remarks"
+                        value="{{ old('remarks', $busGiver->remarks) }}">
+                    <label for="remarks">Remarks</label>
+                    @error('remarks')
+                    <div class="invalid-tooltip">
+                        {{ $message }}
+                    </div>
+                    @enderror
+                </div>
+            </div>
 
             <div class="text-center mt-5">
                 <button type="submit" class="btn btn-bg-blue">Submit</button>

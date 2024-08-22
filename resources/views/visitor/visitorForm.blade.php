@@ -239,8 +239,20 @@
                                                             @enderror
                                                         </div>
                                                         <div class="form-group col-sm-6 flex-column d-flex">
+                                                            <label class="form-control-label px-3">Invited by<span
+                                                                    class="text-danger">*</span></label>
+                                                            <input type="text" id="invitedBy" name="invitedBy"
+                                                                value="{{ old('invitedBy') }}"
+                                                                class="form-control @error('invitedBy') is-invalid @enderror">
+                                                            @error('invitedBy')
+                                                            <span class="invalid-feedback" role="alert">
+                                                                <strong>{{ $message }}</strong>
+                                                            </span>
+                                                            @enderror
+                                                        </div>
+                                                        <div class="form-group col-sm-6 flex-column d-flex">
                                                             <label class="form-control-label px-3">Product /
-                                                                Service<span class="text-danger">*</span></label>
+                                                                Service</label>
                                                             <input type="text" id="product" name="product"
                                                                 value="{{ old('product') }}"
                                                                 class="form-control @error('product') is-invalid @enderror"
@@ -251,12 +263,9 @@
                                                             </span>
                                                             @enderror
                                                         </div>
-                                                    </div>
-                                                    <div class="row justify-content-between text-left">
                                                         <div class="form-group col-sm-6 flex-column d-flex">
                                                             <label class="form-control-label px-3">Are you part of any
-                                                                networking group?<span
-                                                                    class="text-danger">*</span></label>
+                                                                networking group?</label>
                                                             <input type="text" id="networkingGroup"
                                                                 name="networkingGroup"
                                                                 value="{{ old('networkingGroup') }}"
@@ -268,14 +277,28 @@
                                                             </span>
                                                             @enderror
                                                         </div>
+                                                    </div>
+                                                    <div class="row justify-content-between text-left">
+
                                                         <div class="form-group col-sm-6 flex-column d-flex">
-                                                            <label class="form-control-label px-3">Circle Meet<span
-                                                                    class="text-danger">*</span></label>
+                                                            <label class="form-control-label px-3">Circle Meet</label>
                                                             <input type="text" id="circleMeet" name="circleMeet"
                                                                 value="{{ old('circleMeet') }}"
                                                                 class="form-control @error('circleMeet') is-invalid @enderror"
                                                                 onblur="validate(8)">
                                                             @error('circleMeet')
+                                                            <span class="invalid-feedback" role="alert">
+                                                                <strong>{{ $message }}</strong>
+                                                            </span>
+                                                            @enderror
+                                                        </div>
+                                                        <div class="form-group col-sm-6 flex-column d-flex">
+                                                            <label class="form-control-label px-3">How do you know about
+                                                                us ?</label>
+                                                            <input type="text" id="knowsUs" name="knowsUs"
+                                                                value="{{ old('knowsUs') }}"
+                                                                class="form-control @error('knowsUs') is-invalid @enderror">
+                                                            @error('knowsUs')
                                                             <span class="invalid-feedback" role="alert">
                                                                 <strong>{{ $message }}</strong>
                                                             </span>

@@ -36,9 +36,8 @@ class VisitorFormController extends Controller
             'mobileNo' => 'required',
             'businessName' => 'required',
             'businessCategory' => 'required',
-            'product' => 'required',
-            'networkingGroup' => 'required',
-            'circleMeet' => 'required',
+            'invitedBy' => 'required',
+            
         ]);
 
         try {
@@ -51,6 +50,8 @@ class VisitorFormController extends Controller
             $visitor->product = $request->product;
             $visitor->networkingGroup = $request->networkingGroup;
             $visitor->circleMeet = $request->circleMeet;
+            $visitor->invitedBy = $request->invitedBy;
+            $visitor->knowUs = $request->knowUs;
             $visitor->status = 'Active';
 
             $visitor->save();

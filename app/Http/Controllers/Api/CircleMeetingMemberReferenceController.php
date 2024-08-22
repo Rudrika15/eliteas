@@ -24,11 +24,30 @@ class CircleMeetingMemberReferenceController extends Controller
                 ->with('refGiverName')
                 ->where('referenceGiverId', Auth::user()->id)
                 ->get();
+
             return Utils::sendResponse(['refGiver' => $refGiver], 'Circle Meeting Member References retrieved successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
+
+
+    public function receivedRef(Request $request)
+    {
+        try {
+            $busGiver = CircleMeetingMembersBusiness::where('loginMemberId', Auth::user()->id)
+                ->where('status', 'Active')
+                ->orderBy('id', 'DESC')
+                ->get();
+
+
+            return Utils::sendResponse(['busGiver' => $busGiver], 'Circle Meeting Member References retrieved successfully', 200);
+        } catch (\Throwable $th) {
+            return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
+        }
+    }
+
+
 
     // For showing a single data
     public function view(Request $request, $id)
