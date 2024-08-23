@@ -943,7 +943,8 @@
                                             position: relative;
                                             margin-left: 30% !important;
                                         }
-/* 
+
+                                        /* 
                                         .blink {
                                             animation: blinker 1.5s linear infinite;
                                         }
@@ -1356,8 +1357,24 @@
             function fetchMessages() {
                 const authCheck = `{{Auth::user()->id}}`;
                 console.log("authCheck", authCheck);
+                
+                var memberIdElement = document.getElementById('memberId');
+                
+                console.log('Checking for memberId element:', memberIdElement);
+                if (!memberIdElement) {
+                    console.error('Element with ID "memberId" not found');
+                    alert('Member ID is missing. Cannot fetch messages.');
+                    return;
+                }
         
-                $.get('/get-messages', function(messages) {
+                var receiverId = memberIdElement.value;
+                console.log('Receiver ID:', receiverId);
+        
+                // Fetch messages with a POST request
+                $.post('/get-messages', {
+                    receiverId: receiverId,  // Pass the receiverId
+                    _token: '{{ csrf_token() }}'  // Include CSRF token for security
+                }).done(function(messages) {
                     console.log('Got messages');
                     chatBox.innerHTML = ''; // Clear existing messages
                     messages.forEach(function(message) {
@@ -1413,7 +1430,7 @@
             }
         
             function startPolling() {
-                pollingInterval = setInterval(fetchMessages, 1000); // Poll every 1 seconds
+                pollingInterval = setInterval(fetchMessages, 1000); // Poll every 1 second
             }
         
             function stopPolling() {

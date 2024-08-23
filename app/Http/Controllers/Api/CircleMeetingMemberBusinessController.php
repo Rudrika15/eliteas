@@ -15,43 +15,97 @@ use App\Models\CircleMeetingMembersBusiness;
 
 class CircleMeetingMemberBusinessController extends Controller
 {
+    // public function index(Request $request)
+    // {
+    //     try {
+    //         $busGivers = CircleMeetingMembersBusiness::with([
+    //             'users:id,firstName,lastName,email',
+    //             'member:userId,profilePhoto',
+    //             'businessAmounts' // Include business amounts relationship
+    //         ])
+    //             ->where('status', 'Active')
+    //             ->orderByDesc('id')
+    //             ->get();
+
+
+
+    //         return Utils::sendResponse(['busGivers' => $busGivers], 'Circle Meeting Members Business retrieved successfully', 200);
+    //     } catch (\Throwable $th) {
+    //         return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
+    //     }
+    // }
+
     public function index(Request $request)
     {
         try {
-            $busGivers = CircleMeetingMembersBusiness::with([
+            $busGiven = CircleMeetingMembersBusiness::with([
                 'users:id,firstName,lastName,email',
                 'member:userId,profilePhoto',
                 'businessAmounts' // Include business amounts relationship
             ])
+                ->where('loginMemberId', Auth::user()->id)
                 ->where('status', 'Active')
                 ->orderByDesc('id')
                 ->get();
 
-
-
-            return Utils::sendResponse(['busGivers' => $busGivers], 'Circle Meeting Members Business retrieved successfully', 200);
+            return Utils::sendResponse(['busGiven' => $busGiven], 'Circle Meeting Members Business retrieved successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
 
+    // public function recievedBus(Request $request)
+    // {
+    //     try {
+    //         $busRecieved = CircleMeetingMembersBusiness::where('businessGiverId', Auth::user()->id)
+    //             ->where('status', 'Active')
+    //             ->orderBy('id', 'DESC')
+    //             ->get();
+    //         return Utils::sendResponse(['busRecieved' => $busRecieved], 'Circle Meeting Members Business retrieved successfully', 200);
+    //     } catch (\Throwable $th) {
+    //         return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
+    //     }
+    // }
+
     public function recievedBus(Request $request)
     {
         try {
-            $busRecieved = CircleMeetingMembersBusiness::where('businessGiverId', Auth::user()->id)
+            $busRecieved = CircleMeetingMembersBusiness::with([
+                // 'users:id,firstName,lastName', // for businessGiverId
+                // 'member:userId,profilePhoto', // for businessGiverId
+                'loginMember.user:id,firstName,lastName', // for loginMemberId
+                'loginMember.member:userId,profilePhoto', // for loginMemberId
+                'businessAmounts'
+            ])
+                ->where('businessGiverId', Auth::user()->id)
                 ->where('status', 'Active')
-                ->orderBy('id', 'DESC')
+                ->orderByDesc('id')
                 ->get();
+
             return Utils::sendResponse(['busRecieved' => $busRecieved], 'Circle Meeting Members Business retrieved successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
-    
 
 
 
-    
+    public function busGiven(Request $request)
+    {
+        try {
+            $busGiven = CircleMeetingMembersBusiness::where('loginMemberId', Auth::user()->id)
+                ->where('status', 'Active')
+                ->orderBy('id', 'DESC')
+                ->get();
+            return Utils::sendResponse(['busGiven' => $busGiven], 'Circle Meeting Members Business retrieved successfully', 200);
+        } catch (\Throwable $th) {
+            return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
+        }
+    }
+
+
+
+
     public function paymentHistory(Request $request)
     {
         try {

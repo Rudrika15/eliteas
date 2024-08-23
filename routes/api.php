@@ -21,6 +21,7 @@ use App\Http\Controllers\Api\CircleMeetingController;
 use App\Http\Controllers\Api\TrainerMasterController;
 use App\Http\Controllers\Api\ForgetPasswordController;
 use App\Http\Controllers\Api\BusinessCategoryController;
+use App\Http\Controllers\Api\ChangePasswordController;
 use App\Http\Controllers\Api\ChatController;
 use App\Http\Controllers\Api\MeetingInvitationController;
 use App\Http\Controllers\Api\CircleMeetingMembersController;
@@ -248,11 +249,16 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     //chat
     Route::post('/chat/sendMessage', [ChatController::class, 'sendMessage']);
-    Route::get('/chat/getMessages', [ChatController::class, 'getMessages']);
+    // Route::get('/chat/getMessages', [ChatController::class, 'getMessages']);
+    Route::post('/get-messages', [ChatController::class, 'getMessages']);
     Route::get('/chat/getList', [ChatController::class, 'getList']);
 
     //suggested members
     Route::get('/category-wise-member-index', [CircleMemberController::class, 'categoryWiseMember']);
+
+    //change password
+    Route::post('/change-password', [ChangePasswordController::class, 'changePassword']);
+
 
 
     //new api v1
@@ -311,5 +317,12 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('v1/connections/removeConnection', [ConnectionController::class, 'removeConnection']);
     Route::post('v1/connections/viewMemberProfile', [ConnectionController::class, 'viewMemberProfile']);
     Route::get('v1/connections/ConnectionsRequests', [ConnectionController::class, 'ConnectionsRequests']);
+
+    //change password
+    Route::post('v1/change-password', [ApiController::class, 'changePassword']);
+    
+    //busGiven
+    Route::get('busGiven-index', [CircleMeetingMemberBusinessController::class, 'busGiven']);
+
 
 });

@@ -53,21 +53,29 @@ class ChatController extends Controller
     //     return response()->json($messages);
     // }
 
-    public function getMessages()
+    public function getMessages(Request $request)
     {
         // Get the current authenticated user's ID
         $userId = Auth::id();
 
-        // Fetch messages where the current user is either the sender or receiver
-        $messages = Message::where(function ($query) use ($userId) {
+        // Get the receiverId from the request body
+        $receiverId = $request->input('receiverId');
+
+        // Fetch messages where the current user is either the sender or the receiver
+        $messages = Message::where(function ($query) use ($userId, $receiverId) {
             $query->where('senderId', $userId)
-                ->orWhere('receiverId', $userId);
+                ->where('receiverId', $receiverId)
+                ->orWhere(function ($subQuery) use ($userId, $receiverId) {
+                    $subQuery->where('senderId', $receiverId)
+                        ->where('receiverId', $userId);
+                });
         })->orderBy('created_at', 'asc')->get();
 
         foreach ($messages as $key => $value) {
             $messages[$key]->content = decrypt($value->content);
         }
 
+        // Return the filtered messages as JSON response
         return response()->json($messages);
     }
 }

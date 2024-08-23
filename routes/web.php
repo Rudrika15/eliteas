@@ -457,7 +457,7 @@ Route::group(['middleware' => ['auth']], function () {
     // routes/web.php
 
     Route::post('/send-message', [ChatController::class, 'sendMessage']);
-    Route::get('/get-messages', [ChatController::class, 'getMessages']);
+    Route::post('/get-messages', [ChatController::class, 'getMessages']);
 
 
     //location

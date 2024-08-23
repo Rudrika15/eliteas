@@ -274,7 +274,7 @@
                         <li>
                             <a class="dropdown-item d-flex align-items-center" href="{{ route('member') }}">
                                 <i class="bi bi-person"></i>
-                                <span>My Profile</span>
+                                <span style="font-weight: bold;">My Profile</span>
                             </a>
                         </li>
                         @endrole
@@ -285,8 +285,8 @@
 
                         <li>
                             <a class="dropdown-item d-flex align-items-center" href="{{ route('changePasswordForm') }}">
-                                <i class="bi bi-question-circle"></i>
-                                <span>Change Password</span>
+                                <i class="bi bi-key"></i>
+                                <span style="font-weight: bold;">Change Password</span>
                             </a>
                         </li>
                         <li>
@@ -296,8 +296,15 @@
                         <li>
                             <a class="dropdown-item d-flex align-items-center" href="{{ route('logout') }}" onclick="event.preventDefault();
                             document.getElementById('logout-form').submit();">
-                                <i class="bi bi-box-arrow-right"></i>
-                                <span>Sign Out</span>
+                                <i class="bi bi-box-arrow-right signout-style"></i>
+                                <span class="signout-style">Sign Out</span>
+
+                                <style>
+                                    .signout-style {
+                                        color: red;
+                                        font-weight: bold;
+                                    }
+                                </style>
 
                                 <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                                     @csrf

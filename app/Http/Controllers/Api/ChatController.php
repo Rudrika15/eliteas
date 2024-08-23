@@ -41,17 +41,21 @@ class ChatController extends Controller
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
-
-    public function getMessages()
+    public function getMessages(Request $request)
     {
-
         $userId = Auth::id();
+        $receiverId = $request->input('receiverId');
 
         try {
-            $messages = Message::where(function ($query) use ($userId) {
+            $messages = Message::where(function ($query) use ($userId, $receiverId) {
                 $query->where('senderId', $userId)
-                    ->orWhere('receiverId', $userId);
+                    ->where('receiverId', $receiverId)
+                    ->orWhere(function ($subQuery) use ($userId, $receiverId) {
+                        $subQuery->where('senderId', $receiverId)
+                            ->where('receiverId', $userId);
+                    });
             })->orderBy('created_at', 'asc')->get();
+
             foreach ($messages as $key => $value) {
                 $messages[$key]->content = decrypt($value->content);
             }
@@ -61,6 +65,44 @@ class ChatController extends Controller
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
+
+
+    // public function getMessages(Request $request)
+    // {
+    //     $request->validate([
+    //         'senderId' => 'required|integer|exists:users,id',
+    //         'receiverId' => 'required|integer|exists:users,id',
+    //     ]);
+
+    //     $userId = Auth::id();
+    //     $senderId = $request->senderId;
+    //     $receiverId = $request->receiverId;
+
+    //     try {
+    //         $messages = Message::where(function ($query) use ($userId, $senderId, $receiverId) {
+    //             $query->where(function ($query) use ($senderId, $receiverId) {
+    //                 $query->where('senderId', $senderId)
+    //                     ->where('receiverId', $receiverId);
+    //             })->orWhere(function ($query) use ($senderId, $receiverId) {
+    //                 $query->where('senderId', $receiverId)
+    //                     ->where('receiverId', $senderId);
+    //             })->where(function ($query) use ($userId) {
+    //                 $query->where('senderId', $userId)
+    //                     ->orWhere('receiverId', $userId);
+    //             });
+    //         })->orderBy('created_at', 'asc')->get();
+
+    //         foreach ($messages as $key => $value) {
+    //             $messages[$key]->content = decrypt($value->content);
+    //         }
+
+    //         return Utils::sendResponse(['messages' => $messages], 'Messages retrieved successfully', 200);
+    //     } catch (\Throwable $th) {
+    //         return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
+    //     }
+    // }
+
+
 
     public function getList()
     {

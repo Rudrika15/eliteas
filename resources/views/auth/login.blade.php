@@ -38,6 +38,17 @@
   * Author: BootstrapMade.com
   * License: https://bootstrapmade.com/license/
   ======================================================== -->
+
+    @if (Session::has('error'))
+    <div class="alert alert-danger alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert">
+            {{-- <i class="fa fa-times"></i> --}}
+        </button>
+        <strong>Error !</strong> {{ session('error') }}
+    </div>
+    @endif
+
+
 </head>
 
 <body>
@@ -80,6 +91,14 @@
                                                 <span class="invalid-feedback" role="alert">
                                                     <strong>{{ $message }}</strong>
                                                 </span>
+                                                @if (Session::has('error'))
+                                                <div class="alert alert-danger alert-dismissible" role="alert">
+                                                    {{-- <button type="button" class="close" data-dismiss="alert"> --}}
+                                                        {{-- <i class="fa fa-times"></i> --}}
+                                                    </button>
+                                                    <strong>Error !</strong> {{ session('error') }}
+                                                </div>
+                                                @endif
                                                 @enderror
                                             </div>
 

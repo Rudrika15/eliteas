@@ -16,6 +16,7 @@ use Illuminate\Support\Carbon;
 use App\Models\BusinessCategory;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use App\Models\CircleMeetingMembersBusiness;
 use App\Models\CircleMeetingMembersReference;
@@ -35,6 +36,13 @@ class ApiController extends Controller
             return Utils::sendResponse(['errors' => $validator->errors()], 'Invalid Input', 422);
         }
 
+        // Check if the user exists and status is not deleted
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user || $user->status === 'deleted') {
+            return Utils::errorResponses(['error' => 'Account Disabled'], 'Your account has been deleted. Please contact support for assistance.', 403);
+        }
+
         // Attempt to authenticate the user
         if (Auth::attempt($request->only('email', 'password'))) {
             $user = Auth::user();
@@ -44,8 +52,9 @@ class ApiController extends Controller
         }
 
         // If authentication fails
-        return Utils::errorResponses(['error' => 'Unauthorize Access'], 'Email or Password does not match with our records', 401);
+        return Utils::errorResponses(['error' => 'Unauthorized Access'], 'Email or Password does not match with our records', 401);
     }
+
 
 
     //lead board
@@ -750,7 +759,9 @@ class ApiController extends Controller
 
             // Fetch members who belong to the same business category as the authenticated user
             $members = Member::where('businessCategoryId', $authBusinessCategoryId)
-                ->with('circle')
+                ->with(['circle' => function ($query) {
+                    $query->where('status', 'Active');
+                }])
                 ->where('status', 'Active')
                 ->get();
 
@@ -845,6 +856,45 @@ class ApiController extends Controller
             );
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
+        }
+    }
+
+    public function changePassword(Request $request)
+    {
+        try {
+            // Validate the request
+            $request->validate([
+                'current_password' => 'required',
+                'password' => 'required|string|min:6|confirmed',
+            ]);
+
+            // Check if the current password matches the stored password
+            if (!Hash::check($request->current_password, Auth::user()->password)) {
+                return Utils::errorResponse(
+                    ['current_password' => 'The current password does not match our records.'],
+                    'Validation Error',
+                    422
+                );
+            }
+
+            // Update the user's password
+            $user = Auth::user();
+            $user->password = Hash::make($request->password);
+            $user->save();
+
+            // Return a success response
+            return Utils::sendResponse(
+                null,
+                'Password successfully changed!',
+                200
+            );
+        } catch (\Throwable $th) {
+            // Handle any errors that occur during the process
+            return Utils::errorResponse(
+                ['error' => $th->getMessage()],
+                'Internal Server Error',
+                500
+            );
         }
     }
 }
