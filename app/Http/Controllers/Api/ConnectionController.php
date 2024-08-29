@@ -123,28 +123,67 @@ class ConnectionController extends Controller
     }
 
 
+    // public function search(Request $request)
+    // {
+    //     try {
+    //         $find = $request->input('find');
+    //         $members = User::whereHas('member', function ($q) use ($find) {
+    //             $q->where('firstName', 'like', '%' . $find . '%')
+    //                 ->orWhere('lastName', 'like', '%' . $find . '%')
+    //                 ->orWhereHas('circle', function ($q) use ($find) {
+    //                     $q->where('circleName', 'like', '%' . $find . '%');
+    //                 });
+    //         })
+    //             ->with(['member', 'member.circle', 'member.connections' => function ($q) {
+    //                 $q->where('userId', Auth::user()->id);
+    //             }])
+    //             ->get();
+    //         // ->map(function ($member) {
+    //         //     $connection = $member->connections->first();
+    //         //     $status = $connection ? $connection->status : null;
+    //         //     $member['status'] = $status == 'Accepted' ? 'Connected' : ($status == 'Pending' ? 'Pending' : null);
+    //         //     // unset($member['connections']);
+    //         //     return $member;
+    //         // });
+
+    //         $message = "Search results for '$find'";
+
+    //         return Utils::sendResponse([
+    //             'message' => $message,
+    //             'members' => $members
+    //         ], 200);
+    //     } catch (\Throwable $th) {
+    //         return Utils::errorResponse([
+    //             'error' => $th->getMessage()
+    //         ], 'Internal Server Error', 500);
+    //     }
+    // }
+
+
     public function search(Request $request)
     {
         try {
             $find = $request->input('find');
-            $members = User::whereHas('member', function ($q) use ($find) {
-                $q->where('firstName', 'like', '%' . $find . '%')
-                    ->orWhere('lastName', 'like', '%' . $find . '%')
-                    ->orWhereHas('circle', function ($q) use ($find) {
-                        $q->where('circleName', 'like', '%' . $find . '%');
-                    });
-            })
-                ->with(['member', 'member.circle', 'member.connections' => function ($q) {
-                    $q->where('userId', Auth::user()->id);
+
+            // Get the authenticated user's userId
+            $authUserId = Auth::user()->id;
+
+            $members = User::where('status', 'Active') // Ensure the user is active
+                ->whereHas('member', function ($q) use ($find, $authUserId) {
+                    $q->where('status', 'Active') // Ensure the member is active
+                        ->where('userId', '!=', $authUserId) // Exclude the logged-in user's member data
+                        ->where(function ($q) use ($find) {
+                            $q->where('firstName', 'like', '%' . $find . '%')
+                                ->orWhere('lastName', 'like', '%' . $find . '%')
+                                ->orWhereHas('circle', function ($q) use ($find) {
+                                    $q->where('circleName', 'like', '%' . $find . '%');
+                                });
+                        });
+                })
+                ->with(['member', 'member.circle', 'member.connections' => function ($q) use ($authUserId) {
+                    $q->where('userId', $authUserId);
                 }])
                 ->get();
-            // ->map(function ($member) {
-            //     $connection = $member->connections->first();
-            //     $status = $connection ? $connection->status : null;
-            //     $member['status'] = $status == 'Accepted' ? 'Connected' : ($status == 'Pending' ? 'Pending' : null);
-            //     // unset($member['connections']);
-            //     return $member;
-            // });
 
             $message = "Search results for '$find'";
 
@@ -158,6 +197,9 @@ class ConnectionController extends Controller
             ], 'Internal Server Error', 500);
         }
     }
+
+
+
 
     public function requestAction(Request $request)
     {

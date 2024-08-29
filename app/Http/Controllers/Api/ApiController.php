@@ -25,33 +25,27 @@ class ApiController extends Controller
 {
     public function login(Request $request)
     {
-        // Validate the input
         $validator = Validator::make($request->all(), [
             'email' => 'required|email',
             'password' => 'required',
         ]);
 
-        // Check if validation fails
         if ($validator->fails()) {
             return Utils::sendResponse(['errors' => $validator->errors()], 'Invalid Input', 422);
         }
 
-        // Check if the user exists and status is not deleted
         $user = User::where('email', $request->email)->first();
 
         if (!$user || $user->status === 'deleted') {
             return Utils::errorResponses(['error' => 'Account Disabled'], 'Your account has been deleted. Please contact support for assistance.', 403);
         }
 
-        // Attempt to authenticate the user
         if (Auth::attempt($request->only('email', 'password'))) {
             $user = Auth::user();
             $token = $user->createToken('authToken')->plainTextToken;
 
             return Utils::sendResponse(['token' => $token, 'user' => $user], 'Success', 200);
         }
-
-        // If authentication fails
         return Utils::errorResponses(['error' => 'Unauthorized Access'], 'Email or Password does not match with our records', 401);
     }
 
@@ -64,7 +58,6 @@ class ApiController extends Controller
             $previousMonth = Carbon::now()->subMonth()->month;
             $previousYear = Carbon::now()->subMonth()->year;
 
-            // Get CircleCall data with only the selected member fields
             $circlecalls = CircleCall::with(['member' => function ($query) {
                 $query->select('id', 'userId', 'firstname', 'lastname', 'businessCategoryId', 'circleId', 'profilephoto');
             }, 'meetingPerson'])
@@ -73,7 +66,6 @@ class ApiController extends Controller
                 ->whereMonth('date', $previousMonth)
                 ->get();
 
-            // Group the results by memberId and count the meetings
             $circlecalls = $circlecalls->groupBy('memberId')->map(function ($group) {
                 $member = $group->first()->member;
                 return [
@@ -168,7 +160,6 @@ class ApiController extends Controller
 
                     $user = User::find($referenceGiverId);
 
-                    // Only proceed if the user exists and is active (not deleted)
                     if ($user && $user->status === 'Active') {
                         $member = Member::where('userId', $referenceGiverId)->where('status', 'Active')->first();
 
@@ -190,7 +181,6 @@ class ApiController extends Controller
                 ->first();
 
             if (!$refGiver) {
-                // Return a message if no active users are found
                 return Utils::sendResponse(
                     null,
                     'No Reference Lead Board to show for now.',
@@ -270,21 +260,18 @@ class ApiController extends Controller
     public function maxMeetingsUser(Request $request)
     {
         try {
-            // Get the authenticated user
             $authUser = Auth::user();
 
-            // Find the member with the authenticated user's ID
             $member = Member::where('userId', $authUser->id)->first();
             if (!$member) {
                 return Utils::sendResponse([], 'Member not found', 404);
             }
 
-            // Get CircleCall data with only the selected member fields
             $circlecalls = CircleCall::with(['member' => function ($query) {
                 $query->select('id', 'userId', 'firstname', 'lastname', 'businesscategoryId', 'profilephoto');
             }, 'meetingPerson'])
                 ->where('status', 'Active')
-                ->where('memberId', $member->id) // Ensure data is for the member
+                ->where('memberId', $member->id)
                 ->get();
 
             $circlecalls = $circlecalls->groupBy('memberId')->map(function ($group) {
@@ -311,25 +298,23 @@ class ApiController extends Controller
         try {
             $authUser = Auth::user();
 
-            // Get the member associated with the authenticated user
             $member = Member::where('userId', $authUser->id)->first();
             if (!$member) {
                 return Utils::sendResponse([], 'Member not found', 404);
             }
 
-            // Get CircleMeetingMembersBusiness data
+
             $busGiver = CircleMeetingMembersBusiness::where('businessGiverId', $authUser->id)->get();
 
-            // Group and map the data to include user, amount, count, businessCategoryId, and circleId
             $busGiver = $busGiver->groupBy('businessGiverId')->map(function ($group) use ($member) {
                 return [
                     'user' => $group->first()->users,
                     'amount' => $group->sum('amount'),
                     'count' => $group->count(),
-                    'businessCategoryId' => $member->businessCategoryId,  // Include businessCategoryId
-                    'businessCategory' => $member->bCategory->categoryName,  // Include businessCategoryId
-                    'circleId' => $member->circleId,  // Include circleId
-                    'circle' => $member->circle->circleName,  // Include circleId
+                    'businessCategoryId' => $member->businessCategoryId,
+                    'businessCategory' => $member->bCategory->categoryName,
+                    'circleId' => $member->circleId,
+                    'circle' => $member->circle->circleName,
                 ];
             })->sortByDesc('amount')->values();
 
@@ -351,26 +336,22 @@ class ApiController extends Controller
         try {
             $authUser = Auth::user();
 
-            // Retrieve the member associated with the authenticated user
             $member = Member::where('userId', $authUser->id)->first();
             if (!$member) {
                 return Utils::sendResponse([], 'Member not found', 404);
             }
-
-            // Get CircleMeetingMembersReference data
             $refGiver = CircleMeetingMembersReference::where('status', 'Active')
-                ->where('referenceGiverId', $authUser->id) // Ensure data is for the member
+                ->where('referenceGiverId', $authUser->id)
                 ->get();
 
-            // Group and map the data to include user, count, businessCategoryId, and circleId
             $refGiver = $refGiver->groupBy('referenceGiverId')->map(function ($group) use ($member) {
                 return [
                     'user' => $group->first()->refGiverName,
                     'count' => $group->count(),
-                    'businessCategoryId' => $member->businessCategoryId, // Include businessCategoryId
-                    'businessCategory' => $member->bcategory->categoryName, // Include businessCategoryId
-                    'circleId' => $member->circleId, // Include circleId
-                    'circle' => $member->circle->circleName, // Include circleId
+                    'businessCategoryId' => $member->businessCategoryId,
+                    'businessCategory' => $member->bcategory->categoryName,
+                    'circleId' => $member->circleId,
+                    'circle' => $member->circle->circleName,
                 ];
             })->sortByDesc('count')->values();
 
@@ -393,14 +374,11 @@ class ApiController extends Controller
         try {
             $authUser = Auth::user();
 
-            // Find the member with the authenticated user's ID
             $member = Member::where('userId', $authUser->id)->first();
             if (!$member) {
                 return Utils::sendResponse([], 'Member not found', 404);
             }
 
-            // Your existing logic here for referral data
-            // ...
 
             return Utils::sendResponse(
                 [],
@@ -417,14 +395,10 @@ class ApiController extends Controller
         try {
             $authUser = Auth::user();
 
-            // Find the member with the authenticated user's ID
             $member = Member::where('userId', $authUser->id)->first();
             if (!$member) {
                 return Utils::sendResponse([], 'Member not found', 404);
             }
-
-            // Your existing logic here for visitor data
-            // ...
 
             return Utils::sendResponse(
                 [],
@@ -490,16 +464,13 @@ class ApiController extends Controller
     {
         $user = Auth::user();
 
-        // Retrieve the member record associated with the authenticated user
         $member = Member::where('userId', $user->id)->first();
 
         if ($member) {
-            // Retrieve related records
             $billingAddress = BillingAddress::where('memberId', $member->id)->first();
             $contactDetails = ContactDetails::where('memberId', $member->id)->first();
             $topsProfile = TopsProfile::where('memberId', $member->id)->first();
 
-            // Create a separate object for businessCategoryId and circleId
             $businessCategory = [
                 'businessCategoryId' => $member->businessCategoryId,
                 'businessCategory' => $member->bCategory->categoryName,
@@ -512,7 +483,6 @@ class ApiController extends Controller
 
 
 
-            // Return the data in your API response
             return response()->json([
                 'user' => $user,
                 'member' => $member,
@@ -523,7 +493,6 @@ class ApiController extends Controller
                 'circle' => $circle,
             ]);
         } else {
-            // Handle the case where member record is not found
             return response()->json(['error' => 'Member not found'], 404);
         }
     }
@@ -539,7 +508,6 @@ class ApiController extends Controller
 
         $user = Auth::user();
         $member = $user->member;
-        //update only billingAddress table data of logged in user
         $billingAddress = BillingAddress::where('memberId', $member->id)->first();
 
 
@@ -566,7 +534,6 @@ class ApiController extends Controller
         $member = $user->member;
 
 
-        //update only contactDetails table data of logged in user
         $contactDetails = ContactDetails::where('memberId', $member->id)->first();
 
         if ($contactDetails) {
@@ -587,7 +554,6 @@ class ApiController extends Controller
         $user = Auth::user();
         $member = $user->member;
 
-        //update only topsProfile table data of logged in user
         $topsProfile = TopsProfile::where('memberId', $member->id)->first();
 
         if ($topsProfile) {
@@ -684,7 +650,6 @@ class ApiController extends Controller
             $circles = Circle::where('status', 'Active')->get();
 
             foreach ($circles as $circle) {
-                // Customize the fields you want to display for the circle
                 $circleData = [
                     'id' => $circle->id,
                     'name' => $circle->circleName,
@@ -739,11 +704,76 @@ class ApiController extends Controller
     // }
 
     //suggested members
+    // public function categoryWiseMember(Request $request)
+    // {
+    //     try {
+    //         $categoryData = []; // Initialize the array to hold business category data
+
+    //         // Check if the user is authenticated
+    //         if (!auth()->check()) {
+    //             return Utils::errorResponse([], 'Unauthorized', 401);
+    //         }
+
+    //         // Get authenticated user
+    //         $user = auth()->user();
+
+    //         // Get user's memberId and businessCategoryId
+    //         $authMemberId = $user->member->id; // Assuming the user has a related member
+    //         $authBusinessCategoryId = $user->member->businessCategoryId; // Assuming 'businessCategoryId' exists on 'members' table
+
+    //         // Fetch members who belong to the same business category as the authenticated user, excluding the logged-in user
+    //         $members = Member::where('businessCategoryId', $authBusinessCategoryId)
+    //             ->where('id', '!=', $authMemberId) // Exclude the logged-in user's member data
+    //             ->with(['circle' => function ($query) {
+    //                 $query->where('status', 'Active');
+    //             }])
+    //             ->where('status', 'Active')
+    //             ->get();
+
+    //         foreach ($members as $member) {
+    //             // Fetch the category for the current member
+    //             $businessCategory = BusinessCategory::find($member->businessCategoryId); // Fetching the related category object
+
+    //             if ($businessCategory && $businessCategory->status === 'Active') {
+    //                 // Populate the category data only once
+    //                 if (empty($categoryData)) {
+    //                     $categoryData = [
+    //                         'businessCategoryId' => $businessCategory->id,
+    //                         'businessCategoryName' => $businessCategory->categoryName,
+    //                         'members' => [], // Initialize the members array inside categoryData
+    //                     ];
+    //                 }
+
+    //                 // Add member data to the members array within categoryData
+    //                 $categoryData['members'][] = [
+    //                     'authMemberId' => $authMemberId,
+    //                     'userId' => $member->userId,
+    //                     'memberId' => $member->id,
+    //                     'firstName' => $member->firstName,
+    //                     'lastName' => $member->lastName,
+    //                     'profilePhoto' => $member->profilePhoto,
+    //                     'circle' => $member->circle->circleName,
+    //                     'companyName' => $member->companyName,
+    //                     // Add any other fields you need here
+    //                 ];
+    //             }
+    //         }
+
+    //         // Return the consolidated category data array, which includes member data
+    //         return Utils::sendResponse($categoryData, 'Data retrieved successfully', 200);
+    //     } catch (\Throwable $th) {
+    //         // Handle exceptions and return error response
+    //         return Utils::errorResponse([
+    //             'error' => $th->getMessage()
+    //         ], 'Internal Server Error', 500);
+    //     }
+    // }
+
+
     public function categoryWiseMember(Request $request)
     {
         try {
             $categoryData = []; // Initialize the array to hold business category data
-            $data = []; // Initialize the array to hold member data
 
             // Check if the user is authenticated
             if (!auth()->check()) {
@@ -753,33 +783,34 @@ class ApiController extends Controller
             // Get authenticated user
             $user = auth()->user();
 
-            // Get user's memberId and businessCategoryId
             $authMemberId = $user->member->id; // Assuming the user has a related member
             $authBusinessCategoryId = $user->member->businessCategoryId; // Assuming 'businessCategoryId' exists on 'members' table
 
-            // Fetch members who belong to the same business category as the authenticated user
+            // Fetch members who belong to the same business category as the authenticated user, excluding the logged-in user
             $members = Member::where('businessCategoryId', $authBusinessCategoryId)
+                ->where('id', '!=', $authMemberId) // Exclude the logged-in user's member data
+                ->where('status', 'Active') // Ensure the member is active
+                ->whereHas('user', function ($query) {
+                    $query->where('status', 'Active'); // Ensure the associated user is active
+                })
                 ->with(['circle' => function ($query) {
                     $query->where('status', 'Active');
                 }])
-                ->where('status', 'Active')
                 ->get();
 
             foreach ($members as $member) {
-                // Fetch the category for the current member
-                $businessCategory = BusinessCategory::find($member->businessCategoryId); // Fetching the related category object
+                $businessCategory = BusinessCategory::find($member->businessCategoryId);
 
                 if ($businessCategory && $businessCategory->status === 'Active') {
-                    // Populate the category data only once
+
                     if (empty($categoryData)) {
                         $categoryData = [
                             'businessCategoryId' => $businessCategory->id,
                             'businessCategoryName' => $businessCategory->categoryName,
-                            'members' => [], // Initialize the members array inside categoryData
+                            'members' => [],
                         ];
                     }
 
-                    // Add member data to the members array within categoryData
                     $categoryData['members'][] = [
                         'authMemberId' => $authMemberId,
                         'userId' => $member->userId,
@@ -789,25 +820,115 @@ class ApiController extends Controller
                         'profilePhoto' => $member->profilePhoto,
                         'circle' => $member->circle->circleName,
                         'companyName' => $member->companyName,
-                        // Add any other fields you need here
                     ];
                 }
             }
 
-            // Return the consolidated category data array, which includes member data
             return Utils::sendResponse($categoryData, 'Data retrieved successfully', 200);
         } catch (\Throwable $th) {
-            // Handle exceptions and return error response
             return Utils::errorResponse([
                 'error' => $th->getMessage()
             ], 'Internal Server Error', 500);
         }
     }
 
+
+    // public function allMembers(Request $request)
+    // {
+    //     try {
+    //         $allmembers = Member::where('status', 'Active')
+    //             ->with('user')
+    //             ->with('circle:id,circleName')
+    //             ->get();
+
+    //         return Utils::sendResponse(
+    //             ['allmembers' => $allmembers],
+    //             'All members retrieved successfully',
+    //             200
+    //         );
+    //     } catch (\Throwable $th) {
+    //         return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
+    //     }
+    // }
+
+
+    // public function allMembers(Request $request)
+    // {
+    //     try {
+    //         // Check if the user is authenticated
+    //         if (!auth()->check()) {
+    //             return Utils::errorResponse([], 'Unauthorized', 401);
+    //         }
+
+    //         // Get the authenticated user's member ID
+    //         $authMemberId = auth()->user()->member->id; // Assuming the user has a related member
+
+    //         // Fetch all active members, excluding the authenticated user's data
+    //         $allmembers = Member::where('status', 'Active')
+    //         ->where('id', '!=', $authMemberId) // Exclude the authenticated user's member data
+    //             ->with('user')
+    //             ->with('circle:id,circleName')
+    //             ->get();
+
+    //         return Utils::sendResponse(
+    //             ['allmembers' => $allmembers],
+    //             'All members retrieved successfully',
+    //             200
+    //         );
+    //     } catch (\Throwable $th) {
+    //         return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
+    //     }
+    // }
+
+
+    // public function allMembers(Request $request)
+    // {
+    //     try {
+    //         // Check if the user is authenticated
+    //         if (!auth()->check()) {
+    //             return Utils::errorResponse([], 'Unauthorized', 401);
+    //         }
+
+    //         // Get the authenticated user's member ID
+    //         $authMemberId = auth()->user()->member->id; // Assuming the user has a related member
+
+    //         // Fetch all active members, excluding the authenticated user's data, and ensure related user is also active
+    //         $allmembers = Member::where('status', 'Active')
+    //             ->where('id', '!=', $authMemberId) // Exclude the authenticated user's member data
+    //             ->whereHas('user', function ($query) {
+    //                 $query->where('status', 'Active'); // Ensure the related user is active
+    //             })
+    //             ->with('user')
+    //             ->with('circle:id,circleName')
+    //             ->get();
+
+    //         return Utils::sendResponse(
+    //             ['allmembers' => $allmembers],
+    //             'All members retrieved successfully',
+    //             200
+    //         );
+    //     } catch (\Throwable $th) {
+    //         return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
+    //     }
+    // }
+
     public function allMembers(Request $request)
     {
         try {
+            if (!auth()->check()) {
+                return Utils::errorResponse([], 'Unauthorized', 401);
+            }
+
+            $authMember = auth()->user()->member;
+            $authMemberId = $authMember->id;
+            $authCircleId = $authMember->circleId;
+
             $allmembers = Member::where('status', 'Active')
+                ->where('id', '!=', $authMemberId)
+                ->where('circleId', $authCircleId)
+                ->whereHas('user', function ($query) {
+                    $query->where('status', 'Active');
+                })
                 ->with('user')
                 ->with('circle:id,circleName')
                 ->get();
@@ -821,6 +942,10 @@ class ApiController extends Controller
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
+
+
+
+
 
     //member by userId
     public function getUserDetails(Request $request, $userId)
@@ -862,7 +987,6 @@ class ApiController extends Controller
     public function changePassword(Request $request)
     {
         try {
-            // Validate the request
             $request->validate([
                 'current_password' => 'required',
                 'password' => 'required|string|min:6|confirmed',
@@ -877,19 +1001,16 @@ class ApiController extends Controller
                 );
             }
 
-            // Update the user's password
             $user = Auth::user();
             $user->password = Hash::make($request->password);
             $user->save();
 
-            // Return a success response
             return Utils::sendResponse(
                 null,
                 'Password successfully changed!',
                 200
             );
         } catch (\Throwable $th) {
-            // Handle any errors that occur during the process
             return Utils::errorResponse(
                 ['error' => $th->getMessage()],
                 'Internal Server Error',

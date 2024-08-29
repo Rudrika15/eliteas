@@ -85,7 +85,8 @@
                                                 <input id="email" type="email"
                                                     class="form-control @error('email') is-invalid @enderror"
                                                     name="email" value="{{ old('email') }}" required
-                                                    autocomplete="email" autofocus>
+                                                    autocomplete="email" autofocus
+                                                    style="border-color: #1d3268 !important">
                                                 <label for="email"><b>Email Address</b></label>
                                                 @error('email')
                                                 <span class="invalid-feedback" role="alert">
@@ -105,7 +106,8 @@
                                             <div class="mb-3 form-floating">
                                                 <input id="password" type="password"
                                                     class="form-control @error('password') is-invalid @enderror"
-                                                    name="password" required autocomplete="current-password">
+                                                    name="password" required autocomplete="current-password"
+                                                    style="border-color: #1d3268 !important">
                                                 <label for="password"><b>Password</b></label>
                                                 @error('password')
                                                 <span class="invalid-feedback" role="alert">
@@ -115,10 +117,12 @@
                                             </div>
 
                                             <div class="mb-3 form-check">
+
                                                 <input type="checkbox"
                                                     class="form-check-input {{ old('remember') ? 'is-valid' : '' }}"
-                                                    name="remember" id="remember" {{ old('remember') ? 'checked' : ''
-                                                    }}>
+                                                    name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}
+                                                    style="border-color: #1d3268 !important">
+
                                                 <label class="form-check-label"
                                                     style="color: #1d3268; font-weight: bold;" for="remember">Remember
                                                     Me</label>
@@ -150,7 +154,8 @@
 
                                 <div class="credits">
                                     Designed by <a href="https://flipcodesolutions.com/" target="_blank"
-                                        class="text-muted"><b>Aspireotech Solutions</b></a>
+                                        class="text-black"><b>Aspireotech
+                                            Solutions</b></a>
                                 </div>
 
                             </div>

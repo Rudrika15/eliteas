@@ -52,6 +52,25 @@
     </style>
 
 
+{{-- 
+    @role('Member')
+
+    @if(isset($error))
+    <div class="alert alert-danger">{{ $error }}</div>
+    @endif
+
+    @if(isset($listOfUser) && $listOfUser->count())
+    <ul>
+        @foreach($listOfUser as $user)
+        <li>{{ $user->firstName }} {{ $user->lastName }}</li>
+        @endforeach
+    </ul>
+    @else
+    <p>No users found.</p>
+    @endif
+
+
+    @endrole --}}
 
 
     @role('Member')
@@ -378,7 +397,7 @@
         </a>
     </div>
 
-    <div class="col-md-4">
+    {{-- <div class="col-md-4">
         <a href="{{ route('pendingPayments.index') }}" class="card-link">
             <div class="card shadow">
                 <div class="card-header">
@@ -392,13 +411,13 @@
                         {{ session('status') }}
                     </div>
                     @endif
-                    {{-- <h2>{{ $count }}</h2> --}}
+                    <h2>{{ $count }}</h2>
                 </div>
             </div>
         </a>
-    </div>
+    </div> --}}
 
-    <div class="col-md-4">
+    {{-- <div class="col-md-4">
         <a href="{{ route('maxMeetings.index') }}" class="card-link">
             <div class="card shadow">
                 <div class="card-header">
@@ -415,9 +434,9 @@
                 </div>
             </div>
         </a>
-    </div>
+    </div> --}}
 
-    <div class="col-md-4">
+    {{-- <div class="col-md-4">
         <a href="{{ route('maxBusiness.index') }}" class="card-link">
             <div class="card shadow">
                 <div class="card-header">
@@ -431,13 +450,13 @@
                         {{ session('status') }}
                     </div>
                     @endif
-                    {{-- <h2>{{ $count }}</h2> --}}
+                    <h2>{{ $count }}</h2>
                 </div>
             </div>
         </a>
-    </div>
+    </div> --}}
 
-    <div class="col-md-4">
+    {{-- <div class="col-md-4">
         <a href="{{ route('maxReference.index') }}" class="card-link">
             <div class="card shadow">
                 <div class="card-header">
@@ -451,13 +470,13 @@
                         {{ session('status') }}
                     </div>
                     @endif
-                    {{-- <h2>{{ $count }}</h2> --}}
+                    <h2>{{ $count }}</h2>
                 </div>
             </div>
         </a>
-    </div>
+    </div> --}}
 
-    <div class="col-md-4">
+    {{-- <div class="col-md-4">
         <a href="{{ route('maxRefferal.index') }}" class="card-link">
             <div class="card shadow">
                 <div class="card-header">
@@ -471,13 +490,13 @@
                         {{ session('status') }}
                     </div>
                     @endif
-                    {{-- <h2>{{ $count }}</h2> --}}
+                    <h2>{{ $count }}</h2>
                 </div>
             </div>
         </a>
-    </div>
+    </div> --}}
 
-    <div class="col-md-4">
+    {{-- <div class="col-md-4">
         <a href="{{ route('maxVisitor.index') }}" class="card-link">
             <div class="card shadow">
                 <div class="card-header">
@@ -490,11 +509,11 @@
                         {{ session('status') }}
                     </div>
                     @endif
-                    {{-- <h2>{{ $count }}</h2> --}}
+                    <h2>{{ $count }}</h2>
                 </div>
             </div>
         </a>
-    </div>
+    </div> --}}
 </div>
 </div>
 @endrole

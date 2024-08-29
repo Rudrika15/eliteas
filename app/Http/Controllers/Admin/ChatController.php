@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Models\Message;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 class ChatController extends Controller
@@ -78,4 +79,88 @@ class ChatController extends Controller
         // Return the filtered messages as JSON response
         return response()->json($messages);
     }
+
+    public function getList()
+    {
+        $userId = Auth::id();
+
+        try {
+            // Get distinct user IDs who sent messages to or received messages from the current user
+            $userIds = Message::where('senderId', $userId)
+                ->orWhere('receiverId', $userId)
+                ->pluck('senderId', 'receiverId')
+                ->flatten()
+                ->unique()
+                ->filter(function ($id) use ($userId) {
+                    return $id != $userId; // Filter out the current user ID
+                });
+
+            // Fetch user names based on the unique user IDs
+            $listOfUser = User::whereIn('id', $userIds)->get(['id', 'firstName', 'lastName']);
+
+            // Return the view with the list of users
+            return view('home', ['listOfUser' => $listOfUser]);
+        } catch (\Throwable $th) {
+            // Handle the error by returning the view with an error message
+            return view('home', ['error' => $th->getMessage()]);
+        }
+    }
+
+    // public function myChatList()
+    // {
+    //     return view('chat.index');
+    // }
+
+    public function myChatList()
+    {
+        $userId = Auth::id();
+
+        try {
+            // Get distinct user IDs who have sent messages to or received messages from the current user
+            $userIds = Message::where('senderId', $userId)
+                ->orWhere('receiverId', $userId)
+                ->get()
+                ->map(function ($message) use ($userId) {
+                    return $message->senderId == $userId ? $message->receiverId : $message->senderId;
+                })
+                ->unique()
+                ->values();
+
+            // Fetch user details based on the unique user IDs
+            $listOfUsers = User::join('members', 'users.id', '=', 'members.userId')
+                ->whereIn('users.id', $userIds)
+                ->select('users.id', 'users.firstName', 'users.lastName', 'users.email', 'members.profilePhoto')
+                ->get();
+
+            // Pass the data to the view
+            return view('chat.index', ['listOfUsers' => $listOfUsers]);
+        } catch (\Throwable $th) {
+            // Handle the error appropriately
+            return back()->with('error', 'Something went wrong. Please try again.');
+        }
+    }
+
+
+
+    // public function typing(Request $request)
+    // {
+    //     $receiverId = $request->receiverId;
+    //     // Store typing status in session or database
+    //     session()->put("typing_{$receiverId}", true);
+    // }
+
+    // public function stoppedTyping(Request $request)
+    // {
+    //     $receiverId = $request->receiverId;
+    //     // Remove typing status from session or database
+    //     session()->forget("typing_{$receiverId}");
+    // }
+
+    // public function typingStatus(Request $request)
+    // {
+    //     $receiverId = $request->receiverId;
+    //     // Check typing status
+    //     $isTyping = session()->get("typing_{$receiverId}", false);
+    //     return response()->json($isTyping);
+    // }
 }

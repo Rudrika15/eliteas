@@ -458,6 +458,18 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::post('/send-message', [ChatController::class, 'sendMessage']);
     Route::post('/get-messages', [ChatController::class, 'getMessages']);
+    Route::post('/getList', [ChatController::class, 'getList'])->name('chat.getList');
+
+    Route::get('/myChatList', [ChatController::class, 'myChatList'])->name('chat.index');
+
+
+
+    // Route::post('/typing-status', [ChatController::class, 'updateTypingStatus']);
+
+    Route::post('/typing', [ChatController::class, 'typing']);
+    Route::post('/stopped-typing', [ChatController::class, 'stoppedTyping']);
+    Route::get('/typing-status', [ChatController::class, 'typingStatus']);
+
 
 
     //location

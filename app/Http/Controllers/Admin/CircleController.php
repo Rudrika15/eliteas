@@ -66,7 +66,7 @@ class CircleController extends Controller
 
     {
         $this->validate($request, [
-            'circleName' => 'required|unique:circles', 
+            'circleName' => 'required|unique:circles',
             'franchiseId' => 'required',
             'cityId' => 'required',
             'circletypeId' => 'required',
@@ -209,19 +209,34 @@ class CircleController extends Controller
         }
     }
 
-    function delete($id)
+    public function delete($id)
     {
         try {
+            // Find the circle by ID
             $circle = Circle::find($id);
-            $circle->status = "Deleted";
-            $circle->save();
 
-            return redirect()->route('circle.index')->with('Success', 'Circle Deleted Successfully!');
+            // Check if the circle exists
+            if ($circle) {
+                // Set the circle status to "Deleted"
+                $circle->status = "Deleted";
+                $circle->save();
+
+                // Update the status of related schedules to "Deleted"
+                Schedule::where('circleId', $id)->update(['status' => 'Deleted']);
+
+                // Redirect with success message
+                return redirect()->route('circle.index')->with('Success', 'Circle and associated schedules updated successfully!');
+            } else {
+                // If the circle is not found, redirect with an error message
+                return redirect()->route('circle.index')->with('Error', 'Circle not found!');
+            }
         } catch (\Throwable $th) {
-            throw $th;
+            // Handle any exceptions and show the server error page
             return view('servererror');
         }
     }
+
+
 
     public function showByCircle(Request $request, $id)
     {

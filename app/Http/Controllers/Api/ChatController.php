@@ -127,8 +127,11 @@ class ChatController extends Controller
             // Merge both lists of user IDs and remove duplicates
             $allUserIds = $userIds->merge($userIdsFromSender)->unique();
 
-            // Fetch user names based on the unique user IDs
-            $listOfUser = User::whereIn('id', $allUserIds)->get(['id', 'firstName', 'lastName']);
+            // Fetch user names and profile photos based on the unique user IDs
+            $listOfUser = User::join('members', 'users.id', '=', 'members.userId')
+                ->whereIn('users.id', $allUserIds)
+                ->select('users.id', 'users.firstName', 'users.lastName','users.email', 'members.profilePhoto')
+                ->get();
 
             return Utils::sendResponse(['listOfUser' => $listOfUser], 'List of users retrieved successfully', 200);
         } catch (\Throwable $th) {

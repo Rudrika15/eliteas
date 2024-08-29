@@ -41,14 +41,12 @@
 
 <body>
     <main>
-        <div class=""
-            style="background-image: url('{{ asset('img/b2.jpg') }}'); background-size: 100% 100%; background-position: center;">
+        <div class="col-md-12">
             <section
                 class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
                 <div class="container">
                     <div class="row justify-content-center">
                         <div class="col-lg-4 col-md-6 d-flex flex-column align-items-center justify-content-center">
-
                             <div class="d-flex justify-content-center py-4">
                                 <a href="#" class="main-logo d-flex align-items-center">
                                     <img src="{{ asset('img/logo2.jpg') }}" alt=""
@@ -56,10 +54,10 @@
                                 </a>
                             </div><!-- End Logo -->
 
-                            <div class="card mb-3 res-box"
-                                style="width: 20rem; height: 100%; background-image: url('{{ asset('img/b2.jpg') }}'); background-size: cover; background-position: center;">
+                            <div class="card mb-3 res-box" style="width: 250px">
                                 <div class="card-body">
-                                    <h5 class="card-title text-center text-white pb-0 fs-4 mt-5">Verify OTP</h5>
+                                    <h5 class="card-title text-center pb-0 fs-4 mt-3"
+                                        style="color: #1d3268; font-weight: bold;">Verify OTP</h5>
 
                                     <!-- Display Error Message -->
                                     @if ($errors->has('message'))
@@ -125,7 +123,8 @@
                                             <button type="submit" class="btn btn-bg-orange" id="resendBtn"
                                                 disabled>Resend OTP</button>
                                         </div>
-                                        <p class="text-center text-white mt-2" id="countdown">Resend OTP in 60
+                                        <p class="text-center mt-2" style="color: #1d3268; font-weight: bold;"
+                                            id="countdown">Resend OTP in 60
                                             Seconds...</p>
                                     </form>
 

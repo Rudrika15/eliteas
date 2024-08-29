@@ -199,9 +199,64 @@ class CircleMemberController extends Controller
     //         ], 'Internal Server Error', 500);
     //     }
     // }
+    // public function circleWiseMember(Request $request)
+    // {
+    //     try {
+    //         $circlesData = [];
+    //         $circles = Circle::where('status', 'Active')->get();
+
+    //         foreach ($circles as $circle) {
+    //             // Customize the fields you want to display for the circle
+    //             $circleData = [
+    //                 'id' => $circle->id,
+    //                 'name' => $circle->circleName,
+    //                 // Add more fields as needed
+    //             ];
+
+    //             // Fetch members for the current circle
+    //             $circleMembers = $circle->members()->select('id', 'circleId', 'firstName', 'lastName')->get();
+
+    //             $membersData = [];
+
+    //             foreach ($circleMembers as $member) {
+    //                 // Fetch contact details for each member
+    //                 $memberContactDetails = $member->contactDetails()->select('id', 'memberId', 'mobileNo', 'email')->get()->toArray();
+
+    //                 $membersData[] = [
+    //                     'id' => $member->id,
+    //                     'firstName' => $member->firstName,
+    //                     'lastName' => $member->lastName,
+    //                     'contactDetails' => $memberContactDetails,
+    //                 ];
+    //             }
+
+    //             $circlesData[] = [
+    //                 'circle' => $circleData,
+    //                 'members' => $membersData,
+    //             ];
+    //         }
+
+    //         // You can return data using Utils::sendResponse for API response
+    //         return Utils::sendResponse($circlesData, 'Data retrieved successfully', 200);
+    //     } catch (\Throwable $th) {
+    //         // Handle exceptions and return error response
+    //         return Utils::errorResponse([
+    //             'error' => $th->getMessage()
+    //         ], 'Internal Server Error', 500);
+    //     }
+    // }
+
     public function circleWiseMember(Request $request)
     {
         try {
+            // Check if the user is authenticated
+            if (!auth()->check()) {
+                return Utils::errorResponse([], 'Unauthorized', 401);
+            }
+
+            // Get the authenticated user's member ID
+            $authMemberId = auth()->user()->member->id;
+
             $circlesData = [];
             $circles = Circle::where('status', 'Active')->get();
 
@@ -213,14 +268,24 @@ class CircleMemberController extends Controller
                     // Add more fields as needed
                 ];
 
-                // Fetch members for the current circle
-                $circleMembers = $circle->members()->select('id', 'circleId', 'firstName', 'lastName')->get();
+                // Fetch active members for the current circle, excluding the authenticated user's member data
+                $circleMembers = $circle->members()
+                    ->where('status', 'Active') // Only active members
+                    ->where('id', '!=', $authMemberId) // Exclude the authenticated user's member data
+                    ->whereHas('user', function ($query) {
+                        $query->where('status', 'Active'); // Ensure the related user is active
+                    })
+                    ->select('id', 'circleId', 'firstName', 'lastName')
+                    ->get();
 
                 $membersData = [];
 
                 foreach ($circleMembers as $member) {
                     // Fetch contact details for each member
-                    $memberContactDetails = $member->contactDetails()->select('id', 'memberId', 'mobileNo', 'email')->get()->toArray();
+                    $memberContactDetails = $member->contactDetails()
+                        ->select('id', 'memberId', 'mobileNo', 'email')
+                        ->get()
+                        ->toArray();
 
                     $membersData[] = [
                         'id' => $member->id,
@@ -245,6 +310,7 @@ class CircleMemberController extends Controller
             ], 'Internal Server Error', 500);
         }
     }
+
 
     public function categoryWiseMember(Request $request)
     {

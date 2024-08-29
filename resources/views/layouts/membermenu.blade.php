@@ -25,6 +25,13 @@
 </li> --}}
 
 <li class="nav-item">
+    <a class="nav-link collapsed" href="{{ route('chat.index') }}">
+        <i class="bi bi-chat-fill" style="color: #e76a35"></i>
+        <span class="text-blue">My Chats</span>
+    </a>
+</li>
+
+<li class="nav-item">
     <a class="nav-link collapsed" data-bs-target="#activity-nav" data-bs-toggle="collapse" href="#">
         <i class="bi bi-plus-circle-dotted" style="color: #e76a35"></i><span>Activity</span><i
             class="bi bi-chevron-down ms-auto" style="color: #e76a35"></i>

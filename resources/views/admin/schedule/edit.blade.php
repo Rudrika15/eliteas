@@ -46,10 +46,20 @@
                     @enderror
                 </div>
             </div>
+
             <div class="col-md-6">
                 <div class="form-floating">
-                    <input type="text" class="form-control @error('day') is-invalid @enderror" id="day" name="day"
-                        placeholder="Day" value="{{ $schedules->day }}" readonly>
+                    <select class="form-select" id="day" name="day" readonly>
+                        <option value="0" {{ old('day', $schedules->day) == 0 ? 'selected' : '' }}>Sunday</option>
+                        <option value="1" {{ old('day', $schedules->day) == 1 ? 'selected' : '' }}>Monday</option>
+                        <option value="2" {{ old('day', $schedules->day) == 2 ? 'selected' : '' }}>Tuesday</option>
+                        <option value="3" {{ old('day', $schedules->day) == 3 ? 'selected' : '' }}>Wednesday</option>
+                        <option value="4" {{ old('day', $schedules->day) == 4 ? 'selected' : '' }}>Thursday</option>
+                        <option value="5" {{ old('day', $schedules->day) == 5 ? 'selected' : '' }}>Friday</option>
+                        <option value="6" {{ old('day', $schedules->day) == 6 ? 'selected' : '' }}>Saturday</option>
+                    </select>
+                    {{-- <input type="text" class="form-control @error('day') is-invalid @enderror" id="day" name="day"
+                        placeholder="Day" value="{{ $schedules->day }}" readonly> --}}
                     <label for="day">Day</label>
                     @error('day')
                     <div class="invalid-tooltip">
@@ -61,7 +71,7 @@
             <div class="col-md-6 mt-3">
                 <div class="form-floating">
                     <input type="date" class="form-control @error('date') is-invalid @enderror" id="date" name="date"
-                        placeholder="Date" value="{{ $schedules->date }}">
+                        placeholder="Date" value="{{ $schedules->date }}" readonly>
                     <label for="date">Date</label>
                     @error('date')
                     <div class="invalid-tooltip">

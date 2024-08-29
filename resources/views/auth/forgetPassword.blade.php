@@ -60,12 +60,15 @@
                                 </a>
                             </div><!-- End Logo -->
 
-                            <div class="card mb-3 res-box p-3 bg-cover"
-                                style="background-image: url({{ asset('img/b2.jpg') }});">
+                            <div class="card mb-3 res-box p-3 bg-cover">
+                                {{-- style="background-image: url({{ asset('img/b2.jpg') }});"> --}}
                                 <div class="card-body">
-                                    <h5 class="card-title text-center mt-4 pb-0 fs-4 text-white mb-4">Forgot Password ?
+                                    <h5 class="card-title text-center mt-4 pb-0 fs-4 mb-4" style="color: #1d3268;">
+                                        Forgot Password ?
                                     </h5>
-                                    <p class="text-center text-white small mt-3">You can reset your password here.</p>
+                                    <p class="text-center small mt-3" style="color: #1d3268; font-weight:bold;">You can
+                                        reset your
+                                        password here.</p>
 
                                     @if (Session::has('message'))
                                     <div class="alert alert-success d-flex align-items-center justify-content-center"
@@ -82,7 +85,7 @@
                                             <input id="email" type="email"
                                                 class="form-control @error('email') is-invalid @enderror" name="email"
                                                 placeholder="Email address" value="{{ old('email') }}" required
-                                                autofocus>
+                                                autofocus style="border-color: #1d3268 !important">
                                             <label for="email"><b>Email Address</b></label>
                                             @error('email')
                                             <span class="invalid-feedback" role="alert">

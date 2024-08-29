@@ -32,6 +32,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\CircleMeetingMembersBusiness;
 use App\Models\CircleMeetingMembersReference;
 use App\Mail\MeetingInvitation as MailMeetingInvitation;
+use App\Models\Message;
 
 class HomeController extends Controller
 {
@@ -202,8 +203,13 @@ class HomeController extends Controller
                 ->sortByDesc('count')
                 ->first();
 
+            //chat Module
+            $chat = Message::where('senderId', Auth::user()->id)
+                ->orWhere('receiverId', Auth::user()->id)
+                ->get();
 
-            return view('home', compact('count', 'circlecalls', 'busGiver', 'refGiver', 'nearestTraining', 'findRegister', 'testimonials', 'meeting', 'businessCategory', 'myInvites'));
+
+            return view('home', compact('count', 'chat', 'circlecalls', 'busGiver', 'refGiver', 'nearestTraining', 'findRegister', 'testimonials', 'meeting', 'businessCategory', 'myInvites'));
         }
         return view('home', compact('count', 'nearestTraining',  'businessCategory', 'myInvites', 'findRegister'));
     }

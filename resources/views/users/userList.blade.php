@@ -80,6 +80,9 @@
                     @endforeach
                 </tbody>
             </table>
+            <div class="d-flex justify-content-end custom-pagination">
+                {!! $data->links() !!}
+            </div>
             <!-- End Table with stripped rows -->
         </div>
     </div>

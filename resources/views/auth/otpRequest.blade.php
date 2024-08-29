@@ -42,7 +42,7 @@
 <body>
 
     <main>
-        <div class="" style="background-image: url('{{ asset('img/b2.jpg') }}');
+        <div class="" style="
                                                     background-size: 100% 100%;
                                                     background-position: center;">
             <section
@@ -58,13 +58,14 @@
                                 </a>
                             </div><!-- End Logo -->
 
-                            <div class="card mb-3 res-box"
-                                style="width: 20rem; height: 100%; background-image: url('{{ asset('img/b2.jpg') }}'); background-size: cover; background-position: center;">
+                            <div class="card mb-3 res-box">
                                 <div class="card-body">
-                                    <h5 class="card-title text-center pb-0 fs-4 text-white mb-4">Request OTP</h5>
+                                    <h5 class="card-title text-center pb-0 fs-4 mb-4"
+                                        style="color: #1d3268; font-weight: bold;">Request
+                                        OTP</h5>
 
                                     <!-- OTP Request Form -->
-                                    <form action="{{ route('otp.request') }}" method="post"
+                                    <form action=" {{ route('otp.request') }}" method="post"
                                         class="needs-validation w-100" novalidate>
                                         @csrf
 
@@ -97,7 +98,8 @@
                                 <!-- You can delete the links only if you purchased the pro version. -->
                                 <!-- Licensing information: https://bootstrapmade.com/license/ -->
                                 <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/ -->
-                                Designed by <a href="https://flipcodesolutions.com/" target="_blank" class="text-black"><b>Aspireotech
+                                Designed by <a href="https://flipcodesolutions.com/" target="_blank"
+                                    class="text-black"><b>Aspireotech
                                         Solutions</b></a>
                             </div>
 

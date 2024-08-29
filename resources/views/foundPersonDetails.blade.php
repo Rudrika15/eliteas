@@ -555,10 +555,13 @@
                                     @php
                                     $profilePhoto = $member->profilePhoto;
                                     @endphp
-
                                     @if ($profilePhoto && file_exists(public_path('ProfilePhoto/' . $profilePhoto)))
                                     <img src="{{ asset('ProfilePhoto/' . $profilePhoto) }}" alt="ProfilePhoto"
-                                        class="rounded-circle" width="150">
+                                        class="rounded-circle profile-photo">
+
+                                    {{-- style="max-height: 150px; max-width: 150px; object-fit: contain; width: auto;
+                                    height: auto;"> --}}
+
                                     @else
                                     <img src="{{ asset('ProfilePhoto/profile.png') }}" alt="ProfilePhoto"
                                         class="rounded-circle" width="100">
@@ -582,39 +585,63 @@
                                         </p>
 
                                         <div class="d-flex justify-content-center">
-                                            @if (!$memberStatus)
+                                            @php
+                                            $memberCircleId = $member->circleId;
+                                            $userCircleId = null;
+
+                                            if (auth()->check()) {
+                                            $userCircleId = \App\Models\Member::where('userId',
+                                            auth()->user()->id)->value('circleId');
+                                            }
+                                            @endphp
+
+                                            @if ($memberCircleId == $userCircleId)
+                                            <button type="button" class="btn btn-bg-blue shadow-none">
+                                                Connected &nbsp;<i class="bi bi-check-circle-fill"></i>
+                                            </button>
+                                            <button id="messageButton" class="btn btn-bg-orange ms-2">
+                                                Message &nbsp;<i class="bi bi-chat-fill"></i>
+                                            </button>
+                                            @elseif (!$memberStatus)
                                             <form action="{{ route('connect') }}" id="connectForm" method="POST">
                                                 @csrf
-                                                <input type="hiddden" value="{{ $member->user->id }}" name="memberId"
+                                                <input type="hidden" value="{{ $member->user->id }}" name="memberId"
                                                     id="memberId">
-                                                <button type="submit" class="btn btn-bg-blue shadow-none">Connect
-                                                    &nbsp;<i class="bi bi-person-plus-fill"></i></button>
+                                                <button type="submit" class="btn btn-bg-blue shadow-none">
+                                                    Connect &nbsp;<i class="bi bi-person-plus-fill"></i>
+                                                </button>
                                             </form>
-
                                             @elseif ($memberStatus->status == 'Accepted')
-                                            <button type="button" class="btn btn-bg-blue shadow-none">Connected &nbsp;<i
-                                                    class="bi bi-check-circle-fill"></i></button>
-
+                                            <button type="button" class="btn btn-bg-blue shadow-none">
+                                                Connected &nbsp;<i class="bi bi-check-circle-fill"></i>
+                                            </button>
+                                            <button id="messageButton" class="btn btn-bg-orange ms-2">
+                                                Message &nbsp;<i class="bi bi-chat-fill"></i>
+                                            </button>
                                             @elseif ($memberStatus->status == 'Rejected')
                                             <form action="{{ route('connect') }}" id="connectForm" method="POST">
                                                 @csrf
                                                 <input type="hidden" value="{{ $member->user->id }}" name="memberId"
                                                     id="memberId">
-                                                <button type="submit" class="btn btn-bg-blue shadow-none">Connect
-                                                    &nbsp;<i class="bi bi-person-plus-fill"></i></button>
+                                                <button type="submit" class="btn btn-bg-blue shadow-none">
+                                                    Connect &nbsp;<i class="bi bi-person-plus-fill"></i>
+                                                </button>
                                             </form>
-
                                             @else
-                                            <button type="button" class="btn btn-bg-blue shadow-none">Requested &nbsp;<i
-                                                    class="bi bi-clock"></i></button>
+                                            <button type="button" class="btn btn-bg-blue shadow-none">
+                                                Requested &nbsp;<i class="bi bi-clock"></i>
+                                            </button>
                                             @endif
 
-                                            @if(!empty($memberStatus) && $memberStatus->status == 'Accepted')
-                                            <button id="messageButton" class="btn btn-bg-orange ms-2">Message</button>
+                                            {{-- @if(!empty($memberStatus) && $memberStatus->status == 'Accepted')
+                                            <button id="messageButton" class="btn btn-bg-orange ms-2">
+                                                Message
+                                            </button>
                                             @else
-                                            <button id="messageButton"
-                                                class="btn btn-bg-orange ms-2 disabled">Message</button>
-                                            @endif
+                                            <button id="messageButton" class="btn btn-bg-orange ms-2 disabled">
+                                                Message
+                                            </button>
+                                            @endif --}}
 
                                             <style>
                                                 .logged-in {
@@ -631,6 +658,24 @@
                                                     color: red;
                                                     animation: blink 1s infinite;
                                                     /* add blink animation */
+                                                }
+
+                                                .profile-photo {
+                                                    width: 150px;
+                                                    /* Set the desired width */
+                                                    height: 150px;
+                                                    /* Set the desired height */
+                                                    border-radius: 50%;
+                                                    /* Make the image round */
+                                                    object-fit: contain;
+                                                    /* Ensure the image does not stretch or blur */
+                                                    /* object-fit: content; */
+                                                    /* object-fit: content; */
+                                                    /* Ensure the image covers the area */
+                                                    display: block;
+                                                    /* Remove any extra space around the image */
+                                                    margin: 0 auto;
+                                                    /* Center the image if needed */
                                                 }
 
                                                 @keyframes blink {
@@ -656,7 +701,7 @@
                                             class="btn btn-bg-orange back-btn2 mt-2">Back</a>
                                     </div>
 
-                                    <!-- Chat Modal -->
+                                    <!--                  Chat Modal -->
                                     <div id="chatModal" class="modal">
                                         <div class="modal-content">
                                             <span class="close">&times;</span>
