@@ -80,6 +80,7 @@ class ChatController extends Controller
         return response()->json($messages);
     }
 
+
     public function getList()
     {
         $userId = Auth::id();
@@ -163,4 +164,26 @@ class ChatController extends Controller
     //     $isTyping = session()->get("typing_{$receiverId}", false);
     //     return response()->json($isTyping);
     // }
+
+    public function getChat($userId)
+    {
+        $user = User::find($userId);
+
+        // Assuming you have a ChatMessage model and each message belongs to a user
+        $messages = Message::where('senderId', $userId)
+            ->orWhere('receiverId', $userId)
+            ->orderBy('created_at', 'asc')
+            ->get()
+            ->map(function ($message) use ($userId) {
+                return [
+                    'text' => $message->message,
+                    'sentByUser' => $message->senderId == $userId
+                ];
+            });
+
+        return response()->json([
+            'user' => $user,
+            'messages' => $messages
+        ]);
+    }
 }

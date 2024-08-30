@@ -462,6 +462,9 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::get('/myChatList', [ChatController::class, 'myChatList'])->name('chat.index');
 
+    Route::get('/get-chat/{userId}', [ChatController::class, 'getChat']);
+
+
 
 
     // Route::post('/typing-status', [ChatController::class, 'updateTypingStatus']);
