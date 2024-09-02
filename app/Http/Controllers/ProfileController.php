@@ -49,6 +49,10 @@ class ProfileController extends Controller
         // return $request;
 
         try {
+            $this->validate($request, [
+                'profilePhoto' => 'max:2048', // 5MB in kilobytes
+                'companyLogo' => 'max:2048', // 5MB in kilobytes
+            ]);
 
             $id = $request->input('id');
             $member = Member::find($id);

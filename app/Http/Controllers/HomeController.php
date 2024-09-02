@@ -130,7 +130,7 @@ class HomeController extends Controller
                     'member' => $group->first()->member,
                     'count' => $group->count()
                 ];
-            })->sortByDesc('count');
+            })->sortByDesc('count')->first(); // Return only the first (highest count) record
 
             //max business
             $previousMonth = Carbon::now()->subMonth()->month;
@@ -161,7 +161,7 @@ class HomeController extends Controller
                         'categoryName' => $businessCategory->categoryName,
                     ],
                 ];
-            })->sortByDesc('amount')->values();
+            })->sortByDesc('amount')->first();
 
             //reference
 
@@ -295,14 +295,18 @@ class HomeController extends Controller
     public function search(Request $request)
     {
         $query = $request->input('query');
-        $members = Member::where('userId', '!=', Auth::user()->id)
-            ->where('firstName', 'like', '%' . $query . '%')
-            ->orWhere('lastName', 'like', '%' . $query . '%')
+        $members = Member::where('status', 'Active') // Ensure only active members are included
+            ->where('userId', '!=', Auth::user()->id)
+            ->where(function ($q) use ($query) {
+                $q->where('firstName', 'like', '%' . $query . '%')
+                    ->orWhere('lastName', 'like', '%' . $query . '%');
+            })
             ->whereHas('circle', function ($q) use ($query) {
                 $q->where('circleName', 'like', '%' . $query . '%');
             })
             ->with('user', 'circle')
             ->get();
+
         $message = "Search results for '$query'";
 
         return response()->json([
@@ -310,6 +314,7 @@ class HomeController extends Controller
             'members' => $members
         ]);
     }
+
 
 
 

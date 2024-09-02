@@ -59,7 +59,7 @@
     <header id="header" class="header fixed-top d-flex align-items-center shadow-none border ">
 
         <div class="d-flex justify-content-between">
-            <a href="#" class="logo">
+            <a href="{{route('home')}}" class="logo">
                 {{-- <img src="assets/img/logo.png" alt=""> --}}
                 <img src="{{ asset('img/logo2.jpg') }}" alt="UBN" width="100">
             </a>
@@ -227,7 +227,7 @@
                 @endrole
 
 
-               
+
 
                 {{-- @role('member') --}}
                 @if ( Auth::user()->userStatus == 'Online')

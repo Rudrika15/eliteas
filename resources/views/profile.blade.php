@@ -23,6 +23,8 @@
 @endif
 
 
+
+
 <div class="card">
     <div class="card-body d-flex justify-content-between align-items-center">
         <h5 class="card-title">My Profile</h5>
@@ -32,6 +34,14 @@
     <form class="m-3 needs-validation" id="memberForm" enctype="multipart/form-data" method="post"
         action="{{ route('member.update', $member->userId) }}" novalidate>
         @csrf
+
+        @if ($errors->has('file'))
+        <div class="alert alert-danger">
+            {{ $errors->first('file') }}
+        </div>
+        @endif
+
+
         <input type="hidden" name="id" value="{{ $member->id }}">
         <div class="accordion" id="accordionExample">
             <!-- Section 1 -->
@@ -331,37 +341,55 @@
 
                             <div class="form-label-group mt-3">
                                 <div class="row">
+                                    <!-- Profile Photo Input -->
                                     <div class="col-md-6">
                                         <div class="form-label-group mt-3">
                                             <label for="profilePhoto" class="fw-bold">Profile Photo <sup
                                                     class="text-danger">*</sup></label>
-                                            <input type="file" class="form-control" id="profilePhoto"
-                                                name="profilePhoto" accept="image/*"
+                                            <input type="file"
+                                                class="form-control @error('profilePhoto') is-invalid @enderror"
+                                                id="profilePhoto" name="profilePhoto" accept="image/*"
                                                 onchange="previewPhoto(event, 'photoPreview')">
+                                            <span class="text-danger mt-1 d-block">*
+                                                File size:Max 2MB</span>
                                             <div style="width: 100px; height: 100px; position: relative;" class="mt-3">
                                                 <img id="photoPreview"
                                                     src="{{ asset('ProfilePhoto/' . ($member->profilePhoto ?? 'default.jpg')) }}"
                                                     style="width: 100%; height: 100%; object-fit: contain; aspect-ratio: 1/1;">
                                             </div>
+
+                                            <!-- Display Profile Photo Error -->
                                             @error('profilePhoto')
-                                            <span class="error">{{ $message }}</span>
+                                            <span class="text-danger">{{ $message }}</span>
                                             @enderror
+
                                         </div>
                                     </div>
+
+                                    <!-- Company Logo Input -->
                                     <div class="col-md-6">
                                         <div class="form-label-group mt-3">
                                             <label for="companyLogo" class="fw-bold">Company Logo <sup
                                                     class="text-danger">*</sup></label>
-                                            <input type="file" class="form-control" id="companyLogo" name="companyLogo"
-                                                accept="image/*" onchange="previewPhoto(event, 'logoPreview')">
+                                            <input type="file"
+                                                class="form-control @error('companyLogo') is-invalid @enderror"
+                                                id="companyLogo" name="companyLogo" accept="image/*"
+                                                onchange="previewPhoto(event, 'logoPreview')">
+                                            <span class="text-danger mt-1 d-block">*
+                                                File size:Max 2MB</span>
                                             <div style="width: 100px; height: 100px; position: relative;" class="mt-3">
                                                 <img id="logoPreview"
                                                     src="{{ asset('CompanyLogo/' . ($member->companyLogo ?? 'default.jpg')) }}"
                                                     style="width: 100%; height: 100%; object-fit: contain; aspect-ratio: 1/1;">
                                             </div>
+
+                                            <!-- Display Company Logo Error -->
                                             @error('companyLogo')
-                                            <span class="error">{{ $message }}</span>
+                                            <span class="text-danger">{{ $message }}</span>
                                             @enderror
+
+                                            <!-- Note about file size -->
+
                                         </div>
                                     </div>
                                 </div>
