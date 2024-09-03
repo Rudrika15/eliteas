@@ -232,7 +232,7 @@
     }
 
     .chat-input button:hover {
-        background-color: #162e6b;
+        background-color: #e76a35;
     }
 
     /* Styling for message timestamps */

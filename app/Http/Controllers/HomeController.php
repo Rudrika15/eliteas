@@ -295,18 +295,14 @@ class HomeController extends Controller
     public function search(Request $request)
     {
         $query = $request->input('query');
-        $members = Member::where('status', 'Active') // Ensure only active members are included
-            ->where('userId', '!=', Auth::user()->id)
-            ->where(function ($q) use ($query) {
-                $q->where('firstName', 'like', '%' . $query . '%')
-                    ->orWhere('lastName', 'like', '%' . $query . '%');
-            })
+        $members = Member::where('userId', '!=', Auth::user()->id)
+            ->where('firstName', 'like', '%' . $query . '%')
+            ->orWhere('lastName', 'like', '%' . $query . '%')
             ->whereHas('circle', function ($q) use ($query) {
                 $q->where('circleName', 'like', '%' . $query . '%');
             })
             ->with('user', 'circle')
             ->get();
-
         $message = "Search results for '$query'";
 
         return response()->json([

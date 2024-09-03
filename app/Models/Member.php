@@ -82,4 +82,11 @@ class Member extends Model
     {
         return $this->belongsTo(MembershipType::class, 'membershipType', 'id');
     }
+
+    public function circles()
+    {
+        return $this->belongsTo(Circle::class);
+    }
+
+
 }
