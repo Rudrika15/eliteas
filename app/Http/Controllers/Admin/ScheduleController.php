@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Circle;
 use App\Models\Schedule;
 use App\Models\Franchise;
+use App\Utils\ErrorLogger;
 use Illuminate\Http\Request;
 use App\Models\MeetingInvitation;
 use Illuminate\Support\Facades\URL;
@@ -23,7 +24,8 @@ class ScheduleController extends Controller
             $circles = Circle::where('status', 'Active')->paginate(10);
             return view('admin.schedule.index', compact('schedules', 'circles'));
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError($th, request()->fullUrl());
             return view('servererror');
         }
     }
@@ -49,8 +51,11 @@ class ScheduleController extends Controller
             $schedules = Schedule::findOrFail($id);
             return response()->json($schedules);
         } catch (\Throwable $th) {
-            //throw $th
-
+            //throw $th;
+            ErrorLogger::logError(
+                $th,
+                request()->fullUrl()
+            );
             return view('servererror');
         }
     }
@@ -61,7 +66,10 @@ class ScheduleController extends Controller
             $schedules = Schedule::all();
             return view('admin.schedule.create', compact('schedules'));
         } catch (\Throwable $th) {
-            //throe $th
+            //throe $th;
+            ErrorLogger::logError($th,
+                request()->fullUrl()
+            );
             return view('servererror');
         }
     }
@@ -83,7 +91,8 @@ class ScheduleController extends Controller
 
             return redirect()->route('schedule.index')->with('success', 'Mettting Created Successfully!');
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError($th, request()->fullUrl());
             return view('servererror');
         }
     }
@@ -95,7 +104,8 @@ class ScheduleController extends Controller
             $schedules = Schedule::find($id);
             return view('admin.schedule.edit', compact('schedules'));
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError($th, request()->fullUrl());
             return view('servererror');
         }
     }
@@ -123,7 +133,9 @@ class ScheduleController extends Controller
             $schedules->save();
 
             return redirect()->route('schedule.index')->with('success', 'Schedule details updated successfully.');
-        } catch (\Exception $e) {
+        } catch (\Throwable $th) {
+            // throw $th;
+            ErrorLogger::logError($th, request()->fullUrl());
             return redirect()->route('schedule.index')->with('error', 'Failed to update Schedule details.');
         }
     }
@@ -142,7 +154,9 @@ class ScheduleController extends Controller
             $schedules->save();
 
             return redirect()->route('schedule.index')->with('success', 'Schedule deleted successfully.');
-        } catch (\Exception $e) {
+        } catch (\Throwable $th) {
+            // throw $th;
+            ErrorLogger::logError($th, request()->fullUrl());
             return redirect()->route('schedule.index')->with('error', 'Failed to delete Schedule.');
         }
     }
@@ -154,7 +168,8 @@ class ScheduleController extends Controller
             $schedules = Schedule::where('status', 'Active')->get();
             return view('admin.schedule.dashIndex', compact('schedules'));
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError($th, request()->fullUrl());
             return view('servererror');
         }
     }
@@ -165,7 +180,8 @@ class ScheduleController extends Controller
             $schedules = Schedule::find($id);
             return view('admin.schedule.dashEdit', compact('schedules'));
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError($th, request()->fullUrl());
             return view('servererror');
         }
     }
@@ -192,7 +208,9 @@ class ScheduleController extends Controller
             $schedules->save();
 
             return redirect()->route('schedule.dashIndex')->with('success', 'Schedule details updated successfully.');
-        } catch (\Exception $e) {
+        } catch (\Throwable $th) {
+            // throw $th;
+            ErrorLogger::logError($th, request()->fullUrl());
             return redirect()->route('schedule.dashIndex')->with('error', 'Failed to update Schedule details.');
         }
     }
@@ -204,7 +222,8 @@ class ScheduleController extends Controller
             $invitedPersonList = MeetingInvitation::where('meetingId', $id)->paginate(10);
             return view('admin.schedule.invitedList', compact('schedules', 'invitedPersonList'));
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError($th, request()->fullUrl());
             return view('servererror');
         }
     }

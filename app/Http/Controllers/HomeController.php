@@ -10,11 +10,13 @@ use App\Models\State;
 use App\Models\Circle;
 use App\Models\Member;
 use App\Models\Country;
+use App\Models\Message;
 use App\Models\Location;
 use App\Models\Schedule;
 use App\Models\Training;
 use App\Models\CircleCall;
 use App\Models\Connection;
+use App\Utils\ErrorLogger;
 use App\Models\Testimonial;
 use App\Models\TopsProfile;
 use Illuminate\Http\Request;
@@ -32,7 +34,6 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\CircleMeetingMembersBusiness;
 use App\Models\CircleMeetingMembersReference;
 use App\Mail\MeetingInvitation as MailMeetingInvitation;
-use App\Models\Message;
 
 class HomeController extends Controller
 {
@@ -53,176 +54,331 @@ class HomeController extends Controller
      */
 
 
+    // public function index()
+    // {
+    //     $count = Schedule::where('status', 'Active')->count();
+    //     $currentDate = Carbon::now()->toDateString();
+
+    //     $currentDate = Carbon::now();
+
+    //     $nearestTraining = Training::where('status', 'Active')
+    //         ->whereDate('date', '>=', $currentDate)
+    //         ->whereHas('trainers.user')
+    //         ->with('trainers.user')
+    //         ->whereHas('trainersTrainings.user')
+    //         // ->with('trainersTrainings.user')
+    //         // ->whereNotNull('data') // Add this line to filter out records where 'data' is not null
+    //         ->orderBy('date', 'asc')
+    //         ->first();
+
+
+
+    //     $businessCategory = BusinessCategory::where('status', 'Active')->get();
+
+
+    //     $myInvites = MeetingInvitation::where('invitedMemberId', Auth::user()->id)->get();
+
+
+    //     if ($nearestTraining) {
+    //         $findRegister = TrainingRegister::where('userId', Auth::user()->id)
+    //             ->where('trainingId', $nearestTraining->id)
+    //             ->where('trainerId', $nearestTraining->trainersTrainings->user->id)
+    //             ->get();
+    //     } else {
+    //         $findRegister = [];
+    //     }
+
+
+
+
+    //     if (!Auth::user()->hasRole('Admin')) {
+    //         // business category
+
+    //         $testimonials = Testimonial::where('memberId', Auth::user()->member->id)->with('sender')->orderBy('id', 'DESC')->take(3)->get();
+    //         $myCircle = Auth::user()->member->circleId;
+    //         $meeting = Schedule::where('circleId', Auth::user()->member->circleId)
+    //             ->with('circle.members')
+    //             ->with('circle.franchise')
+    //             ->where('status', 'Active')
+    //             ->where('date', '>=', \today())
+    //             ->first();
+
+    //         if ($meeting) {
+    //             $meeting->date = Carbon::parse($meeting->date);
+    //         } else {
+    //             return view('home', ['meeting' => 'No meeting found for now']);
+    //         }
+
+    //         $myInvites = MeetingInvitation::where('invitedMemberId', Auth::user()->id)
+    //             ->where('meetingId', $meeting->id)
+    //             ->get();
+
+
+    //         // Determine the table name based on the slug
+
+    //         //max 1:1 call
+    //         $previousMonth = Carbon::now()->subMonth()->month;
+    //         $previousYear = Carbon::now()->subMonth()->year;
+
+    //         $circlecalls = CircleCall::with(['member', 'meetingPerson'])
+    //             ->where('status', 'Active')
+    //             ->whereYear('date', $previousYear)
+    //             ->whereMonth('date', $previousMonth)
+    //             ->get();
+
+    //         $circlecalls = $circlecalls->groupBy('memberId')->map(function ($group) {
+    //             return [
+    //                 'member' => $group->first()->member,
+    //                 'count' => $group->count()
+    //             ];
+    //         })->sortByDesc('count')->first(); // Return only the first (highest count) record
+
+    //         //max business
+    //         $previousMonth = Carbon::now()->subMonth()->month;
+    //         $previousYear = Carbon::now()->subMonth()->year;
+
+    //         $busGiver = CircleMeetingMembersBusiness::where('status', 'Active')
+    //             ->whereYear('date', $previousYear)
+    //             ->whereMonth('date', $previousMonth)
+    //             ->get();
+
+    //         $busGiver = $busGiver->groupBy('businessGiverId')->map(function ($group) {
+    //             $user = $group->first()->users;
+    //             $member = $user->member()->select('circleId', 'businessCategoryId', 'profilePhoto')->first();
+    //             $circle = Circle::find($member->circleId);
+    //             $businessCategory = BusinessCategory::find($member->businessCategoryId);
+
+    //             return [
+    //                 'user' => $user,
+    //                 'member' => $member,
+    //                 'amount' => $group->sum('amount'),
+    //                 'count' => $group->count(),
+    //                 'circle' => [
+    //                     'id' => $circle->id,
+    //                     'circleName' => $circle->circleName,
+    //                 ],
+    //                 'businessCategory' => [
+    //                     'id' => $businessCategory->id,
+    //                     'categoryName' => $businessCategory->categoryName,
+    //                 ],
+    //             ];
+    //         })->sortByDesc('amount')->first();
+
+    //         //reference
+
+    //         $previousMonth = Carbon::now()->subMonth()->month;
+    //         $previousYear = Carbon::now()->subMonth()->year;
+
+    //         $refGiver = CircleMeetingMembersReference::where('status', 'Active')
+    //             ->whereYear('created_at', $previousYear)
+    //             ->whereMonth('created_at', $previousMonth)
+    //             ->get()
+    //             ->groupBy('referenceGiverId')
+    //             ->map(function ($group) {
+
+    //                 $referenceGiverId = $group->first()->referenceGiverId ?? null;
+
+    //                 if ($referenceGiverId === null) {
+    //                     return null;
+    //                 }
+
+    //                 $user = User::find($referenceGiverId);
+
+    //                 if ($user && $user->status === 'Active') {
+    //                     $member = Member::where('userId', $referenceGiverId)->where('status', 'Active')->first();
+
+    //                     return [
+    //                         'user' => $user,
+    //                         'count' => $group->count(),
+    //                         'businessCategoryId' => $member ? $member->businessCategoryId : null,
+    //                         'businessCategory' => $member ? $member->bcategory->categoryName : null,
+    //                         'circleId' => $member ? $member->circleId : null,
+    //                         'circle' => $member ? $member->circle->circleName : null,
+    //                         'profilePhoto' => $member ? $member->profilePhoto : null,
+    //                     ];
+    //                 }
+
+    //                 return null;
+    //             })
+    //             ->filter()
+    //             ->sortByDesc('count')
+    //             ->first();
+
+    //         //chat Module
+    //         // $chat = Message::where('senderId', Auth::user()->id)
+    //         //     ->orWhere('receiverId', Auth::user()->id)
+    //         //     ->get();
+
+
+    //         return view('home', compact('count', 'circlecalls', 'busGiver', 'refGiver', 'nearestTraining', 'findRegister', 'testimonials', 'meeting', 'businessCategory', 'myInvites'));
+    //     }
+    //     return view('home', compact('count', 'nearestTraining',  'businessCategory', 'myInvites', 'findRegister'));
+    // }
+
     public function index()
     {
-        $count = Schedule::where('status', 'Active')->count();
-        $currentDate = Carbon::now()->toDateString();
+        try {
+            $count = Schedule::where('status', 'Active')->count();
+            $currentDate = Carbon::now()->toDateString();
+            $currentDate = Carbon::now();
 
-        $currentDate = Carbon::now();
-
-        $nearestTraining = Training::where('status', 'Active')
-            ->whereDate('date', '>=', $currentDate)
-            ->whereHas('trainers.user')
-            ->with('trainers.user')
-            ->whereHas('trainersTrainings.user')
-            // ->with('trainersTrainings.user')
-            // ->whereNotNull('data') // Add this line to filter out records where 'data' is not null
-            ->orderBy('date', 'asc')
-            ->first();
-
-
-
-        $businessCategory = BusinessCategory::where('status', 'Active')->get();
-
-
-        $myInvites = MeetingInvitation::where('invitedMemberId', Auth::user()->id)->get();
-
-
-        if ($nearestTraining) {
-            $findRegister = TrainingRegister::where('userId', Auth::user()->id)
-                ->where('trainingId', $nearestTraining->id)
-                ->where('trainerId', $nearestTraining->trainersTrainings->user->id)
-                ->get();
-        } else {
-            $findRegister = [];
-        }
-
-
-
-
-        if (!Auth::user()->hasRole('Admin')) {
-            // business category
-
-            $testimonials = Testimonial::where('memberId', Auth::user()->member->id)->with('sender')->orderBy('id', 'DESC')->take(3)->get();
-            $myCircle = Auth::user()->member->circleId;
-            $meeting = Schedule::where('circleId', Auth::user()->member->circleId)
-                ->with('circle.members')
-                ->with('circle.franchise')
-                ->where('status', 'Active')
-                ->where('date', '>=', \today())
+            $nearestTraining = Training::where('status', 'Active')
+                ->whereDate('date', '>=', $currentDate)
+                ->whereHas('trainers.user')
+                ->with('trainers.user')
+                ->whereHas('trainersTrainings.user')
+                ->orderBy('date', 'asc')
                 ->first();
 
-            if ($meeting) {
-                $meeting->date = Carbon::parse($meeting->date);
+            $businessCategory = BusinessCategory::where('status', 'Active')->get();
+
+            $myInvites = MeetingInvitation::where('invitedMemberId', Auth::user()->id)->get();
+
+            if ($nearestTraining) {
+                $findRegister = TrainingRegister::where('userId', Auth::user()->id)
+                    ->where('trainingId', $nearestTraining->id)
+                    ->where('trainerId', $nearestTraining->trainersTrainings->user->id)
+                    ->get();
             } else {
-                return view('home', ['meeting' => 'No meeting found for now']);
+                $findRegister = [];
             }
 
-            $myInvites = MeetingInvitation::where('invitedMemberId', Auth::user()->id)
-                ->where('meetingId', $meeting->id)
-                ->get();
+            if (!Auth::user()->hasRole('Admin')) {
+                $testimonials = Testimonial::where('memberId', Auth::user()->member->id)
+                    ->with('sender')
+                    ->orderBy('id', 'DESC')
+                    ->take(3)
+                    ->get();
 
+                $myCircle = Auth::user()->member->circleId;
+                $meeting = Schedule::where('circleId', Auth::user()->member->circleId)
+                    ->with('circle.members')
+                    ->with('circle.franchise')
+                    ->where('status', 'Active')
+                    ->where('date', '>=', \today())
+                    ->first();
 
-            // Determine the table name based on the slug
+                if ($meeting) {
+                    $meeting->date = Carbon::parse($meeting->date);
+                } else {
+                    return view('home', ['meeting' => 'No meeting found for now']);
+                }
 
-            //max 1:1 call
-            $previousMonth = Carbon::now()->subMonth()->month;
-            $previousYear = Carbon::now()->subMonth()->year;
+                $myInvites = MeetingInvitation::where('invitedMemberId', Auth::user()->id)
+                    ->where('meetingId', $meeting->id)
+                    ->get();
 
-            $circlecalls = CircleCall::with(['member', 'meetingPerson'])
-                ->where('status', 'Active')
-                ->whereYear('date', $previousYear)
-                ->whereMonth('date', $previousMonth)
-                ->get();
+                $previousMonth = Carbon::now()->subMonth()->month;
+                $previousYear = Carbon::now()->subMonth()->year;
 
-            $circlecalls = $circlecalls->groupBy('memberId')->map(function ($group) {
-                return [
-                    'member' => $group->first()->member,
-                    'count' => $group->count()
-                ];
-            })->sortByDesc('count')->first(); // Return only the first (highest count) record
+                $circlecalls = CircleCall::with(['member', 'meetingPerson'])
+                    ->where('status', 'Active')
+                    ->whereYear('date', $previousYear)
+                    ->whereMonth('date', $previousMonth)
+                    ->get();
 
-            //max business
-            $previousMonth = Carbon::now()->subMonth()->month;
-            $previousYear = Carbon::now()->subMonth()->year;
+                $circlecalls = $circlecalls->groupBy('memberId')->map(function ($group) {
+                    return [
+                        'member' => $group->first()->member,
+                        'count' => $group->count()
+                    ];
+                })->sortByDesc('count')->first();
 
-            $busGiver = CircleMeetingMembersBusiness::where('status', 'Active')
-                ->whereYear('date', $previousYear)
-                ->whereMonth('date', $previousMonth)
-                ->get();
+                $busGiver = CircleMeetingMembersBusiness::where('status', 'Active')
+                    ->whereYear('date', $previousYear)
+                    ->whereMonth('date', $previousMonth)
+                    ->get();
 
-            $busGiver = $busGiver->groupBy('businessGiverId')->map(function ($group) {
-                $user = $group->first()->users;
-                $member = $user->member()->select('circleId', 'businessCategoryId', 'profilePhoto')->first();
-                $circle = Circle::find($member->circleId);
-                $businessCategory = BusinessCategory::find($member->businessCategoryId);
+                $busGiver = $busGiver->groupBy('businessGiverId')->map(function ($group) {
+                    $user = $group->first()->users;
+                    $member = $user->member()->select('circleId', 'businessCategoryId', 'profilePhoto')->first();
+                    $circle = Circle::find($member->circleId);
+                    $businessCategory = BusinessCategory::find($member->businessCategoryId);
 
-                return [
-                    'user' => $user,
-                    'member' => $member,
-                    'amount' => $group->sum('amount'),
-                    'count' => $group->count(),
-                    'circle' => [
-                        'id' => $circle->id,
-                        'circleName' => $circle->circleName,
-                    ],
-                    'businessCategory' => [
-                        'id' => $businessCategory->id,
-                        'categoryName' => $businessCategory->categoryName,
-                    ],
-                ];
-            })->sortByDesc('amount')->first();
+                    return [
+                        'user' => $user,
+                        'member' => $member,
+                        'amount' => $group->sum('amount'),
+                        'count' => $group->count(),
+                        'circle' => [
+                            'id' => $circle->id,
+                            'circleName' => $circle->circleName,
+                        ],
+                        'businessCategory' => [
+                            'id' => $businessCategory->id,
+                            'categoryName' => $businessCategory->categoryName,
+                        ],
+                    ];
+                })->sortByDesc('amount')->first();
 
-            //reference
+                $refGiver = CircleMeetingMembersReference::where('status', 'Active')
+                    ->whereYear('created_at', $previousYear)
+                    ->whereMonth('created_at', $previousMonth)
+                    ->get()
+                    ->groupBy('referenceGiverId')
+                    ->map(function ($group) {
+                        $referenceGiverId = $group->first()->referenceGiverId ?? null;
 
-            $previousMonth = Carbon::now()->subMonth()->month;
-            $previousYear = Carbon::now()->subMonth()->year;
+                        if ($referenceGiverId === null) {
+                            return null;
+                        }
 
-            $refGiver = CircleMeetingMembersReference::where('status', 'Active')
-                ->whereYear('created_at', $previousYear)
-                ->whereMonth('created_at', $previousMonth)
-                ->get()
-                ->groupBy('referenceGiverId')
-                ->map(function ($group) {
+                        $user = User::find($referenceGiverId);
 
-                    $referenceGiverId = $group->first()->referenceGiverId ?? null;
+                        if ($user && $user->status === 'Active') {
+                            $member = Member::where('userId', $referenceGiverId)->where('status', 'Active')->first();
 
-                    if ($referenceGiverId === null) {
+                            return [
+                                'user' => $user,
+                                'count' => $group->count(),
+                                'businessCategoryId' => $member ? $member->businessCategoryId : null,
+                                'businessCategory' => $member ? $member->bcategory->categoryName : null,
+                                'circleId' => $member ? $member->circleId : null,
+                                'circle' => $member ? $member->circle->circleName : null,
+                                'profilePhoto' => $member ? $member->profilePhoto : null,
+                            ];
+                        }
+
                         return null;
-                    }
+                    })
+                    ->filter()
+                    ->sortByDesc('count')
+                    ->first();
 
-                    $user = User::find($referenceGiverId);
+                return view('home', compact('count', 'circlecalls', 'busGiver', 'refGiver', 'nearestTraining', 'findRegister', 'testimonials', 'meeting', 'businessCategory', 'myInvites'));
+            }
 
-                    if ($user && $user->status === 'Active') {
-                        $member = Member::where('userId', $referenceGiverId)->where('status', 'Active')->first();
-
-                        return [
-                            'user' => $user,
-                            'count' => $group->count(),
-                            'businessCategoryId' => $member ? $member->businessCategoryId : null,
-                            'businessCategory' => $member ? $member->bcategory->categoryName : null,
-                            'circleId' => $member ? $member->circleId : null,
-                            'circle' => $member ? $member->circle->circleName : null,
-                            'profilePhoto' => $member ? $member->profilePhoto : null,
-                        ];
-                    }
-
-                    return null;
-                })
-                ->filter()
-                ->sortByDesc('count')
-                ->first();
-
-            //chat Module
-            $chat = Message::where('senderId', Auth::user()->id)
-                ->orWhere('receiverId', Auth::user()->id)
-                ->get();
-
-
-            return view('home', compact('count', 'chat', 'circlecalls', 'busGiver', 'refGiver', 'nearestTraining', 'findRegister', 'testimonials', 'meeting', 'businessCategory', 'myInvites'));
+            return view('home', compact('count', 'nearestTraining', 'businessCategory', 'myInvites', 'findRegister'));
+        } catch (\Throwable $th) {
+            // Log the error
+            ErrorLogger::logError($th, request()->fullUrl());
+            // Return a generic error view or message
+            return view('servererror')->with('error', 'Failed to load the dashboard');
         }
-        return view('home', compact('count', 'nearestTraining',  'businessCategory', 'myInvites', 'findRegister'));
     }
+
+
 
     public function trainingRegister($trainingId, $trainerId)
     {
-        $register = new TrainingRegister();
-        $register->userId = Auth::user()->id;
-        $register->trainingId = $trainingId;
-        $register->trainerId = $trainerId;
-        $register->save();
-        return redirect()->back()->with('success', 'Training Registered Successfully');
+        try {
+            $register = new TrainingRegister();
+            $register->userId = Auth::user()->id;
+            $register->trainingId = $trainingId;
+            $register->trainerId = $trainerId;
+            $register->save();
+
+            return redirect()->back()->with('success', 'Training Registered Successfully');
+        } catch (\Throwable $th) {
+            // Log the error
+            // throw $th;
+            ErrorLogger::logError($th, request()->fullUrl());
+
+            // Return with an error message
+            return redirect()->back()->with('error', 'Failed to register for the training. Please try again.');
+        }
     }
+
 
     public function invitation(Request $request)
     {
@@ -265,7 +421,9 @@ class HomeController extends Controller
                 return redirect()->back()->with('success', 'Invitation Sent Successfully');
             }
             return redirect()->back()->with('error', 'Please Enter Correct Number');
-        } catch (\Exception $e) {
+        } catch (\Throwable $th) {
+            // throw $th;
+            ErrorLogger::logError($th, request()->fullUrl());
             return redirect()->back()->with('error', 'An error occurred while sending the invitation. Please try again.');
         }
     }
@@ -273,43 +431,69 @@ class HomeController extends Controller
 
     public function invitationPay($firstName, $lastName, $amount)
     {
-        $amounts =  $amount;
-        $data = [
-            'firstName' => $firstName,
-            'lastName' => $lastName,
-            'amount' => $amount
-        ];
-        if (!session()->has("data")) {
-            session(["data" => $data]);
+        try {
+            $amounts = $amount;
+            $data = [
+                'firstName' => $firstName,
+                'lastName' => $lastName,
+                'amount' => $amount
+            ];
+            if (!session()->has("data")) {
+                session(["data" => $data]);
+            }
+            return view('invitationPay', compact('data'));
+        } catch (\Throwable $th) {
+            // Log the error
+            ErrorLogger::logError($th, request()->fullUrl());
+
+            // Return with an error message
+            return redirect()->back()->with('error', 'Failed to load invitation payment details. Please try again.');
         }
-
-
-        return view('invitationPay', compact('data'));
     }
 
     public function findMember()
     {
-        return view('find');
+        try {
+            return view('find');
+        } catch (\Throwable $th) {
+            // Log the error
+            ErrorLogger::logError($th, request()->fullUrl());
+
+            // Return with an error message
+            return redirect()->back()->with('error', 'Failed to load member search page. Please try again.');
+        }
     }
 
     public function search(Request $request)
     {
-        $query = $request->input('query');
-        $members = Member::where('userId', '!=', Auth::user()->id)
-            ->where('firstName', 'like', '%' . $query . '%')
-            ->orWhere('lastName', 'like', '%' . $query . '%')
-            ->whereHas('circle', function ($q) use ($query) {
-                $q->where('circleName', 'like', '%' . $query . '%');
-            })
-            ->with('user', 'circle')
-            ->get();
-        $message = "Search results for '$query'";
+        try {
+            $query = $request->input('query');
+            $members = Member::where('userId', '!=', Auth::user()->id)
+                ->where(function ($q) use ($query) {
+                    $q->where('firstName', 'like', '%' . $query . '%')
+                        ->orWhere('lastName', 'like', '%' . $query . '%');
+                })
+                ->whereHas('circle', function ($q) use ($query) {
+                    $q->where('circleName', 'like', '%' . $query . '%');
+                })
+                ->with('user', 'circle')
+                ->get();
+            $message = "Search results for '$query'";
 
-        return response()->json([
-            'message' => $message,
-            'members' => $members
-        ]);
+            return response()->json([
+                'message' => $message,
+                'members' => $members
+            ]);
+        } catch (\Throwable $th) {
+            // Log the error
+            // throw $th;
+            ErrorLogger::logError($th, request()->fullUrl());
+
+            // Return with an error message
+            return response()->json(['error' => 'Failed to perform search. Please try again.'], 500);
+        }
     }
+
 
 
 
@@ -334,6 +518,8 @@ class HomeController extends Controller
 
             return view('foundPersonDetails', compact('member', 'connection', 'memberStatus'));
         } catch (\Throwable $th) {
+            // throw $th;
+            ErrorLogger::logError($th, request()->fullUrl());
             // In case of an error, redirect to servererror view
             return view('servererror');
         }
@@ -341,30 +527,53 @@ class HomeController extends Controller
 
     public function accepted($id)
     {
-        $connection = Connection::find($id);
+        try {
+            $connection = Connection::findOrFail($id);
+            $connection->status = 'Accepted';
+            $connection->save();
 
-        $connection->status = 'Accepted';
-        $connection->save();
+            return redirect()->back()->with('success', 'Connection request accepted');
+        } catch (\Throwable $th) {
+            // throw $th;
+            // Log the error
+            ErrorLogger::logError($th, request()->fullUrl());
 
-        return redirect()->back()->with('success', 'Connection request accepted');
+            // Return with an error message
+            return redirect()->back()->with('error', 'Failed to accept connection request. Please try again.');
+        }
     }
 
     public function rejected($id)
     {
-        $connection = Connection::find($id);
+        try {
+            $connection = Connection::findOrFail($id);
+            $connection->status = 'Rejected';
+            $connection->save();
 
-        $connection->status = 'Rejected';
-        $connection->save();
+            return redirect()->back()->with('error', 'Connection request rejected');
+        } catch (\Throwable $th) {
+            // throw $th;
+            // Log the error
+            ErrorLogger::logError($th, request()->fullUrl());
 
-        return redirect()->back()->with('error', 'Connection request rejected');
+            // Return with an error message
+            return redirect()->back()->with('error', 'Failed to reject connection request. Please try again.');
+        }
     }
-
 
     public function userDetails()
     {
-        // $ip = '103.226.226.86'; //For static IP address get
-        $ip = request()->ip(); //Dynamic IP address get
-        $ipData = \Location::get($ip);
-        return view('location', compact('ipData'));
+        try {
+            $ip = request()->ip(); // Dynamic IP address get
+            $ipData = \Location::get($ip);
+            return view('location', compact('ipData'));
+        } catch (\Throwable $th) {
+            // throw $th;
+            // Log the error
+            ErrorLogger::logError($th, request()->fullUrl());
+
+            // Return with an error message
+            return view('location', ['ipData' => null])->with('error', 'Failed to retrieve location information. Please try again.');
+        }
     }
 }

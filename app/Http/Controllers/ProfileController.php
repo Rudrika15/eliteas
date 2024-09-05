@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\State;
 use App\Models\Member;
 use App\Models\Country;
+use App\Utils\ErrorLogger;
 use App\Models\TopsProfile;
 use Illuminate\Http\Request;
 use App\Models\BillingAddress;
@@ -38,6 +39,9 @@ class ProfileController extends Controller
             return view('profile', compact('member', 'user', 'country', 'states', 'city', 'contactDetails', 'billing', 'tops'));
         } catch (\Throwable $th) {
             // throw $th;
+            ErrorLogger::logError($th,
+                request()->fullUrl()
+            );
             // In case of an error, redirect to servererror view
             return view('servererror');
         }
@@ -179,7 +183,10 @@ class ProfileController extends Controller
 
             return redirect()->route('home')->with('success', 'Profile Updated Successfully!');
         } catch (Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError($th,
+                request()->fullUrl()
+            );
             return view('servererror');
         }
     }

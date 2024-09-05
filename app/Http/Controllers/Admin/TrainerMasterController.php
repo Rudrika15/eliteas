@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\User;
 use App\Models\Franchise;
+use App\Utils\ErrorLogger;
 use Illuminate\Http\Request;
 use App\Models\TrainerMaster;
 use App\Models\TrainingTrainers;
@@ -20,7 +21,10 @@ class TrainerMasterController extends Controller
             $trainer = TrainerMaster::where('status', 'Active')->paginate(10);
             return view('admin.trainerMaster.index', compact('trainer'));
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError($th,
+                request()->fullUrl()
+            );
             return view('servererror');
         }
     }
@@ -31,7 +35,8 @@ class TrainerMasterController extends Controller
             $trainer = TrainerMaster::findOrFail($id);
             return response()->json($trainer);
         } catch (\Throwable $th) {
-            //throw $th
+            //throw $th;
+            ErrorLogger::logError($th, request()->fullUrl());
             return view('servererror');
         }
     }
@@ -42,7 +47,8 @@ class TrainerMasterController extends Controller
             $trainer = TrainerMaster::all();
             return view('admin.trainerMaster.create', compact('trainer'));
         } catch (\Throwable $th) {
-            //throe $th
+            //throe $th;
+            ErrorLogger::logError($th, request()->fullUrl());
             return view('servererror');
         }
     }
@@ -105,7 +111,10 @@ class TrainerMasterController extends Controller
 
             return redirect()->route('trainer.index')->with('success', 'Trainer Created Successfully!');
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError($th,
+                request()->fullUrl()
+            );
             // Log the error or handle it gracefully
             return view('servererror');
         }
@@ -119,7 +128,10 @@ class TrainerMasterController extends Controller
             $trainer = TrainerMaster::find($id);
             return view('admin.trainerMaster.edit', compact('trainer'));
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError($th,
+                request()->fullUrl()
+            );
             return view('servererror');
         }
     }
@@ -152,7 +164,10 @@ class TrainerMasterController extends Controller
 
             return redirect()->route('trainer.index')->with('success', 'Trainer Updated Successfully!');
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError($th,
+                request()->fullUrl()
+            );
             // Log the error or handle it gracefully
             return view('servererror');
         }
@@ -169,7 +184,10 @@ class TrainerMasterController extends Controller
 
             return redirect()->route('trainer.index')->with('success', 'Trainer deleted Successfully!');
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError($th,
+                request()->fullUrl()
+            );
             return view('servererror');
         }
     }
@@ -180,7 +198,10 @@ class TrainerMasterController extends Controller
             $trainers = TrainingTrainers::where('status', 'Active')->paginate(10);
             return view('admin.trainerMaster.trainingWiseTrainerList', compact('trainers'));
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError($th,
+                request()->fullUrl()
+            );
             return view('servererror');
         }
     }

@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\State;
 use App\Models\Country;
 use App\Models\Franchise;
+use App\Utils\ErrorLogger;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Mail\WelcomeMemberEmail;
@@ -25,7 +26,8 @@ class FranchiseController extends Controller
             $franchises = Franchise::where('status', 'Active')->paginate(10);
             return view('admin.franchise.index', compact('franchises', 'user'));
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError($th, request()->fullUrl());
             return view('servererror');
         }
     }
@@ -36,8 +38,8 @@ class FranchiseController extends Controller
             $franchises = Franchise::findOrFail($id);
             return response()->json($franchises);
         } catch (\Throwable $th) {
-            //throw $th
-
+            //throw $th;
+            ErrorLogger::logError($th, request()->fullUrl());
             return view('servererror');
         }
     }
@@ -51,7 +53,8 @@ class FranchiseController extends Controller
             $cities = City::where('status', 'Active')->get();
             return view('admin.franchise.create', compact('franchises', 'countries', 'states', 'cities'));
         } catch (\Throwable $th) {
-            //throe $th
+            //throe $th;
+            ErrorLogger::logError($th, request()->fullUrl());
             return view('servererror');
         }
     }
@@ -98,7 +101,8 @@ class FranchiseController extends Controller
 
             return redirect()->route('franchise.index')->with('success', 'Franchise and User Created Successfully!');
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError($th, request()->fullUrl());
             return view('servererror');
         }
     }
@@ -113,7 +117,8 @@ class FranchiseController extends Controller
             $cities = City::where('status', 'Active')->get();
             return view('admin.franchise.edit', compact('franchises', 'countries', 'states', 'cities'));
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError($th, request()->fullUrl());
             return view('servererror');
         }
     }
@@ -158,7 +163,8 @@ class FranchiseController extends Controller
 
             return redirect()->route('franchise.index')->with('success', 'Franchise details Updated Successfully!');
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError($th, request()->fullUrl());
             return view('servererror');
         }
     }
@@ -177,7 +183,9 @@ class FranchiseController extends Controller
             $franchise->save();
 
             return redirect()->route('franchise.index')->with('success', 'Franchise deleted successfully.');
-        } catch (\Exception $e) {
+        } catch (\Throwable $th) {
+            // throw $th;
+            ErrorLogger::logError($th, request()->fullUrl());
             return redirect()->route('franchise.index')->with('error', 'Failed to delete franchise.');
         }
     }

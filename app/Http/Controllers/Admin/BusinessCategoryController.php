@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Utils\ErrorLogger;
 use Illuminate\Http\Request;
 use App\Models\BusinessCategory;
 use App\Http\Controllers\Controller;
@@ -14,7 +15,8 @@ class BusinessCategoryController extends Controller
             $businessCategory = BusinessCategory::where('status', 'Active')->paginate(10);
             return view('admin.businesscategory.index', compact('businessCategory'));
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError($th, $request->fullUrl());
             return view('servererror');
         }
     }
@@ -26,20 +28,29 @@ class BusinessCategoryController extends Controller
             return response()->json($businessCategory);
         } catch (\Throwable $th) {
             //throw $th;
+            ErrorLogger::logError(
+                $th,
+                $request->fullUrl()
+            );
+
             return view('servererror');
         }
     }
 
-    public function create()
+    public function create(Request $request)
     {
         try {
             $businessCategory = BusinessCategory::all();
             return view('admin.businesscategory.create', compact('businessCategory'));
         } catch (\Throwable $th) {
-            //throe $th;
+            // Log the error using the ErrorLogger utility
+            ErrorLogger::logError($th, $request->fullUrl());
+
+            // Return a custom error view
             return view('servererror');
         }
     }
+
 
     public function store(Request $request)
     {
@@ -65,7 +76,8 @@ class BusinessCategoryController extends Controller
 
             return redirect()->route('bCategory.index')->with('success', 'Business Category Created Successfully!');
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError($th, $request->fullUrl());
             return view('servererror');
         }
     }
@@ -78,6 +90,7 @@ class BusinessCategoryController extends Controller
             return view('admin.businesscategory.edit', compact('businessCategory'));
         } catch (\Throwable $th) {
             // throw $th;
+            ErrorLogger::logError($th, $request->fullUrl());
             return view('servererror');
         }
     }
@@ -112,13 +125,15 @@ class BusinessCategoryController extends Controller
             $businessCategory->save();
 
             return redirect()->route('bCategory.index')->with('success', 'Business Category details updated successfully.');
-        } catch (\Exception $e) {
+        } catch (\Throwable $th) {
+            // throw $th;
+            ErrorLogger::logError($th, $request->fullUrl());
             return redirect()->route('bCategory.index')->with('error', 'Failed to update Business Category details.');
         }
     }
 
 
-    public function delete($id)
+    public function delete(Request $request, $id)
     {
         try {
             $businessCategory = BusinessCategory::find($id);
@@ -132,7 +147,10 @@ class BusinessCategoryController extends Controller
 
             return redirect()->route('bCategory.index')->with('success', 'Business Category deleted successfully.');
         } catch (\Throwable $th) {
-            //throw $th;
+            // Log the error using the ErrorLogger utility
+            ErrorLogger::logError($th, $request->fullUrl());
+
+            // Return a custom error message
             return redirect()->route('bCategory.index')->with('error', 'Failed to delete Business Category.');
         }
     }

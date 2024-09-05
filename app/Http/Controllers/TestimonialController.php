@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Member;
-use App\Models\Testimonial;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\Member;
+use App\Utils\ErrorLogger;
+use App\Models\Testimonial;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -16,18 +16,43 @@ class TestimonialController extends Controller
      */
     public function index()
     {
-        $testimonials = Testimonial::where('memberId', Auth::user()->member->id)->with('sender')->where('status','Active')->paginate(10);
-        $myTestimonials = Testimonial::where('userId', Auth::user()->id)->with('receiver')->where('status', 'Active')->paginate(10);
-        // return Auth::user()->member->id;
-        // return $testimonials;
-        return view('testimonial.index', ["testimonials" => $testimonials, 'myTestimonials' => $myTestimonials]);
+        try {
+            $testimonials = Testimonial::where('memberId', Auth::user()->member->id)
+                ->with('sender')
+                ->where('status', 'Active')
+                ->paginate(10);
+
+            $myTestimonials = Testimonial::where('userId', Auth::user()->id)
+                ->with('receiver')
+                ->where('status', 'Active')
+                ->paginate(10);
+
+            return view('testimonial.index', [
+                'testimonials' => $testimonials,
+                'myTestimonials' => $myTestimonials
+            ]);
+        } catch (\Throwable $th) {
+            // Log the error
+            ErrorLogger::logError($th, request()->fullUrl());
+
+            // Return a generic error view
+            return response()->view('servererror');
+        }
     }
 
     public function indexAdmin()
     {
-        $testimonials = Testimonial::where('status', 'Active')->paginate(10);
+        try {
+            $testimonials = Testimonial::where('status', 'Active')->paginate(10);
 
-        return view('admin.testimonial.index', compact('testimonials'));
+            return view('admin.testimonial.index', compact('testimonials'));
+        } catch (\Throwable $th) {
+            // Log the error
+            ErrorLogger::logError($th, request()->fullUrl());
+
+            // Return a generic error view
+            return response()->view('servererror');
+        }
     }
 
     /**
@@ -43,40 +68,46 @@ class TestimonialController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'circlePersonId' => 'required',
-            'message' => 'required'
-        ]);
+        try {
+            $request->validate([
+                'circlePersonId' => 'required',
+                'message' => 'required'
+            ]);
 
-        $testimonial = new Testimonial();
-        $testimonial->userId = Auth::user()->id;
-        $testimonial->memberId = $request->circlePersonId;
-        $testimonial->message = $request->message;
-        $testimonial->status = 'Active';
-        $testimonial->uploadedDate = Carbon::now()->toDateString();
-        $testimonial->save();
-        return redirect()->route('testimonial.index')->with("success", "Testimonial uploaded successfully.");
+            $testimonial = new Testimonial();
+            $testimonial->userId = Auth::user()->id;
+            $testimonial->memberId = $request->circlePersonId;
+            $testimonial->message = $request->message;
+            $testimonial->status = 'Active';
+            $testimonial->uploadedDate = Carbon::now()->toDateString();
+            $testimonial->save();
+
+            return redirect()->route('testimonial.index')->with("success", "Testimonial uploaded successfully.");
+        } catch (\Throwable $th) {
+            // Log the error
+            ErrorLogger::logError($th, request()->fullUrl());
+
+            // Return a generic error view
+            return response()->view('servererror');
+        }
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Testimonial $testimonial)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
     /**
      * Show the form for editing the specified resource.
      */
     public function edit($id)
     {
-        $myTestimonial = Testimonial::find($id);
+        try {
+            $myTestimonial = Testimonial::findOrFail($id);
 
-        return view('testimonial.edit', compact('myTestimonial'));
+            return view('testimonial.edit', compact('myTestimonial'));
+        } catch (\Throwable $th) {
+            // Log the error
+            ErrorLogger::logError($th, request()->fullUrl());
+
+            // Return a generic error view
+            return response()->view('servererror');
+        }
     }
 
     /**
@@ -84,20 +115,28 @@ class TestimonialController extends Controller
      */
     public function update(Request $request)
     {
-        $request->validate([
-            'circlePersonId' => 'required',
-            'message' => 'required'
-        ]);
+        try {
+            $request->validate([
+                'circlePersonId' => 'required',
+                'message' => 'required'
+            ]);
 
-        $id = $request->id;
-        $testimonial = Testimonial::find($id);
-        $testimonial->userId = Auth::user()->id;
-        $testimonial->memberId = $request->circlePersonId;
-        $testimonial->message = $request->message;
-        $testimonial->status = 'Active';
-        // $testimonial->uploadedDate = Carbon::now()->toDateString();
-        $testimonial->save();
-        return redirect()->route('testimonial.index')->with("success", "Testimonial updated successfully.");
+            $id = $request->id;
+            $testimonial = Testimonial::findOrFail($id);
+            $testimonial->userId = Auth::user()->id;
+            $testimonial->memberId = $request->circlePersonId;
+            $testimonial->message = $request->message;
+            $testimonial->status = 'Active';
+            $testimonial->save();
+
+            return redirect()->route('testimonial.index')->with("success", "Testimonial updated successfully.");
+        } catch (\Throwable $th) {
+            // Log the error
+            ErrorLogger::logError($th, request()->fullUrl());
+
+            // Return a generic error view
+            return response()->view('servererror');
+        }
     }
 
     /**
@@ -105,19 +144,48 @@ class TestimonialController extends Controller
      */
     public function destroy($id)
     {
-        $testimonial = Testimonial::find($id);
-        $testimonial->delete();
-        return redirect()->back()->with("success", "Testimonial deleted successfully.");
+        try {
+            $testimonial = Testimonial::findOrFail($id);
+            $testimonial->delete();
+
+            return redirect()->back()->with("success", "Testimonial deleted successfully.");
+        } catch (\Throwable $th) {
+            // Log the error
+            ErrorLogger::logError($th, request()->fullUrl());
+
+            // Return a generic error view
+            return response()->view('servererror');
+        }
     }
+
     public function archives()
     {
-        $testimonials = Testimonial::onlyTrashed()->paginate(10);
-        return view('admin.testimonial.archives', \compact('testimonials'));
+        try {
+            $testimonials = Testimonial::onlyTrashed()->paginate(10);
+
+            return view('admin.testimonial.archives', compact('testimonials'));
+        } catch (\Throwable $th) {
+            // Log the error
+            ErrorLogger::logError($th, request()->fullUrl());
+
+            // Return a generic error view
+            return response()->view('servererror');
+        }
     }
+
     public function restore($id)
     {
-        $testimonials = Testimonial::withTrashed()->find($id);
-        $testimonials->restore();
-        return \redirect()->route('testimonials.indexAdmin');
+        try {
+            $testimonial = Testimonial::withTrashed()->findOrFail($id);
+            $testimonial->restore();
+
+            return redirect()->route('testimonials.indexAdmin');
+        } catch (\Throwable $th) {
+            // Log the error
+            ErrorLogger::logError($th, request()->fullUrl());
+
+            // Return a generic error view
+            return response()->view('servererror');
+        }
     }
 }

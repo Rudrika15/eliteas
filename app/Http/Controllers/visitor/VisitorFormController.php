@@ -2,23 +2,13 @@
 
 namespace App\Http\Controllers\visitor;
 
+use App\Utils\ErrorLogger;
 use Illuminate\Http\Request;
 use App\Models\VisitorsDetails;
 use App\Http\Controllers\Controller;
 
 class VisitorFormController extends Controller
 {
-    public function index()
-    {
-        $visitors = VisitorsDetails::latest()->paginate(10);
-        return view('visitor.index', compact('visitors'));
-    }
-
-
-    public function visitorForm()
-    {
-        return view('visitor.visitorForm');
-    }
 
     public function storsssse()
     {
@@ -26,10 +16,27 @@ class VisitorFormController extends Controller
         return redirect('visitor.form')->with('success', 'Your Information Updated Successfully');
     }
 
+    public function index()
+    {
+        try {
+            $visitors = VisitorsDetails::latest()->paginate(10);
+            return view('visitor.index', compact('visitors'));
+        } catch (\Throwable $th) {
+            // Log the error
+            ErrorLogger::logError($th, request()->fullUrl());
+
+            // Return a generic error view or message
+            return view('servererror')->with('error', 'Failed to load visitors');
+        }
+    }
+
+    public function visitorForm()
+    {
+        return view('visitor.visitorForm');
+    }
+
     public function store(Request $request)
     {
-        // return $request;
-
         $this->validate($request, [
             'firstName' => 'required',
             'lastName' => 'required',
@@ -37,7 +44,6 @@ class VisitorFormController extends Controller
             'businessName' => 'required',
             'businessCategory' => 'required',
             'invitedBy' => 'required',
-            
         ]);
 
         try {
@@ -58,23 +64,33 @@ class VisitorFormController extends Controller
 
             return redirect()->route('visitor.form')->with('success', 'Your Information Submitted Successfully!');
         } catch (\Throwable $th) {
-            throw $th;
-            return view('servererror');
+            // Log the error
+            ErrorLogger::logError($th, $request->fullUrl());
+
+            // Return a generic error view or message
+            return redirect()->route('visitor.form')->with('error', 'Failed to submit your information');
         }
     }
-
-    // VisitorsController.php
 
     public function updateRemark(Request $request)
     {
-        $visitor = VisitorsDetails::find($request->id);
-        if ($visitor) {
-            $visitor->remarks = $request->remarks;
-            $visitor->save();
+        try {
+            $visitor = VisitorsDetails::find($request->id);
+            if ($visitor) {
+                $visitor->remarks = $request->remarks;
+                $visitor->save();
 
-            return response()->json(['success' => true]);
+                return response()->json(['success' => true]);
+            }
+
+            return response()->json(['success' => false, 'message' => 'Visitor not found']);
+        } catch (\Throwable $th) {
+            // Log the error
+            ErrorLogger::logError($th, $request->fullUrl());
+
+            // Return a generic error response
+            return response()->json(['success' => false, 'message' => 'Failed to update remarks']);
         }
-
-        return response()->json(['success' => false]);
     }
+
 }

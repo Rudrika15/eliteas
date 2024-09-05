@@ -3,14 +3,16 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\CircleCall;
-use App\Models\CircleMeetingMembersReference;
+use App\Utils\ErrorLogger;
+use App\Models\Testimonial;
 use App\Http\Controllers\Controller;
 use App\Models\CircleMeetingMembersBusiness;
-use App\Models\Testimonial;
+use App\Models\CircleMeetingMembersReference;
+use Illuminate\Http\Request;
 
 class CircleMemberActivityController extends Controller
 {
-    public function activity($id)
+    public function activity(Request $request, $id)
     {
         try {
 
@@ -24,7 +26,10 @@ class CircleMemberActivityController extends Controller
 
             return view('admin.circlemember.activity', compact('circlecall', 'refGiver', 'busGiver', 'testimonials'));
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError($th,
+                $request->fullUrl()
+            );
             return view('servererror');
         }
     }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Models\State;
 use App\Models\Member;
 use App\Models\Country;
+use App\Utils\ErrorLogger;
 use App\Models\AllPayments;
 use Illuminate\Http\Request;
 use App\Models\MemberPayment;
@@ -20,7 +21,11 @@ class MemberPaymentController extends Controller
             $payment = MemberPayment::where('status', 'Active')->get();
             return view('admin.payment.index', compact('payment'));
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError($th,
+                request()->fullUrl()
+            );
+
             return view('servererror');
         }
     }
@@ -75,7 +80,11 @@ class MemberPaymentController extends Controller
 
             return redirect()->route('state.index')->with('success', 'State Created Successfully!');
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError($th,
+                request()->fullUrl()
+            );
+
             return view('servererror');
         }
     }
@@ -87,7 +96,11 @@ class MemberPaymentController extends Controller
             $country = Country::where('status', '!=', 'Deleted')->get();
             return view('admin.state.edit', compact('country', 'state'));
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError($th,
+                request()->fullUrl()
+            );
+
             return view('servererror');
         }
     }
@@ -110,7 +123,11 @@ class MemberPaymentController extends Controller
 
             return redirect()->route('state.index')->with('success', 'State Created Successfully!');
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError($th,
+                request()->fullUrl()
+            );
+
             return view('servererror');
         }
     }
@@ -128,7 +145,10 @@ class MemberPaymentController extends Controller
 
             return response()->json($response);
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError($th,
+                request()->fullUrl()
+            );
             return view('servererror');
         }
     }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\State;
 use App\Models\Country;
+use App\Utils\ErrorLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
@@ -20,7 +21,10 @@ class StateController extends Controller
 
             return view('admin.state.index', compact('state'));
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError($th,
+                request()->fullUrl()
+            );
             return view('servererror');
         }
     }
@@ -31,7 +35,10 @@ class StateController extends Controller
             $state = State::with('country')->findOrFail($id);
             return response()->json($state);
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError($th,
+                request()->fullUrl()
+            );
             return view('servererror');
         }
     }
@@ -43,7 +50,10 @@ class StateController extends Controller
                 ->get();
             return view('admin.state.create', compact('country', 'state'));
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError($th,
+                request()->fullUrl()
+            );
             return view('servererror');
         }
     }
@@ -63,7 +73,10 @@ class StateController extends Controller
 
             return redirect()->route('state.create')->with('success', 'State Created Successfully!');
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError($th,
+                request()->fullUrl()
+            );
             return view('servererror');
         }
     }
@@ -75,7 +88,10 @@ class StateController extends Controller
             $country = Country::where('status', '!=', 'Deleted')->get();
             return view('admin.state.edit', compact('country', 'state'));
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError($th,
+                request()->fullUrl()
+            );
             return view('servererror');
         }
     }
@@ -98,7 +114,10 @@ class StateController extends Controller
 
             return redirect()->route('state.index')->with('success', 'State Created Successfully!');
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError($th,
+                request()->fullUrl()
+            );
             return view('servererror');
         }
     }
@@ -114,6 +133,7 @@ class StateController extends Controller
             return redirect()->route('state.index')->with('success', 'Business Category deleted successfully.');
         } catch (\Throwable $th) {
             //throw $th;
+            ErrorLogger::logError($th, request()->fullUrl());
             return redirect()->route('state.index')->with('error', 'Failed to delete Business Category.');
         }
     }

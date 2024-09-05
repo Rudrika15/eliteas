@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\User;
 use App\Models\Message;
+use App\Utils\ErrorLogger;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 class ChatController extends Controller
@@ -136,6 +137,8 @@ class ChatController extends Controller
             // Pass the data to the view
             return view('chat.index', ['listOfUsers' => $listOfUsers]);
         } catch (\Throwable $th) {
+            throw $th;
+            ErrorLogger::logError($th, $request->fullUrl());
             // Handle the error appropriately
             return back()->with('error', 'Something went wrong. Please try again.');
         }

@@ -3,15 +3,16 @@
 namespace App\Http\Controllers\Admin;
 
 
+use Carbon\Carbon;
 use App\Models\Member;
+use App\Utils\ErrorLogger;
 use Illuminate\Http\Request;
 use App\Models\CircleMeeting;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use App\Models\CircleMeetingMembersBusiness;
 use App\Models\CircleMeetingMembersReference;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Auth;
 
 class CircleMeetingMemberReferenceController extends Controller
 {
@@ -31,7 +32,7 @@ class CircleMeetingMemberReferenceController extends Controller
             //     ->with('refGiverName')
             //     ->where('memberId', Auth::user()->id)
             //     ->paginate(10);
-            
+
             $busGiver = CircleMeetingMembersBusiness::where('loginMemberId', Auth::user()->id)
                 ->where('status', 'Active')
                 ->orderBy('id', 'DESC')
@@ -39,7 +40,11 @@ class CircleMeetingMemberReferenceController extends Controller
 
             return view('admin.refGiver.index', compact('refGiver', 'busGiver'));
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError(
+                $th,
+                $request->fullUrl()
+            );
             return view('servererror');
         }
     }
@@ -50,18 +55,26 @@ class CircleMeetingMemberReferenceController extends Controller
             $refGiver = CircleMeetingMembersReference::findOrFail($id);
             return response()->json($refGiver);
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError(
+                $th,
+                $request->fullUrl()
+            );
             return view('servererror');
         }
     }
-    public function create()
+    public function create(Request $request)
     {
         try {
             $circlemeeting = CircleMeeting::where('status', 'Active')->get();
             $members = Member::where('status', 'Active')->get();
             return view('admin.refGiver.create', compact('circlemeeting', 'members'));
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError(
+                $th,
+                $request->fullUrl()
+            );
             return view('servererror');
         }
     }
@@ -124,19 +137,27 @@ class CircleMeetingMemberReferenceController extends Controller
 
             return redirect()->route('refGiver.index')->with('success', ' Created Successfully!');
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError(
+                $th,
+                $request->fullUrl()
+            );
             return view('servererror');
         }
     }
 
-    public function edit($id)
+    public function edit(Request $request, $id)
     {
         try {
             $refGiver = CircleMeetingMembersReference::find($id);
             $member = Member::all();
             return view('admin.refGiver.edit', compact('refGiver', 'member'));
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError(
+                $th,
+                $request->fullUrl()
+            );
             return view('servererror');
         }
     }
@@ -172,12 +193,16 @@ class CircleMeetingMemberReferenceController extends Controller
             $refGiver->save();
             return redirect()->route('refGiver.index')->with('success', ' Updated Successfully!');
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError(
+                $th,
+                $request->fullUrl()
+            );
             return view('servererror');
         }
     }
 
-    function delete($id)
+    function delete(Request $request, $id)
     {
         try {
             $refGiver = CircleMeetingMembersReference::find($id);
@@ -186,7 +211,11 @@ class CircleMeetingMemberReferenceController extends Controller
 
             return redirect()->route('refGiver.index')->with('success', ' Deleted Successfully!');
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError(
+                $th,
+                $request->fullUrl()
+            );
             return view('servererror');
         }
     }

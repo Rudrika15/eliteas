@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+use view;
+use App\Utils\ErrorLogger;
 use Illuminate\Http\Request;
 use App\Models\MembershipType;
 use App\Http\Controllers\Controller;
@@ -14,7 +16,8 @@ class MembershipTypeController extends Controller
             $membershipType = MembershipType::where('status', 'Active')->paginate(10);
             return view('admin.membershiptype.index', compact('membershipType'));
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError($th, request()->fullUrl());
             return view('servererror');
         }
     }
@@ -37,6 +40,10 @@ class MembershipTypeController extends Controller
             return view('admin.membershiptype.create', compact('membershipType'));
         } catch (\Throwable $th) {
             //throe $th;
+            ErrorLogger::logError(
+                $th,
+                request()->fullUrl()
+            );
             return view('servererror');
         }
     }
@@ -60,7 +67,8 @@ class MembershipTypeController extends Controller
 
             return redirect()->route('membershipType.index')->with('success', 'Membership Type Created Successfully!');
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError($th, request()->fullUrl());
             return view('servererror');
         }
     }
@@ -73,6 +81,7 @@ class MembershipTypeController extends Controller
             return view('admin.membershiptype.edit', compact('membershipType'));
         } catch (\Throwable $th) {
             // throw $th;
+            ErrorLogger::logError($th, request()->fullUrl());
             return view('servererror');
         }
     }
@@ -95,7 +104,9 @@ class MembershipTypeController extends Controller
             $membershipType->save();
 
             return redirect()->route('membershipType.index')->with('success', 'Membership Type details updated successfully.');
-        } catch (\Exception $e) {
+        } catch (\Throwable $th) {
+            // throw $th;
+            ErrorLogger::logError($th, request()->fullUrl());
             return redirect()->route('membershipType.index')->with('error', 'Failed to update Membership Type details.');
         }
     }
@@ -116,6 +127,7 @@ class MembershipTypeController extends Controller
             return redirect()->route('membershipType.index')->with('success', 'Business Category deleted successfully.');
         } catch (\Throwable $th) {
             //throw $th;
+            ErrorLogger::logError($th, request()->fullUrl());
             return redirect()->route('membershipType.index')->with('error', 'Failed to delete Business Category.');
         }
     }

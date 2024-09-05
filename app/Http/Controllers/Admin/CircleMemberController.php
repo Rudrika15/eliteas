@@ -11,9 +11,8 @@ use App\Models\Member;
 use App\Models\Country;
 use App\Models\Razorpay;
 use App\Models\CircleCall;
-use App\Models\CircleMeetingMembersBusiness;
-use App\Models\CircleMeetingMembersReference;
 use App\Models\Connection;
+use App\Utils\ErrorLogger;
 use App\Models\AllPayments;
 use App\Models\TopsProfile;
 use Illuminate\Support\Str;
@@ -35,6 +34,8 @@ use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Crypt;
 use App\Mail\MemberSubscriptionDiscount;
+use App\Models\CircleMeetingMembersBusiness;
+use App\Models\CircleMeetingMembersReference;
 
 class CircleMemberController extends Controller
 {
@@ -50,7 +51,11 @@ class CircleMemberController extends Controller
             $membershipType = MembershipType::where('status', 'Active')->get();
             return view('admin.circlemember.index', compact('member', 'roles', 'circle', 'bCategory', 'membershipType'));
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError(
+                $th,
+                $request->fullUrl()
+            );
             return view('servererror');
         }
     }
@@ -91,10 +96,14 @@ class CircleMemberController extends Controller
             return response()->json($circlemember);
         } catch (\Throwable $th) {
             // throw $th;
+            ErrorLogger::logError(
+                $th,
+                $request->fullUrl()
+            );
             return view('servererror');
         }
     }
-    public function create()
+    public function create(Request $request)
     {
         try {
             $businessCategory = BusinessCategory::where('status', 'Active')->orderBy('categoryName', 'asc')->get();
@@ -106,6 +115,8 @@ class CircleMemberController extends Controller
             $membershipType = MembershipType::where('status', 'Active')->get();
             return view('admin.circlemember.create', compact('circle', 'membershipType', 'member', 'countries', 'states', 'cities', 'businessCategory'));
         } catch (\Throwable $th) {
+            // throw $th;
+            ErrorLogger::logError($th, $request->fullUrl());
             return view('servererror');
         }
     }
@@ -262,7 +273,11 @@ class CircleMemberController extends Controller
 
             return redirect()->route('circlemember.index')->with('success', 'Circle Member Created Successfully!');
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError(
+                $th,
+                $request->fullUrl()
+            );
             return view('servererror');
         }
     }
@@ -299,7 +314,7 @@ class CircleMemberController extends Controller
 
 
 
-    public function edit($id)
+    public function edit(Request $request, $id)
     {
         try {
             $user = User::find($id);
@@ -317,7 +332,11 @@ class CircleMemberController extends Controller
 
             return view('admin.circlemember.edit', compact('countries', 'membershipType', 'user', 'states', 'cities', 'member', 'contactDetails', 'billing', 'tops', 'circles', 'businessCategory'));
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError(
+                $th,
+                $request->fullUrl()
+            );
             return view('servererror');
         }
     }
@@ -462,13 +481,17 @@ class CircleMemberController extends Controller
 
             return redirect()->route('circlemember.index')->with('success', 'Member Updated Successfully!');
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError(
+                $th,
+                $request->fullUrl()
+            );
             return view('servererror');
         }
     }
 
 
-    public function delete($id)
+    public function delete(Request $request, $id)
     {
 
         try {
@@ -497,7 +520,6 @@ class CircleMemberController extends Controller
             foreach ($circleCalls as $circleCall) {
                 $circleCall->status = "Deleted";
                 $circleCall->save();
-                
             }
 
             // Fetch and update CircleMeetingMembersBusiness records
@@ -516,12 +538,16 @@ class CircleMemberController extends Controller
 
             return redirect()->route('circlemember.index')->with('success', 'Circle Member Deleted Successfully!');
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError(
+                $th,
+                $request->fullUrl()
+            );
             return view('servererror');
         }
     }
 
-    public function activity()
+    public function activity(Request $request)
     {
         try {
             $circlecall = CircleCall::where('status', 'Active')
@@ -529,7 +555,11 @@ class CircleMemberController extends Controller
                 ->paginate(10);
             return view('admin.circlemember.activity', compact('circlecall'));
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError(
+                $th,
+                $request->fullUrl()
+            );
             return view('servererror');
         }
     }
@@ -559,36 +589,56 @@ class CircleMemberController extends Controller
 
             return redirect()->back()->with('success', 'Role assigned successfully.');
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError(
+                $th,
+                $request->fullUrl()
+            );
+
             return view('servererror');
         }
     }
-
     public function removeRole(Request $request)
     {
-        // Validate the incoming request
-        $request->validate([
-            'memberId' => 'required|exists:circle_members,id',
-            'roleId' => 'required|exists:roles,id',
-        ]);
+        try {
+            // Validate the incoming request
+            $request->validate([
+                'memberId' => 'required|exists:circle_members,id',
+                'roleId' => 'required|exists:roles,id',
+            ]);
 
-        // Find the circle member
-        // $member = CircleMember::findOrFail($request->memberId);
+            // Find the circle member
+            $member = Member::where('id', $request->memberId)->firstOrFail();
 
-        $member = Member::where('id', $request->memberId)->first();
+            // Find the role
+            $role = Role::findOrFail($request->roleId);
 
-        // Find the role
-        $role = Role::findOrFail($request->roleId);
+            // Detach the role from the user (assuming the relationship is defined)
+            $member->user->roles()->detach($role);
 
-        // Detach the role from the user (assuming the relationship is defined)
-        $member->user->roles()->detach($role);
+            return redirect()->back()->with('success', 'Role removed successfully.');
+        } catch (\Throwable $th) {
+            // Log the error using the ErrorLogger utility
+            ErrorLogger::logError($th, $request->fullUrl());
 
-        return redirect()->back()->with('success', 'Role removed successfully.');
+            // Redirect with an error message
+            return redirect()->back()->with('error', 'Failed to remove role.');
+        }
     }
+
 
     public function export(Request $request)
     {
-        $circleId = $request->input('circleId');
-        return Excel::download(new CircleMembersExport($circleId), 'circle_members.xlsx');
+        try {
+
+            $circleId = $request->input('circleId');
+
+            return Excel::download(new CircleMembersExport($circleId), 'circle_members.xlsx');
+        } catch (\Throwable $th) {
+            throw $th;
+            ErrorLogger::logError($th, $request->fullUrl());
+
+            return redirect()->back()->with('error', 'Failed to export data.');
+        }
     }
 }

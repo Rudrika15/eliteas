@@ -3,16 +3,17 @@
 namespace App\Http\Controllers\Admin;
 
 
+use Carbon\Carbon;
 use App\Models\Member;
+use App\Models\Schedule;
+use App\Utils\ErrorLogger;
 use Illuminate\Http\Request;
 use App\Models\CircleMeeting;
 use App\Models\BusinessAmount;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
-use App\Models\CircleMeetingMembersBusiness;
-use App\Models\Schedule;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use App\Models\CircleMeetingMembersBusiness;
 
 class CircleMeetingMemberBusinessController extends Controller
 {
@@ -40,9 +41,10 @@ class CircleMeetingMemberBusinessController extends Controller
                 $item->amount = isset($item->amount) ? number_format($item->amount, 2) : '-';
                 return $item;
             });
-
             return view('admin.circlebusiness.index', compact('busGiver', 'busGiveByOther'));
         } catch (\Throwable $th) {
+            // throw $th;
+            ErrorLogger::logError($th, $request->fullUrl());
             return view('servererror');
         }
     }
@@ -57,17 +59,25 @@ class CircleMeetingMemberBusinessController extends Controller
             $busGiver = CircleMeetingMembersBusiness::findOrFail($id);
             return response()->json($busGiver);
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError(
+                $th,
+                $request->fullUrl()
+            );
             return view('servererror');
         }
     }
-    public function create($id)
+    public function create(Request $request, $id)
     {
         try {
             $busGiver = CircleMeetingMembersBusiness::find($id);
             return view('admin.circlebusiness.create', \compact('busGiver'));
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError(
+                $th,
+                $request->fullUrl()
+            );
             return view('servererror');
         }
     }
@@ -97,19 +107,28 @@ class CircleMeetingMemberBusinessController extends Controller
 
             return redirect()->route('busGiver.index')->with('success', 'Created Successfully!');
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError(
+                $th,
+                $request->fullUrl()
+            );
             return view('servererror');
         }
     }
 
-    public function edit($id)
+    public function edit(Request $request, $id)
     {
         try {
             $busGiver = CircleMeetingMembersBusiness::find($id);
             $paymentHistory = BusinessAmount::where('circleMeetingMemberBusinessId', $id)->get();
             return view('admin.circlebusiness.edit', compact('busGiver', 'paymentHistory'));
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError(
+                $th,
+                $request->fullUrl()
+            );
+
             return view('servererror');
         }
     }
@@ -140,48 +159,73 @@ class CircleMeetingMemberBusinessController extends Controller
 
             return redirect()->route('busGiver.index')->with('success', ' Updated Successfully!');
         } catch (\Throwable $th) {
+            // throw $th;
+            ErrorLogger::logError(
+                $th,
+                $request->fullUrl()
+            );
+            return view('servererror');
+        }
+    }
+
+    public function editPayment(Request $request, $id)
+    {
+        try {
+            $busGiver = CircleMeetingMembersBusiness::find($id);
+
+            $payment = BusinessAmount::findOrFail($id);
+
+            return view('admin.circlebusiness.updatePayment', compact('payment', 'busGiver'));
+        } catch (\Throwable $th) {
             throw $th;
+            ErrorLogger::logError($th, $request->fullUrl());
             return view('servererror');
         }
     }
 
 
-    public function editPayment($id)
-    {
-        $busGiver = CircleMeetingMembersBusiness::find($id);
-        $payment = BusinessAmount::findOrFail($id);
-        return view('admin.circlebusiness.updatePayment', compact('payment', 'busGiver'));
-    }
-
     public function updatePayment(Request $request, $id)
     {
-        // return $request->all();
-        $request->validate([
-            // 'amount' => 'required|numeric',
-            'date' => 'required|date',
-        ]);
+        try {
+            // Validate the request data
+            $request->validate([
+                'date' => 'required|date',
+            ]);
 
-        $payment = BusinessAmount::findOrFail($id);
-        if ($request->amount) {
-            $payment->amount += $request->amount;
-        } else {
-            $payment->amount -= $request->removeAmount;
+            // Find the payment record by ID
+            $payment = BusinessAmount::findOrFail($id);
+
+            // Update the payment amount
+            if ($request->amount) {
+                $payment->amount += $request->amount;
+            } else {
+                $payment->amount -= $request->removeAmount;
+            }
+
+            // Update other payment details
+            $payment->date = $request->date;
+            $payment->status = 'Active';
+            $payment->save();
+
+            // Find the business giver record and update
+            $busGiver = CircleMeetingMembersBusiness::find($request->circleMeetingMemberBusinessId);
+            $busGiver->amount += $request->amount;
+            $busGiver->amount -= $request->removeAmount;
+            $busGiver->date = $request->date;
+            $busGiver->status = 'Active';
+            $busGiver->save();
+
+            // Redirect with success message
+            return redirect()->route('busGiver.index')->with('success', 'Payment updated successfully.');
+        } catch (\Throwable $th) {
+            // throw $th;
+            ErrorLogger::logError($th, $request->fullUrl());
+            return redirect()->back()->with('error', 'Failed to update payment.');
         }
-        $payment->date = $request->date;
-        $payment->status = 'Active';
-        $payment->save();
-
-        $busGiver = CircleMeetingMembersBusiness::find($request->circleMeetingMemberBusinessId);
-        $busGiver->amount += $request->amount;
-        $busGiver->amount -= $request->removeAmount;
-        $busGiver->date = $request->date;
-        $busGiver->status = 'Active';
-        $busGiver->save();
-
-        return redirect()->route('busGiver.index')->with('success', 'Payment updated successfully.');
     }
 
-    function delete($id)
+
+    function delete(Request $request, $id)
     {
         try {
             $busGiver = CircleMeetingMembersBusiness::find($id);
@@ -191,6 +235,10 @@ class CircleMeetingMemberBusinessController extends Controller
             return redirect()->route('busGiver.index')->with('success', ' Deleted Successfully!');
         } catch (\Throwable $th) {
             // throw $th;
+            ErrorLogger::logError(
+                $th,
+                $request->fullUrl()
+            );
             return view('servererror');
         }
     }

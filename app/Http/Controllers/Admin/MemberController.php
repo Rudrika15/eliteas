@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\State;
 use App\Models\Member;
 use App\Models\Country;
+use App\Utils\ErrorLogger;
 use App\Models\TopsProfile;
 use Illuminate\Http\Request;
 use App\Models\BillingAddress;
@@ -23,7 +24,10 @@ class MemberController extends Controller
             $member = Member::all(); // show only 10 record per page
             return view('userrs.member.index', compact('member'));
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError($th,
+                request()->fullUrl()
+            );
             return view('servererror');
         }
     }
@@ -33,6 +37,10 @@ class MemberController extends Controller
         try {
         } catch (\Throwable $th) {
             // throw $th;
+            ErrorLogger::logError($th,
+                request()->fullUrl()
+            );
+
             return view('servererror');
         }
     }
@@ -45,6 +53,10 @@ class MemberController extends Controller
             return view('userrs.member.create', compact('countries', 'states', 'cities'));
         } catch (\Throwable $th) {
             // throw $th;
+            ErrorLogger::logError($th,
+                request()->fullUrl()
+            );
+
             return view('servererror');
         }
     }
@@ -203,11 +215,12 @@ class MemberController extends Controller
 
             $billing->save();
 
-
-
             return redirect()->route('members.index')->with('success', 'Member Created Successfully!');
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError($th,
+                request()->fullUrl()
+            );
             return view('servererror');
         }
     }
@@ -224,7 +237,11 @@ class MemberController extends Controller
             $tops = TopsProfile::where('memberId', $id)->first();
             return view('userrs.member.edit', compact('countries', 'states', 'cities', 'member', 'contactDetails', 'billing', 'tops'));
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError($th,
+                request()->fullUrl()
+            );
+
             return view('servererror');
         }
     }
@@ -243,7 +260,11 @@ class MemberController extends Controller
             $tops = TopsProfile::where('memberId', $id)->first();
             return view('userrs.member.show', compact('country', 'state', 'city', 'member', 'contactDetails', 'billing', 'tops'));
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError($th,
+                request()->fullUrl()
+            );
+
             return view('servererror');
         }
     }
@@ -370,7 +391,10 @@ class MemberController extends Controller
 
             return redirect()->route('members.index')->with('success', 'Member Updated Successfully!');
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError($th,
+                request()->fullUrl()
+            );
             return view('servererror');
         }
     }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Country;
+use App\Utils\ErrorLogger;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -15,6 +16,7 @@ class CountryController extends Controller
             return view('admin.country.index', compact('country'));
         } catch (\Throwable $th) {
             // throw $th;
+            ErrorLogger::logError($th, request()->fullUrl());
             return view('servererror');
         }
     }
@@ -26,6 +28,7 @@ class CountryController extends Controller
             return response()->json($country);
         } catch (\Throwable $th) {
             //throw $th;
+            ErrorLogger::logError($th, request()->fullUrl());
             return view('servererror');
         }
     }
@@ -37,6 +40,7 @@ class CountryController extends Controller
             return view('admin.country.create', compact('country'));
         } catch (\Throwable $th) {
             //throe $th;
+            ErrorLogger::logError($th, request()->fullUrl());
             return view('servererror');
         }
     }
@@ -56,6 +60,7 @@ class CountryController extends Controller
             return redirect()->route('country.create')->with('success', 'Country Created Successfully!');
         } catch (\Throwable $th) {
             //throw $th;
+            ErrorLogger::logError($th, request()->fullUrl());
             return view('servererror');
         }
     }
@@ -68,6 +73,7 @@ class CountryController extends Controller
             return view('admin.country.edit', compact('country'));
         } catch (\Throwable $th) {
             // throw $th;
+            ErrorLogger::logError($th, request()->fullUrl());
             return view('servererror');
         }
     }
@@ -91,7 +97,9 @@ class CountryController extends Controller
             $country->save();
 
             return redirect()->route('country.index')->with('success', 'Country details updated successfully.');
-        } catch (\Exception $e) {
+        } catch (\Throwable $th) {
+            // throw $th;
+            ErrorLogger::logError($th, request()->fullUrl());
             return redirect()->route('country.index')->with('error', 'Failed to update country details.');
         }
     }
@@ -112,6 +120,7 @@ class CountryController extends Controller
             return redirect()->route('country.index')->with('success', 'Country deleted successfully.');
         } catch (\Throwable $th) {
             //throw $th;
+            ErrorLogger::logError($th, request()->fullUrl());
             return redirect()->route('country.index')->with('error', 'Failed to delete country.');
         }
     }

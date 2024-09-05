@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
+use DataTables;
 use App\Models\Franchise;
+use App\Models\CircleType;
+use App\Utils\ErrorLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
-use DataTables;
 use App\Http\Controllers\Controller;
-use App\Models\CircleType;
 
 class CircleTypeController extends Controller
 {
@@ -17,7 +18,11 @@ class CircleTypeController extends Controller
             $circletype = CircleType::where('status', 'Active')->paginate(10);
             return view('admin.circletype.index', compact('circletype'));
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError(
+                $th,
+                $request->fullUrl()
+            );
             return view('servererror');
         }
     }
@@ -28,18 +33,21 @@ class CircleTypeController extends Controller
             $circletype = CircleType::findOrFail($id);
             return response()->json($circletype);
         } catch (\Throwable $th) {
-            //throw $th
+            //throw $th;
+            ErrorLogger::logError($th, $request->fullUrl());
             return view('servererror');
         }
     }
 
-    public function create()
+    public function create(Request $request)
     {
         try {
             $circletype = CircleType::all();
             return view('admin.circletype.create', compact('circletype'));
         } catch (\Throwable $th) {
-            //throe $th
+            //throe $th;
+            ErrorLogger::logError($th, $request->fullUrl());
+
             return view('servererror');
         }
     }
@@ -58,7 +66,11 @@ class CircleTypeController extends Controller
 
             return redirect()->route('circletype.index')->with('success', 'Circle Type Created Successfully!');
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError(
+                $th,
+                $request->fullUrl()
+            );
             return view('servererror');
         }
     }
@@ -70,7 +82,11 @@ class CircleTypeController extends Controller
             $circletype = CircleType::find($id);
             return view('admin.circletype.edit', compact('circletype'));
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError(
+                $th,
+                $request->fullUrl()
+            );
             return view('servererror');
         }
     }
@@ -96,12 +112,13 @@ class CircleTypeController extends Controller
             return redirect()->route('circletype.index')->with('success', 'Circle Type updated successfully.');
         } catch (\Throwable $th) {
             //throw $th;
+            ErrorLogger::logError($th, $request->fullUrl());
             return redirect()->route('circletype.index')->with('error', 'Failed to update Circle Type details.');
         }
     }
 
 
-    public function delete($id)
+    public function delete(Request $request, $id)
     {
         try {
             $circletype = CircleType::find($id);
@@ -116,6 +133,7 @@ class CircleTypeController extends Controller
             return redirect()->route('circletype.index')->with('success', 'Circle Type deleted successfully.');
         } catch (\Throwable $th) {
             //throw $th;
+            ErrorLogger::logError($th, $request->fullUrl());
             return redirect()->route('circletype.index')->with('error', 'Failed to delete Circle Type.');
         }
     }

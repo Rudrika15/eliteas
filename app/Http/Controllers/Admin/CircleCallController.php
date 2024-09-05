@@ -8,6 +8,7 @@ use App\Models\Circle;
 use App\Models\Member;
 use App\Models\Schedule;
 use App\Models\CircleCall;
+use App\Utils\ErrorLogger;
 use App\Models\CircleMember;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -35,7 +36,8 @@ class CircleCallController extends Controller
                 ->paginate(10);
             return view('admin.circlecall.index', compact('circlecall', 'callWith'));
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError($th, $request->fullUrl());
             return view('servererror');
         }
     }
@@ -45,12 +47,16 @@ class CircleCallController extends Controller
         try {
             //
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError(
+                $th,
+                $request->fullUrl()
+            );
             return view('servererror');
         }
     }
 
-    public function create()
+    public function create(Request $request)
     {
         try {
             $circleMember = CircleMember::where('status', '!=', 'Deleted')->with('circle')->with('member')->get();
@@ -70,16 +76,18 @@ class CircleCallController extends Controller
                 ->orderBy('date', 'desc')
                 ->pluck('date')
                 ->first();
-
-
-
-
             return view('admin.circlecall.create', compact('member', 'circleMember', 'scheduleDate', 'lastDate'));
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError(
+                $th,
+                $request->fullUrl()
+            );
             return view('servererror');
         }
     }
+
+
     function getCircle(Request $request): JsonResponse
     {
         $query = $request->input('q');
@@ -97,6 +105,9 @@ class CircleCallController extends Controller
             'userCircleName' => $userCircleName,
         ]);
     }
+
+
+
     public function getCircleMembers(Request $request)
     {
 
@@ -144,10 +155,9 @@ class CircleCallController extends Controller
                 ->with('member.circle') // Include circle information
                 ->get();
         }
-
-
         return response()->json($data);
     }
+
     function getMemberForRef(Request $request): JsonResponse
     {
         $query = $request->input('q');
@@ -165,6 +175,8 @@ class CircleCallController extends Controller
 
         return response()->json($data);
     }
+
+
     function getMemberForRefGiver(Request $request): JsonResponse
     {
         $query = $request->input('q');
@@ -210,38 +222,46 @@ class CircleCallController extends Controller
 
             return redirect()->route('circlecall.index')->with('success', 'Data Added Successfully!');
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError(
+                $th,
+                $request->fullUrl()
+            );
+
             return view('servererror');
         }
     }
 
 
-    public function edit($id)
+    public function edit(Request $request, $id)
     {
         try {
             $circlecall = CircleCall::find($id);
             $member = Member::where('status', '!=', 'Deleted')->get();
             $circleMember = CircleMember::where('status', '!=', 'Deleted')->get();
-            // return $circleMember;
 
+            // Fetch all 'date' values from the query result
             $scheduleDate = Schedule::where('circleId', Auth::user()->member->circle->id)
                 ->where('status', 'Active')
-                ->where('date')
-                ->pluck('date'); // Pluck all 'date' values from the query result
+                ->pluck('date');
 
+            // Fetch the most recent date before the current date
             $lastDate = Schedule::where('circleId', Auth::user()->member->circle->id)
                 ->where('date', '<', now())
                 ->orderBy('date', 'desc')
                 ->pluck('date')
                 ->first();
 
-
             return view('admin.circlecall.edit', compact('circlecall', 'scheduleDate', 'lastDate', 'circleMember', 'member'));
         } catch (\Throwable $th) {
-            throw $th;
+            // Log the error using the ErrorLogger utility
+            ErrorLogger::logError($th, $request->fullUrl());
+
+            // Return a custom error view
             return view('servererror');
         }
     }
+
 
     public function update(Request $request)
     {
@@ -257,13 +277,18 @@ class CircleCallController extends Controller
 
             return redirect()->route('circlecall.index')->with('success', 'Circle Call Updated Successfully!');
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError(
+                $th,
+                $request->fullUrl()
+            );
+
             return view('servererror');
         }
     }
 
 
-    function delete($id)
+    function delete(Request $request, $id)
     {
         try {
             $call = CircleCall::find($id);
@@ -272,7 +297,11 @@ class CircleCallController extends Controller
 
             return redirect()->route('circlecall.index')->with('Success', 'Circle call Deleted Successfully!');
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError(
+                $th,
+                $request->fullUrl()
+            );
             return view('servererror');
         }
     }

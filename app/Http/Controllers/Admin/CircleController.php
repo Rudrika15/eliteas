@@ -11,11 +11,12 @@ use App\Models\Country;
 use App\Models\Schedule;
 use App\Models\Franchise;
 use App\Models\CircleType;
+use App\Utils\ErrorLogger;
 use App\Models\CircleMember;
 use Illuminate\Http\Request;
+use App\Mail\MeetingInvitation;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
-use App\Mail\MeetingInvitation;
 
 class CircleController extends Controller
 {
@@ -30,7 +31,11 @@ class CircleController extends Controller
                 ->paginate(10);
             return view('admin.circle.index', compact('circle'));
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError(
+                $th,
+                $request->fullUrl()
+            );
             return view('servererror');
         }
     }
@@ -41,11 +46,16 @@ class CircleController extends Controller
             $circle = Circle::findOrFail($id);
             return response()->json($circle);
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError(
+                $th,
+                $request->fullUrl()
+            );
+
             return view('servererror');
         }
     }
-    public function create()
+    public function create(Request $request)
     {
         try {
             $countries = Country::where('status', 'Active')->get();
@@ -57,7 +67,12 @@ class CircleController extends Controller
             $circletype = CircleType::where('status', '!=', 'Deleted')->get();
             return view('admin.circle.create', compact('circle', 'franchise', 'city', 'circletype', 'countries', 'states', 'cities'));
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError(
+                $th,
+                $request->fullUrl()
+            );
+
             return view('servererror');
         }
     }
@@ -151,7 +166,11 @@ class CircleController extends Controller
 
             return redirect()->route('circle.index')->with('success', 'Circle Created Successfully!');
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError(
+                $th,
+                $request->fullUrl()
+            );
             return view('servererror');
         }
     }
@@ -159,7 +178,7 @@ class CircleController extends Controller
 
 
 
-    public function edit($id)
+    public function edit(Request $request, $id)
     {
         try {
             $countries = Country::where('status', 'Active')->get();
@@ -171,7 +190,11 @@ class CircleController extends Controller
             $circletype = CircleType::where('status', '!=', 'Deleted')->get();
             return view('admin.circle.edit', compact('franchise', 'circletype', 'city', 'circle', 'countries', 'states', 'cities'));
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError(
+                $th,
+                $request->fullUrl()
+            );
             return view('servererror');
         }
     }
@@ -204,12 +227,16 @@ class CircleController extends Controller
 
             return redirect()->route('circle.index')->with('success', 'Circle Updated Successfully!');
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError(
+                $th,
+                $request->fullUrl()
+            );
             return view('servererror');
         }
     }
 
-    public function delete($id)
+    public function delete(Request $request, $id)
     {
         try {
             // Find the circle by ID
@@ -231,6 +258,8 @@ class CircleController extends Controller
                 return redirect()->route('circle.index')->with('Error', 'Circle not found!');
             }
         } catch (\Throwable $th) {
+            throw $th;
+            ErrorLogger::logError($th, $request->fullUrl());
             // Handle any exceptions and show the server error page
             return view('servererror');
         }
@@ -245,7 +274,12 @@ class CircleController extends Controller
             $schedules = Schedule::where('circleId', $circle->id)->paginate(10);
             return view('admin.circle.show', compact('circle', 'schedules'));
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError(
+                $th,
+                $request->fullUrl()
+            );
+
             return view('servererror');
         }
     }
@@ -257,7 +291,12 @@ class CircleController extends Controller
             $members = Member::where('circleId', $circle->id)->paginate(10);
             return view('admin.circle.memberList', compact('circle', 'members'));
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError(
+                $th,
+                $request->fullUrl()
+            );
+
             return view('servererror');
         }
     }
@@ -344,7 +383,12 @@ class CircleController extends Controller
                 return redirect()->back()->with('error', 'Meetings for the next month have already been generated.');
             }
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError(
+                $th,
+                $request->fullUrl()
+            );
+
             return view('servererror');
         }
     }

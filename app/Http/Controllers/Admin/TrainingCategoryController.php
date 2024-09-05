@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Utils\ErrorLogger;
 use Illuminate\Http\Request;
 use App\Models\TrainingCategory;
 use App\Http\Controllers\Controller;
@@ -14,7 +15,8 @@ class TrainingCategoryController extends Controller
             $trainingCategory = TrainingCategory::where('status', 'Active')->paginate(10);
             return view('admin.trainingcategory.index', compact('trainingCategory'));
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError($th, request()->fullUrl());
             return view('servererror');
         }
     }
@@ -26,6 +28,9 @@ class TrainingCategoryController extends Controller
             return view('admin.trainingcategory.create', compact('trainingCategory'));
         } catch (\Throwable $th) {
             //throe $th;
+            ErrorLogger::logError($th,
+                request()->fullUrl()
+            );
             return view('servererror');
         }
     }
@@ -45,7 +50,8 @@ class TrainingCategoryController extends Controller
 
             return redirect()->route('tCategory.index')->with('success', 'Training Category Created Successfully!');
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError($th, request()->fullUrl());
             return view('servererror');
         }
     }
@@ -58,6 +64,7 @@ class TrainingCategoryController extends Controller
             return view('admin.trainingcategory.edit', compact('trainingCategory'));
         } catch (\Throwable $th) {
             // throw $th;
+            ErrorLogger::logError($th, request()->fullUrl());
             return view('servererror');
         }
     }
@@ -81,7 +88,9 @@ class TrainingCategoryController extends Controller
             $trainingCategory->save();
 
             return redirect()->route('tCategory.index')->with('success', 'Training Category details updated successfully.');
-        } catch (\Exception $e) {
+        } catch (\Throwable $th) {
+            // throw $th;
+            ErrorLogger::logError($th, request()->fullUrl());
             return redirect()->route('tCategory.index')->with('error', 'Failed to update Training Category details.');
         }
     }
@@ -102,6 +111,9 @@ class TrainingCategoryController extends Controller
             return redirect()->route('tCategory.index')->with('success', 'Training Category deleted successfully.');
         } catch (\Throwable $th) {
             //throw $th;
+            ErrorLogger::logError($th,
+                request()->fullUrl()
+            );
             return redirect()->route('tCategory.index')->with('error', 'Failed to delete Training Category.');
         }
     }

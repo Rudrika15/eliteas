@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Utils\ErrorLogger;
 use Illuminate\Http\Request;
 use App\Models\membershipType;
 use App\Models\MemberSubscriptions;
@@ -32,6 +33,8 @@ class MembershipSubscriptionController extends Controller
 
             return view('admin.mysubscriptions.index', compact('subscriptions', 'userId'));
         } catch (\Throwable $th) {
+            // throw $th;
+            ErrorLogger::logError($th, request()->fullUrl());
             return view('servererror');
         }
     }
@@ -45,7 +48,8 @@ class MembershipSubscriptionController extends Controller
             $allSubscriptions = MemberSubscriptions::where('status', 'Active')->paginate(10);
             return view('admin.mysubscriptions.adminIndex', compact('allSubscriptions'));
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError($th, request()->fullUrl());
             return view('servererror');
         }
     }
@@ -71,8 +75,13 @@ class MembershipSubscriptionController extends Controller
 
     public function exportSubscriptions(Request $request)
     {
-        $membershipType = $request->input('membershipType');
-
-        return Excel::download(new SubscriptionsExport($membershipType), 'subscriptions.xlsx');
+        try {
+            $membershipType = $request->input('membershipType');
+            return Excel::download(new SubscriptionsExport($membershipType), 'subscriptions.xlsx');
+        } catch (\Throwable $th) {
+            // throw $th;
+            ErrorLogger::logError($th, $request->fullUrl());
+            return response()->json(['message' => 'Failed to export subscriptions'], 500);
+        }
     }
 }

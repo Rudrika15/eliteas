@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\Admin;
 
+use Carbon\Carbon;
 use App\Models\Country;
 use App\Models\CircleCall;
+use App\Utils\ErrorLogger;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\CircleMeetingMembersBusiness;
 use App\Models\CircleMeetingMembersReference;
-use Carbon\Carbon;
 
 class LeaderBoardController extends Controller
 {
@@ -33,6 +34,8 @@ class LeaderBoardController extends Controller
 
             return view('admin.leaderboards.meetingIndex', compact('circlecalls'));
         } catch (\Throwable $th) {
+            // throw $th;
+            ErrorLogger::logError($th, request()->fullUrl());
             return view('servererror');
         }
     }
@@ -58,7 +61,8 @@ class LeaderBoardController extends Controller
 
             return view('admin.leaderboards.businessIndex', compact('busGiver'));
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError($th, request()->fullUrl());
             return view('servererror');
         }
     }
@@ -109,7 +113,8 @@ class LeaderBoardController extends Controller
 
             return view('admin.leaderboards.referenceIndex', compact('refGiver'));
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError($th, request()->fullUrl());
             return view('servererror');
         }
     }
@@ -135,7 +140,8 @@ class LeaderBoardController extends Controller
 
             return view('admin.leaderboards.refferalIndex');
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError($th, request()->fullUrl());
             return view('servererror');
         }
     }
@@ -160,7 +166,8 @@ class LeaderBoardController extends Controller
 
             return view('admin.leaderboards.visitorIndex');
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            ErrorLogger::logError($th, request()->fullUrl());
             return view('servererror');
         }
     }
