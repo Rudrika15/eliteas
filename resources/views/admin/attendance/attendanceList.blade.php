@@ -8,16 +8,18 @@
         <h5 class="card-title">Attendance List</h5>
         <a href="{{ route('attendance.meetingSchedules') }}" class="btn btn-bg-orange btn-sm">BACK</a>
     </div>
-    <table class="table datatable table-striped table-hover">
+    <table class="table table-bordered table-striped table-hover">
         <thead>
             <tr>
+                <th style="width:10px;" class="text-center">No</th>
                 <th>Attended Person Name</th>
                 {{-- <th>Invited Person</th> --}}
             </tr>
         </thead>
         <tbody>
-            @foreach ($attendanceList as $attendanceListData)
+            @foreach ($attendanceList as $index => $attendanceListData)
             <tr>
+                <td class="text-center">{{ $index + 1 }}</td>
                 <td>
                     {{ $attendanceListData->user ? $attendanceListData->user->firstName . ' ' .
                     $attendanceListData->user->lastName : $attendanceListData->name }}
@@ -29,6 +31,5 @@
     </table>
 </div>
 </div>
-
 
 @endsection

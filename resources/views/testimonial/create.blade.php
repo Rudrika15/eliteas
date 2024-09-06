@@ -45,7 +45,7 @@
                             <input type="hidden" id="circlePersonId" name="circlePersonId" required>
                             <input type="text" class="form-control @error('circlePersonId') is-invalid @enderror"
                                 id="circlePersonName" placeholder="Select Member" required disabled>
-                            <label for="meetingPersonName">Circle Member Name</label>
+                            <label for="meetingPersonName"><span style="color:red">*</span> Circle Member Name</label>
                             @error('circlePersonId')
                                 <div class="invalid-tooltip">
                                     This field is required.
@@ -58,7 +58,7 @@
                         <div class="form-floating mt-3">
                             <textarea class="form-control @error('message') is-invalid @enderror" id="message" name="message"
                                 placeholder="Enter Message"></textarea>
-                            <label for="message">Message</label>
+                            <label for="message"><span style="color:red">*</span> Message</label>
                             @error('message')
                                 <div class="invalid-tooltip">
                                     {{ $message }}

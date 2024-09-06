@@ -20,6 +20,7 @@ class ErrorLogger
         $errorLog = new ErrorLog();
         $errorLog->url = $url ?? request()->fullUrl();
         $errorLog->error_message = $exception->getMessage();
+        $errorLog->status = 'Pending';
 
         // Save the instance to the database
         $errorLog->save();

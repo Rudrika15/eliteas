@@ -23,6 +23,7 @@ use App\Http\Controllers\PrivacyPolicyController;
 use App\Http\Controllers\Admin\LocationController;
 use App\Http\Controllers\Admin\ScheduleController;
 use App\Http\Controllers\Admin\TrainingController;
+use App\Http\Controllers\Admin\ErrorListController;
 use App\Http\Controllers\Admin\FranchiseController;
 use App\Http\Controllers\Admin\AttendanceController;
 use App\Http\Controllers\Admin\CircleCallController;
@@ -473,6 +474,10 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/stopped-typing', [ChatController::class, 'stoppedTyping']);
     Route::get('/typing-status', [ChatController::class, 'typingStatus']);
 
+    //Error List
+
+    Route::get('/error-list', [ErrorListController::class, 'index'])->name('errorList');
+    Route::post('/update-error-status/{id}', [ErrorListController::class, 'updateErrorStatus']);
 
 
     //location

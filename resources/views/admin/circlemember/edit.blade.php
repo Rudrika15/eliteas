@@ -40,7 +40,7 @@
             <div class="col-md-6">
                 <div class="form-floating">
                     <select class="form-select" data-error='Circle Name Field is required' required name="circleId"
-                        id="circleId">
+                        id="circleId" disabled>
                         <option value="" selected disabled> Select Circle </option>
                         @foreach ($circles as $circleData)
                         <option value="{{ $circleData->id }}" {{ old('circleId', $member->circleId) ==

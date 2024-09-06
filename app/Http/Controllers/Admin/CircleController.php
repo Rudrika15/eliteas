@@ -343,8 +343,8 @@ class CircleController extends Controller
                     if ($meetingDate && $meetingDate->greaterThan($date)) {
                         // Check if meeting already exists for this date
                         $existingMeeting = Schedule::where('circleId', $circle->id)
-                            ->whereDate('date', $meetingDate->format('Y-m-d'))
-                            ->first();
+                        ->whereDate('date', $meetingDate->format('Y-m-d'))
+                        ->first();
 
                         if (!$existingMeeting) {
                             Schedule::create([
@@ -383,12 +383,7 @@ class CircleController extends Controller
                 return redirect()->back()->with('error', 'Meetings for the next month have already been generated.');
             }
         } catch (\Throwable $th) {
-            // throw $th;
-            ErrorLogger::logError(
-                $th,
-                $request->fullUrl()
-            );
-
+            throw $th;
             return view('servererror');
         }
     }

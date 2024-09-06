@@ -172,7 +172,8 @@
                                 </div>
                                 <div class="col-md-6">
                                     <input type="date" class="form-control mt-3" id="date" name="date"
-                                        placeholder="Date">
+                                        placeholder="Date" min="{{ date('Y-m-d') }}" 
+                                        onkeydown="return false">
                                 </div>
                             </div>
                             <div class="row">

@@ -729,7 +729,6 @@
             </style>
             <div class="modal-footers">
                 <div class="d-flex justify-content-between">
-
                     <div class="text-start">
                         @if ($nearestTraining->fees == 0)
                         <h5 class="text-muted text-center">Free</h5>
@@ -834,99 +833,113 @@
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-            // Get all elements with the 'pay-button' class
-            var payButtons = document.querySelectorAll('.pay');
-            console.log('pay', payButtons);
-            // Loop through each pay button and attach the click event handler
-            payButtons.forEach(function(button) {
-                button.addEventListener('click', function(e) {
+        // Get all elements with the 'pay-button' class
+        var payButtons = document.querySelectorAll('.pay');
+        console.log('pay buttons', payButtons);
+        
+        // Loop through each pay button and attach the click event handler
+        payButtons.forEach(function(button) {
+            button.addEventListener('click', function(e) {
 
-                    var amountElement = document.querySelector('.amount');
-                    var amountText = amountElement.textContent.trim();
-                    var amount = parseInt(amountText.replace('₹', '').trim()) * 100;
+                var amountElement = document.querySelector('.amount');
+                var amountText = amountElement ? amountElement.textContent.trim() : '';
+                var amount = parseInt(amountText.replace('₹', '').trim()) * 100;
 
-                    console.log('amount', amount);
-                    console.log('pay button', payButtons);
+                console.log('amount:', amount);
 
-                    username = "{{ Auth::user()->name }}";
-                    useremail = "{{ Auth::user()->email }}";
-                    console.log('username', username);
+                var razorpayKey = "{{ env('RAZORPAY_KEY') }}";
+                console.log('Razorpay Key:', razorpayKey);
 
-                    var options = {
-                        "key": "{{ env('RAZORPAY_KEY') }}",
-                        "amount": amount,
-                        "currency": "INR",
-                        "name": "UBN",
-                        "description": "Razorpay payment",
-                        "image": "/img/logo.png",
-                        "handler": function(response) {
-                            // Handle the response after payment
-                            console.log(response);
-                            var paymentId = response.razorpay_payment_id;
-                            storePaymentId(paymentId, amount);
-                        },
-                        "prefill": {
-                            "name": username,
-                            "email": useremail
-                        },
-                        "theme": {
-                            "color": "#012e6f"
-                        }
-                    };
-
-                    var rzp = new Razorpay(options);
-                    rzp.open();
-                });
-            });
-        });
-
-        function storePaymentId(paymentId = '', amount = '') {
-            var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-            var url = `{{ route('razorpay.payment.store') }}`;
-            var trainingId = '{{ $nearestTraining->id ?? '-' }}';
-            var trainerId = '{{ $nearestTraining->trainersTrainings->user->id ?? '-'}}';
-            console.log('trainingId', trainingId);
-            console.log('trainerId', trainerId);
-            fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': csrfToken,
-                    },
-                    body: JSON.stringify({
-                        paymentId: paymentId,
-                        amount: amount,
-                        trainingId: trainingId,
-                        trainerId: trainerId
-                    }),
-                })
-                .then(response => {
-                    // Handle the response from the server
-                    console.log('Payment ID stored successfully');
-                    // Display SweetAlert success message
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Success',
-                        text: 'Payment Successfull',
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            window.location.reload();
-                        }
-                    });
-                })
-                .catch(error => {
-                    console.error('Error storing payment ID: ', error);
-                    // Display SweetAlert error message
+                // Ensure that the Razorpay key is available
+                if (!razorpayKey) {
+                    console.error('Razorpay key is missing.');
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
-                        text: 'Failed to store payment ID',
+                        text: 'Payment configuration error. Please contact support.',
                     });
-                });
-        }
+                    return;
+                }
+
+                var username = "{{ Auth::user()->name }}";
+                var useremail = "{{ Auth::user()->email }}";
+                console.log('username:', username);
+                console.log('useremail:', useremail);
+
+                var options = {
+                    "key": razorpayKey,
+                    "amount": amount,
+                    "currency": "INR",
+                    "name": "UBN",
+                    "description": "Razorpay payment",
+                    "image": "/img/logo.png",
+                    "handler": function(response) {
+                        // Handle the response after payment
+                        console.log('Payment response:', response);
+                        var paymentId = response.razorpay_payment_id;
+                        storePaymentId(paymentId, amount);
+                    },
+                    "prefill": {
+                        "name": username,
+                        "email": useremail
+                    },
+                    "theme": {
+                        "color": "#012e6f"
+                    }
+                };
+
+                var rzp = new Razorpay(options);
+                rzp.open();
+            });
+        });
+    });
+
+    function storePaymentId(paymentId = '', amount = '') {
+        var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        var url = `{{ route('razorpay.payment.store') }}`;
+        var trainingId = '{{ $nearestTraining->id ?? '-' }}';
+        var trainerId = '{{ $nearestTraining->trainersTrainings->user->id ?? '-' }}';
+        
+        console.log('trainingId:', trainingId);
+        console.log('trainerId:', trainerId);
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken,
+            },
+            body: JSON.stringify({
+                paymentId: paymentId,
+                amount: amount,
+                trainingId: trainingId,
+                trainerId: trainerId
+            }),
+        })
+        .then(response => {
+            // Handle the response from the server
+            console.log('Payment ID stored successfully');
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: 'Payment Successful',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.reload();
+                }
+            });
+        })
+        .catch(error => {
+            console.error('Error storing payment ID: ', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Failed to store payment ID',
+            });
+        });
+    }
 </script>
 
 {{-- validation --}}

@@ -71,24 +71,8 @@ class TrainingController extends Controller
     {
         try {
             // Validate the incoming request
-            $request->validate([
-                'title' => 'required|string|max:255',
-                'fees' => 'required|numeric',
-                'type' => 'required|string|max:255',
-                'meetingLink' => 'nullable|url',
-                'venue' => 'nullable|string|max:255',
-                'date' => 'required|date',
-                'time' => 'required|date_format:H:i',
-                'duration' => 'nullable|string|max:255',
-                'note' => 'nullable|string',
-                'trainerId' => 'nullable|array',
-                'trainerId.*' => 'nullable|integer|exists:users,id',
-                'externalTrainerId' => 'nullable|array',
-                'externalTrainerId.*' => 'nullable|integer|exists:external_trainers,id',
-                'trainerId2' => 'nullable|integer|exists:users,id',
-                'externalTrainerId2' => 'nullable|integer|exists:external_trainers,id',
-            ]);
-
+            $request->validate([]);
+            // return request();
             // Create Training record
             $training = new Training();
             $training->title = $request->title;
@@ -104,32 +88,16 @@ class TrainingController extends Controller
 
             // Add trainers to the Training_trainers table if present in the request
             $trainers = [
-                $request->trainerId ?? [],
-                $request->externalTrainerId ?? [],
-                $request->trainerId2 ?? null,
-                $request->externalTrainerId2 ?? null,
+                'trainerId' => $request->trainerId ?? null,
+                'externalTrainerId' => $request->externalTrainerId ?? null,
+                'trainerId2' => $request->trainerId2 ?? null,
+                'externalTrainerId2' => $request->externalTrainerId2 ?? null,
             ];
 
-            foreach ($trainers as $key => $values) {
-                if (is_array($values)) {
-                    foreach ($values as $value) {
-                        if (!is_null($value)) {
-                            DB::table('trainings_trainers')->insert([
-                                'trainingId' => $training->id,
-                                'userId' => $value,
-                                'status' => 'Active',
-                                'created_at' => now(),
-                                'updated_at' => now(),
-                            ]);
-                        }
-                    }
-                } elseif (!is_null($values)) {
+            foreach ($trainers as $key => $value) {
+                if (!is_null($value)) {
                     DB::table('trainings_trainers')->insert([
-                        'trainingId' => $training->id,
-                        'userId' => $values,
-                        'status' => 'Active',
-                        'created_at' => now(),
-                        'updated_at' => now(),
+                        ['trainingId' => $training->id, 'userId' => $value, 'status' => 'Active', 'created_at' => now(), 'updated_at' => now()],
                     ]);
                 }
             }
@@ -137,14 +105,14 @@ class TrainingController extends Controller
             // Redirect the user after successful submission
             return redirect()->route('training.index')->with('success', 'Training details saved successfully.');
         } catch (\Throwable $th) {
-            // Log the error
-            ErrorLogger::logError($th, $request->fullUrl());
-
-            // Redirect with error message
-            return redirect()->back()->with('error', 'Failed to save training details.');
+            // throw $th;
+            ErrorLogger::logError(
+                $th,
+                request()->fullUrl()
+            );
+            return view('servererror');
         }
     }
-
 
 
 
@@ -175,23 +143,7 @@ class TrainingController extends Controller
     {
         try {
             // Validate the incoming request
-            $validatedData = $request->validate([
-                'title' => 'required|string|max:255',
-                'fees' => 'required|numeric',
-                'type' => 'required|string|max:255',
-                'meetingLink' => 'nullable|url',
-                'venue' => 'nullable|string|max:255',
-                'date' => 'required|date',
-                'time' => 'required|date_format:H:i',
-                'duration' => 'nullable|string|max:255',
-                'note' => 'nullable|string',
-                'trainerId' => 'nullable|array',
-                'trainerId.*' => 'nullable|integer|exists:users,id',
-                'externalTrainerId' => 'nullable|array',
-                'externalTrainerId.*' => 'nullable|integer|exists:external_trainers,id',
-                'trainerId2' => 'nullable|integer|exists:users,id',
-                'externalTrainerId2' => 'nullable|integer|exists:external_trainers,id',
-            ]);
+            $validatedData = $request->validate([]);
 
             // Update the fields with validated data
             $training = Training::findOrFail($id);
@@ -204,49 +156,43 @@ class TrainingController extends Controller
             $training->time = $request->time;
             $training->duration = $request->duration;
             $training->note = $request->note;
-            $training->save(); // Use save() instead of update()
+            $training->update();
+
+            // Add trainers to the Training_trainers table if present in the request
+            $trainers = [
+                'trainerId' => $request->input('trainerId'),
+                'externalTrainerId' => $request->input('externalTrainerId'),
+                'trainerId2' => $request->input('trainerId2'),
+                'externalTrainerId2' => $request->input('externalTrainerId2'),
+            ];
 
             // Delete all trainers of the training
             DB::table('trainings_trainers')->where('trainingId', $training->id)->delete();
 
-            // Add trainers to the Training_trainers table if present in the request
-            $trainers = [
-                $request->input('trainerId') ?? [],
-                $request->input('externalTrainerId') ?? [],
-                $request->input('trainerId2'),
-                $request->input('externalTrainerId2'),
-            ];
-
-            foreach ($trainers as $value) {
-                if (is_array($value)) {
-                    foreach ($value as $trainerId) {
-                        if (!is_null($trainerId)) {
-                            DB::table('trainings_trainers')->insert([
-                                'trainingId' => $training->id,
-                                'userId' => $trainerId,
-                                'status' => 'Active',
-                                'created_at' => now(),
-                                'updated_at' => now(),
-                            ]);
-                        }
-                    }
-                } elseif (!is_null($value)) {
+            foreach ($trainers as $key => $value) {
+                if (!is_null($value)) {
+                    // Insert the trainer into the table
                     DB::table('trainings_trainers')->insert([
-                        'trainingId' => $training->id,
-                        'userId' => $value,
-                        'status' => 'Active',
-                        'created_at' => now(),
-                        'updated_at' => now(),
+                        ['trainingId' => $training->id, 'userId' => $value, 'status' => 'Active', 'created_at' => now(), 'updated_at' => now()],
                     ]);
                 }
             }
 
+            // Redirect the user after successful submission
             return redirect()->route('training.index')->with('success', 'Training details updated successfully.');
         } catch (\Throwable $th) {
-            ErrorLogger::logError($th, $request->fullUrl());
-            return redirect()->back()->with('error', 'Failed to update training details.');
+            // throw $th;
+            ErrorLogger::logError(
+                $th,
+                request()->fullUrl()
+            );
+            return view('servererror');
         }
     }
+
+
+
+
 
 
     function delete($id)
@@ -292,8 +238,11 @@ class TrainingController extends Controller
             return response()->json($trainerMasters);
         } catch (\Throwable $th) {
             // throw $th;
-            ErrorLogger::logError($th, $request->fullUrl());
-            return response()->json(['error' => 'An error occurred while fetching trainer details'], 500);
+            ErrorLogger::logError(
+                $th,
+                request()->fullUrl()
+            );
+            return view('servererror');
         }
     }
 
@@ -309,11 +258,15 @@ class TrainingController extends Controller
             if ($internalTrainerMasters->isEmpty()) {
                 return response()->json(['error' => 'Trainers not found'], 404);
             }
+
             return response()->json($internalTrainerMasters);
         } catch (\Throwable $th) {
             // throw $th;
-            ErrorLogger::logError($th, $request->fullUrl());
-            return response()->json(['error' => 'An error occurred while fetching internal trainer details'], 500);
+            ErrorLogger::logError(
+                $th,
+                request()->fullUrl()
+            );
+            return view('servererror');
         }
     }
 }
