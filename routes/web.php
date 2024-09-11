@@ -222,6 +222,11 @@ Route::group(['middleware' => ['auth']], function () {
     // get member list
     Route::get('get-circle', [CircleCallController::class, 'getCircle'])->name('getCircle');
     Route::get('get-circle-members', [CircleCallController::class, 'getCircleMembers'])->name('getCircleMembers');
+
+    // In your web.php or api.php
+    Route::get('/members/byCircle', [CircleCallController::class, 'getMembersByCircle'])->name('members.byCircle');
+
+
     // old get member
     Route::get('get-member', [CircleCallController::class, 'getMember'])->name('getMember');
 
@@ -443,6 +448,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/leaderboard/maxReference', [LeaderBoardController::class, 'maxReference'])->name('maxReference.index');
     Route::get('/leaderboard/maxRefferal', [LeaderBoardController::class, 'maxRefferal'])->name('maxRefferal.index');
     Route::get('/leaderboard/maxVisitor', [LeaderBoardController::class, 'maxVisitor'])->name('maxVisitor.index');
+    Route::get('/leaderboard/circleWiseLeaderboard', [LeaderBoardController::class, 'circleWiseLeaderboard'])->name('circleWiseLeaderboard.index');
 
     //visitors
 

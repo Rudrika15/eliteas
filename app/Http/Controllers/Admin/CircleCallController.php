@@ -59,11 +59,12 @@ class CircleCallController extends Controller
     public function create(Request $request)
     {
         try {
-            $circleMember = CircleMember::where('status', '!=', 'Deleted')->with('circle')->with('member')->get();
-            // $member = Member::where('status', '!=', 'Deleted')->get();
-            $member = User::whereHas('roles', function ($q) {
-                $q->where('name', 'Member');
-            })->with('member.circle')->get();
+            $circles = Circle::all();
+
+            $circleMember = Member::with('circle')
+                ->where('status', 'Active')
+                ->get(); // Ensure 'circleId' is included
+
 
             // return $scheduleDate = Schedule::where('circleId', Auth::user()->member->circle->id)->where('status', 'Active')->get(['date']);
             $scheduleDate = Schedule::where('circleId', Auth::user()->member->circle->id)
@@ -76,9 +77,10 @@ class CircleCallController extends Controller
                 ->orderBy('date', 'desc')
                 ->pluck('date')
                 ->first();
-            return view('admin.circlecall.create', compact('member', 'circleMember', 'scheduleDate', 'lastDate'));
+
+            return view('admin.circlecall.create', compact('circles', 'circleMember', 'scheduleDate', 'lastDate'));
         } catch (\Throwable $th) {
-            // throw $th;
+            throw $th;
             ErrorLogger::logError(
                 $th,
                 $request->fullUrl()
@@ -86,6 +88,25 @@ class CircleCallController extends Controller
             return view('servererror');
         }
     }
+
+
+    public function getMembersByCircle(Request $request)
+    {
+        $circleId = $request->input('circleId');
+
+        if ($circleId) {
+            $members = Member::where('circleId', $circleId)
+                ->with('user')
+                ->where('status', 'Active')
+                ->where('userId', '!=', Auth::id())
+                ->get(['id', 'userId', 'firstName', 'lastName']); // Adjust fields as needed
+
+            return response()->json(['members' => $members]);
+        }
+
+        return response()->json(['members' => []]);
+    }
+
 
 
     function getCircle(Request $request): JsonResponse
@@ -198,8 +219,10 @@ class CircleCallController extends Controller
 
     public function store(Request $request)
     {
+        // return $request;
+
         $validator = Validator::make($request->all(), [
-            'meetingPersonId' => 'required',
+            // 'meetingPersonId' => 'required',
             'meetingPlace' => 'required|regex:/^([a-zA-Z]+)(\s[a-zA-Z]+)*$/',
             'date' => 'required',
             'remarks' => 'required',
@@ -217,6 +240,7 @@ class CircleCallController extends Controller
             $circlecall->date = $request->date;
             $circlecall->remarks = $request->remarks;
             $circlecall->status = 'Active';
+
 
             $circlecall->save();
 

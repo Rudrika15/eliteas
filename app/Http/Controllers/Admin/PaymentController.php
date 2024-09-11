@@ -30,11 +30,11 @@ class PaymentController extends Controller
         try {
             // Validate the request inputs
             $request->validate([
-                'paymentId' => 'required|string',
-                'amount' => 'required|numeric',
-                'trainingId' => 'required|integer',
-                'trainerId' => 'required|integer',
-                'date' => 'required|date',
+                // 'paymentId' => 'required|string',
+                // 'amount' => 'required|numeric',
+                // 'trainingId' => 'required|integer',
+                // 'trainerId' => 'required|integer',
+                // 'date' => 'required|date',
             ]);
 
             // Store the payment ID in the table
@@ -56,7 +56,7 @@ class PaymentController extends Controller
             $allPayments->memberId = $register->userId;
             $allPayments->amount = $payment->amount;
             $allPayments->paymentType = 'RazorPay'; // Hardcoded for RazorPay
-            $allPayments->date = $request->input('date');
+            $allPayments->date = now()->format('Y-m-d');
             $allPayments->paymentMode = 'Training Register';
             $allPayments->remarks = $payment->r_payment_id;
             $allPayments->save();
