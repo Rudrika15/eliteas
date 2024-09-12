@@ -349,6 +349,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     // payment
     Route::post('/razorpay-payment', [PaymentController::class, 'store'])->name('razorpay.payment.store');
+    Route::post('/razorpay-payment-monthlyPaymentStore', [PaymentController::class, 'monthlyPaymentStore'])->name('razorpay.payment.monthlyPaymentStore');
     Route::post('/razorpay-payment-invite', [PaymentController::class, 'invitePayment'])->name('razorpay.payment.invite');
 
     // invite person
@@ -408,6 +409,10 @@ Route::group(['middleware' => ['auth']], function () {
 
     //admin side activity membership status changed
     Route::get('/allPayments', [PaymentController::class, 'allPayments'])->name('allPayments.index');
+    Route::get('/monthlyPayments', [PaymentController::class, 'monthlyPayments'])->name('monthlyPayments.index');
+    Route::get('/generate-payment', [PaymentController::class, 'generateMonthlyPayment'])->name('generate.payment');
+    Route::post('/update-payment-status', [PaymentController::class, 'updatePaymentStatus'])->name('update.payment.status');
+    Route::post('/handle-payment', [PaymentController::class, 'handlePayment'])->name('handle.payment');
 
     //circle admin payment history
     Route::get('/circleAdminPayment', [PaymentController::class, 'circleAdminPaymentHistory'])->name('circleAdminPaymentHistory.index');

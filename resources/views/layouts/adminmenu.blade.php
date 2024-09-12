@@ -263,12 +263,33 @@
 
 </li>
 
+
 <li class="nav-item">
-    <a class="nav-link collapsed " href="{{ route('allPayments.index') }}">
-        <i class="bi bi-currency-rupee" style="color: #e76a35"></i>
-        <span style="color: #1d2856">Payment History</span>
+    <a class="nav-link collapsed" data-bs-target="#payment-nav" data-bs-toggle="collapse" href="#">
+        <i class="bi bi-gear" style="color: #e76a35"></i><span>Payment Management</span><i class="bi bi-chevron-down ms-auto"
+            style="color: #e76a35"></i>
     </a>
-</li>
+
+    <ul id="payment-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+        <li class="nav-item">
+            <a class="nav-link collapsed " href="{{ route('allPayments.index') }}">
+                <i class="bi bi-currency-rupee" style="color: #e76a35"></i>
+                <span style="color: #1d2856">Payment History</span>
+            </a>
+        </li>
+    </ul>
+
+    <ul id="payment-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+        <li class="nav-item">
+            <a class="nav-link collapsed " href="{{ route('monthlyPayments.index') }}">
+                <i class="bi bi-currency-rupee" style="color: #e76a35"></i>
+                <span style="color: #1d2856">Manage Monthly Payment</span>
+            </a>
+        </li>
+    </ul>
+
+
+
 
 <li class="nav-item">
     <a class="nav-link collapsed" href="{{ route('subscription.memberSubscription.admin') }}">

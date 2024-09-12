@@ -1,36 +1,43 @@
 @extends('layouts.master')
 
 @section('content')
-<div class="container">
-    <h1>Leaderboard</h1>
 
-    <!-- Circle Dropdown -->
-    <form method="GET" action="{{ route('circleWiseLeaderboard.index') }}">
-        <div class="form-group">
-            <label for="circleId">Select Circle:</label>
-            <select name="circleId" id="circleId" class="form-control" onchange="this.form.submit()">
-                <option value="">-- Select Circle --</option>
-                @foreach($circles as $circle)
-                <option value="{{ $circle->id }}" {{ $selectedCircleId==$circle->id ? 'selected' : '' }}>
-                    {{ $circle->circleName }}
-                </option>
-                @endforeach
-            </select>
-        </div>
-    </form>
+
+<div class="container">
+    <div class="card">
+
+        <h1 class="p-3" style="color: #1d3268"><b>Leaderboard</b></h1>
+
+        <!-- Circle Dropdown -->
+        <form method="GET" action="{{ route('circleWiseLeaderboard.index') }}">
+            <div class="form-group mb-3 p-3">
+                <label for="circleId"><b>Select Circle:</b></label>
+                <select name="circleId" id="circleId" class="form-control" onchange="this.form.submit()">
+                    <option value="" disabled>-- Select Circle --</option>
+                    @foreach($circles as $circle)
+                    <option value="{{ $circle->id }}" {{ $selectedCircleId==$circle->id ? 'selected' : '' }}>
+                        {{ $circle->circleName }}
+                    </option>
+                    @endforeach
+                </select>
+            </div>
+        </form>
+    </div>
 
     <!-- Circle Calls Section -->
     @if($circlecalls && $circlecalls->isNotEmpty())
-    <div class="row mt-5">
+    <div class="row row-cols-1 row-cols-md-3 g-4">
         @foreach($circlecalls as $call)
-        <div class="col-md-3 mb-4">
+        <div class="col">
             <div class="card">
                 @php
                 $profilePhoto = $call['member']->profilePhoto ?? 'profile.png';
                 @endphp
-                <img src="{{ asset('ProfilePhoto/' . $profilePhoto) }}" class="card-img-top" alt="Profile Photo">
+                <img src="{{ asset('ProfilePhoto/' . $profilePhoto) }}" class="mt-3" alt="Profile Photo"
+                    style="width: 100%; height: 100%; object-fit: contain; aspect-ratio: 1/1;">
+
                 <div class="card-body text-center">
-                    <h5 class="card-title">Max Business Meetscircle</h5>
+                    <h5 class="card-title">Max Business Meets</h5>
                     <p class="card-text">
                         <span style="font-size: 18px; color: #e76a35; font-weight: bold;">
                             {{ $call['member']->firstName }} {{ $call['member']->lastName }}<br>
@@ -57,14 +64,15 @@
 
     <!-- Business Givers Section -->
     @if($busGiver && $busGiver->isNotEmpty())
-    {{-- <div class="row"> --}}
+    {{-- <div class="row row-cols-1 row-cols-md-3 g-4"> --}}
         @foreach($busGiver as $giver)
-        <div class="col-md-3 mb-4">
+        <div class="col">
             <div class="card">
                 @php
-                $profilePhoto = $giver['user']->profilePhoto ?? 'profile.png';
+                $profilePhoto = $giver['member']->profilePhoto ?? 'profile.png';
                 @endphp
-                <img src="{{ asset('ProfilePhoto/' . $profilePhoto) }}" class="card-img-top" alt="Profile Photo">
+                <img src="{{ asset('ProfilePhoto/' . $profilePhoto) }}" class="mt-3" alt="Profile Photo"
+                    style="width: 100%; height: 100%; object-fit: contain; aspect-ratio: 1/1;">
                 <div class="card-body text-center">
                     <h5 class="card-title">Max Business Leader</h5>
                     <p class="card-text">
@@ -96,14 +104,15 @@
     @if($refGiver && $refGiver->isNotEmpty())
     {{-- <div class="row"> --}}
         @foreach($refGiver as $giver)
-        <div class="col-md-3 mb-4">
+        <div class="col">
             <div class="card">
                 @php
                 $profilePhoto = 'profile.png'; // Default profile photo for reference givers
                 @endphp
-                <img src="{{ asset('ProfilePhoto/' . $profilePhoto) }}" class="card-img-top" alt="Profile Photo">
+                <img src="{{ asset('ProfilePhoto/' . $profilePhoto) }}" class="mt-3" alt="Profile Photo"
+                    style="width: 100%; height: 100%; object-fit: contain; aspect-ratio: 1/1;">
                 <div class="card-body text-center">
-                    <h5 class="card-title">Max References</h5>
+                    <h5 class="card-title">Top Reference Giver</h5>
                     <p class="card-text">
                         <span style="font-size: 18px; color: #e76a35; font-weight: bold;">
                             {{ $giver['user']->firstName }} {{ $giver['user']->lastName }}<br>

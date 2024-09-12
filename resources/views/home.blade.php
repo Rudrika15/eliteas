@@ -386,6 +386,178 @@
     </div>
 </div>
 @endif
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card-title"><b>Monthly Meeting Payment</b></div>
+        <div class="card border-0 shadow workshopCard">
+            @if ($monthlyPayments->isNotEmpty())
+            @php
+            // Group payments by month
+            $paymentsByMonth = $monthlyPayments->groupBy('month');
+            $currentMonth = now()->format('F - Y');
+            $hasUnpaid = false;
+            $totalAmount = 0;
+            @endphp
+
+            <div class="card-body">
+                @foreach ($paymentsByMonth as $month => $payments)
+                @if ($month == $currentMonth)
+                @if ($payments->first()->status == 'unpaid')
+                <div class="alert alert-warning">
+                    <strong>Payment Pending!</strong> Your payment is pending for <b>{{ $month }}</b>.
+                </div>
+                <ul>
+                    @foreach ($payments as $payment)
+                    <li>
+                        <b>{{ $month }}:</b> <span class="text-danger">Pending</span>
+                    </li>
+                    @endforeach
+                </ul>
+                @php
+                $pendingMonths = $payments->count();
+                $amountDue = $pendingMonths * 1500; // Amount in rupees
+                $totalAmount += $amountDue;
+                $hasUnpaid = true;
+                @endphp
+                <div class="d-flex justify-content-end mt-4">
+                    <button type="button" class="btn btn-bg-blue btn-md monthlyPay" data-amount="{{ $totalAmount }}">
+                        Pay ₹{{ $totalAmount }}
+                    </button>
+                </div>
+                @else
+                <div class="alert alert-success">
+                    <strong>Payment Completed!</strong> Your payment for <b>{{ $month }}</b> has already been made.
+                </div>
+                @php $hasUnpaid = true; @endphp
+                @endif
+                @endif
+                @endforeach
+
+                @if (!$hasUnpaid)
+                <p class="mt-3 text-muted text-center"> <b>No Monthly Payment data available.</b></p>
+                @endif
+            </div>
+            @else
+            <div class="card-body">
+                <p class="mt-3 text-muted text-center"> <b>No Monthly Payment data available.</b></p>
+            </div>
+            @endif
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get all elements with the 'monthlyPay' class
+        var monthlyPayButton = document.querySelectorAll('.monthlyPay');
+        console.log('pay buttons', monthlyPayButton);
+        
+        // Loop through each pay button and attach the click event handler
+        monthlyPayButton.forEach(function(button) {
+            button.addEventListener('click', function(e) {
+
+                // Retrieve the amount from the data attribute
+                var amount = parseInt(button.getAttribute('data-amount')) * 100; // Convert to paise
+
+                console.log('amount:', amount);
+
+                var razorpayKey = "{{ env('RAZORPAY_KEY') }}";
+                console.log('Razorpay Key:', razorpayKey);
+
+                // Ensure that the Razorpay key is available
+                if (!razorpayKey) {
+                    console.error('Razorpay key is missing.');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Payment configuration error. Please contact support.',
+                    });
+                    return;
+                }
+
+                var username = "{{ Auth::user()->name }}";
+                var useremail = "{{ Auth::user()->email }}";
+                console.log('username:', username);
+                console.log('useremail:', useremail);
+
+                var payOptions = {
+                    "key": razorpayKey,
+                    "amount": amount,
+                    "currency": "INR",
+                    "name": "UBN",
+                    "description": "Monthly payment",
+                    "image": "/img/logo.png",
+                    "handler": function(response) {
+                        // Handle the response after payment
+                        console.log('Payment response:', response);
+                        var paymentId = response.razorpay_payment_id;
+                        storeMonthlyPaymentId(paymentId, amount);
+                    },
+                    "prefill": {
+                        "name": username,
+                        "email": useremail
+                    },
+                    "theme": {
+                        "color": "#012e6f"
+                    }
+                };
+
+                var rzp = new Razorpay(payOptions);
+                rzp.open();
+                console.log('razorpayKey is working');
+                
+            });
+        });
+    });
+
+    function storeMonthlyPaymentId(paymentId = '', amount = '') {
+        var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        var url = `{{ route('razorpay.payment.monthlyPaymentStore') }}`;
+        
+        
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken,
+            },
+            body: JSON.stringify({
+                paymentId: paymentId,
+                amount: amount,
+            
+            }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Payment ID stored successfully:', data);
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: 'Payment Successful',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.reload();
+                }
+            });
+        })
+        .catch(error => {
+            console.error('Error storing payment ID:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Failed to store payment ID',
+            });
+        });
+    }
+</script>
+
+
+
+
 @endrole
 
 

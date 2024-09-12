@@ -108,6 +108,7 @@
     </a>
 </li>
 
+
 @if(Auth::user()->hasRole('Attendance Handler'))
 <li class="nav-item">
     <a class="nav-link collapsed" href="{{ route('attendance.meetingSchedules') }}">
@@ -124,6 +125,18 @@
         <span class="text-blue">All Member Payment History</span>
     </a>
 </li>
+@endif
+
+
+@if(Auth::user()->hasRole('SP'))
+
+<li class="nav-item">
+    <a class="nav-link collapsed " href="{{ route('monthlyPayments.index') }}">
+        <i class="bi bi-currency-rupee" style="color: #e76a35"></i>
+        <span style="color: #1d2856">Manage Monthly Payment</span>
+    </a>
+</li>
+
 @endif
 
 </li><!-- End Tables Nav -->

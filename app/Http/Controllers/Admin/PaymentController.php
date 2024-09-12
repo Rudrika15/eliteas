@@ -16,9 +16,11 @@ use App\Mail\MembershipRenewed;
 use App\Mail\WelcomeMemberEmail;
 use App\Models\TrainingRegister;
 use App\Models\MeetingInvitation;
+use Illuminate\Support\Facades\DB;
 use App\Models\MemberSubscriptions;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use App\Models\MonthlyPayment;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Crypt;
@@ -340,6 +342,152 @@ class PaymentController extends Controller
 
             // Return an error response or redirect
             return response()->json(['message' => 'Failed to renew membership'], 500);
+        }
+    }
+
+    public function monthlyPayments()
+    {
+        $monthlyPayments = MonthlyPayment::paginate(10);
+        return view('admin.paymentHistory.monthlyPayments', compact('monthlyPayments'));
+    }
+
+    public function generateMonthlyPayment()
+    {
+        // Get the current month and year in 'F - Y' format (e.g., "September - 2024")
+        $currentMonth = now()->format('F - Y');
+
+        // Check if there are any records for the current month
+        $existingPayments = DB::table('monthly_payments')
+            ->where('month', $currentMonth)
+            ->exists();
+
+        // If payments for the current month already exist, return with a warning message
+        if ($existingPayments) {
+            return redirect()->back()->with('warning', "Current Months Payments are allready Generated.");
+        }
+
+        // Get all active members from the 'members' table
+        $members = Member::where('status', 'Active')->get();
+
+        // Insert monthly payment record for each member
+        foreach ($members as $member) {
+            DB::table('monthly_payments')->insert([
+                'memberId' => $member->id,
+                'status' => 'unpaid',
+                'paymentDate' => null,
+                'month' => $currentMonth,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Monthly payments generated successfully!');
+    }
+
+
+    public function updatePaymentStatus(Request $request)
+    {
+        // Validate the request data
+
+        // Find the payment record
+        $payment = DB::table('monthly_payments')->where('id', $request->id)->first();
+
+        if ($payment) {
+            // Update the status in the 'monthly_payments' table
+            DB::table('monthly_payments')
+                ->where('id', $request->id)
+                ->update([
+                    'status' => $request->status,
+                    'paymentDate' => now()->format('Y-m-d'),
+                    'updated_at' => now()
+                ]);
+
+            // Insert a new record into the 'AllPayments' table
+            DB::table('all_payments')->insert([
+                'memberId' => $payment->memberId,
+                'paymentType' => 'Offline',
+                'date' => now()->format('Y-m-d'),
+                'paymentMode' => 'CASH',
+                'amount' => 1500, // Assuming 'amount' is a field in the 'monthly_payments' table
+                'remarks' => 'CASH',
+                'status' => 'Active',
+                'updated_at' => now(),
+                'created_at' => now()
+            ]);
+
+            return response()->json(['success' => true]);
+        }
+
+        return response()->json(['success' => false]);
+    }
+
+
+    // public function handlePayment(Request $request)
+    // {
+    //     // Validate request
+    //     $validated = $request->validate([
+    //         // 'payment_id' => 'required|string',
+    //         // 'amount' => 'required|numeric'
+    //     ]);
+
+    //     $monthly = new MonthlyPayment();
+    //     $monthly->id = $request->memberId;
+    //     $monthly->status = 'paid';
+    //     $monthly->paymentDate = now();
+    //     $monthly->updated_at = now();
+    //     $monthly->save();
+
+
+    //     $allPayments = new AllPayments();
+    //     $allPayments->memberId = $request->memberId;
+    //     $allPayments->paymentType = $request->RazorPay;
+    //     $allPayments->date = now()->format('Y-m-d');
+    //     $allPayments->paymentMode = 'Monthly Meeting Payment';
+    //     $allPayments->amount = $request->amount;
+    //     $allPayments->remarks = $request->payment_id;
+
+
+    //     return response()->json(['success' => true]);
+    // }
+
+    public function monthlyPaymentStore(Request $request)
+    {
+        try {
+            // Validate the request 
+
+            // Store the payment ID in the table
+            $payment = new Razorpay();
+            $payment->r_payment_id = $request->input('paymentId');
+            $payment->user_email = Auth::user()->email;
+            $payment->amount = $request->input('amount') / 100;
+            $payment->save();
+
+            // Register for the training
+            $monthly = MonthlyPayment::where('memberId', Auth::user()->member->id)->first();
+            $monthly->status = 'paid';
+            $monthly->paymentDate = now();
+            $monthly->updated_at = now();
+            $monthly->save();
+
+
+            // Store the payment details
+            $allPayments = new AllPayments();
+            $allPayments->memberId = $monthly->memberId;
+            $allPayments->amount = $payment->amount;
+            $allPayments->paymentType = 'RazorPay'; // Hardcoded for RazorPay
+            $allPayments->date = now()->format('Y-m-d');
+            $allPayments->paymentMode = 'Monthly Payment';
+            $allPayments->remarks = $payment->r_payment_id;
+            $allPayments->save();
+
+            // Return a success response
+            return response()->json(['message' => 'Payment ID stored successfully'], 200);
+        } catch (\Throwable $th) {
+            // Log the error using the ErrorLogger utility
+            ErrorLogger::logError($th, $request->fullUrl());
+
+            // Return an error response
+            return response()->json(['message' => 'Failed to store payment ID'], 500);
         }
     }
 }

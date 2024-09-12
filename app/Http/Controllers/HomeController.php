@@ -22,6 +22,7 @@ use App\Models\TopsProfile;
 use Illuminate\Http\Request;
 use App\Models\BillingAddress;
 use App\Models\ContactDetails;
+use App\Models\MonthlyPayment;
 use App\Models\BusinessCategory;
 use App\Models\TrainingRegister;
 use App\Models\MeetingInvitation;
@@ -345,7 +346,11 @@ class HomeController extends Controller
                     ->sortByDesc('count')
                     ->first();
 
-                return view('home', compact('count', 'circlecalls', 'busGiver', 'refGiver', 'nearestTraining', 'findRegister', 'testimonials', 'meeting', 'businessCategory', 'myInvites'));
+                $monthlyPayments = MonthlyPayment::where('status', 'unpaid')
+                    ->where('memberId', Auth::user()->member->id)
+                    ->get();
+
+                return view('home', compact('count', 'monthlyPayments', 'circlecalls', 'busGiver', 'refGiver', 'nearestTraining', 'findRegister', 'testimonials', 'meeting', 'businessCategory', 'myInvites'));
             }
 
             return view('home', compact('count', 'nearestTraining', 'businessCategory', 'myInvites', 'findRegister'));
