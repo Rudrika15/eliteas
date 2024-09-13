@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Models\City;
 use App\Models\User;
 use App\Utils\Utils;
+use App\Models\Event;
 use App\Models\State;
 use App\Models\Circle;
 use App\Models\Member;
@@ -20,6 +21,7 @@ use App\Utils\ErrorLogger;
 use App\Models\Testimonial;
 use App\Models\TopsProfile;
 use Illuminate\Http\Request;
+use App\Models\EventRegister;
 use App\Models\BillingAddress;
 use App\Models\ContactDetails;
 use App\Models\MonthlyPayment;
@@ -350,12 +352,26 @@ class HomeController extends Controller
                     ->where('memberId', Auth::user()->member->id)
                     ->get();
 
-                return view('home', compact('count', 'monthlyPayments', 'circlecalls', 'busGiver', 'refGiver', 'nearestTraining', 'findRegister', 'testimonials', 'meeting', 'businessCategory', 'myInvites'));
+                $nearestEvents = Event::where('status', 'Active')
+                ->whereDate('event_date', '>=', $currentDate)
+                ->orderBy('event_date', 'asc')
+                ->first();
+
+                if ($nearestEvents) {
+                    $findEventRegister = EventRegister::where('memberId', Auth::user()->member->id)
+                        ->get();
+                } else {
+                    $findEventRegister = [];
+                }
+
+
+                return view('home', compact('count', 'monthlyPayments', 'nearestEvents', 'findEventRegister', 'circlecalls', 'busGiver', 'refGiver', 'nearestTraining', 'findRegister', 'testimonials', 'meeting', 'businessCategory', 'myInvites'));
             }
 
             return view('home', compact('count', 'nearestTraining', 'businessCategory', 'myInvites', 'findRegister'));
         } catch (\Throwable $th) {
             // Log the error
+            throw $th;
             ErrorLogger::logError($th, request()->fullUrl());
             // Return a generic error view or message
             return view('servererror')->with('error', 'Failed to load the dashboard');
@@ -383,6 +399,30 @@ class HomeController extends Controller
             return redirect()->back()->with('error', 'Failed to register for the training. Please try again.');
         }
     }
+
+
+    public function eventRegister($eventId, Request $request)
+    {
+        try {
+            $eventregister = new EventRegister();
+            $eventregister->userId = Auth::user()->id;
+            $eventregister->eventId = $eventId;
+            $eventregister->personName = $request->personName;
+            $eventregister->personEmail = $request->personEmail;
+            $eventregister->personContact = $request->personContact;
+            $eventregister->save();
+
+            return redirect()->back()->with('success', 'Event Registered Successfully');
+        } catch (\Throwable $th) {
+            // Log the error
+            throw $th;
+            ErrorLogger::logError($th, request()->fullUrl());
+
+            // Return with an error message
+            return redirect()->back()->with('error', 'Failed to register for the Event. Please try again.');
+        }
+    }
+
 
 
     public function invitation(Request $request)

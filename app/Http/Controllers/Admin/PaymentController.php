@@ -11,7 +11,9 @@ use App\Models\Razorpay;
 use App\Utils\ErrorLogger;
 use App\Models\AllPayments;
 use Illuminate\Http\Request;
+use App\Models\EventRegister;
 use App\Models\MembershipType;
+use App\Models\MonthlyPayment;
 use App\Mail\MembershipRenewed;
 use App\Mail\WelcomeMemberEmail;
 use App\Models\TrainingRegister;
@@ -20,7 +22,6 @@ use Illuminate\Support\Facades\DB;
 use App\Models\MemberSubscriptions;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
-use App\Models\MonthlyPayment;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Crypt;
@@ -486,6 +487,49 @@ class PaymentController extends Controller
             // Log the error using the ErrorLogger utility
             ErrorLogger::logError($th, $request->fullUrl());
 
+            // Return an error response
+            return response()->json(['message' => 'Failed to store payment ID'], 500);
+        }
+    }
+    public function eventPayment(Request $request)
+    {
+        try {
+            // Validate the request 
+
+            // Store the payment ID in the table
+            $payment = new Razorpay();
+            $payment->r_payment_id = $request->input('paymentId');
+            $payment->user_email = Auth::user()->email;
+            $payment->amount = $request->input('amount') / 100;
+            $payment->save();
+
+            // Register for the training
+            $eventPayment = new EventRegister();
+            $eventPayment->eventId = $request->eventId;
+            $eventPayment->memberId = Auth::user()->member->id;
+            $eventPayment->personName = $request->personName;
+            $eventPayment->personEmail = $request->personEmail;
+            $eventPayment->personContact = $request->personContact;
+            $eventPayment->paymentStatus = 'paid';
+            $eventPayment->save();
+
+
+            // Store the payment details
+            $allPayments = new AllPayments();
+            $allPayments->memberId = $eventPayment->memberId;
+            $allPayments->amount = $payment->amount;
+            $allPayments->paymentType = 'RazorPay'; // Hardcoded for RazorPay
+            $allPayments->date = now()->format('Y-m-d');
+            $allPayments->paymentMode = 'Event Register Payment';
+            $allPayments->remarks = $payment->r_payment_id;
+            $allPayments->save();
+
+            // Return a success response
+            return response()->json(['message' => 'Payment Received successfully'], 200);
+        } catch (\Throwable $th) {
+            // throw $th;
+            // Log the error using the ErrorLogger utility
+            ErrorLogger::logError($th, $request->fullUrl());
             // Return an error response
             return response()->json(['message' => 'Failed to store payment ID'], 500);
         }

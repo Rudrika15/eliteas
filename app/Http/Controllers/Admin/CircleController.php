@@ -258,7 +258,7 @@ class CircleController extends Controller
                 return redirect()->route('circle.index')->with('Error', 'Circle not found!');
             }
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
             ErrorLogger::logError($th, $request->fullUrl());
             // Handle any exceptions and show the server error page
             return view('servererror');
@@ -383,7 +383,7 @@ class CircleController extends Controller
                 return redirect()->back()->with('error', 'Meetings for the next month have already been generated.');
             }
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
             return view('servererror');
         }
     }

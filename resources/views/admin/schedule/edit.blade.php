@@ -49,7 +49,7 @@
 
             <div class="col-md-6">
                 <div class="form-floating">
-                    <select class="form-select" id="day" name="day" readonly>
+                    <select class="form-select" id="day" name="day">
                         <option value="0" {{ old('day', $schedules->day) == 0 ? 'selected' : '' }}>Sunday</option>
                         <option value="1" {{ old('day', $schedules->day) == 1 ? 'selected' : '' }}>Monday</option>
                         <option value="2" {{ old('day', $schedules->day) == 2 ? 'selected' : '' }}>Tuesday</option>
@@ -71,7 +71,7 @@
             <div class="col-md-6 mt-3">
                 <div class="form-floating">
                     <input type="date" class="form-control @error('date') is-invalid @enderror" id="date" name="date"
-                        placeholder="Date" value="{{ $schedules->date }}" readonly>
+                        placeholder="Date" value="{{ $schedules->date }}">
                     <label for="date">Date</label>
                     @error('date')
                     <div class="invalid-tooltip">

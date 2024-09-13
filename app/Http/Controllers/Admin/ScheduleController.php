@@ -21,7 +21,7 @@ class ScheduleController extends Controller
         try {
 
             $schedules = Schedule::where('status', 'Active')->paginate(10);
-            $circles = Circle::where('status', 'Active')->paginate(10);
+            $circles = Circle::where('status', 'Active')->get();
             return view('admin.schedule.index', compact('schedules', 'circles'));
         } catch (\Throwable $th) {
             // throw $th;
@@ -67,7 +67,8 @@ class ScheduleController extends Controller
             return view('admin.schedule.create', compact('schedules'));
         } catch (\Throwable $th) {
             //throe $th;
-            ErrorLogger::logError($th,
+            ErrorLogger::logError(
+                $th,
                 request()->fullUrl()
             );
             return view('servererror');

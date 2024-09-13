@@ -12,6 +12,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\ChatController;
 use App\Http\Controllers\Admin\CityController;
+use App\Http\Controllers\Admin\EventController;
 use App\Http\Controllers\Admin\StateController;
 use App\Http\Controllers\TestimonialController;
 use App\Http\Controllers\Admin\CircleController;
@@ -350,6 +351,7 @@ Route::group(['middleware' => ['auth']], function () {
     // payment
     Route::post('/razorpay-payment', [PaymentController::class, 'store'])->name('razorpay.payment.store');
     Route::post('/razorpay-payment-monthlyPaymentStore', [PaymentController::class, 'monthlyPaymentStore'])->name('razorpay.payment.monthlyPaymentStore');
+    Route::post('/razorpay-payment-eventPayment', [PaymentController::class, 'eventPayment'])->name('razorpay.payment.eventPayment');
     Route::post('/razorpay-payment-invite', [PaymentController::class, 'invitePayment'])->name('razorpay.payment.invite');
 
     // invite person
@@ -382,6 +384,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('testimonial/archives', [TestimonialController::class, 'archives'])->name('testimonial.archives');
     Route::get('testimonial/restore/{id}', [TestimonialController::class, 'restore'])->name('testimonial.restore');
 
+    Route::get('/trainingRegisterView', [TrainerMasterController::class, 'trainingRegisterView'])->name('trainerMaster.trainingRegisterView');
     Route::get('/trainingRegister/{trainingId?}/{trainerId?}', [HomeController::class, 'trainingRegister'])->name('training.register');
     Route::get('/invitationPay/{personName?}/{personEmail?}/{invitedPersonFirstName?}/{invitedPersonLastName?}/{amount?}', [HomeController::class, 'invitationPay'])->name('invitationPay');
     // Route::post('/invitationPay', [HomeController::class, 'invitationPay'])->name('invitationPay');
@@ -493,7 +496,14 @@ Route::group(['middleware' => ['auth']], function () {
 
     //location
 
+    //event
 
+    Route::get('/event/index', [EventController::class, 'index'])->name('event.index');
+    Route::get('event/create', [EventController::class, 'create'])->name('event.create');
+    Route::post('event/store', [EventController::class, 'store'])->name('event.store');
+    Route::get('event/edit/{id?}', [EventController::class, 'edit'])->name('event.edit');
+    Route::post('event/update', [EventController::class, 'update'])->name('event.update');
+    Route::delete('event/delete/{id?}', [EventController::class, 'delete'])->name('event.delete');
 
 });
 

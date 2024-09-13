@@ -19,5 +19,9 @@ class TrainingRegister extends Model
         return $this->hasMany(TrainingTrainers::class, 'trainingId', 'id');
     }
 
+    public function training()
+    {
+        return $this->belongsTo(Training::class, 'trainingId', 'id');
+    }
 
 }

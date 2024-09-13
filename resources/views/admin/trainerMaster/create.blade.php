@@ -116,6 +116,20 @@
                     </div>
                 </div>
 
+                <div class="col-md-6">
+                    <div class="form-floating mt-3">
+                        <input type="text" class="form-control @error('bio') is-invalid @enderror" id="bio" name="bio"
+                            placeholder="Train Name">
+                        <label for="bio">Bio</label>
+                        @error('bio')
+                        <div class="invalid-tooltip">
+                            {{ $message }}
+                        </div>
+                        @enderror
+                    </div>
+                </div>
+
+
 
             </div>
             <div class="text-center mt-5">

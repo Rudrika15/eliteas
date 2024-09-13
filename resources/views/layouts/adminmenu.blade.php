@@ -85,6 +85,32 @@
 </li>
 
 <li class="nav-item">
+    <a class="nav-link collapsed" data-bs-target="#event-nav" data-bs-toggle="collapse" href="#">
+        <i class="bi bi-person-gear" style="color: #e76a35"></i><span>Event</span><i
+            class="bi bi-chevron-down ms-auto" style="color: #e76a35"></i>
+    </a>
+    <ul id="event-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+        <li class="nav-item">
+            <a class="nav-link " href="{{ route('event.index') }}">
+                <i class="bi bi-person-gear" style="color: #e76a35"></i>
+                <span>Event Master</span>
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link " href="{{ route('training.index') }}">
+                <i class="bi bi-gear-wide-connected" style="color: #e76a35"></i>
+                <span>Event Register List</span>
+            </a>
+        </li>
+
+
+    </ul>
+</li><!-- End Tables Nav -->
+
+
+
+<li class="nav-item">
     <a class="nav-link collapsed" data-bs-target="#training-nav" data-bs-toggle="collapse" href="#">
         <i class="bi bi-person-gear" style="color: #e76a35"></i><span>Training</span><i
             class="bi bi-chevron-down ms-auto" style="color: #e76a35"></i>
@@ -108,6 +134,13 @@
             <a class="nav-link " href="{{ route('trainer.list') }}">
                 <i class="bi bi-gear-wide-connected" style="color: #e76a35"></i>
                 <span>Trainer List</span>
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link " href="{{ route('trainerMaster.trainingRegisterView') }}">
+                <i class="bi bi-gear-wide-connected" style="color: #e76a35"></i>
+                <span>Training Register List</span>
             </a>
         </li>
 
@@ -176,6 +209,15 @@
         </li> --}}
     </ul>
 </li>
+
+
+<li class="nav-item">
+    <a class="nav-link collapsed " href="{{ route('circle.index') }}">
+        <i class="bi bi-plus-circle-dotted" style="color: #e76a35"></i>
+        <span>Circle List</span>
+    </a>
+</li>
+
 
 <li class="nav-item">
     <a class="nav-link collapsed" data-bs-target="#master-nav" data-bs-toggle="collapse" href="#">
@@ -266,8 +308,8 @@
 
 <li class="nav-item">
     <a class="nav-link collapsed" data-bs-target="#payment-nav" data-bs-toggle="collapse" href="#">
-        <i class="bi bi-gear" style="color: #e76a35"></i><span>Payment Management</span><i class="bi bi-chevron-down ms-auto"
-            style="color: #e76a35"></i>
+        <i class="bi bi-currency-rupee" style="color: #e76a35"></i><span>Payment Management</span><i
+            class="bi bi-chevron-down ms-auto" style="color: #e76a35"></i>
     </a>
 
     <ul id="payment-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
