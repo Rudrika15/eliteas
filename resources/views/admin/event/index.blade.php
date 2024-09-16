@@ -38,6 +38,11 @@
                             <td>{{$eventData->end_time}}</td>
                             <td>{{$eventData->amount}}</td>
                             <td>
+                                <a href="{{ route('event.eventRegisterList', $eventData->id) }}"
+                                    class="btn btn-bg-orange btn-sm btn-tooltip">
+                                    <i class="bi bi-eye"></i>
+                                    <span class="btn-text">List of Registred User</span>
+                                </a>
                                 <a href="{{ route('event.edit', $eventData->id) }}"
                                     class="btn btn-bg-blue btn-sm btn-tooltip">
                                     <i class="bi bi-pen"></i>

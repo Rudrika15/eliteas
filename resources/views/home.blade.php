@@ -387,6 +387,8 @@
 </div>
 @endif
 
+
+
 <div class="row">
     <div class="col-md-12">
         <div class="card-title"><b>Upcoming Events</b></div>
@@ -407,7 +409,7 @@
                 </div>
                 <div class="row">
                     <div class="col-md-12">
-                        @if (count($findEventRegister) == 0)
+                        @if (!is_null($findEventRegister) && count($findEventRegister) == 0)
                         @if ($nearestEvents->amount == 0)
                         <h5 class="text-muted text-end me-4 pt-5">Free</h5>
                         <button type="button" class="btn btn-bg-orange btn-md" id="freeRegisterBtn">
@@ -425,23 +427,81 @@
                         @else
                         <div class="d-flex justify-content-end">
                             <div class="ps-5 ms-5 mt-5">
-                                <strong> <span class="text-success">Already Joined</span> </strong>
+                                <strong><span class="text-success">Already Joined</span></strong>
                             </div>
                         </div>
                         @endif
                     </div>
                 </div>
+
+                <!-- Shareable Link Section -->
+                <div class="row mt-3">
+                    <div class="col-md-12">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                {{-- <a href="{{ route('event.link', $nearestEvents->event_slug) }}" target="_blank">
+                                    View Event Details
+                                </a> --}}
+                            </div>
+                            <div>
+                                <button class="btn btn-sm btn-primary" onclick="copyLink()">
+                                    Copy Shareable Link
+                                </button>
+                                <input type="hidden" id="shareableLink"
+                                    value="{{ route('event.link', $nearestEvents->event_slug) }}">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
             @else
             <div class="row">
                 <div class="col-md-12">
-                    <p class="mt-3 text-muted text-center"> <b>No Events for now.</b></p>
+                    <p class="mt-3 text-muted text-center"><b>No Events for now.</b></p>
                 </div>
             </div>
             @endif
         </div>
     </div>
 </div>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+<script>
+    function copyLink() {
+        var copyText = document.getElementById("shareableLink").value;
+        navigator.clipboard.writeText(copyText).then(function() {
+            alert("Link copied to clipboard");
+        }, function(err) {
+            alert("Could not copy link");
+        });
+    }
+</script>
+<script>
+    function copyLink() {
+        var copyText = document.getElementById("shareableLink").value;
+        navigator.clipboard.writeText(copyText).then(function() {
+            Swal.fire({
+                icon: 'success',
+                title: 'Link copied!',
+                text: 'The shareable link has been copied to your clipboard.',
+                confirmButtonText: 'OK'
+            });
+        }, function(err) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: 'Could not copy the link. Please try again.',
+                confirmButtonText: 'OK'
+            });
+        });
+    }
+</script>
+
+
+
 
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

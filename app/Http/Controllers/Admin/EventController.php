@@ -7,6 +7,7 @@ use App\Utils\ErrorLogger;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Circle;
+use App\Models\EventRegister;
 
 class EventController extends Controller
 {
@@ -129,6 +130,75 @@ class EventController extends Controller
             $event->status = "Deleted";
             $event->save();
             return redirect()->route('event.index')->with('success', 'Event Deleted Successfully!');
+        } catch (\Throwable $th) {
+            // throw $th;
+            ErrorLogger::logError(
+                $th,
+                $request->fullUrl()
+            );
+            return view('servererror');
+        }
+    }
+
+    public function eventLink($slug)
+    {
+        $event = Event::where('event_slug', $slug)->firstOrFail();
+
+        return view('admin.event.eventLink', compact('event'));
+    }
+
+    public function storeUserDetails(Request $request)
+    {
+
+        $eventReg = new EventRegister();
+        $eventReg->eventId = $request->eventId;
+        $eventReg->personName = $request->personName;
+        $eventReg->personEmail = $request->personEmail;
+        $eventReg->personContact = $request->personContact;
+        $eventReg->save();
+
+        return redirect()->back()->with('success', 'Your data is saved sucessfully.');
+    }
+
+    // public function checkEmail(Request $request)
+    // {
+    //     $email = $request->input('personemail');
+    //     $eventId = $request->input('eventId');
+
+    //     // Check if the email is already registered for the event
+    //     $registered = Eventregister::where('eventId', $eventId)
+    //         ->where('personEmail', $email)
+    //         ->exists();
+
+    //     return response()->json(['registered' => $registered]);
+    // }
+
+    // In EventController.php
+    public function checkRegistration(Request $request)
+    {
+        try {
+            $email = $request->input('personEmail');
+            $eventId = $request->input('eventId');
+
+            $isRegistered = Eventregister::where('eventId', $eventId)
+                ->where('personEmail', $email)
+                ->exists();
+
+            return response()->json(['isRegistered' => $isRegistered]);
+        } catch (\Throwable $th) {
+            // throw $th;
+            ErrorLogger::logError($th, $request->fullUrl());
+            return response()->json(['error' => 'Something went wrong.'], 500);
+        }
+    }
+
+
+    public function eventRegisterList(Request $request, $id)
+    {
+        try {
+            $event = Event::find($id);
+            $registerList = EventRegister::paginate(10);
+            return view('admin.event.eventRegistrationList', compact('event', 'registerList'));
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError(

@@ -359,6 +359,7 @@ class HomeController extends Controller
 
                 if ($nearestEvents) {
                     $findEventRegister = EventRegister::where('memberId', Auth::user()->member->id)
+                        ->where('eventId', $nearestEvents->id)
                         ->get();
                 } else {
                     $findEventRegister = [];

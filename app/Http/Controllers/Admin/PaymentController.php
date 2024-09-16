@@ -534,4 +534,54 @@ class PaymentController extends Controller
             return response()->json(['message' => 'Failed to store payment ID'], 500);
         }
     }
+
+    public function userEventPayment(Request $request)
+    {
+        try {
+            // Validate the request 
+            $request->validate([
+                'paymentId' => 'required|string',
+                'amount' => 'required|integer',
+                'eventId' => 'required|integer',
+                'personName' => 'required|string',
+                'personEmail' => 'required|email',
+                'personContact' => 'required|string',
+            ]);
+
+            // Store the payment ID in the table
+            $payment = new Razorpay();
+            $payment->r_payment_id = $request->input('paymentId');
+            $payment->user_email = $request->personEmail ?? null;
+            $payment->amount = $request->input('amount') / 100;
+            $payment->save();
+
+            // Register for the training
+            $eventPayment = new EventRegister();
+            $eventPayment->eventId = $request->eventId;
+            // $eventPayment->memberId = null; // Make sure this is handled appropriately
+            $eventPayment->personName = $request->personName;
+            $eventPayment->personEmail = $request->personEmail;
+            $eventPayment->personContact = $request->personContact;
+            $eventPayment->paymentStatus = 'paid';
+            $eventPayment->save();
+
+            // Store the payment details
+            $allPayments = new AllPayments();
+            // $allPayments->memberId = $eventPayment->memberId ?? null; // Make sure this is handled appropriately
+            $allPayments->amount = $payment->amount;
+            $allPayments->paymentType = 'RazorPay'; // Hardcoded for RazorPay
+            $allPayments->date = now()->format('Y-m-d');
+            $allPayments->paymentMode = 'Event Register Payment';
+            $allPayments->remarks = $payment->r_payment_id;
+            $allPayments->save();
+
+            // Return a success response
+            return response()->json(['message' => 'Payment Received successfully'], 200);
+        } catch (\Throwable $th) {
+            // Log the error using the ErrorLogger utility
+            ErrorLogger::logError($th, $request->fullUrl());
+            // Return an error response
+            return response()->json(['message' => 'Failed to store payment ID'], 500);
+        }
+    }
 }
