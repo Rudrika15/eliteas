@@ -97,12 +97,12 @@
             </a>
         </li>
 
-        <li class="nav-item">
-            <a class="nav-link " href="{{ route('training.index') }}">
+        {{-- <li class="nav-item">
+            <a class="nav-link " href="{{ route('eventRegisterList') }}">
                 <i class="bi bi-gear-wide-connected" style="color: #e76a35"></i>
                 <span>Event Register List</span>
             </a>
-        </li>
+        </li> --}}
 
 
     </ul>

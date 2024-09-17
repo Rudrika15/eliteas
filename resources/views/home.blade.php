@@ -403,7 +403,7 @@
 
                     <div class="col-md-2 pt-3 text-muted text-end">
                         <b>Date : </b> {{ \Carbon\Carbon::parse($nearestEvents->event_date)->format('j M Y') }} <br>
-                        <b>Start Time :</b> {{ $nearestEvents->start_time }}
+                        <b>Start Time :</b> {{ $nearestEvents->start_time }} <br>
                         <b>End Time :</b> {{ $nearestEvents->end_time }}
                     </div>
                 </div>
@@ -444,7 +444,7 @@
                                 </a> --}}
                             </div>
                             <div>
-                                <button class="btn btn-sm btn-primary" onclick="copyLink()">
+                                <button class="btn btn-bg-blue btn-sm" onclick="copyLink()">
                                     Copy Shareable Link
                                 </button>
                                 <input type="hidden" id="shareableLink"
@@ -661,12 +661,12 @@
                 @endforeach
 
                 @if (!$hasUnpaid)
-                <p class="mt-3 text-muted text-center"> <b>No Monthly Payment data available.</b></p>
+                <p class="mt-5 text-muted text-center"> <b>No Monthly Payment data available.</b></p>
                 @endif
             </div>
             @else
             <div class="card-body">
-                <p class="mt-3 text-muted text-center"> <b>No Monthly Payment data available.</b></p>
+                <p class="mt-5 text-muted text-center"> <b>No Monthly Payment data available.</b></p>
             </div>
             @endif
         </div>

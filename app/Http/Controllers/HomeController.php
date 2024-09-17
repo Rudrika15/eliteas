@@ -416,7 +416,7 @@ class HomeController extends Controller
             return redirect()->back()->with('success', 'Event Registered Successfully');
         } catch (\Throwable $th) {
             // Log the error
-            throw $th;
+            // throw $th;
             ErrorLogger::logError($th, request()->fullUrl());
 
             // Return with an error message

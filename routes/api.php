@@ -1,35 +1,38 @@
 <?php
 
-use App\Http\Controllers\Api\ApiController;
-use App\Http\Controllers\Api\AttendanceController;
 use App\Models\CircleMember;
 use Illuminate\Http\Request;
 use App\Mail\MeetingInvitation;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\ApiController;
+use App\Http\Controllers\Api\ChatController;
+use App\Http\Controllers\Api\EventController;
 use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Api\CircleController;
+use App\Http\Controllers\Admin\MemberController;
+use App\Http\Controllers\Api\MonthlyPaymentController;
+use App\Http\Controllers\Api\LocationController;
 use App\Http\Controllers\Api\OTPLoginController;
 use App\Http\Controllers\Api\TrainingController;
 use App\Http\Controllers\Api\FranchiseController;
 use App\Http\Controllers\Api\MyPaymentController;
+use App\Http\Controllers\Api\AttendanceController;
 use App\Http\Controllers\Api\CircleCallController;
 use App\Http\Controllers\Api\CircleTypeController;
 use App\Http\Controllers\Api\ConnectionController;
+use App\Http\Controllers\Api\LeaderBoardController;
 use App\Http\Controllers\Api\TestimonialController;
 use App\Http\Controllers\Api\CircleMemberController;
 use App\Http\Controllers\Api\CircleMeetingController;
 use App\Http\Controllers\Api\TrainerMasterController;
+use App\Http\Controllers\Api\ChangePasswordController;
 use App\Http\Controllers\Api\ForgetPasswordController;
 use App\Http\Controllers\Api\BusinessCategoryController;
-use App\Http\Controllers\Api\ChangePasswordController;
-use App\Http\Controllers\Api\ChatController;
 use App\Http\Controllers\Api\MeetingInvitationController;
 use App\Http\Controllers\Api\CircleMeetingMembersController;
 use App\Http\Controllers\Api\MembershipSubscriptionController;
 use App\Http\Controllers\Api\CircleMeetingMemberBusinessController;
 use App\Http\Controllers\Api\CircleMeetingMemberReferenceController;
-use App\Http\Controllers\Api\LeaderBoardController;
-use App\Http\Controllers\Api\LocationController;
 
 // use App\Http\Controllers\Api\CircleMeetingMemberBusinessController;
 
@@ -222,8 +225,33 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/membership-history', [MembershipSubscriptionController::class, 'MembershipHistory']);
 
     // My Payment History
-
     Route::get('/my-payment-history', [MyPaymentController::class, 'myPaymentHistory']);
+
+    //Event
+    Route::post('/register/{eventId}', [EventController::class, 'eventRegister']);
+    // Store user details for an event
+    Route::post('/store-details', [EventController::class, 'storeUserDetails']);
+
+
+    // Retrieve all active events
+    Route::get('/event/index', [EventController::class, 'index']);
+
+    // Check if a user is registered for an event
+    Route::post('/check-registration-user', [EventController::class, 'checkRegistrationUser']);
+    Route::post('/check-registration', [EventController::class, 'checkRegistration']);
+
+    // Get the registration list for an event
+    Route::get('/register-list/{id}', [EventController::class, 'eventRegisterList']);
+
+    // Payment for event registration (for members)
+    Route::post('/payment/member', [EventController::class, 'eventPaymentForMember']);
+
+    // Payment for event registration (for users)
+    Route::post('/payment/user', [EventController::class, 'userEventPayment']);
+
+    //Monthly Payment APi
+    Route::post('/monthly-payment/store', [MonthlyPaymentController::class, 'monthlyPaymentStore']);
+
 
     // Attendance Api
 
@@ -320,9 +348,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     //change password
     Route::post('v1/change-password', [ApiController::class, 'changePassword']);
-    
+
     //busGiven
     Route::get('busGiven-index', [CircleMeetingMemberBusinessController::class, 'busGiven']);
-
-
 });

@@ -20,6 +20,8 @@ class ErrorLogger
         $errorLog = new ErrorLog();
         $errorLog->url = $url ?? request()->fullUrl();
         $errorLog->error_message = $exception->getMessage();
+        $errorLog->date = now()->toDateString();
+        $errorLog->time = now()->toTimeString();
         $errorLog->status = 'Pending';
 
         // Save the instance to the database

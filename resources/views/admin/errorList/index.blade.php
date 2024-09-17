@@ -20,6 +20,8 @@
                             <th class="text-center">S.No</th>
                             <th class="text-center">Page URL</th>
                             <th class="text-center">Error Message</th>
+                            <th class="text-center">Date</th>
+                            <th class="text-center">Time</th>
                             <th class="text-center">Status</th>
                         </tr>
                     </thead>
@@ -29,6 +31,8 @@
                             <td>{{ $key + $errorList->firstItem() }}</td>
                             <td>{{$errorListData->url ?? '-'}}</td>
                             <td>{{$errorListData->error_message ?? '-'}}</td>
+                            <td>{{$errorListData->date ?? '-'}}</td>
+                            <td>{{$errorListData->time ?? '-'}}</td>
                             <td style="width: 82px;">
                                 <select class="form-control update-status" data-id="{{$errorListData->id}}">
                                     <option value="Pending" {{ $errorListData->status == 'Pending' ? 'selected' : ''

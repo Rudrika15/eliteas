@@ -20,7 +20,7 @@ class EventController extends Controller
                 ->paginate(10);
             return view('admin.event.index', compact('event'));
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
             ErrorLogger::logError(
                 $th,
                 $request->fullUrl()
@@ -35,7 +35,7 @@ class EventController extends Controller
             $circle = Circle::where('status', 'Active')->get();
             return view('admin.event.create', compact('circle'));
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
             ErrorLogger::logError(
                 $th,
                 $request->fullUrl()
@@ -67,7 +67,7 @@ class EventController extends Controller
 
             return redirect()->route('event.create')->with('success', 'Event Created Successfully!');
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
             ErrorLogger::logError(
                 $th,
                 $request->fullUrl()
@@ -83,7 +83,7 @@ class EventController extends Controller
             $circle = Circle::where('status', 'Active')->get();
             return view('admin.event.edit', compact('event', 'circle'));
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
             ErrorLogger::logError(
                 $th,
                 $request->fullUrl()
@@ -114,7 +114,7 @@ class EventController extends Controller
                 return back()->with('error', 'Event Not Found!');
             }
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
             ErrorLogger::logError(
                 $th,
                 $request->fullUrl()
@@ -142,22 +142,36 @@ class EventController extends Controller
 
     public function eventLink($slug)
     {
-        $event = Event::where('event_slug', $slug)->firstOrFail();
-
-        return view('admin.event.eventLink', compact('event'));
+        try {
+            $event = Event::where('event_slug', $slug)->firstOrFail();
+            return view('admin.event.eventLink', compact('event'));
+        } catch (\Throwable $th) {
+            ErrorLogger::logError(
+                $th,
+                request()->fullUrl()
+            );
+            return view('servererror');
+        }
     }
 
     public function storeUserDetails(Request $request)
     {
+        try {
+            $eventReg = new EventRegister();
+            $eventReg->eventId = $request->eventId;
+            $eventReg->personName = $request->personName;
+            $eventReg->personEmail = $request->personEmail;
+            $eventReg->personContact = $request->personContact;
+            $eventReg->save();
 
-        $eventReg = new EventRegister();
-        $eventReg->eventId = $request->eventId;
-        $eventReg->personName = $request->personName;
-        $eventReg->personEmail = $request->personEmail;
-        $eventReg->personContact = $request->personContact;
-        $eventReg->save();
-
-        return redirect()->back()->with('success', 'Your data is saved sucessfully.');
+            return redirect()->back()->with('success', 'Your data is saved successfully.');
+        } catch (\Throwable $th) {
+            ErrorLogger::logError(
+                $th,
+                $request->fullUrl()
+            );
+            return view('servererror');
+        }
     }
 
     // public function checkEmail(Request $request)
