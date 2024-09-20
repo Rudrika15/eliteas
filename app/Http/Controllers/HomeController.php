@@ -348,9 +348,17 @@ class HomeController extends Controller
                     ->sortByDesc('count')
                     ->first();
 
-                $monthlyPayments = MonthlyPayment::where('status', 'unpaid')
-                    ->where('memberId', Auth::user()->member->id)
-                    ->get();
+// monthly payment
+
+                $monthlyPayments = MonthlyPayment::where('memberId', Auth::user()->member->id)
+                ->where('status', 'unpaid')
+                ->get()
+                ->groupBy('month');
+
+                 // Sum the total unpaid amounts
+                $totalAmountDue = $monthlyPayments->map(function ($group) {
+                return $group->sum('amount');
+                })->sum();
 
                 $nearestEvents = Event::where('status', 'Active')
                 ->whereDate('event_date', '>=', $currentDate)
@@ -366,7 +374,7 @@ class HomeController extends Controller
                 }
 
 
-                return view('home', compact('count', 'monthlyPayments', 'nearestEvents', 'findEventRegister', 'circlecalls', 'busGiver', 'refGiver', 'nearestTraining', 'findRegister', 'testimonials', 'meeting', 'businessCategory', 'myInvites'));
+                return view('home', compact('count', 'monthlyPayments', 'totalAmountDue', 'nearestEvents', 'findEventRegister', 'circlecalls', 'busGiver', 'refGiver', 'nearestTraining', 'findRegister', 'testimonials', 'meeting', 'businessCategory', 'myInvites'));
             }
 
             return view('home', compact('count', 'nearestTraining', 'businessCategory', 'myInvites', 'findRegister'));
