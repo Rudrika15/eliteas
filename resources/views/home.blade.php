@@ -639,60 +639,51 @@
         <div class="card-title"><b>Monthly Meeting Payment</b></div>
         <div class="card border-0 shadow workshopCard">
             @if ($monthlyPayments->isNotEmpty())
-            @php
-            // Group payments by month
-            $paymentsByMonth = $monthlyPayments->groupBy('month');
-            $currentMonth = now()->format('F - Y');
-            $hasUnpaid = false;
-            $totalAmount = 0;
-            @endphp
+                <div class="card-body">
+                    @foreach ($monthlyPayments as $month => $payments)
+                        @php
+                            $currentMonth = now()->format('F - Y');
+                            $isCurrentMonth = $month == $currentMonth;
+                            $isUnpaid = $payments->first()->status == 'unpaid';
+                        @endphp
 
-            <div class="card-body">
-                @foreach ($paymentsByMonth as $month => $payments)
-                @if ($month == $currentMonth)
-                @if ($payments->first()->status == 'unpaid')
-                <div class="alert alert-warning">
-                    <strong>Payment Pending!</strong> Your payment is pending for <b>{{ $month }}</b>.
-                </div>
-                <ul>
-                    @foreach ($payments as $payment)
-                    <li>
-                        <b>{{ $month }}:</b> <span class="text-danger">Pending</span>
-                    </li>
+                        @if ($isUnpaid)
+                            <div class="alert alert-warning">
+                                <strong>Payment Pending!</strong> Your payment is pending for <b>{{ $month }}</b>.
+                            </div>
+
+                            <ul>
+                                @foreach ($payments as $payment)
+                                    <li>
+                                        <b>{{ $month }}:</b> <span class="text-danger">Pending</span>
+                                    </li>
+                                @endforeach
+                            </ul>
+
+                        @else
+                            <div class="alert alert-success">
+                                <strong>Payment Completed!</strong> Your payment for <b>{{ $month }}</b> has already been made.
+                            </div>
+                        @endif
                     @endforeach
-                </ul>
-                @php
-                $pendingMonths = $payments->count();
-                $amountDue = $pendingMonths * 1500; // Amount in rupees
-                $totalAmount += $amountDue;
-                $hasUnpaid = true;
-                @endphp
-                <div class="d-flex justify-content-end mt-4">
-                    <button type="button" class="btn btn-bg-orange btn-md monthlyPay" data-amount="{{ $totalAmount }}">
-                        Pay ₹{{ $totalAmount }}
-                    </button>
-                </div>
-                @else
-                <div class="alert alert-success">
-                    <strong>Payment Completed!</strong> Your payment for <b>{{ $month }}</b> has already been made.
-                </div>
-                @php $hasUnpaid = true; @endphp
-                @endif
-                @endif
-                @endforeach
 
-                @if (!$hasUnpaid)
-                <p class="mt-5 text-muted text-center"> <b>No Monthly Payment data available.</b></p>
-                @endif
-            </div>
+                    <div class="d-flex justify-content-end mt-4">
+                        <button type="button" class="btn btn-bg-orange btn-md monthlyPay" data-amount="{{ $totalAmountDue }}">
+                            Pay ₹{{ $totalAmountDue }}
+                        </button>
+                    </div>
+                </div>
             @else
-            <div class="card-body">
-                <p class="mt-5 text-muted text-center"> <b>No Monthly Payment data available.</b></p>
-            </div>
+                <div class="card-body">
+                    <p class="mt-5 text-muted text-center"><b>No Monthly Payment data available.</b></p>
+                </div>
             @endif
         </div>
     </div>
 </div>
+
+
+
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>

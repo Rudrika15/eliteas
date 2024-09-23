@@ -464,12 +464,19 @@ class PaymentController extends Controller
             $payment->save();
 
             // Register for the training
-            $monthly = MonthlyPayment::where('memberId', Auth::user()->member->id)->first();
-            $monthly->status = 'paid';
-            $monthly->paymentDate = now();
-            $monthly->updated_at = now();
-            $monthly->save();
+            // $monthly = MonthlyPayment::where('memberId', Auth::user()->member->id)->first();
+            // $monthly->status = 'paid';
+            // $monthly->paymentDate = now();
+            // $monthly->updated_at = now();
+            // $monthly->save();
 
+            $monthly = MonthlyPayment::where('memberId', Auth::user()->member->id)
+            ->where('status', 'unpaid')
+            ->update([
+                'status' => 'paid',
+                'paymentDate' => now(),
+                'updated_at' => now(),
+            ]);
 
             // Store the payment details
             $allPayments = new AllPayments();
@@ -586,6 +593,39 @@ class PaymentController extends Controller
         // Return an error response
         return response()->json(['message' => 'Failed to store payment ID'], 500);
     }
+
+    public function monthlyPaymentIndex()
+{
+    try {
+        // Get the authenticated user
+        $authUser = auth()->user();
+
+        // Get the member's ID from the authenticated user
+        $memberId = $authUser->member->id;
+
+        // Get all monthly payments for the member (both paid and unpaid)
+        $paymentsByMonth = MonthlyPayment::where('memberId', $memberId)
+            ->orderBy('month', 'ASC')
+            ->get()
+            ->groupBy('month'); // Group payments by month for easier access in the view
+
+        // Get the current month
+        $currentMonth = now()->format('F');
+
+        // Check if there are any unpaid payments
+        $hasUnpaid = true;
+        $totalAmount = 0;
+
+        // Return the data to the Blade view
+        return view('home', compact('paymentsByMonth', 'currentMonth', 'hasUnpaid', 'totalAmount'));
+    } catch (\Throwable $th) {
+        // Handle any exceptions and redirect to an error page or show a flash message
+        return redirect()->back()->with('error', 'Failed to retrieve monthly payments. Please try again.');
+    }
+}
+
+
+
 }
 
 }

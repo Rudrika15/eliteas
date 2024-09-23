@@ -46,6 +46,7 @@ use App\Http\Controllers\Admin\MembershipSubscriptionController;
 use App\Http\Controllers\Admin\MembershipSubscriptionsController;
 use App\Http\Controllers\Admin\CircleMeetingMemberBusinessController;
 use App\Http\Controllers\Admin\CircleMeetingMemberReferenceController;
+use App\Http\Controllers\Api\MonthlyPaymentController;
 
 /*
 |--------------------------------------------------------------------------

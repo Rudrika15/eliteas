@@ -250,7 +250,8 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('/payment/user', [EventController::class, 'userEventPayment']);
 
     //Monthly Payment APi
-    Route::post('/monthly-payment/store', [MonthlyPaymentController::class, 'monthlyPaymentStore']);
+    // Route::post('/monthly-payment/store', [MonthlyPaymentController::class, 'monthlyPaymentStore']);
+    Route::get('/monthlyPayment/index', [MonthlyPaymentController::class, 'monthlyPaymentIndex']);
 
 
     // Attendance Api

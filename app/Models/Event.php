@@ -17,6 +17,12 @@ class Event extends Model
         return $this->belongsTo(Circle::class, 'circleId', 'id');
     }
 
+    public function registrations()
+{
+    return $this->hasMany(EventRegister::class, 'eventId'); // Make sure the foreign key is correct
+}
+
+
     public static function boot()
     {
         parent::boot();

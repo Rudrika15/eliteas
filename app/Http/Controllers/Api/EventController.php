@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Utils\Utils;
 use App\Models\Event;
+use App\Models\Member;
 use App\Models\Razorpay;
 use App\Models\AllPayments;
 use Illuminate\Http\Request;
@@ -33,23 +34,52 @@ class EventController extends Controller
     }
 
     public function index(Request $request)
-    {
-        try {
-            $events = Event::with('circle')
-                ->where('status', 'Active')
-                ->orderBy('id', 'DESC')
-                ->get();
+{
+    try {
+        // Get the authenticated user based on the Bearer token
+        $authUser = auth()->user();
 
-            return Utils::sendResponse([
-                'events' => $events
-            ], 'Events retrieved successfully', 200);
-        } catch (\Throwable $th) {
-            // Return with an error message
+        // Check if the user exists and get their member ID from the members table
+        $memberId = Member::where('userId', $authUser->id)->value('id');
+
+        if (!$memberId) {
             return Utils::errorResponse([
-                'error' => 'Failed to retrieve events. Please try again.'
-            ], 'Internal Server Error', 500);
+                'error' => 'Member not found.'
+            ], 'Not Found', 404);
         }
+
+        // Get the nearest upcoming event that is associated with the member and exclude past events
+        $event = Event::with(['circle', 'registrations' => function($query) use ($memberId) {
+            // Get the registration details from event_registers table for the member
+            $query->where('memberId', $memberId);
+        }])
+        ->where('status', 'Active')
+        ->where('event_date', '>=', now()) // Only get upcoming events
+        ->orderBy('event_date', 'ASC') // Order by nearest date
+        ->first(); // Get the closest event
+
+        // Check if no upcoming event is found
+        if (!$event) {
+            return Utils::sendResponse([
+                'message' => 'No events for now.'
+            ], 'No upcoming events', 200);
+        }
+
+        // Return the response with the nearest event and its registration details
+        return Utils::sendResponse([
+            'event' => $event
+        ], 'Nearest event retrieved successfully', 200);
+        
+    } catch (\Throwable $th) {
+        // Return with an error message
+        return Utils::errorResponse([
+            'error' => 'Failed to retrieve event. Please try again.'
+        ], 'Internal Server Error', 500);
     }
+}
+
+
+
 
     public function storeUserDetails(Request $request)
     {
