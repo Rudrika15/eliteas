@@ -3,11 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Event;
+use App\Models\Circle;
 use App\Utils\ErrorLogger;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-use App\Models\Circle;
 use App\Models\EventRegister;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class EventController extends Controller
 {
@@ -162,7 +163,25 @@ class EventController extends Controller
             $eventReg->personName = $request->personName;
             $eventReg->personEmail = $request->personEmail;
             $eventReg->personContact = $request->personContact;
+            $eventReg->refMemberId = $request->refMemberId;
             $eventReg->save();
+
+            return redirect()->back()->with('success', 'Your data is saved successfully.');
+        } catch (\Throwable $th) {
+            ErrorLogger::logError(
+                $th,
+                $request->fullUrl()
+            );
+            return view('servererror');
+        }
+    }
+    public function eventRegister(Request $request)
+    {
+        try {
+            $eventRegister = new EventRegister();
+            $eventRegister->eventId = $request->eventId;
+            $eventRegister->memberId = Auth::user()->member->id;
+            $eventRegister->save();
 
             return redirect()->back()->with('success', 'Your data is saved successfully.');
         } catch (\Throwable $th) {

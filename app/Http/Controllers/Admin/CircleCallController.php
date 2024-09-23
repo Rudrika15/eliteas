@@ -59,7 +59,7 @@ class CircleCallController extends Controller
     public function create(Request $request)
     {
         try {
-            $circles = Circle::all();
+            $circles = Circle::where('status', 'Active')->get();
 
             $circleMember = Member::with('circle')
                 ->where('status', 'Active')
@@ -269,6 +269,8 @@ class CircleCallController extends Controller
             $circlecall = CircleCall::find($id);
             $member = Member::where('status', '!=', 'Deleted')->get();
             $circleMember = CircleMember::where('status', '!=', 'Deleted')->get();
+            $circles = Circle::where('status', 'Active')->get();
+
 
             // Fetch all 'date' values from the query result
             $scheduleDate = Schedule::where('circleId', Auth::user()->member->circle->id)
@@ -282,7 +284,7 @@ class CircleCallController extends Controller
                 ->pluck('date')
                 ->first();
 
-            return view('admin.circlecall.edit', compact('circlecall', 'scheduleDate', 'lastDate', 'circleMember', 'member'));
+            return view('admin.circlecall.edit', compact('circlecall', 'circles', 'scheduleDate', 'lastDate', 'circleMember', 'member'));
         } catch (\Throwable $th) {
             // Log the error using the ErrorLogger utility
             ErrorLogger::logError($th, $request->fullUrl());

@@ -83,7 +83,7 @@
             <div class="col-md-6 mt-3">
                 <div class="form-floating">
                     <input type="text" class="form-control @error('venue') is-invalid @enderror" id="venue" name="venue"
-                        placeholder="Venue" value="{{ $schedules->venue }}" required>
+                        placeholder="Venue" value="{{ $schedules->venue }}">
                     <label for="venue">Venue</label>
                     @error('venue')
                     <div class="invalid-tooltip">
@@ -95,7 +95,7 @@
             <div class="col-md-6 mt-3">
                 <div class="form-floating">
                     <input type="time" class="form-control @error('meetingTime') is-invalid @enderror" id="meetingTime"
-                        name="meetingTime" placeholder="Meeting Time" value="{{ $schedules->meetingTime }}" required>
+                        name="meetingTime" placeholder="Meeting Time" value="{{ $schedules->meetingTime }}">
                     <label for="meetingTime">Meeting Time</label>
                     @error('meetingTime')
                     <div class="invalid-tooltip">
@@ -107,7 +107,7 @@
             <div class="col-md-6 mt-3">
                 <div class="form-floating">
                     <input type="text" class="form-control @error('remarks') is-invalid @enderror" id="remarks"
-                        name="remarks" placeholder="Remarks" value="{{ $schedules->remarks }}" required>
+                        name="remarks" placeholder="Remarks" value="{{ $schedules->remarks }}">
                     <label for="remarks">Remarks</label>
                     @error('remarks')
                     <div class="invalid-tooltip">

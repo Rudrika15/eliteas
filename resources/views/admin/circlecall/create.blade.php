@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title', 'UBN - Business Meet')
+@section('title', 'UBN - IBM')
 @section('content')
 
 <div class="card">
@@ -18,10 +18,12 @@
         <div class="row mb-3 mt-3">
             <!-- Circle Dropdown -->
             <div class="col-md-6">
+                
                 <div class="form-floating">
                     <select class="form-select @error('circleId') is-invalid @enderror" id="circleId" name="circleId"
                         required>
-                        <option value="">Select Circle</option>
+                        <option value="" selected disabled>Select Circle</option>
+                        <option value="{{ auth()->user()->member->circleId }}" selected> {{ auth()->user()->member->circle->circleName }}</option>
                         @foreach ($circles as $circle)
                         <option value="{{ $circle->id }}">{{ $circle->circleName }}</option>
                         @endforeach
@@ -93,7 +95,7 @@
             
                 <!-- Photo Preview Section -->
                 <div class="mt-1">
-                    <img id="photoPreview" src="" alt="Meeting Image" style="width: 50%; height: 50%; object-fit: contain; aspect-ratio: 1/1;" />
+                    <img id="photoPreview" src="{{ asset('img/profile.png') }}" alt="Meeting Image" style="width: 100px; height: 100px; object-fit: contain; aspect-ratio: 1/1;" />
                 </div>
             </div>
             
@@ -140,7 +142,7 @@
         </div>
         <div class="text-center mt-5">
             <button type="submit" class="btn btn-bg-blue">Submit</button>
-            <button type="reset" class="btn btn-bg-orange">Reset</button>
+            {{-- <button type="reset" class="btn btn-bg-orange">Reset</button> --}}
         </div>
     </form><!-- End floating Labels Form -->
 </div>
@@ -157,42 +159,48 @@
             }
         });
 
-        // Handle circle dropdown change event
-        $('#circleId').on('change', function() {
-            var circleId = $(this).val();
-            console.log('Selected Circle ID:', circleId); // Log selected circle ID
-
+        // Function to load members for a selected circle
+        function loadMembers(circleId) {
             // Clear the member dropdown
             $('#memberId').empty().append('<option value="">Select Member</option>');
-            console.log('Cleared member dropdown');
 
             if (circleId) {
-                console.log('Making AJAX request to fetch members for circle ID:', circleId); // Log AJAX request start
                 $.ajax({
                     url: '{{ route("members.byCircle") }}',
                     method: 'GET',
                     data: { circleId: circleId },
                     success: function(response) {
-                        console.log('AJAX response received:', response); // Log the entire response
-
                         if (response.members && response.members.length > 0) {
-                            console.log('Members found:', response.members); // Log members data
                             response.members.forEach(function(member) {
                                 $('#memberId').append('<option value="' + member.id + '" data-user-id="' + member.userId + '" data-first-name="' + member.firstName + '" data-last-name="' + member.lastName + '">' + member.firstName + ' ' + member.lastName + '</option>');
                             });
+
+                            // Pre-select the authenticated member if exists in the list
+                            var defaultMemberId = '{{ auth()->user()->member->id }}'; // Assuming memberId is available
+                            if (defaultMemberId) {
+                                $('#memberId').val(defaultMemberId).trigger('change'); // Set the default selected member and trigger the change event
+                            }
                         } else {
-                            console.log('No members found for circle ID:', circleId); // Log when no members found
                             $('#memberId').append('<option value="">No Members Found</option>');
                         }
                     },
                     error: function(xhr) {
-                        console.error('AJAX request error:', xhr); // Log AJAX request error
                         $('#memberId').append('<option value="">Error loading members</option>');
                     }
                 });
-            } else {
-                console.log('No circle selected, resetting member dropdown'); // Log when no circle ID is selected
             }
+        }
+
+        // Load members on page load if a circle is selected by default
+        var defaultCircleId = '{{ auth()->user()->member->circleId }}'; // Get the default circle ID from the authenticated user
+        if (defaultCircleId) {
+            loadMembers(defaultCircleId); // Load members for the default circle
+        }
+
+        // Handle circle dropdown change event
+        $('#circleId').on('change', function() {
+            var circleId = $(this).val();
+            loadMembers(circleId); // Load members based on the selected circle
         });
 
         // Handle member dropdown change event
@@ -203,9 +211,16 @@
             var firstName = selectedOption.data('first-name');
             var lastName = selectedOption.data('last-name');
 
-            // Update the meetingPersonId field
-            $('#meetingPersonId').val(userId); // Set the correct userId here
-            $('#meetingPersonName').val(firstName + ' ' + lastName);
+            // Check if a valid member is selected
+            if (memberId) {
+                // Update the meetingPersonId field with userId and name fields
+                $('#meetingPersonId').val(userId); // Set the correct userId here
+                $('#meetingPersonName').val(firstName + ' ' + lastName); // Set the name
+            } else {
+                // Reset the meeting person fields when no member is selected
+                $('#meetingPersonId').val('');
+                $('#meetingPersonName').val('');
+            }
 
             console.log('Selected Member ID:', memberId);
             console.log('Selected Member User ID:', userId); // Log the correct userId
@@ -213,6 +228,8 @@
         });
     });
 </script>
+
+
 
 <script>
     $(document).ready(function () {

@@ -547,13 +547,13 @@ class PaymentController extends Controller
     try {
         // Validate the request 
         $request->validate([
-            'paymentId' => 'required|string',
-            'amount' => 'required|integer',
-            'eventId' => 'required|integer',
-            'personName' => 'required|string',
-            'personEmail' => 'required|email',
-            'personContact' => 'required|string',
-            'refId' => 'nullable|integer' // If optional, otherwise use 'required'
+            // 'paymentId' => 'required|string',
+            // 'amount' => 'required|integer',
+            // 'eventId' => 'required|integer',
+            // 'personName' => 'required|string',
+            // 'personEmail' => 'required|email',
+            // 'personContact' => 'required|string',
+            // 'refId' => 'nullable|integer' // If optional, otherwise use 'required'
         ]);
 
         // Store the payment ID in the Razorpay payments table
@@ -569,7 +569,7 @@ class PaymentController extends Controller
         $eventPayment->personName = $request->personName;
         $eventPayment->personEmail = $request->personEmail;
         $eventPayment->personContact = $request->personContact;
-        $eventPayment->refMemberId = $request->refId ?? null; // Handle null if not provided
+        $eventPayment->refMemberId = $request->refMemberId ?? null; // Handle null if not provided
         $eventPayment->paymentStatus = 'paid';
         $eventPayment->save();
 
@@ -591,8 +591,54 @@ class PaymentController extends Controller
         // Log the error using the ErrorLogger utility
         ErrorLogger::logError($th, $request->fullUrl());
         // Return an error response
-        return response()->json(['message' => 'Failed to store payment ID'], 500);
-    }
+        
+    }return response()->json(['message' => 'Failed to store payment ID'], 500);
+}
+
+    public function userOfflinePayment(Request $request)
+{
+    try {
+        // Validate the request 
+        $request->validate([
+        
+        ]);
+
+        // Store the payment ID in the Razorpay payments table
+        $payment = new Razorpay();
+        $payment->r_payment_id = 'Offline';
+        $payment->user_email = $request->personEmail ?? null;
+        $payment->amount = $request->input('amount') / 100; // Convert paise to rupees
+        $payment->save();
+
+        // Register for the event
+        $eventPayment = new EventRegister();
+        $eventPayment->eventId = $request->eventId;
+        $eventPayment->personName = $request->personName;
+        $eventPayment->personEmail = $request->personEmail;
+        $eventPayment->personContact = $request->personContact;
+        $eventPayment->refMemberId = $request->refMemberId ?? null; // Handle null if not provided
+        $eventPayment->paymentStatus = 'pending';
+        $eventPayment->save();
+
+        // Store the payment details in the AllPayments table
+        $allPayments = new AllPayments();
+        $allPayments->amount = $payment->amount;
+        $allPayments->paymentType = 'Offline'; // Payment type
+        $allPayments->date = now()->format('Y-m-d');
+        $allPayments->paymentMode = 'Event Register Payment';
+        $allPayments->remarks = 'Offline Payment';
+        $allPayments->save();
+
+        // Return a success response
+        return response()->json(['message' => 'Registred Successfully for the Event'], 200);
+
+    } catch (\Throwable $th) {
+        // Log the error using the ErrorLogger utility
+        ErrorLogger::logError($th, $request->fullUrl());
+        // Return an error response
+        
+    }return response()->json(['message' => 'Failed to Register for Event, Please try after sometime'], 500);
+}
 
     public function monthlyPaymentIndex()
 {
@@ -625,7 +671,5 @@ class PaymentController extends Controller
 }
 
 
-
-}
 
 }

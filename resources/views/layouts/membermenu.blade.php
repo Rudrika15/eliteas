@@ -24,12 +24,12 @@
     </a>
 </li> --}}
 
-<li class="nav-item">
+{{-- <li class="nav-item">
     <a class="nav-link collapsed" href="{{ route('chat.index') }}">
         <i class="bi bi-chat" style="color: #e76a35"></i>
         <span class="text-blue">My Chats</span>
     </a>
-</li>
+</li> --}}
 
 <li class="nav-item">
     <a class="nav-link collapsed" data-bs-target="#activity-nav" data-bs-toggle="collapse" href="#">
@@ -105,6 +105,13 @@
     <a class="nav-link collapsed" href="{{ route('myAllPayments.index') }}">
         <i class="bi bi-currency-rupee" style="color: #e76a35"></i>
         <span class="text-blue">My Payment History</span>
+    </a>
+</li>
+
+<li class="nav-item">
+    <a class="nav-link collapsed" href="{{ route('errorList') }}">
+        <i class="bi bi-exclamation-triangle" style="color: red"></i>
+        <span class="text-blue">Error Log List</span>
     </a>
 </li>
 

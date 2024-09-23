@@ -78,9 +78,9 @@ class ScheduleController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'venue' => 'required',
-            'meetingTime' => 'required',
-            'remarks' => 'required',
+            // 'venue' => 'required',
+            // 'meetingTime' => 'required',
+            // 'remarks' => 'required',
         ]);
 
         try {
@@ -115,9 +115,9 @@ class ScheduleController extends Controller
     {
         $this->validate($request, [
             'id' => 'required|exists:schedules,id',
-            'venue' => 'required',
-            'meetingTime' => 'required',
-            'remarks' => 'required',
+            // 'venue' => 'required',
+            // 'meetingTime' => 'required',
+            // 'remarks' => 'required',
         ]);
 
         try {

@@ -505,6 +505,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('event/store', [EventController::class, 'store'])->name('event.store');
     Route::get('event/edit/{id?}', [EventController::class, 'edit'])->name('event.edit');
     Route::get('event/eventRegisterList/{id?}', [EventController::class, 'eventRegisterList'])->name('event.eventRegisterList');
+    Route::post('/event/register/{eventId}', [EventController::class, 'eventRegister'])->name('event.register');
     Route::post('event/update', [EventController::class, 'update'])->name('event.update');
     Route::delete('event/delete/{id?}', [EventController::class, 'delete'])->name('event.delete');
 
@@ -554,3 +555,4 @@ Route::get('/event/{slug}', [EventController::class, 'eventLink'])->name('event.
 Route::post('/store-user-details', [EventController::class, 'storeUserDetails'])->name('storeUserDetails');
 Route::post('/check-registration', [EventController::class, 'checkRegistration'])->name('checkRegistration');
 Route::post('/razorpay-payment-userEventPayment', [PaymentController::class, 'userEventPayment'])->name('razorpay.payment.userEventPayment');
+Route::post('/userOfflinePayment', [PaymentController::class, 'userOfflinePayment'])->name('razorpay.payment.userOfflinePayment');

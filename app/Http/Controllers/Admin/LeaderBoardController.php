@@ -296,7 +296,7 @@ class LeaderBoardController extends Controller
     {
         try {
             // Get all circles for the dropdown
-            $circles = Circle::all();
+            $circles = Circle::where('status', 'Active')->get();
 
             // Get the selected circle ID from the request
             $selectedCircleId = $request->input('circleId');

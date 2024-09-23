@@ -75,7 +75,7 @@
 
     @role('Member')
     <div>
-        @if(count($circlecalls) > 0 || count($busGiver) > 0 || $refGiver)
+        {{-- @if(count($circlecalls) > 0 || count($busGiver) > 0 || $refGiver)
         <div class="card-header">
             <b style="color: #1d2856; font-size:15px">Leader Board</b>
         </div>
@@ -83,10 +83,10 @@
 
             @if($circlecalls)
             <div class="col">
-                <div class="card">
+                <div class="card"> --}}
                     {{-- <div class="card" style="width: 270px; height: 522px;"> --}}
 
-                        @php
+                        {{-- @php
                         $profilePhoto = $circlecalls['member']->profilePhoto ?? 'profile.png';
                         @endphp
 
@@ -187,13 +187,13 @@
                                     <span style="color: #e76a35; font-weight: bold;">References Count: {{
                                         $refGiver['count']
                                         ?? '0'
-                                        }}</span><br>
+                                        }}</span><br> --}}
                                     {{--
                                     <hr class="mx-auto" style="color: #e76a35; width: 30%;">
                                     <span style="color: #e76a35; font-weight: bold;">Business Category: {{
                                         $refGiver['businessCategory']
                                         ?? 'N/A' }}</span><br> --}}
-                                </span>
+                                {{-- </span>
                             </div>
                             </p>
                         </div>
@@ -202,7 +202,7 @@
                 @endif
 
             </div>
-            @endif
+            @endif --}}
 
             <div class="container-responsive">
                 <div class="row">
@@ -410,29 +410,33 @@
                 <div class="row">
                     <div class="col-md-12">
                         @if (!is_null($findEventRegister) && count($findEventRegister) == 0)
-                        @if ($nearestEvents->amount == 0)
-                        <h5 class="text-muted text-end me-4 pt-5">Free</h5>
-                        <button type="button" class="btn btn-bg-orange btn-md" id="freeRegisterBtn">
-                            Register
-                        </button>
+                            @if ($nearestEvents->amount == 0)
+                                <h5 class="text-muted text-end me-4 pt-5">Free</h5>
+                                <form method="POST" action="{{ route('event.register', ['eventId' => $nearestEvents->id]) }}">
+                                    @csrf
+                                    <button type="submit" class="btn btn-bg-orange btn-md" id="freeRegisterBtn">
+                                        Register
+                                    </button>
+                                </form>
+                            @else
+                                <h5 class="text-muted text-end me-4 pt-3"> ₹ {{ $nearestEvents->amount }}</h5>
+                                <div class="d-flex justify-content-end">
+                                    <button type="button" class="btn btn-bg-orange btn-md" id="razorpayBtnEvent"
+                                        data-amount-event="{{ $nearestEvents->amount }}">
+                                        Join Now
+                                    </button>
+                                </div>
+                            @endif
                         @else
-                        <h5 class="text-muted text-end me-4 pt-3"> ₹ {{ $nearestEvents->amount }}</h5>
-                        <div class="d-flex justify-content-end">
-                            <button type="button" class="btn btn-bg-orange btn-md" id="razorpayBtnEvent"
-                                data-amount-event="{{ $nearestEvents->amount }}">
-                                Join Now
-                            </button>
-                        </div>
-                        @endif
-                        @else
-                        <div class="d-flex justify-content-end">
-                            <div class="ps-5 ms-5 mt-5">
-                                <strong><span class="text-success">Already Joined</span></strong>
+                            <div class="d-flex justify-content-end">
+                                <div class="ps-5 ms-5 mt-5">
+                                    <strong><span class="text-success">Already Joined</span></strong>
+                                </div>
                             </div>
-                        </div>
                         @endif
                     </div>
                 </div>
+                
 
                 <!-- Shareable Link Section -->
                 {{-- <div class="row mt-3">
@@ -467,8 +471,16 @@
                                     Copy Shareable Link
                                 </button>
                                 <input type="hidden" id="shareableLink"
-                                    value="{{ route('event.link', ['slug' => $nearestEvents->event_slug, 'ref' => Auth::user()->member->id]) }}">
+                                    value="{{ route('event.link', ['slug' => $nearestEvents->event_slug]) }}">
                             </div>
+
+                            <style>
+                                #shareableLink {
+                                display: none;
+                            }
+
+                            </style>
+
                         </div>
                     </div>
                 </div>
