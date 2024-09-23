@@ -536,52 +536,56 @@ class PaymentController extends Controller
     }
 
     public function userEventPayment(Request $request)
-    {
-        try {
-            // Validate the request 
-            $request->validate([
-                'paymentId' => 'required|string',
-                'amount' => 'required|integer',
-                'eventId' => 'required|integer',
-                'personName' => 'required|string',
-                'personEmail' => 'required|email',
-                'personContact' => 'required|string',
-            ]);
+{
+    try {
+        // Validate the request 
+        $request->validate([
+            'paymentId' => 'required|string',
+            'amount' => 'required|integer',
+            'eventId' => 'required|integer',
+            'personName' => 'required|string',
+            'personEmail' => 'required|email',
+            'personContact' => 'required|string',
+            'refId' => 'nullable|integer' // If optional, otherwise use 'required'
+        ]);
 
-            // Store the payment ID in the table
-            $payment = new Razorpay();
-            $payment->r_payment_id = $request->input('paymentId');
-            $payment->user_email = $request->personEmail ?? null;
-            $payment->amount = $request->input('amount') / 100;
-            $payment->save();
+        // Store the payment ID in the Razorpay payments table
+        $payment = new Razorpay();
+        $payment->r_payment_id = $request->input('paymentId');
+        $payment->user_email = $request->personEmail ?? null;
+        $payment->amount = $request->input('amount') / 100; // Convert paise to rupees
+        $payment->save();
 
-            // Register for the training
-            $eventPayment = new EventRegister();
-            $eventPayment->eventId = $request->eventId;
-            // $eventPayment->memberId = null; // Make sure this is handled appropriately
-            $eventPayment->personName = $request->personName;
-            $eventPayment->personEmail = $request->personEmail;
-            $eventPayment->personContact = $request->personContact;
-            $eventPayment->paymentStatus = 'paid';
-            $eventPayment->save();
+        // Register for the event
+        $eventPayment = new EventRegister();
+        $eventPayment->eventId = $request->eventId;
+        $eventPayment->personName = $request->personName;
+        $eventPayment->personEmail = $request->personEmail;
+        $eventPayment->personContact = $request->personContact;
+        $eventPayment->refMemberId = $request->refId ?? null; // Handle null if not provided
+        $eventPayment->paymentStatus = 'paid';
+        $eventPayment->save();
 
-            // Store the payment details
-            $allPayments = new AllPayments();
-            // $allPayments->memberId = $eventPayment->memberId ?? null; // Make sure this is handled appropriately
-            $allPayments->amount = $payment->amount;
-            $allPayments->paymentType = 'RazorPay'; // Hardcoded for RazorPay
-            $allPayments->date = now()->format('Y-m-d');
-            $allPayments->paymentMode = 'Event Register Payment';
-            $allPayments->remarks = $payment->r_payment_id;
-            $allPayments->save();
+        // Store the payment details in the AllPayments table
+        $allPayments = new AllPayments();
+        // Add memberId if relevant, but handle this carefully based on your logic
+        // $allPayments->memberId = $eventPayment->memberId ?? null;
+        $allPayments->amount = $payment->amount;
+        $allPayments->paymentType = 'RazorPay'; // Payment type
+        $allPayments->date = now()->format('Y-m-d');
+        $allPayments->paymentMode = 'Event Register Payment';
+        $allPayments->remarks = $payment->r_payment_id;
+        $allPayments->save();
 
-            // Return a success response
-            return response()->json(['message' => 'Payment Received successfully'], 200);
-        } catch (\Throwable $th) {
-            // Log the error using the ErrorLogger utility
-            ErrorLogger::logError($th, $request->fullUrl());
-            // Return an error response
-            return response()->json(['message' => 'Failed to store payment ID'], 500);
-        }
+        // Return a success response
+        return response()->json(['message' => 'Payment Received successfully'], 200);
+
+    } catch (\Throwable $th) {
+        // Log the error using the ErrorLogger utility
+        ErrorLogger::logError($th, $request->fullUrl());
+        // Return an error response
+        return response()->json(['message' => 'Failed to store payment ID'], 500);
     }
+}
+
 }

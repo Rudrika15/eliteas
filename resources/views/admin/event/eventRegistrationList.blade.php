@@ -21,7 +21,8 @@
                             <th>Person Name</th>
                             <th>Person Email</th>
                             <th>Person Contact</th>
-                            <th>Payment Status</th>
+                            <th>Reference By</th>
+                            {{-- <th>Payment Status</th> --}}
                         </tr>
                     </thead>
                     <tbody>
@@ -34,7 +35,8 @@
                             <td>{{$registerListData->personName ?? ''}}</td>
                             <td>{{$registerListData->personEmail ?? ''}}</td>
                             <td>{{$registerListData->personContact ?? ''}}</td>
-                            <td>{{$registerListData->PaymentStatus ?? ''}}</td>
+                            <td>{{$registerListData->refMembers->firstName ?? ''}} {{$registerListData->refMembers->lastName ?? ''}} </td>
+                            {{-- <td>{{$registerListData->PaymentStatus ?? ''}}</td> --}}
 
                         </tr>
                         @endforeach

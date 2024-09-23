@@ -14,6 +14,11 @@ class EventRegister extends Model
         return $this->belongsTo(Member::class, 'memberId', 'id');
     }
 
+    public function refMembers()
+    {
+        return $this->belongsTo(Member::class, 'refMemberId', 'id');
+    }
+
     public function events()
     {
         return $this->belongsTo(Event::class, 'eventId', 'id');

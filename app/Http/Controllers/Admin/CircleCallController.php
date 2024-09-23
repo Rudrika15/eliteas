@@ -237,6 +237,12 @@ class CircleCallController extends Controller
             $circlecall->memberId = Auth::user()->id;
             $circlecall->meetingPersonId = $request->meetingPersonId;
             $circlecall->meetingPlace = $request->meetingPlace;
+            
+            if ($request->meetingImage) {
+                $circlecall->meetingImage = time() . '.' . $request->meetingImage->extension();
+                $request->meetingImage->move(public_path('meetingImage'), $circlecall->meetingImage);
+            }
+
             $circlecall->date = $request->date;
             $circlecall->remarks = $request->remarks;
             $circlecall->status = 'Active';
@@ -294,6 +300,12 @@ class CircleCallController extends Controller
             $circlecall = CircleCall::find($id);
             $circlecall->meetingPersonId = $request->meetingPersonId;
             $circlecall->meetingPlace = $request->meetingPlace;
+
+            if ($request->meetingImage) {
+                $circlecall->meetingImage = time() . '.' . $request->meetingImage->extension();
+                $request->meetingImage->move(public_path('meetingImage'), $circlecall->meetingImage);
+            }
+            
             $circlecall->remarks = $request->remarks;
             $circlecall->status = 'Active';
 

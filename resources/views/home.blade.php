@@ -435,6 +435,25 @@
                 </div>
 
                 <!-- Shareable Link Section -->
+                {{-- <div class="row mt-3">
+                    <div class="col-md-12">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <a href="{{ route('event.link', $nearestEvents->event_slug) }}" target="_blank">
+                                    View Event Details
+                                </a>
+                            </div>
+                            <div>
+                                <button class="btn btn-bg-blue btn-sm" onclick="copyLink()">
+                                    Copy Shareable Link
+                                </button>
+                                <input type="hidden" id="shareableLink"
+                                    value="{{ route('event.link', $nearestEvents->event_slug) }}">
+                            </div>
+                        </div>
+                    </div>
+                </div> --}}
+
                 <div class="row mt-3">
                     <div class="col-md-12">
                         <div class="d-flex justify-content-between">
@@ -448,11 +467,13 @@
                                     Copy Shareable Link
                                 </button>
                                 <input type="hidden" id="shareableLink"
-                                    value="{{ route('event.link', $nearestEvents->event_slug) }}">
+                                    value="{{ route('event.link', ['slug' => $nearestEvents->event_slug, 'ref' => Auth::user()->member->id]) }}">
                             </div>
                         </div>
                     </div>
                 </div>
+
+
 
             </div>
             @else

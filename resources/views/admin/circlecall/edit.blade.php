@@ -51,6 +51,42 @@
 
             <div class="col-md-6">
                 <div class="form-floating mt-3">
+                    <input type="file" class="form-control @error('meetingImage') is-invalid @enderror" id="meetingImage" value="{{ $circlecall->meetingImage }}" name="meetingImage" accept="image/*" required onchange="previewPhoto(event)">
+                    <label for="meetingImage">Upload Meeting Image</label>
+                    @error('meetingImage')
+                    <div class="invalid-tooltip">
+                        This field is required.
+                    </div>
+                    @enderror
+                </div>
+            
+                <!-- Photo Preview Section -->
+                <div class="mt-1">
+                    <img id="photoPreview" src="" alt="Meeting Image" style="width: 50%; height: 50%; object-fit: contain; aspect-ratio: 1/1;" />
+                </div>
+            </div>
+
+            <script>
+                function previewPhoto(event) {
+                    const file = event.target.files[0];
+                    const preview = document.getElementById('photoPreview');
+                
+                    if (file) {
+                        const reader = new FileReader();
+                
+                        reader.onload = function(e) {
+                            preview.src = e.target.result;
+                            preview.style.display = 'block'; // Show the image
+                        }
+                
+                        reader.readAsDataURL(file); // Read the file as a data URL
+                    }
+                }
+            </script>
+
+
+            <div class="col-md-6">
+                <div class="form-floating mt-3">
                     <input type="date" class="form-control" id="date" name="date" placeholder="Meeting Date" disabled
                         value="{{ $circlecall->date }}">
                     <label for="date">Date</label>

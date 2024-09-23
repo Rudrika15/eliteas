@@ -41,7 +41,7 @@
         <li class="nav-item">
             <a class="nav-link collapsed " href="{{ route('circlecall.index') }}">
                 <i class="bi bi-mic text-orange"></i>
-                <span class="text-blue">Business Meet</span>
+                <span class="text-blue">IBM</span>
             </a>
         </li>
         <li class="nav-item">

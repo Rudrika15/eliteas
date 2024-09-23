@@ -83,13 +83,23 @@
                     </div>
                     <div class="mb-3">
                         <label for="personEmail" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="personEmail" name="personEmail" required>
+                        <input type="email" class="form-control" id="personEmail" name="personEmail" required 
+                               pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" 
+                               title="Please enter a valid email address.">
                     </div>
+                    
                     <div class="mb-3">
                         <label for="personContact" class="form-label">Contact Number</label>
-                        <input type="text" class="form-control" id="personContact" name="personContact" required>
+                        <input type="text" class="form-control" id="personContact" name="personContact" required 
+                               oninput="validateContactNumber(this)" maxlength="10" 
+                               placeholder="Enter 10 digit number" pattern="\d{10}" 
+                               title="Please enter a valid 10-digit contact number.">
                     </div>
-                    <input type="hidden" id="eventId" value="{{ $event->id }}">
+                    <input type="hidden" id="eventId" name="eventId" value="{{ $event->id }}">
+                    
+                    <!-- Hidden field to store refId -->
+                    <input type="hidden" id="refId" name="refId">
+
                     <div class="d-flex justify-content-end">
                         <button type="submit" class="btn btn-primary">Pay Now</button>
                     </div>
@@ -99,150 +109,190 @@
     </div>
 </div>
 
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    // Check if the URL has a 'ref' query parameter
+    document.addEventListener("DOMContentLoaded", function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const refId = urlParams.get('ref');
+
+        // Debugging log to check if refId is being retrieved
+        console.log('Ref ID:', refId);
+
+        // If 'ref' exists, set the value in the hidden input field
+        if (refId) {
+            const refIdField = document.getElementById('refId');
+            
+            if (refIdField) {
+                refIdField.value = refId;
+                console.log('Ref ID set to:', refIdField.value);  // Check if it's set correctly
+            } else {
+                console.error('Ref ID input field not found');
+            }
+        } else {
+            console.error('Ref ID not found in URL');
+        }
+    });
+</script>
+
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-    var razorpayBtnEvent = document.getElementById('razorpayBtnEvent');
+        var razorpayBtnEvent = document.getElementById('razorpayBtnEvent');
 
-    if (razorpayBtnEvent) {
-        razorpayBtnEvent.addEventListener('click', function() {
-            $('#registerModal').modal('show');
-        });
-    }
+        // Extract refId from the URL and set it in the hidden field
+        const urlParams = new URLSearchParams(window.location.search);
+        const refId = urlParams.get('ref');
+        if (refId) {
+            document.getElementById('refId').value = refId;
+            console.log('Ref ID found and set:', refId);
+        }
 
-    $('#registrationForm').on('submit', function(event) {
-        event.preventDefault();
-        $('#registerModal').modal('hide');
+        if (razorpayBtnEvent) {
+            razorpayBtnEvent.addEventListener('click', function() {
+                $('#registerModal').modal('show');
+            });
+        }
 
-        var form = $(this);
-        var formData = new FormData(form[0]); // Use FormData to handle the form data
-        var amount = parseInt($('#razorpayBtnEvent').data('amount-event')) * 100; // Convert to paise
-        var razorpayKey = "{{ env('RAZORPAY_KEY') }}";
+        $('#registrationForm').on('submit', function(event) {
+            event.preventDefault();
+            $('#registerModal').modal('hide');
 
-        // Get form field values
-        var personName = formData.get('personName') || '';
-        var personEmail = formData.get('personEmail') || '';
-        var personContact = formData.get('personContact') || '';
-        var eventId = $('#eventId').val();
+            var form = $(this);
+            var formData = new FormData(form[0]); // Use FormData to handle the form data
+            var amount = parseInt($('#razorpayBtnEvent').data('amount-event')) * 100; // Convert to paise
+            var razorpayKey = "{{ env('RAZORPAY_KEY') }}";
 
-        console.log('Form Data:', {
-            personName: personName,
-            personEmail: personEmail,
-            personContact: personContact,
-            amount: amount
-        });
+            // Get form field values
+            var personName = formData.get('personName') || '';
+            var personEmail = formData.get('personEmail') || '';
+            var personContact = formData.get('personContact') || '';
+            var eventId = $('#eventId').val();
+            var refId = $('#refId').val();  // Get refId from hidden field
 
-        // Check if user is already registered
-        $.ajax({
-            url: "{{ route('checkRegistration') }}",
-            method: 'POST',
-            data: {
-                _token: $('meta[name="csrf-token"]').attr('content'),
+            console.log('Form Data:', {
+                personName: personName,
                 personEmail: personEmail,
-                eventId: eventId
-            },
-            success: function(response) {
-                if (response.isRegistered) {
-                    Swal.fire({
-                        icon: 'info',
-                        title: 'Already Registered',
-                        text: 'You are already registered for this event.',
-                    });
-                } else {
-                    // Proceed with Razorpay payment
-                    var eventOptions = {
-                        "key": razorpayKey,
-                        "amount": amount,
-                        "currency": "INR",
-                        "name": "{{ $event->title }}",
-                        "description": "Event Registration Payment",
-                        "image": "/img/logo.png",
-                        "handler": function(response) {
-                            console.log('Payment successful, Payment ID:', response.razorpay_payment_id);
-                            storeEventPaymentDetails(response.razorpay_payment_id, amount, personName, personEmail, personContact);
-                        },
-                        "prefill": {
-                            "name": personName,
-                            "email": personEmail
-                        },
-                        "theme": {
-                            "color": "#F37254"
-                        }
-                    };
+                personContact: personContact,
+                amount: amount,
+                refId: refId  // Log refId for debugging
+            });
 
-                    var rzp = new Razorpay(eventOptions);
-                    rzp.open();
+            // Check if user is already registered
+            $.ajax({
+                url: "{{ route('checkRegistration') }}",
+                method: 'POST',
+                data: {
+                    _token: $('meta[name="csrf-token"]').attr('content'),
+                    personEmail: personEmail,
+                    eventId: eventId,
+                    refId: refId  // Include refId in registration check
+                },
+                success: function(response) {
+                    if (response.isRegistered) {
+                        Swal.fire({
+                            icon: 'info',
+                            title: 'Already Registered',
+                            text: 'You are already registered for this event.',
+                        });
+                    } else {
+                        // Proceed with Razorpay payment
+                        var eventOptions = {
+                            "key": razorpayKey,
+                            "amount": amount,
+                            "currency": "INR",
+                            "name": "{{ $event->title }}",
+                            "description": "Event Registration Payment",
+                            "image": "/img/logo.png",
+                            "handler": function(response) {
+                                console.log('Payment successful, Payment ID:', response.razorpay_payment_id);
+                                storeEventPaymentDetails(response.razorpay_payment_id, amount, personName, personEmail, personContact, refId);
+                            },
+                            "prefill": {
+                                "name": personName,
+                                "email": personEmail
+                            },
+                            "theme": {
+                                "color": "#F37254"
+                            }
+                        };
+
+                        var rzp = new Razorpay(eventOptions);
+                        rzp.open();
+                    }
+                },
+                error: function(error) {
+                    console.error('Error checking registration:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Failed to check registration status.',
+                    });
                 }
-            },
-            error: function(error) {
-                console.error('Error checking registration:', error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Failed to check registration status.',
-                });
-            }
+            });
         });
     });
-});
 
-function storeEventPaymentDetails(paymentId, amount, personName, personEmail, personContact) {
-    var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-    var url = `{{ route('razorpay.payment.userEventPayment') }}`;
-    var eventId = document.getElementById('eventId').value;
+    function storeEventPaymentDetails(paymentId, amount, personName, personEmail, personContact, refId) {
+        var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        var url = `{{ route('razorpay.payment.userEventPayment') }}`;
+        var eventId = document.getElementById('eventId').value;
 
-    console.log('Storing Payment Details:', {
-        paymentId: paymentId,
-        amount: amount,
-        eventId: eventId,
-        personName: personName,
-        personEmail: personEmail,
-        personContact: personContact
-    });
-
-    fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': csrfToken
-        },
-        body: JSON.stringify({
+        console.log('Storing Payment Details:', {
             paymentId: paymentId,
             amount: amount,
             eventId: eventId,
             personName: personName,
             personEmail: personEmail,
-            personContact: personContact
+            personContact: personContact,
+            refId: refId  // Include refId for storage
+        });
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken
+            },
+            body: JSON.stringify({
+                paymentId: paymentId,
+                amount: amount,
+                eventId: eventId,
+                personName: personName,
+                personEmail: personEmail,
+                personContact: personContact,
+                refId: refId  // Send refId with payment details
+            })
         })
-    })
-    .then(response => {
-        console.log('Response Status:', response.status);
-        return response.json();
-    })
-    .then(data => {
-        console.log('Payment details stored successfully:', data);
-        Swal.fire({
-            icon: 'success',
-            title: 'Payment Successful',
-            text: 'You have successfully registered for the event.',
-        }).then((result) => {
-            if (result.isConfirmed) {
-                window.location.reload();
-            }
+        .then(response => {
+            console.log('Response Status:', response.status);
+            return response.json();
+        })
+        .then(data => {
+            console.log('Payment details stored successfully:', data);
+            Swal.fire({
+                icon: 'success',
+                title: 'Payment Successful',
+                text: 'You have successfully registered for the event.',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.reload();
+                }
+            });
+        })
+        .catch(error => {
+            console.error('Error storing payment details:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Failed to store payment details.',
+            });
         });
-    })
-    .catch(error => {
-        console.error('Error storing payment details:', error);
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Failed to store payment details.',
-        });
-    });
-}
-
-
+    }
 </script>
+
 @endsection
