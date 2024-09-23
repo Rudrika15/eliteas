@@ -25,8 +25,8 @@
                         <div class="col-md-8">
                             <h5>{{ $event->title }}</h5>
                             <p>
-                                <strong>Date:</strong> {{
-                                \Carbon\Carbon::parse($event->event_date)->format('j M Y') }}<br>
+                                <strong>Date:</strong>  
+                                \Carbon\Carbon::parse($event->event_date)->format('j M Y') <br>
                                 <strong>Start Time:</strong> {{ $event->start_time }}<br>
                                 <strong>End Time:</strong> {{ $event->end_time }}
                             </p>
@@ -68,6 +68,7 @@
 </div>
 
 <!-- Modal -->
+<!-- Modal -->
 <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -95,13 +96,29 @@
                                placeholder="Enter 10 digit number" pattern="\d{10}" 
                                title="Please enter a valid 10-digit contact number.">
                     </div>
+
+                    <!-- Checkbox for Offline Payment -->
+                    {{-- <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="payOffline" name="payOffline">
+                        <label class="form-check-label" for="payOffline">
+                            Pay Offline
+                        </label>
+                    </div> --}}
+
                     <input type="hidden" id="eventId" name="eventId" value="{{ $event->id }}">
-                    
+
                     <!-- Hidden field to store refId -->
                     <input type="hidden" id="refId" name="refId">
+                
+                    <div class="form-check mb-3">
 
-                    <div class="d-flex justify-content-end">
-                        <button type="submit" class="btn btn-primary">Pay Now</button>
+                        <input type="checkbox" id="myCheckbox"> Check to Pay Now
+
+                        <!-- Buttons -->
+                        <button type="submit" class="btn btn-primary" id="payNowButton" style="display:none;">Pay Now</button>
+                        <button type="submit" class="btn btn-success" id="registerButton">Register</button>
+
+
                     </div>
                 </form>
             </div>
@@ -110,57 +127,37 @@
 </div>
 
 
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    // Check if the URL has a 'ref' query parameter
-    document.addEventListener("DOMContentLoaded", function() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const refId = urlParams.get('ref');
-
-        // Debugging log to check if refId is being retrieved
-        console.log('Ref ID:', refId);
-
-        // If 'ref' exists, set the value in the hidden input field
-        if (refId) {
-            const refIdField = document.getElementById('refId');
-            
-            if (refIdField) {
-                refIdField.value = refId;
-                console.log('Ref ID set to:', refIdField.value);  // Check if it's set correctly
-            } else {
-                console.error('Ref ID input field not found');
-            }
-        } else {
-            console.error('Ref ID not found in URL');
-        }
-    });
-</script>
-
-
-<script>
     document.addEventListener('DOMContentLoaded', function() {
         var razorpayBtnEvent = document.getElementById('razorpayBtnEvent');
+        var registerButton = document.getElementById('registerButton');
+        var myCheckbox = document.getElementById('myCheckbox');
+        var payNowButton = document.getElementById('payNowButton');
 
-        // Extract refId from the URL and set it in the hidden field
-        const urlParams = new URLSearchParams(window.location.search);
-        const refId = urlParams.get('ref');
-        if (refId) {
-            document.getElementById('refId').value = refId;
-            console.log('Ref ID found and set:', refId);
-        }
-
+        // Show the registration modal when "Join Now" button is clicked
         if (razorpayBtnEvent) {
             razorpayBtnEvent.addEventListener('click', function() {
                 $('#registerModal').modal('show');
             });
         }
 
+        // Handle the checkbox change to show/hide the "Pay Now" button
+        myCheckbox.addEventListener('change', function() {
+            if (myCheckbox.checked) {
+                payNowButton.style.display = 'inline-block'; // Show the button
+            } else {
+                payNowButton.style.display = 'none'; // Hide the button
+            }
+        });
+
+        // Handle the form submission for registration
         $('#registrationForm').on('submit', function(event) {
-            event.preventDefault();
-            $('#registerModal').modal('hide');
+            event.preventDefault(); // Prevent the default form submission
 
             var form = $(this);
             var formData = new FormData(form[0]); // Use FormData to handle the form data
@@ -178,7 +175,6 @@
                 personName: personName,
                 personEmail: personEmail,
                 personContact: personContact,
-                amount: amount,
                 refId: refId  // Log refId for debugging
             });
 
@@ -190,7 +186,7 @@
                     _token: $('meta[name="csrf-token"]').attr('content'),
                     personEmail: personEmail,
                     eventId: eventId,
-                    refId: refId  // Include refId in registration check
+                    refMemberId: refId  // Include refId in registration check
                 },
                 success: function(response) {
                     if (response.isRegistered) {
@@ -200,29 +196,35 @@
                             text: 'You are already registered for this event.',
                         });
                     } else {
-                        // Proceed with Razorpay payment
-                        var eventOptions = {
-                            "key": razorpayKey,
-                            "amount": amount,
-                            "currency": "INR",
-                            "name": "{{ $event->title }}",
-                            "description": "Event Registration Payment",
-                            "image": "/img/logo.png",
-                            "handler": function(response) {
-                                console.log('Payment successful, Payment ID:', response.razorpay_payment_id);
-                                storeEventPaymentDetails(response.razorpay_payment_id, amount, personName, personEmail, personContact, refId);
-                            },
-                            "prefill": {
-                                "name": personName,
-                                "email": personEmail
-                            },
-                            "theme": {
-                                "color": "#F37254"
-                            }
-                        };
+                        // Check if "Pay Now" is selected
+                        if ($('#myCheckbox').is(':checked')) {
+                            // Proceed with Razorpay payment
+                            var eventOptions = {
+                                "key": razorpayKey,
+                                "amount": amount,
+                                "currency": "INR",
+                                "name": "{{ $event->title }}",
+                                "description": "Event Registration Payment",
+                                "image": "/img/logo.png",
+                                "handler": function(response) {
+                                    console.log('Payment successful, Payment ID:', response.razorpay_payment_id);
+                                    storeEventPaymentDetails(response.razorpay_payment_id, amount, personName, personEmail, personContact, refId);
+                                },
+                                "prefill": {
+                                    "name": personName,
+                                    "email": personEmail
+                                },
+                                "theme": {
+                                    "color": "#F37254"
+                                }
+                            };
 
-                        var rzp = new Razorpay(eventOptions);
-                        rzp.open();
+                            var rzp = new Razorpay(eventOptions);
+                            rzp.open();
+                        } else {
+                            // Register without payment
+                            storeRegistrationDetails(personName, personEmail, personContact, refId);
+                        }
                     }
                 },
                 error: function(error) {
@@ -249,7 +251,7 @@
             personName: personName,
             personEmail: personEmail,
             personContact: personContact,
-            refId: refId  // Include refId for storage
+            refMemberId: refId  // Include refId for storage
         });
 
         fetch(url, {
@@ -269,11 +271,9 @@
             })
         })
         .then(response => {
-            console.log('Response Status:', response.status);
             return response.json();
         })
         .then(data => {
-            console.log('Payment details stored successfully:', data);
             Swal.fire({
                 icon: 'success',
                 title: 'Payment Successful',
@@ -293,6 +293,62 @@
             });
         });
     }
+
+    function storeRegistrationDetails(personName, personEmail, personContact, refId) {
+        var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        var url = `{{ route('eventPayment.userOfflinePayment') }}`;
+        var eventId = document.getElementById('eventId').value;
+
+        console.log('Storing Registration Details:', {
+            personName: personName,
+            personEmail: personEmail,
+            personContact: personContact,
+            eventId: eventId,
+            refMemberId: refId  // Include refId for storage
+        });
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken
+            },
+            body: JSON.stringify({
+                personName: personName,
+                personEmail: personEmail,
+                personContact: personContact,
+                eventId: eventId,
+                refMemberId: refId  // Send refId with registration details
+            })
+        })
+        .then(response => {
+            return response.json();
+        })
+        .then(data => {
+            Swal.fire({
+                icon: 'success',
+                title: 'Registration Successful',
+                text: 'You have successfully registered for the event.',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.reload();
+                }
+            });
+        })
+        .catch(error => {
+            console.error('Error storing registration details:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Failed to store registration details.',
+            });
+        });
+    }
 </script>
+
+
+
+
+
 
 @endsection

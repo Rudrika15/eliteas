@@ -569,7 +569,7 @@ class PaymentController extends Controller
         $eventPayment->personName = $request->personName;
         $eventPayment->personEmail = $request->personEmail;
         $eventPayment->personContact = $request->personContact;
-        $eventPayment->refMemberId = $request->refMemberId ?? null; // Handle null if not provided
+        $eventPayment->refMemberId = $request->refId ?? null; // Handle null if not provided
         $eventPayment->paymentStatus = 'paid';
         $eventPayment->save();
 
@@ -616,7 +616,7 @@ class PaymentController extends Controller
         $eventPayment->personName = $request->personName;
         $eventPayment->personEmail = $request->personEmail;
         $eventPayment->personContact = $request->personContact;
-        $eventPayment->refMemberId = $request->refMemberId ?? null; // Handle null if not provided
+        $eventPayment->refMemberId = $request->refId ?? null; // Handle null if not provided
         $eventPayment->paymentStatus = 'pending';
         $eventPayment->save();
 

@@ -471,7 +471,7 @@
                                     Copy Shareable Link
                                 </button>
                                 <input type="hidden" id="shareableLink"
-                                    value="{{ route('event.link', ['slug' => $nearestEvents->event_slug]) }}">
+                                    value="{{ route('event.link', ['slug' => $nearestEvents->event_slug, 'ref' => auth()->user()->member->id]) }}">
                             </div>
 
                             <style>

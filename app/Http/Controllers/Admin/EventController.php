@@ -207,6 +207,7 @@ class EventController extends Controller
     // }
 
     // In EventController.php
+    
     public function checkRegistration(Request $request)
     {
         try {

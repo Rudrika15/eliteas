@@ -555,4 +555,4 @@ Route::get('/event/{slug}', [EventController::class, 'eventLink'])->name('event.
 Route::post('/store-user-details', [EventController::class, 'storeUserDetails'])->name('storeUserDetails');
 Route::post('/check-registration', [EventController::class, 'checkRegistration'])->name('checkRegistration');
 Route::post('/razorpay-payment-userEventPayment', [PaymentController::class, 'userEventPayment'])->name('razorpay.payment.userEventPayment');
-Route::post('/userOfflinePayment', [PaymentController::class, 'userOfflinePayment'])->name('razorpay.payment.userOfflinePayment');
+Route::post('/userOfflinePayment', [PaymentController::class, 'userOfflinePayment'])->name('eventPayment.userOfflinePayment');
