@@ -217,14 +217,14 @@
                 </li><!-- End Messages Nav --> --}}
 
 
-                @role('Admin')
+                {{-- @role('Admin') --}}
                 <li class="nav-item pe-3">
-                    <a class="nav-link" href="{{ url('/visitor-form') }}"
+                    <a class="nav-link" href="{{ url('/visitor-form') }}" target="_blank"
                         style="color: #1d3268; padding: 10px; border-radius: 5px; background-color: rgba(29, 50, 102, 0.2);">
                         <b>Visitor Form</b>
                     </a>
                 </li>
-                @endrole
+                {{-- @endrole --}}
 
 
 

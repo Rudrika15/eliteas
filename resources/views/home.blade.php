@@ -235,13 +235,58 @@
                                 </p>
                                 <div class="row">
                                     <div class="col-md-11 ps-3 card-title ">Invite people to join</div>
-                                    <div class="col-md-1 mt-2 ">
+                                    <div class="col-md-1 mt-2">
                                         <button type="button" class="btn btn-bg-orange btn-sm mt-2"
-                                            data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                            onclick="openInvitePage('{{ $meeting->cm_slug }}', '{{ $meeting->id }}', '{{ auth()->user()->member->id }}')"
+                                            target="_blank">
                                             Invite
                                         </button>
                                     </div>
                                 </div>
+
+                                <script>
+                                    function openInvitePage(slug, meetingId, memberId) {
+                                        // Construct the URL for the visitor form page
+                                        const url = `/visitor-form?slug=${slug}&meetingId=${meetingId}&memberId=${memberId}`;
+                                        // Redirect to the new URL
+                                        window.location.href = url;
+                                    }
+                                </script>
+
+
+                                {{-- <div class="row">
+                                    <div class="col-md-11 ps-3 card-title "></div>
+                                    <div class="col-md-1 mt-2">
+                                        <button type="button" class="btn btn-bg-orange btn-sm mt-2"
+                                            onclick="openInvitePage('{{ $meeting->cm_slug }}', '{{ auth()->user()->memberId }}')"
+                                            target="_blank">
+                                            Invite Via Link
+                                        </button>
+                                    </div>
+                                </div> --}}
+
+                                <div class="justify-content-end">
+                                    <button class="btn btn-bg-blue btn-sm" onclick="copyMeetingLink()">
+                                        Invite Via Link
+                                    </button>
+                                    <input type="hidden" id="shareableMeetingLink"
+                                        value="{{ route('visitor.form', ['slug' => $meeting->cm_slug, 'meetingId' => $meeting->id, 'ref' => auth()->user()->member->id]) }}">
+                                </div>
+
+                                <script>
+                                    function copyMeetingLink() {
+                                        var copyText = document.getElementById("shareableMeetingLink").value;
+                                        navigator.clipboard.writeText(copyText).then(function() {
+                                            alert("Link copied to clipboard");
+                                        }, function(err) {
+                                            alert("Could not copy link");
+                                        });
+                                    }
+                                </script>
+
+
+                                
+
                                 <div class="accordion mt-3">
                                     <div class="accordion-item ">
                                         <div class="accordion-header" id="headingSix">
@@ -519,7 +564,27 @@
             Swal.fire({
                 icon: 'success',
                 title: 'Link copied!',
-                text: 'The shareable link has been copied to your clipboard.',
+                text: 'The link has been copied to your clipboard.',
+                confirmButtonText: 'OK'
+            });
+        }, function(err) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: 'Could not copy the link. Please try again.',
+                confirmButtonText: 'OK'
+            });
+        });
+    }
+</script>
+<script>
+    function copyMeetingLink() {
+        var copyText = document.getElementById("shareableMeetingLink").value;
+        navigator.clipboard.writeText(copyText).then(function() {
+            Swal.fire({
+                icon: 'success',
+                title: 'Link copied!',
+                text: 'The link has been copied to your clipboard.',
                 confirmButtonText: 'OK'
             });
         }, function(err) {

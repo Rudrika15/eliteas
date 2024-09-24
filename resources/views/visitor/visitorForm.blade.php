@@ -149,174 +149,242 @@
 
 
 
-                                                <h5 class="text-center mb-4" style="color: #1d3268;"><b>Please Fill the
-                                                        Form</b></h5>
+                                                <h5 class="text-center mb-4" style="color: #1d3268;"><b>Visitor Registration Form</b></h5>
                                                 {{-- <h5 class="text-center mb-4">Please Fill the Form</h5> --}}
                                                 <form method="POST" action="{{ route('visitor.form.store') }}"
-                                                    class="needs-validation w-100 form-card" novalidate>
-                                                    @csrf
-                                                    <div class="row justify-content-between text-left">
-                                                        <div class="form-group col-sm-6 flex-column d-flex">
-                                                            <label class="form-control-label px-3">First name<span
-                                                                    class="text-danger">*</span></label>
-                                                            <input type="text" id="firstName" name="firstName"
-                                                                value="{{ old('firstName') }}"
-                                                                class="form-control @error('firstName') is-invalid @enderror"
-                                                                onblur="validate(1)">
-                                                            @error('firstName')
-                                                            <span class="invalid-feedback" role="alert">
-                                                                <strong>{{ $message }}</strong>
-                                                            </span>
-                                                            @enderror
-                                                        </div>
-                                                        <div class="form-group col-sm-6 flex-column d-flex">
-                                                            <label class="form-control-label px-3">Last name<span
-                                                                    class="text-danger">*</span></label>
-                                                            <input type="text" id="lastName" name="lastName"
-                                                                value="{{ old('lastName') }}"
-                                                                class="form-control @error('lastName') is-invalid @enderror"
-                                                                onblur="validate(2)">
-                                                            @error('lastName')
-                                                            <span class="invalid-feedback" role="alert">
-                                                                <strong>{{ $message }}</strong>
-                                                            </span>
-                                                            @enderror
-                                                        </div>
-                                                    </div>
-                                                    <div class="row justify-content-between text-left">
-                                                        <div class="form-group col-sm-6 flex-column d-flex">
-                                                            <label class="form-control-label px-3">Mobile No<span
-                                                                    class="text-danger">*</span></label>
-                                                            {{-- <input type="tel" id="mobileNo" name="mobileNo" --}}
-                                                                <input type="text" id="mobileNo" name="mobileNo"
-                                                                value="{{ old('mobileNo') }}"
-                                                                class="form-control @error('mobileNo') is-invalid @enderror"
-                                                                oninput="if(this.value.length > 10) this.value = this.value.slice(0,10); this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');"
-                                                                pattern="[0-9]{10}"
-                                                                oninvalid="this.setCustomValidity('Please enter a valid 10-digit mobile number');"
-                                                                oninput="this.setCustomValidity('')"
-                                                                onblur="validate(3)">
-                                                            @error('mobileNo')
-                                                            <span class="invalid-feedback" role="alert">
-                                                                <strong>{{ $message }}</strong>
-                                                            </span>
-                                                            @enderror
-                                                            @if ($errors->has('mobileNo') && $errors->first('mobileNo')
-                                                            == 'Please enter a valid 10-digit mobile number')
-                                                            <span class="invalid-feedback" role="alert"
-                                                                style="color: red;">
-                                                                <strong>{{ $errors->first('mobileNo') }}</strong>
-                                                            </span>
-                                                            @endif
-                                                        </div>
-                                                        <div class="form-group col-sm-6 flex-column d-flex">
-                                                            <label class="form-control-label px-3">Business Name<span
-                                                                    class="text-danger">*</span></label>
-                                                            <input type="text" id="businessName" name="businessName"
-                                                                value="{{ old('businessName') }}"
-                                                                class="form-control @error('businessName') is-invalid @enderror"
-                                                                onblur="validate(4)">
-                                                            @error('businessName')
-                                                            <span class="invalid-feedback" role="alert">
-                                                                <strong>{{ $message }}</strong>
-                                                            </span>
-                                                            @enderror
-                                                        </div>
-                                                    </div>
-                                                    <div class="row justify-content-between text-left">
-                                                        <div class="form-group col-sm-6 flex-column d-flex">
-                                                            <label class="form-control-label px-3">Business
-                                                                Category<span class="text-danger">*</span></label>
-                                                            <input type="text" id="businessCategory"
-                                                                name="businessCategory"
-                                                                value="{{ old('businessCategory') }}"
-                                                                class="form-control @error('businessCategory') is-invalid @enderror"
-                                                                onblur="validate(5)">
-                                                            @error('businessCategory')
-                                                            <span class="invalid-feedback" role="alert">
-                                                                <strong>{{ $message }}</strong>
-                                                            </span>
-                                                            @enderror
-                                                        </div>
-                                                        <div class="form-group col-sm-6 flex-column d-flex">
-                                                            <label class="form-control-label px-3">Invited by<span
-                                                                    class="text-danger">*</span></label>
-                                                            <input type="text" id="invitedBy" name="invitedBy"
-                                                                value="{{ old('invitedBy') }}"
-                                                                class="form-control @error('invitedBy') is-invalid @enderror">
-                                                            @error('invitedBy')
-                                                            <span class="invalid-feedback" role="alert">
-                                                                <strong>{{ $message }}</strong>
-                                                            </span>
-                                                            @enderror
-                                                        </div>
-                                                        <div class="form-group col-sm-6 flex-column d-flex">
-                                                            <label class="form-control-label px-3">Product /
-                                                                Service</label>
-                                                            <input type="text" id="product" name="product"
-                                                                value="{{ old('product') }}"
-                                                                class="form-control @error('product') is-invalid @enderror"
-                                                                onblur="validate(6)">
-                                                            @error('product')
-                                                            <span class="invalid-feedback" role="alert">
-                                                                <strong>{{ $message }}</strong>
-                                                            </span>
-                                                            @enderror
-                                                        </div>
-                                                        <div class="form-group col-sm-6 flex-column d-flex">
-                                                            <label class="form-control-label px-3">Are you part of any
-                                                                networking group?</label>
-                                                            <input type="text" id="networkingGroup"
-                                                                name="networkingGroup"
-                                                                value="{{ old('networkingGroup') }}"
-                                                                class="form-control @error('networkingGroup') is-invalid @enderror"
-                                                                onblur="validate(7)">
-                                                            @error('networkingGroup')
-                                                            <span class="invalid-feedback" role="alert">
-                                                                <strong>{{ $message }}</strong>
-                                                            </span>
-                                                            @enderror
-                                                        </div>
-                                                    </div>
-                                                    <div class="row justify-content-between text-left">
+    class="needs-validation w-100 form-card" novalidate>
+    @csrf
+    <div class="row justify-content-between text-left">
+        <div class="form-group col-sm-6 flex-column d-flex">
+            <label class="form-control-label px-3">First name<span class="text-danger">*</span></label>
+            <input type="text" id="firstName" name="firstName"
+                value="{{ old('firstName') }}"
+                class="form-control @error('firstName') is-invalid @enderror"
+                onblur="validate(1)">
+            @error('firstName')
+            <span class="invalid-feedback" role="alert">
+                <strong>{{ $message }}</strong>
+            </span>
+            @enderror
+        </div>
+        <div class="form-group col-sm-6 flex-column d-flex">
+            <label class="form-control-label px-3">Last name<span class="text-danger">*</span></label>
+            <input type="text" id="lastName" name="lastName"
+                value="{{ old('lastName') }}"
+                class="form-control @error('lastName') is-invalid @enderror"
+                onblur="validate(2)">
+            @error('lastName')
+            <span class="invalid-feedback" role="alert">
+                <strong>{{ $message }}</strong>
+            </span>
+            @enderror
+        </div>
+    </div>
+    <div class="row justify-content-between text-left">
+        <div class="form-group col-sm-6 flex-column d-flex">
+            <label class="form-control-label px-3">Mobile No<span class="text-danger">*</span></label>
+            <input type="text" id="mobileNo" name="mobileNo"
+                value="{{ old('mobileNo') }}"
+                class="form-control @error('mobileNo') is-invalid @enderror"
+                oninput="if(this.value.length > 10) this.value = this.value.slice(0,10); this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');"
+                pattern="[0-9]{10}"
+                oninvalid="this.setCustomValidity('Please enter a valid 10-digit mobile number');"
+                oninput="this.setCustomValidity('')"
+                onblur="validate(3)">
+            @error('mobileNo')
+            <span class="invalid-feedback" role="alert">
+                <strong>{{ $message }}</strong>
+            </span>
+            @enderror
+            @if ($errors->has('mobileNo') && $errors->first('mobileNo') == 'Please enter a valid 10-digit mobile number')
+            <span class="invalid-feedback" role="alert" style="color: red;">
+                <strong>{{ $errors->first('mobileNo') }}</strong>
+            </span>
+            @endif
+        </div>
+        <div class="form-group col-sm-6 flex-column d-flex">
+            <label class="form-control-label px-3">Business Name<span class="text-danger">*</span></label>
+            <input type="text" id="businessName" name="businessName"
+                value="{{ old('businessName') }}"
+                class="form-control @error('businessName') is-invalid @enderror"
+                onblur="validate(4)">
+            @error('businessName')
+            <span class="invalid-feedback" role="alert">
+                <strong>{{ $message }}</strong>
+            </span>
+            @enderror
+        </div>
+    </div>
+    <div class="row justify-content-between text-left">
+        <div class="form-group col-sm-6 flex-column d-flex">
+            <label class="form-control-label px-3">Business Category<span class="text-danger">*</span></label>
+            <select class="form-select" id="businessCategory" name="businessCategory"
+                class="form-control @error('businessCategory') is-invalid @enderror" onblur="validate(5)">
+                <option value="" disabled selected>Select Business Category</option>
+                @foreach ($businessCategory as $businessCategoryData)
+                <option value="{{ $businessCategoryData->id }}"
+                    {{ old('businessCategory') == $businessCategoryData->id ? 'selected' : '' }}>
+                    {{ $businessCategoryData->categoryName }}
+                </option>
+                @endforeach
+                <option value="other" {{ old('businessCategory') == 'other' ? 'selected' : '' }}>Other</option>
+            </select>
 
-                                                        <div class="form-group col-sm-6 flex-column d-flex">
-                                                            <label class="form-control-label px-3">Circle Meet</label>
-                                                            <input type="text" id="circleMeet" name="circleMeet"
-                                                                value="{{ old('circleMeet') }}"
-                                                                class="form-control @error('circleMeet') is-invalid @enderror"
-                                                                onblur="validate(8)">
-                                                            @error('circleMeet')
-                                                            <span class="invalid-feedback" role="alert">
-                                                                <strong>{{ $message }}</strong>
-                                                            </span>
-                                                            @enderror
-                                                        </div>
-                                                        <div class="form-group col-sm-6 flex-column d-flex">
-                                                            <label class="form-control-label px-3">How do you know about
-                                                                us ?</label>
-                                                            <input type="text" id="knowsUs" name="knowsUs"
-                                                                value="{{ old('knowsUs') }}"
-                                                                class="form-control @error('knowsUs') is-invalid @enderror">
-                                                            @error('knowsUs')
-                                                            <span class="invalid-feedback" role="alert">
-                                                                <strong>{{ $message }}</strong>
-                                                            </span>
-                                                            @enderror
-                                                        </div>
-                                                    </div>
-                                                    <div class="row justify-content-center">
-                                                        <div class="form-group col-sm-3">
-                                                            <button type="submit"
-                                                                class="btn-sm btn-bg-blue"><b>Submit</b></button>
-                                                        </div>
-                                                    </div>
-                                                </form>
+            <!-- Input field for other category -->
+            <div class="mt-3"></div>
+            <input type="text" id="otherCategory" name="otherCategory" placeholder="Please specify your business category"
+                class="form-control {{ old('businessCategory') == 'other' ? '' : 'd-none' }}" onblur="validate(5)"
+                value="{{ old('otherCategory') }}">
+
+            @error('businessCategory')
+            <span class="invalid-feedback" role="alert">
+                <strong>{{ $message }}</strong>
+            </span>
+            @enderror
+
+            <script>
+                const businessCategory = document.getElementById('businessCategory');
+                const otherCategoryInput = document.getElementById('otherCategory');
+
+                businessCategory.addEventListener('change', function () {
+                    if (this.value === 'other') {
+                        otherCategoryInput.classList.remove('d-none');
+                    } else {
+                        otherCategoryInput.classList.add('d-none');
+                        otherCategoryInput.value = '';  // Clear the input if it's hidden
+                    }
+                });
+            </script>
+        </div>
+
+       <div class="form-group col-sm-6 flex-column d-flex">
+    <label class="form-control-label px-3">Invited by<span class="text-danger">*</span></label>
+    
+    @if(Auth::check())
+        <!-- If the user is authenticated, show their name -->
+
+        @php
+            $meetingId = request()->query('meetingId'); // Get the 'ref' parameter from the URL
+        @endphp
+
+        <input type="text" id="invitedBy" name="invitedBy"
+            value="{{ Auth::user()->member->firstName }} {{ Auth::user()->member->lastName }}"
+            class="form-control @error('invitedBy') is-invalid @enderror" disabled>
+        <input type="hidden" id="invitedByHidden" name="invitedBy" value="{{ Auth::user()->member->id }}">
+        <input type="hidden" id="meetingId" name="meetingId" value="{{ $meetingId ?? 0 }}">
+    @else
+        <!-- If the user is not authenticated, get the member ID from the URL -->
+        @php
+            $memberId = request()->query('ref'); // Get the 'ref' parameter from the URL
+            $meetingId = request()->query('meetingId'); // Get the 'ref' parameter from the URL
+            // You might want to fetch the member details based on this ID to show the name.
+            $member = \App\Models\Member::find($memberId); // Fetch member from the database
+        @endphp
+        
+        <input type="text" id="invitedBy" name="invitedBy"
+            value="{{ $member ? $member->firstName . ' ' . $member->lastName : 'Invited by a member' }}" 
+            class="form-control" disabled>
+        <input type="hidden" id="invitedByHidden" name="invitedBy" value="{{ $memberId ?? 0 }}"> <!-- Default to 0 if no member found -->
+        <input type="hidden" id="meetingId" name="meetingId" value="{{ $meetingId ?? 0 }}">
+        @endif
+
+    @error('invitedBy')
+    <span class="invalid-feedback" role="alert">
+        <strong>{{ $message }}</strong>
+    </span>
+    @enderror
+</div>
+
+        
+        <div class="form-group col-sm-6 flex-column d-flex">
+            <label class="form-control-label px-3">Product / Service</label>
+            <input type="text" id="product" name="product"
+                value="{{ old('product') }}"
+                class="form-control @error('product') is-invalid @enderror"
+                onblur="validate(6)">
+            @error('product')
+            <span class="invalid-feedback" role="alert">
+                <strong>{{ $message }}</strong>
+            </span>
+            @enderror
+        </div>
+        <div class="form-group col-sm-6 flex-column d-flex">
+            <label class="form-control-label px-3">Are you part of any networking group?</label>
+            <input type="text" id="networkingGroup"
+                name="networkingGroup"
+                value="{{ old('networkingGroup') }}"
+                class="form-control @error('networkingGroup') is-invalid @enderror"
+                onblur="validate(7)">
+            @error('networkingGroup')
+            <span class="invalid-feedback" role="alert">
+                <strong>{{ $message }}</strong>
+            </span>
+            @enderror
+        </div>
+    </div>
+    <div class="row justify-content-between text-left">
+
+        <div class="form-group col-sm-6 flex-column d-flex">
+            <label class="form-control-label px-3">Circle Meet</label>
+            <input type="text" id="circleMeet" name="circleMeet"
+                value="{{ old('circleMeet') }}"
+                class="form-control @error('circleMeet') is-invalid @enderror"
+                onblur="validate(8)">
+            @error('circleMeet')
+            <span class="invalid-feedback" role="alert">
+                <strong>{{ $message }}</strong>
+            </span>
+            @enderror
+        </div>
+        <div class="form-group col-sm-6 flex-column d-flex">
+            <label class="form-control-label px-3">How do you know about us ?</label>
+            <input type="text" id="knowsUs" name="knowsUs"
+                value="{{ old('knowsUs') }}"
+                class="form-control @error('knowsUs') is-invalid @enderror">
+            @error('knowsUs')
+            <span class="invalid-feedback" role="alert">
+                <strong>{{ $message }}</strong>
+            </span>
+            @enderror
+        </div>
+    </div>
+
+    {{-- <input type="hiddden" name="meetingId" id="meetingId" value="{{ $meeting->id }}"> --}}
+
+    <div class="form-group col-auto">
+        <input type="checkbox" id="myCheckbox"> Check to Pay Offline
+        <div class="row justify-content-start align-items-center">
+        </div>
+        <div class="form-group col-auto">
+            <!-- Buttons -->
+            <button type="submit" class="btn btn-bg-blue" id="register" style="display:none;">Register</button>
+            <button type="submit" class="btn btn-success" id="payNowMeet" >Pay Now</button>
+        </div>
+    </div>
+</form>
+
                                         </div>
                                 </div>
                             </div>
                         </div>
     </main><!-- End #main -->
+
+
+    <script>
+        var myCheckbox = document.getElementById('myCheckbox'); // Corrected checkbox ID
+        var register = document.getElementById('register');
+        var payNowMeet = document.getElementById('payNowMeet');
+    
+        myCheckbox.addEventListener('change', function() {
+            if (myCheckbox.checked) {
+                payNowMeet.style.display = 'none'; // Show the Pay Now button
+                register.style.display = 'inline-block'; // Hide the Register button
+            } else {
+                register.style.display = 'none'; // Show the Register button
+                payNowMeet.style.display = 'inline-block'; // Hide the Pay Now button
+            }
+        });
+    </script>
 
     <script>
         function validate(val) {

@@ -26,7 +26,7 @@
                             <h5>{{ $event->title }}</h5>
                             <p>
                                 <strong>Date:</strong>  
-                                \Carbon\Carbon::parse($event->event_date)->format('j M Y') <br>
+                                {{\Carbon\Carbon::parse($event->event_date)->format('j M Y')}} <br>
                                 <strong>Start Time:</strong> {{ $event->start_time }}<br>
                                 <strong>End Time:</strong> {{ $event->end_time }}
                             </p>
@@ -134,6 +134,12 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Extract the "ref" parameter from the URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const refId = urlParams.get('ref'); // Get the "ref" parameter from the URL
+
+        console.log('Ref ID:', refId); // Log refId for debugging
+
         var razorpayBtnEvent = document.getElementById('razorpayBtnEvent');
         var registerButton = document.getElementById('registerButton');
         var myCheckbox = document.getElementById('myCheckbox');
@@ -150,7 +156,9 @@
         myCheckbox.addEventListener('change', function() {
             if (myCheckbox.checked) {
                 payNowButton.style.display = 'inline-block'; // Show the button
+                registerButton.style.display = 'none'; // Hide the button
             } else {
+                registerButton.style.display = 'inline-block'; // Show the button
                 payNowButton.style.display = 'none'; // Hide the button
             }
         });
@@ -169,7 +177,6 @@
             var personEmail = formData.get('personEmail') || '';
             var personContact = formData.get('personContact') || '';
             var eventId = $('#eventId').val();
-            var refId = $('#refId').val();  // Get refId from hidden field
 
             console.log('Form Data:', {
                 personName: personName,
@@ -270,9 +277,7 @@
                 refId: refId  // Send refId with payment details
             })
         })
-        .then(response => {
-            return response.json();
-        })
+        .then(response => response.json())
         .then(data => {
             Swal.fire({
                 icon: 'success',
@@ -321,9 +326,7 @@
                 refMemberId: refId  // Send refId with registration details
             })
         })
-        .then(response => {
-            return response.json();
-        })
+        .then(response => response.json())
         .then(data => {
             Swal.fire({
                 icon: 'success',
@@ -345,6 +348,7 @@
         });
     }
 </script>
+
 
 
 

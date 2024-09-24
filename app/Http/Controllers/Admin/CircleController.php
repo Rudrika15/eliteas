@@ -12,6 +12,7 @@ use App\Models\Schedule;
 use App\Models\Franchise;
 use App\Models\CircleType;
 use App\Utils\ErrorLogger;
+use Illuminate\Support\Str;
 use App\Models\CircleMember;
 use Illuminate\Http\Request;
 use App\Mail\MeetingInvitation;
@@ -136,13 +137,26 @@ class CircleController extends Controller
                     if ($meetingDate && $meetingDate->month == $startOfMonth->month) {
                         if ($meetingDate->isFuture()) {
                             $futureMeetingFound = true; // Future meeting found
+                            
+                            // Create a basic slug using the circle name and meeting date
+                            $slug = Str::slug($circle->circleName . '-' . $meetingDate->format('Y-m-d'));
+                    
+                            // Check if the slug already exists
+                            if (Schedule::where('cm_slug', $slug)->exists()) {
+                                // If it exists, append a unique identifier
+                                $slug = $slug . '-' . uniqid();
+                            }
+                    
+                            // Create and save the new schedule
                             $schedule = new Schedule();
                             $schedule->circleId = $circle->id;
                             $schedule->day = $meetingDate->dayOfWeek; // Store the day of the week
                             $schedule->date = $meetingDate->format('Y-m-d');
+                            $schedule->cm_slug = $slug; // Store the generated slug
                             $schedule->save();
                         }
                     }
+                    
                 }
 
                 return $futureMeetingFound;
@@ -343,23 +357,35 @@ class CircleController extends Controller
                     if ($meetingDate && $meetingDate->greaterThan($date)) {
                         // Check if meeting already exists for this date
                         $existingMeeting = Schedule::where('circleId', $circle->id)
-                        ->whereDate('date', $meetingDate->format('Y-m-d'))
-                        ->first();
-
+                            ->whereDate('date', $meetingDate->format('Y-m-d'))
+                            ->first();
+                    
                         if (!$existingMeeting) {
-                            Schedule::create([
-                                'circleId' => $circle->id,
-                                'day' => $meetingDate->dayOfWeek, // Store day of week (0 = Sunday, ..., 6 = Saturday)
-                                'date' => $meetingDate,
-                                'venue' => null,
-                                'meetingTime' => null, // Example time
-                                'remarks' => null,
-                                'status' => 'Active',
-                            ]);
-
+                            // Create a basic slug using the circle name and meeting date
+                            $slug = Str::slug($circle->circleName . '-' . $meetingDate->format('Y-m-d'));
+                    
+                            // Check if the slug already exists
+                            if (Schedule::where('cm_slug', $slug)->exists()) {
+                                // If it exists, append a unique identifier
+                                $slug = $slug . '-' . uniqid();
+                            }
+                    
+                            // Create and save the new schedule
+                            $schedule = new Schedule();
+                            $schedule->circleId = $circle->id;
+                            $schedule->day = $meetingDate->dayOfWeek; // Store the day of the week
+                            $schedule->date = $meetingDate->format('Y-m-d');
+                            $schedule->venue = null;
+                            $schedule->meetingTime = null; // Example time
+                            $schedule->remarks = null;
+                            $schedule->status = 'Active';
+                            $schedule->cm_slug = $slug; // Store the generated slug
+                            $schedule->save();
+                    
                             $futureMeetingFound = true;
                         }
                     }
+                    
                 }
 
                 return $futureMeetingFound;

@@ -8,4 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class VisitorsDetails extends Model
 {
     use HasFactory;
+
+    public function member()
+    {
+        return $this->belongsTo(Member::class, 'invitedBy', 'id'); // Correct foreign key relationship
+    }
+
 }

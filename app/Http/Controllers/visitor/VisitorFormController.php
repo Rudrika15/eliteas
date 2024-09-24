@@ -5,6 +5,8 @@ namespace App\Http\Controllers\visitor;
 use App\Utils\ErrorLogger;
 use Illuminate\Http\Request;
 use App\Models\VisitorsDetails;
+use App\Models\BusinessCategory;
+use App\Models\MeetingInvitation;
 use App\Http\Controllers\Controller;
 
 class VisitorFormController extends Controller
@@ -32,45 +34,120 @@ class VisitorFormController extends Controller
 
     public function visitorForm()
     {
-        return view('visitor.visitorForm');
+        $businessCategory = BusinessCategory::all();
+        return view('visitor.visitorForm', compact('businessCategory'));
     }
 
-    public function store(Request $request)
-    {
-        $this->validate($request, [
-            'firstName' => 'required',
-            'lastName' => 'required',
-            'mobileNo' => 'required',
-            'businessName' => 'required',
-            'businessCategory' => 'required',
-            'invitedBy' => 'required',
-        ]);
+//     public function store(Request $request)
+// {
+//     $this->validate($request, [
+//         'firstName' => 'required',
+//         'lastName' => 'required',
+//         'mobileNo' => 'required',
+//         'businessName' => 'required',
+//         'businessCategory' => 'required',
+//         // 'invitedBy' => 'required',
+//     ]);
 
-        try {
-            $visitor = new VisitorsDetails();
-            $visitor->firstName = $request->firstName;
-            $visitor->lastName = $request->lastName;
-            $visitor->mobileNo = $request->mobileNo;
-            $visitor->businessName = $request->businessName;
+//     try {
+//         // Create a new VisitorsDetails object
+//         $visitor = new VisitorsDetails();
+//         $visitor->firstName = $request->firstName;
+//         $visitor->lastName = $request->lastName;
+//         $visitor->mobileNo = $request->mobileNo;
+//         $visitor->businessName = $request->businessName;
+
+//         // Determine business category and assign it to the visitor
+//         if ($request->businessCategory == 'other') {
+//             // If 'other', assign the otherCategory value
+//             $visitor->businessCategory = $request->otherCategory; // Make sure VisitorsDetails has this property
+//         } else {
+//             // Otherwise, assign the selected business category
+//             $visitor->businessCategory = $request->businessCategory;
+//         }
+
+//         // Save to the BusinessCategory model (if you want to save the category separately)
+//         $business = new BusinessCategory();
+//         $business->categoryName = $visitor->businessCategory; // Save the appropriate category
+//         $business->save();
+
+//         // Assign additional properties to the visitor
+//         $visitor->product = $request->product;
+//         $visitor->networkingGroup = $request->networkingGroup;
+//         $visitor->circleMeet = $request->circleMeet;
+//         $visitor->invitedBy = $request->invitedBy;
+//         $visitor->knowUs = $request->knowsUs; // Make sure this matches the field name
+//         $visitor->status = 'Active';
+
+//         // Save the visitor information
+//         $visitor->save();
+
+//         return redirect()->route('visitor.form')->with('success', 'Your Information Submitted Successfully!');
+//     } catch (\Throwable $th) {
+//         // Log the error
+//         ErrorLogger::logError($th, $request->fullUrl());
+
+//         // Return a generic error view or message
+//         return redirect()->route('visitor.form')->with('error', 'Failed to submit your information');
+//     }
+// }
+
+public function store(Request $request)
+{
+    try {
+        // Create a new VisitorsDetails object
+        $visitor = new VisitorsDetails();
+        $visitor->firstName = $request->firstName;
+        $visitor->lastName = $request->lastName;
+        $visitor->mobileNo = $request->mobileNo;
+        $visitor->businessName = $request->businessName;
+
+        // Determine business category and assign it to the visitor
+        if ($request->businessCategory == 'other') {
+            // If 'other', assign the otherCategory value and check if already exists
+            $business = BusinessCategory::where('categoryName', $request->otherCategory)->first();
+            if (!$business) {
+                $business = new BusinessCategory();
+                $business->categoryName = $request->otherCategory;
+                $business->save();
+            }
+            $visitor->businessCategory = $business->id;
+        } else {
+            // Otherwise, assign the selected business category
             $visitor->businessCategory = $request->businessCategory;
-            $visitor->product = $request->product;
-            $visitor->networkingGroup = $request->networkingGroup;
-            $visitor->circleMeet = $request->circleMeet;
-            $visitor->invitedBy = $request->invitedBy;
-            $visitor->knowUs = $request->knowUs;
-            $visitor->status = 'Active';
-
-            $visitor->save();
-
-            return redirect()->route('visitor.form')->with('success', 'Your Information Submitted Successfully!');
-        } catch (\Throwable $th) {
-            // Log the error
-            ErrorLogger::logError($th, $request->fullUrl());
-
-            // Return a generic error view or message
-            return redirect()->route('visitor.form')->with('error', 'Failed to submit your information');
         }
+
+        // Assign additional properties to the visitor
+        $visitor->product = $request->product;
+        $visitor->networkingGroup = $request->networkingGroup;
+        $visitor->circleMeet = $request->circleMeet;
+        $visitor->invitedBy = $request->invitedBy;
+        $visitor->knowUs = $request->knowsUs; // Make sure this matches the field name
+        $visitor->status = 'Active';
+
+        // Save the visitor information
+        $visitor->save();
+
+                $invitation = new MeetingInvitation();
+                $invitation->meetingId = $request->meetingId;
+                $invitation->invitedMemberId = $visitor->invitedBy;
+                $invitation->personName = $request->firstName . ' ' . $request->lastName;
+                $invitation->personEmail = null;
+                $invitation->personContact = $visitor->mobileNo;
+                $invitation->businessCategoryId = $visitor->businessCategory;
+                $invitation->save();
+
+
+        return redirect()->route('visitor.form')->with('success', 'Your Information Submitted Successfully!');
+    } catch (\Throwable $th) {
+        // Log the error
+        ErrorLogger::logError($th, $request->fullUrl());
+
+        // Return a generic error view or message
+        return redirect()->route('visitor.form')->with('error', 'Failed to submit your information');
     }
+}
+
 
     public function updateRemark(Request $request)
     {

@@ -49,7 +49,7 @@
                             <td>{{$visitor->networkingGroup}}</td>
                             <td>{{$visitor->circleMeet}}</td>
                             <td>{{$visitor->product}}</td>
-                            <td>{{$visitor->invitedBy}}</td>
+                            <td>{{ $visitor->member->firstName ?? '' }} {{ $visitor->member->lastName ?? '' }}</td>
                             <td>{{$visitor->knowUs}}</td>
                             <td>
                                 <input type="text" class="form-control remark-field" data-id="{{ $visitor->id }}"

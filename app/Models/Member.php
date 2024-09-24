@@ -23,6 +23,11 @@ class Member extends Model
         'userId',
     ];
 
+    public function visitorInvites()
+    {
+        return $this->hasMany(VisitorsDetails::class, 'invitedBy', 'id');
+    }
+
     public function contact()
     {
         return $this->belongsTo(ContactDetails::class, 'id', 'memberId');
