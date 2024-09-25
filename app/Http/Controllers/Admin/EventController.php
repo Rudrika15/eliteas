@@ -47,6 +47,8 @@ class EventController extends Controller
 
     public function store(Request $request)
     {
+        // return $request;
+
         $this->validate($request, [
             'title' => 'required',
             'event_date' => 'required',
@@ -59,11 +61,23 @@ class EventController extends Controller
             $event->circleId = $request->circleId;
             $event->venue = $request->venue;
             $event->event_date = $request->event_date;
+
+            $uniqueId = time();
+
+            if ($request->hasFile('event_thumb')) {
+                $event->event_thumb = $uniqueId . '_thumb.' . $request->event_thumb->extension();
+                $request->event_thumb->move(public_path('Event'), $event->event_thumb);
+            }
+
+            if ($request->hasFile('event_banner')) {
+                $event->event_banner = $uniqueId . '_banner.' . $request->event_banner->extension();
+                $request->event_banner->move(public_path('Event'), $event->event_banner);
+            }
+
             $event->start_time = $request->start_time;
             $event->end_time = $request->end_time;
             $event->amount = $request->amount;
             $event->status = 'Active';
-
             $event->save();
 
             return redirect()->route('event.create')->with('success', 'Event Created Successfully!');
@@ -95,6 +109,8 @@ class EventController extends Controller
 
     public function update(Request $request)
     {
+        // return $request;
+
         try {
             $id = $request->id;
             $event = Event::find($id);
@@ -102,6 +118,20 @@ class EventController extends Controller
                 $event->title = $request->title;
                 $event->circleId = $request->circleId;
                 $event->venue = $request->venue;
+
+                $uniqueId = time();
+
+                if ($request->hasFile('event_thumb')) {
+                    $event->event_thumb = $uniqueId . '_thumb.' . $request->event_thumb->extension();
+                    $request->event_thumb->move(public_path('Event'), $event->event_thumb);
+                }
+
+                if ($request->hasFile('event_banner')) {
+                    $event->event_banner = $uniqueId . '_banner.' . $request->event_banner->extension();
+                    $request->event_banner->move(public_path('Event'), $event->event_banner);
+                }
+
+
                 $event->event_date = $request->event_date;
                 $event->start_time = $request->start_time;
                 $event->end_time = $request->end_time;
@@ -207,7 +237,7 @@ class EventController extends Controller
     // }
 
     // In EventController.php
-    
+
     public function checkRegistration(Request $request)
     {
         try {

@@ -71,6 +71,9 @@ Route::post('forget-password', [ForgotPasswordController::class, 'submitForgetPa
 Route::get('reset-password/{token}', [ForgotPasswordController::class, 'showResetPasswordForm'])->name('reset.password.get');
 Route::post('reset-password', [ForgotPasswordController::class, 'submitResetPasswordForm'])->name('reset.password.post');
 
+Route::post('/razorpay-payment-visitor', [PaymentController::class, 'storePaymentDetails'])->name('razorpay.payment.store.visitor');
+
+
 Route::get('visitor-form', [VisitorFormController::class, 'visitorForm'])->name('visitor.form');
 Route::post('visitor-form-store', [VisitorFormController::class, 'store'])->name('visitor.form.store');
 

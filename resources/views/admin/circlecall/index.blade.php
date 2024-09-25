@@ -28,7 +28,7 @@
             <h4 class="card-title">IBM by Me</h4>
             <a href="{{ route('circlecall.create') }}" class="btn btn-bg-orange btn-sm mt-3 btn-tooltip">
                 <i class="bi bi-plus-circle"></i>
-                <span class="btn-text">Create Circle Call</span>
+                <span class="btn-text">Create IBM</span>
             </a>
         </div>
         <hr class="mb-4">

@@ -22,6 +22,8 @@
                             <th>Title</th>
                             <th>Circle</th>
                             <th>Event Date</th>
+                            <th>Event Image</th>
+                            <th>Event Banner</th>
                             <th>Start Time</th>
                             <th>End Time</th>
                             <th>Amount</th>
@@ -34,6 +36,20 @@
                             <td>{{$eventData->title ?? '-'}}</td>
                             <td>{{$eventData->circle->circleName ?? '-'}}</td>
                             <td>{{$eventData->event_date}}</td>
+                            <td>
+                                @if ($eventData->event_thumb)
+                                <img src="{{ url('Event/' . basename($eventData->event_thumb)) }}" alt="Event Image" style="width: 50px; height: 50px; object-fit: contain; aspect-ratio: 1/1;">
+                                @else
+                                <span></span>
+                                @endif
+                            </td>
+                            <td>
+                                @if ($eventData->event_banner)
+                                <img src="{{ url('Event/' . basename($eventData->event_banner)) }}" alt="Event Banner" style="width: 50px; height: 50px; object-fit: contain; aspect-ratio: 1/1;">
+                                @else
+                                <span></span>
+                                @endif
+                            </td>
                             <td>{{$eventData->start_time}}</td>
                             <td>{{$eventData->end_time}}</td>
                             <td>{{$eventData->amount}}</td>

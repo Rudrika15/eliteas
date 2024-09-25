@@ -15,7 +15,9 @@ use App\Models\EventRegister;
 use App\Models\MembershipType;
 use App\Models\MonthlyPayment;
 use App\Mail\MembershipRenewed;
+use App\Models\VisitorsDetails;
 use App\Mail\WelcomeMemberEmail;
+use App\Models\BusinessCategory;
 use App\Models\TrainingRegister;
 use App\Models\MeetingInvitation;
 use Illuminate\Support\Facades\DB;
@@ -118,6 +120,65 @@ class PaymentController extends Controller
 
             // Redirect with error message
             return redirect("/")->with("error", "Failed to complete payment");
+        }
+    }
+
+    public function storePaymentDetails(Request $request)
+    {
+        try {
+            
+            $visitor = new VisitorsDetails();
+            $visitor->firstName = $request->firstName;
+            $visitor->lastName = $request->lastName;
+            $visitor->mobileNo = $request->mobileNo;
+            $visitor->businessName = $request->businessName;
+
+            
+            if ($request->businessCategory == 'other') {
+                
+                $business = BusinessCategory::where('categoryName', $request->otherCategory)->first();
+                if (!$business) {
+                    $business = new BusinessCategory();
+                    $business->categoryName = $request->otherCategory;
+                    $business->save();
+                }
+                $visitor->businessCategory = $business->id;
+            } else {
+                $visitor->businessCategory = $request->businessCategory;
+            }
+
+            
+            $visitor->product = $request->product;
+            $visitor->networkingGroup = $request->networkingGroup;
+            $visitor->circleMeet = $request->circleMeet;
+            $visitor->invitedBy = $request->invitedBy;
+            $visitor->knowUs = $request->knowsUs;
+            $visitor->meetingId = $request->meetingId;
+            $visitor->status = 'Active';
+
+            // Save the visitor information
+            $visitor->save();
+
+            $invitation = new MeetingInvitation();
+            $invitation->meetingId = $request->meetingId;
+            $invitation->invitedMemberId = $visitor->invitedBy;
+            $invitation->personName = $request->firstName . ' ' . $request->lastName;
+            $invitation->personEmail = null;
+            $invitation->personContact = $visitor->mobileNo;
+            $invitation->businessCategoryId = $visitor->businessCategory;
+            $invitation->paymentStatus = 'Paid';
+            $invitation->save();
+
+            $razorpay = new RazorPay();
+            $razorpay->r_payment_id = $request->paymentId;
+            $razorpay->user_email = null;
+            $razorpay->amount = $request->amount / 100;
+            $razorpay->save();
+
+            return response()->json(['success' => 'Payment details stored successfully.'], 200);
+        } catch (\Exception $e) {
+            \Log::error('Failed to store payment details: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to store payment details: ' . $e->getMessage()], 500);
         }
     }
 
@@ -346,16 +407,26 @@ class PaymentController extends Controller
         }
     }
 
-    public function monthlyPayments()
+    public function monthlyPayments(Request $request)
     {
-        $monthlyPayments = MonthlyPayment::paginate(10);
-        return view('admin.paymentHistory.monthlyPayments', compact('monthlyPayments'));
+        $status = $request->input('status');
+
+        // If status is provided, filter by the given status (paid/unpaid)
+        if ($status) {
+            $monthlyPayments = MonthlyPayment::where('status', $status)->paginate(10);
+        } else {
+            // If no status is selected, show all monthly payments
+            $monthlyPayments = MonthlyPayment::paginate(10);
+        }
+
+        return view('admin.paymentHistory.monthlyPayments', compact('monthlyPayments', 'status'));
     }
 
-    public function generateMonthlyPayment()
+
+    public function generateMonthlyPayment(Request $request)
     {
         // Get the current month and year in 'F - Y' format (e.g., "September - 2024")
-        $currentMonth = now()->format('F - Y');
+        $currentMonth = $request->month . " - " . now()->format('Y');
 
         // Check if there are any records for the current month
         $existingPayments = DB::table('monthly_payments')
@@ -471,12 +542,12 @@ class PaymentController extends Controller
             // $monthly->save();
 
             $monthly = MonthlyPayment::where('memberId', Auth::user()->member->id)
-            ->where('status', 'unpaid')
-            ->update([
-                'status' => 'paid',
-                'paymentDate' => now(),
-                'updated_at' => now(),
-            ]);
+                ->where('status', 'unpaid')
+                ->update([
+                    'status' => 'paid',
+                    'paymentDate' => now(),
+                    'updated_at' => now(),
+                ]);
 
             // Store the payment details
             $allPayments = new AllPayments();
@@ -543,133 +614,128 @@ class PaymentController extends Controller
     }
 
     public function userEventPayment(Request $request)
-{
-    try {
-        // Validate the request 
-        $request->validate([
-            // 'paymentId' => 'required|string',
-            // 'amount' => 'required|integer',
-            // 'eventId' => 'required|integer',
-            // 'personName' => 'required|string',
-            // 'personEmail' => 'required|email',
-            // 'personContact' => 'required|string',
-            // 'refId' => 'nullable|integer' // If optional, otherwise use 'required'
-        ]);
+    {
+        try {
+            // Validate the request 
+            $request->validate([
+                // 'paymentId' => 'required|string',
+                // 'amount' => 'required|integer',
+                // 'eventId' => 'required|integer',
+                // 'personName' => 'required|string',
+                // 'personEmail' => 'required|email',
+                // 'personContact' => 'required|string',
+                // 'refId' => 'nullable|integer' // If optional, otherwise use 'required'
+            ]);
 
-        // Store the payment ID in the Razorpay payments table
-        $payment = new Razorpay();
-        $payment->r_payment_id = $request->input('paymentId');
-        $payment->user_email = $request->personEmail ?? null;
-        $payment->amount = $request->input('amount') / 100; // Convert paise to rupees
-        $payment->save();
+            // Store the payment ID in the Razorpay payments table
+            $payment = new Razorpay();
+            $payment->r_payment_id = $request->input('paymentId');
+            $payment->user_email = $request->personEmail ?? null;
+            $payment->amount = $request->input('amount') / 100; // Convert paise to rupees
+            $payment->save();
 
-        // Register for the event
-        $eventPayment = new EventRegister();
-        $eventPayment->eventId = $request->eventId;
-        $eventPayment->personName = $request->personName;
-        $eventPayment->personEmail = $request->personEmail;
-        $eventPayment->personContact = $request->personContact;
-        $eventPayment->refMemberId = $request->refId ?? null; // Handle null if not provided
-        $eventPayment->paymentStatus = 'paid';
-        $eventPayment->save();
+            // Register for the event
+            $eventPayment = new EventRegister();
+            $eventPayment->eventId = $request->eventId;
+            $eventPayment->personName = $request->personName;
+            $eventPayment->personEmail = $request->personEmail;
+            $eventPayment->personContact = $request->personContact;
+            $eventPayment->refMemberId = $request->refId ?? null; // Handle null if not provided
+            $eventPayment->paymentStatus = 'paid';
+            $eventPayment->save();
 
-        // Store the payment details in the AllPayments table
-        $allPayments = new AllPayments();
-        // Add memberId if relevant, but handle this carefully based on your logic
-        // $allPayments->memberId = $eventPayment->memberId ?? null;
-        $allPayments->amount = $payment->amount;
-        $allPayments->paymentType = 'RazorPay'; // Payment type
-        $allPayments->date = now()->format('Y-m-d');
-        $allPayments->paymentMode = 'Event Register Payment';
-        $allPayments->remarks = $payment->r_payment_id;
-        $allPayments->save();
+            // Store the payment details in the AllPayments table
+            $allPayments = new AllPayments();
+            // Add memberId if relevant, but handle this carefully based on your logic
+            // $allPayments->memberId = $eventPayment->memberId ?? null;
+            $allPayments->amount = $payment->amount;
+            $allPayments->paymentType = 'RazorPay'; // Payment type
+            $allPayments->date = now()->format('Y-m-d');
+            $allPayments->paymentMode = 'Event Register Payment';
+            $allPayments->remarks = $payment->r_payment_id;
+            $allPayments->save();
 
-        // Return a success response
-        return response()->json(['message' => 'Payment Received successfully'], 200);
+            // Return a success response
+            return response()->json(['message' => 'Payment Received successfully'], 200);
+        } catch (\Throwable $th) {
+            // Log the error using the ErrorLogger utility
+            ErrorLogger::logError($th, $request->fullUrl());
+            // Return an error response
 
-    } catch (\Throwable $th) {
-        // Log the error using the ErrorLogger utility
-        ErrorLogger::logError($th, $request->fullUrl());
-        // Return an error response
-        
-    }return response()->json(['message' => 'Failed to store payment ID'], 500);
-}
+        }
+        return response()->json(['message' => 'Failed to store payment ID'], 500);
+    }
 
     public function userOfflinePayment(Request $request)
-{
-    try {
-        // Validate the request 
-        $request->validate([
-        
-        ]);
+    {
+        try {
+            // Validate the request 
+            $request->validate([]);
 
-        // Store the payment ID in the Razorpay payments table
-        $payment = new Razorpay();
-        $payment->r_payment_id = 'Offline';
-        $payment->user_email = $request->personEmail ?? null;
-        $payment->amount = $request->input('amount') / 100; // Convert paise to rupees
-        $payment->save();
+            // Store the payment ID in the Razorpay payments table
+            $payment = new Razorpay();
+            $payment->r_payment_id = 'Offline';
+            $payment->user_email = $request->personEmail ?? null;
+            $payment->amount = $request->input('amount') / 100; // Convert paise to rupees
+            $payment->save();
 
-        // Register for the event
-        $eventPayment = new EventRegister();
-        $eventPayment->eventId = $request->eventId;
-        $eventPayment->personName = $request->personName;
-        $eventPayment->personEmail = $request->personEmail;
-        $eventPayment->personContact = $request->personContact;
-        $eventPayment->refMemberId = $request->refId ?? null; // Handle null if not provided
-        $eventPayment->paymentStatus = 'pending';
-        $eventPayment->save();
+            // Register for the event
+            $eventPayment = new EventRegister();
+            $eventPayment->eventId = $request->eventId;
+            $eventPayment->personName = $request->personName;
+            $eventPayment->personEmail = $request->personEmail;
+            $eventPayment->personContact = $request->personContact;
+            $eventPayment->refMemberId = $request->refId ?? null; // Handle null if not provided
+            $eventPayment->paymentStatus = 'pending';
+            $eventPayment->save();
 
-        // Store the payment details in the AllPayments table
-        $allPayments = new AllPayments();
-        $allPayments->amount = $payment->amount;
-        $allPayments->paymentType = 'Offline'; // Payment type
-        $allPayments->date = now()->format('Y-m-d');
-        $allPayments->paymentMode = 'Event Register Payment';
-        $allPayments->remarks = 'Offline Payment';
-        $allPayments->save();
+            // Store the payment details in the AllPayments table
+            $allPayments = new AllPayments();
+            $allPayments->amount = $payment->amount;
+            $allPayments->paymentType = 'Offline'; // Payment type
+            $allPayments->date = now()->format('Y-m-d');
+            $allPayments->paymentMode = 'Event Register Payment';
+            $allPayments->remarks = 'Offline Payment';
+            $allPayments->save();
 
-        // Return a success response
-        return response()->json(['message' => 'Registred Successfully for the Event'], 200);
+            // Return a success response
+            return response()->json(['message' => 'Registred Successfully for the Event'], 200);
+        } catch (\Throwable $th) {
+            // Log the error using the ErrorLogger utility
+            ErrorLogger::logError($th, $request->fullUrl());
+            // Return an error response
 
-    } catch (\Throwable $th) {
-        // Log the error using the ErrorLogger utility
-        ErrorLogger::logError($th, $request->fullUrl());
-        // Return an error response
-        
-    }return response()->json(['message' => 'Failed to Register for Event, Please try after sometime'], 500);
-}
+        }
+        return response()->json(['message' => 'Failed to Register for Event, Please try after sometime'], 500);
+    }
 
     public function monthlyPaymentIndex()
-{
-    try {
-        // Get the authenticated user
-        $authUser = auth()->user();
+    {
+        try {
+            // Get the authenticated user
+            $authUser = auth()->user();
 
-        // Get the member's ID from the authenticated user
-        $memberId = $authUser->member->id;
+            // Get the member's ID from the authenticated user
+            $memberId = $authUser->member->id;
 
-        // Get all monthly payments for the member (both paid and unpaid)
-        $paymentsByMonth = MonthlyPayment::where('memberId', $memberId)
-            ->orderBy('month', 'ASC')
-            ->get()
-            ->groupBy('month'); // Group payments by month for easier access in the view
+            // Get all monthly payments for the member (both paid and unpaid)
+            $paymentsByMonth = MonthlyPayment::where('memberId', $memberId)
+                ->orderBy('month', 'ASC')
+                ->get()
+                ->groupBy('month'); // Group payments by month for easier access in the view
 
-        // Get the current month
-        $currentMonth = now()->format('F');
+            // Get the current month
+            $currentMonth = now()->format('F');
 
-        // Check if there are any unpaid payments
-        $hasUnpaid = true;
-        $totalAmount = 0;
+            // Check if there are any unpaid payments
+            $hasUnpaid = true;
+            $totalAmount = 0;
 
-        // Return the data to the Blade view
-        return view('home', compact('paymentsByMonth', 'currentMonth', 'hasUnpaid', 'totalAmount'));
-    } catch (\Throwable $th) {
-        // Handle any exceptions and redirect to an error page or show a flash message
-        return redirect()->back()->with('error', 'Failed to retrieve monthly payments. Please try again.');
+            // Return the data to the Blade view
+            return view('home', compact('paymentsByMonth', 'currentMonth', 'hasUnpaid', 'totalAmount'));
+        } catch (\Throwable $th) {
+            // Handle any exceptions and redirect to an error page or show a flash message
+            return redirect()->back()->with('error', 'Failed to retrieve monthly payments. Please try again.');
+        }
     }
-}
-
-
-
 }
