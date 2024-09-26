@@ -142,7 +142,7 @@ class CircleMemberController extends Controller
             for ($i = 0; $i < $length; $i++) {
                 $password .= $characters[rand(0, strlen($characters) - 1)];
             }
-            $rowPassword = $password;
+            $rowPassword = 123456;
 
             // Create and save the user
             $user = new User;

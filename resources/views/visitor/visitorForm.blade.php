@@ -35,6 +35,9 @@
     <!-- Template Main CSS File -->
     <link href="{{ asset('css/style.css') }}" rel="stylesheet" />
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
 
 
     <style>
@@ -315,6 +318,8 @@
                                         @endphp
                                         <input type="hidden" id="cityAmount" name="cityAmount"
                                             value="{{ $cityAmount }}">
+                                        <input type="hidden" id="meetingId" name="meetingId"
+                                            value="{{ $meeting->id }}">
                                     @endif
 
                                     @error('invitedBy')
@@ -413,14 +418,16 @@
                 event.preventDefault();
 
                 console.log('Pay Now button clicked');
-                console.log('City Amount:', document.getElementById('cityAmount').value);
+                const cityAmount = document.getElementById('cityAmount').value;
+                console.log('City Amount:', cityAmount);
 
                 // Get the amount and other necessary details
-                const amount = parseInt(document.getElementById('cityAmount').value) *
-                    100; // Convert to paise
+                const amount = parseInt(cityAmount) * 100; // Convert to paise
                 console.log('Amount:', amount);
+
                 const razorpayKey = "{{ env('RAZORPAY_KEY') }}"; // Razorpay Key
                 console.log('Razorpay Key:', razorpayKey);
+
                 const invitedBy = document.getElementById('invitedByHidden').value;
                 console.log('Invited By:', invitedBy);
 
@@ -433,11 +440,8 @@
                     return;
                 }
 
-                // Print form data in console
+                // Collect form data
                 const formData = new FormData(document.getElementById('visitorForm'));
-                for (const entry of formData.entries()) {
-                    console.log(`${entry[0]}: ${entry[1]}`);
-                }
 
                 // Razorpay payment options
                 const options = {
@@ -449,13 +453,9 @@
                     "image": "/img/logo.png", // Your logo
                     "handler": function(response) {
                         console.log('Payment successful, storing payment details');
-                        storePaymentDetails(response.razorpay_payment_id, amount);
+                        storePaymentDetails(response.razorpay_payment_id, amount, formData);
                     },
-                    "prefill": {
-                        // Uncomment these if you want to pre-fill with authenticated user's data
-                        // "name": "{{ Auth::user()->name }}", 
-                        // "email": "{{ Auth::user()->email }}"
-                    },
+                    "prefill": {},
                     "theme": {
                         "color": "#F37254"
                     }
@@ -468,8 +468,8 @@
                 rzp.open();
             });
 
-            // AJAX request to store payment details
-            function storePaymentDetails(paymentId, amount) {
+            // AJAX request to store payment details along with form data
+            function storePaymentDetails(paymentId, amount, formData) {
                 console.log('Storing payment details:', {
                     paymentId,
                     amount
@@ -477,13 +477,33 @@
 
                 const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
                 const url = `{{ route('razorpay.payment.store.visitor') }}`;
-                const meetingId = document.getElementById('meetingId').value;
 
-                console.log('Storing payment details:', {
-                    meetingId,
-                    amount,
-                    paymentId
+                // Ensure meetingId exists before accessing its value
+                const meetingIdElement = document.getElementById('meetingId');
+                const meetingId = meetingIdElement ? meetingIdElement.value : null;
+
+                if (!meetingId) {
+                    console.error('Meeting ID not found.');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Meeting ID is missing. Please contact support.',
+                    });
+                    return;
+                }
+
+                // Add payment details to formData
+                formData.append('paymentId', paymentId);
+                formData.append('amount', amount);
+                formData.append('meetingId', meetingId);
+
+                // Convert formData to JSON object
+                const formObject = {};
+                formData.forEach((value, key) => {
+                    formObject[key] = value;
                 });
+
+                console.log('Form Data with Payment Details:', formObject);
 
                 fetch(url, {
                         method: 'POST',
@@ -491,16 +511,10 @@
                             'Content-Type': 'application/json',
                             'X-CSRF-TOKEN': csrfToken
                         },
-                        body: JSON.stringify({
-                            paymentId: paymentId,
-                            amount: amount,
-                            meetingId: meetingId,
-                            // Include other necessary fields if required
-                        })
+                        body: JSON.stringify(formObject) // Send the form data as JSON
                     })
                     .then(response => {
                         if (!response.ok) {
-                            // Log the error response
                             console.error('Error response:', response);
                             return response.json().then(errorData => {
                                 throw new Error(errorData.error || 'Failed to store payment details.');
@@ -516,7 +530,6 @@
                                 title: 'Success',
                                 text: 'Payment successful and details stored!',
                             });
-                            // Optionally redirect or reload
                             window.location.reload();
                         } else {
                             Swal.fire({
@@ -537,6 +550,7 @@
             }
         });
     </script>
+
 
 
 

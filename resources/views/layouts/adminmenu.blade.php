@@ -77,17 +77,55 @@
     </a>
 </li>
 
-<li class="nav-item">
+{{-- <li class="nav-item">
     <a class="nav-link collapsed" href="{{ route('testimonials.indexAdmin') }}">
         <i class="bi bi-person" style="color: #e76a35"></i>
         <span style="color: #1d2856">Testimonial</span>
     </a>
+</li> --}}
+
+<li class="nav-item">
+    <a class="nav-link collapsed" data-bs-target="#allActivity-nav" data-bs-toggle="collapse" href="#">
+        <i class="bi bi-person-gear" style="color: #e76a35"></i><span>All Activity</span><i
+            class="bi bi-chevron-down ms-auto" style="color: #e76a35"></i>
+    </a>
+    <ul id="allActivity-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="{{ route('testimonials.indexAdmin') }}">
+                <i class="bi bi-person" style="color: #e76a35"></i>
+                <span style="color: #1d2856">Testimonial</span>
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="{{ route('activity.ibm') }}">
+                <i class="bi bi-person" style="color: #e76a35"></i>
+                <span style="color: #1d2856">IBM</span>
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="{{ route('activity.refrence') }}">
+                <i class="bi bi-person" style="color: #e76a35"></i>
+                <span style="color: #1d2856">References</span>
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="{{ route('activity.businesses') }}">
+                <i class="bi bi-person" style="color: #e76a35"></i>
+                <span style="color: #1d2856">Business Slip</span>
+            </a>
+        </li>
+
+    </ul>
 </li>
+
 
 <li class="nav-item">
     <a class="nav-link collapsed" data-bs-target="#event-nav" data-bs-toggle="collapse" href="#">
-        <i class="bi bi-person-gear" style="color: #e76a35"></i><span>Event</span><i
-            class="bi bi-chevron-down ms-auto" style="color: #e76a35"></i>
+        <i class="bi bi-person-gear" style="color: #e76a35"></i><span>Event</span><i class="bi bi-chevron-down ms-auto"
+            style="color: #e76a35"></i>
     </a>
     <ul id="event-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
         <li class="nav-item">

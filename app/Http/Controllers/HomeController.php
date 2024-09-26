@@ -235,6 +235,10 @@ class HomeController extends Controller
 
             $businessCategory = BusinessCategory::where('status', 'Active')->get();
 
+            // $auth = Auth::user();
+            // $member = Member::where('userId', $auth->id)->first();
+
+
             $myInvites = MeetingInvitation::where('invitedMemberId', Auth::user()->id)->get();
 
             if ($nearestTraining) {
@@ -267,7 +271,7 @@ class HomeController extends Controller
                     return view('home', ['meeting' => 'No meeting found for now']);
                 }
 
-                $myInvites = MeetingInvitation::where('invitedMemberId', Auth::user()->id)
+                $myInvites = MeetingInvitation::where('invitedMemberId', Auth::user()->member->id)
                     ->where('meetingId', $meeting->id)
                     ->get();
 
@@ -348,22 +352,22 @@ class HomeController extends Controller
                     ->sortByDesc('count')
                     ->first();
 
-// monthly payment
+                // monthly payment
 
                 $monthlyPayments = MonthlyPayment::where('memberId', Auth::user()->member->id)
-                ->where('status', 'unpaid')
-                ->get()
-                ->groupBy('month');
+                    ->where('status', 'unpaid')
+                    ->get()
+                    ->groupBy('month');
 
-                 // Sum the total unpaid amounts
+                // Sum the total unpaid amounts
                 $totalAmountDue = $monthlyPayments->map(function ($group) {
-                return $group->sum('amount');
+                    return $group->sum('amount');
                 })->sum();
 
                 $nearestEvents = Event::where('status', 'Active')
-                ->whereDate('event_date', '>=', $currentDate)
-                ->orderBy('event_date', 'asc')
-                ->first();
+                    ->whereDate('event_date', '>=', $currentDate)
+                    ->orderBy('event_date', 'asc')
+                    ->first();
 
                 if ($nearestEvents) {
                     $findEventRegister = EventRegister::where('memberId', Auth::user()->member->id)

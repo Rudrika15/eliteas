@@ -2,7 +2,7 @@
 
 use Maatwebsite\Excel\Excel;
 use App\Exports\TrainersListExport;
-
+use App\Http\Controllers\Admin\AllActivityController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Artisan;
@@ -514,6 +514,12 @@ Route::group(['middleware' => ['auth']], function () {
 
     // Route::post('/store-user-details', [EventController::class, 'storeUserDetails'])->name('storeUserDetails');
     // Route::post('/check-email', [EventController::class, 'checkEmail'])->name('checkEmail');
+
+    //All Activity
+
+    Route::get('/activity/ibm', [AllActivityController::class, 'ibm'])->name('activity.ibm');
+    Route::get('/activity/refrence', [AllActivityController::class, 'refrence'])->name('activity.refrence');
+    Route::get('/activity/businesses', [AllActivityController::class, 'business'])->name('activity.businesses');
 });
 
 
