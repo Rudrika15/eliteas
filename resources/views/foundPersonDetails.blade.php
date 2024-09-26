@@ -599,9 +599,9 @@
                                             <button type="button" class="btn btn-bg-blue shadow-none">
                                                 Connected &nbsp;<i class="bi bi-check-circle-fill"></i>
                                             </button>
-                                            <button id="messageButton" class="btn btn-bg-orange ms-2">
+                                            {{-- <button id="messageButton" class="btn btn-bg-orange ms-2">
                                                 Message &nbsp;<i class="bi bi-chat-fill"></i>
-                                            </button>
+                                            </button> --}}
                                             @elseif (!$memberStatus)
                                             <form action="{{ route('connect') }}" id="connectForm" method="POST">
                                                 @csrf
@@ -615,9 +615,9 @@
                                             <button type="button" class="btn btn-bg-blue shadow-none">
                                                 Connected &nbsp;<i class="bi bi-check-circle-fill"></i>
                                             </button>
-                                            <button id="messageButton" class="btn btn-bg-orange ms-2">
+                                            {{-- <button id="messageButton" class="btn btn-bg-orange ms-2">
                                                 Message &nbsp;<i class="bi bi-chat-fill"></i>
-                                            </button>
+                                            </button> --}}
                                             @elseif ($memberStatus->status == 'Rejected')
                                             <form action="{{ route('connect') }}" id="connectForm" method="POST">
                                                 @csrf
@@ -1230,14 +1230,14 @@
                                                     </div>
                                                 </div>
                                                 <hr>
-                                                <div class="row">
+                                                {{-- <div class="row">
                                                     <div class="col-sm-3">
                                                         <h6 class="mb-0"> My Fav. BNI Story </h6>
                                                     </div>
                                                     <div class="col-sm-9 text-secondary">
                                                         {{ $member->topsProfile->myFavBniStory ?? '-' }}
                                                     </div>
-                                                </div>
+                                                </div> --}}
                                                 <hr>
                                                 <div class="row">
                                                     <div class="col-sm-3">

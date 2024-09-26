@@ -39,8 +39,8 @@
 
 
 
-    <script src="https://code.jquery.com/jquery-3.7.1.js"
-        integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+        crossorigin="anonymous"></script>
 
 
 
@@ -59,7 +59,7 @@
     <header id="header" class="header fixed-top d-flex align-items-center shadow-none border ">
 
         <div class="d-flex justify-content-between">
-            <a href="{{route('home')}}" class="logo">
+            <a href="{{ route('home') }}" class="logo">
                 {{-- <img src="assets/img/logo.png" alt=""> --}}
                 <img src="{{ asset('img/logo2.jpg') }}" alt="UBN" width="100">
             </a>
@@ -217,46 +217,48 @@
                 </li><!-- End Messages Nav --> --}}
 
 
-                {{-- @role('Admin') --}}
-                <li class="nav-item pe-3">
-                    <a class="nav-link" href="{{ url('/visitor-form') }}" target="_blank"
-                        style="color: #1d3268; padding: 10px; border-radius: 5px; background-color: rgba(29, 50, 102, 0.2);">
-                        <b>Visitor Form</b>
-                    </a>
-                </li>
-                {{-- @endrole --}}
+                @role('Admin')
+                    <li class="nav-item pe-3">
+                        <a class="nav-link" href="{{ url('/visitor-form') }}" target="_blank"
+                            style="color: #1d3268; padding: 10px; border-radius: 5px; background-color: rgba(29, 50, 102, 0.2);">
+                            <b>Visitor Form</b>
+                        </a>
+                    </li>
+                @endrole
 
 
 
 
                 {{-- @role('member') --}}
-                @if ( Auth::user()->userStatus == 'Online')
-                <li class="nav-item">
-                    <a class="nav-link" href="#">
-                        <span class="badge rounded-pill bg-success"
-                            style="font-size: 12px;padding: 5px 10px;color: #fff;display: inline-block;margin-top: 5px;">Online</span>
-                    </a>
-                </li>
+                @if (Auth::user()->userStatus == 'Online')
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <span class="badge rounded-pill bg-success"
+                                style="font-size: 12px;padding: 5px 10px;color: #fff;display: inline-block;margin-top: 5px;">Online</span>
+                        </a>
+                    </li>
                 @else
-                <li class="nav-item">
-                    <a class="nav-link" href="#">
-                        <span class="badge rounded-pill bg-danger"
-                            style="font-size: 12px;padding: 5px 10px;color: #fff;display: inline-block;margin-top: 5px;">Offline</span>
-                    </a>
-                </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <span class="badge rounded-pill bg-danger"
+                                style="font-size: 12px;padding: 5px 10px;color: #fff;display: inline-block;margin-top: 5px;">Offline</span>
+                        </a>
+                    </li>
                 @endif
                 {{-- @endrole --}}
 
                 <li class="nav-item dropdown pe-3">
 
-                    <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+                    <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#"
+                        data-bs-toggle="dropdown">
                         @if (isset(Auth::user()->profile_photo))
-                        {{-- <img class="img-profile rounded-circle" src="{{url('public/img/logo.png')}}"> --}}
-                        <img class="img-profile rounded-circle" src="public/img/logo.png">
+                            {{-- <img class="img-profile rounded-circle" src="{{url('public/img/logo.png')}}"> --}}
+                            <img class="img-profile rounded-circle" src="public/img/logo.png">
                         @else
-                        <span class="rounded-circle text-center p-2 fs-5 badge logobadge d-inline-block text-light h-50"
-                            style="width: 38px !important;">
-                        </span>
+                            <span
+                                class="rounded-circle text-center p-2 fs-5 badge logobadge d-inline-block text-light h-50"
+                                style="width: 38px !important;">
+                            </span>
                         @endif
                         {{-- <span class="d-none d-md-block dropdown-toggle ps-2">{{Auth::user()->name}}</span> --}}
                         <span class="d-md-none">Hello, {{ Auth::user()->firstName ?? '-' }}</span>
@@ -274,12 +276,12 @@
                             <hr class="dropdown-divider">
                         </li>
                         @role('Member')
-                        <li>
-                            <a class="dropdown-item d-flex align-items-center" href="{{ route('member') }}">
-                                <i class="bi bi-person"></i>
-                                <span style="font-weight: bold;">My Profile</span>
-                            </a>
-                        </li>
+                            <li>
+                                <a class="dropdown-item d-flex align-items-center" href="{{ route('member') }}">
+                                    <i class="bi bi-person"></i>
+                                    <span style="font-weight: bold;">My Profile</span>
+                                </a>
+                            </li>
                         @endrole
 
                         <li>
@@ -287,7 +289,8 @@
                         </li>
 
                         <li>
-                            <a class="dropdown-item d-flex align-items-center" href="{{ route('changePasswordForm') }}">
+                            <a class="dropdown-item d-flex align-items-center"
+                                href="{{ route('changePasswordForm') }}">
                                 <i class="bi bi-key"></i>
                                 <span style="font-weight: bold;">Change Password</span>
                             </a>
@@ -297,7 +300,8 @@
                         </li>
 
                         <li>
-                            <a class="dropdown-item d-flex align-items-center" href="{{ route('logout') }}" onclick="event.preventDefault();
+                            <a class="dropdown-item d-flex align-items-center" href="{{ route('logout') }}"
+                                onclick="event.preventDefault();
                             document.getElementById('logout-form').submit();">
                                 <i class="bi bi-box-arrow-right signout-style"></i>
                                 <span class="signout-style">Sign Out</span>
@@ -309,7 +313,8 @@
                                     }
                                 </style>
 
-                                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                <form id="logout-form" action="{{ route('logout') }}" method="POST"
+                                    class="d-none">
                                     @csrf
                                 </form>
                             </a>
@@ -338,11 +343,11 @@
             <!-- End Charts Nav -->
 
             @role('Admin')
-            @include('layouts.adminmenu')
+                @include('layouts.adminmenu')
             @endrole
 
             @role('Member')
-            @include('layouts.membermenu')
+                @include('layouts.membermenu')
             @endrole
 
             <!-- End Tables Nav -->
@@ -361,7 +366,7 @@
 
         {{-- <div class="pagetitle">
             {{-- <h1>Dashboard</h1> --}}
-            {{-- <nav>
+        {{-- <nav>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="index.html">Home</a></li>
                     <li class="breadcrumb-item active">Dashboard</li>
@@ -431,25 +436,75 @@
     <!-- end -->
 
     @if (Session::get('success'))
-    <script>
-        Swal.fire({
+        <script>
+            Swal.fire({
                 icon: 'success',
                 title: "{{ Session::get('success') }}",
                 showConfirmButton: true,
 
             });
-    </script>
+        </script>
     @endif
 
     @if (Session::get('error'))
-    <script>
-        Swal.fire({
+        <script>
+            Swal.fire({
                 icon: 'error',
                 title: "{{ Session::get('error') }}",
                 showConfirmButton: true,
             });
-    </script>
+        </script>
     @endif
+
+
+    {{-- <script>
+        window.onerror = function(message, source, lineno, colno, error) {
+            // Construct the error data
+            const errorData = {
+                message: message,
+                source: source,
+                lineno: lineno,
+                colno: colno,
+                stack: error ? error.stack : null,
+                url: window.location.href, // Current page URL
+                method: 'GET', // Assuming it's a GET request; adjust if needed
+                ip_address: '', // IP address would be captured in Laravel, so we leave it blank
+                user_agent: navigator.userAgent // Capturing the user agent
+            };
+    
+            // Log error to server
+            logErrorToServer(errorData);
+    
+            // Optional: Show a message to the user or handle it as needed
+            console.error('Error occurred:', errorData);
+        };
+    
+        // Function to log error to server
+        function logErrorToServer(errorData) {
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            const url = '{{ route('log.error') }}'; // Your Laravel route for logging errors
+    
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken
+                },
+                body: JSON.stringify(errorData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    console.error('Failed to log error:', response);
+                }
+            })
+            .catch(err => {
+                console.error('Error logging error:', err);
+            });
+        }
+    </script> --}}
+    
+
+
     <script src="{{ asset('vendor/apexcharts/apexcharts.min.js') }}"></script>
     <script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ asset('vendor/chart.js/chart.umd.js') }}"></script>

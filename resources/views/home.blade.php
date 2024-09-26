@@ -614,7 +614,6 @@
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
         @if ($nearestEvents)
-            {
             <script>
                 document.addEventListener('DOMContentLoaded', function() {
                     // Get the Razorpay button
@@ -718,7 +717,6 @@
                         });
                 }
             </script>
-            }
         @endif
 
 
@@ -784,7 +782,6 @@
         <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
         @if ($monthlyPayments)
-            {
             <script>
                 document.addEventListener('DOMContentLoaded', function() {
                     // Get all elements with the 'monthlyPay' class
@@ -891,7 +888,6 @@
                         });
                 }
             </script>
-            }
         @endif
     @endrole
 

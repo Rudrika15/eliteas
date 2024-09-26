@@ -77,6 +77,10 @@ Route::post('/razorpay-payment-visitor', [PaymentController::class, 'storePaymen
 Route::get('visitor-form', [VisitorFormController::class, 'visitorForm'])->name('visitor.form');
 Route::post('visitor-form-store', [VisitorFormController::class, 'store'])->name('visitor.form.store');
 
+Route::get('/server-error', function () {
+    return view('servererror'); // This will render the custom error page
+})->name('server.error');
+
 
 Auth::routes();
 Route::group(['middleware' => ['auth']], function () {
@@ -496,6 +500,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::get('/error-list', [ErrorListController::class, 'index'])->name('errorList');
     Route::post('/update-error-status/{id}', [ErrorListController::class, 'updateErrorStatus']);
+    // Route::post('/log-error-web', [ErrorListController::class, 'logError'])->name('log.error');
 
 
     //location

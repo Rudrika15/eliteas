@@ -33,6 +33,7 @@ use App\Http\Controllers\Api\CircleMeetingMembersController;
 use App\Http\Controllers\Api\MembershipSubscriptionController;
 use App\Http\Controllers\Api\CircleMeetingMemberBusinessController;
 use App\Http\Controllers\Api\CircleMeetingMemberReferenceController;
+use App\Http\Controllers\Api\UpdateAppController;
 
 // use App\Http\Controllers\Api\CircleMeetingMemberBusinessController;
 
@@ -352,4 +353,11 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     //busGiven
     Route::get('busGiven-index', [CircleMeetingMemberBusinessController::class, 'busGiven']);
+
+    //app
+    // Route::get('/app-version', [ApiController::class, 'getAppVersion']);
 });
+
+//get app version
+Route::get('app-version', [UpdateAppController::class, 'getAppVersion']);
+Route::post('update-app-version', [UpdateAppController::class, 'updateAppVersion']);

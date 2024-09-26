@@ -108,12 +108,12 @@
     </a>
 </li>
 
-<li class="nav-item">
+{{-- <li class="nav-item">
     <a class="nav-link collapsed" href="{{ route('errorList') }}">
         <i class="bi bi-exclamation-triangle" style="color: red"></i>
         <span class="text-blue">Error Log List</span>
     </a>
-</li>
+</li> --}}
 
 
 @if(Auth::user()->hasRole('Attendance Handler'))

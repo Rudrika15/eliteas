@@ -344,6 +344,9 @@ class CircleMemberController extends Controller
 
     public function update(Request $request)
     {
+
+        // return $request;
+
         try {
             // return $request;
             // Find the member
@@ -361,21 +364,23 @@ class CircleMemberController extends Controller
 
             // Update the member
             $member = Member::findOrFail($member);
-            $member->circleId = $request->circleId;
-            $member->title = $request->title;
-            $member->firstName = $request->firstName;
-            $member->lastName = $request->lastName;
-            $member->username = $request->username;
-            $member->businessCategoryId = $request->businessCategory;
-            $member->suffix = $request->suffix;
-            $member->displayName = $request->displayName;
-            $member->gstRegiState = $request->gstRegiState;
-            $member->gStinPan = $request->gStinPan;
-            $member->industry = $request->industry;
-            $member->classification = $request->classification;
-            $member->gender = $request->gender;
-            $member->language = $request->language;
-            $member->timeZone = $request->timeZone;
+            if ($request->has('circleId')) {
+                $member->circleId = $request->circleId;
+            }
+            $member->title = $request->has('title') ? $request->title : $member->title;
+            $member->firstName = $request->has('firstName') ? $request->firstName : $member->firstName;
+            $member->lastName = $request->has('lastName') ? $request->lastName : $member->lastName;
+            $member->username = $request->has('username') ? $request->username : $member->username;
+            $member->businessCategoryId = $request->has('businessCategory') ? $request->businessCategory : $member->businessCategoryId;
+            $member->suffix = $request->has('suffix') ? $request->suffix : $member->suffix;
+            $member->displayName = $request->has('displayName') ? $request->displayName : $member->displayName;
+            $member->gstRegiState = $request->has('gstRegiState') ? $request->gstRegiState : $member->gstRegiState;
+            $member->gstinPan = $request->has('gstinPan') ? $request->gstinPan : $member->gstinPan;
+            $member->industry = $request->has('industry') ? $request->industry : $member->industry;
+            $member->classification = $request->has('classification') ? $request->classification : $member->classification;
+            $member->gender = $request->has('gender') ? $request->gender : $member->gender;
+            $member->language = $request->has('language') ? $request->language : $member->language;
+            $member->timeZone = $request->has('timeZone') ? $request->timeZone : $member->timeZone;
 
             if ($request->hasFile('profilePhoto')) {
                 $profilePhoto = $request->file('profilePhoto');
@@ -392,91 +397,100 @@ class CircleMemberController extends Controller
                 $member->companyLogo = $companyLogoName;
             }
 
-            $member->goals = $request->goals;
-            $member->chapter = $request->chapter;
-            $member->renewalDueDate = $request->renewalDueDate;
-            $member->accomplishment = $request->accomplishment;
-            $member->companyName = $request->companyName;
-            $member->interests = $request->interests;
-            $member->networks = $request->networks;
-            $member->skills = $request->skills;
-            $member->myBusiness = $request->myBusiness;
-            $member->webSite = $request->webSite;
-            $member->showWebsite = $request->showWebsite;
-            $member->socialLinks = $request->socialLinks;
-            $member->showSocialLinks = $request->showSocialLinks;
-            $member->receiveUpdates = $request->receiveUpdates;
-            $member->shareRevenue = $request->shareRevenue;
-            $member->membershipStatus = $request->membershipStatus;
-            $member->membershipType = $request->membershipType;
-            $member->keyWords = $request->keyWords;
+            $member->goals =  $request->has('goals') ? $request->goals : $member->goals;
+            $member->chapter = $request->has('chapter') ? $request->chapter : $member->chapter;
+            $member->renewalDueDate = $request->has('renewalDueDate') ? $request->renewalDueDate : $member->renewalDueDate;
+            $member->accomplishment = $request->has('accomplishment') ? $request->accomplishment : $member->accomplishment;
+            $member->companyName = $request->has('companyName') ? $request->companyName : $member->companyName;
+            $member->interests = $request->has('interests') ? $request->interests : $member->interests;
+            $member->networks = $request->has('networks') ? $request->networks : $member->networks;
+            $member->skills = $request->has('skills') ? $request->skills : $member->skills;
+            $member->myBusiness = $request->has('myBusiness') ? $request->myBusiness : $member->myBusiness;
+            $member->webSite = $request->has('webSite') ? $request->webSite : $member->webSite;
+            $member->showWebsite = $request->has('showWebsite') ? $request->showWebsite : $member->showWebsite;
+            $member->socialLinks = $request->has('socialLinks') ? $request->socialLinks : $member->socialLinks;
+            $member->showSocialLinks = $request->has('showSocialLinks') ? $request->showSocialLinks : $member->showSocialLinks;
+            $member->receiveUpdates = $request->has('receiveUpdates') ? $request->receiveUpdates : $member->receiveUpdates;
+            $member->shareRevenue = $request->has('shareRevenue') ? $request->shareRevenue : $member->shareRevenue;
+            $member->membershipStatus = $request->has('membershipStatus') ? $request->membershipStatus : $member->membershipStatus;
+            // $member->membershipType = $request->has('membershipType') ? $request->membershipType : $member->membershipType;
+            $member->keyWords = $request->has('keyWords') ? $request->keyWords : $member->keyWords;
             $member->status = 'Active';
             $member->save();
 
             // Update TopsProfile
             $tops = TopsProfile::where('memberId', $member->id)->firstOrFail();
-            $tops->idealRef = $request->idealRef;
-            $tops->topProduct = $request->topProduct;
-            $tops->topProblemSolved = $request->topProblemSolved;
-            $tops->myFavBNIStory = $request->myFavBNIStory;
-            $tops->myIdealRefPartner = $request->myIdealRefPartner;
-            $tops->weeklyPresent1 = $request->weeklyPresent1;
-            $tops->weeklyPresent2 = $request->weeklyPresent2;
-            $tops->yearsInBusiness = $request->yearsInBusiness;
-            $tops->prevJobs = $request->prevJobs;
-            $tops->spouse = $request->spouse;
-            $tops->children = $request->children;
-            $tops->pets = $request->pets;
-            $tops->hobbiesInterests = $request->hobbiesInterests;
-            $tops->cityofRes = $request->cityofRes;
-            $tops->yearsInCity = $request->yearsInCity;
-            $tops->myBurningDesire = $request->myBurningDesire;
-            $tops->dontKnowAboutMe = $request->dontKnowAboutMe;
-            $tops->mKeyToSuccess = $request->mKeyToSuccess;
+            $tops->idealRef = $request->has('idealRef') ? $request->idealRef : $tops->idealRef;
+            $tops->topProduct = $request->has('topProduct') ? $request->topProduct : $tops->topProduct;
+            $tops->topProblemSolved = $request->has('topProblemSolved') ? $request->topProblemSolved : $tops->topProblemSolved;
+            $tops->myFavBNIStory = $request->has('myFavBNIStory') ? $request->myFavBNIStory : $tops->myFavBNIStory;
+            $tops->myIdealRefPartner = $request->has('myIdealRefPartner') ? $request->myIdealRefPartner : $tops->myIdealRefPartner;
+            $tops->weeklyPresent1 = $request->has('weeklyPresent1') ? $request->weeklyPresent1 : $tops->weeklyPresent1;
+            $tops->weeklyPresent2 = $request->has('weeklyPresent2') ? $request->weeklyPresent2 : $tops->weeklyPresent2;
+            $tops->yearsInBusiness = $request->has('yearsInBusiness') ? $request->yearsInBusiness : $tops->yearsInBusiness;
+            $tops->prevJobs = $request->has('prevJobs') ? $request->prevJobs : $tops->prevJobs;
+            $tops->spouse = $request->has('spouse') ? $request->spouse : $tops->spouse;
+            $tops->children = $request->has('children') ? $request->children : $tops->children;
+            $tops->pets = $request->has('pets') ? $request->pets : $tops->pets;
+            $tops->hobbiesInterests = $request->has('hobbiesInterests') ? $request->hobbiesInterests : $tops->hobbiesInterests;
+            $tops->cityofRes = $request->has('cityofRes') ? $request->cityofRes : $tops->cityofRes;
+            $tops->yearsInCity = $request->has('yearsInCity') ? $request->yearsInCity : $tops->yearsInCity;
+            $tops->myBurningDesire = $request->has('myBurningDesire') ? $request->myBurningDesire : $tops->myBurningDesire;
+            $tops->dontKnowAboutMe = $request->has('dontKnowAboutMe') ? $request->dontKnowAboutMe : $tops->dontKnowAboutMe;
+            $tops->mKeyToSuccess = $request->has('mKeyToSuccess') ? $request->mKeyToSuccess : $tops->mKeyToSuccess;
             $tops->status = 'Active';
             $tops->save();
 
             // Update ContactDetails
-            // $contact = ContactDetails::where('memberId', $member->id)->firstOrFail();
-            $contact = ContactDetails::findOrFail($member->id);
+            // return $member;
+            $contact = ContactDetails::where('memberId', $member->id)->firstOrFail();
+            // return $contact = ContactDetails::findOrFail($member->id);
 
-            $contact->showMeOnPublicWeb = $request->showMeOnPublicWeb;
-            $contact->billingAddress = $request->billingAddress;
-            $contact->phone = $request->phone;
-            $contact->showPhone = $request->showPhone;
-            $contact->directNo = $request->directNo;
-            $contact->showDirectNo = $request->showDirectNo;
-            $contact->home = $request->home;
-            $contact->mobileNo = $request->mobileNo;
-            $contact->showMobileNo = $request->showMobileNo;
-            $contact->pager = $request->pager;
-            $contact->voiceMail = $request->voiceMail;
-            $contact->tollFree = $request->tollFree;
-            $contact->showTollFree = $request->showTollFree;
-            $contact->fax = $request->fax;
-            $contact->showFax = $request->showFax;
-            $contact->email = $request->email;
-            $contact->showEmail = $request->showEmail;
-            $contact->addressLine1 = $request->addressLine1;
-            $contact->addressLine2 = $request->addressLine2;
+            $contact->showMeOnPublicWeb = $request->has('showMeOnPublicWeb') ? $request->showMeOnPublicWeb : $contact->showMeOnPublicWeb;
+            $contact->billingAddress = $request->has('billingAddress') ? $request->billingAddress : $contact->billingAddress;
+            $contact->phone = $request->has('phone') ? $request->phone : $contact->phone;
+            $contact->showPhone = $request->has('showPhone') ? $request->showPhone : $contact->showPhone;
+            $contact->directNo = $request->has('directNo') ? $request->directNo : $contact->directNo;
+            $contact->showDirectNo = $request->has('showDirectNo') ? $request->showDirectNo : $contact->showDirectNo;
+            $contact->home = $request->has('home') ? $request->home : $contact->home;
+            $contact->mobileNo = $request->has('mobileNo') ? $request->mobileNo : $contact->mobileNo;
+            $contact->showMobileNo = $request->has('showMobileNo') ? $request->showMobileNo : $contact->showMobileNo;
+            $contact->pager = $request->has('pager') ? $request->pager : $contact->pager;
+            $contact->voiceMail = $request->has('voiceMail') ? $request->voiceMail : $contact->voiceMail;
+            $contact->tollFree = $request->has('tollFree') ? $request->tollFree : $contact->tollFree;
+            $contact->showTollFree = $request->has('showTollFree') ? $request->showTollFree : $contact->showTollFree;
+            $contact->fax = $request->has('fax') ? $request->fax : $contact->fax;
+            $contact->showFax = $request->has('showFax') ? $request->showFax : $contact->showFax;
+            $contact->email = $request->has('email') ? $request->email : $contact->email;
+            $contact->showEmail = $request->has('showEmail') ? $request->showEmail : $contact->showEmail;
+            $contact->addressLine1 = $request->has('addressLine1') ? $request->addressLine1 : $contact->addressLine1;
+            $contact->addressLine2 = $request->has('addressLine2') ? $request->addressLine2 : $contact->addressLine2;
+
             // $contact->profileAddress = $request->profileAddress;
-            $contact->city = $request->city;
-            $contact->state = $request->state;
-            $contact->country = $request->country;
-            $contact->pinCode = $request->pinCode;
+            $contact->city = $request->has('city') ? $request->city : $contact->city;
+            $contact->state = $request->has('state') ? $request->state : $contact->state;
+            $contact->country = $request->has('country') ? $request->country : $contact->country;
+            $contact->pinCode = $request->has('pinCode') ? $request->pinCode : $contact->pinCode;
             $contact->status = 'Active';
             $contact->save();
 
             // Update BillingAddress
             $billing = BillingAddress::where('memberId', $member->id)->firstOrFail();
-            $billing->bAddressLine1 = $request->bAddressLine1;
-            $billing->bAddressLine2 = $request->bAddressLine2;
-            $billing->bCity = $request->bCity;
-            $billing->bState = $request->bState;
-            $billing->bCountry = $request->bCountry;
-            $billing->bPinCode = $request->bPinCode;
+            $billing->bAddressLine1 = $request->has('bAddressLine1') ? $request->bAddressLine1 : $billing->bAddressLine1;
+            $billing->bAddressLine2 = $request->has('bAddressLine2') ? $request->bAddressLine2 : $billing->bAddressLine2;
+            $billing->bCity = $request->has('bCity') ? $request->bCity : $billing->bCity;
+            $billing->bState = $request->has('bState') ? $request->bState : $billing->bState;
+            $billing->bCountry = $request->has('bCountry') ? $request->bCountry : $billing->bCountry;
+            $billing->bPinCode = $request->has('bPinCode') ? $request->bPinCode : $billing->bPinCode;
             $billing->status = 'Active';
             $billing->save();
+
+            $user = User::find($member->userId);
+            $user->email = $request->has('email') ? $request->email : $user->email;
+            $user->firstName = $request->has('firstName') ? $request->firstName : $user->firstName;
+            $user->lastName = $request->has('lastName') ? $request->lastName : $user->lastName;
+            $user->contactNo = $request->has('contactNo') ? $request->contactNo : $user->contactNo;
+            $user->save();
 
 
             return redirect()->route('circlemember.index')->with('success', 'Member Updated Successfully!');
