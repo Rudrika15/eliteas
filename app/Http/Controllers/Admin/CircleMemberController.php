@@ -617,7 +617,7 @@ class CircleMemberController extends Controller
         try {
             // Validate the incoming request
             $request->validate([
-                'memberId' => 'required|exists:circle_members,id',
+                'memberId' => 'required|exists:members,id',
                 'roleId' => 'required|exists:roles,id',
             ]);
 

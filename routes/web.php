@@ -77,6 +77,12 @@ Route::post('/razorpay-payment-visitor', [PaymentController::class, 'storePaymen
 Route::get('visitor-form', [VisitorFormController::class, 'visitorForm'])->name('visitor.form');
 Route::post('visitor-form-store', [VisitorFormController::class, 'store'])->name('visitor.form.store');
 
+
+//new visitorform
+Route::get('visitor-form-view', [VisitorFormController::class, 'visitorsFormView'])->name('visitors.form.view');
+Route::post('visitors-form-user', [VisitorFormController::class, 'visitorStore'])->name('visitors.form.store');
+
+
 Route::get('/server-error', function () {
     return view('servererror'); // This will render the custom error page
 })->name('server.error');

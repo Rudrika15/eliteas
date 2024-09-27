@@ -2,9 +2,10 @@
 
 namespace App\Exceptions;
 
-use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
-use Illuminate\Http\Exceptions\PostTooLargeException;
 use Throwable;
+use App\Utils\ErrorLogger;
+use Illuminate\Http\Exceptions\PostTooLargeException;
+use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
 class Handler extends ExceptionHandler
 {
@@ -29,9 +30,23 @@ class Handler extends ExceptionHandler
         });
     }
 
+    public function report(Throwable $exception)
+    {
+        // Log the error into the database with file and line number
+        ErrorLogger::logError($exception);
+
+        // Let Laravel handle the exception
+        parent::report($exception);
+    }
+    
 
     public function render($request, Throwable $exception)
     {
+
+        if ($this->isHttpException($exception)) {
+            return response()->view('servererror', [], 500);
+        }
+
         if ($exception instanceof PostTooLargeException) {
             return redirect()->back()->withErrors(['file' => 'Please select a file with a maximum size of 2MB.']);
         }

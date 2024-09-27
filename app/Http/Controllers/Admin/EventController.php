@@ -211,6 +211,7 @@ class EventController extends Controller
             $eventRegister = new EventRegister();
             $eventRegister->eventId = $request->eventId;
             $eventRegister->memberId = Auth::user()->member->id;
+            $eventRegister->PaymentStatus = "Event Is Free";
             $eventRegister->save();
 
             return redirect()->back()->with('success', 'Your data is saved successfully.');

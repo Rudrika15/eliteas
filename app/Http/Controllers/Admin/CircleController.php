@@ -137,16 +137,16 @@ class CircleController extends Controller
                     if ($meetingDate && $meetingDate->month == $startOfMonth->month) {
                         if ($meetingDate->isFuture()) {
                             $futureMeetingFound = true; // Future meeting found
-                            
+
                             // Create a basic slug using the circle name and meeting date
                             $slug = Str::slug($circle->circleName . '-' . $meetingDate->format('Y-m-d'));
-                    
+
                             // Check if the slug already exists
                             if (Schedule::where('cm_slug', $slug)->exists()) {
                                 // If it exists, append a unique identifier
                                 $slug = $slug . '-' . uniqid();
                             }
-                    
+
                             // Create and save the new schedule
                             $schedule = new Schedule();
                             $schedule->circleId = $circle->id;
@@ -156,7 +156,6 @@ class CircleController extends Controller
                             $schedule->save();
                         }
                     }
-                    
                 }
 
                 return $futureMeetingFound;
@@ -359,17 +358,17 @@ class CircleController extends Controller
                         $existingMeeting = Schedule::where('circleId', $circle->id)
                             ->whereDate('date', $meetingDate->format('Y-m-d'))
                             ->first();
-                    
+
                         if (!$existingMeeting) {
                             // Create a basic slug using the circle name and meeting date
                             $slug = Str::slug($circle->circleName . '-' . $meetingDate->format('Y-m-d'));
-                    
+
                             // Check if the slug already exists
                             if (Schedule::where('cm_slug', $slug)->exists()) {
                                 // If it exists, append a unique identifier
                                 $slug = $slug . '-' . uniqid();
                             }
-                    
+
                             // Create and save the new schedule
                             $schedule = new Schedule();
                             $schedule->circleId = $circle->id;
@@ -381,11 +380,10 @@ class CircleController extends Controller
                             $schedule->status = 'Active';
                             $schedule->cm_slug = $slug; // Store the generated slug
                             $schedule->save();
-                    
+
                             $futureMeetingFound = true;
                         }
                     }
-                    
                 }
 
                 return $futureMeetingFound;
@@ -410,6 +408,10 @@ class CircleController extends Controller
             }
         } catch (\Throwable $th) {
             // throw $th;
+            ErrorLogger::logError(
+                $th,
+                $request->fullUrl()
+            );
             return view('servererror');
         }
     }

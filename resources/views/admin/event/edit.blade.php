@@ -78,7 +78,7 @@
                 <div class="col-md-6">
                     <div class="form-floating mt-3">
                         <input type="file" class="form-control @error('event_banner') is-invalid @enderror"
-                            id="event_banner" name="event_banner" accept="image/*" onchange="previewPhoto2(event)" required
+                            id="event_banner" name="event_banner" accept="image/*" onchange="previewPhoto2(event)" 
                             {{ ($oldEventBanner = $event->event_banner) ? 'data-old-value="' . $oldEventBanner . '"' : '' }}>
                         <label for="event_banner">Event Banner</label>
                         <div class="mt-1">
@@ -121,7 +121,7 @@
                 <div class="col-md-6">
                     <div class="form-floating mt-3">
                         <input type="file" class="form-control @error('event_thumb') is-invalid @enderror"
-                            id="event_thumb" name="event_thumb" accept="image/*" onchange="previewPhoto(event)" required
+                            id="event_thumb" name="event_thumb" accept="image/*" onchange="previewPhoto(event)" 
                             {{ ($oldEventThumb = $event->event_thumb) ? 'data-old-value="' . $oldEventThumb . '"' : '' }}>
                         <label for="event_thumb">Event Thumbnail</label>
                         <div class="mt-1">

@@ -9,7 +9,8 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h4 class="card-title">Circle Member</h4>
-                    <a href="{{ route('circlemember.create') }}" class="btn btn-bg-orange btn-sm mt-3 btn-tooltip"><i class="bi bi-plus-circle"></i>
+                    <a href="{{ route('circlemember.create') }}" class="btn btn-bg-orange btn-sm mt-3 btn-tooltip"><i
+                            class="bi bi-plus-circle"></i>
                         <span class="btn-text">Add Member</span>
                     </a>
                 </div>
@@ -88,7 +89,8 @@
                             @foreach ($member as $circlememberData)
                                 <tr>
                                     <td>{{ $circlememberData->circle->circleName ?? '-' }}</td>
-                                    <td>{{ $circlememberData->firstName ?? '-' }} {{ $circlememberData->lastName ?? '' }}</td>
+                                    <td>{{ $circlememberData->firstName ?? '-' }} {{ $circlememberData->lastName ?? '' }}
+                                    </td>
                                     <td>{{ $circlememberData->bCategory->categoryName ?? '-' }}</td>
                                     <td>{{ $circlememberData->membershipType ?? '-' }} </td>
                                     <td>
@@ -100,15 +102,18 @@
                                         @endforeach
                                     </td>
                                     <td>
-                                        <a href="{{ route('circlemember.activity', $circlememberData->id) }}" class="btn btn-bg-orange btn-sm btn-tooltip">
+                                        <a href="{{ route('circlemember.activity', $circlememberData->id) }}"
+                                            class="btn btn-bg-orange btn-sm btn-tooltip">
                                             <i class="bi bi-info-circle"></i>
                                             <span class="btn-text">Activity</span>
                                         </a>
-                                        <a href="{{ route('circlemember.edit', $circlememberData->id) }}" class="btn btn-bg-blue btn-sm btn-tooltip">
+                                        <a href="{{ route('circlemember.edit', $circlememberData->id) }}"
+                                            class="btn btn-bg-blue btn-sm btn-tooltip">
                                             <i class="bi bi-pen"></i>
                                             <span class="btn-text">Edit Member</span>
                                         </a>
-                                        <a href="{{ route('circlemember.delete', $circlememberData->id) }}" class="btn btn-danger btn-sm btn-tooltip">
+                                        <a href="{{ route('circlemember.delete', $circlememberData->id) }}"
+                                            class="btn btn-danger btn-sm btn-tooltip">
                                             <i class="bi bi-trash"></i>
                                             <span class="btn-text">Delete Member</span>
                                         </a>
@@ -118,33 +123,44 @@
                                 </a> --}}
                                     </td>
                                     <td>
-                                        <button type="button" class="btn btn-bg-blue btn-sm btn-tooltip" data-bs-toggle="modal" data-bs-target="#assignRoleModal{{ $circlememberData->id }}"><i class="bi bi-person-plus"></i>
+                                        <button type="button" class="btn btn-bg-blue btn-sm btn-tooltip"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#assignRoleModal{{ $circlememberData->id }}"><i
+                                                class="bi bi-person-plus"></i>
                                             <span class="btn-text">Assign Role</span>
                                         </button>
 
                                         {{-- Modal --}}
 
-                                        <div class="modal fade" id="assignRoleModal{{ $circlememberData->id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="assignRoleModalLabel" aria-hidden="true">
+                                        <div class="modal fade" id="assignRoleModal{{ $circlememberData->id }}"
+                                            data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                                            aria-labelledby="assignRoleModalLabel" aria-hidden="true">
                                             <div class="modal-dialog modal-dialog-centered">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
                                                         <h5 class="modal-title" id="assignRoleModalLabel">Assign Role</h5>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                            aria-label="Close"></button>
                                                     </div>
                                                     <div class="modal-body">
                                                         <form action="{{ route('assign.role') }}" method="POST">
                                                             @csrf
-                                                            <input type="hidden" name="memberId" value="{{ $circlememberData->id }}">
+                                                            <input type="hidden" name="memberId"
+                                                                value="{{ $circlememberData->id }}">
                                                             <select name="roleId" class="form-select">
                                                                 <option value="">Select Role</option>
                                                                 @foreach ($roles as $role)
-                                                                    @if (!in_array($role->name, ['Franchise Admin', 'Member', 'Admin', 'Trainer']))
-                                                                        <option value="{{ $role->id }}">{{ $role->name }}</option>
+                                                                    @if (!in_array($role->name, ['Franchise Admin', 'Member', 'Admin', 'Trainer']) && !$circlememberData->user->roles->contains($role->id))
+                                                                        <option value="{{ $role->id }}">
+                                                                            {{ $role->name }}</option>
                                                                     @endif
                                                                 @endforeach
                                                             </select>
-                                                            <button type="submit" class="btn btn-primary btn-sm">Assign</button>
-                                                        </form>
+                                                            <div class="mt-3">
+                                                            <button type="submit"
+                                                                class="btn btn-primary btn-sm">Assign</button>
+                                                            </div>
+                                                            </form>
                                                     </div>
                                                 </div>
                                             </div>
@@ -152,31 +168,42 @@
 
                                         {{-- //remove role --}}
 
-                                        <button type="button" class="btn btn-danger btn-sm btn-tooltip" data-bs-toggle="modal" data-bs-target="#removeRoleModal{{ $circlememberData->id }}"><i class="bi bi-trash"></i>
+                                        <button type="button" class="btn btn-danger btn-sm btn-tooltip"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#removeRoleModal{{ $circlememberData->id }}"><i
+                                                class="bi bi-trash"></i>
                                             <span class="btn-text">Remove Role</span>
                                         </button>
                                         {{-- Modal --}}
 
-                                        <div class="modal fade" id="removeRoleModal{{ $circlememberData->id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="removeRoleModalLabel" aria-hidden="true">
+                                        <div class="modal fade" id="removeRoleModal{{ $circlememberData->id }}"
+                                            data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                                            aria-labelledby="removeRoleModalLabel" aria-hidden="true">
                                             <div class="modal-dialog modal-dialog-centered">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
                                                         <h5 class="modal-title" id="removeRoleModalLabel">Remove Role</h5>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                            aria-label="Close"></button>
                                                     </div>
                                                     <div class="modal-body">
                                                         <form action="{{ route('remove.role') }}" method="POST">
                                                             @csrf
-                                                            <input type="hidden" name="memberId" value="{{ $circlememberData->id }}">
+                                                            <input type="hidden" name="memberId"
+                                                                value="{{ $circlememberData->id }}">
                                                             <select name="roleId" class="form-select">
                                                                 <option value="">Select Role</option>
                                                                 @foreach ($circlememberData->user->roles as $role)
                                                                     @if (!in_array($role->name, ['Member', 'Trainer', 'Admin']))
-                                                                        <option value="{{ $role->id }}">{{ $role->name }}</option>
+                                                                        <option value="{{ $role->id }}">
+                                                                            {{ $role->name }}</option>
                                                                     @endif
                                                                 @endforeach
                                                             </select>
-                                                            <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+                                                            <div class="mt-3">
+                                                                <button type="submit"
+                                                                    class="btn btn-danger btn-sm justify-content-end">Remove</button>
+                                                            </div>
                                                         </form>
                                                     </div>
                                                 </div>
@@ -295,8 +322,10 @@
                         console.log('Row circle name:', circleName);
 
 
-                        if ((categoryId !== '' && categoryName !== $('#categoryId option:selected').text().trim()) ||
-                            (circleId !== '' && circleName !== $('#circleId option:selected').text().trim())) {
+                        if ((categoryId !== '' && categoryName !== $('#categoryId option:selected').text()
+                                .trim()) ||
+                            (circleId !== '' && circleName !== $('#circleId option:selected').text().trim())
+                        ) {
                             $(this).hide();
                         } else {
                             $(this).show();

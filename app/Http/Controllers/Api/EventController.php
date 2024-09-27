@@ -34,49 +34,48 @@ class EventController extends Controller
     }
 
     public function index(Request $request)
-{
-    try {
-        // Get the authenticated user based on the Bearer token
-        $authUser = auth()->user();
+    {
+        try {
+            // Get the authenticated user based on the Bearer token
+            $authUser = auth()->user();
 
-        // Check if the user exists and get their member ID from the members table
-        $memberId = Member::where('userId', $authUser->id)->value('id');
+            // Check if the user exists and get their member ID from the members table
+            $memberId = Member::where('userId', $authUser->id)->value('id');
 
-        if (!$memberId) {
-            return Utils::errorResponse([
-                'error' => 'Member not found.'
-            ], 'Not Found', 404);
-        }
+            if (!$memberId) {
+                return Utils::errorResponse([
+                    'error' => 'Member not found.'
+                ], 'Not Found', 404);
+            }
 
-        // Get the nearest upcoming event that is associated with the member and exclude past events
-        $event = Event::with(['circle', 'registrations' => function($query) use ($memberId) {
-            // Get the registration details from event_registers table for the member
-            $query->where('memberId', $memberId);
-        }])
-        ->where('status', 'Active')
-        ->where('event_date', '>=', now()) // Only get upcoming events
-        ->orderBy('event_date', 'ASC') // Order by nearest date
-        ->first(); // Get the closest event
+            // Get the nearest upcoming event that is associated with the member and exclude past events
+            $event = Event::with(['circle', 'registrations' => function ($query) use ($memberId) {
+                // Get the registration details from event_registers table for the member
+                $query->where('memberId', $memberId);
+            }])
+                ->where('status', 'Active')
+                ->where('event_date', '>=', now()) // Only get upcoming events
+                ->orderBy('event_date', 'ASC') // Order by nearest date
+                ->first(); // Get the closest event
 
-        // Check if no upcoming event is found
-        if (!$event) {
+            // Check if no upcoming event is found
+            if (!$event) {
+                return Utils::sendResponse([
+                    'message' => 'No events for now.'
+                ], 'No upcoming events', 200);
+            }
+
+            // Return the response with the nearest event and its registration details
             return Utils::sendResponse([
-                'message' => 'No events for now.'
-            ], 'No upcoming events', 200);
+                'event' => $event
+            ], 'Nearest event retrieved successfully', 200);
+        } catch (\Throwable $th) {
+            // Return with an error message
+            return Utils::errorResponse([
+                'error' => 'Failed to retrieve event. Please try again.'
+            ], 'Internal Server Error', 500);
         }
-
-        // Return the response with the nearest event and its registration details
-        return Utils::sendResponse([
-            'event' => $event
-        ], 'Nearest event retrieved successfully', 200);
-        
-    } catch (\Throwable $th) {
-        // Return with an error message
-        return Utils::errorResponse([
-            'error' => 'Failed to retrieve event. Please try again.'
-        ], 'Internal Server Error', 500);
     }
-}
 
 
 
@@ -85,10 +84,20 @@ class EventController extends Controller
     {
         try {
             $eventReg = new EventRegister();
+
+            $isRegistered = EventRegister::where('memberId', auth()->user()->member->id)
+                ->where('eventId', $request->eventId)
+                ->exists();
+
+            if ($isRegistered) {
+                return Utils::errorResponse([
+                    'error' => 'You are already registered for this event.'
+                ], 'Already Registered', 400);
+            }
+
+            $eventReg->memberId = auth()->user()->member->id;
             $eventReg->eventId = $request->eventId;
-            $eventReg->personName = $request->personName;
-            $eventReg->personEmail = $request->personEmail;
-            $eventReg->personContact = $request->personContact;
+            $eventReg->paymentStatus = 'Event Is Free';
             $eventReg->save();
 
             return Utils::sendResponse([], 'Your data is saved successfully.', 201);
@@ -99,6 +108,8 @@ class EventController extends Controller
             ], 'Internal Server Error', 500);
         }
     }
+
+
     public function checkRegistration(Request $request)
     {
         try {
