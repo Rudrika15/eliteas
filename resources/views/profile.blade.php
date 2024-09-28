@@ -3,283 +3,290 @@
 @section('title', 'UBN - Update Profile')
 @section('content')
 
-{{-- 426957587522
+    {{-- 426957587522
 10154837867 --}}
 
-{{-- Message --}}
-@if (Session::has('success'))
-<div class="alert alert-success alert-dismissible" role="alert">
-    <button type="button" class="close" data-dismiss="alert">
-        {{-- <i class="fa fa-times"></i> --}}
-    </button>
-    <strong>Success !</strong> {{ session('success') }}
-</div>
-@endif
-
-@if (Session::has('error'))
-<div class="alert alert-danger alert-dismissible" role="alert">
-    <button type="button" class="close" data-dismiss="alert">
-        {{-- <i class="fa fa-times"></i> --}}
-    </button>
-    <strong>Error !</strong> {{ session('error') }}
-</div>
-@endif
-
-
-
-
-<div class="card">
-    <div class="card-body d-flex justify-content-between align-items-center">
-        <h5 class="card-title">My Profile</h5>
-    </div>
-
-    <!-- Floating Labels Form -->
-    <form class="m-3 needs-validation" id="memberForm" enctype="multipart/form-data" method="post"
-        action="{{ route('member.update', $member->userId) }}" novalidate>
-        @csrf
-
-        @if ($errors->has('file'))
-        <div class="alert alert-danger">
-            {{ $errors->first('file') }}
+    {{-- Message --}}
+    @if (Session::has('success'))
+        <div class="alert alert-success alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert">
+                {{-- <i class="fa fa-times"></i> --}}
+            </button>
+            <strong>Success !</strong> {{ session('success') }}
         </div>
-        @endif
+    @endif
+
+    @if (Session::has('error'))
+        <div class="alert alert-danger alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert">
+                {{-- <i class="fa fa-times"></i> --}}
+            </button>
+            <strong>Error !</strong> {{ session('error') }}
+        </div>
+    @endif
 
 
-        <input type="hidden" name="id" value="{{ $member->id }}">
-        <div class="accordion" id="accordionExample">
-            <!-- Section 1 -->
-            <div class="accordion-item mt-3">
-                <h2 class="accordion-header" id="headingOne">
-                    <button class="accordion-button" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                        Personal Information
-                    </button>
-                </h2>
-                <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
-                    data-bs-parent="#accordionExample">
-                    <div class="accordion-body">
-                        <div class="row">
-                            <div class="col-md-6 mt-3">
-                                <div class="form-floating">
-                                    <input type="text" class="form-control @error('title') is-invalid @enderror"
-                                        id="title" name="title" value="{{ $member->title ?? '-' }}" placeholder="title">
-                                    <label for="title">Title</label>
-                                    @error('title')
-                                    <div class="invalid-tooltip">
-                                        {{ $message }}
-                                    </div>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div class="col-md-6 mt-3">
-                                <div class="form-floating">
-                                    <input type="text" class="form-control @error('firstName') is-invalid @enderror"
-                                        id="firstName" name="firstName" value="{{ $user->firstName ?? '-' }}"
-                                        placeholder="First Name">
-                                    <label for="firstName">First Name</label>
-                                    @error('firstName')
-                                    <div class="invalid-tooltip">
-                                        {{ $message }}
-                                    </div>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div class="col-md-6 mt-3">
-                                <div class="form-floating">
-                                    <input type="text" class="form-control @error('lastName') is-invalid @enderror"
-                                        id="lastName" name="lastName" value="{{ $user->lastName ?? '-' }}"
-                                        placeholder="Last Name">
-                                    <label for="lastName">Last Name</label>
-                                    @error('lastName')
-                                    <div class="invalid-tooltip">
-                                        {{ $message }}
-                                    </div>
-                                    @enderror
-                                </div>
-                            </div>
 
-                            <div class="col-md-6 mt-3">
-                                <div class="form-floating">
-                                    <input type="text" class="form-control @error('email') is-invalid @enderror"
-                                        id="email" name="email" value="{{ $user->email ?? '-' }}" placeholder="email">
-                                    <label for="email">Email</label>
-                                    @error('email')
-                                    <div class="invalid-tooltip">
-                                        {{ $message }}
-                                    </div>
-                                    @enderror
-                                </div>
-                            </div>
 
-                            <div class="col-md-6 mt-3">
-                                <div class="form-floating">
-                                    <input type="text" class="form-control @error('contactNo') is-invalid @enderror"
-                                        id="contactNo" name="contactNo" value="{{ $user->contactNo ?? '-' }}"
-                                        placeholder="Mobile No">
-                                    <label for="contactNo">Mobile No</label>
-                                    @error('contactNo')
-                                    <div class="invalid-tooltip">
-                                        {{ $message }}
-                                    </div>
-                                    @enderror
-                                </div>
-                            </div>
+    <div class="card">
+        <div class="card-body d-flex justify-content-between align-items-center">
+            <h5 class="card-title">My Profile</h5>
+        </div>
 
-                            <div class="col-md-6 mt-3">
-                                <?php
+        <!-- Floating Labels Form -->
+        <form class="m-3 needs-validation" id="memberForm" enctype="multipart/form-data" method="post"
+            action="{{ route('member.update', $member->userId) }}" novalidate>
+            @csrf
+
+            @if ($errors->has('file'))
+                <div class="alert alert-danger">
+                    {{ $errors->first('file') }}
+                </div>
+            @endif
+
+
+            <input type="hidden" name="id" value="{{ $member->id }}">
+            <div class="accordion" id="accordionExample">
+                <!-- Section 1 -->
+                <div class="accordion-item mt-3">
+                    <h2 class="accordion-header" id="headingOne">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                            Personal Information
+                        </button>
+                    </h2>
+                    <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
+                        data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                            <div class="row">
+                                <div class="col-md-6 mt-3">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control @error('title') is-invalid @enderror"
+                                            id="title" name="title" value="{{ $member->title ?? '-' }}"
+                                            placeholder="title">
+                                        <label for="title">Title</label>
+                                        @error('title')
+                                            <div class="invalid-tooltip">
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mt-3">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control @error('firstName') is-invalid @enderror"
+                                            id="firstName" name="firstName" value="{{ $user->firstName ?? '-' }}"
+                                            placeholder="First Name">
+                                        <label for="firstName">First Name</label>
+                                        @error('firstName')
+                                            <div class="invalid-tooltip">
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mt-3">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control @error('lastName') is-invalid @enderror"
+                                            id="lastName" name="lastName" value="{{ $user->lastName ?? '-' }}"
+                                            placeholder="Last Name">
+                                        <label for="lastName">Last Name</label>
+                                        @error('lastName')
+                                            <div class="invalid-tooltip">
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 mt-3">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control @error('email') is-invalid @enderror"
+                                            id="email" name="email" value="{{ $user->email ?? '-' }}"
+                                            placeholder="email">
+                                        <label for="email">Email</label>
+                                        @error('email')
+                                            <div class="invalid-tooltip">
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 mt-3">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control @error('contactNo') is-invalid @enderror"
+                                            id="contactNo" name="contactNo" value="{{ $user->contactNo ?? '-' }}"
+                                            placeholder="Mobile No">
+                                        <label for="contactNo">Mobile No</label>
+                                        @error('contactNo')
+                                            <div class="invalid-tooltip">
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 mt-3">
+                                    <?php
     
                                 
                                 
                                 if($member->gender === "male") 
                                 {
                                 ?>
-                                <div class="form-floating">
-                                    <div class="form-check">
-                                        <input class="form-check-input" checked type="radio" name="gender" id="gender"
-                                            value="male" checked>
-                                        <label class="form-check-label" for="gender">
-                                            Male
-                                        </label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="gender" id="gender"
-                                            value="female">
-                                        <label class="form-check-label" for="gender">
-                                            Female
-                                        </label>
-                                    </div>
+                                    <div class="form-floating">
+                                        <div class="form-check">
+                                            <input class="form-check-input" checked type="radio" name="gender"
+                                                id="gender" value="male" checked>
+                                            <label class="form-check-label" for="gender">
+                                                Male
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="gender" id="gender"
+                                                value="female">
+                                            <label class="form-check-label" for="gender">
+                                                Female
+                                            </label>
+                                        </div>
 
-                                    @error('gender')
-                                    <div class="invalid-tooltip">
-                                        {{ $message }}
+                                        @error('gender')
+                                            <div class="invalid-tooltip">
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
                                     </div>
-                                    @enderror
-                                </div>
-                                <?php } 
+                                    <?php } 
                                 else {?>
-                                <div class="form-floating">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="gender" id="gender"
-                                            value="male">
-                                        <label class="form-check-label" for="gender">
-                                            Male
-                                        </label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" checked type="radio" name="gender" id="gender"
-                                            value="female" checked>
-                                        <label class="form-check-label" for="gender">
-                                            Female
-                                        </label>
-                                    </div>
+                                    <div class="form-floating">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="gender" id="gender"
+                                                value="male">
+                                            <label class="form-check-label" for="gender">
+                                                Male
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" checked type="radio" name="gender"
+                                                id="gender" value="female" checked>
+                                            <label class="form-check-label" for="gender">
+                                                Female
+                                            </label>
+                                        </div>
 
-                                    @error('gender')
-                                    <div class="invalid-tooltip">
-                                        {{ $message }}
+                                        @error('gender')
+                                            <div class="invalid-tooltip">
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
                                     </div>
-                                    @enderror
+                                    <?php } ?>
                                 </div>
-                                <?php } ?>
-                            </div>
 
-                            <div class="col-md-6 mt-3">
-                                <div class="form-floating">
-                                    <input type="text" class="form-control @error('companyName') is-invalid @enderror"
-                                        id="companyName" name="companyName" value="{{ $member->companyName ?? '-' }}"
-                                        placeholder="Company Name">
-                                    <label for="companyName">Company Name</label>
-                                    @error('companyName')
-                                    <div class="invalid-tooltip">
-                                        {{ $message }}
+                                <div class="col-md-6 mt-3">
+                                    <div class="form-floating">
+                                        <input type="text"
+                                            class="form-control @error('companyName') is-invalid @enderror"
+                                            id="companyName" name="companyName"
+                                            value="{{ $member->companyName ?? '-' }}" placeholder="Company Name">
+                                        <label for="companyName">Company Name</label>
+                                        @error('companyName')
+                                            <div class="invalid-tooltip">
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
                                     </div>
-                                    @enderror
                                 </div>
-                            </div>
-                            <div class="col-md-6 mt-3">
-                                <div class="form-floating">
-                                    <input type="text" class="form-control @error('gStinPan') is-invalid @enderror"
-                                        id="gStinPan" name="gStinPan" value="{{ $member->gstinPan ?? '-' }}"
-                                        placeholder="GSTIN / PAN">
-                                    <label for="gStinPan">GSTIN / PAN </label>
-                                    @error('gStinPan')
-                                    <div class="invalid-tooltip">
-                                        {{ $message }}
+                                <div class="col-md-6 mt-3">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control @error('gStinPan') is-invalid @enderror"
+                                            id="gStinPan" name="gStinPan" value="{{ $member->gstinPan ?? '-' }}"
+                                            placeholder="GSTIN / PAN">
+                                        <label for="gStinPan">GSTIN / PAN </label>
+                                        @error('gStinPan')
+                                            <div class="invalid-tooltip">
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
                                     </div>
-                                    @enderror
                                 </div>
-                            </div>
 
-                            <div class="col-md-6 mt-3">
-                                <div class="form-floating">
-                                    <input type="longText" class="form-control @error('keyWords') is-invalid @enderror"
-                                        id="keyWords" name="keyWords" value="{{ $member->keyWords ?? '-' }}"
-                                        placeholder="keyWords">
-                                    <label for="keyWords">Keywords (Comma Seperated)</label>
-                                    @error('keyWords')
-                                    <div class="invalid-tooltip">
-                                        {{ $message }}
+                                <div class="col-md-6 mt-3">
+                                    <div class="form-floating">
+                                        <input type="longText"
+                                            class="form-control @error('keyWords') is-invalid @enderror" id="keyWords"
+                                            name="keyWords" value="{{ $member->keyWords ?? '-' }}"
+                                            placeholder="keyWords">
+                                        <label for="keyWords">Keywords (Comma Seperated)</label>
+                                        @error('keyWords')
+                                            <div class="invalid-tooltip">
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
                                     </div>
-                                    @enderror
                                 </div>
-                            </div>
 
-                            <div class="col-md-6 mt-3">
-                                <div class="form-floating">
-                                    <input type="text" class="form-control @error('addressLine1') is-invalid @enderror"
-                                        id="addressLine1" name="addressLine1"
-                                        value="{{ $contactDetails->addressLine1 ?? '-' }}"
-                                        placeholder="Billing Address Line 1">
-                                    <label for="addressLine1">Address Line 1</label>
-                                    @error('addressLine1')
-                                    <div class="invalid-tooltip">
-                                        {{ $message }}
+                                <div class="col-md-6 mt-3">
+                                    <div class="form-floating">
+                                        <input type="text"
+                                            class="form-control @error('addressLine1') is-invalid @enderror"
+                                            id="addressLine1" name="addressLine1"
+                                            value="{{ $contactDetails->addressLine1 ?? '-' }}"
+                                            placeholder="Billing Address Line 1">
+                                        <label for="addressLine1">Address Line 1</label>
+                                        @error('addressLine1')
+                                            <div class="invalid-tooltip">
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
                                     </div>
-                                    @enderror
                                 </div>
-                            </div>
-                            <div class="col-md-6 mt-3">
-                                <div class="form-floating">
-                                    <input type="text" class="form-control @error('addressLine2') is-invalid @enderror"
-                                        id="addressLine2" name="addressLine2"
-                                        value="{{ $contactDetails->addressLine2 ?? '-' }}" placeholder="addressLine2">
-                                    <label for="addressLine2">Address Line 2 </label>
-                                    @error('addressLine2')
-                                    <div class="invalid-tooltip">
-                                        {{ $message }}
+                                <div class="col-md-6 mt-3">
+                                    <div class="form-floating">
+                                        <input type="text"
+                                            class="form-control @error('addressLine2') is-invalid @enderror"
+                                            id="addressLine2" name="addressLine2"
+                                            value="{{ $contactDetails->addressLine2 ?? '-' }}"
+                                            placeholder="addressLine2">
+                                        <label for="addressLine2">Address Line 2 </label>
+                                        @error('addressLine2')
+                                            <div class="invalid-tooltip">
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
                                     </div>
-                                    @enderror
                                 </div>
-                            </div>
-                            <div class="col-md-6 mt-3">
-                                <div class="form-floating">
-                                    <input type="text" class="form-control @error('webSite') is-invalid @enderror"
-                                        id="webSite" name="webSite" value="{{ $member->webSite ?? '-' }}"
-                                        placeholder="webSite">
-                                    <label for="webSite">Website</label>
-                                    @error('webSite')
-                                    <div class="invalid-tooltip">
-                                        {{ $message }}
+                                <div class="col-md-6 mt-3">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control @error('webSite') is-invalid @enderror"
+                                            id="webSite" name="webSite" value="{{ $member->webSite ?? '-' }}"
+                                            placeholder="webSite">
+                                        <label for="webSite">Website</label>
+                                        @error('webSite')
+                                            <div class="invalid-tooltip">
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
                                     </div>
-                                    @enderror
                                 </div>
-                            </div>
-                            <div class="col-md-6 mt-3">
-                                <div class="form-floating">
-                                    <input type="text"
-                                        class="form-control @error('businessCategory') is-invalid @enderror"
-                                        id="businessCategory" name="businessCategory"
-                                        value="{{ $member->bCategory->categoryName ?? '-' }}"
-                                        placeholder="businessCategory" readonly>
-                                    <label for="businessCategory">Business Category</label>
-                                    @error('businessCategory')
-                                    <div class="invalid-tooltip">
-                                        {{ $message }}
+                                <div class="col-md-6 mt-3">
+                                    <div class="form-floating">
+                                        <input type="text"
+                                            class="form-control @error('businessCategory') is-invalid @enderror"
+                                            id="businessCategory" name="businessCategory"
+                                            value="{{ $member->bCategory->categoryName ?? '-' }}"
+                                            placeholder="businessCategory" readonly>
+                                        <label for="businessCategory">Business Category</label>
+                                        @error('businessCategory')
+                                            <div class="invalid-tooltip">
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
                                     </div>
-                                    @enderror
                                 </div>
-                            </div>
 
-                            {{-- <div class="col-md-6 mt-3">
+                                {{-- <div class="col-md-6 mt-3">
                                 <div class="form-floating">
                                     <select class="form-select @error('country') is-invalid @enderror" id="country"
                                         name="country">
@@ -342,67 +349,69 @@
                             </div> --}}
 
 
-                            <div class="form-label-group mt-3">
-                                <div class="row">
-                                    <!-- Profile Photo Input -->
-                                    <div class="col-md-6">
-                                        <div class="form-label-group mt-3">
-                                            <label for="profilePhoto" class="fw-bold">Profile Photo <sup
-                                                    class="text-danger">*</sup></label>
-                                            <input type="file"
-                                                class="form-control @error('profilePhoto') is-invalid @enderror"
-                                                id="profilePhoto" name="profilePhoto" accept="image/*"
-                                                onchange="previewPhoto(event, 'photoPreview')">
-                                            <span class="text-danger mt-1 d-block">*
-                                                File size:Max 2MB</span>
-                                            <div style="width: 100px; height: 100px; position: relative;" class="mt-3">
-                                                <img id="photoPreview"
-                                                    src="{{ asset('ProfilePhoto/' . ($member->profilePhoto ?? 'default.jpg')) }}"
-                                                    style="width: 100%; height: 100%; object-fit: contain; aspect-ratio: 1/1;">
+                                <div class="form-label-group mt-3">
+                                    <div class="row">
+                                        <!-- Profile Photo Input -->
+                                        <div class="col-md-6">
+                                            <div class="form-label-group mt-3">
+                                                <label for="profilePhoto" class="fw-bold">Profile Photo <sup
+                                                        class="text-danger">*</sup></label>
+                                                <input type="file"
+                                                    class="form-control @error('profilePhoto') is-invalid @enderror"
+                                                    id="profilePhoto" name="profilePhoto" accept="image/*"
+                                                    onchange="previewPhoto(event, 'photoPreview')">
+                                                <span class="text-danger mt-1 d-block">*
+                                                    File size:Max 2MB</span>
+                                                <div style="width: 100px; height: 100px; position: relative;"
+                                                    class="mt-3">
+                                                    <img id="photoPreview"
+                                                        src="{{ asset('ProfilePhoto/' . ($member->profilePhoto ?? 'default.jpg')) }}"
+                                                        style="width: 100%; height: 100%; object-fit: contain; aspect-ratio: 1/1;">
+                                                </div>
+
+                                                <!-- Display Profile Photo Error -->
+                                                @error('profilePhoto')
+                                                    <span class="text-danger">The Maximum File Size is 2MB</span>
+                                                @enderror
+
                                             </div>
-
-                                            <!-- Display Profile Photo Error -->
-                                            @error('profilePhoto')
-                                            <span class="text-danger">{{ $message }}</span>
-                                            @enderror
-
                                         </div>
-                                    </div>
 
-                                    <!-- Company Logo Input -->
-                                    <div class="col-md-6">
-                                        <div class="form-label-group mt-3">
-                                            <label for="companyLogo" class="fw-bold">Company Logo <sup
-                                                    class="text-danger">*</sup></label>
-                                            <input type="file"
-                                                class="form-control @error('companyLogo') is-invalid @enderror"
-                                                id="companyLogo" name="companyLogo" accept="image/*"
-                                                onchange="previewPhoto(event, 'logoPreview')">
-                                            <span class="text-danger mt-1 d-block">*
-                                                File size:Max 2MB</span>
-                                            <div style="width: 100px; height: 100px; position: relative;" class="mt-3">
-                                                <img id="logoPreview"
-                                                    src="{{ asset('CompanyLogo/' . ($member->companyLogo ?? 'default.jpg')) }}"
-                                                    style="width: 100%; height: 100%; object-fit: contain; aspect-ratio: 1/1;">
+                                        <!-- Company Logo Input -->
+                                        <div class="col-md-6">
+                                            <div class="form-label-group mt-3">
+                                                <label for="companyLogo" class="fw-bold">Company Logo <sup
+                                                        class="text-danger">*</sup></label>
+                                                <input type="file"
+                                                    class="form-control @error('companyLogo') is-invalid @enderror"
+                                                    id="companyLogo" name="companyLogo" accept="image/*"
+                                                    onchange="previewPhoto(event, 'logoPreview')">
+                                                <span class="text-danger mt-1 d-block">*
+                                                    File size:Max 2MB</span>
+                                                <div style="width: 100px; height: 100px; position: relative;"
+                                                    class="mt-3">
+                                                    <img id="logoPreview"
+                                                        src="{{ asset('CompanyLogo/' . ($member->companyLogo ?? 'default.jpg')) }}"
+                                                        style="width: 100%; height: 100%; object-fit: contain; aspect-ratio: 1/1;">
+                                                </div>
+
+                                                <!-- Display Company Logo Error -->
+                                                @error('companyLogo')
+                                                    <span class="text-danger">The Maximum File Size is 2MB</span>
+                                                @enderror
+
+                                                <!-- Note about file size -->
+
                                             </div>
-
-                                            <!-- Display Company Logo Error -->
-                                            @error('companyLogo')
-                                            <span class="text-danger">{{ $message }}</span>
-                                            @enderror
-
-                                            <!-- Note about file size -->
-
                                         </div>
                                     </div>
                                 </div>
-                            </div>
 
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            {{-- <div class="accordion-item mt-3">
+                {{-- <div class="accordion-item mt-3">
                 <h2 class="accordion-header" id="headingOne">
                     <button class="accordion-button" type="button" data-bs-toggle="collapse"
                         data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
@@ -517,8 +526,8 @@
                     </div>
                 </div>
             </div> --}}
-            <!-- Section 2 -->
-            {{-- <div class="accordion-item mt-3">
+                <!-- Section 2 -->
+                {{-- <div class="accordion-item mt-3">
                 <h2 class="accordion-header" id="headingTwo">
                     <button class="accordion-button" type="button" data-bs-toggle="collapse"
                         data-bs-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
@@ -586,8 +595,8 @@
                     </div>
                 </div>
             </div> --}}
-            <!-- Section 3 -->
-            {{-- <div class="accordion-item mt-3">
+                <!-- Section 3 -->
+                {{-- <div class="accordion-item mt-3">
                 <h2 class="accordion-header" id="headingThree">
                     <button class="accordion-button" type="button" data-bs-toggle="collapse"
                         data-bs-target="#collapseThree" aria-expanded="true" aria-controls="collapseThree">
@@ -670,8 +679,8 @@
                     </div>
                 </div>
             </div> --}}
-            <!-- Section 4 -->
-            {{-- <div class="accordion-item mt-3">
+                <!-- Section 4 -->
+                {{-- <div class="accordion-item mt-3">
                 <h2 class="accordion-header" id="headingFour">
                     <button class="accordion-button" type="button" data-bs-toggle="collapse"
                         data-bs-target="#collapseFour" aria-expanded="true" aria-controls="collapseFour">
@@ -864,8 +873,8 @@
                     </div>
                 </div>
             </div> --}}
-            <!-- Section 5 -->
-            {{-- <div class="accordion-item mt-3">
+                <!-- Section 5 -->
+                {{-- <div class="accordion-item mt-3">
                 <h2 class="accordion-header" id="headingFive">
                     <button class="accordion-button" type="button" data-bs-toggle="collapse"
                         data-bs-target="#collapseFive" aria-expanded="true" aria-controls="collapseFive">
@@ -1112,8 +1121,8 @@
                     </div>
                 </div>
             </div> --}}
-            <!-- Section 6 -->
-            {{-- <div class="accordion-item mt-3">
+                <!-- Section 6 -->
+                {{-- <div class="accordion-item mt-3">
                 <h2 class="accordion-header" id="headingSix">
                     <button class="accordion-button" type="button" data-bs-toggle="collapse"
                         data-bs-target="#collapseSix" aria-expanded="true" aria-controls="collapseSix">
@@ -1222,8 +1231,8 @@
                     </div>
                 </div>
             </div> --}}
-            <!-- Section 7 -->
-            {{-- <div class="accordion-item mt-3">
+                <!-- Section 7 -->
+                {{-- <div class="accordion-item mt-3">
                 <h2 class="accordion-header" id="headingSeven">
                     <button class="accordion-button" type="button" data-bs-toggle="collapse"
                         data-bs-target="#collapseSeven" aria-expanded="true" aria-controls="collapseSeven">
@@ -1336,8 +1345,8 @@
                     </div>
                 </div>
             </div> --}}
-            <!-- Section 8 -->
-            {{-- <div class="accordion-item mt-3">
+                <!-- Section 8 -->
+                {{-- <div class="accordion-item mt-3">
                 <h2 class="accordion-header" id="headingEight">
                     <button class="accordion-button" type="button" data-bs-toggle="collapse"
                         data-bs-target="#collapseEight" aria-expanded="true" aria-controls="collapseEight">
@@ -1710,15 +1719,15 @@
                     </div>
                 </div>
             </div> --}}
-            <div class="text-center mt-3">
-                <button type="submit" class="btn btn-bg-blue">Submit</button>
-                {{-- <button type="reset" class="btn btn-bg-orange">Reset</button> --}}
-            </div>
-    </form><!-- End floating Labels Form -->
-</div>
+                <div class="text-center mt-3">
+                    <button type="submit" class="btn btn-bg-blue">Submit</button>
+                    {{-- <button type="reset" class="btn btn-bg-orange">Reset</button> --}}
+                </div>
+        </form><!-- End floating Labels Form -->
+    </div>
 
 
-{{-- <script>
+    {{-- <script>
     function previewPhoto(event) {
             var input = event.target;
             var reader = new FileReader();
@@ -1744,18 +1753,18 @@
         }
 </script> --}}
 
-<script>
-    function previewPhoto(event, previewId) {
-        var input = event.target;
-        var reader = new FileReader();
-        reader.onload = function() {
-            var dataURL = reader.result;
-            var img = document.getElementById(previewId);
-            img.src = dataURL;
-        };
-        reader.readAsDataURL(input.files[0]);
-    }
-</script>
+    <script>
+        function previewPhoto(event, previewId) {
+            var input = event.target;
+            var reader = new FileReader();
+            reader.onload = function() {
+                var dataURL = reader.result;
+                var img = document.getElementById(previewId);
+                img.src = dataURL;
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    </script>
 
 
 @endsection

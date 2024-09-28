@@ -165,7 +165,7 @@
                                     <input type="text" id="firstName" name="firstName"
                                         value="{{ old('firstName') }}"
                                         class="form-control @error('firstName') is-invalid @enderror"
-                                        onblur="validate(1)">
+                                        onblur="validate(1)" required>
                                     @error('firstName')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -177,7 +177,7 @@
                                             class="text-danger">*</span></label>
                                     <input type="text" id="lastName" name="lastName" value="{{ old('lastName') }}"
                                         class="form-control @error('lastName') is-invalid @enderror"
-                                        onblur="validate(2)">
+                                        onblur="validate(2)" required>
                                     @error('lastName')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -195,7 +195,7 @@
                                         oninput="if(this.value.length > 10) this.value = this.value.slice(0,10); this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');"
                                         pattern="[0-9]{10}"
                                         oninvalid="this.setCustomValidity('Please enter a valid 10-digit mobile number');"
-                                        oninput="this.setCustomValidity('')" onblur="validate(3)">
+                                        oninput="this.setCustomValidity('')" onblur="validate(3)" required>
                                     @error('mobileNo')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -213,7 +213,7 @@
                                     <input type="text" id="businessName" name="businessName"
                                         value="{{ old('businessName') }}"
                                         class="form-control @error('businessName') is-invalid @enderror"
-                                        onblur="validate(4)">
+                                        onblur="validate(4)" required>
                                     @error('businessName')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -227,7 +227,7 @@
                                             class="text-danger">*</span></label>
                                     <select class="form-select" id="businessCategory" name="businessCategory"
                                         class="form-control @error('businessCategory') is-invalid @enderror"
-                                        onblur="validate(5)">
+                                        onblur="validate(5)" required>
                                         <option value="" disabled selected>Select Business Category</option>
                                         @foreach ($businessCategory as $businessCategoryData)
                                             <option value="{{ $businessCategoryData->id }}"
@@ -393,9 +393,15 @@
                                     <!-- Buttons -->
                                     <button type="submit" class="btn btn-bg-blue" id="register"
                                         style="display:none;">Register</button>
-                                    <button type="submit" class="btn btn-success" id="payNowMeet"
+                                    {{-- <button type="submit" class="btn btn-success" id="payNowMeet" disabled
                                         onclick="document.getElementById('cityAmount').value = {{ $cityAmount }};">Pay
-                                        Now ₹ {{ $cityAmount }}</button>
+                                        Now ₹ {{ $cityAmount }}</button> --}}
+
+                                    <button type="submit" class="btn btn-success" id="payNowMeet" disabled>
+                                        Pay Now ₹ {{ $cityAmount }}
+                                    </button>
+
+
                                 </div>
                             </div>
                         </form>
@@ -405,8 +411,42 @@
             </div>
         </div>
     </main><!-- End #main -->
-
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+    <script>
+        // Wait for the DOM to be fully loaded
+        document.addEventListener("DOMContentLoaded", function() {
+            const requiredFields = document.querySelectorAll(
+                "#visitorForm input[required], #visitorForm select[required]");
+            const payNowButton = document.getElementById("payNowMeet");
+
+            // Disable the pay now button initially
+            payNowButton.disabled = true;
+
+            // Function to check if all required fields are filled
+            function validateForm() {
+                let allFieldsFilled = true;
+
+                // Loop through each required field and check if it's filled
+                requiredFields.forEach(function(field) {
+                    if (field.value.trim() === "" || field.classList.contains('is-invalid')) {
+                        allFieldsFilled = false;
+                    }
+                });
+
+                // Enable or disable the button based on whether all fields are filled
+                payNowButton.disabled = !allFieldsFilled;
+            }
+
+            // Attach event listeners to all required fields
+            requiredFields.forEach(function(field) {
+                field.addEventListener("input", validateForm);
+                field.addEventListener("change", validateForm);
+            });
+        });
+    </script>
+
+
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {

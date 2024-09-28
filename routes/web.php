@@ -155,6 +155,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::post('/get-states', [FranchiseController::class, 'getStates'])->name('get.states');
     Route::post('/get-cities', [FranchiseController::class, 'getCities'])->name('get.cities');
+    Route::post('get/state-country', [FranchiseController::class, 'getStateAndCountry'])->name('get.state.country');
 
 
 
@@ -394,9 +395,10 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('membershipType/update', [MembershipTypeController::class, 'update'])->name('membershipType.update');
     Route::get('membershipType/delete/{id?}', [MembershipTypeController::class, 'delete'])->name('membershipType.delete');
 
-    Route::get('testimonial/destroy{id}', [TestimonialController::class, 'destroy'])->name('testimonial.destroy');
+    Route::get('testimonial/archived/{id}', [TestimonialController::class, 'archived'])->name('testimonial.archived');
     Route::get('testimonial/archives', [TestimonialController::class, 'archives'])->name('testimonial.archives');
     Route::get('testimonial/restore/{id}', [TestimonialController::class, 'restore'])->name('testimonial.restore');
+    Route::get('testimonial/delete/{id}', [TestimonialController::class, 'delete'])->name('testimonial.delete');
 
     Route::get('/trainingRegisterView', [TrainerMasterController::class, 'trainingRegisterView'])->name('trainerMaster.trainingRegisterView');
     Route::get('/trainingRegister/{trainingId?}/{trainerId?}', [HomeController::class, 'trainingRegister'])->name('training.register');

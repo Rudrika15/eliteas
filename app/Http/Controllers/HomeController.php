@@ -252,6 +252,7 @@ class HomeController extends Controller
 
             if (!Auth::user()->hasRole('Admin')) {
                 $testimonials = Testimonial::where('memberId', Auth::user()->member->id)
+                    ->where('status', 'Active')
                     ->with('sender')
                     ->orderBy('id', 'DESC')
                     ->take(3)

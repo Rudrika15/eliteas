@@ -226,6 +226,7 @@ class CircleCallController extends Controller
             'meetingPlace' => 'required|regex:/^([a-zA-Z]+)(\s[a-zA-Z]+)*$/',
             'date' => 'required',
             'remarks' => 'required',
+            'meetingImage' => 'mimes:jpeg,jpg,png,gif|max:2048',
         ]);
 
         if ($validator->fails()) {
@@ -237,7 +238,7 @@ class CircleCallController extends Controller
             $circlecall->memberId = Auth::user()->id;
             $circlecall->meetingPersonId = $request->meetingPersonId;
             $circlecall->meetingPlace = $request->meetingPlace;
-            
+
             if ($request->meetingImage) {
                 $circlecall->meetingImage = time() . '.' . $request->meetingImage->extension();
                 $request->meetingImage->move(public_path('meetingImage'), $circlecall->meetingImage);
@@ -298,6 +299,14 @@ class CircleCallController extends Controller
     public function update(Request $request)
     {
         try {
+
+            $validator = Validator::make($request->all(), [
+                'meetingPlace' => 'required|regex:/^([a-zA-Z]+)(\s[a-zA-Z]+)*$/',
+                'date' => 'required',
+                'remarks' => 'required',
+                'meetingImage' => 'mimes:jpeg,jpg,png,gif|max:2048',
+            ]);
+
             $id = $request->id;
             $circlecall = CircleCall::find($id);
             $circlecall->meetingPersonId = $request->meetingPersonId;
@@ -307,7 +316,7 @@ class CircleCallController extends Controller
                 $circlecall->meetingImage = time() . '.' . $request->meetingImage->extension();
                 $request->meetingImage->move(public_path('meetingImage'), $circlecall->meetingImage);
             }
-            
+
             $circlecall->remarks = $request->remarks;
             $circlecall->status = 'Active';
 

@@ -41,6 +41,13 @@ class ChangePasswordController extends Controller
                 ]);
             }
 
+            // Check if current password is same as new password
+            if (Hash::check($request->password, Auth::user()->password)) {
+                throw ValidationException::withMessages([
+                    'password' => 'The new password must be different from the last password',
+                ]);
+            }
+
             // Change Password
             $user = Auth::user();
             $user->password = Hash::make($request->password);

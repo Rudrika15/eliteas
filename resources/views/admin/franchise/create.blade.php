@@ -46,7 +46,7 @@
                     <div class="form-floating">
                         <input type="text" class="form-control @error('franchiseContactDetails') is-invalid @enderror"
                             id="franchiseContactDetails" name="franchiseContactDetails"
-                            placeholder="Franchise Contact Details" required>
+                            placeholder="Franchise Contact Details" required pattern="[0-9]{1,10}" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');" maxlength="10">
                         <label for="franchiseContactDetails">Franchise Contact Details</label>
                         @error('franchiseContactDetails')
                         <div class="invalid-tooltip">

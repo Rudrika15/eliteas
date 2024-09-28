@@ -275,7 +275,7 @@ class CircleMemberController extends Controller
                     ->whereHas('user', function ($query) {
                         $query->where('status', 'Active'); // Ensure the related user is active
                     })
-                    ->select('id', 'circleId', 'firstName', 'lastName')
+                    ->select('id','circleId', 'firstName', 'lastName', 'userId')
                     ->get();
 
                 $membersData = [];
@@ -289,6 +289,7 @@ class CircleMemberController extends Controller
 
                     $membersData[] = [
                         'id' => $member->id,
+                        'userId' => $member->userId,
                         'firstName' => $member->firstName,
                         'lastName' => $member->lastName,
                         'contactDetails' => $memberContactDetails,

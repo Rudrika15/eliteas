@@ -142,11 +142,13 @@ class TestimonialController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function archived($id)
     {
         try {
+
             $testimonial = Testimonial::findOrFail($id);
-            $testimonial->delete();
+            $testimonial->status = 'Archived';
+            $testimonial->save();
 
             return redirect()->back()->with("success", "Testimonial deleted successfully.");
         } catch (\Throwable $th) {
@@ -161,7 +163,7 @@ class TestimonialController extends Controller
     public function archives()
     {
         try {
-            $testimonials = Testimonial::onlyTrashed()->paginate(10);
+            $testimonials = Testimonial::where('status', 'Archived')->paginate(10);
 
             return view('admin.testimonial.archives', compact('testimonials'));
         } catch (\Throwable $th) {
@@ -176,8 +178,26 @@ class TestimonialController extends Controller
     public function restore($id)
     {
         try {
-            $testimonial = Testimonial::withTrashed()->findOrFail($id);
-            $testimonial->restore();
+            $testimonial = Testimonial::where('status', 'Archived')->findOrFail($id);
+            $testimonial->status = 'Active';
+            $testimonial->save();
+
+            return redirect()->route('testimonials.indexAdmin');
+        } catch (\Throwable $th) {
+            // Log the error
+            ErrorLogger::logError($th, request()->fullUrl());
+
+            // Return a generic error view
+            return response()->view('servererror');
+        }
+    }
+
+    public function delete($id)
+    {
+        try {
+            $testimonial = Testimonial::where('status', 'Archived')->findOrFail($id);
+            $testimonial->status = 'Deleted';
+            $testimonial->save();
 
             return redirect()->route('testimonials.indexAdmin');
         } catch (\Throwable $th) {

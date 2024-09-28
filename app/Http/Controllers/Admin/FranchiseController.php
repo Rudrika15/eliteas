@@ -63,7 +63,7 @@ class FranchiseController extends Controller
     {
         $this->validate($request, [
             'franchiseName' => 'required|unique:franchises',
-            'franchiseContactDetails' => 'required',
+            'franchiseContactDetails' => 'required|max:10',
             'firstName' => 'required',
             'lastName' => 'required',
             'email' => 'required|email|unique:users',
@@ -112,10 +112,15 @@ class FranchiseController extends Controller
     {
         try {
             $franchises = Franchise::find($id);
-            $countries = Country::where('status', 'Active')->get();
-            $states = State::where('status', 'Active')->get();
             $cities = City::where('status', 'Active')->get();
-            return view('admin.franchise.edit', compact('franchises', 'countries', 'states', 'cities'));
+            $states = State::where('status', 'Active')->get();
+            $countries = Country::where('status', 'Active')->get();
+
+            $city = City::where('id', $franchises->cityId)->first();
+            $state = State::where('id', $city->stateId)->first();
+            $country = Country::where('id', $state->countryId)->first();
+
+            return view('admin.franchise.edit', compact('franchises', 'cities', 'states', 'countries', 'city', 'state', 'country'));
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError($th, request()->fullUrl());
@@ -230,7 +235,6 @@ class FranchiseController extends Controller
         return response()->json($options);
     }
 
-
     public function getCities(Request $request)
     {
         $stateId = $request->stateId;
@@ -244,5 +248,20 @@ class FranchiseController extends Controller
         }
 
         return response()->json($options);
+    }
+
+    public function getStateAndCountry(Request $request)
+    {
+        $city = City::find($request->cityId); // Assuming you have a City model
+        if ($city) {
+            $state = $city->state; // Assuming City belongs to State
+            $country = $state->country; // Assuming State belongs to Country
+            return response()->json([
+                'stateId' => $state->id,
+                'countryId' => $country->id,
+            ]);
+        }
+
+        return response()->json(['error' => 'City not found'], 404);
     }
 }

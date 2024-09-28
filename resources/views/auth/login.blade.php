@@ -39,14 +39,7 @@
   * License: https://bootstrapmade.com/license/
   ======================================================== -->
 
-    @if (Session::has('error'))
-    <div class="alert alert-danger alert-dismissible" role="alert">
-        <button type="button" class="close" data-dismiss="alert">
-            {{-- <i class="fa fa-times"></i> --}}
-        </button>
-        <strong>Error !</strong> {{ session('error') }}
-    </div>
-    @endif
+
 
 
 </head>
@@ -72,95 +65,101 @@
                             <div class="card mb-3 res-box" style="width: 20rem; border: 1px solid #1d3268;">
                                 {{-- <div class=" card mb-3 res-box"
                                     style="width: 20rem; background-image: url({{ asset('img/b2.jpg') }});"> --}}
-                                    <div class="card-body">
-                                        <h5 class="card-title text-center pb-0 fs-4 mb-4" style="color: #1d3268;">Login
-                                        </h5>
-                                        {{-- <p class="text-center small">Enter your email & password to login</p> --}}
+                                <div class="card-body">
+                                    <h5 class="card-title text-center pb-0 fs-4 mb-4" style="color: #1d3268;">Login
+                                    </h5>
+                                    {{-- <p class="text-center small">Enter your email & password to login</p> --}}
 
-                                        <form method="POST" action="{{ route('login') }}" class="needs-validation w-100"
-                                            novalidate id="login-form">
-                                            @csrf
+                                    <form method="POST" action="{{ route('login') }}" class="needs-validation w-100"
+                                        novalidate id="login-form">
+                                        @csrf
 
-                                            <div class="mb-3 form-floating">
-                                                <input id="email" type="email"
-                                                    class="form-control @error('email') is-invalid @enderror"
-                                                    name="email" value="{{ old('email') }}" required
-                                                    autocomplete="email" autofocus
-                                                    style="border-color: #1d3268 !important">
-                                                <label for="email"><b>Email Address</b></label>
-                                                @error('email')
-                                                <span class="invalid-feedback" role="alert">
+                                        <div class="mb-3 form-floating">
+                                            <input id="email" type="email"
+                                                class="form-control @error('email') is-invalid @enderror" name="email"
+                                                value="{{ old('email') }}" required autocomplete="email" autofocus
+                                                style="border-color: #1d3268 !important">
+                                            <label for="email"><b>Email Address</b></label>
+
+                                            @if (Session::has('error') && Session::get('error') === 'email')
+                                                <span class="invalid-feedback d-block" role="alert">
+                                                    <strong>Your Email is incorrect.</strong>
+                                                </span>
+                                            @endif
+
+                                            @error('email')
+                                                <span class="invalid-feedback d-block" role="alert">
                                                     <strong>{{ $message }}</strong>
                                                 </span>
-                                                @if (Session::has('error'))
-                                                <div class="alert alert-danger alert-dismissible" role="alert">
-                                                    {{-- <button type="button" class="close" data-dismiss="alert"> --}}
-                                                        {{-- <i class="fa fa-times"></i> --}}
-                                                    </button>
-                                                    <strong>Error !</strong> {{ session('error') }}
-                                                </div>
-                                                @endif
-                                                @enderror
-                                            </div>
+                                            @enderror
+                                        </div>
 
-                                            <div class="mb-3 form-floating">
-                                                <input id="password" type="password"
-                                                    class="form-control @error('password') is-invalid @enderror"
-                                                    name="password" required autocomplete="current-password"
-                                                    style="border-color: #1d3268 !important">
-                                                <label for="password"><b>Password</b></label>
-                                                @error('password')
-                                                <span class="invalid-feedback" role="alert">
+                                        <div class="mb-3 form-floating">
+                                            <input id="password" type="password"
+                                                class="form-control @error('password') is-invalid @enderror"
+                                                name="password" required autocomplete="current-password"
+                                                style="border-color: #1d3268 !important">
+                                            <label for="password"><b>Password</b></label>
+
+                                            @if (Session::has('error') && Session::get('error') === 'password')
+                                                <span class="invalid-feedback d-block" role="alert">
+                                                    <strong>Your Password is incorrect.</strong>
+                                                </span>
+                                            @endif
+
+                                            @error('password')
+                                                <span class="invalid-feedback d-block" role="alert">
                                                     <strong>{{ $message }}</strong>
                                                 </span>
-                                                @enderror
-                                            </div>
+                                            @enderror
+                                        </div>
 
-                                            <div class="mb-3 form-check">
 
-                                                <input type="checkbox"
-                                                    class="form-check-input {{ old('remember') ? 'is-valid' : '' }}"
-                                                    name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}
-                                                    style="border-color: #1d3268 !important">
+                                        <div class="mb-3 form-check">
 
-                                                <label class="form-check-label"
-                                                    style="color: #1d3268; font-weight: bold;" for="remember">Remember
-                                                    Me</label>
-                                            </div>
+                                            <input type="checkbox"
+                                                class="form-check-input {{ old('remember') ? 'is-valid' : '' }}"
+                                                name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}
+                                                style="border-color: #1d3268 !important">
 
-                                            <div class="d-grid">
-                                                <button type="submit" class="btn btn-bg-blue">Login</button>
-                                            </div>
-                                            {{-- <div class="mt-3 text-center">
+                                            <label class="form-check-label" style="color: #1d3268; font-weight: bold;"
+                                                for="remember">Remember
+                                                Me</label>
+                                        </div>
+
+                                        <div class="d-grid">
+                                            <button type="submit" class="btn btn-bg-blue">Login</button>
+                                        </div>
+                                        {{-- <div class="mt-3 text-center">
                                                 <a href="{{ route('otp.request') }}" class=""
                                                     style="color: #1d3268; font-weight: bold;">Login with
                                                     OTP</a>
                                             </div> --}}
 
-                                            @if (Route::has('password.request'))
+                                        @if (Route::has('password.request'))
                                             <div class="mt-3 text-center">
                                                 <a href="{{ route('forget.password.get') }}" class=""
                                                     style="color: #1d3268; font-weight: bold;">Forgot
                                                     Your
                                                     Password ?</a>
                                             </div>
-                                            @endif
+                                        @endif
 
-                                            <input type="hidden" name="latitude" id="latitude">
-                                            <input type="hidden" name="longitude" id="longitude">
-                                        </form>
-                                    </div>
+                                        <input type="hidden" name="latitude" id="latitude">
+                                        <input type="hidden" name="longitude" id="longitude">
+                                    </form>
                                 </div>
-
-                                <div class="credits">
-                                    Designed by <a href="https://flipcodesolutions.com/" target="_blank"
-                                        class="text-black"><b>Aspireotech
-                                            Solutions</b></a>
-                                </div>
-
                             </div>
+
+                            <div class="credits">
+                                Designed by <a href="https://flipcodesolutions.com/" target="_blank"
+                                    class="text-black"><b>Aspireotech
+                                        Solutions</b></a>
+                            </div>
+
                         </div>
                     </div>
+                </div>
 
             </section>
 
@@ -185,36 +184,37 @@
 
     {{-- Location script --}}
     <script>
-        document.getElementById('login-form').addEventListener('submit', function (event) {
-                event.preventDefault();
-        
-                if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(function (position) {
-                        // Append the location data to the form
-                        const latitudeInput = document.createElement('input');
-                        latitudeInput.type = 'hidden';
-                        latitudeInput.name = 'latitude';
-                        latitudeInput.value = position.coords.latitude;
-        
-                        const longitudeInput = document.createElement('input');
-                        longitudeInput.type = 'hidden';
-                        longitudeInput.name = 'longitude';
-                        longitudeInput.value = position.coords.longitude;
-        
-                        const form = document.getElementById('login-form');
-                        form.appendChild(latitudeInput);
-                        form.appendChild(longitudeInput);
-        
-                        form.submit();
-                    }, function (error) {
-                        console.error("Geolocation error: ", error);
-                        document.getElementById('login-form').submit(); // Submit the form even if geolocation fails
-                    });
-                } else {
-                    console.error("Geolocation is not supported by this browser.");
-                    document.getElementById('login-form').submit();
-                }
-            });
+        document.getElementById('login-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    // Append the location data to the form
+                    const latitudeInput = document.createElement('input');
+                    latitudeInput.type = 'hidden';
+                    latitudeInput.name = 'latitude';
+                    latitudeInput.value = position.coords.latitude;
+
+                    const longitudeInput = document.createElement('input');
+                    longitudeInput.type = 'hidden';
+                    longitudeInput.name = 'longitude';
+                    longitudeInput.value = position.coords.longitude;
+
+                    const form = document.getElementById('login-form');
+                    form.appendChild(latitudeInput);
+                    form.appendChild(longitudeInput);
+
+                    form.submit();
+                }, function(error) {
+                    console.error("Geolocation error: ", error);
+                    document.getElementById('login-form')
+                        .submit(); // Submit the form even if geolocation fails
+                });
+            } else {
+                console.error("Geolocation is not supported by this browser.");
+                document.getElementById('login-form').submit();
+            }
+        });
     </script>
 </body>
 
