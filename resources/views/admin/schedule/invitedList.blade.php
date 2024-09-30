@@ -62,7 +62,7 @@
                 </tbody>
             </table>
             <div class="d-flex justify-content-end custom-pagination">
-                {!! $invitedPersonListData->links() !!}
+                {!! $invitedPersonList->links() !!}
             </div>
             <!-- End Table with stripped rows -->
         </div>

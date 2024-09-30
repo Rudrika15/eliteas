@@ -35,7 +35,7 @@
         @csrf
         <input type="hidden" name="id" value="{{ $training->id }}">
 
-        <div class="row">
+        <div class="row m-3">
             <div class="col-md-6">
                 {{-- Trainer 1 --}}
                 <h5><b>Trainer 1</b></h5>
@@ -141,7 +141,7 @@
 
 
         {{-- Training Details --}}
-        <div class="accordion-item mt-3">
+        <div class="accordion-item mt-5 m-3">
             <h2 class="accordion-header" id="headingSix">
                 <button class="accordion-button collapsed show" type="button" data-bs-toggle="collapse"
                     data-bs-target="#collapseSix" aria-expanded="false" aria-controls="collapseSix">

@@ -78,12 +78,13 @@
                 <div class="col-md-6">
                     <div class="form-floating mt-3">
                         <input type="file" class="form-control @error('event_banner') is-invalid @enderror"
-                            id="event_banner" name="event_banner" accept="image/*" onchange="previewPhoto2(event)" 
+                            id="event_banner" name="event_banner" accept="image/*" onchange="previewPhoto2(event)"
                             {{ ($oldEventBanner = $event->event_banner) ? 'data-old-value="' . $oldEventBanner . '"' : '' }}>
                         <label for="event_banner">Event Banner</label>
                         <div class="mt-1">
                             <img id="photoPreview2"
-                                src="{{ $oldEventBanner ? asset('Event/' . $oldEventBanner) : asset('img/profile.png') }}" alt="Event Banner"
+                                src="{{ $oldEventBanner ? asset('Event/' . $oldEventBanner) : asset('img/profile.png') }}"
+                                alt="Event Banner"
                                 style="width: 100px; height: 100px; object-fit: contain; aspect-ratio: 1/1;" />
                         </div>
                         <span style="color: red;">*Max Upload Size is 2 MB</span>
@@ -121,11 +122,12 @@
                 <div class="col-md-6">
                     <div class="form-floating mt-3">
                         <input type="file" class="form-control @error('event_thumb') is-invalid @enderror"
-                            id="event_thumb" name="event_thumb" accept="image/*" onchange="previewPhoto(event)" 
+                            id="event_thumb" name="event_thumb" accept="image/*" onchange="previewPhoto(event)"
                             {{ ($oldEventThumb = $event->event_thumb) ? 'data-old-value="' . $oldEventThumb . '"' : '' }}>
                         <label for="event_thumb">Event Thumbnail</label>
                         <div class="mt-1">
-                            <img id="photoPreview1" src="{{ $oldEventThumb ? asset('Event/' . $oldEventThumb) : asset('img/profile.png') }}"
+                            <img id="photoPreview1"
+                                src="{{ $oldEventThumb ? asset('Event/' . $oldEventThumb) : asset('img/profile.png') }}"
                                 alt="Event Thumb"
                                 style="width: 100px; height: 100px; object-fit: contain; aspect-ratio: 1/1;" />
                         </div>
@@ -181,7 +183,6 @@
             </div>
             <div class="text-center">
                 <button type="submit" class="btn btn-bg-blue">Submit</button>
-                <button type="reset" class="btn btn-bg-orange">Reset</button>
             </div>
         </form><!-- End floating Labels Form -->
     </div>

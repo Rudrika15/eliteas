@@ -450,6 +450,8 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::post('/renew-membership/{userId}', [PaymentController::class, 'renewMembership'])->name('renewMembership.mail');
 
+
+
     // Attendance
 
     Route::get('/attendance/takeAttendance/{id?}', [AttendanceController::class, 'takeAttendance'])->name('attendance.takeAttendance');

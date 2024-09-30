@@ -126,16 +126,16 @@ class PaymentController extends Controller
     public function storePaymentDetails(Request $request)
     {
         try {
-            
+
             $visitor = new VisitorsDetails();
             $visitor->firstName = $request->firstName;
             $visitor->lastName = $request->lastName;
             $visitor->mobileNo = $request->mobileNo;
             $visitor->businessName = $request->businessName;
 
-            
+
             if ($request->businessCategory == 'other') {
-                
+
                 $business = BusinessCategory::where('categoryName', $request->otherCategory)->first();
                 if (!$business) {
                     $business = new BusinessCategory();
@@ -147,7 +147,7 @@ class PaymentController extends Controller
                 $visitor->businessCategory = $request->businessCategory;
             }
 
-            
+
             $visitor->product = $request->product;
             $visitor->networkingGroup = $request->networkingGroup;
             $visitor->circleMeet = $request->circleMeet;
@@ -403,7 +403,7 @@ class PaymentController extends Controller
             ErrorLogger::logError($th, request()->fullUrl());
 
             // Return an error response or redirect
-            return response()->json(['message' => 'Failed to renew membership'], 500);
+            return response()->json(['message' => 'Failed to send mail'], 500);
         }
     }
 

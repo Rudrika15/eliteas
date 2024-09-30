@@ -25,7 +25,13 @@
                         <select class="form-select @error('circleId') is-invalid @enderror" id="circleId" name="circleId"
                             required>
                             <option value="" selected disabled>Select Circle</option>
-                            <option value="{{ old('circleId') }}" selected> {{ old('circleName') }}</option>
+                            @if (old('circleId'))
+                                <option value="{{ old('circleId') }}" selected>{{ old('circleName') }}</option>
+                            @else
+                                <option value="{{ $circlecall->circleId }}" selected>
+                                    {{ $circlecall->meetingPerson->circle->circleName }}
+                                </option>
+                            @endif
                             @foreach ($circles as $circle)
                                 <option value="{{ $circle->id }}">{{ $circle->circleName }}</option>
                             @endforeach
@@ -45,7 +51,13 @@
                         <select class="form-select @error('memberId') is-invalid @enderror" id="memberId" name="memberId"
                             required>
                             <option value="" selected disabled>Select Member</option>
-                            <option value="{{ old('memberId') }}" selected> {{ old('memberName') }}</option>
+                            @if (old('memberId'))
+                                <option value="{{ old('memberId') }}" selected> {{ old('memberName') }}</option>
+                            @else
+                                <option value="{{ $circlecall->meetingPersonId }}" selected>
+                                    {{ $circlecall->meetingPerson->firstName }} {{ $circlecall->meetingPerson->lastName }}
+                                </option>
+                            @endif
                             <!-- Options will be populated dynamically -->
                         </select>
                         <label for="memberId">Member</label>
@@ -107,7 +119,8 @@
 
                     <!-- Photo Preview Section -->
                     <div class="mt-1">
-                        <img id="photoPreview" src="{{ $oldMeetingImage ? $oldMeetingImage : asset('img/profile.png') }}"
+                        <img id="photoPreview"
+                            src="{{ $circlecall->meetingImage ? asset('meetingImage/' . $circlecall->meetingImage) : asset('img/profile.png') }}"
                             alt="Meeting Image"
                             style="width: 100px; height: 100px; object-fit: contain; aspect-ratio: 1/1;" />
                     </div>

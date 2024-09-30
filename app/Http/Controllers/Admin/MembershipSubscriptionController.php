@@ -45,14 +45,16 @@ class MembershipSubscriptionController extends Controller
     public function memberData(Request $request)
     {
         try {
+            $membershipType = membershipType::where('status', 'Active')->get();
             $allSubscriptions = MemberSubscriptions::where('status', 'Active')->paginate(10);
-            return view('admin.mysubscriptions.adminIndex', compact('allSubscriptions'));
+            return view('admin.mysubscriptions.adminIndex', compact('allSubscriptions', 'membershipType'));
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError($th, request()->fullUrl());
             return view('servererror');
         }
     }
+
 
     // public function checkMembershipValidity()
     // {
@@ -81,7 +83,7 @@ class MembershipSubscriptionController extends Controller
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError($th, $request->fullUrl());
-            return response()->json(['message' => 'Failed to export subscriptions'], 500);
+            return redirect()->back()->with('error', 'Failed to export subscriptions');
         }
     }
 }

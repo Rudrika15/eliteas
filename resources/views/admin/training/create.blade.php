@@ -22,11 +22,13 @@
         </div>
     @endif
 
-    <div class="card">
+    <div class="card ">
         <div class="card-body d-flex justify-content-between align-items-center">
             <h5 class="card-title">Create Training</h5>
             <a href="{{ route('training.index') }}" class="btn btn-bg-orange btn-sm">BACK</a>
         </div>
+
+
 
         <!-- Form -->
         <form class="m-3 needs-validation" id="trainingForm" enctype="multipart/form-data" method="post"
@@ -34,7 +36,7 @@
             @csrf
 
             {{-- Trainer 1 and Trainer 2 --}}
-            <div class="row">
+            <div class="row m-3">
                 <div class="col-md-6">
                     <!-- Trainer 1 -->
                     <h3><b>Trainer 1</b></h3>
@@ -57,7 +59,7 @@
                         <div class="form-floating mt-3">
                             <input type="hidden" name="trainerId" id="trainerId">
                             <input type="text" class="form-control" id="trainerName" name="memberName"
-                                placeholder="Select Member">
+                                placeholder="Select Member" readonly required>
                             <label for="trainerName">Select Member</label>
                         </div>
                     </div>
@@ -66,7 +68,7 @@
                         <div class="form-floating mt-3">
                             <input type="hidden" name="externalTrainerId" id="externalTrainerId">
                             <input type="text" class="form-control" id="trainerNameExternal" name="trainerNameExternal"
-                                placeholder="Trainer Name External">
+                                placeholder="Trainer Name External" readonly>
                             <label for="trainerNameExternal">Trainer Name External</label>
                         </div>
                     </div>
@@ -74,11 +76,12 @@
                     <!-- Contact details -->
                     <div class="form-floating mt-3">
                         <input type="text" class="form-control" id="trainerContact" name="contactNo"
-                            placeholder="Contact No">
+                            placeholder="Contact No" readonly>
                         <label for="trainerContact">Contact No</label>
                     </div>
                     <div class="form-floating mt-3">
-                        <input type="text" class="form-control" id="trainerEmail" name="email" placeholder="Email">
+                        <input type="text" class="form-control" id="trainerEmail" name="email" placeholder="Email"
+                            readonly>
                         <label for="trainerEmail">Email</label>
                     </div>
                 </div>
@@ -105,7 +108,7 @@
                         <input type="hidden" name="trainerId2" id="trainerId2">
                         <div class="form-floating mt-3">
                             <input type="text" class="form-control" id="trainerName2" name="trainerNameInternal"
-                                placeholder="Trainer Name Internal">
+                                placeholder="Trainer Name Internal" readonly>
                             <label for="trainerName2">Trainer Name Internal</label>
                         </div>
                     </div>
@@ -114,7 +117,7 @@
                         <input type="hidden" name="externalTrainerId2" id="externalTrainerId2">
                         <div class="form-floating mt-3">
                             <input type="text" class="form-control" id="trainerNameExternal2"
-                                name="trainerNameExternal2" placeholder="Trainer Name External">
+                                name="trainerNameExternal2" placeholder="Trainer Name External" readonly>
                             <label for="trainerNameExternal2">Trainer Name External</label>
                         </div>
                     </div>
@@ -122,23 +125,23 @@
                     <!-- Contact details -->
                     <div class="form-floating mt-3">
                         <input type="text" class="form-control" id="trainerContact2" name="contactNo2"
-                            placeholder="Contact No">
+                            placeholder="Contact No" readonly>
                         <label for="trainerContact2">Contact No</label>
                     </div>
                     <div class="form-floating mt-3">
                         <input type="text" class="form-control" id="trainerEmail2" name="email2"
-                            placeholder="Email">
+                            placeholder="Email" readonly>
                         <label for="trainerEmail2">Email</label>
                     </div>
                 </div>
             </div>
 
             <!-- Button to toggle Trainer 2 form -->
-            <button type="button" class="btn btn-bg-orange mt-3" id="toggleTrainer2Button">Add Trainer 2</button>
+            <button type="button" class="btn btn-bg-orange mt-3 m-3" id="toggleTrainer2Button">Add Trainer 2</button>
 
 
             {{-- Training Details --}}
-            <div class="accordion-item mt-3">
+            <div class="accordion-item mt-3 m-3">
                 <h2 class="accordion-header" id="headingSix">
                     <button class="accordion-button collapsed show" type="button" data-bs-toggle="collapse"
                         data-bs-target="#collapseSix" aria-expanded="false" aria-controls="collapseSix">
@@ -295,7 +298,7 @@
     <script>
         $(document).ready(function() {
             // Show/hide trainer member lists based on radio button selection
-            $('.trainer-radio').click(function() {
+            $('.trainer-radio').change(function() {
                 var inputValue = $(this).val();
                 if (inputValue === "internalMember") {
                     $('#memberListDropdownMember').show();
@@ -311,6 +314,9 @@
                     $('#memberListInput').show();
                 }
             });
+
+            // show/hide internal or external member based on radio button selection on page load
+            $('.trainer-radio:checked').change();
 
             $('#trainerName, #trainerNameExternal').on('select2:select', function(e) {
                 var data = e.params.data;
