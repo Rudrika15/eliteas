@@ -363,8 +363,6 @@
                     </div>
                 </div>
 
-
-
                 <div class="row">
                     <div class="col-md-12">
                         <div class="card-title"><b>Upcoming Training Workshops</b></div>
