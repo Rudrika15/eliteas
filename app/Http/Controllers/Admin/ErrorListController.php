@@ -13,7 +13,7 @@ class ErrorListController extends Controller
     public function index()
     {
         try {
-            $errorList = ErrorLog::orderBy('created_at', 'desc')->paginate(5);
+            $errorList = ErrorLog::orderBy('created_at', 'desc')->paginate(10);
             return view('admin.errorList.index', compact('errorList'));
         } catch (\Throwable $th) {
             // throw $th;

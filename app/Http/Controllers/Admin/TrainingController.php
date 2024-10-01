@@ -53,6 +53,8 @@ class TrainingController extends Controller
     public function create()
     {
         try {
+
+
             $trainer = Member::with('circle')->where('status', 'Active')->get();
             $training = Training::with('trainer')
                 ->get();
@@ -69,6 +71,10 @@ class TrainingController extends Controller
 
     public function store(Request $request)
     {
+
+        return $request;
+
+
         try {
             // Validate the incoming request
             $request->validate([]);
