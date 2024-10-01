@@ -3,19 +3,48 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\User;
+use App\Models\Circle;
+use App\Models\Member;
 use App\Models\Franchise;
 use App\Utils\ErrorLogger;
 use Illuminate\Http\Request;
 use App\Models\TrainerMaster;
+use App\Models\TrainingRegister;
 use App\Models\TrainingTrainers;
 use App\Exports\TrainersListExport;
 use App\Http\Controllers\Controller;
-use App\Models\TrainingRegister;
 use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Facades\Excel;
 
 class TrainerMasterController extends Controller
 {
+
+    public function getMemberDetails($id)
+    {
+        // Retrieve the member's details from the members table
+        $member = Member::find($id);
+
+        if ($member) {
+            // Retrieve additional details (contact, email) from the users table
+            $user = User::where('id', $member->userId)->first();
+
+            // Return the data in JSON format
+            return response()->json([
+                'success' => true,
+                'member' => $member,
+                'contactNo' => $user->contactNo ?? null,
+                'email' => $user->email ?? null
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Member not found'
+            ]);
+        }
+    }
+
+
+
     public function index(Request $request)
     {
         try {
@@ -46,8 +75,14 @@ class TrainerMasterController extends Controller
     public function create()
     {
         try {
+            $circles = Circle::where('status', 'Active')->get();
+
+            $circleMember = Member::with('circle')
+                ->where('status', 'Active')
+                ->get(); // Ensure 'circleId' is included
+
             $trainer = TrainerMaster::all();
-            return view('admin.trainerMaster.create', compact('trainer'));
+            return view('admin.trainerMaster.create', compact('trainer', 'circles', 'circleMember'));
         } catch (\Throwable $th) {
             //throe $th;
             ErrorLogger::logError($th, request()->fullUrl());
@@ -65,6 +100,8 @@ class TrainerMasterController extends Controller
                 'lastName' => 'required',
                 'email' => 'required|email|unique:users,email',
                 'contactNo' => 'required|unique:users,contactNo|max:10',
+                // 'bio' => 'required',
+                'trainerImage' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             ];
         }
 
@@ -94,6 +131,13 @@ class TrainerMasterController extends Controller
                 $trainer->type = $request->type; // Change from 'group' to 'type'
                 $trainer->externalMemberContact = $request->contactNo;
                 $trainer->externalMemberBio = $request->bio;
+
+                if ($request->hasFile('trainerImage')) {
+                    $imageName = time() . '.' . $request->trainerImage->extension();
+                    $request->trainerImage->move(public_path('img/trainerImages'), $imageName);
+                    $trainer->trainerImage = $imageName;
+                }
+
                 $trainer->status = 'Active';
                 $trainer->save();
             } else if ($request->type == 'internalMember') {
@@ -101,6 +145,9 @@ class TrainerMasterController extends Controller
                 $user = User::find($request->trainerId);
                 if (!$user) {
                     return redirect()->back()->with('error', 'User not found.');
+                }
+                if (TrainerMaster::where('userId', $user->id)->exists()) {
+                    return redirect()->back()->with('error', 'Member is already a trainer.');
                 }
                 $user->assignRole('Trainer'); // Assign role to the user
                 $user->save();

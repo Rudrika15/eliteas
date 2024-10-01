@@ -385,6 +385,9 @@ Route::group(['middleware' => ['auth']], function () {
     //Testimonial View Admin Side
     Route::get('testimonials/indexAdmin', [TestimonialController::class, 'indexAdmin'])->name('testimonials.indexAdmin');
 
+    Route::get('/get-member-details/{id}', [TrainerMasterController::class, 'getMemberDetails']);
+
+
 
     //Membership Master
     Route::get('/membershipType/index', [MembershipTypeController::class, 'index'])->name('membershipType.index');

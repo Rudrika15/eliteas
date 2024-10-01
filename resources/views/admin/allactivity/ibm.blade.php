@@ -29,11 +29,20 @@
                         <tbody>
                             @foreach ($ibms as $ibmData)
                                 <tr>
-                                    <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $ibmData->member->firstName ?? '-' }} {{ $ibmData->member->lastName ?? '-' }}</td>
-                                    <td>{{ $ibmData->meetingPerson->firstName ?? '-' }} {{ $ibmData->meetingPerson->lastName ?? '-' }}</td>
+                                    <td>{{ ($ibms->currentPage() - 1) * $ibms->perPage() + $loop->iteration }}</td>
+                                    <td>{{ $ibmData->member->firstName ?? '-' }} {{ $ibmData->member->lastName ?? '-' }}
+                                    </td>
+                                    <td>{{ $ibmData->meetingPerson->firstName ?? '-' }}
+                                        {{ $ibmData->meetingPerson->lastName ?? '-' }}</td>
                                     <td>{{ $ibmData->meetingPlace ?? '-' }}</td>
-                                    <td>{{ $ibmData->meetingImage ?? '-' }}</td>
+                                    <td>
+                                        @if ($ibmData->meetingImage)
+                                            <img src="{{ url('meetingImage/' . basename($ibmData->meetingImage)) }}"
+                                                alt="Meeting Image" style="width: 100px; height: auto; border-radius: 5px;">
+                                        @else
+                                            <span></span>
+                                        @endif
+                                    </td>
                                     <td>{{ $ibmData->date ?? '-' }}</td>
                                     <td>{{ $ibmData->remarks ?? '-' }}</td>
 

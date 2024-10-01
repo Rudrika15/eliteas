@@ -79,11 +79,11 @@
                     <div class="card-header">
                         <b style="color: #1d2856; font-size:15px">Leader Board</b>
                     </div>
-                    <div class="row  row-cols-1 row-cols-md-3 g-4">
+                    <div class="row  row-cols-1 row-cols-md-3 g-4 mt-2">
 
                         @if ($circlecalls)
                             <div class="col ">
-                                <div class="card">
+                                <div class="card ">
 
                                     @php
                                         $profilePhoto = $circlecalls['member']->profilePhoto ?? 'profile.png';
