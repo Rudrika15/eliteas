@@ -20,7 +20,7 @@
                 <div class="d-flex align-items-center mb-3">
                     <small class="text-muted me-1"><strong>Filter By:</strong></small>
                     <div class="d-flex align-items-center">
-                        <select name="membershipType" id="membershipType" class="form-select form-select-sm">
+                        <select name="membershipType" id="filterembershipType" class="form-select form-select-sm">
                             <option value="" selected>Select Membership</option>
                             @foreach ($membershipType as $membershipTypeData)
                                 <option value="{{ $membershipTypeData->id }}">{{ $membershipTypeData->membershipType }}
@@ -61,15 +61,13 @@
                                             $today = \Carbon\Carbon::now();
                                             $warningThreshold = $today->copy()->addDays(10);
                                         @endphp
-                                        <span
-                                            class="badge {{ $validityDate->isPast() ? 'bg-danger' : ($validityDate->between($today, $warningThreshold) ? 'bg-warning' : 'bg-success') }}">
+                                        <span class="badge {{ $validityDate->isPast() ? 'bg-danger' : ($validityDate->between($today, $warningThreshold) ? 'bg-warning' : 'bg-success') }}">
                                             {{ $subscriptionData->validity ? $validityDate->format('d-M-Y') : '-' }}
                                         </span>
                                     </td>
                                     {{-- <td>{{ $subscriptionData->status ?? '-' }}</td> --}}
                                     <td>
-                                        <form action="{{ route('renewMembership.mail', $subscriptionData->userId) }}"
-                                            method="POST" class="d-inline">
+                                        <form action="{{ route('renewMembership.mail', $subscriptionData->userId) }}" method="POST" class="d-inline">
                                             @csrf
                                             <button type="submit" class="btn btn-bg-blue btn-sm btn-tooltip">
                                                 <i class="bi bi-envelope"></i>
