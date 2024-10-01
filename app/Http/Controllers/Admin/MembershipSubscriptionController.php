@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Utils\ErrorLogger;
 use Illuminate\Http\Request;
-use App\Models\membershipType;
+use App\Models\MembershipType;
 use App\Models\MemberSubscriptions;
 use App\Exports\SubscriptionsExport;
 use App\Http\Controllers\Controller;

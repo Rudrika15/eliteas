@@ -75,193 +75,191 @@
 
         @role('Member')
             <div>
-                {{-- @if (count($circlecalls) > 0 || count($busGiver) > 0 || $refGiver)
-        <div class="card-header">
-            <b style="color: #1d2856; font-size:15px">Leader Board</b>
-        </div>
-        <div class="row row-cols-1 row-cols-md-3 g-4">
-
-            @if ($circlecalls)
-            <div class="col">
-                <div class="card"> --}}
-                {{-- <div class="card" style="width: 270px; height: 522px;"> --}}
-
-                {{-- @php
-                        $profilePhoto = $circlecalls['member']->profilePhoto ?? 'profile.png';
-                        @endphp
-
-                        <img src="{{ asset('ProfilePhoto/' . $profilePhoto) }}" class="mt-3" alt="Profile Photo"
-                            style="width: 100%; height: 100%; object-fit: contain; aspect-ratio: 1/1;">
-
-                        <div class="card-body">
-                            <h5 class="card-title text-center">Max Business Meets</h5>
-                            <p class="card-text text-center">
-                                <span style="font-size: 18px; color: #e76a35; font-weight: bold;">
-                                    {{ $circlecalls['member']->firstName }} {{ $circlecalls['member']->lastName }}<br>
-                                </span>
-                                <hr class="mx-auto" style="color: #e76a35; width: 30%;">
-                            <div style="display: flex; justify-content: center;">
-                                <span style="font-size: 14px; text-align: center;">
-                                    <span style="color: #e76a35; font-weight: bold;">Circle: {{
-                                        $circlecalls['member']->circle->circleName }}</span><br>
-                                </span>
-                            </div>
-                            <hr class="mx-auto" style="color: #e76a35; width: 30%;">
-                            <div style="display: flex; justify-content: center;">
-                                <span style="font-size: 12px; text-align: center;">
-                                    <span style="color: #e76a35; font-weight: bold;">Meetings Count: {{
-                                        $circlecalls['count']
-                                        }}</span><br>
-                                </span>
-                            </div>
-                            </p>
-                        </div>
+                @if (count($circlecalls) > 0 || count($busGiver) > 0 || $refGiver)
+                    <div class="card-header">
+                        <b style="color: #1d2856; font-size:15px">Leader Board</b>
                     </div>
-                </div>
-                @endif
+                    <div class="row row-cols-1 row-cols-md-3 g-4">
 
-                @if ($busGiver)
-                <div class="col">
-                    <div class="card">
-                        @php
-                        $profilePhoto = $busGiver['member']->profilePhoto ?? 'profile.png';
-                        @endphp
+                        @if ($circlecalls)
+                            <div class="col">
+                                <div class="card">
+                                    <div class="card" style="width: 270px; height: 522px;">
 
-                        <img src="{{ asset('ProfilePhoto/' . $profilePhoto) }}" class="mt-3" alt="Profile Photo"
-                            style="width: 100%; height: 100%; object-fit: contain; aspect-ratio: 1/1;">
-                        <div class="card-body">
-                            <h5 class="card-title text-center">Max Business Leader</h5>
-                            <p class="card-text text-center">
-                                <span style="font-size: 18px; color: #e76a35; font-weight: bold;">
-                                    {{ $busGiver['user']->firstName }} {{ $busGiver['user']->lastName }}<br>
-                                </span>
-                                <hr class="mx-auto" style="color: #e76a35; width: 30%;">
-                            <div style="display: flex; justify-content: center;">
-                                <span style="font-size: 14px; text-align: center;">
-                                    <span style="color: #e76a35; font-weight: bold;">Circle: {{
-                                        $busGiver['circle']['circleName']
-                                        }}</span><br>
-                                </span>
-                            </div>
-                            <hr class="mx-auto" style="color: #e76a35; width: 30%;">
-                            <div style="display: flex; justify-content: center;">
-                                <span style="font-size: 12px; text-align: center;">
-                                    <span style="color: #e76a35; font-weight: bold;">Meetings Count: {{
-                                        $busGiver['count']
-                                        }}</span><br>
-                                    <hr class="mx-auto" style="color: #e76a35; width: 30%;">
-                                    <span style="color: #e76a35; font-weight: bold;">Amount: {{ $busGiver['amount']
-                                        }}</span><br>
-                                </span>
-                            </div>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                @endif
+                                        @php
+                                            $profilePhoto = $circlecalls['member']->profilePhoto ?? 'profile.png';
+                                        @endphp
 
-                @if ($refGiver)
-                <div class="col">
-                    <div class="card">
-                        <img src="{{ asset('ProfilePhoto/' . ($refGiver['profilePhoto'] ?? 'profile.png')) }}"
-                            class="mt-3" alt="Profile Photo"
-                            style="width: 100%; height: 100%; object-fit: contain; aspect-ratio: 1/1;">
-                        <div class="card-body">
-                            <h5 class="card-title text-center">Top Reference Giver</h5>
-                            <p class="card-text text-center">
-                                <span style="font-size: 18px; color: #e76a35; font-weight: bold;">
-                                    {{ $refGiver['user']->firstName ?? 'N/A' }} {{ $refGiver['user']->lastName ?? 'N/A'
-                                    }}<br>
-                                </span>
-                                <hr class="mx-auto" style="color: #e76a35; width: 30%;">
-                            <div style="display: flex; justify-content: center;">
-                                <span style="font-size: 14px; text-align: center;">
-                                    <span style="color: #e76a35; font-weight: bold;">Circle: {{ $refGiver['circle'] ??
-                                        'N/A'
-                                        }}</span><br>
-                                </span>
-                            </div>
-                            <hr class="mx-auto" style="color: #e76a35; width: 30%;">
-                            <div style="display: flex; justify-content: center;">
-                                <span style="font-size: 12px; text-align: center;">
-                                    <span style="color: #e76a35; font-weight: bold;">References Count: {{
-                                        $refGiver['count']
-                                        ?? '0'
-                                        }}</span><br> --}}
-                {{--
-                                    <hr class="mx-auto" style="color: #e76a35; width: 30%;">
-                                    <span style="color: #e76a35; font-weight: bold;">Business Category: {{
-                                        $refGiver['businessCategory']
-                                        ?? 'N/A' }}</span><br> --}}
-                {{-- </span>
-                            </div>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                @endif
+                                        <img src="{{ asset('ProfilePhoto/' . $profilePhoto) }}" class="mt-3"
+                                            alt="Profile Photo"
+                                            style="width: 100%; height: 100%; object-fit: contain; aspect-ratio: 1/1;">
 
-            </div>
-            @endif --}}
-
-                <div class="container-responsive">
-                    <div class="row">
-                        @if ($meeting)
-                            <div class="col-md-12">
-                                <div class="card-title"><b>Upcoming Circle Meetings</b></div>
-                                <div class="card border-0 shadow workshopCard">
-                                    <div class="card-body">
-
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <h4 class="card-title">{{ $meeting->circle->circleName }}
-                                                    <span class="text-muted">( {{ $meeting->circle->city->cityName }}
-                                                        )</span>
-                                                </h4>
+                                        <div class="card-body">
+                                            <h5 class="card-title text-center">Max Business Meets</h5>
+                                            <p class="card-text text-center">
+                                                <span style="font-size: 18px; color: #e76a35; font-weight: bold;">
+                                                    {{ $circlecalls['member']->firstName }}
+                                                    {{ $circlecalls['member']->lastName }}<br>
+                                                </span>
+                                                <hr class="mx-auto" style="color: #e76a35; width: 30%;">
+                                            <div style="display: flex; justify-content: center;">
+                                                <span style="font-size: 14px; text-align: center;">
+                                                    <span style="color: #e76a35; font-weight: bold;">Circle:
+                                                        {{ $circlecalls['member']->circle->circleName }}</span><br>
+                                                </span>
                                             </div>
-                                            <div class="col-md-6 pt-3 text-muted text-end">
-                                                {{ $meeting->date->format('j M Y') }} <br>
-                                                {{ $meeting->meetingTime }}
+                                            <hr class="mx-auto" style="color: #e76a35; width: 30%;">
+                                            <div style="display: flex; justify-content: center;">
+                                                <span style="font-size: 12px; text-align: center;">
+                                                    <span style="color: #e76a35; font-weight: bold;">Meetings Count:
+                                                        {{ $circlecalls['count'] }}</span><br>
+                                                </span>
                                             </div>
+                                            </p>
                                         </div>
-                                        <p>
-                                            <small class="fw-italic text-muted pt-2 fw-italic">
-                                                Total Members : {{ $meeting->circle->members->count() }}
-                                            </small>
-                                            <br>
-                                            <small class="text-muted">
-                                                Franchise Name : {{ $meeting->circle->franchise->franchiseName }}
-                                            </small>
+                                    </div>
+                                </div>
+                        @endif
+
+                        @if ($busGiver)
+                            <div class="col">
+                                <div class="card">
+                                    @php
+                                        $profilePhoto = $busGiver['member']->profilePhoto ?? 'profile.png';
+                                    @endphp
+
+                                    <img src="{{ asset('ProfilePhoto/' . $profilePhoto) }}" class="mt-3" alt="Profile Photo"
+                                        style="width: 100%; height: 100%; object-fit: contain; aspect-ratio: 1/1;">
+                                    <div class="card-body">
+                                        <h5 class="card-title text-center">Max Business Leader</h5>
+                                        <p class="card-text text-center">
+                                            <span style="font-size: 18px; color: #e76a35; font-weight: bold;">
+                                                {{ $busGiver['user']->firstName }} {{ $busGiver['user']->lastName }}<br>
+                                            </span>
+                                            <hr class="mx-auto" style="color: #e76a35; width: 30%;">
+                                        <div style="display: flex; justify-content: center;">
+                                            <span style="font-size: 14px; text-align: center;">
+                                                <span style="color: #e76a35; font-weight: bold;">Circle:
+                                                    {{ $busGiver['circle']['circleName'] }}</span><br>
+                                            </span>
+                                        </div>
+                                        <hr class="mx-auto" style="color: #e76a35; width: 30%;">
+                                        <div style="display: flex; justify-content: center;">
+                                            <span style="font-size: 12px; text-align: center;">
+                                                <span style="color: #e76a35; font-weight: bold;">Meetings Count:
+                                                    {{ $busGiver['count'] }}</span><br>
+                                                <hr class="mx-auto" style="color: #e76a35; width: 30%;">
+                                                <span style="color: #e76a35; font-weight: bold;">Amount:
+                                                    {{ $busGiver['amount'] }}</span><br>
+                                            </span>
+                                        </div>
                                         </p>
-                                        <div class="row">
-                                            <div class="col-md-11 ps-3 card-title ">Invite people to join</div>
-                                            <div class="col-md-1 mt-2">
-                                                {{-- <button type="button" class="btn btn-bg-orange btn-sm mt-2"
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+
+                        @if ($refGiver)
+                            <div class="col">
+                                <div class="card">
+                                    <img src="{{ asset('ProfilePhoto/' . ($refGiver['profilePhoto'] ?? 'profile.png')) }}"
+                                        class="mt-3" alt="Profile Photo"
+                                        style="width: 100%; height: 100%; object-fit: contain; aspect-ratio: 1/1;">
+                                    <div class="card-body">
+                                        <h5 class="card-title text-center">Top Reference Giver</h5>
+                                        <p class="card-text text-center">
+                                            <span style="font-size: 18px; color: #e76a35; font-weight: bold;">
+                                                {{ $refGiver['user']->firstName ?? 'N/A' }}
+                                                {{ $refGiver['user']->lastName ?? 'N/A' }}<br>
+                                            </span>
+                                            <hr class="mx-auto" style="color: #e76a35; width: 30%;">
+                                        <div style="display: flex; justify-content: center;">
+                                            <span style="font-size: 14px; text-align: center;">
+                                                <span style="color: #e76a35; font-weight: bold;">Circle:
+                                                    {{ $refGiver['circle'] ?? 'N/A' }}</span><br>
+                                            </span>
+                                        </div>
+                                        <hr class="mx-auto" style="color: #e76a35; width: 30%;">
+                                        <div style="display: flex; justify-content: center;">
+                                            <span style="font-size: 12px; text-align: center;">
+                                                <span style="color: #e76a35; font-weight: bold;">References Count:
+                                                    {{ $refGiver['count'] ?? '0' }}</span><br>
+
+                                                <hr class="mx-auto" style="color: #e76a35; width: 30%;">
+                                                <span style="color: #e76a35; font-weight: bold;">Business Category:
+                                                    {{ $refGiver['businessCategory'] ?? 'N/A' }}</span><br>
+                                            </span>
+                                        </div>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+
+                    </div>
+                @endif
+            </div>
+        </div>
+
+        <div class="container-responsive">
+            <div class="row">
+                @if ($meeting)
+                    <div class="col-md-12">
+                        <div class="card-title"><b>Upcoming Circle Meetings</b></div>
+                        <div class="card border-0 shadow workshopCard">
+                            <div class="card-body">
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h4 class="card-title">{{ $meeting->circle->circleName }}
+                                            <span class="text-muted">( {{ $meeting->circle->city->cityName }}
+                                                )</span>
+                                        </h4>
+                                    </div>
+                                    <div class="col-md-6 pt-3 text-muted text-end">
+                                        {{ $meeting->date->format('j M Y') }} <br>
+                                        {{ $meeting->meetingTime }}
+                                    </div>
+                                </div>
+                                <p>
+                                    <small class="fw-italic text-muted pt-2 fw-italic">
+                                        Total Members : {{ $meeting->circle->members->count() }}
+                                    </small>
+                                    <br>
+                                    <small class="text-muted">
+                                        Franchise Name : {{ $meeting->circle->franchise->franchiseName }}
+                                    </small>
+                                </p>
+                                <div class="row">
+                                    <div class="col-md-11 ps-3 card-title ">Invite people to join</div>
+                                    <div class="col-md-1 mt-2">
+                                        {{-- <button type="button" class="btn btn-bg-orange btn-sm mt-2"
                                                     onclick="openInvitePage('{{ $meeting->cm_slug }}', '{{ $meeting->id }}', '{{ auth()->user()->member->id }}')"
                                                     target="_blank">
                                                     Invite
                                                 </button> --}}
 
-                                                <button type="button" class="btn btn-bg-orange btn-sm mt-2" href="javascript:void(0)" onclick="openInvitePage('{{ $meeting->cm_slug }}', '{{ $meeting->id }}', '{{ auth()->user()->member->id }}')">
-                                                    Invite
-                                                    </a>
-                                                </button>
+                                        <button type="button" class="btn btn-bg-orange btn-sm mt-2" href="javascript:void(0)"
+                                            onclick="openInvitePage('{{ $meeting->cm_slug }}', '{{ $meeting->id }}', '{{ auth()->user()->member->id }}')">
+                                            Invite
+                                            </a>
+                                        </button>
 
 
-                                            </div>
-                                        </div>
+                                    </div>
+                                </div>
 
-                                        <script>
-                                            function openInvitePage(slug, meetingId, memberId) {
-                                                // Construct the URL for the visitor form page
-                                                const url = `/visitor-form?slug=${slug}&meetingId=${meetingId}&memberId=${memberId}`;
-                                                // Open the URL in a new tab
-                                                window.open(url, '_blank'); // This will open the URL in a new tab
-                                            }
-                                        </script>
+                                <script>
+                                    function openInvitePage(slug, meetingId, memberId) {
+                                        // Construct the URL for the visitor form page
+                                        const url = `/visitor-form?slug=${slug}&meetingId=${meetingId}&memberId=${memberId}`;
+                                        // Open the URL in a new tab
+                                        window.open(url, '_blank'); // This will open the URL in a new tab
+                                    }
+                                </script>
 
 
-                                        {{-- <div class="row">
+                                {{-- <div class="row">
                                     <div class="col-md-11 ps-3 card-title "></div>
                                     <div class="col-md-1 mt-2">
                                         <button type="button" class="btn btn-bg-orange btn-sm mt-2"
@@ -272,161 +270,172 @@
                                     </div>
                                 </div> --}}
 
-                                        <div class="justify-content-end">
-                                            <button class="btn btn-bg-blue btn-sm" onclick="copyMeetingLink()">
-                                                Invite Via Link
+                                <div class="justify-content-end">
+                                    <button class="btn btn-bg-blue btn-sm" onclick="copyMeetingLink()">
+                                        Invite Via Link
+                                    </button>
+                                    <input type="hidden" id="shareableMeetingLink"
+                                        value="{{ route('visitor.form', ['slug' => $meeting->cm_slug, 'meetingId' => $meeting->id, 'ref' => auth()->user()->member->id]) }}">
+                                </div>
+
+                                <script>
+                                    function copyMeetingLink() {
+                                        var copyText = document.getElementById("shareableMeetingLink").value;
+                                        navigator.clipboard.writeText(copyText).then(function() {
+                                            alert("Link copied to clipboard");
+                                        }, function(err) {
+                                            alert("Could not copy link");
+                                        });
+                                    }
+                                </script>
+
+
+
+
+                                <div class="accordion mt-3">
+                                    <div class="accordion-item ">
+                                        <div class="accordion-header" id="headingSix">
+
+                                            <button class="accordion-button collapsed" type="button"
+                                                data-bs-toggle="collapse" data-bs-target="#collapseSix" aria-expanded="false"
+                                                aria-controls="collapseSix">
+                                                <div class="card-title"> My Invites </div>
                                             </button>
-                                            <input type="hidden" id="shareableMeetingLink" value="{{ route('visitor.form', ['slug' => $meeting->cm_slug, 'meetingId' => $meeting->id, 'ref' => auth()->user()->member->id]) }}">
                                         </div>
 
-                                        <script>
-                                            function copyMeetingLink() {
-                                                var copyText = document.getElementById("shareableMeetingLink").value;
-                                                navigator.clipboard.writeText(copyText).then(function() {
-                                                    alert("Link copied to clipboard");
-                                                }, function(err) {
-                                                    alert("Could not copy link");
-                                                });
-                                            }
-                                        </script>
-
-
-
-
-                                        <div class="accordion mt-3">
-                                            <div class="accordion-item ">
-                                                <div class="accordion-header" id="headingSix">
-
-                                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSix" aria-expanded="false" aria-controls="collapseSix">
-                                                        <div class="card-title"> My Invites </div>
-                                                    </button>
-                                                </div>
-
-                                                <div id="collapseSix" class="accordion-collapse collapse" aria-labelledby="headingSix">
-                                                    <div class="accordion-body">
-                                                        <div class="table-responsive">
-                                                            <table class="table table-border datatable table-striped table-hover">
-                                                                <thead>
+                                        <div id="collapseSix" class="accordion-collapse collapse"
+                                            aria-labelledby="headingSix">
+                                            <div class="accordion-body">
+                                                <div class="table-responsive">
+                                                    <table class="table table-border datatable table-striped table-hover">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Name</th>
+                                                                <th>Email</th>
+                                                                <th>Contact</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @if ($myInvites->count() == 0)
+                                                                <tr>
+                                                                    <td colspan="2" class="text-muted text-center">
+                                                                        No
+                                                                        Invites
+                                                                        for
+                                                                        current
+                                                                        meeting</td>
+                                                                </tr>
+                                                            @else
+                                                                @foreach ($myInvites as $invite)
                                                                     <tr>
-                                                                        <th>Name</th>
-                                                                        <th>Email</th>
-                                                                        <th>Contact</th>
+                                                                        <td><small
+                                                                                class="text-muted">{{ $invite->personName }}</small>
+                                                                        </td>
+                                                                        <td><small
+                                                                                class="text-muted">{{ $invite->personEmail }}</small>
+                                                                        <td><small
+                                                                                class="text-muted">{{ $invite->personContact }}</small>
+                                                                        </td>
                                                                     </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                    @if ($myInvites->count() == 0)
-                                                                        <tr>
-                                                                            <td colspan="2" class="text-muted text-center">No
-                                                                                Invites
-                                                                                for
-                                                                                current
-                                                                                meeting</td>
-                                                                        </tr>
-                                                                    @else
-                                                                        @foreach ($myInvites as $invite)
-                                                                            <tr>
-                                                                                <td><small class="text-muted">{{ $invite->personName }}</small>
-                                                                                </td>
-                                                                                <td><small class="text-muted">{{ $invite->personEmail }}</small>
-                                                                                <td><small class="text-muted">{{ $invite->personContact }}</small>
-                                                                                </td>
-                                                                            </tr>
-                                                                        @endforeach
-                                                                    @endif
-                                                                </tbody>
-                                                            </table>
-                                                        </div>
-                                                    </div>
+                                                                @endforeach
+                                                            @endif
+                                                        </tbody>
+                                                    </table>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        @else
-                            <div class="col-md-12">
-                                <div class="alert alert-info" role="alert">
-                                    No upcoming circle meeting found
-                                </div>
-                            </div>
-                        @endif
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="card-title"><b>Upcoming Training Workshops</b></div>
-                        <div class="card border-0 shadow workshopCard">
-                            {{-- {{$nearestTraining}} --}}
-                            @if ($nearestTraining)
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-md-10">
-                                            <h4 class="card-title">{{ $nearestTraining->title }}</h4>
-                                        </div>
-
-                                        <div class="col-md-2 pt-3 text-muted text-end">
-                                            <b>Date : </b> {{ \Carbon\Carbon::parse($nearestTraining->date)->format('j M Y') }}
-                                            <br>
-                                            <b>Time :</b> {{ $nearestTraining->time }}
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-8 mt-4">
-                                            <p class="text-muted"><strong>Trainer Details:</strong><br>
-                                                <small class="fw-italic text-muted pt-2 fw-italic">
-
-                                                    @foreach ($nearestTraining->trainers as $user)
-                                                        <input type="hidden" value="{{ $user->user->id }}" name="trainerId1" class="trainerId1">
-                                                        {{ $user->user->firstName }}
-                                                        {{ $user->user->lastName }}
-                                                    @endforeach
-
-
-                                                </small>
-                                                <br>
-                                                <small class="text-muted">
-                                                    {{ $nearestTraining->trainersTrainings->externalMemberBio ?? '' }}
-                                                </small>
-                                            </p>
-                                        </div>
-                                        <div class="col-md-4">
-                                            @if (count($findRegister) == 0)
-                                                @if ($nearestTraining->fees == 0)
-                                                    <h5 class="text-muted text-end me-4 pt-5">Free</h5>
-                                                    <button type="button" class="btn btn-bg-orange btn-md" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-                                                        Register
-                                                    </button>
-                                                @else
-                                                    <h5 class="text-muted text-end me-4 pt-3"> ₹
-                                                        {{ $nearestTraining->fees }}
-                                                    </h5>
-                                                    <div class="d-flex justify-content-end">
-                                                        <button type="button" class="btn btn-bg-orange btn-md " data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-                                                            Join Now
-                                                        </button>
-                                                    </div>
-                                                @endif
-                                            @else
-                                                <div class="d-flex justify-content-end">
-                                                    <div class="ps-5 ms-5 mt-5">
-                                                        <strong> <span class="text-success">Already Joined</span> </strong>
-                                                    </div>
-                                                </div>
-                                            @endif
-                                        </div>
-                                    </div>
-                                </div>
                         </div>
                     </div>
-                </div>
-            @else
-                <div class="row">
+                @else
                     <div class="col-md-12">
-                        <p class="mt-3 text-muted text-center"> <b> No Training Workshop for now. </b></p>
+                        <div class="alert alert-info" role="alert">
+                            No upcoming circle meeting found
+                        </div>
                     </div>
+                @endif
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card-title"><b>Upcoming Training Workshops</b></div>
+                <div class="card border-0 shadow workshopCard">
+                    {{-- {{$nearestTraining}} --}}
+                    @if ($nearestTraining)
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-10">
+                                    <h4 class="card-title">{{ $nearestTraining->title }}</h4>
+                                </div>
+
+                                <div class="col-md-2 pt-3 text-muted text-end">
+                                    <b>Date : </b> {{ \Carbon\Carbon::parse($nearestTraining->date)->format('j M Y') }}
+                                    <br>
+                                    <b>Time :</b> {{ $nearestTraining->time }}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-8 mt-4">
+                                    <p class="text-muted"><strong>Trainer Details:</strong><br>
+                                        <small class="fw-italic text-muted pt-2 fw-italic">
+
+                                            @foreach ($nearestTraining->trainers as $user)
+                                                <input type="hidden" value="{{ $user->user->id }}" name="trainerId1"
+                                                    class="trainerId1">
+                                                {{ $user->user->firstName }}
+                                                {{ $user->user->lastName }}
+                                            @endforeach
+
+
+                                        </small>
+                                        <br>
+                                        <small class="text-muted">
+                                            {{ $nearestTraining->trainersTrainings->externalMemberBio ?? '' }}
+                                        </small>
+                                    </p>
+                                </div>
+                                <div class="col-md-4">
+                                    @if (count($findRegister) == 0)
+                                        @if ($nearestTraining->fees == 0)
+                                            <h5 class="text-muted text-end me-4 pt-5">Free</h5>
+                                            <button type="button" class="btn btn-bg-orange btn-md" data-bs-toggle="modal"
+                                                data-bs-target="#staticBackdrop">
+                                                Register
+                                            </button>
+                                        @else
+                                            <h5 class="text-muted text-end me-4 pt-3"> ₹
+                                                {{ $nearestTraining->fees }}
+                                            </h5>
+                                            <div class="d-flex justify-content-end">
+                                                <button type="button" class="btn btn-bg-orange btn-md "
+                                                    data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                                                    Join Now
+                                                </button>
+                                            </div>
+                                        @endif
+                                    @else
+                                        <div class="d-flex justify-content-end">
+                                            <div class="ps-5 ms-5 mt-5">
+                                                <strong> <span class="text-success">Already Joined</span> </strong>
+                                            </div>
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
                 </div>
             </div>
+        </div>
+    @else
+        <div class="row">
+            <div class="col-md-12">
+                <p class="mt-3 text-muted text-center"> <b> No Training Workshop for now. </b></p>
+            </div>
+        </div>
+        </div>
         </div>
         </div>
         @endif
@@ -457,7 +466,8 @@
                                     @if (!is_null($findEventRegister) && count($findEventRegister) == 0)
                                         @if ($nearestEvents->amount == 0)
                                             <h5 class="text-muted text-end me-4 pt-5">Free</h5>
-                                            <form method="POST" action="{{ route('event.register', ['eventId' => $nearestEvents->id]) }}">
+                                            <form method="POST"
+                                                action="{{ route('event.register', ['eventId' => $nearestEvents->id]) }}">
                                                 @csrf
                                                 <button type="submit" class="btn btn-bg-orange btn-md" id="freeRegisterBtn">
                                                     Register
@@ -466,7 +476,8 @@
                                         @else
                                             <h5 class="text-muted text-end me-4 pt-3"> ₹ {{ $nearestEvents->amount }}</h5>
                                             <div class="d-flex justify-content-end">
-                                                <button type="button" class="btn btn-bg-orange btn-md" id="razorpayBtnEvent" data-amount-event="{{ $nearestEvents->amount }}">
+                                                <button type="button" class="btn btn-bg-orange btn-md" id="razorpayBtnEvent"
+                                                    data-amount-event="{{ $nearestEvents->amount }}">
                                                     Join Now
                                                 </button>
                                             </div>
@@ -514,7 +525,8 @@
                                             <button class="btn btn-bg-blue btn-sm" onclick="copyLink()">
                                                 Copy Shareable Link
                                             </button>
-                                            <input type="hidden" id="shareableLink" value="{{ route('event.link', ['slug' => $nearestEvents->event_slug, 'ref' => auth()->user()->member->id]) }}">
+                                            <input type="hidden" id="shareableLink"
+                                                value="{{ route('event.link', ['slug' => $nearestEvents->event_slug, 'ref' => auth()->user()->member->id]) }}">
                                         </div>
 
                                         <style>
@@ -749,7 +761,8 @@
                             @endforeach
 
                             <div class="d-flex justify-content-end mt-4">
-                                <button type="button" class="btn btn-bg-orange btn-md monthlyPay" data-amount="{{ $totalAmountDue }}">
+                                <button type="button" class="btn btn-bg-orange btn-md monthlyPay"
+                                    data-amount="{{ $totalAmountDue }}">
                                     Pay ₹{{ $totalAmountDue }}
                                 </button>
                             </div>
@@ -889,7 +902,8 @@
                     <div class="card shadow">
                         <div class="card-header">
                             <b style="color: #1d2856;">Upcoming Circle Meetings</b>
-                            <i class="bi bi-calendar3" style="display: inline-block; float: right; color: rgb(255, 187, 0);"></i>
+                            <i class="bi bi-calendar3"
+                                style="display: inline-block; float: right; color: rgb(255, 187, 0);"></i>
                         </div>
                         <div class="card-body">
                             @if (session('status'))
@@ -1064,7 +1078,8 @@
 </div> --}}
 
         <!-- Bootstrap Modal -->
-        <div class="modal fade" id="allInvitesModal" tabindex="-1" aria-labelledby="allInvitesModalLabel" aria-hidden="true">
+        <div class="modal fade" id="allInvitesModal" tabindex="-1" aria-labelledby="allInvitesModalLabel"
+            aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -1097,7 +1112,8 @@
                                                     'Rejected' => 'red',
                                                 ];
                                             @endphp
-                                            <td style="background-color: {{ $statusColors[$invite->paymentStatus] ?? 'red' }}; color: white;">
+                                            <td
+                                                style="background-color: {{ $statusColors[$invite->paymentStatus] ?? 'red' }}; color: white;">
                                                 {{ Str::ucfirst($invite->paymentStatus) }}</td>
                                         </tr>
                                     @endforeach
@@ -1131,29 +1147,39 @@
                 </div>
                 <div class="row" style=" position: relative;">
                     <div class="col-md-9" style="position: relative; left: 50%; transform: translateX(-50%);">
-                        <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel" style=" position: relative;">
+                        <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel"
+                            style=" position: relative;">
                             <div class="carousel-inner">
                                 @foreach ($testimonials as $key => $testimonial)
                                     <div class="carousel-item {{ $key == 0 ? 'active' : '' }}" style="position: relative;">
-                                        <div class="card" style="border-radius:10px; height:250px; box-shadow: 0 4px 6px rgba(0,0,0,.1);">
+                                        <div class="card"
+                                            style="border-radius:10px; height:250px; box-shadow: 0 4px 6px rgba(0,0,0,.1);">
                                             <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
                                                 {{-- {{asset('/')}} --}}
                                                 {{-- {{$testimonial->member->profilePhoto}} --}}
-                                                <img src="{{ asset('ProfilePhoto/' . $testimonial->sender->profilePhoto) }}" alt="Profile" class="rounded-circle img-thumbnail object-fit-cover" style="height: 100px;width:100px;">
+                                                <img src="{{ asset('ProfilePhoto/' . $testimonial->sender->profilePhoto) }}"
+                                                    alt="Profile" class="rounded-circle img-thumbnail object-fit-cover"
+                                                    style="height: 100px;width:100px;">
                                                 <h3>{{ $testimonial->sender->firstName . ' ' . $testimonial->sender->lastName }}
                                                 </h3>
-                                                <p class="text-center text-muted text-wrap p-testimonial-message"><i class="bi bi-quote text-dark" style="font-size: 20px;"></i>{{ $testimonial->message }}<i class="bi bi-quote text-dark" style="font-size: 20px;display:inline-block;transform:rotate(180deg);"></i>
+                                                <p class="text-center text-muted text-wrap p-testimonial-message"><i
+                                                        class="bi bi-quote text-dark"
+                                                        style="font-size: 20px;"></i>{{ $testimonial->message }}<i
+                                                        class="bi bi-quote text-dark"
+                                                        style="font-size: 20px;display:inline-block;transform:rotate(180deg);"></i>
                                                 </p>
                                             </div>
                                         </div>
                                     </div>
                                 @endforeach
                             </div>
-                            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+                            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls"
+                                data-bs-slide="prev">
                                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                                 <span class="visually-hidden">Previous</span>
                             </button>
-                            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+                            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls"
+                                data-bs-slide="next">
                                 <span class="carousel-control-next-icon" aria-hidden="true"></span>
                                 <span class="visually-hidden">Next</span>
                             </button>
@@ -1170,14 +1196,16 @@
 
         <!-- Modal -->
         @if ($nearestTraining)
-            <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false"
+                tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="staticBackdropLabel">Join {{ $nearestTraining->title }}
                                 Training
                             </h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
                             <div class="row">
@@ -1220,7 +1248,8 @@
                                 <div class="">
                                     @if (count($findRegister) == 0)
                                         @if ($nearestTraining->fees == 0)
-                                            <a href="{{ route('training.register') }}/{{ $nearestTraining->id }}/{{ $nearestTraining->trainersTrainings->user->id }}" class="btn btn-primary">Register Now</a>
+                                            <a href="{{ route('training.register') }}/{{ $nearestTraining->id }}/{{ $nearestTraining->trainersTrainings->user->id }}"
+                                                class="btn btn-primary">Register Now</a>
                                         @else
                                             <button type="button" class="btn btn-bg-blue pay">Pay Now</button>
                                         @endif
@@ -1242,7 +1271,8 @@
 
 
         <!-- Modal -->
-        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+            aria-hidden="true">
             <div class="modal-dialog modal-dialog-scrollable">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -1256,17 +1286,22 @@
                                 <input type="hidden" name="meetingId" id="meetingId" value="{{ $meeting->id }}">
                                 <div class="mb-3">
                                     <label for="personName" class="form-label">Name</label>
-                                    <input type="text" class="form-control" name="personName" id="personName" required>
+                                    <input type="text" class="form-control" name="personName" id="personName"
+                                        required>
                                     <span class="error-message text-danger"></span> <!-- Error message placeholder -->
                                 </div>
                                 <div class="mb-3">
                                     <label for="personEmail" class="form-label">Email address</label>
-                                    <input type="email" class="form-control" name="personEmail" id="personEmail" aria-describedby="emailHelp" required>
+                                    <input type="email" class="form-control" name="personEmail" id="personEmail"
+                                        aria-describedby="emailHelp" required>
                                     <span class="error-message text-danger"></span> <!-- Error message placeholder -->
                                 </div>
                                 <div class="mb-3">
                                     <label for="personContact" class="form-label">Contact Number</label>
-                                    <input type="tel" class="form-control" name="personContact" id="personContact" pattern="[0-9]{10}" maxlength="10" oninput="if(this.value.length > 10) this.value = this.value.slice(0,10); this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');" required>
+                                    <input type="tel" class="form-control" name="personContact" id="personContact"
+                                        pattern="[0-9]{10}" maxlength="10"
+                                        oninput="if(this.value.length > 10) this.value = this.value.slice(0,10); this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');"
+                                        required>
                                     <span class="error-message text-danger" id="phoneError" style="display:none;">
                                         Please enter correct number
                                     </span> <!-- Error message placeholder -->
@@ -1287,7 +1322,9 @@
                                     <select name="  businessCategoryId" class="form-select" id="personBusiness" required>
                                         <option value="" disabled selected>--Select Business Category--</option>
                                         @foreach ($businessCategory as $category)
-                                            <option value="{{ $category->id }}"><img src="{{ asset('BusinessCategory') }}/{{ $category->image }}" alt=""> {{ $category->categoryName }}</option>
+                                            <option value="{{ $category->id }}"><img
+                                                    src="{{ asset('BusinessCategory') }}/{{ $category->image }}"
+                                                    alt=""> {{ $category->categoryName }}</option>
                                         @endforeach
                                     </select>
                                     <span class="error-message text-danger"></span> <!-- Error message placeholder -->
@@ -1370,7 +1407,6 @@
             });
         });
 
-        var trainingId1 = '{{ $nearestTraining->trainers[0]->user }}';
 
         function storePaymentId(paymentId = '', amount = '') {
             var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
