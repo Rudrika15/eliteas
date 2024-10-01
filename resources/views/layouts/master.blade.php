@@ -10,13 +10,11 @@
 
     <title>@yield('title')</title>
 
-
-
     <meta content="" name="description">
     <meta content="" name="keywords">
 
     <!-- Favicons -->
-    <link href="{{ asset('img/favicon.png') }}" rel="icon" />
+    <link href="{{ asset('img/faviconUbn.png') }}" rel="icon" />
     <link href="{{ asset('img/apple-touch-icon.png') }}" rel="apple-touch-icon" />
 
     <!-- Google Fonts -->
@@ -502,7 +500,7 @@
             });
         }
     </script> --}}
-    
+
 
 
     <script src="{{ asset('vendor/apexcharts/apexcharts.min.js') }}"></script>

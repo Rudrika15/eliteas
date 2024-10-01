@@ -19,10 +19,10 @@ class TrainingController extends Controller
     {
         try {
             $trainings = Training::with('trainer')
-            ->where('status', 'Active')
-            ->where('date', '>=', Carbon::now()->subDays(1))
-            // ->where('date', '>', now()->toDateString())
-            ->get();
+                ->where('status', 'Active')
+                ->where('date', '>=', Carbon::now()->subDays(1))
+                // ->where('date', '>', now()->toDateString())
+                ->get();
 
             return Utils::sendResponse(['trainings' => $trainings], 'Trainings retrieved successfully', 200);
         } catch (\Throwable $th) {
@@ -136,7 +136,7 @@ class TrainingController extends Controller
             $register = new TrainingRegister();
             $register->userId = Auth::user()->id;
             $register->trainingId = $trainingId;
-            $register->trainerId = $trainerId;
+            // $register->trainerId = $trainerId;
             $register->save();
 
             $payment = new Razorpay();
@@ -151,6 +151,4 @@ class TrainingController extends Controller
             return response()->json(['error' => 'Error Registering Training'], 500);
         }
     }
-
-    
 }
