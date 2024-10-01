@@ -353,6 +353,8 @@
                     </div>
                 </div>
 
+
+
                 <div class="row">
                     <div class="col-md-12">
                         <div class="card-title"><b>Upcoming Training Workshops</b></div>
@@ -1370,7 +1372,6 @@
             });
         });
 
-        var trainingId1 = '{{ $nearestTraining->trainers[0]->user }}';
 
         function storePaymentId(paymentId = '', amount = '') {
             var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
