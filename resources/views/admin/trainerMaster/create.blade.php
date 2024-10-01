@@ -66,7 +66,7 @@
 
                         <!-- Member Selection -->
                         <div class="member-list mt-3" id="memberListDropdownMember">
-                            @include('InternalTrainer')
+                            {{-- @include('InternalTrainer') --}}
                             <input type="hidden" name="trainerId" id="trainerId">
                             <input type="text" class="form-control mt-3" id="trainerName" name="memberName"
                                 placeholder="Select Member" readonly>
