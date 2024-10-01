@@ -1511,9 +1511,4 @@
     </script>
 
     <!-- sweetalert -->
-
-
-
-
-
 @endsection
