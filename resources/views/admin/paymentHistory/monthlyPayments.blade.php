@@ -37,6 +37,7 @@
                     <table class="table table-striped table-hover">
                         <thead>
                             <tr>
+                                <th>S.No</th>
                                 <th>Member Name</th>
                                 <th>Payment Date</th>
                                 <th>Month & Year</th>
@@ -46,17 +47,19 @@
                         <tbody>
                             @foreach ($monthlyPayments as $payment)
                                 <tr>
+                                    <th>{{ ($monthlyPayments->currentPage() - 1) * $monthlyPayments->perPage() + $loop->index + 1 }}
+                                    </th>
                                     <td>{{ $payment->members->firstName ?? '-' }} {{ $payment->members->lastName ?? '-' }}
                                     </td>
                                     <td>{{ $payment->paymentDate ? date('d-m-Y', strtotime($payment->paymentDate)) : '-' }}
                                     </td>
                                     <td>{{ $payment->month ?? '-' }}</td>
-                                    <td style="width: 75px;">
+                                    <td style="width: 95px;">
                                         <select class="form-control status-select" data-id="{{ $payment->id }}">
-                                            <option value="unpaid" {{ $payment->status == 'unpaid' ? 'selected' : '' }}
-                                                style="background-color: red; color: white;">Unpaid</option>
-                                            <option value="paid" {{ $payment->status == 'paid' ? 'selected' : '' }}
-                                                style="background-color: green; color: white;">Paid</option>
+                                            <option value="unpaid" {{ $payment->status == 'unpaid' ? 'selected' : '' }}>
+                                                Unpaid</option>
+                                            <option value="paid" {{ $payment->status == 'paid' ? 'selected' : '' }}>Paid
+                                            </option>
                                         </select>
                                     </td>
                                 </tr>
@@ -72,14 +75,51 @@
         </div>
     </div>
 
+
+    <style>
+        .unpaid {
+            background-color: red;
+            color: white;
+        }
+
+        .paid {
+            background-color: green;
+            color: white;
+        }
+    </style>
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         $(document).ready(function() {
+            // Function to update the background color based on the status
+            function updateSelectColor(selectElement) {
+                const status = selectElement.val();
+
+                // Remove any previously applied classes
+                selectElement.removeClass('unpaid paid');
+
+                // Add the appropriate class based on the selected status
+                if (status === 'unpaid') {
+                    selectElement.addClass('unpaid');
+                } else if (status === 'paid') {
+                    selectElement.addClass('paid');
+                }
+            }
+
+            // Apply the correct color when the page loads
+            $('.status-select').each(function() {
+                updateSelectColor($(this));
+            });
+
             // Handle status change
             $('.status-select').change(function() {
                 var paymentId = $(this).data('id');
                 var status = $(this).val();
 
+                // Update the color dynamically when the status changes
+                updateSelectColor($(this));
+
+                // Send an AJAX request to update the status
                 $.ajax({
                     url: '{{ route('update.payment.status') }}',
                     type: 'POST',

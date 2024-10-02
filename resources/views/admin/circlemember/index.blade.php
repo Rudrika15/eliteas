@@ -20,7 +20,7 @@
                         <i class="bi bi-file-earmark-excel"></i> Download Excel
                     </button> --}}
                         <form action="{{ route('circlemember.export') }}" method="GET" class="d-flex align-items-center">
-                            <h6 class=""><b>Download Member List:</b></h6>
+                            <h6 class="mb-0"><b>Download Member List: </b></h6>
                             <select name="circleId" id="circleId" class="form-select me-3">
                                 <option value="">Select Circle</option>
                                 @foreach ($circle as $circleData)
@@ -75,6 +75,7 @@
                     <table class="table table-striped table-hover">
                         <thead>
                             <tr>
+                                <th>S.No</th>
                                 <th>Circle Name</th>
                                 <th>Member Name</th>
                                 <th>Business Category</th>
@@ -88,6 +89,7 @@
                             {{-- {{$member}} --}}
                             @foreach ($member as $circlememberData)
                                 <tr>
+                                    <th>{{ ($member->currentPage() - 1) * $member->perPage() + $loop->index + 1 }}</th>
                                     <td>{{ $circlememberData->circle->circleName ?? '-' }}</td>
                                     <td>{{ $circlememberData->firstName ?? '-' }} {{ $circlememberData->lastName ?? '' }}
                                     </td>
@@ -150,17 +152,19 @@
                                                             <select name="roleId" class="form-select">
                                                                 <option value="">Select Role</option>
                                                                 @foreach ($roles as $role)
-                                                                    @if (!in_array($role->name, ['Franchise Admin', 'Member', 'Admin', 'Trainer']) && !$circlememberData->user->roles->contains($role->id))
+                                                                    @if (
+                                                                        !in_array($role->name, ['Franchise Admin', 'Member', 'Admin', 'Trainer']) &&
+                                                                            !$circlememberData->user->roles->contains($role->id))
                                                                         <option value="{{ $role->id }}">
                                                                             {{ $role->name }}</option>
                                                                     @endif
                                                                 @endforeach
                                                             </select>
-                                                            <div class="mt-3">
-                                                            <button type="submit"
-                                                                class="btn btn-primary btn-sm">Assign</button>
+                                                            <div class="d-flex justify-content-end mt-3">
+                                                                <button type="submit"
+                                                                    class="btn btn-bg-blue btn-sm">Assign</button>
                                                             </div>
-                                                            </form>
+                                                        </form>
                                                     </div>
                                                 </div>
                                             </div>
@@ -200,9 +204,10 @@
                                                                     @endif
                                                                 @endforeach
                                                             </select>
-                                                            <div class="mt-3">
+
+                                                            <div class="d-flex justify-content-end mt-3">
                                                                 <button type="submit"
-                                                                    class="btn btn-danger btn-sm justify-content-end">Remove</button>
+                                                                    class="btn btn-bg-orange btn-sm">Remove</button>
                                                             </div>
                                                         </form>
                                                     </div>

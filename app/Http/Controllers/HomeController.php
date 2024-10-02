@@ -244,7 +244,7 @@ class HomeController extends Controller
             if ($nearestTraining) {
                 $findRegister = TrainingRegister::where('userId', Auth::user()->id)
                     ->where('trainingId', $nearestTraining->id)
-                    ->where('trainerId', $nearestTraining->trainersTrainings->user->id)
+                    // ->where('trainerId', $nearestTraining->trainersTrainings->user->id)
                     ->get();
             } else {
                 $findRegister = [];

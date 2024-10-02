@@ -469,6 +469,7 @@ Route::group(['middleware' => ['auth']], function () {
     //export excel file
     Route::get('circlemember/export', [CircleMemberController::class, 'export'])->name('circlemember.export');
     Route::post('/subscriptions/export', [MembershipSubscriptionController::class, 'exportSubscriptions'])->name('subscriptions.export');
+    Route::get('export/users', [UserController::class, 'export'])->name('export.users');
     // Route::get('trainers/export', [TrainerMasterController::class, 'trainerListExport'])->name('trainersListExport.export');
 
     //leaderboard on dashboard

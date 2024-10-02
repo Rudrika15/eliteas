@@ -2,39 +2,35 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\Member;
 use App\Models\CircleCall;
 use App\Utils\ErrorLogger;
 use App\Models\Testimonial;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\CircleMeetingMembersBusiness;
 use App\Models\CircleMeetingMembersReference;
-use Illuminate\Http\Request;
 
 class CircleMemberActivityController extends Controller
 {
     public function activity(Request $request, $id)
     {
         try {
+            // Fetch member details based on the provided id
+            $member = Member::find($id);
 
-            $circlecall = CircleCall::where('memberId', $id)->get();
+            // Retrieve related data for the member
+            $circlecall = CircleCall::where('memberId', $id)->paginate(5);
+            $refGiver = CircleMeetingMembersReference::where('memberId', $id)->paginate(5);
+            $busGiver = CircleMeetingMembersBusiness::where('loginMemberId', $id)->paginate(5);
+            $testimonials = Testimonial::where('memberId', $id)->paginate(5);
 
-            $refGiver = CircleMeetingMembersReference::where('memberId', $id)->get();
-
-            $busGiver = CircleMeetingMembersBusiness::where('loginMemberId', $id)->get();
-
-            $testimonials = Testimonial::where('memberId', $id)->get();
-
-            return view('admin.circlemember.activity', compact('circlecall', 'refGiver', 'busGiver', 'testimonials'));
+            // Pass the member and the related data to the view
+            return view('admin.circlemember.activity', compact('member', 'circlecall', 'refGiver', 'busGiver', 'testimonials'));
         } catch (\Throwable $th) {
-            // throw $th;
-            ErrorLogger::logError($th,
-                $request->fullUrl()
-            );
+            // Log the error and return the error view
+            ErrorLogger::logError($th, $request->fullUrl());
             return view('servererror');
         }
     }
-
-
-    
-
 }

@@ -8,9 +8,11 @@ use App\Models\User;
 use App\Models\Member;
 use Illuminate\View\View;
 use Illuminate\Support\Arr;
+use App\Exports\UsersExport;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Controller;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\RedirectResponse;
 
 class UserController extends Controller
@@ -180,5 +182,10 @@ class UserController extends Controller
         $roles = $user->roles()->pluck('name')->toArray();
 
         return response()->json($roles);
+    }
+
+    public function export()
+    {
+        return Excel::download(new UsersExport, 'users.xlsx');
     }
 }

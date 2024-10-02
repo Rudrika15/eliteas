@@ -36,13 +36,13 @@
             <table class="table table-striped table-hover">
                 <thead>
                     <tr>
-                        <th>Training Name</th>
-                        <th>Date</th>
-                        <th>Trainer Name</th>
+                        <th class="w-25 text-start">Training Name</th>
+                        <th class="w-25 text-start">Date</th>
+                        <th class="w-25 text-start">Trainer Name</th>
                         {{-- <th>Status</th> --}}
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="table-group-divider text-start">
                     @foreach ($trainers as $trainerData)
                     <tr>
                         <td>{{$trainerData->training->title ?? '-'}}</td>

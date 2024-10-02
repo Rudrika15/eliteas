@@ -53,7 +53,6 @@ class PaymentController extends Controller
             $register = new TrainingRegister();
             $register->userId = Auth::user()->id;
             $register->trainingId = $request->input('trainingId');
-            $register->trainerId = json_encode([$request->input('trainerId'), $request->input('trainerId')]);
             $register->save();
 
             // Store the payment details
