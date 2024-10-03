@@ -37,6 +37,7 @@
                 <table class="table table-striped table-hover mb-4">
                     <thead>
                         <tr>
+                            <th>S.No</th>
                             <th>Meeting Person</th>
                             <th>Meeting Place</th>
                             <th>Meeting Image</th>
@@ -48,6 +49,7 @@
                     <tbody>
                         @foreach ($circlecall as $circlecallData)
                             <tr>
+                                <th>{{ ($circlecall->currentPage() - 1) * $circlecall->perPage() + $loop->index + 1 }}</th>
                                 <td>{{ $circlecallData->meetingPerson->firstName ?? '-' }}
                                     {{ $circlecallData->meetingPerson->lastName ?? '-' }}</td>
                                 <td>{{ $circlecallData->meetingPlace ?? '-' }}</td>

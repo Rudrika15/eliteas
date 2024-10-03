@@ -163,6 +163,7 @@ class CircleCallController extends Controller
             $circleCall->memberId = $member->id;
             $circleCall->meetingPersonId = $request->input('meetingPersonId');
             $circleCall->meetingPlace = $request->input('meetingPlace');
+            $circleCall->meetingImage = $request->input('meetingImage');
             $circleCall->date = $request->input('date');
             $circleCall->remarks = $request->input('remarks');
             $circleCall->status = 'Active';
@@ -207,6 +208,7 @@ class CircleCallController extends Controller
 
             $circleCall->meetingPersonId = $request->input('meetingPersonId');
             $circleCall->meetingPlace = $request->input('meetingPlace');
+            $circleCall->meetingImage = $request->input('meetingImage');
             $circleCall->date = $request->input('date');
             $circleCall->remarks = $request->input('remarks');
             $circleCall->save();
