@@ -71,7 +71,7 @@ class AttendanceController extends Controller
             $schedules = Schedule::where('circleId', auth()->user()->member->circle->id)
                 ->orderBy('date', 'desc')
                 ->where('date', '<', now())
-                ->get();
+                ->paginate(10);
 
             return view('admin.attendance.meetingSchedule', compact('schedules'));
         } catch (\Throwable $th) {

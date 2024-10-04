@@ -3,11 +3,11 @@
 
 @section('content')
 
-<!-- Loader -->
-<div id="loader" class="loader"></div>
+    <!-- Loader -->
+    <div id="loader" class="loader"></div>
 
-{{-- Message --}}
-{{-- @if (Session::has('success'))
+    {{-- Message --}}
+    {{-- @if (Session::has('success'))
 <div class="alert alert-success alert-dismissible" role="alert">
     <button type="button" class="close" data-dismiss="alert"></button>
     <strong>Success!</strong> {{ session('success') }}
@@ -21,97 +21,102 @@
 </div>
 @endif --}}
 
-{{-- Received Testimonial --}}
-<div class="container">
-    <div class="row">
-        <div class="col-12">
-            <div class="card mt-3">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center mb-5">
-                        <h4 class="card-title">Received Testimonials</h4>
+    {{-- Received Testimonial --}}
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-5">
+                            <h4 class="card-title">Received Testimonials</h4>
+                        </div>
+                        <hr class="mb-5">
+                        <!-- Table with stripped rows -->
+                        <div class="table-responsive mt-5">
+                            <table class="table table-bordered table-striped table-hover mb-5">
+                                <thead>
+                                    <tr>
+                                        {{-- <th>S.No</th> --}}
+                                        <th>Circle Member</th>
+                                        <th>Message</th>
+                                        <th>Uploaded Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($testimonials as $testimonial)
+                                        <tr>
+
+                                            {{-- <th>{{ ($testimonial->currentPage() - 1) * $testimonial->perPage() + $loop->index + 1 }} --}}
+                                            <td>{{ $testimonial->sender->firstName ?? '' }}
+                                                {{ $testimonial->sender->lastName ?? '' }}
+                                            </td>
+                                            <td>{{ $testimonial->message ?? '' }}</td>
+                                            <td>{{ \Carbon\Carbon::parse($testimonial->uploadedDate)->format('d-m-Y') ?? '' }}
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                            <div class="d-flex justify-content-end custom-pagination">
+                                {!! $testimonials->links() !!}
+                            </div>
+                        </div>
                     </div>
-                    <hr class="mb-5">
-                    <!-- Table with stripped rows -->
-                    <div class="table-responsive mt-5">
-                        <table class="table table-striped table-hover mb-5">
-                            <thead>
-                                <tr>
-                                    <th>Circle Member</th>
-                                    <th>Message</th>
-                                    <th>Uploaded Date</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($testimonials as $testimonial)
-                                <tr>
-                                    <td>{{ $testimonial->sender->firstName ?? '' }} {{ $testimonial->sender->lastName ??
-                                        '' }}</td>
-                                    <td>{{ $testimonial->message ?? '' }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($testimonial->uploadedDate)->format('d-m-Y') ?? '' }}
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                        <div class="d-flex justify-content-end custom-pagination">
-                            {!! $testimonials->links() !!}
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-5">
+                            <h4 class="card-title">Given Testimonials</h4>
+                            <a href="{{ route('testimonial.create') }}" class="btn btn-bg-orange btn-sm mt-3 btn-tooltip">
+                                <i class="bi bi-plus-circle"></i>
+                                <span class="btn-text">Add Testimonial</span>
+                            </a>
+                        </div>
+                        <hr class="mb-5">
+                        <!-- Table with stripped rows -->
+                        <div class="table-responsive mt-5">
+                            <table class="table table-bordered table-striped table-hover mb-5">
+                                <thead>
+                                    <tr>
+                                        <th>Circle Member</th>
+                                        <th>Message</th>
+                                        <th>Date</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($myTestimonials as $myTestimonial)
+                                        <tr>
+                                            <td>{{ $myTestimonial->receiver->firstName ?? '' }}
+                                                {{ $myTestimonial->receiver->lastName ?? '' }}</td>
+                                            <td>{{ $myTestimonial->message ?? '' }}</td>
+                                            <td>{{ \Carbon\Carbon::parse($myTestimonial->uploadedDate)->format('d-m-Y') ?? '' }}
+                                            <td>
+                                                <a href="{{ route('testimonial.edit', $myTestimonial->id) }}"
+                                                    class="btn btn-bg-blue btn-sm btn-tooltip">
+                                                    <i class="bi bi-pen"></i>
+                                                    <span class="btn-text">Edit Testimonial</span>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                            <div class="d-flex justify-content-end custom-pagination ">
+                                {!! $myTestimonials->links() !!}
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-
-<div class="row">
-    <div class="col-12">
-        <div class="card mt-3">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-5">
-                    <h4 class="card-title">Given Testimonials</h4>
-                    <a href="{{ route('testimonial.create') }}" class="btn btn-bg-orange btn-sm mt-3 btn-tooltip">
-                        <i class="bi bi-plus-circle"></i>
-                        <span class="btn-text">Add Testimonial</span>
-                    </a>
-                </div>
-                <hr class="mb-5">
-                <!-- Table with stripped rows -->
-                <div class="table-responsive mt-5">
-                    <table class="table table-striped table-hover mb-5">
-                        <thead>
-                            <tr>
-                                <th>Circle Member</th>
-                                <th>Message</th>
-                                <th>Date</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($myTestimonials as $myTestimonial)
-                            <tr>
-                                <td>{{ $myTestimonial->receiver->firstName ?? '' }} {{
-                                    $myTestimonial->receiver->lastName ?? '' }}</td>
-                                <td>{{ $myTestimonial->message ?? '' }}</td>
-                                <td>{{ \Carbon\Carbon::parse($myTestimonial->uploadedDate)->format('d-m-Y') ?? '' }}
-                                <td>
-                                    <a href="{{ route('testimonial.edit', $myTestimonial->id) }}"
-                                        class="btn btn-bg-blue btn-sm btn-tooltip">
-                                        <i class="bi bi-pen"></i>
-                                        <span class="btn-text">Edit Testimonial</span>
-                                    </a>
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                    <div class="d-flex justify-content-end custom-pagination ">
-                        {!! $myTestimonials->links() !!}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
 @endsection
 

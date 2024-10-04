@@ -61,9 +61,17 @@
                             <div class="row">
                                 <div class="col-md-6 mt-3">
                                     <div class="form-floating">
-                                        <input type="text" class="form-control @error('title') is-invalid @enderror"
-                                            id="title" name="title" value="{{ $member->title ?? '-' }}"
-                                            placeholder="title">
+                                        <select class="form-select @error('title') is-invalid @enderror" id="title"
+                                            name="title">
+                                            <option value="" disabled selected>Select Title</option>
+                                            <option value="Mr" {{ $member->title == 'Mr' ? 'selected' : '' }}>Mr
+                                            </option>
+                                            <option value="Ms" {{ $member->title == 'Ms' ? 'selected' : '' }}>Ms
+                                            </option>
+                                            <option value="Mrs" {{ $member->title == 'Mrs' ? 'selected' : '' }}>Mrs
+                                            </option>
+                                            <!-- Add more options as needed -->
+                                        </select>
                                         <label for="title">Title</label>
                                         @error('title')
                                             <div class="invalid-tooltip">
@@ -71,6 +79,7 @@
                                             </div>
                                         @enderror
                                     </div>
+
                                 </div>
                                 <div class="col-md-6 mt-3">
                                     <div class="form-floating">

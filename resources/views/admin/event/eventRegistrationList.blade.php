@@ -14,9 +14,10 @@
 
                 <!-- Table with stripped rows -->
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover">
+                    <table class="table table-bordered table-striped table-hover">
                         <thead>
                             <tr>
+                                <th>S.No</th>
                                 <th>Title</th>
                                 <th>Member Name</th>
                                 <th>Person Name</th>
@@ -29,6 +30,8 @@
                         <tbody>
                             @foreach ($registerList as $registerListData)
                                 <tr>
+                                    <th>{{ ($registerList->currentPage() - 1) * $registerList->perPage() + $loop->index + 1 }}
+
                                     <td>{{ $registerListData->events->title ?? '' }}</td>
                                     <td>{{ $registerListData->members->firstName ?? '' }}
                                         {{ $registerListData->members->lastName ?? '' }}

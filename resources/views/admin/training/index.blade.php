@@ -3,8 +3,8 @@
 @section('header', 'State')
 @section('content')
 
-{{-- Message --}}
-{{-- @if (Session::has('success'))
+    {{-- Message --}}
+    {{-- @if (Session::has('success'))
 <div class="alert alert-success alert-dismissible" role="alert">
     <button type="button" class="close" data-dismiss="alert">
         <i class="fa fa-times"></i>
@@ -22,38 +22,39 @@
 </div>
 @endif --}}
 
-<div class="card">
-    <div class="card-body">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h4 class="card-title">Trainings</h4>
-            <a href="{{ route('training.create') }}" class="btn btn-bg-orange btn-sm mt-3 btn-tooltip"><i
-                    class="bi bi-plus-circle"></i>
-                <span class="btn-text">Create Training</span>
-            </a>
-        </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="card-title">Trainings</h4>
+                <a href="{{ route('training.create') }}" class="btn btn-bg-orange btn-sm mt-3 btn-tooltip"><i
+                        class="bi bi-plus-circle"></i>
+                    <span class="btn-text">Create Training</span>
+                </a>
+            </div>
 
-        <!-- Table with stripped rows -->
-        <div class="table-responsive">
-            <table class="table table-striped table-hover">
-                <thead>
-                    <tr>
-                        {{-- <th>Trainer Name</th> --}}
-                        <th>Title</th>
-                        {{-- <th>External Trainer</th> --}}
-                        <th>Type</th>
-                        <th>Fees</th>
-                        <th>Meeting Link</th>
-                        <th>Venue</th>
-                        <th>Date</th>
-                        <th>Time</th>
-                        {{-- <th>Status</th> --}}
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($training as $trainingData)
-                    <tr>
-                        {{-- <td>
+            <!-- Table with stripped rows -->
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>S.No</th>
+                            {{-- <th>Trainer Name</th> --}}
+                            <th>Title</th>
+                            {{-- <th>External Trainer</th> --}}
+                            <th>Type</th>
+                            <th>Fees</th>
+                            <th>Meeting Link</th>
+                            <th>Venue</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                            {{-- <th>Status</th> --}}
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($training as $trainingData)
+                            <tr>
+                                {{-- <td>
                             @php
                             $trainerIds = explode(',', $trainingData->trainerId);
                             $trainerNames = [];
@@ -66,8 +67,10 @@
                             echo implode(', ', $trainerNames) ?: '-';
                             @endphp
                         </td> --}}
-                        <td>{{$trainingData->title ?? '-'}}</td>
-                        {{-- <td>
+                                <th>{{ ($training->currentPage() - 1) * $training->perPage() + $loop->index + 1 }}
+
+                                <td>{{ $trainingData->title ?? '-' }}</td>
+                                {{-- <td>
                             @php
                             $externalTrainerIds = explode(',', $trainingData->externalTrainerId);
                             $externalTrainerNames = [];
@@ -80,50 +83,52 @@
                             echo implode(', ', $externalTrainerNames) ?: '-';
                             @endphp
                         </td> --}}
-                        {{-- <td>{{$trainingData->user->firstName ?? '-'}} {{$trainingData->user->lastName ?? '-'}}</td>
+                                {{-- <td>{{$trainingData->user->firstName ?? '-'}} {{$trainingData->user->lastName ?? '-'}}</td>
                         --}}
-                        <td>{{$trainingData->type ?? '-'}}</td>
-                        <td>{{ number_format($trainingData->fees, 2, '.', ',') }}</td>
-                        <td>{{$trainingData->meetingLink}}</td>
-                        <td>{{$trainingData->venue ?? '-'}}</td>
-                        <td>{{ \Carbon\Carbon::parse($trainingData->date)->format('d-m-Y') ?? '-' }}</td>
-                        <td>{{$trainingData->time ?? '-'}}</td>
-                        {{-- <td>{{$trainingData->status ?? '-'}}</td> --}}
-                        <td>
-                            <a href="{{ route('training.edit', $trainingData->id) }}"
-                                class="btn btn-bg-blue btn-sm btn-tooltip">
-                                <i class="bi bi-pen"></i>
-                                <span class="btn-text">Edit</span>
-                            </a>
+                                <td>{{ $trainingData->type ?? '-' }}</td>
+                                <td>{{ number_format($trainingData->fees, 2, '.', ',') }}</td>
+                                <td>{{ $trainingData->meetingLink }}</td>
+                                <td>{{ $trainingData->venue ?? '-' }}</td>
+                                <td>{{ \Carbon\Carbon::parse($trainingData->date)->format('d-m-Y') ?? '-' }}</td>
+                                <td>{{ $trainingData->time ?? '-' }}</td>
+                                {{-- <td>{{$trainingData->status ?? '-'}}</td> --}}
+                                <td>
+                                    <a href="{{ route('training.edit', $trainingData->id) }}"
+                                        class="btn btn-bg-blue btn-sm btn-tooltip">
+                                        <i class="bi bi-pen"></i>
+                                        <span class="btn-text">Edit</span>
+                                    </a>
 
-                            {{-- <a href="{{ route('franchise.show', $franchiseData->id) }}" class="btn btn-info">
+                                    {{-- <a href="{{ route('franchise.show', $franchiseData->id) }}" class="btn btn-info">
                                 <i class="bi bi-eye"></i>
                             </a> --}}
 
-                            <a href="#" onclick="confirmDelete('{{ route('training.delete', $trainingData->id) }}')" class="btn btn-danger btn-sm btn-tooltip">
-                                <i class="bi bi-trash"></i>
-                                <span class="btn-text">Delete</span>
-                            </a>
-                            <script>
-                                function confirmDelete(url) {
-                                    Swal.fire({
-                                        title: 'Are you sure?',
-                                        text: "You won't be able to revert this!",
-                                        icon: 'warning',
-                                        showCancelButton: true,
-                                        confirmButtonColor: '#3085d6',
-                                        cancelButtonColor: '#d33',
-                                        confirmButtonText: 'Yes, delete it!'
-                                    }).then((result) => {
-                                        if (result.isConfirmed) {
-                                            window.location.href = url;
+                                    <a href="#"
+                                        onclick="confirmDelete('{{ route('training.delete', $trainingData->id) }}')"
+                                        class="btn btn-danger btn-sm btn-tooltip">
+                                        <i class="bi bi-trash"></i>
+                                        <span class="btn-text">Delete</span>
+                                    </a>
+                                    <script>
+                                        function confirmDelete(url) {
+                                            Swal.fire({
+                                                title: 'Are you sure?',
+                                                text: "You won't be able to revert this!",
+                                                icon: 'warning',
+                                                showCancelButton: true,
+                                                confirmButtonColor: '#3085d6',
+                                                cancelButtonColor: '#d33',
+                                                confirmButtonText: 'Yes, delete it!'
+                                            }).then((result) => {
+                                                if (result.isConfirmed) {
+                                                    window.location.href = url;
+                                                }
+                                            })
                                         }
-                                    })
-                                }
-                            </script>
+                                    </script>
 
 
-                            {{-- <form action="{{ route('training.delete', $trainingData->id) }}" method="POST"
+                                    {{-- <form action="{{ route('training.delete', $trainingData->id) }}" method="POST"
                                 style="display: inline;">
                                 @csrf
                                 @method('DELETE')
@@ -131,15 +136,15 @@
                                     <i class="bi bi-trash"></i> <!-- Icon for delete -->
                                 </button>
                             </form> --}}
-                        </td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
-            <div class="d-flex justify-content-end custom-pagination">
-                {!! $training->links() !!}
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+                <div class="d-flex justify-content-end custom-pagination">
+                    {!! $training->links() !!}
+                </div>
+                <!-- End Table with stripped rows -->
             </div>
-            <!-- End Table with stripped rows -->
         </div>
-    </div>
     @endsection

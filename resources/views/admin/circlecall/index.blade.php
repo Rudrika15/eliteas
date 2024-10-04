@@ -34,7 +34,7 @@
             <hr class="mb-4">
             <!-- Table with stripped rows -->
             <div class="table-responsive">
-                <table class="table table-striped table-hover mb-4">
+                <table class="table table-bordered table-striped table-hover mb-4">
                     <thead>
                         <tr>
                             <th>S.No</th>
@@ -113,9 +113,10 @@
             <hr class="mb-4">
             <!-- Table with stripped rows -->
             <div class="table-responsive">
-                <table class="table table-striped table-hover mb-4">
+                <table class="table table-bordered table-striped table-hover mb-4">
                     <thead>
                         <tr>
+                            <th>S.No</th>
                             <th>Meeting Person</th>
                             <th>Meeting Place</th>
                             <th>Meeting Image</th>
@@ -126,6 +127,7 @@
                     <tbody>
                         @foreach ($callWith as $callWithData)
                             <tr>
+                                <th>{{ ($callWith->currentPage() - 1) * $callWith->perPage() + $loop->index + 1 }}</th>
                                 <td>{{ $callWithData->member->firstName ?? '-' }}
                                     {{ $callWithData->member->lastName ?? '-' }}</td>
                                 <td>{{ $callWithData->meetingPlace ?? '-' }}</td>
@@ -143,7 +145,7 @@
                         @endforeach
                     </tbody>
                 </table>
-                <div class="d-flex justify-content-end" style="color: #1d3268">
+                <div class="d-flex justify-content-end custom-pagination">
                     {!! $callWith->links() !!}
                 </div>
             </div>

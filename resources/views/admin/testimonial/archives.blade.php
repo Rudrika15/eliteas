@@ -30,9 +30,10 @@
             </div>
 
             <!-- Table with stripped rows -->
-            <table class="table table-striped table-hover">
+            <table class="table table-bordered table-striped table-hover">
                 <thead>
                     <tr>
+                        <th>S.No</th>
                         <th>Testimonial Giver</th>
                         <th>Testimonial Taker</th>
                         <th>Message</th>
@@ -44,6 +45,7 @@
                 <tbody>
                     @foreach ($testimonials as $testimonialData)
                         <tr>
+                            <td>{{ ($testimonials->currentPage() - 1) * $testimonials->perPage() + $loop->index + 1 }}
                             <td>{{ $testimonialData->user->firstName ?? '-' }} {{ $testimonialData->user->lastName ?? '-' }}
                             </td>
                             <td>{{ $testimonialData->member->firstName ?? '-' }}

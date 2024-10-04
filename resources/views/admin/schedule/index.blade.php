@@ -40,7 +40,7 @@
 
             <!-- Table with stripped rows -->
             <div class="table-responsive">
-                <table class="table table-striped table-hover" id="scheduleTable">
+                <table class="table table-bordered table-striped table-hover" id="scheduleTable">
                     <thead>
                         <tr>
                             <th>S.No</th>

@@ -14,7 +14,7 @@
 
                 <!-- Table with stripped rows -->
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover">
+                    <table class="table table-bordered table-striped table-hover">
                         <thead>
                             <tr>
                                 <th>No</th>
@@ -29,7 +29,7 @@
                         <tbody>
                             @foreach ($ibms as $ibmData)
                                 <tr>
-                                    <td>{{ ($ibms->currentPage() - 1) * $ibms->perPage() + $loop->iteration }}</td>
+                                    <th>{{ ($ibms->currentPage() - 1) * $ibms->perPage() + $loop->iteration }}</th>
                                     <td>{{ $ibmData->member->firstName ?? '-' }} {{ $ibmData->member->lastName ?? '-' }}
                                     </td>
                                     <td>{{ $ibmData->meetingPerson->firstName ?? '-' }}

@@ -14,7 +14,7 @@
 
                 <!-- Table with stripped rows -->
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover">
+                    <table class="table table-bordered table-striped table-hover">
                         <thead>
                             <tr>
                                 <th class="text-center">S.No</th>
@@ -28,7 +28,7 @@
                         <tbody>
                             @foreach ($errorList as $key => $errorListData)
                                 <tr>
-                                    <td>{{ $key + $errorList->firstItem() }}</td>
+                                    <th>{{ $key + $errorList->firstItem() }}</th>
                                     <td>{{ $errorListData->url ?? '-' }}</td>
                                     <td>{{ $errorListData->error_message ?? '-' }}</td>
                                     <td>{{ $errorListData->date ?? '-' }}</td>

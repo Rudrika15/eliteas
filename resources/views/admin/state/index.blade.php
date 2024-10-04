@@ -34,9 +34,10 @@
 
             <!-- Table with stripped rows -->
             <div class="table-responsive">
-                <table class="table table-striped table-hover">
+                <table class="table table-bordered table-striped table-hover">
                     <thead>
                         <tr>
+                            <th>S.No</th>
                             <th>Country Name</th>
                             <th>State Name</th>
                             <th>Status</th>
@@ -46,6 +47,7 @@
                     <tbody>
                         @foreach ($state as $stateData)
                         <tr>
+                            <th>{{ ($state->currentPage() - 1) * $state->perPage() + $loop->index + 1 }}
                             <td>{{$stateData->country->countryName ?? '-'}}</td>
                             <td>{{$stateData->stateName}}</td>
                             <td>{{$stateData->status}}</td>

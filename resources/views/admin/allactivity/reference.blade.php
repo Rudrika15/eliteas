@@ -14,10 +14,10 @@
 
                 <!-- Table with stripped rows -->
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover">
+                    <table class="table table-bordered table-striped table-hover">
                         <thead>
                             <tr>
-                                <th>No</th>
+                                <th>S.No</th>
                                 <th>Reference By</th>
                                 <th>Reference To</th>
                                 <th>Contact Name</th>
@@ -30,7 +30,7 @@
                         <tbody>
                             @foreach ($refrences as $refrenceData)
                                 <tr>
-                                    <td>{{ $loop->iteration }}</td>
+                                    <th>{{ ($refrences->currentPage() - 1) * $refrences->perPage() + $loop->index + 1 }}
                                     <td>{{ $refrenceData->members->firstName ?? '-' }}
                                         {{ $refrenceData->members->lastName ?? '-' }}</td>
                                     <td>{{ $refrenceData->refGiverName->firstName ?? '-' }}

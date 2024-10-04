@@ -36,7 +36,7 @@
                 </div>
 
                 <div class="table-responsive">
-                    <table class="table datatable table-striped table-hover" id="subscriptionsTable">
+                    <table class="table table-bordered table-striped table-hover" id="subscriptionsTable">
                         <thead>
                             <tr>
                                 <th>S.No</th>

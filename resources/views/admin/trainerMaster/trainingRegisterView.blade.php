@@ -11,9 +11,10 @@
 
             <!-- Table with stripped rows -->
             <div class="table-responsive">
-                <table class="table table-striped table-hover">
+                <table class="table table-bordered table-striped table-hover">
                     <thead>
                         <tr>
+                            <th>S.No</th>
                             <th>User Name</th>
                             <th>Training Title</th>
                         </tr>
@@ -21,6 +22,8 @@
                     <tbody>
                         @foreach ($trainingRegister as $trainingRegisterData)
                             <tr>
+                                <th>{{ ($trainingRegister->currentPage() - 1) * $trainingRegister->perPage() + $loop->index + 1 }}
+
                                 <td>{{ $trainingRegisterData->user->firstName ?? '' }}
                                     {{ $trainingRegisterData->user->lastName ?? '' }}</td>
 

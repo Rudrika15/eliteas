@@ -287,14 +287,21 @@
                                 <div class="form-group col-sm-6 flex-column d-flex">
                                     <label class="form-control-label px-3">Are you part of any networking
                                         group?</label>
-                                    <input type="text" id="networkingGroup" name="networkingGroup"
-                                        value="{{ old('networkingGroup') }}"
+                                    <select id="networkingGroup" name="networkingGroup"
                                         class="form-control @error('networkingGroup') is-invalid @enderror">
+                                        <option value="" disabled selected>Select Yes or No</option>
+                                        <option value="Yes"
+                                            {{ old('networkingGroup') == 'Yes' ? 'selected' : '' }}>Yes</option>
+                                        <option value="No" {{ old('networkingGroup') == 'No' ? 'selected' : '' }}>
+                                            No</option>
+                                    </select>
                                     @error('networkingGroup')
-                                        <span class="invalid-feedback"
-                                            role="alert"><strong>{{ $message }}</strong></span>
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
                                     @enderror
                                 </div>
+
                             </div>
 
                             <!-- Circle Meet and How do you know about us -->
@@ -311,15 +318,31 @@
                                 </div>
 
                                 <div class="form-group col-sm-6 flex-column d-flex">
-                                    <label class="form-control-label px-3">How do you know about us?</label>
-                                    <input type="text" id="knowsUs" name="knowsUs"
-                                        value="{{ old('knowsUs') }}"
+                                    <label class="form-control-label px-3">How do you know about us ?</label>
+                                    <select id="knowsUs" name="knowsUs"
                                         class="form-control @error('knowsUs') is-invalid @enderror">
+                                        <option value="" disabled selected>Select an Option</option>
+                                        <option value="Facebook" {{ old('knowsUs') == 'Facebook' ? 'selected' : '' }}>
+                                            Facebook</option>
+                                        <option value="Twitter" {{ old('knowsUs') == 'Twitter' ? 'selected' : '' }}>
+                                            Twitter</option>
+                                        <option value="Instagram"
+                                            {{ old('knowsUs') == 'Instagram' ? 'selected' : '' }}>Instagram</option>
+                                        <option value="LinkedIn" {{ old('knowsUs') == 'LinkedIn' ? 'selected' : '' }}>
+                                            LinkedIn</option>
+                                        <option value="Google" {{ old('knowsUs') == 'Google' ? 'selected' : '' }}>
+                                            Google</option>
+                                        <option value="Other" {{ old('knowsUs') == 'Other' ? 'selected' : '' }}>Other
+                                        </option>
+                                        <!-- Add more social media options as needed -->
+                                    </select>
                                     @error('knowsUs')
-                                        <span class="invalid-feedback"
-                                            role="alert"><strong>{{ $message }}</strong></span>
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
                                     @enderror
                                 </div>
+
                             </div>
 
                             <!-- Submit Button -->

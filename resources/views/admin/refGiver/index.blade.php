@@ -28,8 +28,8 @@
                             <i class="bi bi-plus-circle"></i>
                             <span class="btn-text">Add Reference Details</span>
                         </a> --}}
-    </div>
-    <hr>
+    {{-- </div> --}}
+    {{-- <hr> --}}
     <!-- Table with stripped rows -->
     {{-- <div class="table-responsive mt-5">
                         <table class="table table-striped table-hover mb-5">
@@ -57,7 +57,7 @@
                                     <td>{{ $referenceByOtherData->scale ?? '-' }}</td> --}}
     {{-- <td>{{ $referenceByOther->description ?? '-' }}</td> --}}
     {{-- <td>{{ $referenceByOther->status }}</td> --}}
-    </tr>
+    {{-- </tr> --}}
     {{-- @endforeach
                             </tbody>
                         </table>
@@ -86,9 +86,10 @@
                         <hr class="mb-5">
                         <!-- Table with stripped rows -->
                         <div class="table-responsive mt-5">
-                            <table class="table table-striped table-hover mb-5">
+                            <table class="table table-bordered table-striped table-hover mb-5">
                                 <thead>
                                     <tr>
+                                        <th>S.No</th>
                                         <th>Business Giver</th>
                                         {{-- <th>Login Member</th> --}}
                                         <th>Date</th>
@@ -100,6 +101,8 @@
                                 <tbody>
                                     @foreach ($busGiver as $busGiverData)
                                         <tr>
+                                            <th>{{ ($busGiver->currentPage() - 1) * $busGiver->perPage() + $loop->index + 1 }}
+                                            </th>
                                             <td>{{ $busGiverData->businessGiver->firstName . ' ' . $busGiverData->businessGiver->lastName ?? '-' }}
                                             </td>
                                             {{-- <td>{{ $busGiverData->loginMember->firstName . ' ' .
@@ -145,9 +148,10 @@
                                 <hr>
                                 <!-- Table with stripped rows -->
                                 <div class="table-responsive mt-5">
-                                    <table class="table table-striped table-hover mb-5">
+                                    <table class="table table-bordered table-striped table-hover mb-5">
                                         <thead>
                                             <tr>
+                                                <th>S.No</th>
                                                 <th>Member Name</th>
                                                 <th>Ex.Contact Name</th>
                                                 <th>Ex.Contact No</th>
@@ -161,6 +165,8 @@
                                         <tbody>
                                             @foreach ($refGiver as $refGiverData)
                                                 <tr>
+                                                    <th>{{ ($refGiver->currentPage() - 1) * $refGiver->perPage() + $loop->index + 1 }}
+                                                    </th>
                                                     <td>{{ $refGiverData->members->firstName ?? '-' }}
                                                         {{ $refGiverData->members->lastName ?? '-' }}</td>
                                                     <td>{{ $refGiverData->contactName ?? '-' }}</td>

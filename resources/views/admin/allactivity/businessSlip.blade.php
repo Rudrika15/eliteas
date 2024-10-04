@@ -14,10 +14,10 @@
 
                 <!-- Table with stripped rows -->
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover">
+                    <table class="table table-bordered table-striped table-hover">
                         <thead>
                             <tr>
-                                <th>No</th>
+                                <th>S.No</th>
                                 <th>Business By</th>
                                 <th>Business To</th>
                                 <th>Amount</th>
@@ -28,7 +28,7 @@
                         <tbody>
                             @foreach ($businesses as $businessData)
                                 <tr>
-                                    <td>{{ $loop->iteration }}</td>
+                                    <th>{{ ($businesses->currentPage() - 1) * $businesses->perPage() + $loop->index + 1 }}
                                     <td>{{ $businessData->businessGiver->firstName ?? '-' }}
                                         {{ $businessData->businessGiver->lastName ?? '-' }}</td>
                                     <td>{{ $businessData->loginMember->firstName ?? '-' }}

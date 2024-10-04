@@ -32,7 +32,7 @@
 
             <!-- Table with stripped rows -->
             <div class="table-responsive">
-                <table class="table table-striped table-hover">
+                <table class="table table-bordered table-striped table-hover">
                     <thead>
                         <tr>
                             <th>No</th>
@@ -45,7 +45,7 @@
                     <tbody>
                         @foreach ($data as $key => $user)
                             <tr>
-                                <td>{{ ++$i }}</td>
+                                <th>{{ ($data->currentPage() - 1) * $data->perPage() + $loop->index + 1 }}
                                 <td>{{ $user->firstName ?? '' }}</td>
                                 <td>{{ $user->lastName ?? '' }}</td>
                                 <td>{{ $user->email ?? '' }}</td>

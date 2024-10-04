@@ -30,9 +30,10 @@
                         <hr class="mb-5">
                         <!-- Table with stripped rows -->
                         <div class="table-responsive mt-5">
-                            <table class="table table-striped table-hover mb-5">
+                            <table class="table table-bordered table-striped table-hover mb-5">
                                 <thead>
                                     <tr>
+                                        <th>S.No</th>
                                         <th>Business Giver</th>
                                         {{-- <th>Login Member</th> --}}
                                         <th>Date</th>
@@ -44,6 +45,8 @@
                                 <tbody>
                                     @foreach ($busGiver as $busGiverData)
                                         <tr>
+                                            <th>{{ ($busGiver->currentPage() - 1) * $busGiver->perPage() + $loop->index + 1 }}
+                                            </th>
                                             <td>{{ $busGiverData->businessGiver->firstName . ' ' . $busGiverData->businessGiver->lastName ?? '-' }}
                                             </td>
                                             {{-- <td>{{ $busGiverData->loginMember->firstName . ' ' .
@@ -88,9 +91,10 @@
                         <hr class="mb-5">
                         <!-- Table with stripped rows -->
                         <div class="table-responsive mt-5">
-                            <table class="table table-striped table-hover mb-5">
+                            <table class="table table-bordered table-striped table-hover mb-5">
                                 <thead>
                                     <tr>
+                                        <th>S.No</th>
                                         <th>Member Name</th>
                                         <th>Date</th>
                                         <th>Amount</th>
@@ -99,6 +103,8 @@
                                 <tbody>
                                     @foreach ($busGiveByOther as $busGiveByOtherData)
                                         <tr>
+                                            <th>{{ ($busGiveByOther->currentPage() - 1) * $busGiveByOther->perPage() + $loop->index + 1 }}
+                                            </th>
                                             <td>{{ $busGiveByOtherData->loginMember->firstName . ' ' . $busGiveByOtherData->loginMember->lastName ?? '-' }}
                                             </td>
                                             <td>{{ \Carbon\Carbon::parse($busGiveByOtherData->date)->format('d-m-Y') ?? '-' }}
