@@ -42,7 +42,8 @@
 <body>
 
     <main>
-        <div class="" style="
+        <div class=""
+            style="
                                                     background-size: 100% 100%;
                                                     background-position: center;">
             <section
@@ -78,10 +79,10 @@
                                             <label for="phone"
                                                 style="background-color: transparent;"><b>Phone</b></label>
                                             @error('phone')
-                                            <div class="invalid-tooltip mt-3"
-                                                style="background-color: transparent; color: red;">
-                                                {{ $message }}
-                                            </div>
+                                                <div class="invalid-tooltip mt-3"
+                                                    style="background-color: transparent; color: red;">
+                                                    {{ $message }}
+                                                </div>
                                             @enderror
                                         </div>
 
@@ -98,7 +99,7 @@
                                 <!-- You can delete the links only if you purchased the pro version. -->
                                 <!-- Licensing information: https://bootstrapmade.com/license/ -->
                                 <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/ -->
-                                Designed by <a href="https://flipcodesolutions.com/" target="_blank"
+                                Designed by <a href="https://www.aspireotech.com/" target="_blank"
                                     class="text-black"><b>Aspireotech
                                         Solutions</b></a>
                             </div>

@@ -71,10 +71,10 @@
                                         password here.</p>
 
                                     @if (Session::has('message'))
-                                    <div class="alert alert-success d-flex align-items-center justify-content-center"
-                                        role="alert">
-                                        <span class="w-100 text-center">{{ Session::get('message') }}</span>
-                                    </div>
+                                        <div class="alert alert-success d-flex align-items-center justify-content-center"
+                                            role="alert">
+                                            <span class="w-100 text-center">{{ Session::get('message') }}</span>
+                                        </div>
                                     @endif
 
                                     <form method="POST" action="{{ route('forget.password.post') }}"
@@ -88,9 +88,9 @@
                                                 autofocus style="border-color: #1d3268 !important">
                                             <label for="email"><b>Email Address</b></label>
                                             @error('email')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
                                             @enderror
                                         </div>
 
@@ -103,7 +103,7 @@
                             </div>
 
                             <div class="credits">
-                                Designed by <a href="https://flipcodesolutions.com/" target="_blank"
+                                Designed by <a href="https://www.aspireotech.com/" target="_blank"
                                     class="text-black"><b>Aspireotech Solutions</b></a>
                             </div>
                         </div>

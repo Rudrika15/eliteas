@@ -29,6 +29,7 @@ use App\Models\BusinessCategory;
 use App\Models\TrainingRegister;
 use App\Models\MeetingInvitation;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -378,8 +379,13 @@ class HomeController extends Controller
                     $findEventRegister = [];
                 }
 
+                $signedUrl = URL::signedRoute('visitor.form', [
+                    'slug' => $meeting->cm_slug,
+                    'meetingId' => $meeting->id,
+                    'ref' => auth()->user()->member->id
+                ], now()->addMinutes(60));
 
-                return view('home', compact('count', 'monthlyPayments', 'totalAmountDue', 'nearestEvents', 'findEventRegister', 'circlecalls', 'busGiver', 'refGiver', 'nearestTraining', 'findRegister', 'testimonials', 'meeting', 'businessCategory', 'myInvites'));
+                return view('home', compact('signedUrl',  'count', 'monthlyPayments', 'totalAmountDue', 'nearestEvents', 'findEventRegister', 'circlecalls', 'busGiver', 'refGiver', 'nearestTraining', 'findRegister', 'testimonials', 'meeting', 'businessCategory', 'myInvites'));
             }
 
             return view('home', compact('count', 'nearestTraining', 'businessCategory', 'myInvites', 'findRegister'));

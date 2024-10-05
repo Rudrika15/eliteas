@@ -9,6 +9,7 @@ use App\Models\Razorpay;
 use App\Models\AllPayments;
 use Illuminate\Http\Request;
 use App\Models\EventRegister;
+use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
@@ -65,17 +66,28 @@ class EventController extends Controller
                 ], 'No upcoming events', 200);
             }
 
+            // Create the signed URL for the event link
+            $signedUrl = URL::signedRoute('event.link', [
+                'slug' => $event->event_slug, // Correct the parameter name to match the route
+                'ref' => $memberId // Using the correct member ID here
+            ], now()->addMinutes(60));
+
             // Return the response with the nearest event and its registration details
             return Utils::sendResponse([
-                'event' => $event
+                'event' => $event,
+                'eventLink' => $signedUrl
             ], 'Nearest event retrieved successfully', 200);
         } catch (\Throwable $th) {
+            // Log the error for debugging purposes
+            \Log::error('Error retrieving event: ' . $th->getMessage());
+
             // Return with an error message
             return Utils::errorResponse([
                 'error' => 'Failed to retrieve event. Please try again.'
             ], 'Internal Server Error', 500);
         }
     }
+
 
 
 

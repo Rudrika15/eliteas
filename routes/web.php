@@ -74,13 +74,18 @@ Route::post('reset-password', [ForgotPasswordController::class, 'submitResetPass
 Route::post('/razorpay-payment-visitor', [PaymentController::class, 'storePaymentDetails'])->name('razorpay.payment.store.visitor');
 
 
-Route::get('visitor-form', [VisitorFormController::class, 'visitorForm'])->name('visitor.form');
+// Route::get('visitor-form', [VisitorFormController::class, 'visitorForm'])->name('visitor.form');
+
+// test visitor form route
+Route::get('/visitor-form', [VisitorFormController::class, 'visitorForm'])->name('visitor.form')->middleware('signed');
 Route::post('visitor-form-store', [VisitorFormController::class, 'store'])->name('visitor.form.store');
 
+// event invite
+// Route::get('/event-link', [EventController::class, 'showEvent'])->name('event.link')->middleware('signed');
 
 //new visitorform
-Route::get('visitor-form-view', [VisitorFormController::class, 'visitorsFormView'])->name('visitors.form.view');
-Route::post('visitors-form-user', [VisitorFormController::class, 'visitorStore'])->name('visitors.form.store');
+// Route::get('visitor-form-view', [VisitorFormController::class, 'visitorsFormView'])->name('visitors.form.view');
+// Route::post('visitors-form-user', [VisitorFormController::class, 'visitorStore'])->name('visitors.form.store');
 
 
 Route::get('/server-error', function () {
@@ -579,7 +584,9 @@ Route::post('/membership-payment', [PaymentController::class, 'membershipPayment
 
 
 //event registration for outsider
-Route::get('/event/{slug}', [EventController::class, 'eventLink'])->name('event.link');
+Route::get('/event-link/{slug}', [EventController::class, 'eventLink'])->name('event.link')->middleware('signed');
+
+// Route::get('/event/{slug}', [EventController::class, 'eventLink'])->name('event.link');
 Route::post('/store-user-details', [EventController::class, 'storeUserDetails'])->name('storeUserDetails');
 Route::post('/check-registration', [EventController::class, 'checkRegistration'])->name('checkRegistration');
 Route::post('/razorpay-payment-userEventPayment', [PaymentController::class, 'userEventPayment'])->name('razorpay.payment.userEventPayment');

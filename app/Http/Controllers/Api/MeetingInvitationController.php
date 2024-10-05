@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Schedule;
 use Illuminate\Http\Request;
 use App\Models\MeetingInvitation;
+use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -69,7 +70,6 @@ class MeetingInvitationController extends Controller
     {
         try {
             $myCircle = Auth::user()->member->circleId;
-
             $today = Carbon::today();
 
             $meeting = Schedule::where('circleId', $myCircle)
@@ -80,10 +80,22 @@ class MeetingInvitationController extends Controller
                 ->orderBy('date', 'asc')
                 ->first();
 
+            $signedUrl = null;
             $meetingData = [];
+
             if ($meeting) {
+                // Generate the signed URL for the visitor form
+                $signedUrl = URL::signedRoute('visitor.form', [
+                    'slug' => $meeting->cm_slug,
+                    'meetingId' => $meeting->id,
+                    'ref' => auth()->user()->member->id
+                ], now()->addMinutes(60));
+
+                // Prepare meeting data
                 $meetingData = $meeting->toArray();
                 $meetingData['circle'] = $meeting->circle->toArray();
+
+                // Include members in the circle
                 $members = [];
                 foreach ($meeting->circle->members as $member) {
                     $members[] = [
@@ -95,14 +107,15 @@ class MeetingInvitationController extends Controller
                 }
                 $meetingData['circle']['members'] = $members;
                 $meetingData['circle']['franchise'] = $meeting->circle->franchise->toArray();
+
+                // Add the signed URL to the response data
+                $meetingData['invite_url'] = $signedUrl;
             }
 
+            // Return response with meeting data and signed URL
             return Utils::sendResponse($meetingData, 'Upcoming Circle Meeting Retrieved Successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
-
-
-
 }

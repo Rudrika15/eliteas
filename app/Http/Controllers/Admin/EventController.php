@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\Event;
 use App\Models\Circle;
+use App\Models\Member;
 use App\Utils\ErrorLogger;
 use Illuminate\Http\Request;
 use App\Models\EventRegister;
@@ -184,6 +185,8 @@ class EventController extends Controller
             return view('servererror');
         }
     }
+
+
 
     public function storeUserDetails(Request $request)
     {

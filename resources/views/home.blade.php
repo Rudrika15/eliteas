@@ -262,24 +262,30 @@
                                                 </button> --}}
 
                                         <button type="button" class="btn btn-bg-orange btn-sm mt-2"
-                                            href="javascript:void(0)"
-                                            onclick="openInvitePage('{{ $meeting->cm_slug }}', '{{ $meeting->id }}', '{{ auth()->user()->member->id }}')">
+                                            onclick="openInvitePage('{{ $signedUrl }}')">
                                             Invite
-                                            </a>
                                         </button>
+
+                                        <script>
+                                            function openInvitePage(url) {
+                                                // Open the pre-generated signed URL in a new tab
+                                                window.open(url, '_blank');
+                                            }
+                                        </script>
+
 
 
                                     </div>
                                 </div>
 
-                                <script>
+                                {{-- <script>
                                     function openInvitePage(slug, meetingId, memberId) {
                                         // Construct the URL for the visitor form page
-                                        const url = `/visitor-form?slug=${slug}&meetingId=${meetingId}&memberId=${memberId}`;
+                                        const url = `/visitor-form?slug=${slug}&meetingId=${meetingId}&ref=${memberId}`;
                                         // Open the URL in a new tab
                                         window.open(url, '_blank'); // This will open the URL in a new tab
                                     }
-                                </script>
+                                </script> --}}
 
 
                                 {{-- <div class="row">
@@ -298,7 +304,7 @@
                                         Invite Via Link
                                     </button>
                                     <input type="hidden" id="shareableMeetingLink"
-                                        value="{{ route('visitor.form', ['slug' => $meeting->cm_slug, 'meetingId' => $meeting->id, 'ref' => auth()->user()->member->id]) }}">
+                                        value="{{ URL::signedRoute('visitor.form', ['slug' => $meeting->cm_slug, 'meetingId' => $meeting->id, 'ref' => auth()->user()->member->id]) }}">
                                 </div>
 
                                 <script>
@@ -311,6 +317,7 @@
                                         });
                                     }
                                 </script>
+
 
                                 <div class="accordion mt-3">
                                     <div class="accordion-item ">
@@ -540,10 +547,10 @@
                                         </div>
                                         <div>
                                             <button class="btn btn-bg-blue btn-sm" onclick="copyLink()">
-                                                Copy Shareable Link
+                                                Invite Via Link
                                             </button>
                                             <input type="hidden" id="shareableLink"
-                                                value="{{ route('event.link', ['slug' => $nearestEvents->event_slug, 'ref' => auth()->user()->member->id]) }}">
+                                                value="{{ URL::signedRoute('event.link', ['slug' => $nearestEvents->event_slug, 'ref' => auth()->user()->member->id]) }}">
                                         </div>
 
                                         <style>

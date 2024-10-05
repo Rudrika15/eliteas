@@ -8,6 +8,7 @@ use App\Models\VisitorsDetails;
 use App\Models\BusinessCategory;
 use App\Models\MeetingInvitation;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\URL;
 
 class VisitorFormController extends Controller
 {
@@ -225,4 +226,7 @@ class VisitorFormController extends Controller
             return response()->json(['success' => false, 'message' => 'Failed to update remarks']);
         }
     }
+
+
+
 }

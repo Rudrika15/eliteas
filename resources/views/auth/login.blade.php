@@ -152,7 +152,7 @@
                             </div>
 
                             <div class="credits">
-                                Designed by <a href="https://flipcodesolutions.com/" target="_blank"
+                                Designed by <a href="https://www.aspireotech.com/" target="_blank"
                                     class="text-black"><b>Aspireotech
                                         Solutions</b></a>
                             </div>

@@ -38,7 +38,7 @@ class Handler extends ExceptionHandler
         // Let Laravel handle the exception
         parent::report($exception);
     }
-    
+
 
     public function render($request, Throwable $exception)
     {
@@ -49,6 +49,11 @@ class Handler extends ExceptionHandler
 
         if ($exception instanceof PostTooLargeException) {
             return redirect()->back()->withErrors(['file' => 'Please select a file with a maximum size of 2MB.']);
+        }
+
+
+        if ($exception instanceof \Illuminate\Routing\Exceptions\InvalidSignatureException) {
+            return redirect()->back()->withErrors('message', 'The link is invalid or has been tampered with.');
         }
 
         return parent::render($request, $exception);
