@@ -17,6 +17,18 @@ use App\Models\CircleMeetingMembersBusiness;
 
 class CircleMeetingMemberBusinessController extends Controller
 {
+
+    public function __construct()
+    {
+        // Apply middleware for circle call-related permissions
+        $this->middleware('permission:circle-meeting-member-business-index', ['only' => ['index', 'view']]);
+        $this->middleware('permission:circle-meeting-member-business-create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:circle-meeting-member-business-edit', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:circle-meeting-member-business-delete', ['only' => ['delete']]);
+        $this->middleware('permission:edit-payment', ['only' => ['editPayment']]);
+        $this->middleware('permission:update-payment', ['only' => ['updatePayment']]);
+    }
+
     public function index(Request $request)
     {
         try {

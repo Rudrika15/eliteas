@@ -153,9 +153,9 @@
                                             <tr>
                                                 <th>S.No</th>
                                                 <th>Member Name</th>
-                                                <th>Ex.Contact Name</th>
-                                                <th>Ex.Contact No</th>
-                                                <th>Ex.Email</th>
+                                                <th>Reffered Person Name</th>
+                                                <th>Contact No</th>
+                                                <th>Email</th>
                                                 <th>Scale</th>
                                                 {{-- <th>Description</th> --}}
                                                 <th>Status</th>
@@ -170,8 +170,10 @@
                                                     <td>{{ $refGiverData->members->firstName ?? '-' }}
                                                         {{ $refGiverData->members->lastName ?? '-' }}</td>
                                                     <td>{{ $refGiverData->contactName ?? '-' }}</td>
-                                                    <td>{{ $refGiverData->contactNo ?? '-' }}</td>
-                                                    <td>{{ $refGiverData->email ?? '-' }}</td>
+                                                    <td>{{ $refGiverData->contactNo ?? ($refGiverData->members->user->contactNo ?? '-') }}
+                                                    </td>
+                                                    <td>{{ $refGiverData->email ?? ($refGiverData->members->user->email ?? '-') }}
+                                                    </td>
                                                     <td>{{ $refGiverData->scale ?? '-' }}</td>
                                                     {{-- <td>{{ $refGiverData->description ?? '-' }}</td> --}}
                                                     <td>{{ $refGiverData->status }}</td>

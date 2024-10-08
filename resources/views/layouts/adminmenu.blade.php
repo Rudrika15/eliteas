@@ -78,6 +78,13 @@
 </li>
 
 {{-- <li class="nav-item">
+    <a class="nav-link collapsed" href="{{ route('permission.index') }}">
+        <i class="bi bi-person-vcard" style="color: #e76a35"></i>
+        <span style="color: #1d2856">Permission</span>
+    </a>
+</li> --}}
+
+{{-- <li class="nav-item">
     <a class="nav-link collapsed" href="{{ route('testimonials.indexAdmin') }}">
         <i class="bi bi-person" style="color: #e76a35"></i>
         <span style="color: #1d2856">Testimonial</span>
@@ -399,8 +406,12 @@
     </a>
 </li>
 
-
-
+<li class="nav-item">
+    <a class="nav-link collapsed" href="{{ route('updateApp.edit') }}">
+        <i class="bi bi-arrow-up-circle" style="color: #e76a35"></i>
+        <span style="color: #1d2856">App Version Update</span>
+    </a>
+</li>
 
 
 <!-- End Forms Nav -->

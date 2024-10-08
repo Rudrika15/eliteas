@@ -383,7 +383,7 @@ class HomeController extends Controller
                     'slug' => $meeting->cm_slug,
                     'meetingId' => $meeting->id,
                     'ref' => auth()->user()->member->id
-                ], now()->addMinutes(60));
+                ], now()->addMinutes(1440));
 
                 return view('home', compact('signedUrl',  'count', 'monthlyPayments', 'totalAmountDue', 'nearestEvents', 'findEventRegister', 'circlecalls', 'busGiver', 'refGiver', 'nearestTraining', 'findRegister', 'testimonials', 'meeting', 'businessCategory', 'myInvites'));
             }

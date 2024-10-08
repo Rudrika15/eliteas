@@ -39,6 +39,7 @@ use App\Models\CircleMeetingMembersReference;
 
 class CircleMemberController extends Controller
 {
+
     public function index(Request $request)
     {
         try {
@@ -612,6 +613,7 @@ class CircleMemberController extends Controller
             return view('servererror');
         }
     }
+    
     public function removeRole(Request $request)
     {
         try {

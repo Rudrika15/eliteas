@@ -2,7 +2,6 @@
 
 use Maatwebsite\Excel\Excel;
 use App\Exports\TrainersListExport;
-use App\Http\Controllers\Admin\AllActivityController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Artisan;
@@ -12,6 +11,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\ChatController;
 use App\Http\Controllers\Admin\CityController;
+use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\Admin\EventController;
 use App\Http\Controllers\Admin\StateController;
 use App\Http\Controllers\TestimonialController;
@@ -30,8 +30,10 @@ use App\Http\Controllers\Admin\AttendanceController;
 use App\Http\Controllers\Admin\CircleCallController;
 use App\Http\Controllers\Admin\CircleTypeController;
 use App\Http\Controllers\Admin\ConnectionController;
+use App\Http\Controllers\Admin\AllActivityController;
 use App\Http\Controllers\Admin\LeaderBoardController;
 use App\Http\Controllers\Admin\CircleMemberController;
+use App\Http\Controllers\Api\MonthlyPaymentController;
 use App\Http\Controllers\Admin\CircleMeetingController;
 use App\Http\Controllers\Admin\TrainerMasterController;
 use App\Http\Controllers\Auth\ChangePasswordController;
@@ -46,7 +48,7 @@ use App\Http\Controllers\Admin\MembershipSubscriptionController;
 use App\Http\Controllers\Admin\MembershipSubscriptionsController;
 use App\Http\Controllers\Admin\CircleMeetingMemberBusinessController;
 use App\Http\Controllers\Admin\CircleMeetingMemberReferenceController;
-use App\Http\Controllers\Api\MonthlyPaymentController;
+use App\Http\Controllers\Admin\UpdateAppController;
 
 /*
 |--------------------------------------------------------------------------
@@ -113,6 +115,18 @@ Route::group(['middleware' => ['auth']], function () {
         return redirect()->back();
     });
 
+    //update App
+    Route::get('updateApp/edit/{id?}', [UpdateAppController::class, 'edit'])->name('updateApp.edit');
+    Route::post('update-app-version/update', [UpdateAppController::class, 'updateAppVersion'])->name('updateApp.update');
+
+
+    //permission
+    Route::get('permission/index', [PermissionController::class, 'index'])->name('permission.index');
+    Route::get('permission/create', [PermissionController::class, 'create'])->name('permission.create');
+    Route::post('permission/store', [PermissionController::class, 'store'])->name('permission.store');
+    Route::get('permission/edit/{id?}', [PermissionController::class, 'edit'])->name('permission.edit');
+    Route::post('permission/update', [PermissionController::class, 'update'])->name('permission.update');
+    Route::get('permission/delete/{id?}', [PermissionController::class, 'delete'])->name('permission.delete');
 
     //change password
     Route::get('change-password', [ChangePasswordController::class, 'showChangePasswordForm'])->name('changePasswordForm');

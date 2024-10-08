@@ -461,30 +461,31 @@ class PaymentController extends Controller
         // Validate the request data
 
         // Find the payment record
-        $payment = DB::table('monthly_payments')->where('id', $request->id)->first();
+        // $payment = DB::table('monthly_payments')->where('id', $request->id)->first();
+
+        $payment = MonthlyPayment::where('id', $request->id)->first();
 
         if ($payment) {
             // Update the status in the 'monthly_payments' table
-            DB::table('monthly_payments')
-                ->where('id', $request->id)
-                ->update([
-                    'status' => $request->status,
-                    'paymentDate' => now()->format('Y-m-d'),
-                    'updated_at' => now()
-                ]);
 
-            // Insert a new record into the 'AllPayments' table
-            DB::table('all_payments')->insert([
-                'memberId' => $payment->memberId,
-                'paymentType' => 'Offline',
-                'date' => now()->format('Y-m-d'),
-                'paymentMode' => 'CASH',
-                'amount' => 1500, // Assuming 'amount' is a field in the 'monthly_payments' table
-                'remarks' => 'CASH',
-                'status' => 'Active',
-                'updated_at' => now(),
-                'created_at' => now()
-            ]);
+            $monthlyPayment = MonthlyPayment::find($request->id);
+            $monthlyPayment->status = 'paid';
+            $monthlyPayment->paymentDate = now()->format('Y-m-d');
+            $monthlyPayment->updated_at = now();
+            $monthlyPayment->save();
+
+            $allMonthly = new AllPayments();
+            $allMonthly->memberId = $payment->memberId;
+            $allMonthly->paymentType = 'Offline';
+            $allMonthly->date = now()->format('Y-m-d');
+            $allMonthly->paymentMode = 'CASH';
+            $allMonthly->amount = 1500; // Assuming 'amount' is a field in the 'monthly_payments' table
+            $allMonthly->remarks = 'CASH';
+            $allMonthly->status = 'Active';
+            $allMonthly->updated_at = now();
+            $allMonthly->created_at = now();
+            $allMonthly->save();
+
 
             return response()->json(['success' => true]);
         }
@@ -548,9 +549,10 @@ class PaymentController extends Controller
                     'updated_at' => now(),
                 ]);
 
+
             // Store the payment details
             $allPayments = new AllPayments();
-            $allPayments->memberId = $monthly->memberId;
+            $allPayments->memberId = Auth::user()->member->id;
             $allPayments->amount = $payment->amount;
             $allPayments->paymentType = 'RazorPay'; // Hardcoded for RazorPay
             $allPayments->date = now()->format('Y-m-d');

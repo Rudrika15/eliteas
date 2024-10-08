@@ -115,17 +115,7 @@
                                         </div>
 
 
-                                        <div class="mb-3 form-check">
 
-                                            <input type="checkbox"
-                                                class="form-check-input {{ old('remember') ? 'is-valid' : '' }}"
-                                                name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}
-                                                style="border-color: #1d3268 !important">
-
-                                            <label class="form-check-label" style="color: #1d3268; font-weight: bold;"
-                                                for="remember">Remember
-                                                Me</label>
-                                        </div>
 
                                         <div class="d-grid">
                                             <button type="submit" class="btn btn-bg-blue">Login</button>

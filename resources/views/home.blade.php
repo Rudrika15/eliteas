@@ -252,14 +252,14 @@
                                         Franchise Name : {{ $meeting->circle->franchise->franchiseName }}
                                     </small>
                                 </p>
-                                <div class="row">
+                                {{-- <div class="row">
                                     <div class="col-md-11 ps-3 card-title ">Invite people to join</div>
                                     <div class="col-md-1 mt-2">
-                                        {{-- <button type="button" class="btn btn-bg-orange btn-sm mt-2"
+                                        <button type="button" class="btn btn-bg-orange btn-sm mt-2"
                                                     onclick="openInvitePage('{{ $meeting->cm_slug }}', '{{ $meeting->id }}', '{{ auth()->user()->member->id }}')"
                                                     target="_blank">
                                                     Invite
-                                                </button> --}}
+                                                </button>
 
                                         <button type="button" class="btn btn-bg-orange btn-sm mt-2"
                                             onclick="openInvitePage('{{ $signedUrl }}')">
@@ -276,7 +276,7 @@
 
 
                                     </div>
-                                </div>
+                                </div> --}}
 
                                 {{-- <script>
                                     function openInvitePage(slug, meetingId, memberId) {
@@ -299,7 +299,7 @@
                                     </div>
                                 </div> --}}
 
-                                <div class="justify-content-end">
+                                {{-- <div class="justify-content-end">
                                     <button class="btn btn-bg-blue btn-sm" onclick="copyMeetingLink()">
                                         Invite Via Link
                                     </button>
@@ -316,10 +316,10 @@
                                             alert("Could not copy link");
                                         });
                                     }
-                                </script>
+                                </script> --}}
 
 
-                                <div class="accordion mt-3">
+                                {{-- <div class="accordion mt-3">
                                     <div class="accordion-item ">
                                         <div class="accordion-header" id="headingSix">
 
@@ -372,7 +372,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </div> --}}
                             </div>
                         </div>
                     </div>
