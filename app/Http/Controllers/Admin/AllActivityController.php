@@ -11,13 +11,14 @@ use Illuminate\Http\Request;
 class AllActivityController extends Controller
 {
 
-    function __construct()
-    {
-        // Applying middleware based on the specific methods for IBM, Reference, and Business.
-        $this->middleware('permission:ibm-list|ibm-create|ibm-edit|ibm-delete', ['only' => ['ibm']]);
-        $this->middleware('permission:reference-list|reference-create|reference-edit|reference-delete', ['only' => ['reference']]);
-        $this->middleware('permission:business-list|business-create|business-edit|business-delete', ['only' => ['business']]);
-    }
+    // function __construct()
+    // {
+    //     // Applying middleware based on the specific methods for IBM, Reference, and Business.
+    //     $this->middleware('permission:ibm-list|ibm-create|ibm-edit|ibm-delete', ['only' => ['ibm']]);
+    //     $this->middleware('permission:reference-list|reference-create|reference-edit|reference-delete', ['only' => ['reference']]);
+    //     $this->middleware('permission:business-list|business-create|business-edit|business-delete', ['only' => ['business']]);
+    // }
+
     public function ibm()
     {
         $ibms = CircleCall::where('status', 'Active')->paginate(10);

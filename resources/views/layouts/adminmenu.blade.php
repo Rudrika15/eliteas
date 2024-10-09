@@ -77,12 +77,12 @@
     </a>
 </li>
 
-{{-- <li class="nav-item">
+<li class="nav-item">
     <a class="nav-link collapsed" href="{{ route('permission.index') }}">
         <i class="bi bi-person-vcard" style="color: #e76a35"></i>
         <span style="color: #1d2856">Permission</span>
     </a>
-</li> --}}
+</li>
 
 {{-- <li class="nav-item">
     <a class="nav-link collapsed" href="{{ route('testimonials.indexAdmin') }}">

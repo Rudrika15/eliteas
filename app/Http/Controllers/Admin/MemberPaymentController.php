@@ -14,6 +14,18 @@ use App\Http\Controllers\Controller;
 
 class MemberPaymentController extends Controller
 {
+
+
+    // public function __construct()
+    // {
+    //     // Apply middleware for event-related permissions
+    //     $this->middleware('permission:member-payment-index', ['only' => ['index', 'view']]);
+    //     $this->middleware('permission:event-create', ['only' => ['create', 'store']]);
+    //     $this->middleware('permission:event-edit', ['only' => ['edit', 'update']]);
+    //     $this->middleware('permission:event-delete', ['only' => ['delete']]);
+    // }
+
+
     public function index(Request $request)
     {
         try {
@@ -22,7 +34,8 @@ class MemberPaymentController extends Controller
             return view('admin.payment.index', compact('payment'));
         } catch (\Throwable $th) {
             // throw $th;
-            ErrorLogger::logError($th,
+            ErrorLogger::logError(
+                $th,
                 request()->fullUrl()
             );
 
@@ -75,13 +88,14 @@ class MemberPaymentController extends Controller
             $payments->remarks = $payment->paymentId;
             $payments->status = 'Active';
             $payments->save();
-            
+
 
 
             return redirect()->route('state.index')->with('success', 'State Created Successfully!');
         } catch (\Throwable $th) {
             // throw $th;
-            ErrorLogger::logError($th,
+            ErrorLogger::logError(
+                $th,
                 request()->fullUrl()
             );
 
@@ -97,7 +111,8 @@ class MemberPaymentController extends Controller
             return view('admin.state.edit', compact('country', 'state'));
         } catch (\Throwable $th) {
             // throw $th;
-            ErrorLogger::logError($th,
+            ErrorLogger::logError(
+                $th,
                 request()->fullUrl()
             );
 
@@ -124,7 +139,8 @@ class MemberPaymentController extends Controller
             return redirect()->route('state.index')->with('success', 'State Created Successfully!');
         } catch (\Throwable $th) {
             // throw $th;
-            ErrorLogger::logError($th,
+            ErrorLogger::logError(
+                $th,
                 request()->fullUrl()
             );
 
@@ -146,7 +162,8 @@ class MemberPaymentController extends Controller
             return response()->json($response);
         } catch (\Throwable $th) {
             // throw $th;
-            ErrorLogger::logError($th,
+            ErrorLogger::logError(
+                $th,
                 request()->fullUrl()
             );
             return view('servererror');

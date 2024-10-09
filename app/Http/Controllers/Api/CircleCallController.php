@@ -63,6 +63,7 @@ class CircleCallController extends Controller
 
             return Utils::sendResponse(['circleCalls' => $circleCalls], 'Circle Calls retrieved successfully', 200);
         } catch (\Throwable $th) {
+            // throw $th;
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
@@ -143,6 +144,7 @@ class CircleCallController extends Controller
         $validator = Validator::make($request->all(), [
             'meetingPersonId' => 'required',
             'meetingPlace' => 'required',
+            'meetingImage' => 'mimes:jpeg,jpg,png,gif|max:2048',
             'date' => 'required',
             'remarks' => 'required',
         ]);
@@ -160,7 +162,7 @@ class CircleCallController extends Controller
             }
 
             $circleCall = new CircleCall();
-            $circleCall->memberId = $member->id;
+            $circleCall->memberId = $memberId;
             $circleCall->meetingPersonId = $request->input('meetingPersonId');
             $circleCall->meetingPlace = $request->input('meetingPlace');
 
@@ -187,6 +189,7 @@ class CircleCallController extends Controller
         $validator = Validator::make($request->all(), [
             'meetingPersonId' => 'required',
             'meetingPlace' => 'required',
+            'meetingImage' => 'mimes:jpeg,jpg,png,gif|max:2048',
             'date' => 'required',
             'remarks' => 'required',
         ]);

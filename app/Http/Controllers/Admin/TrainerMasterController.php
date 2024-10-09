@@ -19,6 +19,19 @@ use Maatwebsite\Excel\Facades\Excel;
 class TrainerMasterController extends Controller
 {
 
+
+    // public function __construct()
+    // {
+    //     $this->middleware('permission:trainer-master-list|trainer-master-create|trainer-master-edit|trainer-master-delete');
+    //     $this->middleware('permission:trainer-master-create', ['only' => ['create','store']]);
+    //     $this->middleware('permission:trainer-master-edit', ['only' => ['edit','update']]);
+    //     $this->middleware('permission:trainer-master-show', ['only' => ['show']]);
+    //     $this->middleware('permission:trainer-master-get-member-details', ['only' => ['getMemberDetails']]);
+    //     $this->middleware('permission:trainer-master-training-wise-trainer-list', ['only' => ['trainingWiseTrainerlist']]);
+    //     $this->middleware('permission:trainer-master-training-register-view', ['only' => ['trainingRegisterView']]);
+    // }
+
+
     public function getMemberDetails($id)
     {
         // Retrieve the member's details from the members table

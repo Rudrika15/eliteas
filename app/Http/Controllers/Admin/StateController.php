@@ -11,6 +11,18 @@ use App\Http\Controllers\Controller;
 
 class StateController extends Controller
 {
+
+
+    public function __construct()
+    {
+        // Apply middleware for event-related permissions
+        $this->middleware('permission:state-index', ['only' => ['index', 'view']]);
+        $this->middleware('permission:state-create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:state-edit', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:state-delete', ['only' => ['delete']]);
+    }
+
+
     public function index(Request $request)
     {
         try {
@@ -22,7 +34,8 @@ class StateController extends Controller
             return view('admin.state.index', compact('state'));
         } catch (\Throwable $th) {
             // throw $th;
-            ErrorLogger::logError($th,
+            ErrorLogger::logError(
+                $th,
                 request()->fullUrl()
             );
             return view('servererror');
@@ -36,7 +49,8 @@ class StateController extends Controller
             return response()->json($state);
         } catch (\Throwable $th) {
             // throw $th;
-            ErrorLogger::logError($th,
+            ErrorLogger::logError(
+                $th,
                 request()->fullUrl()
             );
             return view('servererror');
@@ -51,7 +65,8 @@ class StateController extends Controller
             return view('admin.state.create', compact('country', 'state'));
         } catch (\Throwable $th) {
             // throw $th;
-            ErrorLogger::logError($th,
+            ErrorLogger::logError(
+                $th,
                 request()->fullUrl()
             );
             return view('servererror');
@@ -74,7 +89,8 @@ class StateController extends Controller
             return redirect()->route('state.create')->with('success', 'State Created Successfully!');
         } catch (\Throwable $th) {
             // throw $th;
-            ErrorLogger::logError($th,
+            ErrorLogger::logError(
+                $th,
                 request()->fullUrl()
             );
             return view('servererror');
@@ -89,7 +105,8 @@ class StateController extends Controller
             return view('admin.state.edit', compact('country', 'state'));
         } catch (\Throwable $th) {
             // throw $th;
-            ErrorLogger::logError($th,
+            ErrorLogger::logError(
+                $th,
                 request()->fullUrl()
             );
             return view('servererror');
@@ -115,7 +132,8 @@ class StateController extends Controller
             return redirect()->route('state.index')->with('success', 'State Created Successfully!');
         } catch (\Throwable $th) {
             // throw $th;
-            ErrorLogger::logError($th,
+            ErrorLogger::logError(
+                $th,
                 request()->fullUrl()
             );
             return view('servererror');

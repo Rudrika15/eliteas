@@ -16,6 +16,19 @@ use Illuminate\Support\Facades\Hash;
 
 class TrainingController extends Controller
 {
+
+    // public function __construct()
+    // {
+
+    //     // Apply middleware for event-related permissions
+    //     $this->middleware('permission:training-index', ['only' => ['index', 'view']]);
+    //     $this->middleware('permission:training-create', ['only' => ['create', 'store']]);
+    //     $this->middleware('permission:training-edit', ['only' => ['edit', 'update']]);
+    //     $this->middleware('permission:training-delete', ['only' => ['delete']]);
+    //     $this->middleware('permission:training-get-trainer-details', ['only' => ['getTrainerDetails']]);
+    //     $this->middleware('permission:training-get-internal-details', ['only' => ['getInternalDetails']]);
+    // }
+
     public function index(Request $request)
     {
         try {

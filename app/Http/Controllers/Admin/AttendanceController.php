@@ -13,16 +13,16 @@ use App\Models\CircleMeetingsAttendances;
 class AttendanceController extends Controller
 {
 
-    function __construct()
-{
-    // Applying middleware based on specific methods for attendance management
-    $this->middleware('permission:attendance-take|attendance-list|attendance-create|attendance-edit', ['only' => ['takeAttendance']]);
-    $this->middleware('permission:attendance-take|attendance-list|attendance-create|attendance-edit', ['only' => ['invitedAttendance']]);
-    $this->middleware('permission:meeting-schedule-view|meeting-schedule-list', ['only' => ['meetingSchedules']]);
-    $this->middleware('permission:attendance-list-view', ['only' => ['attendanceList']]);
-    $this->middleware('permission:attendance-store|attendance-create', ['only' => ['attendanceStore']]);
-    $this->middleware('permission:attendance-invite-store|attendance-invite-create', ['only' => ['invitedAttendanceStore']]);
-}
+    //     function __construct()
+    // {
+    //     // Applying middleware based on specific methods for attendance management
+    //     $this->middleware('permission:attendance-take|attendance-list|attendance-create|attendance-edit', ['only' => ['takeAttendance']]);
+    //     $this->middleware('permission:invited-attendance-take|invited-attendance-list|invited-attendance-create|invited-attendance-edit', ['only' => ['invitedAttendance']]);
+    //     $this->middleware('permission:meeting-schedule-view|meeting-schedule-list', ['only' => ['meetingSchedules']]);
+    //     $this->middleware('permission:attendance-list-view', ['only' => ['attendanceList']]);
+    //     $this->middleware('permission:attendance-store|attendance-store-create', ['only' => ['attendanceStore']]);
+    //     $this->middleware('permission:attendance-invite-store|attendance-invite-create', ['only' => ['invitedAttendanceStore']]);
+    // }
 
     public function takeAttendance(Request $request)
     {

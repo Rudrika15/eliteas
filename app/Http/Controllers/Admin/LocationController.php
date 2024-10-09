@@ -11,6 +11,13 @@ use Illuminate\Support\Facades\Auth;
 class LocationController extends Controller
 {
 
+    public function __construct()
+    {
+        // Apply middleware for event-related permissions
+        $this->middleware('permission:location-save', ['only' => ['saveLocation']]);
+    }
+
+
     public function saveLocation(Request $request)
     {
         try {

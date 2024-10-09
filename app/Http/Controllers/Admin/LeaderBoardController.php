@@ -15,6 +15,20 @@ use App\Models\CircleMeetingMembersReference;
 
 class LeaderBoardController extends Controller
 {
+
+    // public function __construct()
+    // {
+    //     // Apply middleware for event-related permissions
+    //     $this->middleware('permission:max-meetings', ['only' => ['maxMeetings']]);
+    //     $this->middleware('permission:max-business', ['only' => ['maxBusiness']]);
+    //     $this->middleware('permission:max-refferal', ['only' => ['maxRefferal']]);
+    //     $this->middleware('permission:max-reference', ['only' => ['maxReference']]);
+    //     $this->middleware('permission:max-visitor', ['only' => ['maxVisitor']]);
+    //     $this->middleware('permission:circle-wise-leaderboard', ['only' => ['circleWiseLeaserboard']]);
+    // }
+
+
+
     public function maxMeetings(Request $request)
     {
         try {

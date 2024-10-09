@@ -16,6 +16,18 @@ use App\Models\CircleMeetingMembersReference;
 
 class CircleMeetingMemberReferenceController extends Controller
 {
+
+    // public function __construct()
+    // {
+    //     // Apply middleware for circle call-related permissions
+    //     $this->middleware('permission:circle-meeting-member-reference-index', ['only' => ['index', 'view']]);
+    //     $this->middleware('permission:circle-meeting-member-reference-create', ['only' => ['create', 'store']]);
+    //     $this->middleware('permission:circle-meeting-member-reference-edit', ['only' => ['edit', 'update']]);
+    //     $this->middleware('permission:circle-meeting-member-reference-delete', ['only' => ['delete']]);
+    //     $this->middleware('permission:get-member-details', ['only' => ['getMemberDetails']]);
+    // }
+
+
     public function index(Request $request)
     {
         try {

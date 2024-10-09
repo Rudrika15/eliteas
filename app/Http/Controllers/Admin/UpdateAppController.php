@@ -9,6 +9,13 @@ use Illuminate\Http\Request;
 class UpdateAppController extends Controller
 {
 
+    public function __construct()
+    {
+
+        // Apply middleware for event-related permissions
+        $this->middleware('permission:ubn-app-edit', ['only' => ['edit', 'updateAppVersion']]);
+    }
+
     public function edit()
     {
         $updateApp = AppVersion::first();

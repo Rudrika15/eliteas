@@ -12,6 +12,16 @@ use App\Http\Controllers\Controller;
 
 class CircleTypeController extends Controller
 {
+
+    // public function __construct()
+    // {
+    //     // Apply middleware for circle type-related permissions
+    //     $this->middleware('permission:circle-type-index', ['only' => ['index', 'view']]);
+    //     $this->middleware('permission:circle-type-create', ['only' => ['create', 'store']]);
+    //     $this->middleware('permission:circle-type-edit', ['only' => ['edit', 'update']]);
+    //     $this->middleware('permission:circle-type-delete', ['only' => ['delete']]);
+    // }
+
     public function index(Request $request)
     {
         try {

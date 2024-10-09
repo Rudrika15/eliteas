@@ -12,14 +12,14 @@ use Illuminate\Support\Facades\Auth;
 class ChatController extends Controller
 {
 
-    public function __construct()
-    {
-        // Apply middleware for chat-related permissions
-        $this->middleware('permission:send-message', ['only' => ['sendMessage']]);
-        $this->middleware('permission:get-messages', ['only' => ['getMessages']]);
-        $this->middleware('permission:chat-list-view', ['only' => ['getList', 'myChatList']]);
-        $this->middleware('permission:get-chat', ['only' => ['getChat']]);
-    }
+    // public function __construct()
+    // {
+    //     // Apply middleware for chat-related permissions
+    //     $this->middleware('permission:chat-send-message', ['only' => ['sendMessage']]);
+    //     $this->middleware('permission:chat-get-messages', ['only' => ['getMessages']]);
+    //     $this->middleware('permission:chat-list-view', ['only' => ['getList', 'myChatList']]);
+    //     $this->middleware('permission:chat-get-chat', ['only' => ['getChat']]);
+    // }
 
 
     public function sendMessage(Request $request)

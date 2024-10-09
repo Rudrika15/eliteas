@@ -18,6 +18,19 @@ use Illuminate\Support\Facades\Hash;
 
 class MemberController extends Controller
 {
+
+
+    // public function __construct()
+    // {
+    //     // Apply middleware for event-related permissions
+    //     $this->middleware('permission:member-index', ['only' => ['index', 'view']]);
+    //     $this->middleware('permission:member-create', ['only' => ['create', 'store']]);
+    //     $this->middleware('permission:member-edit', ['only' => ['edit', 'update']]);
+    //     $this->middleware('permission:member-show', ['only' => ['show']]);
+    // }
+
+
+
     public function index(Request $request)
     {
         try {
@@ -25,7 +38,8 @@ class MemberController extends Controller
             return view('userrs.member.index', compact('member'));
         } catch (\Throwable $th) {
             // throw $th;
-            ErrorLogger::logError($th,
+            ErrorLogger::logError(
+                $th,
                 request()->fullUrl()
             );
             return view('servererror');
@@ -37,7 +51,8 @@ class MemberController extends Controller
         try {
         } catch (\Throwable $th) {
             // throw $th;
-            ErrorLogger::logError($th,
+            ErrorLogger::logError(
+                $th,
                 request()->fullUrl()
             );
 
@@ -53,7 +68,8 @@ class MemberController extends Controller
             return view('userrs.member.create', compact('countries', 'states', 'cities'));
         } catch (\Throwable $th) {
             // throw $th;
-            ErrorLogger::logError($th,
+            ErrorLogger::logError(
+                $th,
                 request()->fullUrl()
             );
 
@@ -218,7 +234,8 @@ class MemberController extends Controller
             return redirect()->route('members.index')->with('success', 'Member Created Successfully!');
         } catch (\Throwable $th) {
             // throw $th;
-            ErrorLogger::logError($th,
+            ErrorLogger::logError(
+                $th,
                 request()->fullUrl()
             );
             return view('servererror');
@@ -238,7 +255,8 @@ class MemberController extends Controller
             return view('userrs.member.edit', compact('countries', 'states', 'cities', 'member', 'contactDetails', 'billing', 'tops'));
         } catch (\Throwable $th) {
             // throw $th;
-            ErrorLogger::logError($th,
+            ErrorLogger::logError(
+                $th,
                 request()->fullUrl()
             );
 
@@ -261,7 +279,8 @@ class MemberController extends Controller
             return view('userrs.member.show', compact('country', 'state', 'city', 'member', 'contactDetails', 'billing', 'tops'));
         } catch (\Throwable $th) {
             // throw $th;
-            ErrorLogger::logError($th,
+            ErrorLogger::logError(
+                $th,
                 request()->fullUrl()
             );
 
@@ -392,7 +411,8 @@ class MemberController extends Controller
             return redirect()->route('members.index')->with('success', 'Member Updated Successfully!');
         } catch (\Throwable $th) {
             // throw $th;
-            ErrorLogger::logError($th,
+            ErrorLogger::logError(
+                $th,
                 request()->fullUrl()
             );
             return view('servererror');

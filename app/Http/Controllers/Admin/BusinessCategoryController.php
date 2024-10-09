@@ -10,14 +10,14 @@ use App\Http\Controllers\Controller;
 class BusinessCategoryController extends Controller
 {
 
-    function __construct()
-    {
-        // Applying middleware for managing business categories with specific permissions
-        $this->middleware('permission:business-category-list|business-category-create|business-category-edit', ['only' => ['index', 'show']]);
-        $this->middleware('permission:business-category-create', ['only' => ['create', 'store']]);
-        $this->middleware('permission:business-category-edit', ['only' => ['edit', 'update']]);
-        $this->middleware('permission:business-category-delete', ['only' => ['delete']]);
-    }
+    // function __construct()
+    // {
+    //     // Applying middleware for managing business categories with specific permissions
+    //     $this->middleware('permission:business-category-list', ['only' => ['index', 'show']]);
+    //     $this->middleware('permission:business-category-create', ['only' => ['create', 'store']]);
+    //     $this->middleware('permission:business-category-edit', ['only' => ['edit', 'update']]);
+    //     $this->middleware('permission:business-category-delete', ['only' => ['delete']]);
+    // }
 
 
 

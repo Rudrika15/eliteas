@@ -12,7 +12,7 @@ class PermissionController extends Controller
      */
     public function index()
     {
-        $permissions = Permission::paginate(10);
+        $permissions = Permission::where('status', 'Active')->paginate(10);
         return view('admin.permission.index', compact('permissions'));
     }
 
@@ -35,7 +35,8 @@ class PermissionController extends Controller
         $permission->status = 'Active';
         $permission->save();
 
-        return redirect()->route('permission.index')->with('success', 'Permission created successfully');
+        return redirect()->route('permission.create');
+        // return redirect()->route('permission.create')->with('success', 'Permission created successfully');
     }
 
     /**
@@ -73,7 +74,7 @@ class PermissionController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function delete(string $id)
     {
         $permission = Permission::find($id);
         $permission->delete();

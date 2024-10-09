@@ -30,6 +30,32 @@ use Illuminate\Support\Facades\Crypt;
 
 class PaymentController extends Controller
 {
+
+
+    // public function __construct()
+    // {
+    //     // Apply middleware for event-related permissions
+    //     $this->middleware('permission:payment-store', ['only' => ['store']]);
+    //     $this->middleware('permission:payment-invite-payment', ['only' => ['invitePayment']]);
+    //     $this->middleware('permission:payment-store-payment-details', ['only' => ['storePaymentDetails']]);
+    //     $this->middleware('permission:payment-membership-payment', ['only' => ['membershipPayment']]);
+    //     $this->middleware('permission:payment-my-all-payments', ['only' => ['myAllPayments']]);
+    //     $this->middleware('permission:payment-all-payments', ['only' => ['allPayments']]);
+    //     $this->middleware('permission:payment-circle-admin-payment-history', ['only' => ['circleAdminPaymentHistory']]);
+    //     $this->middleware('permission:payment-pending-payments', ['only' => ['pendingPayments']]);
+    //     $this->middleware('permission:payment-renew-membership', ['only' => ['renewMembership']]);
+    //     $this->middleware('permission:payment-monthly-payments', ['only' => ['monthlyPayments']]);
+    //     $this->middleware('permission:payment-generate-monthly-payment', ['only' => ['generateMonthlyPayment']]);
+    //     $this->middleware('permission:payment-update-payment-status', ['only' => ['updatePaymentStatus']]);
+    //     $this->middleware('permission:payment-monthly-payment-store', ['only' => ['monthlyPaymentStore']]);
+    //     $this->middleware('permission:payment-user-event-payment', ['only' => ['userEventPayment']]);
+    //     $this->middleware('permission:payment-event-payment', ['only' => ['eventPayment']]);
+    //     $this->middleware('permission:payment-user-offline-payment', ['only' => ['userOfflinePayment']]);
+    //     $this->middleware('permission:payment-monthly-payment-index', ['only' => ['monthlyPaymentIndex']]);
+    // }
+
+
+
     public function store(Request $request)
     {
         try {

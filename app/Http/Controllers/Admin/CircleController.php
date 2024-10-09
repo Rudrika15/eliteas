@@ -22,17 +22,17 @@ use App\Http\Controllers\Controller;
 class CircleController extends Controller
 {
 
-    public function __construct()
-    {
-        // Apply middleware for circle call-related permissions
-        $this->middleware('permission:circle-index', ['only' => ['index', 'view']]);
-        $this->middleware('permission:circle-create', ['only' => ['create', 'store']]);
-        $this->middleware('permission:circle-edit', ['only' => ['edit', 'update']]);
-        $this->middleware('permission:circle-delete', ['only' => ['delete']]);
-        $this->middleware('permission:show-by-circle', ['only' => ['showByCircle']]);
-        $this->middleware('permission:member-list', ['only' => ['memberList']]);
-        $this->middleware('permission:generate-meetings', ['only' => ['generateMeetings']]);
-    }
+    // public function __construct()
+    // {
+    //     // Apply middleware for circle call-related permissions
+    //     $this->middleware('permission:circle-index', ['only' => ['index', 'view']]);
+    //     $this->middleware('permission:circle-create', ['only' => ['create', 'store']]);
+    //     $this->middleware('permission:circle-edit', ['only' => ['edit', 'update']]);
+    //     $this->middleware('permission:circle-delete', ['only' => ['delete']]);
+    //     $this->middleware('permission:show-by-circle', ['only' => ['showByCircle']]);
+    //     $this->middleware('permission:member-list', ['only' => ['memberList']]);
+    //     $this->middleware('permission:generate-meetings', ['only' => ['generateMeetings']]);
+    // }
 
 
     public function index(Request $request)

@@ -40,6 +40,22 @@ use App\Models\CircleMeetingMembersReference;
 class CircleMemberController extends Controller
 {
 
+    // public function __construct()
+    // {
+    //     // Apply middleware for circle member-related permissions
+    //     $this->middleware('permission:circle-member-index', ['only' => ['index', 'view']]);
+    //     $this->middleware('permission:circle-member-create', ['only' => ['create', 'store']]);
+    //     $this->middleware('permission:circle-member-edit', ['only' => ['edit', 'update']]);
+    //     $this->middleware('permission:circle-member-delete', ['only' => ['delete']]);
+    //     $this->middleware('permission:circle-member-filter', ['only' => ['filter']]);
+    //     $this->middleware('permission:circle-member-payment', ['only' => ['memberPayment']]);
+    //     $this->middleware('permission:get-membership-amount', ['only' => ['getMembershipAmount']]);
+    //     $this->middleware('permission:circle-member-activity', ['only' => ['activity']]);
+    //     $this->middleware('permission:circle-member-assignRole', ['only' => ['assignRole']]);
+    //     $this->middleware('permission:circle-member-removeRole', ['only' => ['removeRole']]);
+    //     $this->middleware('permission:circle-member-export', ['only' => ['export']]);
+    // }
+
     public function index(Request $request)
     {
         try {
@@ -613,7 +629,7 @@ class CircleMemberController extends Controller
             return view('servererror');
         }
     }
-    
+
     public function removeRole(Request $request)
     {
         try {
