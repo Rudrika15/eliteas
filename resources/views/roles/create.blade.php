@@ -3,63 +3,82 @@
 @section('header', 'Franchise')
 @section('content')
 
-{{-- Message --}}
-@if (Session::has('success'))
-<div class="alert alert-success alert-dismissible" role="alert">
-    <button type="button" class="close" data-dismiss="alert">
-        {{-- <i class="fa fa-times"></i> --}}
-    </button>
-    <strong>Success !</strong> {{ session('success') }}
-</div>
-@endif
 
-@if (Session::has('error'))
-<div class="alert alert-danger alert-dismissible" role="alert">
-    <button type="button" class="close" data-dismiss="alert">
-        {{-- <i class="fa fa-times"></i> --}}
-    </button>
-    <strong>Error !</strong> {{ session('error') }}
-</div>
-@endif
-
-
-<div class="card">
-    <div class="card-body d-flex justify-content-between align-items-center">
-        <h5 class="card-title">Create New Role</h5>
-        <a href="{{ route('roles.index') }}" class="btn btn-bg-orange btn-sm">BACK</a>
-    </div>
-
-    <!-- Floating Labels Form -->
-    <form class="m-3 needs-validation" id="rolesForm" enctype="multipart/form-data" method="post"
-        action="{{ route('roles.store') }}" novalidate>
-        @csrf
-        <div class="row">
-            <div class="col-xs-12 col-sm-12 col-md-12">
-                <div class="form-group">
-                    <strong>Name:</strong>
-                    {!! Form::text('name', null, ['placeholder' => 'Name', 'class' => 'form-control']) !!}
-                </div>
-            </div>
-            <div class="col-xs-12 col-sm-12 col-md-12">
-                <div class="form-group">
-                    <strong>Permission:</strong>
-                    <br />
-                    @foreach ($permission as $value)
-                    <label>{{ Form::checkbox('permission[]', $value->id, false, ['class' => 'name']) }}
-                        {{ $value->name }}</label>
-                    <br />
-                    @endforeach
-                </div>
-            </div>
-            <div class="col-xs-12 col-sm-12 col-md-12 text-center">
-                <button type="submit" class="btn btn-bg-blue">Submit</button>
-                <button type="reset" class="btn btn-bg-orange">Reset</button>
-            </div>
+    <div class="card">
+        <div class="card-body d-flex justify-content-between align-items-center">
+            <h5 class="card-title">Create New Role</h5>
+            <a href="{{ route('roles.index') }}" class="btn btn-bg-orange btn-sm">BACK</a>
         </div>
-        {{-- <div class="text-center">
-            <button type="submit" class="btn btn-primary">Submit</button>
-        </div> --}}
-    </form><!-- End floating Labels Form -->
-</div>
 
+        <!-- Floating Labels Form -->
+        <form class="m-3 needs-validation" id="rolesForm" enctype="multipart/form-data" method="post"
+            action="{{ route('roles.store') }}" novalidate>
+            @csrf
+            <div class="row">
+                <div class="col-xs-12 col-sm-12 col-md-12">
+                    <div class="form-group">
+                        <strong>Name:</strong>
+                        {!! Form::text('name', null, ['placeholder' => 'Name', 'class' => 'form-control']) !!}
+                    </div>
+                </div>
+
+                <div class="col-xs-12 col-sm-12 col-md-12 mt-3">
+                    <strong>Permissions (A-Z):</strong>
+                    <br />
+
+                    {{-- "Check All" Checkbox --}}
+                    <div class="form-group mb-3">
+                        <label>
+                            <input type="checkbox" id="checkAll"> Check All
+                        </label>
+                    </div>
+
+                    {{-- Alphabetical Sections --}}
+                    <div class="alphabetical-sections mt-3">
+                        @foreach ($permissionGroups as $letter => $permissions)
+                            <div class="card mb-3">
+                                <div class="card-header">
+                                    <h5 class="mb-0">{{ strtoupper($letter) }}</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        @foreach ($permissions as $permission)
+                                            <div class="col-md-4 mb-2">
+                                                <label>
+                                                    {{ Form::checkbox('permission[]', $permission->id, false, ['class' => 'permission-checkbox']) }}
+                                                    {{ $permission->name }}
+                                                </label>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                    {{-- End Alphabetical Sections --}}
+
+                </div>
+                <div class="col-xs-12 col-sm-12 col-md-12 text-center">
+                    <button type="submit" class="btn btn-bg-blue">Submit</button>
+                    <button type="reset" class="btn btn-bg-orange">Reset</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const checkAll = document.getElementById('checkAll');
+            const permissionCheckboxes = document.querySelectorAll('.permission-checkbox');
+            console.log('here');
+
+            checkAll.addEventListener('change', function() {
+                console.log('cheked');
+
+                permissionCheckboxes.forEach((checkbox) => {
+                    checkbox.checked = this
+                        .checked; // Set the checked property to match the state of 'checkAll'
+                });
+            });
+        });
+    </script>
 @endsection

@@ -46,9 +46,26 @@ class HomeController extends Controller
      *
      * @return void
      */
+
+    // public function __construct()
+    // {
+    //     $this->middleware('auth');
+    // }
+
     public function __construct()
     {
         $this->middleware('auth');
+        $this->middleware('permission:home-index', ['only' => ['index']]);
+        $this->middleware('permission:home-training-register', ['only' => ['trainingRegister']]);
+        $this->middleware('permission:home-event-register', ['only' => ['eventRegister']]);
+        $this->middleware('permission:home-invitation', ['only' => ['invitation']]);
+        $this->middleware('permission:home-invitation-pay', ['only' => ['invitationPay']]);
+        $this->middleware('permission:home-find-member', ['only' => ['findMember']]);
+        $this->middleware('permission:home-search', ['only' => ['search']]);
+        $this->middleware('permission:home-found-person-details', ['only' => ['foundPersonDetails']]);
+        $this->middleware('permission:home-accepted', ['only' => ['accepted']]);
+        $this->middleware('permission:home-rejected', ['only' => ['rejected']]);
+        $this->middleware('permission:home-userDetails', ['only' => ['userDetails']]);
     }
 
     /**

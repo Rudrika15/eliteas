@@ -16,32 +16,32 @@ class MemberPaymentController extends Controller
 {
 
 
-    // public function __construct()
-    // {
-    //     // Apply middleware for event-related permissions
-    //     $this->middleware('permission:member-payment-index', ['only' => ['index', 'view']]);
-    //     $this->middleware('permission:event-create', ['only' => ['create', 'store']]);
-    //     $this->middleware('permission:event-edit', ['only' => ['edit', 'update']]);
-    //     $this->middleware('permission:event-delete', ['only' => ['delete']]);
-    // }
-
-
-    public function index(Request $request)
+    public function __construct()
     {
-        try {
-
-            $payment = MemberPayment::where('status', 'Active')->get();
-            return view('admin.payment.index', compact('payment'));
-        } catch (\Throwable $th) {
-            // throw $th;
-            ErrorLogger::logError(
-                $th,
-                request()->fullUrl()
-            );
-
-            return view('servererror');
-        }
+        // Apply middleware for event-related permissions
+        $this->middleware('permission:member-payment-index', ['only' => ['index', 'view']]);
+        $this->middleware('permission:event-create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:event-edit', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:event-delete', ['only' => ['delete']]);
     }
+
+
+    // public function index(Request $request)
+    // {
+    //     try {
+
+    //         $payment = MemberPayment::where('status', 'Active')->get();
+    //         return view('admin.payment.index', compact('payment'));
+    //     } catch (\Throwable $th) {
+    //         // throw $th;
+    //         ErrorLogger::logError(
+    //             $th,
+    //             request()->fullUrl()
+    //         );
+
+    //         return view('servererror');
+    //     }
+    // }
     // //For show single data
     // public function view(Request $request, $id)
     // {
@@ -64,109 +64,109 @@ class MemberPaymentController extends Controller
     //     }
     // }
 
-    public function store(Request $request)
-    {
-        $this->validate($request, [
-            // 'stateName' => 'required',
-        ]);
-        try {
-            $payment = new MemberPayment();
-            $payment->memberId = $request->memberId;
-            $payment->paymentTypeId = $request->paymentTypeId;
-            $payment->amount = $request->amount;
-            $payment->gst = $request->gst;
-            $payment->status = 'Active';
+    // public function store(Request $request)
+    // {
+    //     $this->validate($request, [
+    //         // 'stateName' => 'required',
+    //     ]);
+    //     try {
+    //         $payment = new MemberPayment();
+    //         $payment->memberId = $request->memberId;
+    //         $payment->paymentTypeId = $request->paymentTypeId;
+    //         $payment->amount = $request->amount;
+    //         $payment->gst = $request->gst;
+    //         $payment->status = 'Active';
 
-            $payment->save();
+    //         $payment->save();
 
-            $payments = new AllPayments();
-            $payments->memberId = $payment->memberId;
-            $payments->paymentType = 'Razorpay';
-            $payments->amount = $payment->amount;
-            $payments->gst = $request->gst;
-            $payments->paymentMode = 'Membership Payment';
-            $payments->remarks = $payment->paymentId;
-            $payments->status = 'Active';
-            $payments->save();
-
-
-
-            return redirect()->route('state.index')->with('success', 'State Created Successfully!');
-        } catch (\Throwable $th) {
-            // throw $th;
-            ErrorLogger::logError(
-                $th,
-                request()->fullUrl()
-            );
-
-            return view('servererror');
-        }
-    }
-
-    public function edit($id)
-    {
-        try {
-            $state = State::find($id);
-            $country = Country::where('status', '!=', 'Deleted')->get();
-            return view('admin.state.edit', compact('country', 'state'));
-        } catch (\Throwable $th) {
-            // throw $th;
-            ErrorLogger::logError(
-                $th,
-                request()->fullUrl()
-            );
-
-            return view('servererror');
-        }
-    }
-
-    public function update(Request $request)
-    {
-        $this->validate($request, [
-            'stateName' => 'required',
-
-        ]);
-        try {
-            $id = $request->id;
-            $state = State::find($id);
-            $state->countryId = $request->countryId;
-            $state->stateName = $request->stateName;
-            $state->status = 'Active';
-
-            $state->save();
+    //         $payments = new AllPayments();
+    //         $payments->memberId = $payment->memberId;
+    //         $payments->paymentType = 'Razorpay';
+    //         $payments->amount = $payment->amount;
+    //         $payments->gst = $request->gst;
+    //         $payments->paymentMode = 'Membership Payment';
+    //         $payments->remarks = $payment->paymentId;
+    //         $payments->status = 'Active';
+    //         $payments->save();
 
 
-            return redirect()->route('state.index')->with('success', 'State Created Successfully!');
-        } catch (\Throwable $th) {
-            // throw $th;
-            ErrorLogger::logError(
-                $th,
-                request()->fullUrl()
-            );
 
-            return view('servererror');
-        }
-    }
+    //         return redirect()->route('state.index')->with('success', 'State Created Successfully!');
+    //     } catch (\Throwable $th) {
+    //         // throw $th;
+    //         ErrorLogger::logError(
+    //             $th,
+    //             request()->fullUrl()
+    //         );
 
-    function delete($id)
-    {
-        try {
-            $state = State::find($id);
-            $state->status = "Deleted";
-            $state->save();
-            $response = [
-                'success' => true,
-                'message' => 'State Deleted Successfully!',
-            ];
+    //         return view('servererror');
+    //     }
+    // }
 
-            return response()->json($response);
-        } catch (\Throwable $th) {
-            // throw $th;
-            ErrorLogger::logError(
-                $th,
-                request()->fullUrl()
-            );
-            return view('servererror');
-        }
-    }
+    // public function edit($id)
+    // {
+    //     try {
+    //         $state = State::find($id);
+    //         $country = Country::where('status', '!=', 'Deleted')->get();
+    //         return view('admin.state.edit', compact('country', 'state'));
+    //     } catch (\Throwable $th) {
+    //         // throw $th;
+    //         ErrorLogger::logError(
+    //             $th,
+    //             request()->fullUrl()
+    //         );
+
+    //         return view('servererror');
+    //     }
+    // }
+
+    // public function update(Request $request)
+    // {
+    //     $this->validate($request, [
+    //         'stateName' => 'required',
+
+    //     ]);
+    //     try {
+    //         $id = $request->id;
+    //         $state = State::find($id);
+    //         $state->countryId = $request->countryId;
+    //         $state->stateName = $request->stateName;
+    //         $state->status = 'Active';
+
+    //         $state->save();
+
+
+    //         return redirect()->route('state.index')->with('success', 'State Created Successfully!');
+    //     } catch (\Throwable $th) {
+    //         // throw $th;
+    //         ErrorLogger::logError(
+    //             $th,
+    //             request()->fullUrl()
+    //         );
+
+    //         return view('servererror');
+    //     }
+    // }
+
+    // function delete($id)
+    // {
+    //     try {
+    //         $state = State::find($id);
+    //         $state->status = "Deleted";
+    //         $state->save();
+    //         $response = [
+    //             'success' => true,
+    //             'message' => 'State Deleted Successfully!',
+    //         ];
+
+    //         return response()->json($response);
+    //     } catch (\Throwable $th) {
+    //         // throw $th;
+    //         ErrorLogger::logError(
+    //             $th,
+    //             request()->fullUrl()
+    //         );
+    //         return view('servererror');
+    //     }
+    // }
 }

@@ -10,16 +10,16 @@ use App\Http\Controllers\Controller;
 class TrainingCategoryController extends Controller
 {
 
-    // public function __construct()
-    // {
+    public function __construct()
+    {
         
-    //     // Apply middleware for event-related permissions
-    //     $this->middleware('permission:training-category-index', ['only' => ['index', 'view']]);
-    //     $this->middleware('permission:training-category-create', ['only' => ['create', 'store']]);
-    //     $this->middleware('permission:training-category-edit', ['only' => ['edit', 'update']]);
-    //     $this->middleware('permission:training-category-delete', ['only' => ['delete']]);
+        // Apply middleware for event-related permissions
+        $this->middleware('permission:training-category-index', ['only' => ['index', 'view']]);
+        $this->middleware('permission:training-category-create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:training-category-edit', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:training-category-delete', ['only' => ['delete']]);
 
-    // }
+    }
 
     public function index(Request $request)
     {

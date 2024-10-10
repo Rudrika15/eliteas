@@ -11,12 +11,12 @@ use App\Http\Controllers\Controller;
 class ErrorListController extends Controller
 {
 
-    // public function __construct()
-    // {
-    //     // Apply middleware for error log management permissions
-    //     $this->middleware('permission:error-view', ['only' => ['index']]);
-    //     $this->middleware('permission:error-edit', ['only' => ['updateErrorStatus']]);
-    // }
+    public function __construct()
+    {
+        // Apply middleware for error log management permissions
+        $this->middleware('permission:error-index', ['only' => ['index']]);
+        $this->middleware('permission:error-edit', ['only' => ['updateErrorStatus']]);
+    }
 
 
     public function index()

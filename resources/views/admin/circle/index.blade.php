@@ -84,6 +84,13 @@
                                     <td>{{ $circleData->status }}</td>
                                     <td>
 
+                                        <a href="{{ route('circle.report', $circleData->id) }}"
+                                            class="btn btn-bg-blue btn-sm btn-tooltip">
+                                            <i class="bi bi-file-earmark-text"></i>
+                                            <span class="btn-text">Circle Report</span>
+                                        </a>
+
+
                                         <a href="{{ route('meetings.by.circle', $circleData->id) }}"
                                             class="btn btn-bg-orange btn-sm btn-tooltip">
                                             <i class="bi bi-eye"></i>

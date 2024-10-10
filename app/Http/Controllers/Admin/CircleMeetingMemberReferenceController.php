@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 
 use Carbon\Carbon;
+use App\Models\Circle;
 use App\Models\Member;
 use App\Utils\ErrorLogger;
 use Illuminate\Http\Request;
@@ -17,15 +18,15 @@ use App\Models\CircleMeetingMembersReference;
 class CircleMeetingMemberReferenceController extends Controller
 {
 
-    // public function __construct()
-    // {
-    //     // Apply middleware for circle call-related permissions
-    //     $this->middleware('permission:circle-meeting-member-reference-index', ['only' => ['index', 'view']]);
-    //     $this->middleware('permission:circle-meeting-member-reference-create', ['only' => ['create', 'store']]);
-    //     $this->middleware('permission:circle-meeting-member-reference-edit', ['only' => ['edit', 'update']]);
-    //     $this->middleware('permission:circle-meeting-member-reference-delete', ['only' => ['delete']]);
-    //     $this->middleware('permission:get-member-details', ['only' => ['getMemberDetails']]);
-    // }
+    public function __construct()
+    {
+        // Apply middleware for circle call-related permissions
+        $this->middleware('permission:circle-meeting-member-reference-index', ['only' => ['index', 'view']]);
+        $this->middleware('permission:circle-meeting-member-reference-create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:circle-meeting-member-reference-edit', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:circle-meeting-member-reference-delete', ['only' => ['delete']]);
+        $this->middleware('permission:get-member-details', ['only' => ['getMemberDetails']]);
+    }
 
 
     public function index(Request $request)
@@ -78,9 +79,17 @@ class CircleMeetingMemberReferenceController extends Controller
     public function create(Request $request)
     {
         try {
+
+            $circles = Circle::where('status', 'Active')->get();
+
+            $circleMember = Member::with('circle')
+                ->where('status', 'Active')
+                ->get(); // Ensure 'circleId' is included
+
+
             $circlemeeting = CircleMeeting::where('status', 'Active')->get();
-            $members = Member::where('status', 'Active')->get();
-            return view('admin.refGiver.create', compact('circlemeeting', 'members'));
+            // $members = Member::where('status', 'Active')->get();
+            return view('admin.refGiver.create', compact('circlemeeting', 'circles', 'circleMember'));
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError(
@@ -162,8 +171,10 @@ class CircleMeetingMemberReferenceController extends Controller
     {
         try {
             $refGiver = CircleMeetingMembersReference::find($id);
-            $member = Member::all();
-            return view('admin.refGiver.edit', compact('refGiver', 'member'));
+            $member = Member::where('status', 'Active')->get();
+            $circles = Circle::where('status', 'Active')->get();
+
+            return view('admin.refGiver.edit', compact('refGiver', 'member', 'circles'));
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError(

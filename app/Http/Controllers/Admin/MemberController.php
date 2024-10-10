@@ -20,14 +20,14 @@ class MemberController extends Controller
 {
 
 
-    // public function __construct()
-    // {
-    //     // Apply middleware for event-related permissions
-    //     $this->middleware('permission:member-index', ['only' => ['index', 'view']]);
-    //     $this->middleware('permission:member-create', ['only' => ['create', 'store']]);
-    //     $this->middleware('permission:member-edit', ['only' => ['edit', 'update']]);
-    //     $this->middleware('permission:member-show', ['only' => ['show']]);
-    // }
+    public function __construct()
+    {
+        // Apply middleware for event-related permissions
+        $this->middleware('permission:member-index', ['only' => ['index', 'view']]);
+        $this->middleware('permission:member-create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:member-edit', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:member-show', ['only' => ['show']]);
+    }
 
 
 

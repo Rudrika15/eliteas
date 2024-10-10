@@ -18,19 +18,19 @@ class ScheduleController extends Controller
 {
 
 
-    // public function __construct()
-    // {
-    //     // Apply middleware for event-related permissions
-    //     $this->middleware('permission:schedule-index', ['only' => ['index', 'view']]);
-    //     $this->middleware('permission:schedule-show', ['only' => ['show']]);
-    //     $this->middleware('permission:schedule-create', ['only' => ['create', 'store']]);
-    //     $this->middleware('permission:schedule-edit', ['only' => ['edit', 'update']]);
-    //     $this->middleware('permission:schedule-delete', ['only' => ['delete']]);
-    //     $this->middleware('permission:schedule-filter', ['only' => ['filter']]);
-    //     $this->middleware('permission:schedule-dash-index', ['only' => ['dashIndex']]);
-    //     $this->middleware('permission:schedule-dash-edit', ['only' => ['dashEdit', 'dashUpdate']]);
-    //     $this->middleware('permission:schedule-invited-list', ['only' => ['invitedList']]);
-    // }
+    public function __construct()
+    {
+        // Apply middleware for event-related permissions
+        $this->middleware('permission:schedule-index', ['only' => ['index', 'view']]);
+        $this->middleware('permission:schedule-show', ['only' => ['show']]);
+        $this->middleware('permission:schedule-create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:schedule-edit', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:schedule-delete', ['only' => ['delete']]);
+        $this->middleware('permission:schedule-filter', ['only' => ['filter']]);
+        $this->middleware('permission:schedule-dash-index', ['only' => ['dashIndex']]);
+        $this->middleware('permission:schedule-dash-edit', ['only' => ['dashEdit', 'dashUpdate']]);
+        $this->middleware('permission:schedule-invited-list', ['only' => ['invitedList']]);
+    }
 
 
     public function index(Request $request)

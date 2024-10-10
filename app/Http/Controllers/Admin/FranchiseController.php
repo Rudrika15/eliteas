@@ -20,17 +20,17 @@ use Illuminate\Support\Facades\Mail;
 class FranchiseController extends Controller
 {
 
-    // public function __construct()
-    // {
-    //     // Apply middleware for event-related permissions
-    //     $this->middleware('permission:franchise-index', ['only' => ['index', 'view']]);
-    //     $this->middleware('permission:franchise-create', ['only' => ['create', 'store']]);
-    //     $this->middleware('permission:franchise-edit', ['only' => ['edit', 'update']]);
-    //     $this->middleware('permission:franchise-delete', ['only' => ['delete']]);
-    //     $this->middleware('permission:franchise-get-state-and-country', ['only' => ['getStateAndCountry']]);
-    //     $this->middleware('permission:franchise-get-states', ['only' => ['getStates']]);
-    //     $this->middleware('permission:franchise-get-cities', ['only' => ['getCities']]);
-    // }
+    public function __construct()
+    {
+        // Apply middleware for event-related permissions
+        $this->middleware('permission:franchise-index', ['only' => ['index', 'view']]);
+        $this->middleware('permission:franchise-create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:franchise-edit', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:franchise-delete', ['only' => ['delete']]);
+        $this->middleware('permission:franchise-get-state-and-country', ['only' => ['getStateAndCountry']]);
+        $this->middleware('permission:franchise-get-states', ['only' => ['getStates']]);
+        $this->middleware('permission:franchise-get-cities', ['only' => ['getCities']]);
+    }
 
 
 

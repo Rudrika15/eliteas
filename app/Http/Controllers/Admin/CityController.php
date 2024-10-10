@@ -13,14 +13,14 @@ use App\Http\Controllers\Controller;
 class CityController extends Controller
 {
 
-    // public function __construct()
-    // {
-    //     // Apply middleware for city-related permissions
-    //     $this->middleware('permission:city-index', ['only' => ['index', 'view']]);
-    //     $this->middleware('permission:city-create', ['only' => ['create', 'store']]);
-    //     $this->middleware('permission:city-edit', ['only' => ['edit', 'update']]);
-    //     $this->middleware('permission:city-delete', ['only' => ['delete']]);
-    // }
+    public function __construct()
+    {
+        // Apply middleware for city-related permissions
+        $this->middleware('permission:city-index', ['only' => ['index', 'view']]);
+        $this->middleware('permission:city-create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:city-edit', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:city-delete', ['only' => ['delete']]);
+    }
 
 
     public function index(Request $request)

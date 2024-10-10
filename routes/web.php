@@ -215,6 +215,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('circle/update', [CircleController::class, 'update'])->name('circle.update');
     Route::get('circle/delete/{id?}', [CircleController::class, 'delete'])->name('circle.delete');
     Route::get('circle/memberList/{id?}', [CircleController::class, 'memberList'])->name('circle.memberList');
+    Route::get('circle/report/{id?}', [CircleController::class, 'report'])->name('circle.report');
 
 
     Route::get('/circlemember/index', [CircleMemberController::class, 'index'])->name('circlemember.index');

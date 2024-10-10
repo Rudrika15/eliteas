@@ -14,6 +14,20 @@ class TestimonialController extends Controller
     /**
      * Display a listing of the resource.
      */
+
+    public function __construct()
+    {
+        $this->middleware('permission:testimonial-index', ['only' => ['index', 'view']]);
+        $this->middleware('permission:testimonial-indexAdmin', ['only' => ['indexAdmin']]);
+        $this->middleware('permission:permission-create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:permission-edit', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:permission-delete', ['only' => ['delete']]);
+        $this->middleware('permission:permission-restore', ['only' => ['restore']]);
+        $this->middleware('permission:permission-archived', ['only' => ['archived']]);
+        $this->middleware('permission:permission-archives', ['only' => ['archives']]);
+    }
+
+
     public function index()
     {
         try {

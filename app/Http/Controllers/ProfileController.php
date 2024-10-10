@@ -18,6 +18,14 @@ use Illuminate\Support\Facades\Auth;
 
 class ProfileController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('permission:profile-member', ['only' => ['member']]);
+        $this->middleware('permission:profile-member-update', ['only' => ['memberUpdate']]);
+    }
+
+
     public function member($id = 0)
     {
         try {

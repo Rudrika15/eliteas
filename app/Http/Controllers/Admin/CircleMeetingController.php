@@ -14,15 +14,15 @@ class CircleMeetingController extends Controller
 {
 
 
-    // public function __construct()
-    // {
-    //     // Apply middleware for circle call-related permissions
-    //     $this->middleware('permission:circle-meeting-index', ['only' => ['index', 'view']]);
-    //     $this->middleware('permission:circle-meeting-create', ['only' => ['create', 'store']]);
-    //     $this->middleware('permission:circle-meeting-edit', ['only' => ['edit', 'update']]);
-    //     $this->middleware('permission:circle-meeting-delete', ['only' => ['delete']]);
-    //     $this->middleware('permission:invited-person-list', ['only' => ['invitedPersonList']]);
-    // }
+    public function __construct()
+    {
+        // Apply middleware for circle call-related permissions
+        $this->middleware('permission:circle-meeting-index', ['only' => ['index', 'view']]);
+        $this->middleware('permission:circle-meeting-create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:circle-meeting-edit', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:circle-meeting-delete', ['only' => ['delete']]);
+        $this->middleware('permission:invited-person-list', ['only' => ['invitedPersonList']]);
+    }
 
 
     public function index(Request $request)

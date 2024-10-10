@@ -10,6 +10,7 @@ use App\Models\Member;
 use App\Models\Country;
 use App\Models\Schedule;
 use App\Models\Franchise;
+use App\Models\CircleCall;
 use App\Models\CircleType;
 use App\Utils\ErrorLogger;
 use Illuminate\Support\Str;
@@ -18,21 +19,157 @@ use Illuminate\Http\Request;
 use App\Mail\MeetingInvitation;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
+use App\Models\CircleMeetingMembersBusiness;
+use App\Models\CircleMeetingMembersReference;
 
 class CircleController extends Controller
 {
 
-    // public function __construct()
+    public function __construct()
+    {
+        // Apply middleware for circle call-related permissions
+        $this->middleware('permission:circle-index', ['only' => ['index', 'view']]);
+        $this->middleware('permission:circle-create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:circle-edit', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:circle-delete', ['only' => ['delete']]);
+        $this->middleware('permission:show-by-circle', ['only' => ['showByCircle']]);
+        $this->middleware('permission:member-list', ['only' => ['memberList']]);
+        $this->middleware('permission:generate-meetings', ['only' => ['generateMeetings']]);
+    }
+
+
+    // public function report(Request $request, $id)
     // {
-    //     // Apply middleware for circle call-related permissions
-    //     $this->middleware('permission:circle-index', ['only' => ['index', 'view']]);
-    //     $this->middleware('permission:circle-create', ['only' => ['create', 'store']]);
-    //     $this->middleware('permission:circle-edit', ['only' => ['edit', 'update']]);
-    //     $this->middleware('permission:circle-delete', ['only' => ['delete']]);
-    //     $this->middleware('permission:show-by-circle', ['only' => ['showByCircle']]);
-    //     $this->middleware('permission:member-list', ['only' => ['memberList']]);
-    //     $this->middleware('permission:generate-meetings', ['only' => ['generateMeetings']]);
+    //     try {
+    //         // Circle call data start
+
+    //         // Get the current circle based on the provided circle ID
+    //         $circle = Circle::findOrFail($id);
+
+    //         // Retrieve all CircleCalls with 'Active' status
+    //         $circlecalls = CircleCall::with(['member'])
+    //             ->where('status', 'Active')
+    //             ->get();
+
+    //         // Filter the circle calls by matching the member's circleId with the current circle's ID
+    //         $filteredCircleCalls = $circlecalls->filter(function ($call) use ($circle) {
+    //             $memberCircleId = Member::where('userId', $call->memberId)->value('circleId');
+    //             return $memberCircleId == $circle->id;
+    //         });
+
+    //         // Group the calls by year and month, and within each month, group by memberId
+    //         $circleCallsGrouped = $filteredCircleCalls->groupBy(function ($call) {
+    //             return Carbon::parse($call->date)->format('Y-m'); // Group by Year-Month
+    //         })->map(function ($callsInMonth) {
+    //             return $callsInMonth->groupBy('memberId')->map(function ($group) {
+    //                 $circleId = Member::where('userId', $group->first()->memberId)->value('circleId');
+    //                 return [
+    //                     'circleId' => $circleId,
+    //                     'total' => $group->count()
+    //                 ];
+    //             })->sortByDesc('total');
+    //         })->sortKeysDesc();  // Sort months in descending order
+
+    //         // Circle call data ended
+
+    //         // Return the view with the filtered data
+    //         return view('admin.circle.report', compact('circle', 'circleCallsGrouped'));
+    //     } catch (\Throwable $th) {
+    //         throw $th;
+    //         // Log the error and show the error view
+    //         ErrorLogger::logError($th, $request->fullUrl());
+    //         return view('servererror');
+    //     }
     // }
+
+
+    public function report(Request $request, $id)
+    {
+        try {
+            // Circle call data start
+
+            // Get the current circle based on the provided circle ID
+            $circle = Circle::findOrFail($id);
+
+            // Retrieve all CircleCalls with 'Active' status
+            $circlecalls = CircleCall::with(['member'])
+                ->where('status', 'Active')
+                ->get();
+
+            // Filter the circle calls by matching the member's circleId with the current circle's ID
+            $filteredCircleCalls = $circlecalls->filter(function ($call) use ($circle) {
+                $memberCircleId = Member::where('userId', $call->memberId)->value('circleId');
+                return $memberCircleId == $circle->id;
+            });
+
+            // Group the calls by year and month, and count the total meetings for each month
+            $circleCallsGrouped = $filteredCircleCalls->groupBy(function ($call) {
+                return Carbon::parse($call->date)->format('Y-m'); // Group by Year-Month
+            })->map(function ($callsInMonth) {
+                return $callsInMonth->count();  // Get the total count for the month
+            })->sortKeysDesc();  // Sort months in descending order
+
+            // Circle call data ended
+
+            // business data started
+
+            // Retrieve all CircleMeetingMembersBusiness with 'Active' status
+            $circleMeetingMembersBusiness = CircleMeetingMembersBusiness::with(['member'])
+                ->where('status', 'Active')
+                ->get();
+
+            // Filter the business meeting records by matching the referenceGiverId with the current circle's ID
+            $filteredBusinessMeetings = $circleMeetingMembersBusiness->filter(function ($meeting) use ($circle) {
+                $businessGiverCircleId = Member::where('userId', $meeting->businessGiverId)->value('circleId');
+                return $businessGiverCircleId == $circle->id;
+            });
+
+            // Group the business meetings by year and month, and sum the total amount for each month
+            $businessMeetingsGrouped = $filteredBusinessMeetings->groupBy(function ($meeting) {
+                return Carbon::parse($meeting->date)->format('Y-m'); // Group by Year-Month
+            })->map(function ($meetingsInMonth) {
+                return [
+                    'count' => $meetingsInMonth->count(), // Get the total count for the month
+                    'totalAmount' => $meetingsInMonth->sum('amount') // Sum the total amount for the month
+                ];
+            })->sortKeysDesc();  // Sort months in descending order
+
+            //business data ended
+
+            //reference data started
+
+            $circleMeetingMembersReference = CircleMeetingMembersReference::with(['members'])
+                ->where('status', 'Active')
+
+                ->get();
+
+            // Filter the business meeting records by matching the referenceGiverId with the current circle's ID
+            $filteredReferences = $circleMeetingMembersReference->filter(function ($references) use ($circle) {
+                $referenceGiverCircleId = Member::where('userId', $references->referenceGiverId)->value('circleId');
+                return $referenceGiverCircleId == $circle->id;
+            });
+
+            // Group the business meetings by year and month, and sum the total amount for each month
+            $referencesGrouped = $filteredReferences->groupBy(function ($references) {
+                return Carbon::parse($references->created_at)->format('Y-m'); // Group by Year-Month
+            })->map(function ($referencesInMonth) {
+                return [
+                    'count' => $referencesInMonth->count(), // Get the total count for the month
+                    // 'totalReferences' => $referencesInMonth->sum('count') // Sum the total amount for the month
+                ];
+            })->sortKeysDesc();
+
+
+            // Return the view with the filtered data
+            return view('admin.circle.report', compact('circle', 'circleCallsGrouped', 'businessMeetingsGrouped', 'referencesGrouped'));
+        } catch (\Throwable $th) {
+            throw $th;
+            // Log the error and show the error view
+            ErrorLogger::logError($th, $request->fullUrl());
+            return view('servererror');
+        }
+    }
+
 
 
     public function index(Request $request)

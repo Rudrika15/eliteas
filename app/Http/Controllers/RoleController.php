@@ -45,8 +45,15 @@ class RoleController extends Controller
      */
     public function create(): View
     {
-        $permission = Permission::get();
-        return view('roles.create', compact('permission'));
+        $permissions = Permission::where('status', 'active') // Filter active permissions
+            ->orderBy('name', 'asc')   // Sort permissions alphabetically
+            ->get();
+
+        $permissionGroups = $permissions->groupBy(function ($permission) {
+            return strtoupper(substr($permission->name, 0, 1)); // Group by the first letter
+        });
+
+        return view('roles.create', compact('permissionGroups'));
     }
 
     /**
@@ -90,16 +97,41 @@ class RoleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+    // public function edit($id): View
+    // {
+    //     $role = Role::find($id);
+    //     $permission = Permission::get();
+    //     $rolePermissions = DB::table("role_has_permissions")->where("role_has_permissions.role_id", $id)
+    //         ->pluck('role_has_permissions.permission_id', 'role_has_permissions.permission_id')
+    //         ->all();
+
+    //     return view('roles.edit', compact('role', 'permission', 'rolePermissions'));
+    // }
+
     public function edit($id): View
     {
         $role = Role::find($id);
-        $permission = Permission::get();
-        $rolePermissions = DB::table("role_has_permissions")->where("role_has_permissions.role_id", $id)
-            ->pluck('role_has_permissions.permission_id', 'role_has_permissions.permission_id')
+
+        // Fetch active permissions, sort alphabetically, and group by the first letter
+        $permissions = Permission::where('status', 'active') // Filter active permissions
+            ->orderBy('name', 'asc') // Sort permissions alphabetically
+            ->get();
+
+        $permissionGroups = $permissions->groupBy(function ($permission) {
+            return strtoupper(substr($permission->name, 0, 1)); // Group by the first letter
+        });
+
+        // Retrieve permissions associated with the role
+        $rolePermissions = DB::table("role_has_permissions")
+            ->where("role_has_permissions.role_id", $id)
+            ->pluck('role_has_permissions.permission_id')
             ->all();
 
-        return view('roles.edit', compact('role', 'permission', 'rolePermissions'));
+        return view('roles.edit', compact('role', 'permissionGroups', 'rolePermissions'));
     }
+
+
+
 
     /**
      * Update the specified resource in storage.

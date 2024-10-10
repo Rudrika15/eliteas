@@ -14,17 +14,17 @@ use Illuminate\Support\Facades\Auth;
 class EventController extends Controller
 {
 
-    //     public function __construct()
-    // {
-    //     // Apply middleware for event-related permissions
-    //     $this->middleware('permission:event-index', ['only' => ['index', 'view']]);
-    //     $this->middleware('permission:event-create', ['only' => ['create', 'store']]);
-    //     $this->middleware('permission:event-edit', ['only' => ['edit', 'update']]);
-    //     $this->middleware('permission:event-delete', ['only' => ['delete']]);
-    //     $this->middleware('permission:event-register', ['only' => ['eventRegister', 'storeUserDetails']]);
-    //     $this->middleware('permission:event-view-register-list', ['only' => ['eventRegisterList']]);
-    //     $this->middleware('permission:event-link', ['only' => ['eventLink']]);
-    // }
+        public function __construct()
+    {
+        // Apply middleware for event-related permissions
+        $this->middleware('permission:event-index', ['only' => ['index', 'view']]);
+        $this->middleware('permission:event-create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:event-edit', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:event-delete', ['only' => ['delete']]);
+        $this->middleware('permission:event-register', ['only' => ['eventRegister', 'storeUserDetails']]);
+        $this->middleware('permission:event-view-register-list', ['only' => ['eventRegisterList']]);
+        $this->middleware('permission:event-link', ['only' => ['eventLink']]);
+    }
 
 
     public function index(Request $request)

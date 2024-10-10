@@ -77,6 +77,62 @@
                     @include('circleMemberMaster')
 
                 </div>
+
+                <div class="row mb-3 mt-3">
+                    <!-- Circle Dropdown -->
+                    <div class="col-md-6">
+
+                        <div class="form-floating">
+                            <select class="form-select @error('circleId') is-invalid @enderror" id="circleId"
+                                name="circleId" required>
+                                <option value="" selected disabled>Select Circle</option>
+                                @if (old('circleId'))
+                                    <option value="{{ old('circleId') }}" selected>{{ old('circleName') }}</option>
+                                @else
+                                    <option value="{{ $refGiver->circleId }}" selected>
+                                        {{ $refGiver->members->circle->circleName ?? '-' }}
+                                    </option>
+                                @endif
+                                @foreach ($circles as $circle)
+                                    <option value="{{ $circle->id }}">{{ $circle->circleName }}</option>
+                                @endforeach
+                            </select>
+                            <label for="circleId">Circle</label>
+                            @error('circleId')
+                                <div class="invalid-tooltip">
+                                    This field is required.
+                                </div>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <!-- Member Dropdown -->
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <select class="form-select @error('memberId') is-invalid @enderror" id="memberId"
+                                name="memberId" required>
+                                <option value="" selected disabled>Select Member</option>
+                                @if (old('memberId'))
+                                    <option value="{{ old('memberId') }}" selected> {{ old('memberName') }}</option>
+                                @else
+                                    <option value="{{ $refGiver->meetingPersonId }}" selected>
+                                        {{ $refGiver->members->firstName ?? '-' }}
+                                        {{ $refGiver->members->lastName ?? '-' }}
+                                    </option>
+                                @endif
+                                <!-- Options will be populated dynamically -->
+                            </select>
+                            <label for="memberId">Member</label>
+                            @error('memberId')
+                                <div class="invalid-tooltip">
+                                    This field is required.
+                                </div>
+                            @enderror
+                        </div>
+                    </div>
+                </div>
+
+
                 {{-- <div class="col-md-8"> --}}
                 <input type="hidden" id="meetingPersonId" name="memberId" value="{{ $refGiver->memberId }}">
                 <div class="form-floating">
@@ -84,7 +140,8 @@
                     <!-- Searchable input field -->
                     <input type="text" class="form-control" id="meetingPersonName" name="memberName"
                         placeholder="Select Member"
-                        value="{{ $refGiver->members->firstName . ' ' . $refGiver->members->lastName ?? '-' }}" readonly disabled>
+                        value="{{ $refGiver->members->firstName . ' ' . $refGiver->members->lastName ?? '-' }}" readonly
+                        disabled>
                     <label for="memberName">Member Name</label>
                     @error('memberId')
                         <div class="invalid-tooltip">
@@ -185,7 +242,8 @@
                             <input type="text"
                                 class="form-control @error('contactNo') is-invalid @enderror selectedMemberContact"
                                 id="contactPersonContact" name="contactNo" value="{{ $refGiver->contactNo }}"
-                                placeholder="Contact No" maxlength="10" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" >
+                                placeholder="Contact No" maxlength="10"
+                                oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
                             <label for="contactNo">Contact No</label>
                             @error('contactNo')
                                 <div class="invalid-tooltip">
@@ -197,7 +255,8 @@
                     <div class="">
                         <div class="form-floating mt-3">
                             <input type="text" class="form-control @error('email') is-invalid @enderror"
-                                id="contactPersonEmail" name="email" value="{{ $refGiver->email }}" placeholder="email">
+                                id="contactPersonEmail" name="email" value="{{ $refGiver->email }}"
+                                placeholder="email">
                             <label for="email">Email</label>
                             @error('email')
                                 <div class="invalid-tooltip">
@@ -334,6 +393,89 @@
     </script>
 
 
+    <script>
+        $(document).ready(function() {
+            // Set up CSRF token for AJAX requests
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+
+            // Function to load members for a selected circle
+            function loadMembers(circleId, selectedMemberId = null) {
+                // Clear the member dropdown
+                $('#memberId').empty().append('<option value="">Select Member</option>');
+
+                if (circleId) {
+                    $.ajax({
+                        url: '{{ route('members.byCircle') }}',
+                        method: 'GET',
+                        data: {
+                            circleId: circleId
+                        },
+                        success: function(response) {
+                            if (response.members && response.members.length > 0) {
+                                response.members.forEach(function(member) {
+                                    $('#memberId').append('<option value="' + member.id +
+                                        '" data-user-id="' + member.userId +
+                                        '" data-first-name="' + member.firstName +
+                                        '" data-last-name="' + member.lastName + '">' +
+                                        member.firstName + ' ' + member.lastName +
+                                        '</option>');
+                                });
+
+                                // Pre-select the member if one is passed to the function
+                                if (selectedMemberId) {
+                                    $('#memberId').val(selectedMemberId).trigger('change');
+                                }
+                            } else {
+                                $('#memberId').append('<option value="">No Members Found</option>');
+                            }
+                        },
+                        error: function(xhr) {
+                            $('#memberId').append('<option value="">Error loading members</option>');
+                        }
+                    });
+                }
+            }
+
+            // Handle member selection and update meeting person fields
+            $('#memberId').on('change', function() {
+                var selectedOption = $(this).find('option:selected');
+                var memberId = selectedOption.val();
+                var userId = selectedOption.data('user-id');
+                var firstName = selectedOption.data('first-name');
+                var lastName = selectedOption.data('last-name');
+
+                // Check if a valid member is selected
+                if (memberId) {
+                    $('#meetingPersonId').val(userId); // Set the correct userId
+                    $('#meetingPersonName').val(firstName + ' ' + lastName); // Set the name
+                } else {
+                    $('#meetingPersonId').val(''); // Clear the fields if no member is selected
+                    $('#meetingPersonName').val('');
+                }
+            });
+
+            // On page load, set the circle and member dropdown values if they exist
+            var defaultCircleId = '{{ old('circleId', $refGiver->circleId) }}'; // Get the default circle ID
+            var defaultMemberId =
+                '{{ old('memberId', $refGiver->members->memberId) }}'; // Get the default member ID
+
+            // If there's a default circle, load members for that circle and set the default member
+            if (defaultCircleId) {
+                loadMembers(defaultCircleId,
+                    defaultMemberId); // Load members for the default circle and pre-select the default member
+            }
+
+            // Handle circle dropdown change event
+            $('#circleId').on('change', function() {
+                var circleId = $(this).val();
+                loadMembers(circleId); // Load members based on the selected circle
+            });
+        });
+    </script>
 
 
     <!-- Your JavaScript code to trigger inclusion of circleMemberMaster -->

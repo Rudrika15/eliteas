@@ -263,6 +263,13 @@
     </a>
 </li>
 
+{{-- <li class="nav-item">
+    <a class="nav-link collapsed " href="{{ route('circle.index') }}">
+        <i class="bi bi-file-earmark-text" style="color: #e76a35"></i>
+        <span>Report</span>
+    </a>
+</li> --}}
+
 
 <li class="nav-item">
     <a class="nav-link collapsed" data-bs-target="#master-nav" data-bs-toggle="collapse" href="#">

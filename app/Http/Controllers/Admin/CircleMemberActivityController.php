@@ -14,10 +14,10 @@ use App\Models\CircleMeetingMembersReference;
 class CircleMemberActivityController extends Controller
 {
 
-    // public function __construct()
-    // {
-    //     $this->middleware('permission:circle-member-activity', ['only' => ['activity']]);
-    // }
+    public function __construct()
+    {
+        $this->middleware('permission:circle-member-activity', ['only' => ['activity']]);
+    }
 
 
 

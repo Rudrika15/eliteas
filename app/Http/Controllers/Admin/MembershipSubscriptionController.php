@@ -14,13 +14,13 @@ class MembershipSubscriptionController extends Controller
 {
 
 
-    // public function __construct()
-    // {
-    //     // Apply middleware for event-related permissions
-    //     $this->middleware('permission:member-subscription-index', ['only' => ['index']]);
-    //     $this->middleware('permission:member-subscription-member-data', ['only' => ['memberData']]);
-    //     $this->middleware('permission:member-subscription-export', ['only' => ['exportSubscriptions']]);
-    // }
+    public function __construct()
+    {
+        // Apply middleware for event-related permissions
+        $this->middleware('permission:member-subscription-index', ['only' => ['index']]);
+        $this->middleware('permission:member-subscription-member-data', ['only' => ['memberData']]);
+        $this->middleware('permission:member-subscription-export', ['only' => ['exportSubscriptions']]);
+    }
 
 
     public function index(Request $request)

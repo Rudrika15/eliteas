@@ -10,14 +10,14 @@ use App\Http\Controllers\Controller;
 class CountryController extends Controller
 {
 
-    // public function __construct()
-    // {
-    //     // Apply middleware for country-related permissions
-    //     $this->middleware('permission:country-view', ['only' => ['index', 'show']]);
-    //     $this->middleware('permission:country-create', ['only' => ['create', 'store']]);
-    //     $this->middleware('permission:country-edit', ['only' => ['edit', 'update']]);
-    //     $this->middleware('permission:country-delete', ['only' => ['delete']]);
-    // }
+    public function __construct()
+    {
+        // Apply middleware for country-related permissions
+        $this->middleware('permission:country-index', ['only' => ['index', 'show']]);
+        $this->middleware('permission:country-create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:country-edit', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:country-delete', ['only' => ['delete']]);
+    }
 
 
     public function index(Request $request)

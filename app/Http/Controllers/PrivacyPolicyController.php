@@ -7,6 +7,12 @@ use Illuminate\Http\Request;
 
 class PrivacyPolicyController extends Controller
 {
+
+    // public function __construct()
+    // {
+    //     $this->middleware('permission:policy-index', ['only' => ['index', 'view']]);
+    // }
+
     public function index()
     {
         try {

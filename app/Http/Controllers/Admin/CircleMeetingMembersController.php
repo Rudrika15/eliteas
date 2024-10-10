@@ -14,14 +14,14 @@ use App\Http\Controllers\Controller;
 class CircleMeetingMembersController extends Controller
 {
 
-    // public function __construct()
-    // {
-    //     // Apply middleware for circle meeting-related permissions
-    //     $this->middleware('permission:circle-meeting-member-index', ['only' => ['index', 'view']]);
-    //     $this->middleware('permission:circle-meeting-member-create', ['only' => ['create', 'store']]);
-    //     $this->middleware('permission:circle-meeting-member-edit', ['only' => ['edit', 'update']]);
-    //     $this->middleware('permission:circle-meeting-member-delete', ['only' => ['delete']]);
-    // }
+    public function __construct()
+    {
+        // Apply middleware for circle meeting-related permissions
+        $this->middleware('permission:circle-meeting-member-index', ['only' => ['index', 'view']]);
+        $this->middleware('permission:circle-meeting-member-create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:circle-meeting-member-edit', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:circle-meeting-member-delete', ['only' => ['delete']]);
+    }
 
 
     public function index(Request $request)

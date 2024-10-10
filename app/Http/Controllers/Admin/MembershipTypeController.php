@@ -12,14 +12,14 @@ class MembershipTypeController extends Controller
 {
 
 
-    // public function __construct()
-    // {
-    //     // Apply middleware for event-related permissions
-    //     $this->middleware('permission:membership-type-index', ['only' => ['index']]);
-    //     $this->middleware('permission:membership-type-create', ['only' => ['create', 'store']]);
-    //     $this->middleware('permission:membership-type-edit', ['only' => ['edit', 'update']]);
-    //     $this->middleware('permission:membership-type-delete', ['only' => ['delete']]);
-    // }
+    public function __construct()
+    {
+        // Apply middleware for event-related permissions
+        $this->middleware('permission:membership-type-index', ['only' => ['index']]);
+        $this->middleware('permission:membership-type-create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:membership-type-edit', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:membership-type-delete', ['only' => ['delete']]);
+    }
 
 
 

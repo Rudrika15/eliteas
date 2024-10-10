@@ -12,16 +12,16 @@ use Illuminate\Support\Facades\Auth;
 class ConnectionController extends Controller
 {
 
-    // public function __construct()
-    // {
-    //     // Apply middleware for connection-related permissions
-    //     $this->middleware('permission:connection-connect', ['only' => ['connect']]);
-    //     $this->middleware('permission:connection-requests', ['only' => ['connectionRequests']]);
-    //     $this->middleware('permission:connection-view', ['only' => ['myConnections']]);
-    //     $this->middleware('permission:connection-accept', ['only' => ['accept']]);
-    //     $this->middleware('permission:connection-reject', ['only' => ['reject']]);
-    //     $this->middleware('permission:connection-remove', ['only' => ['removeConnection']]);
-    // }
+    public function __construct()
+    {
+        // Apply middleware for connection-related permissions
+        $this->middleware('permission:connection-connect', ['only' => ['connect']]);
+        $this->middleware('permission:connection-requests', ['only' => ['connectionRequests']]);
+        $this->middleware('permission:connection-view', ['only' => ['myConnections']]);
+        $this->middleware('permission:connection-accept', ['only' => ['accept']]);
+        $this->middleware('permission:connection-reject', ['only' => ['reject']]);
+        $this->middleware('permission:connection-remove', ['only' => ['removeConnection']]);
+    }
 
 
     public function connect(Request $request)
