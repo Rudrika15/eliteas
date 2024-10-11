@@ -33,6 +33,7 @@ use App\Http\Controllers\Api\CircleMeetingMembersController;
 use App\Http\Controllers\Api\MembershipSubscriptionController;
 use App\Http\Controllers\Api\CircleMeetingMemberBusinessController;
 use App\Http\Controllers\Api\CircleMeetingMemberReferenceController;
+use App\Http\Controllers\Api\PermissionController;
 use App\Http\Controllers\Api\UpdateAppController;
 
 // use App\Http\Controllers\Api\CircleMeetingMemberBusinessController;
@@ -86,6 +87,11 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     // Admin side profile change
     Route::post('/members/{id}', [LoginController::class, 'memberUpdateAdmin']);
     // Route::put('/members/{id}', [MemberController::class, 'update']);
+
+    //permissions
+    Route::get('/permissions-index', [PermissionController::class, 'index']);
+    Route::get('/role-permissions-index', [PermissionController::class, 'rolePermission']);
+    Route::get('/role-index', [PermissionController::class, 'getRole']);
 
 
     // Circl 1:1 Call 

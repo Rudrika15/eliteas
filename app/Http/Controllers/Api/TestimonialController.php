@@ -11,22 +11,7 @@ use App\Utils\Utils;
 
 class TestimonialController extends Controller
 {
-    public function index(Request $request)
-    {
-        try {
-            $authUser = Auth::user();
-            if (!$authUser) {
-                return Utils::errorResponse('Unauthorized', 'Unauthorized', 401);
-            }
 
-            $testimonials = Testimonial::where('memberId', $authUser->member->id)->with('sender')->get();
-            $myTestimonials = Testimonial::where('userId', $authUser->id)->with('receiver')->get();
-
-            return Utils::sendResponse([$testimonials], 'Testimonials retrieved successfully', 200);
-        } catch (\Throwable $th) {
-            return Utils::errorResponse($th->getMessage(), 'Internal Server Error', 500);
-        }
-    }
 
     public function myTestimonials(Request $request)
     {

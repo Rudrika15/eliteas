@@ -25,28 +25,33 @@ class ApiController extends Controller
 {
     public function login(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
+        try {
+            $validator = Validator::make($request->all(), [
+                'email' => 'required|email',
+                'password' => 'required',
+            ]);
 
-        if ($validator->fails()) {
-            return Utils::sendResponse(['errors' => $validator->errors()], 'Invalid Input', 422);
+            if ($validator->fails()) {
+                return Utils::sendResponse(['errors' => $validator->errors()], 'Invalid Input', 422);
+            }
+
+            $user = User::where('email', $request->email)->first();
+
+            if (!$user || $user->status === 'deleted') {
+                return Utils::errorResponses(['error' => 'Account Disabled'], 'Your account has been deleted. Please contact support for assistance.', 403);
+            }
+
+            if (Auth::attempt($request->only('email', 'password'))) {
+                $user = Auth::user();
+                $token = $user->createToken('authToken')->plainTextToken;
+
+                return Utils::sendResponse(['token' => $token, 'user' => $user], 'Success', 200);
+            }
+
+            return Utils::errorResponses(['error' => 'Unauthorized Access'], 'Email or Password does not match with our records', 401);
+        } catch (\Throwable $th) {
+            return Utils::errorResponses(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
-
-        $user = User::where('email', $request->email)->first();
-
-        if (!$user || $user->status === 'deleted') {
-            return Utils::errorResponses(['error' => 'Account Disabled'], 'Your account has been deleted. Please contact support for assistance.', 403);
-        }
-
-        if (Auth::attempt($request->only('email', 'password'))) {
-            $user = Auth::user();
-            $token = $user->createToken('authToken')->plainTextToken;
-
-            return Utils::sendResponse(['token' => $token, 'user' => $user], 'Success', 200);
-        }
-        return Utils::errorResponses(['error' => 'Unauthorized Access'], 'Email or Password does not match with our records', 401);
     }
 
 
