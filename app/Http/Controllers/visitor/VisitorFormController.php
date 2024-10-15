@@ -124,6 +124,7 @@ class VisitorFormController extends Controller
             $visitor->circleMeet = $request->circleMeet;
             $visitor->invitedBy = $request->invitedBy;
             $visitor->knowUs = $request->knowsUs; // Make sure this matches the field name
+            $visitor->meetingId = $request->meetingId;
             $visitor->status = 'Active';
 
             // Save the visitor information
@@ -136,16 +137,17 @@ class VisitorFormController extends Controller
             $invitation->personEmail = null;
             $invitation->personContact = $visitor->mobileNo;
             $invitation->businessCategoryId = $visitor->businessCategory;
+            $invitation->personEmail = 'Unpaid';
             $invitation->save();
 
 
-            return redirect()->route('visitor.form')->with('success', 'Your Information Submitted Successfully!');
+            return redirect()->back()->with('success', 'Your Information Submitted Successfully!');
         } catch (\Throwable $th) {
             // Log the error
+            // throw $th;
             ErrorLogger::logError($th, $request->fullUrl());
-
             // Return a generic error view or message
-            return redirect()->route('visitor.form')->with('error', 'Failed to submit your information');
+            return redirect()->back()->with('error', 'Failed to submit your information');
         }
     }
 
@@ -198,6 +200,7 @@ class VisitorFormController extends Controller
             return redirect()->route('visitors.form.view')->with('success', 'Your Information Submitted Successfully!');
         } catch (\Throwable $th) {
             // Log the error
+            throw $th;
             ErrorLogger::logError($th, $request->fullUrl());
 
             // Return a generic error view or message
@@ -226,7 +229,4 @@ class VisitorFormController extends Controller
             return response()->json(['success' => false, 'message' => 'Failed to update remarks']);
         }
     }
-
-
-
 }

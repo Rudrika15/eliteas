@@ -400,7 +400,7 @@ class HomeController extends Controller
                     'slug' => $meeting->cm_slug,
                     'meetingId' => $meeting->id,
                     'ref' => auth()->user()->member->id
-                ], now()->addMinutes(1440));
+                ]);
 
                 return view('home', compact('signedUrl',  'count', 'monthlyPayments', 'totalAmountDue', 'nearestEvents', 'findEventRegister', 'circlecalls', 'busGiver', 'refGiver', 'nearestTraining', 'findRegister', 'testimonials', 'meeting', 'businessCategory', 'myInvites'));
             }
@@ -408,7 +408,7 @@ class HomeController extends Controller
             return view('home', compact('count', 'nearestTraining', 'businessCategory', 'myInvites', 'findRegister'));
         } catch (\Throwable $th) {
             // Log the error
-            throw $th;
+            // throw $th;
             ErrorLogger::logError($th, request()->fullUrl());
             // Return a generic error view or message
             return view('servererror')->with('error', 'Failed to load the dashboard');

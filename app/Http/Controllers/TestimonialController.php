@@ -19,12 +19,12 @@ class TestimonialController extends Controller
     {
         $this->middleware('permission:testimonial-index', ['only' => ['index', 'view']]);
         $this->middleware('permission:testimonial-indexAdmin', ['only' => ['indexAdmin']]);
-        $this->middleware('permission:permission-create', ['only' => ['create', 'store']]);
-        $this->middleware('permission:permission-edit', ['only' => ['edit', 'update']]);
-        $this->middleware('permission:permission-delete', ['only' => ['delete']]);
-        $this->middleware('permission:permission-restore', ['only' => ['restore']]);
-        $this->middleware('permission:permission-archived', ['only' => ['archived']]);
-        $this->middleware('permission:permission-archives', ['only' => ['archives']]);
+        $this->middleware('permission:testimonial-create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:testimonial-edit', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:testimonial-delete', ['only' => ['delete']]);
+        $this->middleware('permission:testimonial-restore', ['only' => ['restore']]);
+        $this->middleware('permission:testimonial-archived', ['only' => ['archived']]);
+        $this->middleware('permission:testimonial-archives', ['only' => ['archives']]);
     }
 
 

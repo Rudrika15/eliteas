@@ -250,7 +250,7 @@ class CircleCallController extends Controller
                 return Utils::errorResponse(['error' => 'Circle Call not found'], 'Not Found', 404);
             }
 
-            if ($circleCall->memberId != $member->id) {
+            if ($circleCall->memberId != $memberId) {
                 return Utils::errorResponse(['error' => 'Unauthorized'], 'Unauthorized', 403);
             }
 

@@ -34,7 +34,7 @@
 
                         <div class="col-md-12 d-flex mt-3">
                             <div class="form-floating flex-fill me-2">
-                                <select class="form-select" id="circleId" name="circleId" required>
+                                <select class="form-select" id="circleId" name="circleId">
                                     <option value="" selected disabled>Select Circle</option>
                                     @foreach ($circles as $circle)
                                         <option value="{{ $circle->id }}"
@@ -52,7 +52,7 @@
 
                             <div class="form-floating flex-fill">
                                 <select class="form-select @error('memberId') is-invalid @enderror" id="memberId"
-                                    name="memberId" required>
+                                    name="memberId">
                                     <option value="">Select Member</option>
                                     <!-- Options will be populated dynamically -->
                                 </select>
@@ -295,13 +295,47 @@
                     if (selectedVal == 'externalMember') {
                         $('.member-list').hide();
                         $('.externalTrainer').show();
+                        $('#circleId').parent().hide(); // Hide the parent div of circle dropdown
+                        $('#memberId').parent().hide();
                     } else {
                         $('.member-list').show();
                         $('.externalTrainer').hide();
+                        $('#circleId').parent().show(); // Hide the parent div of circle dropdown
+                        $('#memberId').parent().show();
                     }
                 }
             });
         </script>
+
+
+        {{-- <script>
+            $(document).ready(function() {
+                var selectedVal = '{{ old('type', 'internalMember') }}';
+                toggleTrainerSections(selectedVal);
+
+                $('.trainer-radio').change(function() {
+                    selectedVal = $(this).val();
+                    toggleTrainerSections(selectedVal);
+                });
+
+                function toggleTrainerSections(selectedVal) {
+                    if (selectedVal == 'externalMember') {
+                        // Hide the Circle and Member dropdowns
+
+                        $('.member-list').parent().hide(); // Hide the parent div of circle dropdown
+                        $('#circleId').parent().hide(); // Hide the parent div of circle dropdown
+                        $('#memberId').parent().hide();
+                        $('.externalTrainer').show();
+                        // Hide the parent div of member dropdown
+                    } else {
+                        // Show the Circle and Member dropdowns
+                        $('#circleId').parent().show();
+                        $('#memberId').parent().show();
+                    }
+                }
+            });
+        </script> --}}
+
 
 
     @endsection

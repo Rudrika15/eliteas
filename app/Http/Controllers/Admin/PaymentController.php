@@ -200,10 +200,10 @@ class PaymentController extends Controller
             $razorpay->amount = $request->amount / 100;
             $razorpay->save();
 
-            return response()->json(['success' => 'Payment details stored successfully.'], 200);
-        } catch (\Exception $e) {
-            \Log::error('Failed to store payment details: ' . $e->getMessage());
-            return response()->json(['error' => 'Failed to store payment details: ' . $e->getMessage()], 500);
+            return response()->json(['success' => 'Payment details stored successfully'], 200);
+        } catch (\Throwable $th) {
+            ErrorLogger::logError($th, $request->fullUrl());
+            return response()->json(['error' => 'Failed to store payment details: ' . $th->getMessage()], 500);
         }
     }
 

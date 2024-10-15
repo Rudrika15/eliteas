@@ -29,7 +29,7 @@
                             @foreach ($errorList as $key => $errorListData)
                                 <tr>
                                     <th>{{ $key + $errorList->firstItem() }}</th>
-                                    <td>{{ $errorListData->url ?? '-' }}</td>
+                                    <td style="max-width: 500px">{{ $errorListData->url ?? '-' }}</td>
                                     <td>{{ $errorListData->error_message ?? '-' }}</td>
                                     <td>{{ $errorListData->date ?? '-' }}</td>
                                     <td>{{ $errorListData->time ?? '-' }}</td>

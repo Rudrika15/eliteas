@@ -29,6 +29,22 @@ class TestimonialController extends Controller
         }
     }
 
+    public function index(Request $request)
+    {
+        try {
+            $authUser = Auth::user()->member->id;
+            if (!$authUser) {
+                return Utils::errorResponse('Unauthorized', 'Unauthorized', 401);
+            }
+
+            $receivedTestimonial = Testimonial::where('memberId', $authUser)->with('sender')->get();
+
+            return Utils::sendResponse([$receivedTestimonial], 'Recieved Testimonials retrieved successfully', 200);
+        } catch (\Throwable $th) {
+            return Utils::errorResponse($th->getMessage(), 'Internal Server Error', 500);
+        }
+    }
+
     public function indexAdmin()
     {
         try {

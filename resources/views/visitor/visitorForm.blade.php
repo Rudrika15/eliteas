@@ -590,7 +590,10 @@
                                 title: 'Success',
                                 text: 'Payment successful and details stored!',
                             });
-                            window.location.reload();
+                            setTimeout(function() {
+                                window.location.reload();
+                            }, 3000);
+                            // window.location.reload();
                         } else {
                             Swal.fire({
                                 icon: 'error',
