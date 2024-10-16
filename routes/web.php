@@ -559,6 +559,10 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/activity/ibm', [AllActivityController::class, 'ibm'])->name('activity.ibm');
     Route::get('/activity/refrence', [AllActivityController::class, 'refrence'])->name('activity.refrence');
     Route::get('/activity/businesses', [AllActivityController::class, 'business'])->name('activity.businesses');
+    // Route::get('/activity/activityAllByCircle', [AllActivityController::class, 'activityAllByCircle'])->name('activity.allActivityByCircle');
+    Route::get('/activity/ibm/vp', [AllActivityController::class, 'ibmVp'])->name('activity.ibmVp');
+    Route::get('/activity/refrence/vp', [AllActivityController::class, 'refrenceVp'])->name('activity.refrenceVp');
+    Route::get('/activity/businesses/vp', [AllActivityController::class, 'businessVp'])->name('activity.businessesVp');
 });
 
 

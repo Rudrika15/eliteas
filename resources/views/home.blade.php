@@ -81,7 +81,8 @@
                         (isset($busGiver) && count($busGiver) > 0) ||
                         (isset($refGiver) && count($refGiver) > 0))
                     <div class="card-header">
-                        <b style="color: #1d2856; font-size:15px">Leader Board</b>
+                        <b style="color: #1d2856; font-size:15px">Leader Board -
+                            {{ \Carbon\Carbon::now()->subMonth()->format('F Y') }}</b>
                     </div>
                     <div class="row  row-cols-1 row-cols-md-3 g-4 mt-2">
 
@@ -389,6 +390,9 @@
                             <div class="row">
                                 <div class="col-md-10">
                                     <h4 class="card-title">{{ $nearestTraining->title }}</h4>
+                                    @if ($nearestTraining->venue)
+                                        <b>Venue:</b> {{ $nearestTraining->venue }}
+                                    @endif
                                 </div>
 
                                 <div class="col-md-2 pt-3 text-muted text-end">

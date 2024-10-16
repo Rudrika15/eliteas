@@ -1,19 +1,36 @@
 @extends('layouts.master')
 
-@section('header', 'IBM')
+@section('header', 'IBM References')
 @section('content')
-
 
     <div class="container">
         <div class="card">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h4 class="card-title">Refrences List</h4>
-
+                    <h4 class="card-title">References List</h4>
                 </div>
 
+                <!-- Date Filter Form -->
+                <form method="GET" action="{{ route('activity.refrenceVp') }}" class="form-inline">
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <label for="start_date"><b>Start Date</b></label>
+                            <input type="date" id="start_date" name="start_date" class="form-control"
+                                value="{{ request('start_date') }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="end_date"><b>End Date</b></label>
+                            <input type="date" id="end_date" name="end_date" class="form-control"
+                                value="{{ request('end_date') }}">
+                        </div>
+                        <div class="col-md-4 align-self-end">
+                            <button type="submit" class="btn btn-bg-blue mx-2">Filter</button>
+                            <a href="{{ route('activity.refrenceVp') }}" class="btn btn-bg-orange">Clear</a>
+                        </div>
+                </form>
+
                 <!-- Table with stripped rows -->
-                <div class="table-responsive">
+                <div class="table-responsive mt-3">
                     <table class="table table-bordered table-striped table-hover">
                         <thead>
                             <tr>
@@ -31,7 +48,9 @@
                         <tbody>
                             @foreach ($refrences as $refrenceData)
                                 <tr>
-                                    <th>{{ ($refrences->currentPage() - 1) * $refrences->perPage() + $loop->index + 1 }}
+                                    {{-- <th>{{ ($refrences->currentPage() - 1) * $refrences->perPage() + $loop->index + 1 }}
+                                    </th> --}}
+                                    <td>{{ $loop->iteration }}</td>
                                     <td>{{ \Carbon\Carbon::parse($refrenceData->created_at)->format('d-m-Y') }}</td>
                                     <td>{{ $refrenceData->refGiverName->firstName ?? '-' }}
                                         {{ $refrenceData->refGiverName->lastName ?? '-' }}</td>
@@ -47,7 +66,7 @@
                         </tbody>
                     </table>
                     <div class="d-flex justify-content-end custom-pagination">
-                        {!! $refrences->links() !!}
+                        {{-- {!! $refrences->links() !!} --}}
                     </div>
                 </div>
                 <!-- End Table with stripped rows -->

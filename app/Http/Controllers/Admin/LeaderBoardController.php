@@ -24,7 +24,7 @@ class LeaderBoardController extends Controller
         $this->middleware('permission:max-refferal', ['only' => ['maxRefferal']]);
         $this->middleware('permission:max-reference', ['only' => ['maxReference']]);
         $this->middleware('permission:max-visitor', ['only' => ['maxVisitor']]);
-        $this->middleware('permission:circle-wise-leaderboard', ['only' => ['circleWiseLeaserboard']]);
+        $this->middleware('permission:circle-wise-leaderboard', ['only' => ['circleWiseLeaderboard']]);
     }
 
 

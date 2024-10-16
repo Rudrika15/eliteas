@@ -37,12 +37,50 @@
                                     <td>{{ $ibmData->meetingPlace ?? '-' }}</td>
                                     <td>
                                         @if ($ibmData->meetingImage)
-                                            <img src="{{ url('meetingImage/' . basename($ibmData->meetingImage)) }}"
-                                                alt="Meeting Image" style="width: 100px; height: auto; border-radius: 5px;">
+                                            <div class="meeting-image-wrapper" style="position: relative;">
+                                                <img src="{{ url('meetingImage/' . basename($ibmData->meetingImage)) }}"
+                                                    alt="Meeting Image"
+                                                    style="width: 100px; height: auto; border-radius: 5px;"
+                                                    onclick="openImage(this)">
+                                                <div class="meeting-image-overlay" onclick="closeImage(event)">
+                                                </div>
+                                            </div>
                                         @else
                                             <span></span>
                                         @endif
                                     </td>
+
+                                    <script>
+                                        function openImage(img) {
+                                            img.parentElement.classList.add('active');
+                                            var overlay = img.parentElement.querySelector('.meeting-image-overlay');
+                                            overlay.style.backgroundImage = "url('" + img.src + "')";
+                                        }
+
+                                        function closeImage(event) {
+                                            if (event.target.classList.contains('meeting-image-overlay')) {
+                                                event.target.parentElement.classList.remove('active');
+                                            }
+                                        }
+                                    </script>
+
+                                    <style>
+                                        .meeting-image-wrapper {
+                                            position: relative;
+                                        }
+
+                                        .meeting-image-wrapper.active .meeting-image-overlay {
+                                            position: fixed;
+                                            top: 0;
+                                            left: 0;
+                                            width: 100vw;
+                                            height: 100vh;
+                                            background-size: contain;
+                                            background-repeat: no-repeat;
+                                            background-position: center;
+                                            z-index: 1000;
+                                        }
+                                    </style>
                                     <td>{{ $ibmData->date ?? '-' }}</td>
                                     <td>{{ $ibmData->remarks ?? '-' }}</td>
 

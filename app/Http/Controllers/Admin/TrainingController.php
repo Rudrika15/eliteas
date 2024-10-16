@@ -85,7 +85,7 @@ class TrainingController extends Controller
     public function store(Request $request)
     {
 
-        return $request;
+        // return $request;
 
 
         try {

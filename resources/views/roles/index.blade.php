@@ -28,7 +28,7 @@
                     <tbody>
                         @foreach ($roles as $key => $role)
                             <tr>
-                                <td>{{ ++$i }}</td>
+                                <th>{{ ($roles->currentPage() - 1) * $roles->perPage() + $loop->iteration }}</th>
                                 <td>{{ $role->name }}</td>
                                 <td>
                                     <a class="btn btn-bg-orange btn-sm btn-tooltip"
@@ -56,6 +56,9 @@
                         @endforeach
                     </tbody>
                 </table>
+                <div class="d-flex justify-content-end custom-pagination">
+                    {!! $roles->links() !!}
+                </div>
             </div>
             <!-- End Table with stripped rows -->
         </div>

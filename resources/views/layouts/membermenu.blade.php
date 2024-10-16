@@ -31,6 +31,45 @@
     </a>
 </li> --}}
 
+@role('Vice President')
+    <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#allActivityVp-nav" data-bs-toggle="collapse" href="#">
+            <i class="bi bi-person-gear" style="color: #e76a35"></i><span>My Circle Activity</span><i
+                class="bi bi-chevron-down ms-auto" style="color: #e76a35"></i>
+        </a>
+        <ul id="allActivityVp-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+            {{-- <li class="nav-item">
+            <a class="nav-link collapsed" href="{{ route('testimonials.indexAdmin') }}">
+                <i class="bi bi-person" style="color: #e76a35"></i>
+                <span style="color: #1d2856">Testimonial</span>
+            </a>
+        </li> --}}
+
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="{{ route('activity.ibmVp') }}">
+                    <i class="bi bi-person" style="color: #e76a35"></i>
+                    <span style="color: #1d2856">IBM</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="{{ route('activity.refrenceVp') }}">
+                    <i class="bi bi-person" style="color: #e76a35"></i>
+                    <span style="color: #1d2856">References</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="{{ route('activity.businessesVp') }}">
+                    <i class="bi bi-person" style="color: #e76a35"></i>
+                    <span style="color: #1d2856">Business Slip</span>
+                </a>
+            </li>
+
+        </ul>
+    </li>
+@endrole
+
 <li class="nav-item">
     <a class="nav-link collapsed" data-bs-target="#activity-nav" data-bs-toggle="collapse" href="#">
         <i class="bi bi-plus-circle-dotted" style="color: #e76a35"></i><span>Activity</span><i
@@ -108,6 +147,15 @@
     </a>
 </li>
 
+
+{{-- <li class="nav-item">
+    <a class="nav-link collapsed " href="{{ route('activity.allActivityByCircle') }}">
+        <i class="bi bi-currency-rupee" style="color: #e76a35"></i>
+        <span style="color: #1d2856">All Acitivity</span>
+    </a>
+</li> --}}
+
+
 {{-- <li class="nav-item">
     <a class="nav-link collapsed" href="{{ route('errorList') }}">
         <i class="bi bi-exclamation-triangle" style="color: red"></i>
@@ -116,34 +164,42 @@
 </li> --}}
 
 
-@if(Auth::user()->hasRole('Attendance Handler'))
-<li class="nav-item">
-    <a class="nav-link collapsed" href="{{ route('attendance.meetingSchedules') }}">
-        <i class="bi bi-person-video2" style="color: #e76a35"></i>
-        <span class="text-blue">C M Attendances</span>
-    </a>
-</li>
+@if (Auth::user()->hasRole('Attendance Handler'))
+    <li class="nav-item">
+        <a class="nav-link collapsed" href="{{ route('attendance.meetingSchedules') }}">
+            <i class="bi bi-person-video2" style="color: #e76a35"></i>
+            <span class="text-blue">C M Attendances</span>
+        </a>
+    </li>
 @endif
 
-@if(Auth::user()->hasRole('Circle Admin'))
-<li class="nav-item">
-    <a class="nav-link collapsed" href="{{ route('circleAdminPaymentHistory.index') }}">
-        <i class="bi bi-cash-stack" style="color: #e76a35"></i>
-        <span class="text-blue">All Member Payment History</span>
-    </a>
-</li>
+@if (Auth::user()->hasRole('Circle Admin'))
+    <li class="nav-item">
+        <a class="nav-link collapsed" href="{{ route('circleAdminPaymentHistory.index') }}">
+            <i class="bi bi-cash-stack" style="color: #e76a35"></i>
+            <span class="text-blue">All Member Payment History</span>
+        </a>
+    </li>
 @endif
 
 
-@if(Auth::user()->hasRole('SP'))
+@if (Auth::user()->hasRole('SP'))
+    <li class="nav-item">
+        <a class="nav-link collapsed " href="{{ route('monthlyPayments.index') }}">
+            <i class="bi bi-currency-rupee" style="color: #e76a35"></i>
+            <span style="color: #1d2856">Manage Monthly Payment</span>
+        </a>
+    </li>
+@endif
 
-<li class="nav-item">
-    <a class="nav-link collapsed " href="{{ route('monthlyPayments.index') }}">
-        <i class="bi bi-currency-rupee" style="color: #e76a35"></i>
-        <span style="color: #1d2856">Manage Monthly Payment</span>
-    </a>
-</li>
-
+@if (Auth::user()->hasRole('VC'))
+    || (Auth::user()->hasRole('Admin'))
+    <li class="nav-item">
+        <a class="nav-link collapsed " href="{{ route('activity.allActivityByCircle') }}">
+            <i class="bi bi-currency-rupee" style="color: #e76a35"></i>
+            <span style="color: #1d2856">All Acitivity</span>
+        </a>
+    </li>
 @endif
 
 </li><!-- End Tables Nav -->
