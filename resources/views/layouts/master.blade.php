@@ -276,8 +276,19 @@
                         @role('Member')
                             <li>
                                 <a class="dropdown-item d-flex align-items-center" href="{{ route('member') }}">
-                                    <i class="bi bi-person"></i>
-                                    <span style="font-weight: bold;">My Profile</span>
+                                    <i class="bi bi-person" style="color: #e76a35"></i>
+                                    <span style="font-weight: bold; color: #1d2856">My Profile</span>
+                                </a>
+                            </li>
+
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+
+                            <li>
+                                <a class="dropdown-item d-flex align-items-center" href="{{ route('member') }}">
+                                    <i class="bi bi-cart" style="color: #e76a35"></i>
+                                    <span style="font-weight: bold; color: #1d2856">Go To UBN Mart</span>
                                 </a>
                             </li>
                         @endrole
@@ -289,8 +300,8 @@
                         <li>
                             <a class="dropdown-item d-flex align-items-center"
                                 href="{{ route('changePasswordForm') }}">
-                                <i class="bi bi-key"></i>
-                                <span style="font-weight: bold;">Change Password</span>
+                                <i class="bi bi-key" style="color: #e76a35"></i>
+                                <span style="font-weight: bold; color: #1d2856">Change Password</span>
                             </a>
                         </li>
                         <li>
@@ -311,7 +322,8 @@
                                     }
                                 </style>
 
-                                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                <form id="logout-form" action="{{ route('logout') }}" method="POST"
+                                    class="d-none">
                                     @csrf
                                 </form>
                             </a>

@@ -9,8 +9,7 @@ use App\Models\ContactDetails;
 use App\Models\CircleCall;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-
-
+use Spatie\Permission\Models\Role;
 
 class Member extends Model
 {
@@ -22,6 +21,11 @@ class Member extends Model
         // 'email',
         'userId',
     ];
+
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class);
+    }
 
     public function visitorInvites()
     {
@@ -92,6 +96,4 @@ class Member extends Model
     {
         return $this->belongsTo(Circle::class);
     }
-
-
 }

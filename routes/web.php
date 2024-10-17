@@ -219,6 +219,7 @@ Route::group(['middleware' => ['auth']], function () {
 
 
     Route::get('/circlemember/index', [CircleMemberController::class, 'index'])->name('circlemember.index');
+    Route::get('/filter-table-data', [CircleMemberController::class, 'filterTableData'])->name('filterTableData');
     Route::get('circlemember/show/{id?}', [CircleMemberController::class, 'show'])->name('circlemember.show');
     Route::get('circlemember/create', [CircleMemberController::class, 'create'])->name('circlemember.create');
     Route::post('circlemember/store', [CircleMemberController::class, 'store'])->name('circlemember.store');

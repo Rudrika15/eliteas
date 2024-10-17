@@ -57,7 +57,7 @@
                     <select name="membershipType" id="membershipType" class="form-select mt-3">
                         <option value="">Select MembershipType</option>
                         @foreach ($membershipType as $membershipTypeData)
-                            <option value="{{ $membershipTypeData->id }}">{{ $membershipTypeData->membershipType }}</option>
+                            <option >{{ $membershipTypeData->membershipType }}</option>
                         @endforeach
                     </select>
 
@@ -263,127 +263,170 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        console.log('Script loaded for category');
-
         $(document).ready(function() {
-            console.log('Document ready for category - jQuery version:', $.fn.jquery);
-
-
             function filterTable() {
-                console.log('Filtering table... of category');
                 var categoryId = $('#categoryId').val().trim();
-                console.log('Selected category ID:', categoryId);
-
-
-                $('tbody tr').show();
-
-
-                if (categoryId !== '') {
-                    $('tbody tr').each(function() {
-                        var categoryName = $(this).find('td:nth-child(3)').text().trim();
-                        console.log('Row category name:', categoryName);
-
-
-                        if (categoryName !== $('#categoryId option:selected').text().trim()) {
-                            $(this).hide();
-                        } else {
-                            $(this).show();
-                        }
-                    });
-                }
-            }
-
-
-            $('#categoryId').change(function() {
-                console.log('Dropdown selection changed');
-                filterTable();
-            });
-        });
-    </script>
-
-
-    <script>
-        $(document).ready(function() {
-
-
-            function filterTable() {
-                console.log('Filtering table... of category and circle');
-                var categoryId = $('#categoryId').val().trim();
-                var circleId = $('#circleId').val().trim();
-
+                var circleId = $('#filtercircleId').val().trim();
+                var membershipType = $('#membershipType').val().trim();
+    
                 console.log('Selected category ID:', categoryId);
                 console.log('Selected circle ID:', circleId);
+                console.log('Selected membership type:', membershipType);
+    
+                // Send AJAX request to the server to filter data
+                $.ajax({
+                    url: '{{ route('filterTableData') }}', // Replace with the correct route
+                    method: 'GET',
+                    data: {
+                        categoryId: categoryId,
+                        circleId: circleId,
+                        membershipType: membershipType
+                    },
+                    success: function(response) {
+                        console.log('Filtered data received from server', response);
+    
+                        // Clear existing table rows
+                        $('tbody').empty();
+    
+                        // Append the filtered data to the table
+                        $.each(response.data, function(index, row) {
+                            var rolesHTML = row.user.roles.map(function(role) {
+                                return `<span class="badge rounded-pill bg-success">${role.name}</span>`;
+                            }).join(', ');
+    
+                            // Append the table row with modals and updated action buttons
+                            $('tbody').append(`
+                                <tr>
+                                    <td></td>
+                                    <td>${row.circle.circleName}</td>
+                                    <td>${row.firstName} ${row.lastName}</td>
+                                    <td>${row.b_category.categoryName}</td>
+                                    <td>${row.membershipType}</td>
+                                    <td>${rolesHTML}</td>
+                                    <td>
+                                        <a href="/circlemember/activity/${row.id}"
+   class="btn btn-bg-orange btn-sm btn-tooltip">
+   <i class="bi bi-info-circle"></i>
+   <span class="btn-text">Activity</span>
+</a>
+<a href="/circlemember/edit/${row.id}"
+   class="btn btn-bg-blue btn-sm btn-tooltip">
+   <i class="bi bi-pen"></i>
+   <span class="btn-text">Edit Member</span>
+</a>
+<a href="/circlemember/delete/${row.id}"
+   class="btn btn-danger btn-sm btn-tooltip">
+   <i class="bi bi-trash"></i>
+   <span class="btn-text">Delete Member</span>
+</a>
 
-
-                $('tbody tr').show();
-
-
-                if (categoryId !== '' || circleId !== '') {
-                    $('tbody tr').each(function() {
-                        var categoryName = $(this).find('td:nth-child(3)').text().trim();
-                        var circleName = $(this).find('td:first').text().trim();
-
-                        console.log('Row category name:', categoryName);
-                        console.log('Row circle name:', circleName);
-
-
-                        if ((categoryId !== '' && categoryName !== $('#categoryId option:selected').text()
-                                .trim()) ||
-                            (circleId !== '' && circleName !== $('#circleId option:selected').text().trim())
-                        ) {
-                            $(this).hide();
-                        } else {
-                            $(this).show();
-                        }
-                    });
-                }
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-bg-blue btn-sm btn-tooltip"
+                                                data-bs-toggle="modal" data-bs-target="#assignRoleModal${row.id}">
+                                            <i class="bi bi-person-plus"></i>
+                                            <span class="btn-text">Assign Role</span>
+                                        </button>
+                                        <button type="button" class="btn btn-danger btn-sm btn-tooltip"
+                                                data-bs-toggle="modal" data-bs-target="#removeRoleModal${row.id}">
+                                            <i class="bi bi-trash"></i>
+                                            <span class="btn-text">Remove Role</span>
+                                        </button>
+    
+                                        <!-- Assign Role Modal -->
+                                        <div class="modal fade" id="assignRoleModal${row.id}" 
+                                             data-bs-backdrop="static" data-bs-keyboard="false" 
+                                             tabindex="-1" aria-labelledby="assignRoleModalLabel${row.id}" 
+                                             aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="assignRoleModalLabel${row.id}">
+                                                            Assign Role
+                                                        </h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                                aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form action="{{ route('assign.role') }}" method="POST">
+                                                            @csrf
+                                                            <input type="hidden" name="memberId" value="${row.id}">
+                                                            <select name="roleId" class="form-select">
+                                                                <option value="">Select Role</option>
+                                                                ${response.roles.map(function(role) {
+                                                                    return `<option value="${role.id}">${role.name}</option>`;
+                                                                }).join('')}
+                                                            </select>
+                                                            <div class="d-flex justify-content-end mt-3">
+                                                                <button type="submit" class="btn btn-bg-blue btn-sm">Assign</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+    
+                                        <!-- Remove Role Modal -->
+                                        <div class="modal fade" id="removeRoleModal${row.id}" 
+                                             data-bs-backdrop="static" data-bs-keyboard="false" 
+                                             tabindex="-1" aria-labelledby="removeRoleModalLabel${row.id}" 
+                                             aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="removeRoleModalLabel${row.id}">
+                                                            Remove Role
+                                                        </h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                                aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form action="{{ route('remove.role') }}" method="POST">
+                                                            @csrf
+                                                            <input type="hidden" name="memberId" value="${row.id}">
+                                                            <select name="roleId" class="form-select">
+                                                                <option value="">Select Role</option>
+                                                                ${row.user.roles.filter(function(role) {
+                                                                    return role.name !== 'Member' && role.name !== 'Admin' && role.name !== 'Trainer';
+                                                                }).map(function(role) {
+                                                                    return `<option value="${role.id}">${role.name}</option>`;
+                                                                }).join('')}
+                                                            </select>
+                                                            <div class="d-flex justify-content-end mt-3">
+                                                                <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            `);
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error fetching filtered data:', error);
+                    }
+                });
             }
-
-
-            $('#categoryId,#circleId').change(function() {
-                console.log('Dropdown selection changed');
+    
+            // Trigger the filter function when any dropdown changes
+            $('#categoryId, #filtercircleId, #membershipType').change(function() {
                 filterTable();
             });
-        });
-    </script>
-
-
-
-    <script>
-        $(document).ready(function() {
-
-            function filterTableByMembershipType() {
-                var membershipType = $('#membershipType').val().trim();
-
-                console.log('Selected membership type:', membershipType);
-
-
-                $('tbody tr').show();
-
-
-                if (membershipType !== '') {
-                    $('tbody tr').each(function() {
-                        var membershipTypeText = $(this).find('td:nth-child(4)').text().trim();
-
-                        console.log('Row membership type:', membershipTypeText);
-
-
-                        if (membershipTypeText !== $('#membershipType option:selected').text().trim()) {
-                            $(this).hide();
-                        } else {
-                            $(this).show();
-                        }
-                    });
-                }
-            }
-
-
-            $('#membershipType').change(function() {
-                console.log('Dropdown selection changed');
-                filterTableByMembershipType();
+    
+            // Delegate event for dynamically created modals
+            $(document).on('click', '[data-bs-toggle="modal"]', function() {
+                var targetModal = $(this).data('bs-target');
+                $(targetModal).modal('show');
             });
         });
     </script>
+    
+
+
+
 
 
 

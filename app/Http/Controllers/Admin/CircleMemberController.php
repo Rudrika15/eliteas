@@ -24,6 +24,7 @@ use App\Models\MembershipType;
 use App\Mail\MemberSubscription;
 use App\Mail\WelcomeMemberEmail;
 use App\Models\BusinessCategory;
+use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
 use App\Models\MemberSubscriptions;
 use Illuminate\Support\Facades\URL;
@@ -55,6 +56,38 @@ class CircleMemberController extends Controller
         $this->middleware('permission:circle-member-removeRole', ['only' => ['removeRole']]);
         $this->middleware('permission:circle-member-export', ['only' => ['export']]);
     }
+
+    public function filterTableData(Request $request)
+    {
+        $categoryId = $request->input('categoryId');
+        $circleId = $request->input('circleId');
+        $membershipType = $request->input('membershipType');
+
+        $query = Member::with(['circle', 'bCategory', 'mType', 'user.roles']); // Replace with your actual table name
+
+        if ($categoryId) {
+            $query->where('businessCategoryId', $categoryId); // Adjust column name if necessary
+        }
+
+        if ($circleId) {
+            $query->where('circleId', $circleId); // Adjust column name if necessary
+        }
+
+        if ($membershipType) {
+            $query->where('membershipType', $membershipType); // Adjust column name if necessary
+        }
+
+        // Fetch filtered data
+        $data = $query->get();
+
+        // Fetch all roles (or limit based on your condition)
+        $roles = Role::all(); // Or filter roles based on your requirements
+
+        return response()->json(['data' => $data, 'roles' => $roles]);
+    }
+
+
+
 
     public function index(Request $request)
     {
@@ -170,6 +203,33 @@ class CircleMemberController extends Controller
             $user->password = Hash::make($rowPassword);
             $user->assignRole('Member');
             $user->save();
+
+            // CURL Request to API
+            $curl = curl_init();
+
+            // Set curl options
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => env('BASE_URL'),
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => 'POST',
+                CURLOPT_POSTFIELDS => array(
+                    'firstName' => $user->firstName,
+                    'lastName' => $user->lastName,
+                    'email' => $user->email,
+                    'contactNo' => $user->contactNo,
+                    'password' => $rowPassword
+                ),
+            ));
+
+            // Execute and close the curl request
+            $response = curl_exec($curl);
+            curl_close($curl);
+
 
             // Create and save the member
             $member = new Member();
