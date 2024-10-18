@@ -297,7 +297,7 @@
                             // Append the table row with modals and updated action buttons
                             $('tbody').append(`
                                 <tr>
-                                    <td></td>
+                                    <th>${index + 1}</th>
                                     <td>${row.circle.circleName}</td>
                                     <td>${row.firstName} ${row.lastName}</td>
                                     <td>${row.b_category.categoryName}</td>
