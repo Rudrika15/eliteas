@@ -44,7 +44,7 @@
                                     <td>{{ $visitor->firstName }} {{ $visitor->lastName }}</td>
                                     <td>{{ $visitor->mobileNo }}</td>
                                     <td>{{ $visitor->businessName }}</td>
-                                    <td>{{ $visitor->businessCategory }}</td>
+                                    <td>{{ $visitor->bCategory->categoryName }}</td>
                                     <td>{{ $visitor->networkingGroup }}</td>
                                     <td>{{ $visitor->circleMeet }}</td>
                                     <td>{{ $visitor->product }}</td>

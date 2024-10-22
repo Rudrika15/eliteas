@@ -14,4 +14,8 @@ class VisitorsDetails extends Model
         return $this->belongsTo(Member::class, 'invitedBy', 'id'); // Correct foreign key relationship
     }
 
+    public function bCategory()
+    {
+        return $this->belongsTo(BusinessCategory::class, 'businessCategory', 'id');
+    }
 }
