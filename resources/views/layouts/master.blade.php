@@ -225,6 +225,14 @@
                 @endrole --}}
 
 
+                {{-- <li class="nav-item">
+                    <a class="nav-link" href="https://ubnmart.ubncommunity.com/">
+                        <span class="badge rounded-pill bg-warning"
+                            style="font-size: 12px;padding: 5px 10px;color: #fff;display: inline-block;margin-top: 5px; margin-right: 10px;">Go
+                            To Mart</span>
+                    </a>
+                </li> --}}
+
 
 
                 {{-- @role('member') --}}
@@ -292,6 +300,16 @@
                                 </a>
                             </li>
                         @endrole
+
+                        @role('Admin')
+                            <li>
+                                <a class="dropdown-item d-flex align-items-center" href="{{ route('member') }}">
+                                    <i class="bi bi-cart" style="color: #e76a35"></i>
+                                    <span style="font-weight: bold; color: #1d2856">Go To UBN Mart</span>
+                                </a>
+                            </li>
+                        @endrole
+
 
                         <li>
                             <hr class="dropdown-divider">
@@ -480,19 +498,19 @@
                 ip_address: '', // IP address would be captured in Laravel, so we leave it blank
                 user_agent: navigator.userAgent // Capturing the user agent
             };
-    
+
             // Log error to server
             logErrorToServer(errorData);
-    
+
             // Optional: Show a message to the user or handle it as needed
             console.error('Error occurred:', errorData);
         };
-    
+
         // Function to log error to server
         function logErrorToServer(errorData) {
             const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
             const url = '{{ route('log.error') }}'; // Your Laravel route for logging errors
-    
+
             fetch(url, {
                 method: 'POST',
                 headers: {

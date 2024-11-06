@@ -35,8 +35,10 @@ use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Crypt;
 use App\Mail\MemberSubscriptionDiscount;
+use App\Models\circleAdmin;
 use App\Models\CircleMeetingMembersBusiness;
 use App\Models\CircleMeetingMembersReference;
+use Illuminate\Support\Facades\Auth;
 
 class CircleMemberController extends Controller
 {
@@ -92,16 +94,24 @@ class CircleMemberController extends Controller
     public function index(Request $request)
     {
         try {
-            // $member = Member::findOrFail($user->id);
-            $member = Member::whereHas('circle')->where('status', 'Active')->with('circle')->whereHas('contactDetails')->where('status', 'Active')->with('contactDetails')->with('user')->where('status', 'Active')->with('topsProfile')->with('billingAddress')->paginate(10);
+            $user = Auth::user();
+            $memberQuery = Member::where('status', 'Active')
+                ->whereHas('circle')
+                ->whereHas('contactDetails')
+                ->with(['circle', 'contactDetails', 'user', 'topsProfile', 'billingAddress']);
+
+            if ($user->hasRole('Circle Admin')) {
+                $memberQuery->where('createdBy', $user->id);
+            }
+
+            $member = $memberQuery->paginate(10);
             $circle = Circle::where('status', 'Active')->get();
             $bCategory = BusinessCategory::where('status', 'Active')->get();
-            // $roles = Role::whereNotIn('name', ['Admin', 'Member', 'Trainer', 'Franchise '])->paginate(10);
             $roles = Role::all();
             $membershipType = MembershipType::where('status', 'Active')->get();
+
             return view('admin.circlemember.index', compact('member', 'roles', 'circle', 'bCategory', 'membershipType'));
         } catch (\Throwable $th) {
-            // throw $th;
             ErrorLogger::logError(
                 $th,
                 $request->fullUrl()
@@ -109,6 +119,63 @@ class CircleMemberController extends Controller
             return view('servererror');
         }
     }
+
+    public function assignCircle(Request $request)
+    {
+
+        try {
+            $member = Member::where('id', $request->memberId)->first();
+
+            $circleAdmin = new circleAdmin();
+            $circleAdmin->memberId = $member->id;
+            $circleAdmin->circleId = $request->circleId;
+            $circleAdmin->save();
+
+            return redirect()->back()->with('success', 'Circle assigned successfully.');
+        } catch (\Throwable $th) {
+            // throw $th;
+            ErrorLogger::logError(
+                $th,
+                $request->fullUrl()
+            );
+
+            return view('servererror');
+        }
+    }
+
+    // public function index(Request $request)
+    // {
+    //     try {
+    //         $user = Auth::user();
+    //         $memberQuery = Member::where('status', 'Active')
+    //             ->whereHas('circle')
+    //             ->whereHas('contactDetails')
+    //             ->with(['circle', 'contactDetails', 'user', 'topsProfile', 'billingAddress']);
+
+    //         if ($user->hasRole('Circle Admin')) {
+    //             $memberQuery->where('createdBy', $user->id);
+    //         }
+
+    //         $member = $memberQuery->paginate(10);
+    //         // $member = Member::findOrFail($user->id);
+    //         $member = Member::whereHas('circle')->where('status', 'Active')->with('circle')->whereHas('contactDetails')->where('status', 'Active')->with('contactDetails')->with('user')->where('status', 'Active')->with('topsProfile')->with('billingAddress')->paginate(10);
+    //         $circle = Circle::where('status', 'Active')->get();
+    //         $bCategory = BusinessCategory::where('status', 'Active')->get();
+    //         // $roles = Role::whereNotIn('name', ['Admin', 'Member', 'Trainer', 'Franchise '])->paginate(10);
+    //         $roles = Role::all();
+    //         $membershipType = MembershipType::where('status', 'Active')->get();
+
+    //         return view('admin.circlemember.index', compact('member', 'roles', 'circle', 'bCategory', 'membershipType'));
+    //     } catch (\Throwable $th) {
+    //         // throw $th;
+    //         ErrorLogger::logError(
+    //             $th,
+    //             $request->fullUrl()
+    //         );
+    //         return view('servererror');
+    //     }
+    // }
+
 
     //filter data
     public function filter(Request $request)
@@ -157,13 +224,25 @@ class CircleMemberController extends Controller
     {
         try {
             $businessCategory = BusinessCategory::where('status', 'Active')->orderBy('categoryName', 'asc')->get();
-            $circle = Circle::where('status', 'Active')->get();
+            $user = Auth::user();
+            if ($user->hasRole('Circle Admin')) {
+                $circle = Circle::where('status', 'Active')->where('createdBy', $user->id)->get();
+            } else {
+                $circle = Circle::where('status', 'Active')->get();
+            }
             $member = Member::where('status', 'Active')->get();
             $countries = Country::where('status', 'Active')->get();
             $states = State::where('status', 'Active')->get();
             $cities = City::where('status', 'Active')->get();
             $membershipType = MembershipType::where('status', 'Active')->get();
-            return view('admin.circlemember.create', compact('circle', 'membershipType', 'member', 'countries', 'states', 'cities', 'businessCategory'));
+
+            $circles = Circle::where('status', 'Active')->get();
+
+            $circleMember = Member::with('circle')
+                ->where('status', 'Active')
+                ->get(); // Ensure 'circleId' is included
+
+            return view('admin.circlemember.create', compact('circle', 'membershipType', 'circles', 'circleMember', 'member', 'countries', 'states', 'cities', 'businessCategory'));
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError($th, $request->fullUrl());
@@ -183,6 +262,8 @@ class CircleMemberController extends Controller
             'gender' => 'required',
             'mobileNo' => 'required|unique:users,contactNo',
         ]);
+
+
 
         try {
             // Generate random password
@@ -204,36 +285,53 @@ class CircleMemberController extends Controller
             $user->assignRole('Member');
             $user->save();
 
-            // CURL Request to API
+            // Initialize cURL
             $curl = curl_init();
 
-            // Set curl options
-            curl_setopt_array($curl, array(
+            // Set cURL options
+            curl_setopt_array($curl, [
                 CURLOPT_URL => env('BASE_URL'),
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_ENCODING => '',
                 CURLOPT_MAXREDIRS => 10,
                 CURLOPT_TIMEOUT => 0,
                 CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_FAILONERROR => true,
+                CURLOPT_SSL_VERIFYPEER => false, // Disable SSL verification for testing
                 CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
                 CURLOPT_CUSTOMREQUEST => 'POST',
-                CURLOPT_POSTFIELDS => array(
+                CURLOPT_POSTFIELDS => http_build_query([
                     'firstName' => $user->firstName,
                     'lastName' => $user->lastName,
                     'email' => $user->email,
                     'contactNo' => $user->contactNo,
                     'password' => $rowPassword
-                ),
-            ));
+                ]),
+                CURLOPT_HTTPHEADER => [
+                    'Content-Type: application/x-www-form-urlencoded'
+                ],
+            ]);
 
-            // Execute and close the curl request
+
+            // Execute and handle response
             $response = curl_exec($curl);
+
+            // Check for errors
+            if (curl_errno($curl)) {
+                $error_msg = curl_error($curl);
+                // Handle the error, e.g., log or display it
+                echo "cURL Error: $error_msg";
+            }
+
+            // Close cURL session
             curl_close($curl);
 
 
             // Create and save the member
             $member = new Member();
+            $member->createdBy = Auth::user()->id;
             $member->circleId = $request->circleId;
+            $member->sponsoredBy = $request->memberId;
             $member->userId = $user->id;
             $member->title = $request->title;
             $member->username = $request->username;
@@ -402,7 +500,12 @@ class CircleMemberController extends Controller
             $contactDetails = ContactDetails::where('memberId', $id)->first();
             $billing = BillingAddress::where('memberId', $id)->first();
             $tops = TopsProfile::where('memberId', $id)->first();
-            $circles = Circle::where('status', 'Active')->get();
+            $user = Auth::user();
+            if ($user->hasRole('Circle Admin')) {
+                $circle = Circle::where('status', 'Active')->where('createdBy', $user->id)->get();
+            } else {
+                $circle = Circle::where('status', 'Active')->get();
+            }
             $businessCategory = BusinessCategory::where('status', 'Active')->get();
             $membershipType = MembershipType::where('status', 'Active')->get();
 

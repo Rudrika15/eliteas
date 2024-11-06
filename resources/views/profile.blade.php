@@ -138,10 +138,10 @@
 
                                 <div class="col-md-6 mt-3">
                                     <?php
-    
-                                
-                                
-                                if($member->gender === "male") 
+
+
+
+                                if($member->gender === "male")
                                 {
                                 ?>
                                     <div class="form-floating">
@@ -166,7 +166,7 @@
                                             </div>
                                         @enderror
                                     </div>
-                                    <?php } 
+                                    <?php }
                                 else {?>
                                     <div class="form-floating">
                                         <div class="form-check">
@@ -288,6 +288,20 @@
                                             placeholder="businessCategory" readonly>
                                         <label for="businessCategory">Business Category</label>
                                         @error('businessCategory')
+                                            <div class="invalid-tooltip">
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mt-3">
+                                    <div class="form-floating">
+                                        <input type="date"
+                                            class="form-control @error('birthDate') is-invalid @enderror" id="birthDate"
+                                            name="birthDate" value="{{ $member->birthDate ?? '' }}"
+                                            placeholder="birthDate">
+                                        <label for="birthDate">Birth Date</label>
+                                        @error('birthDate')
                                             <div class="invalid-tooltip">
                                                 {{ $message }}
                                             </div>

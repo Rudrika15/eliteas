@@ -49,10 +49,10 @@
                                 <th>{{ ($franchises->currentPage() - 1) * $franchises->perPage() + $loop->index + 1 }}
 
                                 <td>{{ $franchiseData->franchiseName }}</td>
-                                <td>{{ $franchiseData->user ? $franchiseData->user->firstName . ' ' . $franchiseData->user->lastName : '-' }}
+                                <td>{{ $franchiseData->user ? $franchiseData->user->firstName . ' ' . $franchiseData->user->lastName : 'Managed By UBN' }}
                                 </td>
                                 <td>{{ $franchiseData->city->cityName ?? '-' }}</td>
-                                <td>{{ $franchiseData->franchiseContactDetails }}</td>
+                                <td>{{ $franchiseData->franchiseContactDetails ?? '9979411148' }}</td>
                                 <td>{{ $franchiseData->status }}</td>
                                 <td>
                                     {{-- <div class="btn-group" role="group"> --}}

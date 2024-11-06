@@ -236,6 +236,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('circlemember/activity/{id?}', [CircleMemberActivityController::class, 'activity'])->name('circlemember.activity');
     //give new role to member
     Route::post('/assign-role', [CircleMemberController::class, 'assignRole'])->name('assign.role');
+    Route::post('/assign-circle', [CircleMemberController::class, 'assignCircle'])->name('assign.circle');
     Route::post('/remove-role', [CircleMemberController::class, 'removeRole'])->name('remove.role');
 
 
@@ -262,6 +263,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     // In your web.php or api.php
     Route::get('/members/byCircle', [CircleCallController::class, 'getMembersByCircle'])->name('members.byCircle');
+    Route::get('/member/byCircle', [CircleMemberController::class, 'getMemberByCircle'])->name('member.byCircle');
 
 
     // old get member
@@ -434,7 +436,7 @@ Route::group(['middleware' => ['auth']], function () {
 
 
 
-    // global search 
+    // global search
     Route::get('/search', [HomeController::class, 'findMember'])->name('search');
     Route::get('/searchQuery', [HomeController::class, 'search'])->name('searchQuery');
     Route::get('/foundPersonDetails/{id}', [HomeController::class, 'foundPersonDetails'])->name('foundPersonDetails');

@@ -83,4 +83,14 @@ class User extends Authenticatable
     {
         return $this->hasMany(Connection::class, 'userId', 'id');
     }
+
+    public function circles()
+    {
+        return $this->hasMany(Circle::class, 'userId', 'id');
+    }
+
+    public function members()
+    {
+        return $this->hasMany(Member::class, 'createdBy', 'id');
+    }
 }

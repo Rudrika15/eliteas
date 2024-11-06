@@ -26,7 +26,7 @@ class CircleCallController extends Controller
         $this->middleware('permission:circle-call-create', ['only' => ['create', 'store']]);
         $this->middleware('permission:circle-call-edit', ['only' => ['edit', 'update']]);
         $this->middleware('permission:circle-call-delete', ['only' => ['delete']]);
-        $this->middleware('permission:get-member-by-circle', ['only' => ['getMemberByCircle']]);
+        $this->middleware('permission:get-member-by-circle', ['only' => ['getMembersByCircle']]);
         $this->middleware('permission:get-circle', ['only' => ['getCircle']]);
         $this->middleware('permission:get-circle-members', ['only' => ['getCircleMembers']]);
         $this->middleware('permission:get-member', ['only' => ['getMember']]);

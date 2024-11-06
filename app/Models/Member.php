@@ -96,4 +96,14 @@ class Member extends Model
     {
         return $this->belongsTo(Circle::class);
     }
+
+    public function users()
+    {
+        return $this->belongsTo(User::class, 'createdBy', 'id');
+    }
+
+    public function members()
+    {
+        return $this->belongsTo(Member::class, 'sponsoredBy');
+    }
 }

@@ -74,53 +74,112 @@ class FranchiseController extends Controller
         }
     }
 
+    // public function store(Request $request)
+    // {
+    //     $this->validate($request, [
+    //         'franchiseName' => 'required|unique:franchises',
+    //         // 'franchiseContactDetails' => 'required|max:10',
+    //         // 'firstName' => 'required',
+    //         // 'lastName' => 'required',
+    //         // 'email' => 'required|email|unique:users',
+
+    //     ]);
+
+    //     try {
+    //         $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()';
+    //         $password = '';
+    //         $length = 8;
+    //         for ($i = 0; $i < $length; $i++) {
+    //             $password .= $characters[rand(0, strlen($characters) - 1)];
+    //         }
+
+    //         $rowPassword = $password;
+
+    //         $user = new User;
+    //         $user->firstName = $request->firstName;
+    //         $user->lastName = $request->lastName;
+    //         $user->email = $request->email;
+    //         $user->password = Hash::make($rowPassword);
+    //         // $user->password = Str::random(8);
+    //         $user->assignRole('Franchise Admin');
+    //         $user->save();
+
+    //         $franchises = new Franchise();
+    //         $franchises->franchiseName = $request->franchiseName;
+    //         $franchises->franchiseContactDetails = $request->franchiseContactDetails;
+    //         $franchises->cityId = $request->cityId;
+    //         $franchises->userId = $user->id;
+    //         $franchises->status = 'Active';
+    //         $franchises->save();
+
+    //         Mail::to($user->email)->send(new WelcomeMemberEmail($user, $rowPassword));
+
+    //         return redirect()->route('franchise.index')->with('success', 'Franchise and User Created Successfully!');
+    //     } catch (\Throwable $th) {
+    //         // throw $th;
+    //         ErrorLogger::logError($th, request()->fullUrl());
+    //         return view('servererror');
+    //     }
+    // }
+
+
     public function store(Request $request)
     {
+        // Validate required fields based on the checkbox state
         $this->validate($request, [
             'franchiseName' => 'required|unique:franchises',
-            'franchiseContactDetails' => 'required|max:10',
-            'firstName' => 'required',
-            'lastName' => 'required',
-            'email' => 'required|email|unique:users',
-
+            'franchiseContactDetails' => $request->managedByUbn ? 'nullable|max:10' : 'required|max:10',
+            'firstName' => $request->managedByUbn ? 'nullable' : 'required',
+            'lastName' => $request->managedByUbn ? 'nullable' : 'required',
+            'email' => $request->managedByUbn ? 'nullable|email|unique:users' : 'required|email|unique:users',
         ]);
 
         try {
-            $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()';
-            $password = '';
-            $length = 8;
-            for ($i = 0; $i < $length; $i++) {
-                $password .= $characters[rand(0, strlen($characters) - 1)];
-            }
-
-            $rowPassword = $password;
-
-            $user = new User;
-            $user->firstName = $request->firstName;
-            $user->lastName = $request->lastName;
-            $user->email = $request->email;
-            $user->password = Hash::make($rowPassword);
-            // $user->password = Str::random(8);
-            $user->assignRole('Franchise Admin');
-            $user->save();
-
+            // Create Franchise
             $franchises = new Franchise();
             $franchises->franchiseName = $request->franchiseName;
             $franchises->franchiseContactDetails = $request->franchiseContactDetails;
             $franchises->cityId = $request->cityId;
-            $franchises->userId = $user->id;
+            $franchises->userId = null;  // Set to null until a user is created if 'managedByUbn' is unchecked
             $franchises->status = 'Active';
-            $franchises->save();
 
-            Mail::to($user->email)->send(new WelcomeMemberEmail($user, $rowPassword));
+            // Only create a user if 'managedByUbn' is unchecked
+            if (!$request->managedByUbn) {
+                // Generate a random password
+                $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()';
+                $password = '';
+                $length = 8;
+                for ($i = 0; $i < $length; $i++) {
+                    $password .= $characters[rand(0, strlen($characters) - 1)];
+                }
+                $rowPassword = $password;
+
+                // Create User
+                $user = new User;
+                $user->firstName = $request->firstName;
+                $user->lastName = $request->lastName;
+                $user->email = $request->email;
+                $user->password = Hash::make($rowPassword);
+                $user->assignRole('Franchise Admin');
+                $user->save();
+
+                // Associate the franchise with the created user
+                $franchises->userId = $user->id;
+
+                // Send a welcome email
+                Mail::to($user->email)->send(new WelcomeMemberEmail($user, $rowPassword));
+            }
+
+            $franchises->save();
 
             return redirect()->route('franchise.index')->with('success', 'Franchise and User Created Successfully!');
         } catch (\Throwable $th) {
-            // throw $th;
             ErrorLogger::logError($th, request()->fullUrl());
             return view('servererror');
         }
     }
+
+
 
 
     public function edit(Request $request, $id)
@@ -241,7 +300,7 @@ class FranchiseController extends Controller
     public function getStates(Request $request)
     {
         $countryId = $request->countryId;
-        $states = State::where('countryId', $countryId)->get();
+        $states = State::where('countryId', $countryId)->where('status', 'Active')->get();
 
         $options = '<option value="">Select State</option>';
         foreach ($states as $state) {
@@ -254,7 +313,7 @@ class FranchiseController extends Controller
     {
         $stateId = $request->stateId;
 
-        $cities = City::where('stateId', $stateId)->get();
+        $cities = City::where('stateId', $stateId)->where('status', 'Active')->get();
 
         $options = '<option value="">Select City</option>';
 

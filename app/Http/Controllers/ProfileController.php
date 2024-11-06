@@ -47,7 +47,8 @@ class ProfileController extends Controller
             return view('profile', compact('member', 'user', 'country', 'states', 'city', 'contactDetails', 'billing', 'tops'));
         } catch (\Throwable $th) {
             // throw $th;
-            ErrorLogger::logError($th,
+            ErrorLogger::logError(
+                $th,
                 request()->fullUrl()
             );
             // In case of an error, redirect to servererror view
@@ -99,6 +100,7 @@ class ProfileController extends Controller
             // $member->renewalDueDate = $request->renewalDueDate;
             // $member->accomplishment = $request->accomplishment;
             $member->companyName = $request->companyName;
+            $member->birthDate = $request->birthDate;
             // $member->interests = $request->interests;
             // $member->networks = $request->networks;
             // $member->skills = $request->skills;
@@ -192,7 +194,8 @@ class ProfileController extends Controller
             return redirect()->route('home')->with('success', 'Profile Updated Successfully!');
         } catch (Throwable $th) {
             // throw $th;
-            ErrorLogger::logError($th,
+            ErrorLogger::logError(
+                $th,
                 request()->fullUrl()
             );
             return view('servererror');

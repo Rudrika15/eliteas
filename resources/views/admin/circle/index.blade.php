@@ -31,7 +31,9 @@
                         <a href="{{ route('circle.create') }}" class="btn btn-bg-orange btn-sm mt-3 mr-2 btn-tooltip"><i
                                 class="bi bi-plus-circle"></i>
                             <span class="btn-text">Create Circle</span></a>
-                        <a href="{{ route('schedule.index') }}" class="btn btn-bg-blue btn-sm mt-3">All Meetings</a>
+                        @role('Admin')
+                            <a href="{{ route('schedule.index') }}" class="btn btn-bg-blue btn-sm mt-3">All Meetings</a>
+                        @endrole
                     </div>
                 </div>
 
@@ -42,6 +44,7 @@
                         <thead>
                             <tr>
                                 <th>S.No</th>
+                                <th>Created By</th>
                                 <th>Circle Name</th>
                                 <th>Franchise Name</th>
                                 <th>City Name</th>
@@ -56,6 +59,8 @@
                             @foreach ($circle as $circleData)
                                 <tr>
                                     <th>{{ ($circle->currentPage() - 1) * $circle->perPage() + $loop->index + 1 }}</th>
+                                    <td>{{ $circleData->users->firstName ?? '' }} {{ $circleData->users->lastName ?? '' }}
+                                    </td>
                                     <td>{{ $circleData->circleName }}</td>
                                     <td>{{ $circleData->franchise->franchiseName ?? '-' }}</td>
                                     <td>{{ $circleData->city->cityName ?? '-' }}</td>

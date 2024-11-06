@@ -402,7 +402,21 @@ class HomeController extends Controller
                     'ref' => auth()->user()->member->id
                 ]);
 
-                return view('home', compact('signedUrl',  'count', 'monthlyPayments', 'totalAmountDue', 'nearestEvents', 'findEventRegister', 'circlecalls', 'busGiver', 'refGiver', 'nearestTraining', 'findRegister', 'testimonials', 'meeting', 'businessCategory', 'myInvites'));
+                $birthDate = Member::select('id', 'userId', 'birthDate', 'firstName', 'lastName')->whereNotNull('birthDate')->get();
+                $today = Carbon::today()->format('m-d');
+                $todaysBirthdays = Member::whereRaw("DATE_FORMAT(birthDate, '%m-%d') = ?", [$today])->get();
+
+                $today = Carbon::today()->format('m-d');
+
+                // Fetch users whose birthdays match today's date
+                $todaysBirthdays = Member::whereRaw("DATE_FORMAT(birthdate, '%m-%d') = ?", [$today])->get();
+
+                // Generate images for each user with a birthday today
+                foreach ($todaysBirthdays as $user) {
+                    $this->generateBirthdayWishImage($user);
+                }
+
+                return view('home', compact('birthDate', 'signedUrl', 'count', 'monthlyPayments', 'totalAmountDue', 'nearestEvents', 'findEventRegister', 'circlecalls', 'busGiver', 'refGiver', 'nearestTraining', 'findRegister', 'testimonials', 'meeting', 'businessCategory', 'myInvites', 'todaysBirthdays'));
             }
 
             return view('home', compact('count', 'nearestTraining', 'businessCategory', 'myInvites', 'findRegister'));
@@ -415,6 +429,49 @@ class HomeController extends Controller
         }
     }
 
+
+    private function generateBirthdayWishImage($member)
+    {
+        $width = 800;
+        $height = 400;
+
+        // Create a blank image
+        $image = imagecreatetruecolor($width, $height);
+
+        // Define colors
+        $backgroundColor = imagecolorallocate($image, 255, 235, 59); // Yellow
+        $textColor = imagecolorallocate($image, 51, 51, 51); // Dark Gray
+
+        // Fill the background
+        imagefilledrectangle($image, 0, 0, $width, $height, $backgroundColor);
+
+        // Set birthday text
+        $text = "Happy Birthday, {$member->firstName}!";
+        $fontSize = 5;
+
+        // Calculate text positioning to center it
+        $textWidth = imagefontwidth($fontSize) * strlen($text);
+        $textX = ($width - $textWidth) / 2;
+        $textY = ($height / 2) - (imagefontheight($fontSize) / 2);
+
+        // Add text using built-in GD font
+        imagestring($image, $fontSize, $textX, $textY, $text, $textColor);
+
+        // Define the directory path
+        $directoryPath = public_path('birthday_images');
+
+        // Check if the directory exists; if not, create it
+        if (!is_dir($directoryPath)) {
+            mkdir($directoryPath, 0777, true);
+        }
+
+        // Save the image
+        $path = "{$directoryPath}/{$member->id}_birthday.png";
+        imagepng($image, $path);
+
+        // Free up memory
+        imagedestroy($image);
+    }
 
 
     public function trainingRegister($trainingId, $trainerId)

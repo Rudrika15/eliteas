@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
 use App\Models\CircleMeetingMembersBusiness;
 use App\Models\CircleMeetingMembersReference;
+use Illuminate\Support\Facades\Auth;
 
 class CircleController extends Controller
 {
@@ -175,22 +176,40 @@ class CircleController extends Controller
     public function index(Request $request)
     {
         try {
-            $circle = Circle::with('circleType')
-                ->with('city')->where('status', '!=', 'Deleted')
-                ->with('franchise')
-                ->where('status', 'Active')
-                ->orderBy('id', 'DESC')
-                ->paginate(10);
+            // Get the authenticated user
+            $user = Auth::user();
+
+            // Initialize the Circle query with necessary relationships
+            $circleQuery = Circle::with('circleType', 'city', 'franchise')
+                ->where('status', '!=', 'Deleted') // Exclude deleted circles
+                ->where('status', 'Active'); // Only active circles
+
+            // If the user is a 'Circle Admin', get circles created by the user and circles they administer
+            if ($user->hasRole('Circle Admin')) {
+                $circleQuery->where(function ($query) use ($user) {
+                    $query->where('createdBy', $user->id) // Circles created by the user
+                        ->orWhereIn('id', function ($subQuery) use ($user) {
+                            $memberId = Member::where('userId', $user->id)->value('id');
+                            $subQuery->select('circleId')->from('circle_admins')->where('memberId', $memberId);
+                        });
+                });
+            } else {
+                // If the user is not a Circle Admin, get all active circles
+                // No additional filtering is done here, so it fetches all circles with 'Active' status
+            }
+
+            // Order by ID and paginate the results
+            $circle = $circleQuery->orderBy('id', 'DESC')->paginate(10);
+
+            // Return the view with the circles
             return view('admin.circle.index', compact('circle'));
         } catch (\Throwable $th) {
-            // throw $th;
-            ErrorLogger::logError(
-                $th,
-                $request->fullUrl()
-            );
+            // Log the error and return the server error page
+            ErrorLogger::logError($th, $request->fullUrl());
             return view('servererror');
         }
     }
+
     //For show single data
     public function view(Request $request, $id)
     {
@@ -213,10 +232,10 @@ class CircleController extends Controller
             $countries = Country::where('status', 'Active')->get();
             $states = State::where('status', 'Active')->get();
             $cities = City::where('status', 'Active')->get();
-            $city = City::where('status', '!=', 'Deleted')->get();
-            $circle = Circle::where('status', '!=', 'Deleted')->get();
-            $franchise = Franchise::where('status', '!=', 'Deleted')->get();
-            $circletype = CircleType::where('status', '!=', 'Deleted')->get();
+            $city = City::where('status', 'Active')->get();
+            $circle = Circle::where('status', 'Active')->get();
+            $franchise = Franchise::where('status', 'Active')->get();
+            $circletype = CircleType::where('status', 'Active')->get();
             return view('admin.circle.create', compact('circle', 'franchise', 'city', 'circletype', 'countries', 'states', 'cities'));
         } catch (\Throwable $th) {
             // throw $th;
@@ -243,7 +262,11 @@ class CircleController extends Controller
         ]);
 
         try {
+
+            $userId = Auth::id();
+
             $circle = new Circle();
+            $circle->createdBy = $userId;
             $circle->circleName = $request->circleName;
             $circle->franchiseId = $request->franchiseId;
             $circle->cityId = $request->cityId;

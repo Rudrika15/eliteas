@@ -11,6 +11,7 @@ class Circle extends Model
 
     protected $fillable = [
         'circleName',
+        'userId',
         'franchiseId',
         'cityId',
         'circleTypeId',
@@ -52,9 +53,14 @@ class Circle extends Model
     {
         return $this->hasMany(Member::class, 'circleId', 'id');
     }
-    
+
     public function circleWiseMembers()
     {
         return $this->hasMany(Member::class, 'circleId', 'id');
+    }
+
+    public function users()
+    {
+        return $this->belongsTo(User::class, 'createdBy', 'id');
     }
 }

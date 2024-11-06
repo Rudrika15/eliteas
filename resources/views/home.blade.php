@@ -75,6 +75,21 @@
 
 
         @role('Member')
+
+
+            <div class="row">
+
+                @foreach ($todaysBirthdays as $user)
+                    <div class="birthday-card">
+                        <img src="{{ asset('birthday_images/' . $user->id . '_birthday.png') }}"
+                            alt="Happy Birthday {{ $user->firstName }}">
+                    </div>
+                @endforeach
+
+
+            </div>
+
+
             <div>
                 @if (
                     (isset($circlecalls) && count($circlecalls) > 0) ||
@@ -1438,7 +1453,7 @@
             var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
             var url = `{{ route('razorpay.payment.store') }}`;
             var trainingId = $('.trainingId').val();
-            // var trainingId2 = 
+            // var trainingId2 =
             // var trainerId = '{{ $nearestTraining->trainersTrainings[0]->user ?? '-' }}';
 
             console.log('my training id:', trainingId);
