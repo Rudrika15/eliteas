@@ -608,20 +608,28 @@ class HomeController extends Controller
         try {
             $query = $request->input('query');
             $members = Member::where('userId', '!=', Auth::user()->id)
+                ->where('status', 'Active')
                 ->where(function ($q) use ($query) {
-                    $q->where('firstName', 'like', '%' . $query . '%')
-                        ->orWhere('lastName', 'like', '%' . $query . '%');
+                    $q
+                        ->where('firstName', 'like', '%' . $query . '%')
+                        ->orWhere('lastName', 'like', '%' . $query . '%')
+                        ->orWhere('keyWords', 'like', '%' . $query . '%');
                 })
-                ->whereHas('circle', function ($q) use ($query) {
-                    $q->where('circleName', 'like', '%' . $query . '%');
-                })
+                // ->whereHas('circle', function ($q) use ($query) {
+                //     $q->where('circleName', 'like', '%' . $query . '%');
+                // })
                 ->with('user', 'circle')
                 ->get();
+
+
+            // $members = Member::where('keyWords', 'like', '%' . $query . '%')->get();
+
             $message = "Search results for '$query'";
+
 
             return response()->json([
                 'message' => $message,
-                'members' => $members
+                'members' => $members,
             ]);
         } catch (\Throwable $th) {
             // Log the error
