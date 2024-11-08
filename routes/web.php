@@ -48,6 +48,8 @@ use App\Http\Controllers\Admin\MembershipSubscriptionController;
 use App\Http\Controllers\Admin\MembershipSubscriptionsController;
 use App\Http\Controllers\Admin\CircleMeetingMemberBusinessController;
 use App\Http\Controllers\Admin\CircleMeetingMemberReferenceController;
+use App\Http\Controllers\admin\TemplateDetailController;
+use App\Http\Controllers\admin\TemplatemasterController;
 use App\Http\Controllers\Admin\UpdateAppController;
 
 /*
@@ -508,7 +510,22 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/visitor-index', [VisitorFormController::class, 'index'])->name('visitor.index');
     Route::post('/visitor/update-remark', [VisitorFormController::class, 'updateRemark'])->name('visitor.updateRemark');
 
+    //template
 
+    Route::get('/template-index', [TemplatemasterController::class, 'index'])->name('template.index');
+    Route::get('/template-create', [TemplatemasterController::class, 'create'])->name('template.create');
+    Route::post('/template/store', [TemplatemasterController::class, 'store'])->name('template.store');
+    Route::get('/template-edit/{id}', [TemplatemasterController::class, 'edit'])->name('template.edit');
+    Route::post('/template/update', [TemplatemasterController::class, 'update'])->name('template.update');
+    Route::get('/template-delete/{id}', [TemplatemasterController::class, 'destroy'])->name('template.delete');
+
+    //Template Details
+    Route::get('template-detail-index/{id?}', [TemplateDetailController::class, 'index'])->name('templateDetail.index');
+    Route::get('template-detail-create', [TemplateDetailController::class, 'create'])->name('templateDetail.create');
+    Route::post('template-detail-store', [TemplateDetailController::class, 'store'])->name('templateDetail.store');
+    Route::get('template-detail-edit/{id}', [TemplateDetailController::class, 'edit'])->name('templateDetail.edit');
+    Route::post('template-detail-update', [TemplateDetailController::class, 'update'])->name('templateDetail.update');
+    Route::get('template-detail-delete/{id?}', [TemplateDetailController::class, 'destroy'])->name('templateDetail.delete');
 
 
 

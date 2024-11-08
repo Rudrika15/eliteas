@@ -291,12 +291,21 @@
     </ul>
 
     <ul id="master-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-    <li class="nav-item">
-        <a class="nav-link collapsed" href="{{ route('permission.index') }}">
-            <i class="bi bi-person-vcard" style="color: #e76a35"></i>
-            <span style="color: #1d2856">Permissions</span>
-        </a>
-    </li>
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="{{ route('permission.index') }}">
+                <i class="bi bi-person-vcard" style="color: #e76a35"></i>
+                <span style="color: #1d2856">Permissions</span>
+            </a>
+        </li>
+    </ul>
+
+    <ul id="master-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+        <li class="nav-item">
+            <a class="nav-link " href="{{ route('template.index') }}">
+                <i class="bi bi-image" style="color: #e76a35"></i>
+                <span>Template</span>
+            </a>
+        </li>
     </ul>
 
     <ul id="master-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
