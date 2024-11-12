@@ -287,6 +287,88 @@ class CircleController extends Controller
     //     }
     // }
 
+    // public function report(Request $request, $id)
+    // {
+    //     try {
+    //         // Get the current circle based on the provided circle ID
+    //         $circle = Circle::findOrFail($id);
+
+    //         // Parse the date range from the request
+    //         $startDate = $request->input('start_date');
+    //         $endDate = $request->input('end_date');
+
+    //         // Default the totals to 0
+    //         $totalCircleCalls = 0;
+    //         $totalBusinessAmount = 0;
+    //         $totalReferences = 0;
+
+    //         // If date range is provided, apply filtering
+    //         if ($startDate && $endDate) {
+    //             $start = Carbon::parse($startDate)->startOfDay();
+    //             $end = Carbon::parse($endDate)->endOfDay();
+
+    //             // Circle Calls
+    //             $circleCalls = CircleCall::with(['member'])
+    //                 ->where('status', 'Active')
+    //                 ->whereBetween('date', [$start, $end])
+    //                 ->get();
+
+    //             // Filter circle calls by circle ID
+    //             $filteredCircleCalls = $circleCalls->filter(function ($call) use ($circle) {
+    //                 $memberCircleId = Member::where('userId', $call->memberId)->value('circleId');
+    //                 return $memberCircleId == $circle->id;
+    //             });
+
+    //             // Total Circle Calls
+    //             $totalCircleCalls = $filteredCircleCalls->count();
+
+    //             // Business Meetings
+    //             $businessMeetings = CircleMeetingMembersBusiness::with(['member'])
+    //                 ->where('status', 'Active')
+    //                 ->whereBetween('date', [$start, $end])
+    //                 ->get();
+
+    //             // Filter business meetings by circle ID
+    //             $filteredBusinessMeetings = $businessMeetings->filter(function ($meeting) use ($circle) {
+    //                 $businessGiverCircleId = Member::where('userId', $meeting->businessGiverId)->value('circleId');
+    //                 return $businessGiverCircleId == $circle->id;
+    //             });
+
+    //             // Total Business Amount
+    //             $totalBusinessAmount = $filteredBusinessMeetings->sum('amount');
+
+    //             // References
+    //             $references = CircleMeetingMembersReference::with(['members'])
+    //                 ->where('status', 'Active')
+    //                 ->whereBetween('created_at', [$start, $end])
+    //                 ->get();
+
+    //             // Filter references by circle ID
+    //             $filteredReferences = $references->filter(function ($reference) use ($circle) {
+    //                 $referenceGiverCircleId = Member::where('userId', $reference->referenceGiverId)->value('circleId');
+    //                 return $referenceGiverCircleId == $circle->id;
+    //             });
+
+    //             // Total References
+    //             $totalReferences = $filteredReferences->count();
+    //         }
+
+    //         // Return the view with the totals
+    //         return view('admin.circle.report', compact(
+    //             'circle',
+    //             'totalCircleCalls',
+    //             'totalBusinessAmount',
+    //             'totalReferences',
+    //             'startDate',
+    //             'endDate'
+    //         ));
+    //     } catch (\Throwable $th) {
+    //         // Log the error and show the error view
+    //         ErrorLogger::logError($th, $request->fullUrl());
+    //         return view('servererror');
+    //     }
+    // }
+
     public function report(Request $request, $id)
     {
         try {
@@ -302,56 +384,60 @@ class CircleController extends Controller
             $totalBusinessAmount = 0;
             $totalReferences = 0;
 
-            // If date range is provided, apply filtering
-            if ($startDate && $endDate) {
-                $start = Carbon::parse($startDate)->startOfDay();
-                $end = Carbon::parse($endDate)->endOfDay();
+            // Determine the date range
+            $start = $startDate ? Carbon::parse($startDate)->startOfDay() : null;
+            $end = $endDate ? Carbon::parse($endDate)->endOfDay() : Carbon::now()->endOfDay();
 
-                // Circle Calls
-                $circleCalls = CircleCall::with(['member'])
-                    ->where('status', 'Active')
-                    ->whereBetween('date', [$start, $end])
-                    ->get();
+            // Circle Calls
+            $circleCalls = CircleCall::with(['member'])
+                ->where('status', 'Active')
+                ->when($start, function ($query) use ($start, $end) {
+                    return $query->whereBetween('date', [$start, $end]);
+                })
+                ->get();
 
-                // Filter circle calls by circle ID
-                $filteredCircleCalls = $circleCalls->filter(function ($call) use ($circle) {
-                    $memberCircleId = Member::where('userId', $call->memberId)->value('circleId');
-                    return $memberCircleId == $circle->id;
-                });
+            // Filter circle calls by circle ID
+            $filteredCircleCalls = $circleCalls->filter(function ($call) use ($circle) {
+                $memberCircleId = Member::where('userId', $call->memberId)->value('circleId');
+                return $memberCircleId == $circle->id;
+            });
 
-                // Total Circle Calls
-                $totalCircleCalls = $filteredCircleCalls->count();
+            // Total Circle Calls
+            $totalCircleCalls = $filteredCircleCalls->count();
 
-                // Business Meetings
-                $businessMeetings = CircleMeetingMembersBusiness::with(['member'])
-                    ->where('status', 'Active')
-                    ->whereBetween('date', [$start, $end])
-                    ->get();
+            // Business Meetings
+            $businessMeetings = CircleMeetingMembersBusiness::with(['member'])
+                ->where('status', 'Active')
+                ->when($start, function ($query) use ($start, $end) {
+                    return $query->whereBetween('date', [$start, $end]);
+                })
+                ->get();
 
-                // Filter business meetings by circle ID
-                $filteredBusinessMeetings = $businessMeetings->filter(function ($meeting) use ($circle) {
-                    $businessGiverCircleId = Member::where('userId', $meeting->businessGiverId)->value('circleId');
-                    return $businessGiverCircleId == $circle->id;
-                });
+            // Filter business meetings by circle ID
+            $filteredBusinessMeetings = $businessMeetings->filter(function ($meeting) use ($circle) {
+                $businessGiverCircleId = Member::where('userId', $meeting->businessGiverId)->value('circleId');
+                return $businessGiverCircleId == $circle->id;
+            });
 
-                // Total Business Amount
-                $totalBusinessAmount = $filteredBusinessMeetings->sum('amount');
+            // Total Business Amount
+            $totalBusinessAmount = $filteredBusinessMeetings->sum('amount');
 
-                // References
-                $references = CircleMeetingMembersReference::with(['members'])
-                    ->where('status', 'Active')
-                    ->whereBetween('created_at', [$start, $end])
-                    ->get();
+            // References
+            $references = CircleMeetingMembersReference::with(['members'])
+                ->where('status', 'Active')
+                ->when($start, function ($query) use ($start, $end) {
+                    return $query->whereBetween('created_at', [$start, $end]);
+                })
+                ->get();
 
-                // Filter references by circle ID
-                $filteredReferences = $references->filter(function ($reference) use ($circle) {
-                    $referenceGiverCircleId = Member::where('userId', $reference->referenceGiverId)->value('circleId');
-                    return $referenceGiverCircleId == $circle->id;
-                });
+            // Filter references by circle ID
+            $filteredReferences = $references->filter(function ($reference) use ($circle) {
+                $referenceGiverCircleId = Member::where('userId', $reference->referenceGiverId)->value('circleId');
+                return $referenceGiverCircleId == $circle->id;
+            });
 
-                // Total References
-                $totalReferences = $filteredReferences->count();
-            }
+            // Total References
+            $totalReferences = $filteredReferences->count();
 
             // Return the view with the totals
             return view('admin.circle.report', compact(
@@ -368,7 +454,6 @@ class CircleController extends Controller
             return view('servererror');
         }
     }
-
 
 
 

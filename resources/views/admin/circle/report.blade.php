@@ -8,7 +8,7 @@
         <div class="col-md-12">
             <div class="card shadow">
                 <div class="card-header">
-                    <div class="card-body d-flex justify-content-between align-items-center ">
+                    <div class="card-body d-flex justify-content-between align-items-center">
                         <h5 class="card-title" style="color: #1d2856;">Report of {{ $circle->circleName }} Circle</h5>
                         <a href="{{ route('circle.index') }}" class="btn btn-bg-orange btn-sm">BACK</a>
                     </div>
@@ -45,16 +45,25 @@
             </div>
         </div>
 
-
-
         <!-- Report Summary -->
         <div class="col-md-12">
             <div class="card shadow">
                 <div class="card-body">
-                    <h5 style="color: #1d2856;" class="mt-3"><b>Report
-                            ({{ $startDate ? date('d-m-Y', strtotime($startDate)) : 'Start of Month' }} to
-                            {{ $endDate ? date('d-m-Y', strtotime($endDate)) : 'Today' }})</b></h5>
-                    <hr>
+                    <div class="d-flex justify-content-start">
+                        <h5 style="color: #1d2856;" class="mt-3"><b>Report
+                                ({{ $startDate ? date('d-m-Y', strtotime($startDate)) : 'Start of Month' }} to
+                                {{ $endDate ? date('d-m-Y', strtotime($endDate)) : 'Today' }}) </b></h5>
+                    </div>
+
+                    @if (!$startDate && !$endDate)
+                        <div class="d-flex justify-content-end mt-3">
+                            <span class="align-self-center" style="color: red;">
+                                <b>*The current data indicates the overall report</b>
+                            </span>
+                        </div>
+                    @endif
+
+                    <hr class="mt-2">
                     <div class="row">
                         <!-- Total IBM -->
                         <div class="col-md-4">
