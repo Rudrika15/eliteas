@@ -583,6 +583,9 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/activity/ibm/vp', [AllActivityController::class, 'ibmVp'])->name('activity.ibmVp');
     Route::get('/activity/refrence/vp', [AllActivityController::class, 'refrenceVp'])->name('activity.refrenceVp');
     Route::get('/activity/businesses/vp', [AllActivityController::class, 'businessVp'])->name('activity.businessesVp');
+
+
+    Route::get('/circle/{id}/report', [CircleController::class, 'report'])->name('circle.report');
 });
 
 

@@ -220,6 +220,26 @@ class CircleMemberController extends Controller
             return view('servererror');
         }
     }
+
+    public function getCircleByMember(Request $request)
+    {
+        $memberId = $request->input('memberId');
+
+        if (!$memberId) {
+            return response()->json(['error' => 'Member ID is required'], 400);
+        }
+
+        // Fetch the member and associated circle
+        $member = Member::with('circle')->find($memberId);
+
+        if (!$member || !$member->circle) {
+            return response()->json(['error' => 'Circle not found'], 404);
+        }
+
+        return response()->json(['circleName' => $member->circle->circleName]);
+    }
+
+
     public function create(Request $request)
     {
         try {
@@ -262,8 +282,6 @@ class CircleMemberController extends Controller
             'gender' => 'required',
             'mobileNo' => 'required|unique:users,contactNo',
         ]);
-
-
 
         try {
             // Generate random password
@@ -493,6 +511,7 @@ class CircleMemberController extends Controller
     {
         try {
             $user = User::find($id);
+            $members = Member::all();
             $member = Member::find($id);
             $countries = Country::where('status', 'Active')->get();
             $states = State::where('status', 'Active')->get();
@@ -508,9 +527,9 @@ class CircleMemberController extends Controller
             }
             $businessCategory = BusinessCategory::where('status', 'Active')->get();
             $membershipType = MembershipType::where('status', 'Active')->get();
+            $circles = Circle::where('status', 'Active')->get();
 
-
-            return view('admin.circlemember.edit', compact('countries', 'membershipType', 'user', 'states', 'cities', 'member', 'contactDetails', 'billing', 'tops', 'circles', 'businessCategory'));
+            return view('admin.circlemember.edit', compact('countries', 'circles', 'members', 'membershipType', 'user', 'states', 'cities', 'member', 'contactDetails', 'billing', 'tops', 'circles', 'businessCategory'));
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError(
@@ -544,10 +563,11 @@ class CircleMemberController extends Controller
 
             // Update the member
             $member = Member::findOrFail($member);
-            if ($request->has('circleId')) {
-                $member->circleId = $request->circleId;
+            if ($request->has('circlesId')) {
+                $member->circleId = $request->circlesId;
             }
             $member->title = $request->has('title') ? $request->title : $member->title;
+            $member->sponsoredBy = $request->has('memberId') ? $request->memberId : $member->sponsoredBy;
             $member->firstName = $request->has('firstName') ? $request->firstName : $member->firstName;
             $member->lastName = $request->has('lastName') ? $request->lastName : $member->lastName;
             $member->username = $request->has('username') ? $request->username : $member->username;

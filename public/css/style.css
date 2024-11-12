@@ -1409,3 +1409,30 @@ input:-webkit-autofill:focus {
     background-color: #e9ecef;
     /* Change this to your desired hover background color */
 }
+
+
+/* circle reposrt css
+ */
+
+ .gradient-orange-blue {
+    background: linear-gradient(135deg, #e76a35, #1d3268);
+    border: none;
+}
+.btn-bg-orange {
+    background-color: #e76a35;
+    color: white;
+    border: none;
+}
+.btn-bg-orange:hover {
+    background-color: #d8592b;
+    color: white;
+}
+.btn-bg-blue {
+    background-color: #1d3268;
+    color: white;
+    border: none;
+}
+.btn-bg-blue:hover {
+    background-color: #16254f;
+    color: white;
+}

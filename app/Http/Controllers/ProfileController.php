@@ -112,7 +112,8 @@ class ProfileController extends Controller
             // $member->receiveUpdates = $request->receiveUpdates;
             // $member->shareRevenue = $request->shareRevenue;
             // $member->membershipStatus = $request->membershipStatus;
-            $member->keyWords = $request->keyWords;
+            // $member->keyWords = $request->keyWords;
+            $member->keyWords = $request->keyWords ? json_encode($request->keyWords) : null;
             $member->status = 'Active';
             $member->save();
 

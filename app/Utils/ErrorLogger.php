@@ -16,27 +16,28 @@ class ErrorLogger
      */
     public static function logError(\Throwable $exception, ?string $url = null): void
     {
-        // Create a new ErrorLog instance
+
+        if ($exception->getMessage() === 'Unauthenticated.') {
+            return;
+        }
+
         $errorLog = new ErrorLog();
-        $errorLog->url = $url ?? request()->fullUrl();  // Preserve your URL logic
+        $errorLog->url = $url ?? request()->fullUrl();
         $errorLog->error_message = $exception->getMessage();
         $errorLog->date = now()->toDateString();
         $errorLog->time = now()->toTimeString();
         $errorLog->status = 'Pending';
 
-        // Add the file and line number where the error occurred
-        $errorLog->file = $exception->getFile();   // Add file name
-        $errorLog->line = $exception->getLine();   // Add line number
+        $errorLog->file = $exception->getFile();
+        $errorLog->line = $exception->getLine();
 
-        // Save the instance to the database
         $errorLog->save();
 
-        // Optionally log the error message with additional details
         Log::error($exception->getMessage(), [
             'url' => $url ?? request()->fullUrl(),
-            'file' => $exception->getFile(),  // Include file name in log
-            'line' => $exception->getLine(),  // Include line number in log
-            'trace' => $exception->getTraceAsString(),  // Maintain trace log
+            'file' => $exception->getFile(),
+            'line' => $exception->getLine(),
+            'trace' => $exception->getTraceAsString(),
         ]);
     }
 }
