@@ -81,8 +81,7 @@
 
                 @foreach ($todaysBirthdays as $user)
                     <div class="birthday-card">
-                        <img src="{{ asset('birthday_images/' . $user->id . '_birthday.png') }}"
-                            alt="Happy Birthday {{ $user->firstName }}">
+                        <img src="{{ asset('birthday_images/' . $user->id . '_birthday.png') }}" alt="Happy Birthday {{ $user->firstName }}">
                     </div>
                 @endforeach
 
@@ -91,10 +90,7 @@
 
 
             <div>
-                @if (
-                    (isset($circlecalls) && count($circlecalls) > 0) ||
-                        (isset($busGiver) && count($busGiver) > 0) ||
-                        (isset($refGiver) && count($refGiver) > 0))
+                @if ((isset($circlecalls) && count($circlecalls) > 0) || (isset($busGiver) && count($busGiver) > 0) || (isset($refGiver) && count($refGiver) > 0))
                     <div class="card-header">
                         <b style="color: #1d2856; font-size:15px">Leader Board -
                             {{ \Carbon\Carbon::now()->subMonth()->format('F Y') }}</b>
@@ -109,8 +105,7 @@
                                         $profilePhoto = $circlecalls['member']->profilePhoto ?? 'profile.png';
                                     @endphp
 
-                                    <img src="{{ asset('ProfilePhoto/' . $profilePhoto) }}" class="mt-3" alt="Profile Photo"
-                                        style="width: 100%; height: 100%; object-fit: contain; aspect-ratio: 1/1;">
+                                    <img src="{{ asset('ProfilePhoto/' . $profilePhoto) }}" class="mt-3" alt="Profile Photo" style="width: 100%; height: 100%; object-fit: contain; aspect-ratio: 1/1;">
 
                                     <div class="card-body">
                                         <h5 class="card-title text-center">Max Business Meets</h5>
@@ -147,8 +142,7 @@
                                         $profilePhoto = $busGiver['member']->profilePhoto ?? 'profile.png';
                                     @endphp
 
-                                    <img src="{{ asset('ProfilePhoto/' . $profilePhoto) }}" class="mt-3" alt="Profile Photo"
-                                        style="width: 100%; height: 100%; object-fit: contain; aspect-ratio: 1/1;">
+                                    <img src="{{ asset('ProfilePhoto/' . $profilePhoto) }}" class="mt-3" alt="Profile Photo" style="width: 100%; height: 100%; object-fit: contain; aspect-ratio: 1/1;">
                                     <div class="card-body">
                                         <h5 class="card-title text-center">Max Business Leader</h5>
                                         <p class="card-text text-center">
@@ -181,9 +175,7 @@
                         @if ($refGiver)
                             <div class="col">
                                 <div class="card">
-                                    <img src="{{ asset('ProfilePhoto/' . ($refGiver['profilePhoto'] ?? 'profile.png')) }}"
-                                        class="mt-3" alt="Profile Photo"
-                                        style="width: 100%; height: 100%; object-fit: contain; aspect-ratio: 1/1;">
+                                    <img src="{{ asset('ProfilePhoto/' . ($refGiver['profilePhoto'] ?? 'profile.png')) }}" class="mt-3" alt="Profile Photo" style="width: 100%; height: 100%; object-fit: contain; aspect-ratio: 1/1;">
                                     <div class="card-body">
                                         <h5 class="card-title text-center">Top Reference Giver</h5>
                                         <p class="card-text text-center">
@@ -277,8 +269,7 @@
                                             Invite
                                         </button> --}}
 
-                                        <button type="button" class="btn btn-bg-orange btn-sm mt-2"
-                                            onclick="openInvitePage('{{ $signedUrl }}')">
+                                        <button type="button" class="btn btn-bg-orange btn-sm mt-2" onclick="openInvitePage('{{ $signedUrl }}')">
                                             Invite
                                         </button>
 
@@ -319,8 +310,7 @@
                                     <button class="btn btn-bg-blue btn-sm" onclick="copyMeetingLink()">
                                         Invite Via Link
                                     </button>
-                                    <input type="hidden" id="shareableMeetingLink"
-                                        value="{{ URL::signedRoute('visitor.form', ['slug' => $meeting->cm_slug, 'meetingId' => $meeting->id, 'ref' => auth()->user()->member->id]) }}">
+                                    <input type="hidden" id="shareableMeetingLink" value="{{ URL::signedRoute('visitor.form', ['slug' => $meeting->cm_slug, 'meetingId' => $meeting->id, 'ref' => auth()->user()->member->id]) }}">
                                 </div>
 
                                 <script>
@@ -338,15 +328,12 @@
                                     <div class="accordion-item ">
                                         <div class="accordion-header" id="headingSix">
 
-                                            <button class="accordion-button collapsed" type="button"
-                                                data-bs-toggle="collapse" data-bs-target="#collapseSix" aria-expanded="false"
-                                                aria-controls="collapseSix">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSix" aria-expanded="false" aria-controls="collapseSix">
                                                 <div class="card-title"> My Invites </div>
                                             </button>
                                         </div>
 
-                                        <div id="collapseSix" class="accordion-collapse collapse"
-                                            aria-labelledby="headingSix">
+                                        <div id="collapseSix" class="accordion-collapse collapse" aria-labelledby="headingSix">
                                             <div class="accordion-body">
                                                 <div class="table-responsive">
                                                     <table class="table table-border datatable table-striped table-hover">
@@ -370,13 +357,10 @@
                                                             @else
                                                                 @foreach ($myInvites as $invite)
                                                                     <tr>
-                                                                        <td><small
-                                                                                class="text-muted">{{ $invite->personName }}</small>
+                                                                        <td><small class="text-muted">{{ $invite->personName }}</small>
                                                                         </td>
-                                                                        <td><small
-                                                                                class="text-muted">{{ $invite->personEmail }}</small>
-                                                                        <td><small
-                                                                                class="text-muted">{{ $invite->personContact }}</small>
+                                                                        <td><small class="text-muted">{{ $invite->personEmail }}</small>
+                                                                        <td><small class="text-muted">{{ $invite->personContact }}</small>
                                                                         </td>
                                                                     </tr>
                                                                 @endforeach
@@ -422,10 +406,8 @@
                                         <small class="fw-italic text-muted pt-2 fw-italic">
 
                                             @foreach ($nearestTraining->trainers as $user)
-                                                <input type="hidden" value="{{ $user->user->id }}" name="trainerId"
-                                                    class="trainerId">
-                                                <input type="hidden" value="{{ $nearestTraining->id }}" name="trainingId"
-                                                    class="trainingId">
+                                                <input type="hidden" value="{{ $user->user->id }}" name="trainerId" class="trainerId">
+                                                <input type="hidden" value="{{ $nearestTraining->id }}" name="trainingId" class="trainingId">
                                                 {{ $user->user->firstName }}
                                                 {{ $user->user->lastName }}
                                                 <br>
@@ -443,8 +425,7 @@
                                     @if (count($findRegister) == 0)
                                         @if ($nearestTraining->fees == 0)
                                             <h5 class="text-muted text-end me-4 pt-5">Free</h5>
-                                            <button type="button" class="btn btn-bg-orange btn-md" data-bs-toggle="modal"
-                                                data-bs-target="#staticBackdrop">
+                                            <button type="button" class="btn btn-bg-orange btn-md" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
                                                 Register
                                             </button>
                                         @else
@@ -452,8 +433,7 @@
                                                 {{ $nearestTraining->fees }}
                                             </h5>
                                             <div class="d-flex justify-content-end">
-                                                <button type="button" class="btn btn-bg-orange btn-md "
-                                                    data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                                                <button type="button" class="btn btn-bg-orange btn-md " data-bs-toggle="modal" data-bs-target="#staticBackdrop">
                                                     Join Now
                                                 </button>
                                             </div>
@@ -508,8 +488,7 @@
                                     @if (!is_null($findEventRegister) && count($findEventRegister) == 0)
                                         @if ($nearestEvents->amount == 0)
                                             <h5 class="text-muted text-end me-4 pt-5">Free</h5>
-                                            <form method="POST"
-                                                action="{{ route('event.register', ['eventId' => $nearestEvents->id]) }}">
+                                            <form method="POST" action="{{ route('event.register', ['eventId' => $nearestEvents->id]) }}">
                                                 @csrf
                                                 <button type="submit" class="btn btn-bg-orange btn-md" id="freeRegisterBtn">
                                                     Register
@@ -518,8 +497,7 @@
                                         @else
                                             <h5 class="text-muted text-end me-4 pt-3"> ₹ {{ $nearestEvents->amount }}</h5>
                                             <div class="d-flex justify-content-end">
-                                                <button type="button" class="btn btn-bg-orange btn-md" id="razorpayBtnEvent"
-                                                    data-amount-event="{{ $nearestEvents->amount }}">
+                                                <button type="button" class="btn btn-bg-orange btn-md" id="razorpayBtnEvent" data-amount-event="{{ $nearestEvents->amount }}">
                                                     Join Now
                                                 </button>
                                             </div>
@@ -567,8 +545,7 @@
                                             <button class="btn btn-bg-blue btn-sm" onclick="copyLink()">
                                                 Invite Via Link
                                             </button>
-                                            <input type="hidden" id="shareableLink"
-                                                value="{{ URL::signedRoute('event.link', ['slug' => $nearestEvents->event_slug, 'ref' => auth()->user()->member->id]) }}">
+                                            <input type="hidden" id="shareableLink" value="{{ URL::signedRoute('event.link', ['slug' => $nearestEvents->event_slug, 'ref' => auth()->user()->member->id]) }}">
                                         </div>
 
                                         <style>
@@ -802,8 +779,7 @@
                             @endforeach
 
                             <div class="d-flex justify-content-end mt-4">
-                                <button type="button" class="btn btn-bg-orange btn-md monthlyPay"
-                                    data-amount="{{ $totalAmountDue }}">
+                                <button type="button" class="btn btn-bg-orange btn-md monthlyPay" data-amount="{{ $totalAmountDue }}">
                                     Pay ₹{{ $totalAmountDue }}
                                 </button>
                             </div>
@@ -937,14 +913,113 @@
 
 
     @role('Admin')
+        @if (count($birthdaysToday) > 0)
+            <style>
+                @keyframes fadeInRight {
+                    0% {
+                        opacity: 0;
+                        transform: translateX(100%);
+                    }
+
+                    100% {
+                        opacity: 1;
+                        transform: translateX(0);
+                    }
+                }
+
+                .notification-bar {
+                    position: fixed;
+                    top: 100px;
+                    right: 0;
+                    width: 300px;
+                    z-index: 1050;
+                    animation: fadeInRight 0.5s ease-out;
+                }
+
+                .notification-bar .card-header {
+                    background-color: #f8f9fa;
+                    border-bottom: 1px solid #dee2e6;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                }
+
+                /* Button to reopen the notification bar */
+                .reopen-btn {
+                    display: none;
+                    position: fixed;
+                    top: 100px;
+                    right: 10px;
+                    z-index: 1051;
+                    background-color: #1d2856;
+                    color: white;
+                    border: none;
+                    padding: 8px 12px;
+                    border-radius: 4px;
+                    cursor: pointer;
+                }
+
+                .btn-orange {
+                    background-color: #ff7f00;
+                    color: #fff;
+                    padding: 5px 10px;
+                    border-radius: 5px;
+                    cursor: pointer;
+                }
+
+                .btn-orange:hover {
+                    background-color: #ff7f00;
+                }
+            </style>
+
+            <!-- Notification Bar -->
+            <div class="notification-bar" id="notificationBar">
+                <div class="card shadow w-100">
+                    <div class="card-header">
+                        <b style="color: #1d2856;">Birthday reminders</b>
+                        <i class="bi bi-balloon" style="color: rgb(255, 187, 0);"></i>
+                        <button type="button" onclick="hideNotification()" style="border: none; background: none; color: red; font-size: 1.2rem;">&times;</button>
+                    </div>
+                    <div class="card-body">
+                        <div class="list-group pt-2">
+                            @foreach ($birthdaysToday as $birthday)
+                                <li href="#" class="list-group-item list-group-item-action text-center d-flex justify-content-between" aria-current="true">
+                                    <div>
+                                        {{ $birthday->firstName }} {{ $birthday->lastName }}
+                                    </div>
+                                    <div>
+                                        <a href="{{ route('birthday.canvas', $birthday->userId) }}" class="btn btn-orange" title="Carete a post"><i class="bi bi-balloon"></i></a>
+                                    </div>
+                                </li>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reopen Button -->
+            <button id="reopenButton" class="reopen-btn" onclick="showNotification()"><i class="bi bi-balloon"></i></button>
+
+            <script>
+                function hideNotification() {
+                    document.getElementById('notificationBar').style.display = 'none';
+                    document.getElementById('reopenButton').style.display = 'block';
+                }
+
+                function showNotification() {
+                    document.getElementById('notificationBar').style.display = 'block';
+                    document.getElementById('reopenButton').style.display = 'none';
+                }
+            </script>
+        @endif
+
         <div class="row">
             <div class="col-md-4">
                 <a href="{{ route('schedule.dashIndex') }}" class="card-link">
                     <div class="card shadow">
                         <div class="card-header">
                             <b style="color: #1d2856;">Upcoming Circle Meetings</b>
-                            <i class="bi bi-calendar3"
-                                style="display: inline-block; float: right; color: rgb(255, 187, 0);"></i>
+                            <i class="bi bi-calendar3" style="display: inline-block; float: right; color: rgb(255, 187, 0);"></i>
                         </div>
                         <div class="card-body">
                             @if (session('status'))
@@ -1119,8 +1194,7 @@
 </div> --}}
 
         <!-- Bootstrap Modal -->
-        <div class="modal fade" id="allInvitesModal" tabindex="-1" aria-labelledby="allInvitesModalLabel"
-            aria-hidden="true">
+        <div class="modal fade" id="allInvitesModal" tabindex="-1" aria-labelledby="allInvitesModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -1153,8 +1227,7 @@
                                                     'Rejected' => 'red',
                                                 ];
                                             @endphp
-                                            <td
-                                                style="background-color: {{ $statusColors[$invite->paymentStatus] ?? 'red' }}; color: white;">
+                                            <td style="background-color: {{ $statusColors[$invite->paymentStatus] ?? 'red' }}; color: white;">
                                                 {{ Str::ucfirst($invite->paymentStatus) }}</td>
                                         </tr>
                                     @endforeach
@@ -1188,39 +1261,29 @@
                 </div>
                 <div class="row" style=" position: relative;">
                     <div class="col-md-9" style="position: relative; left: 50%; transform: translateX(-50%);">
-                        <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel"
-                            style=" position: relative;">
+                        <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel" style=" position: relative;">
                             <div class="carousel-inner">
                                 @foreach ($testimonials as $key => $testimonial)
                                     <div class="carousel-item {{ $key == 0 ? 'active' : '' }}" style="position: relative;">
-                                        <div class="card"
-                                            style="border-radius:10px; height:250px; box-shadow: 0 4px 6px rgba(0,0,0,.1);">
+                                        <div class="card" style="border-radius:10px; height:250px; box-shadow: 0 4px 6px rgba(0,0,0,.1);">
                                             <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
                                                 {{-- {{asset('/')}} --}}
                                                 {{-- {{$testimonial->member->profilePhoto}} --}}
-                                                <img src="{{ asset('ProfilePhoto/' . $testimonial->sender->profilePhoto) }}"
-                                                    alt="Profile" class="rounded-circle img-thumbnail object-fit-cover"
-                                                    style="height: 100px;width:100px;">
+                                                <img src="{{ asset('ProfilePhoto/' . $testimonial->sender->profilePhoto) }}" alt="Profile" class="rounded-circle img-thumbnail object-fit-cover" style="height: 100px;width:100px;">
                                                 <h3>{{ $testimonial->sender->firstName . ' ' . $testimonial->sender->lastName }}
                                                 </h3>
-                                                <p class="text-center text-muted text-wrap p-testimonial-message"><i
-                                                        class="bi bi-quote text-dark"
-                                                        style="font-size: 20px;"></i>{{ $testimonial->message }}<i
-                                                        class="bi bi-quote text-dark"
-                                                        style="font-size: 20px;display:inline-block;transform:rotate(180deg);"></i>
+                                                <p class="text-center text-muted text-wrap p-testimonial-message"><i class="bi bi-quote text-dark" style="font-size: 20px;"></i>{{ $testimonial->message }}<i class="bi bi-quote text-dark" style="font-size: 20px;display:inline-block;transform:rotate(180deg);"></i>
                                                 </p>
                                             </div>
                                         </div>
                                     </div>
                                 @endforeach
                             </div>
-                            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls"
-                                data-bs-slide="prev">
+                            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
                                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                                 <span class="visually-hidden">Previous</span>
                             </button>
-                            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls"
-                                data-bs-slide="next">
+                            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
                                 <span class="carousel-control-next-icon" aria-hidden="true"></span>
                                 <span class="visually-hidden">Next</span>
                             </button>
@@ -1237,16 +1300,14 @@
 
         <!-- Modal -->
         @if ($nearestTraining)
-            <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false"
-                tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="staticBackdropLabel">Join {{ $nearestTraining->title }}
                                 Training
                             </h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                aria-label="Close"></button>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
                             <div class="row">
@@ -1289,8 +1350,7 @@
                                 <div class="">
                                     @if (count($findRegister) == 0)
                                         @if ($nearestTraining->fees == 0)
-                                            <a href="{{ route('training.register') }}/{{ $nearestTraining->id }}/{{ $nearestTraining->trainersTrainings->user->id }}"
-                                                class="btn btn-primary">Register Now</a>
+                                            <a href="{{ route('training.register') }}/{{ $nearestTraining->id }}/{{ $nearestTraining->trainersTrainings->user->id }}" class="btn btn-primary">Register Now</a>
                                         @else
                                             <button type="button" class="btn btn-bg-blue pay">Pay Now</button>
                                         @endif
@@ -1312,8 +1372,7 @@
 
 
         <!-- Modal -->
-        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
-            aria-hidden="true">
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-scrollable">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -1327,22 +1386,17 @@
                                 <input type="hidden" name="meetingId" id="meetingId" value="{{ $meeting->id }}">
                                 <div class="mb-3">
                                     <label for="personName" class="form-label">Name</label>
-                                    <input type="text" class="form-control" name="personName" id="personName"
-                                        required>
+                                    <input type="text" class="form-control" name="personName" id="personName" required>
                                     <span class="error-message text-danger"></span> <!-- Error message placeholder -->
                                 </div>
                                 <div class="mb-3">
                                     <label for="personEmail" class="form-label">Email address</label>
-                                    <input type="email" class="form-control" name="personEmail" id="personEmail"
-                                        aria-describedby="emailHelp" required>
+                                    <input type="email" class="form-control" name="personEmail" id="personEmail" aria-describedby="emailHelp" required>
                                     <span class="error-message text-danger"></span> <!-- Error message placeholder -->
                                 </div>
                                 <div class="mb-3">
                                     <label for="personContact" class="form-label">Contact Number</label>
-                                    <input type="tel" class="form-control" name="personContact" id="personContact"
-                                        pattern="[0-9]{10}" maxlength="10"
-                                        oninput="if(this.value.length > 10) this.value = this.value.slice(0,10); this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');"
-                                        required>
+                                    <input type="tel" class="form-control" name="personContact" id="personContact" pattern="[0-9]{10}" maxlength="10" oninput="if(this.value.length > 10) this.value = this.value.slice(0,10); this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');" required>
                                     <span class="error-message text-danger" id="phoneError" style="display:none;">
                                         Please enter correct number
                                     </span> <!-- Error message placeholder -->
@@ -1363,9 +1417,7 @@
                                     <select name="  businessCategoryId" class="form-select" id="personBusiness" required>
                                         <option value="" disabled selected>--Select Business Category--</option>
                                         @foreach ($businessCategory as $category)
-                                            <option value="{{ $category->id }}"><img
-                                                    src="{{ asset('BusinessCategory') }}/{{ $category->image }}"
-                                                    alt=""> {{ $category->categoryName }}</option>
+                                            <option value="{{ $category->id }}"><img src="{{ asset('BusinessCategory') }}/{{ $category->image }}" alt=""> {{ $category->categoryName }}</option>
                                         @endforeach
                                     </select>
                                     <span class="error-message text-danger"></span> <!-- Error message placeholder -->

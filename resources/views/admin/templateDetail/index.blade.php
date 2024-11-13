@@ -11,8 +11,7 @@
             </div>
             <hr>
 
-            <form action="{{ route('templateDetail.store') }}" enctype="multipart/form-data" method="post"
-                class="m-3 needs-validation" novalidate>
+            <form action="{{ route('templateDetail.store') }}" enctype="multipart/form-data" method="post" class="m-3 needs-validation" novalidate>
                 @csrf
 
                 <input type="hidden" name="templateId" value="{{ request('id') }}">
@@ -22,10 +21,9 @@
                         <div class="form-floating mb-3">
                             <select name="title" id="title" class="form-control" required>
                                 <option selected disabled>Select title</option>
-                                <option value="email">Email</option>
-                                <option value="location">Location</option>
-                                <option value="contact">Contact</option>
-                                <option value="website">Website</option>
+                                <option value="ProfilePhoto">Profile Photo</option>
+                                <option value="title1">Title 1</option>
+                                <option value="title2">Title 2</option>
                             </select>
                             <label for="title">Title</label>
                         </div>
@@ -33,9 +31,7 @@
 
                     <div class="col-md-6">
                         <div class="form-floating mb-3">
-                            <input type="file" accept='image/*' onchange="previewPhoto(event)"
-                                class="form-control @error('templateIcon') is-invalid @enderror" id="templateIcon"
-                                name="templateIcon" required>
+                            <input type="file" accept='image/*' onchange="previewPhoto(event)" class="form-control @error('templateIcon') is-invalid @enderror" id="templateIcon" name="templateIcon" required>
                             <label for="templateIcon">Upload Icon</label>
                             <div class="text-danger mt-1">* File size: Max 2MB</div>
                             @error('templateIcon')
@@ -43,8 +39,7 @@
                             @enderror
                         </div>
                         <div class="mt-1">
-                            <img id="photoPreview" src="{{ url('images/default.jpg') }}" alt="Icon Preview"
-                                style="width: 100px; height: 100px; object-fit: contain;">
+                            <img id="photoPreview" src="{{ url('images/default.jpg') }}" alt="Icon Preview" style="width: 100px; height: 100px; object-fit: contain;">
                         </div>
                     </div>
                 </div>
@@ -65,8 +60,7 @@
                     @foreach ($fields as $field => $label)
                         <div class="col-md-6">
                             <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="{{ $field }}"
-                                    name="{{ $field }}" required>
+                                <input type="text" class="form-control" id="{{ $field }}" name="{{ $field }}" required>
                                 <label for="{{ $field }}">{{ $label }}</label>
                             </div>
                         </div>
@@ -75,8 +69,7 @@
                     <div class="col-md-6">
                         <div class="mb-3">
                             <label for="textColor">Text Color</label>
-                            <input type="color" class="form-control-color form-control" id="textColor" name="textColor"
-                                required>
+                            <input type="color" class="form-control-color form-control" id="textColor" name="textColor" required>
                         </div>
                     </div>
                 </div>
@@ -111,8 +104,7 @@
 
                                 <td>
                                     @if ($template->templateIcon)
-                                        <img src="{{ url('templateIcon/' . basename($template->templateIcon)) }}"
-                                            alt="Template Icon" style="width: 100px; height: auto; border-radius: 5px;">
+                                        <img src="{{ url('templateIcon/' . basename($template->templateIcon)) }}" alt="Template Icon" style="width: 100px; height: auto; border-radius: 5px;">
                                     @else
                                         <span></span>
                                     @endif
@@ -128,13 +120,11 @@
                                 <td>{{ $template->textLength }}</td>
                                 <td>{{ $template->frameHeight }}</td>
                                 <td>
-                                    <a href="{{ route('templateDetail.edit', $template->id) }}"
-                                        class="btn btn-bg-blue btn-sm btn-tooltip">
+                                    <a href="{{ route('templateDetail.edit', $template->id) }}" class="btn btn-bg-blue btn-sm btn-tooltip">
                                         <span class="btn-text">Edit Template Details</span>
                                         <i class="bi bi-pen"></i>
                                     </a>
-                                    <button class="btn btn-danger btn-sm btn-tooltip"
-                                        onclick="deleteRow('{{ route('templateDetail.delete', $template->id) }}')">
+                                    <button class="btn btn-danger btn-sm btn-tooltip" onclick="deleteRow('{{ route('templateDetail.delete', $template->id) }}')">
                                         <span class="btn-text">Delete</span>
                                         <i class="bi bi-trash"></i>
                                     </button>

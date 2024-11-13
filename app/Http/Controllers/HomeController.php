@@ -38,6 +38,8 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\CircleMeetingMembersBusiness;
 use App\Models\CircleMeetingMembersReference;
 use App\Mail\MeetingInvitation as MailMeetingInvitation;
+use App\Models\Templatemaster;
+use SebastianBergmann\Template\Template;
 
 class HomeController extends Controller
 {
@@ -256,8 +258,12 @@ class HomeController extends Controller
             // $auth = Auth::user();
             // $member = Member::where('userId', $auth->id)->first();
 
+            $birthdaysToday = Member::whereMonth('birthDate', Carbon::today()->month)
+                ->whereDay('birthDate', Carbon::today()->day)
+                ->get();
 
             $myInvites = MeetingInvitation::where('invitedMemberId', Auth::user()->id)->get();
+
 
             if ($nearestTraining) {
                 $findRegister = TrainingRegister::where('userId', Auth::user()->id)
@@ -267,7 +273,6 @@ class HomeController extends Controller
             } else {
                 $findRegister = [];
             }
-
             if (!Auth::user()->hasRole('Admin')) {
                 $testimonials = Testimonial::where('memberId', Auth::user()->member->id)
                     ->where('status', 'Active')
@@ -402,7 +407,7 @@ class HomeController extends Controller
                     'ref' => auth()->user()->member->id
                 ]);
 
-                $birthDate = Member::select('id', 'userId', 'birthDate', 'firstName', 'lastName')->whereNotNull('birthDate')->get();
+
                 $today = Carbon::today()->format('m-d');
                 $todaysBirthdays = Member::whereRaw("DATE_FORMAT(birthDate, '%m-%d') = ?", [$today])->get();
 
@@ -419,7 +424,7 @@ class HomeController extends Controller
                 return view('home', compact('birthDate', 'signedUrl', 'count', 'monthlyPayments', 'totalAmountDue', 'nearestEvents', 'findEventRegister', 'circlecalls', 'busGiver', 'refGiver', 'nearestTraining', 'findRegister', 'testimonials', 'meeting', 'businessCategory', 'myInvites', 'todaysBirthdays'));
             }
 
-            return view('home', compact('count', 'nearestTraining', 'businessCategory', 'myInvites', 'findRegister'));
+            return view('home', compact('count', 'nearestTraining', 'businessCategory', 'myInvites', 'findRegister', 'birthdaysToday'));
         } catch (\Throwable $th) {
             // Log the error
             // throw $th;
@@ -427,6 +432,14 @@ class HomeController extends Controller
             // Return a generic error view or message
             return view('servererror')->with('error', 'Failed to load the dashboard');
         }
+    }
+
+    public function birthday($id)
+    {
+        $person  = Member::where('userId', $id)->first();
+        $templates = Templatemaster::all();
+        // $template = Templatemaster::with('TemplateDetail')->get();
+        return view('admin.birthday.index', compact('person', 'templates'));
     }
 
 

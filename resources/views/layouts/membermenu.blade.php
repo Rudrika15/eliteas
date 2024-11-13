@@ -133,6 +133,12 @@
                 <span class="text-blue">Circle Leaderboard</span>
             </a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link collapsed " href="{{ route('circleWiseLeaderboard.index') }}">
+                <i class="bi bi-chat-quote text-orange"></i>
+                <span class="text-blue">Specific Ask</span>
+            </a>
+        </li>
     </ul>
 </li>
 

@@ -256,7 +256,7 @@
                                             </div>
                                         @endif
                                     </div>
-                                    <button type="button" class="btn btn-primary mt-2" id="add-keyword">Add
+                                    <button type="button" class="btn btn-bg-blue mt-2" id="add-keyword">Add
                                         Keyword</button>
                                 </div>
 
