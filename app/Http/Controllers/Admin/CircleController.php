@@ -843,7 +843,6 @@ class CircleController extends Controller
                         }
                     }
                 }
-
                 return $futureMeetingFound;
             };
 

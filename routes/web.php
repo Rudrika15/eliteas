@@ -51,6 +51,7 @@ use App\Http\Controllers\Admin\CircleMeetingMemberReferenceController;
 use App\Http\Controllers\admin\TemplateDetailController;
 use App\Http\Controllers\admin\TemplatemasterController;
 use App\Http\Controllers\Admin\UpdateAppController;
+use App\Http\Controllers\Admin\SpecificAskController;
 
 /*
 |--------------------------------------------------------------------------
@@ -588,6 +589,17 @@ Route::group(['middleware' => ['auth']], function () {
 
 
     Route::get('/circle/{id}/report', [CircleController::class, 'report'])->name('circle.report');
+
+
+    //Specific ask
+
+    Route::get('/specific-ask/all-index', [SpecificAskController::class, 'allIndex'])->name('specificask.allIndex');
+    Route::get('/specific-ask/index', [SpecificAskController::class, 'index'])->name('specificask.index');
+    Route::get('/specific-ask/create', [SpecificAskController::class, 'create'])->name('specificask.create');
+    Route::post('/specific-ask/store', [SpecificAskController::class, 'store'])->name('specificask.store');
+    Route::get('/specific-ask/edit/{id?}', [SpecificAskController::class, 'edit'])->name('specificask.edit');
+    Route::post('/specific-ask/update', [SpecificAskController::class, 'update'])->name('specificask.update');
+    Route::post('/specific-ask/delete/{id?}', [SpecificAskController::class, 'delete'])->name('specificask.delete');
 });
 
 

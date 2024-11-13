@@ -27,19 +27,18 @@
         <div class="card-body">
             <div class="d-flex justify-content-between align-items-center mb-5">
                 <h4 class="card-title">Create Specific Ask</h4>
-                <a href="{{ route('testimonial.index') }}" class="btn btn-bg-orange btn-sm">BACK</a>
+                <a href="{{ route('specificask.index') }}" class="btn btn-bg-orange btn-sm">BACK</a>
             </div>
             <hr class="mb-5">
-            <form class="m-3 needs-validation" id="circlecallForm" enctype="multipart/form-data" method="post"
-                action="{{ route('testimonial.store') }}" novalidate>
+            <form class="m-3 needs-validation" id="specificaskForm" enctype="multipart/form-data" method="post"
+                action="{{ route('specificask.store') }}" novalidate>
                 @csrf
                 <div class="row mb-3 ">
                     <div class="col-md-12">
                         <div class="form-floating mt-3">
-                            <textarea class="form-control @error('message') is-invalid @enderror" id="message" name="message"
-                                placeholder="Enter Message"></textarea>
-                            <label for="message"><span style="color:red">*</span> Message</label>
-                            @error('message')
+                            <textarea class="form-control @error('ask') is-invalid @enderror" id="ask" name="ask" placeholder="Enter ask"></textarea>
+                            <label for="ask">Add Your Specific Ask</label>
+                            @error('ask')
                                 <div class="invalid-tooltip">
                                     {{ $message }}
                                 </div>
@@ -49,7 +48,6 @@
                 </div>
                 <div class="text-center mt-5">
                     <button type="submit" class="btn btn-bg-blue">Submit</button>
-                    <button type="reset" class="btn btn-bg-orange">Reset</button>
                 </div>
             </form><!-- End floating Labels Form -->
         </div>

@@ -163,7 +163,7 @@ class LoginController extends Controller
         }
     }
 
-    //admin side profile edit or update 
+    //admin side profile edit or update
 
     public function memberUpdateAdmin(Request $request, $id)
     {
@@ -302,6 +302,7 @@ class LoginController extends Controller
             return Utils::errorResponse(['error' => 'Member not found'], 404);
         }
         $member->title = $request->input('title', $member->title);
+        $member->birthDate  = $request->input('birthDate', $member->birthDate);
         $member->firstName = $request->input('firstName', $member->firstName);
         $member->lastName = $request->input('lastName', $member->lastName);
         // $member->username = $request->input('username', $member->username);
@@ -358,7 +359,7 @@ class LoginController extends Controller
         $member->showSocialLinks = $request->input('showSocialLinks', $member->showSocialLinks);
         $member->receiveUpdates = $request->input('receiveUpdates', $member->receiveUpdates);
         $member->shareRevenue = $request->input('shareRevenue', $member->shareRevenue);
-        
+
 
         $member->save();
 

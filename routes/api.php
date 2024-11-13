@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\EventController;
 use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Api\CircleController;
 use App\Http\Controllers\Admin\MemberController;
+use App\Http\Controllers\Api\AllActivityController;
 use App\Http\Controllers\Api\MonthlyPaymentController;
 use App\Http\Controllers\Api\LocationController;
 use App\Http\Controllers\Api\OTPLoginController;
@@ -33,7 +34,9 @@ use App\Http\Controllers\Api\CircleMeetingMembersController;
 use App\Http\Controllers\Api\MembershipSubscriptionController;
 use App\Http\Controllers\Api\CircleMeetingMemberBusinessController;
 use App\Http\Controllers\Api\CircleMeetingMemberReferenceController;
+use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\PermissionController;
+use App\Http\Controllers\Api\SpecificAskController;
 use App\Http\Controllers\Api\UpdateAppController;
 
 // use App\Http\Controllers\Api\CircleMeetingMemberBusinessController;
@@ -94,7 +97,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/role-index', [PermissionController::class, 'getRole']);
 
 
-    // Circl 1:1 Call 
+    // Circl 1:1 Call
     Route::get('circlecalls-index', [CircleCallController::class, 'index']);
     Route::get('circlecalls-recievedBusinessMeet-index', [CircleCallController::class, 'recievedBusinessMeet']);
     Route::get('circlecalls-view/{id}', [CircleCallController::class, 'view']);
@@ -166,7 +169,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::put('circle-member-update/{id}', [CircleMemberController::class, 'update']);
     Route::delete('circle-member-delete/{id}', [CircleMemberController::class, 'delete']);
 
-    // Circle Meeting 
+    // Circle Meeting
     Route::get('circle-meeting-index', [CircleMeetingController::class, 'index']);
     Route::get('circle-meeting-show/{id}', [CircleMeetingController::class, 'show']);
     Route::post('circle-meeting-create', [CircleMeetingController::class, 'create']);
@@ -180,14 +183,14 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::put('circle-meeting-members-update/{id}', [CircleMeetingMembersController::class, 'update']);
     Route::delete('circle-meeting-members-delete/{id}', [CircleMeetingMembersController::class, 'delete']);
 
-    // Franchise 
+    // Franchise
     Route::get('franchise-index', [FranchiseController::class, 'index']);
     Route::get('franchise-show/{id}', [FranchiseController::class, 'show']);
     Route::post('franchise-create', [FranchiseController::class, 'create']);
     Route::put('franchise-update/{id}', [FranchiseController::class, 'update']);
     Route::delete('franchise-delete/{id}', [FranchiseController::class, 'delete']);
 
-    //search member 
+    //search member
     Route::post('search-member-index', [CircleCallController::class, 'searchmember']);
 
     //circle wise mmeber
@@ -298,7 +301,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
 
     //new api v1
-    //lead board 
+    //lead board
     Route::get('v1/leaderboards/max-meetings', [ApiController::class, 'maxMeetings']);
     Route::get('v1/leaderboards/max-business', [ApiController::class, 'maxBusiness']);
     Route::get('v1/leaderboards/max-reference', [ApiController::class, 'maxReference']);
@@ -362,6 +365,25 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     //app
     // Route::get('/app-version', [ApiController::class, 'getAppVersion']);
+
+
+    // specific Ask
+
+    Route::get('specific-ask/all-index', [SpecificAskController::class, 'allIndexApi']);
+    Route::get('specific-ask/index', [SpecificAskController::class, 'indexApi']);
+    Route::post('specific-ask/create', [SpecificAskController::class, 'createApi']);
+    Route::post('specific-ask/update/{id}', [SpecificAskController::class, 'updateApi']);
+    Route::get('specific-ask/delete/{id}', [SpecificAskController::class, 'deleteApi']);
+
+    //all activity for vp
+
+    Route::get('/ibm-vp', [AllActivityController::class, 'ibmVp']);
+    Route::get('/reference-vp', [AllActivityController::class, 'refrenceVp']);
+    Route::get('/business-vp', [AllActivityController::class, 'businessVp']);
+
+    //circle admin payment history
+
+    Route::get('circleAdminPaymentHistory', [PaymentController::class, 'circleAdminPaymentHistory']);
 });
 
 //get app version

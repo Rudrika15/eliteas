@@ -421,7 +421,7 @@ class HomeController extends Controller
                     $this->generateBirthdayWishImage($user);
                 }
 
-                return view('home', compact('birthDate', 'signedUrl', 'count', 'monthlyPayments', 'totalAmountDue', 'nearestEvents', 'findEventRegister', 'circlecalls', 'busGiver', 'refGiver', 'nearestTraining', 'findRegister', 'testimonials', 'meeting', 'businessCategory', 'myInvites', 'todaysBirthdays'));
+                return view('home', compact('signedUrl', 'count', 'monthlyPayments', 'totalAmountDue', 'nearestEvents', 'findEventRegister', 'circlecalls', 'busGiver', 'refGiver', 'nearestTraining', 'findRegister', 'testimonials', 'meeting', 'businessCategory', 'myInvites', 'todaysBirthdays'));
             }
 
             return view('home', compact('count', 'nearestTraining', 'businessCategory', 'myInvites', 'findRegister', 'birthdaysToday'));
