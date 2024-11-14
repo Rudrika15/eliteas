@@ -42,7 +42,12 @@ class ConnectionController extends Controller
         $connection->memberId = $memberId;
         $connection->userId = $userId;
         $connection->save();
-        return response()->json(['message' => 'Connection request sent successfully']);
+
+        // Return success response
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Connection request sent successfully!'
+        ]);
     }
 
     public function connectionRequests()

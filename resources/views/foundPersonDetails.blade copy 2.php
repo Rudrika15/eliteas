@@ -228,6 +228,7 @@
         }
     </style>
 
+    </style>
 </head>
 
 <body>
@@ -299,25 +300,15 @@
                     </button>
                 @endif
 
-                {{-- @if (!empty($memberStatus) && $memberStatus->status == 'Accepted')
-                    <button id="messageButton" class="btn btn-connect ms-2">
-                        Message
-                    </button>
-                @else
-                    <button id="messageButton" class="btn btn-connect ms-2">
-                        Message
-                    </button>
-                @endif --}}
-
-
                 @if (!empty($memberStatus) && $memberStatus->status == 'Accepted')
                     <button id="messageButton" class="btn btn-connect ms-2">
                         Message
                     </button>
                 @else
-                    <!-- No button is rendered in the else block -->
+                    <button id="messageButton" class="btn btn-connect ms-2">
+                        Message
+                    </button>
                 @endif
-
 
                 <!-- Small Popup Modal -->
                 <div id="chatPopup" class="modal" tabindex="-1" role="dialog">
@@ -411,8 +402,8 @@
                 <div class="content-section">
                     <h5>My Bio</h5>
                     <ul>
-                        {{-- <li><span class="title">Email:</span> <span
-                                class="value">{{ $member->user->email ?? 'Not Specified' }}</span></li> --}}
+                        <li><span class="title">Email:</span> <span
+                                class="value">{{ $member->user->email ?? 'Not Specified' }}</span></li>
                         <li><span class="title">Language:</span> <span
                                 class="value">{{ $member->language ?? 'Not Specified' }}</span></li>
                         <li><span class="title">Hobbies & Interests:</span> <span
@@ -459,146 +450,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
-
-    <script>
-        // Get elements
-        console.log('Getting elements');
-        var modal = document.getElementById("chatModal");
-        var btn = document.getElementById("messageButton");
-        var span = document.getElementsByClassName("close")[0];
-        var chatBox = document.getElementById("chatBox");
-        var chatInput = document.getElementById("chatInput");
-        var sendButton = document.getElementById("sendButton");
-        var pollingInterval;
-        console.log('Got elements');
-
-        // Open the modal
-        btn.onclick = function() {
-            console.log('Button clicked');
-            modal.style.display = "block";
-            console.log('Modal displayed');
-            fetchMessages(); // Fetch messages when the modal is opened
-            startPolling(); // Start polling for new messages
-        }
-
-        // Close the modal
-        span.onclick = function() {
-            console.log('Close button clicked');
-            modal.style.display = "none";
-            console.log('Modal hidden');
-            stopPolling(); // Stop polling when the modal is closed
-        }
-
-        // Close the modal when clicking outside of it
-        window.onclick = function(event) {
-            console.log('Window clicked');
-            if (event.target == modal) {
-                console.log('Modal clicked');
-                modal.style.display = "none";
-                console.log('Modal hidden');
-                stopPolling(); // Stop polling when clicking outside the modal
-            }
-        }
-
-        // Handle sending a message
-        sendButton.onclick = function() {
-            console.log('Send button clicked');
-            sendMessage();
-        }
-
-        chatInput.addEventListener("keypress", function(event) {
-            console.log('Key pressed');
-            if (event.key === "Enter") {
-                console.log('Enter key pressed');
-                sendMessage();
-            }
-        });
-
-        function fetchMessages() {
-            const authCheck = `{{ Auth::user()->id }}`;
-            console.log("authCheck", authCheck);
-
-            var memberIdElement = document.getElementById('memberId');
-
-            console.log('Checking for memberId element:', memberIdElement);
-            if (!memberIdElement) {
-                console.error('Element with ID "memberId" not found');
-                alert('Member ID is missing. Cannot fetch messages.');
-                return;
-            }
-
-            var receiverId = memberIdElement.value;
-            console.log('Receiver ID:', receiverId);
-
-            // Fetch messages with a POST request
-            $.post('/get-messages', {
-                receiverId: receiverId, // Pass the receiverId
-                _token: '{{ csrf_token() }}' // Include CSRF token for security
-            }).done(function(messages) {
-                console.log('Got messages');
-                chatBox.innerHTML = ''; // Clear existing messages
-                messages.forEach(function(message) {
-                    var messageElement = document.createElement("div");
-                    if (message.senderId == authCheck) {
-                        messageElement.className = "message sender"; // Sender's message
-                    } else if (message.receiverId == authCheck) {
-                        messageElement.className = "message receiver"; // Receiver's message
-                    }
-                    messageElement.textContent = message.content;
-                    chatBox.appendChild(messageElement);
-                });
-                chatBox.scrollTop = chatBox.scrollHeight; // Scroll to the bottom
-            }).fail(function(jqXHR, textStatus, errorThrown) {
-                console.error('Error fetching messages: ', textStatus, errorThrown);
-            });
-        }
-
-        function sendMessage() {
-            console.log('Sending message');
-            var message = chatInput.value.trim();
-            var memberIdElement = document.getElementById('memberId');
-
-            console.log('Checking for memberId element:', memberIdElement);
-            if (!memberIdElement) {
-                console.error('Element with ID "memberId" not found');
-                alert('Member ID is missing. Cannot send message.');
-                return;
-            }
-
-            var receiverId = memberIdElement.value;
-            console.log('Receiver ID:', receiverId);
-
-            if (message && receiverId) {
-                $.post('/send-message', {
-                    message: message,
-                    userId: receiverId,
-                    _token: '{{ csrf_token() }}'
-                }).done(function(response) {
-                    console.log('Message sent: ' + response.status);
-                    if (response.status === 'Message sent') {
-                        var messageElement = document.createElement("div");
-                        messageElement.className = "message sender"; // Sender's message
-                        messageElement.textContent = message;
-                        chatBox.appendChild(messageElement);
-                        chatInput.value = "";
-                        chatBox.scrollTop = chatBox.scrollHeight;
-                    }
-                }).fail(function(jqXHR, textStatus, errorThrown) {
-                    console.error('Error sending message: ', textStatus, errorThrown);
-                });
-            }
-        }
-
-        function startPolling() {
-            pollingInterval = setInterval(fetchMessages, 1000); // Poll every 1 second
-        }
-
-        function stopPolling() {
-            clearInterval(pollingInterval);
-        }
-    </script>
-
 
 
     <script>

@@ -245,8 +245,8 @@
             margin: 5px 0;
         }
 
-        .btn-connect {
-            background-color: #0073b1;
+        .btn-view-profile {
+            background-color: #e76a35;
             color: #fff;
             border-radius: 25px;
             padding: 5px 15px;
@@ -255,8 +255,8 @@
             cursor: pointer;
         }
 
-        .btn-connect:hover {
-            background-color: #005580;
+        .btn-view-profile:hover {
+            background-color: #e76a35;
         }
     </style>
 
@@ -307,28 +307,22 @@
                     var profileImage = document.createElement('div');
                     profileImage.classList.add('profile-image');
 
-                    // Log member profilePhoto to ensure it's correct
-                    console.log('Profile photo:', member.profilePhoto);
-
                     if (member.profilePhoto) {
                         var imgElement = document.createElement('img');
                         imgElement.src = '/ProfilePhoto/' + member.profilePhoto;
-
-                        // Log the image URL to check if it's valid
-                        console.log('Image URL:', imgElement.src);
-
-                        // Add the image to the profileImage div
                         profileImage.appendChild(imgElement);
                     } else {
-                        // If no profile photo, show initials
                         profileImage.textContent = member.firstName.charAt(0) + member.lastName.charAt(0);
                     }
 
-
                     var cardTitle = document.createElement('h5');
                     cardTitle.classList.add('card-title');
-                    cardTitle.textContent = member.firstName.charAt(0).toUpperCase() + member.firstName.slice(1) +
-                        ' ' + member.lastName.charAt(0).toUpperCase() + member.lastName.slice(1);
+                    cardTitle.textContent =
+                        member.firstName.charAt(0).toUpperCase() +
+                        member.firstName.slice(1) +
+                        ' ' +
+                        member.lastName.charAt(0).toUpperCase() +
+                        member.lastName.slice(1);
                     cardTitle.addEventListener('click', function() {
                         var routeURL = '/foundPersonDetails/' + member.id;
                         window.location.href = routeURL;
@@ -342,24 +336,12 @@
                     circleText.classList.add('card-text');
                     circleText.textContent = 'Circle Name: ' + member.circle.circleName;
 
-                    var connectButton = document.createElement('button');
-                    connectButton.classList.add('btn', 'btn-connect');
-                    connectButton.textContent = 'Connect';
-                    connectButton.addEventListener('click', function() {
-                        fetch('/connect', {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
-                                        .getAttribute('content')
-                                },
-                                body: JSON.stringify({
-                                    memberId: member.id
-                                })
-                            })
-                            .then(response => response.json())
-                            .then(data => console.log(data))
-                            .catch(error => console.error('Fetch error:', error));
+                    var viewProfileButton = document.createElement('button');
+                    viewProfileButton.classList.add('btn', 'btn-view-profile');
+                    viewProfileButton.textContent = 'View Profile';
+                    viewProfileButton.addEventListener('click', function() {
+                        var routeURL = '/foundPersonDetails/' + member.id;
+                        window.location.href = routeURL;
                     });
 
                     // Append elements to card
@@ -367,7 +349,7 @@
                     cardBody.appendChild(cardTitle);
                     cardBody.appendChild(emailText);
                     cardBody.appendChild(circleText);
-                    cardBody.appendChild(connectButton);
+                    cardBody.appendChild(viewProfileButton);
                     cardElement.appendChild(cardBody);
 
                     cardContainer.appendChild(cardElement); // Append card to card container
