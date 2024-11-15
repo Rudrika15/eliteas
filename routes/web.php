@@ -52,6 +52,8 @@ use App\Http\Controllers\admin\TemplateDetailController;
 use App\Http\Controllers\admin\TemplatemasterController;
 use App\Http\Controllers\Admin\UpdateAppController;
 use App\Http\Controllers\Admin\SpecificAskController;
+use App\Http\Controllers\Conquer\ConEventController;
+use App\Http\Controllers\Conquer\ConquerEventController;
 
 /*
 |--------------------------------------------------------------------------
@@ -577,8 +579,15 @@ Route::group(['middleware' => ['auth']], function () {
     // Route::post('/store-user-details', [EventController::class, 'storeUserDetails'])->name('storeUserDetails');
     // Route::post('/check-email', [EventController::class, 'checkEmail'])->name('checkEmail');
 
-    //All Activity
+    //Conquer Event
+    Route::get('conquer/event/index', [ConquerEventController::class, 'index'])->name('conquer.events.index');
+    Route::get('conquer/event/create', [ConquerEventController::class, 'create'])->name('conquer.events.create');
+    Route::post('conquer/event/store', [ConquerEventController::class, 'store'])->name('conquer.events.store');
+    Route::get('conquer/event/edit/{id?}', [ConquerEventController::class, 'edit'])->name('conquer.events.edit');
+    Route::post('conquer/event/update', [ConquerEventController::class, 'update'])->name('conquer.events.update');
+    Route::delete('conquer/event/delete/{id?}', [ConquerEventController::class, 'delete'])->name('conquer.events.delete');
 
+    //All Activity
     Route::get('/activity/ibm', [AllActivityController::class, 'ibm'])->name('activity.ibm');
     Route::get('/activity/refrence', [AllActivityController::class, 'refrence'])->name('activity.refrence');
     Route::get('/activity/businesses', [AllActivityController::class, 'business'])->name('activity.businesses');
@@ -603,6 +612,10 @@ Route::group(['middleware' => ['auth']], function () {
 });
 
 
+
+Route::get('/main-event', [ConEventController::class, 'main'])->name('main.event');
+Route::get('/main-event/visitor', [ConEventController::class, 'visitor'])->name('main.event.visitor');
+Route::post('/main-event/conquer-visitor-store', [ConEventController::class, 'conquerVisitorStore'])->name('conquer.visitor.form.store');
 
 
 
