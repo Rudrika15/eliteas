@@ -194,21 +194,21 @@
                                 <div class="form-group col-sm-6 flex-column d-flex">
                                     <label class="form-control-label px-3">Contact No<span
                                             class="text-danger">*</span></label>
-                                    <input type="text" id="contactNo" name="contactNo"
-                                        value="{{ old('contactNo') }}"
-                                        class="form-control @error('contactNo') is-invalid @enderror"
+                                    <input type="text" id="mobileNo" name="mobileNo"
+                                        value="{{ old('mobileNo') }}"
+                                        class="form-control @error('mobileNo') is-invalid @enderror"
                                         oninput="if(this.value.length > 10) this.value = this.value.slice(0,10); this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');"
                                         pattern="[0-9]{10}"
                                         oninvalid="this.setCustomValidity('Please enter a valid 10-digit mobile number');"
                                         oninput="this.setCustomValidity('')" onblur="validate(3)" required>
-                                    @error('contactNo')
+                                    @error('mobileNo')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
                                     @enderror
-                                    @if ($errors->has('contactNo') && $errors->first('contactNo') == 'Please enter a valid 10-digit mobile number')
+                                    @if ($errors->has('mobileNo') && $errors->first('mobileNo') == 'Please enter a valid 10-digit mobile number')
                                         <span class="invalid-feedback" role="alert" style="color: red;">
-                                            <strong>{{ $errors->first('contactNo') }}</strong>
+                                            <strong>{{ $errors->first('mobileNo') }}</strong>
                                         </span>
                                     @endif
                                 </div>

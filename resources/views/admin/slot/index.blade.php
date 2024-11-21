@@ -30,7 +30,8 @@
                             @foreach ($slot as $slotData)
                                 <tr>
                                     <th>{{ ($slot->currentPage() - 1) * $slot->perPage() + $loop->index + 1 }}
-                                    <td>{{ $slotData->eventTypeName }}</td>
+                                    <td>{{ $slotData->start_time }}</td>
+                                    <td>{{ $slotData->end_time }}</td>
                                     <td>{{ $slotData->status }}</td>
                                     <td>
                                         <a href="{{ route('slot.edit', $slotData->id) }}"

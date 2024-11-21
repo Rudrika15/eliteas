@@ -507,6 +507,13 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::post('/renew-membership/{userId}', [PaymentController::class, 'renewMembership'])->name('renewMembership.mail');
 
+    //User View for Event
+    // Route::get('/event/userListView', [SlotController::class, 'userListView'])->name('event.slot.userListView');
+
+    //
+    Route::get('/event/{id}/view-members', [SlotController::class, 'userListView'])->name('event.viewMembers');
+
+
 
 
     // Attendance

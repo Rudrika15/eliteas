@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Event;
+use App\Models\EventRegister;
 use App\Models\Slot;
 use App\Utils\ErrorLogger;
 use Illuminate\Http\Request;
@@ -34,11 +36,33 @@ class SlotController extends Controller
         }
     }
 
+    public function userListView(Request $request, $id)
+    {
+        try {
+
+            $event = Event::findOrFail($id);
+            $users = EventRegister::where('eventId', $id)
+                ->where('status', 'Active')
+                ->get();
+
+            $slots = Slot::where('status', 'Active')->get();
+
+            if ($users->isEmpty()) {
+                return redirect()->back()->with('message', 'No active users found for this event.');
+            }
+
+            return view('admin.slot.viewMembers', compact('users', 'event', 'slots'));
+        } catch (\Throwable $th) {
+            ErrorLogger::logError($th, $request->fullUrl());
+            return view('servererror');
+        }
+    }
+
+
     public function create(Request $request)
     {
         try {
-            $slot = Slot::all();
-            return view('admin.slot.create', compact('slot'));
+            return view('admin.slot.create');
         } catch (\Throwable $th) {
             //throe $th;
             ErrorLogger::logError($th, $request->fullUrl());

@@ -16,27 +16,29 @@
             <div class="row mb-3">
                 <div class="col-md-6">
                     <div class="form-floating">
-                        <input type="time" class="form-control" id="startTime" name="startTime" placeholder="Start Time"
+                        <input type="time" class="form-control" id="start_time" name="start_time" placeholder="Start Time"
                             required>
-                        <label for="startTime">Start Time</label>
-                        @error('startTime')
-                            <div class="invalid-tooltip">
-                                {{ $message }}
-                            </div>
-                        @enderror
-                    </div>
-                    <div class="form-floating">
-                        <input type="time" class="form-control" id="endTime" name="endTime" placeholder="End Time"
-                            required>
-                        <label for="endTime">End Time</label>
-                        @error('endTime')
+                        <label for="start_time">Start Time</label>
+                        @error('start_time')
                             <div class="invalid-tooltip">
                                 {{ $message }}
                             </div>
                         @enderror
                     </div>
                 </div>
-                <div class="text-center">
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <input type="time" class="form-control" id="end_time" name="end_time" placeholder="End Time"
+                            required>
+                        <label for="end_time">End Time</label>
+                        @error('end_time')
+                            <div class="invalid-tooltip">
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+                </div>
+                <div class="text-center mt-3">
                     <button type="submit" class="btn btn-bg-blue">Submit</button>
                 </div>
             </div>

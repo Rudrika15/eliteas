@@ -546,6 +546,7 @@
                             <div class="row">
                                 <div class="col-md-10">
                                     <h4 class="card-title">{{ $nearestEvents->title }}</h4>
+                                    <p class="card-text text-muted"> <b> Total Registered Members : {{ $nearestEvents->registrations->count() }} </b></p>
                                 </div>
 
                                 <div class="col-md-2 pt-3 text-muted text-end">
@@ -579,6 +580,15 @@
                                             <div class="ps-5 ms-5 mt-5">
                                                 <strong><span class="text-success">Already Joined</span></strong>
                                             </div>
+                                        @if ($nearestEvents->slot_date)
+                                        <div class="ps-5 ms-5 mt-5">
+                                            <button type="button" class="btn btn-bg-orange btn-md" id="slotBooking"
+                                            onclick="location.href='{{ route('event.viewMembers', ['id' => $nearestEvents->id]) }}'">
+                                        Slot Booking
+                                    </button>
+
+                                        </div>
+                                        @endif
                                         </div>
                                     @endif
                                 </div>

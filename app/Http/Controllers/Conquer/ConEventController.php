@@ -216,13 +216,13 @@ class ConEventController extends Controller
                 'eventId' => 'required|exists:conquer_events,id',
                 'firstName' => 'required|string|max:255',
                 'lastName' => 'required|string|max:255',
-                'contactNo' => 'required|digits:10',
+                'mobileNo' => 'required|digits:10',
                 'email' => 'required|email|max:255',
                 'businessCategory' => 'required|string',
             ]);
 
             // Check if the visitor already exists
-            $existingVisitor = EventRegister::where('email', $request->email)
+            $existingVisitor = VisitorsDetails::where('email', $request->email)
                 ->where('eventId', $request->eventId)
                 ->first();
 
@@ -231,12 +231,13 @@ class ConEventController extends Controller
             }
 
             // Create a new visitor record
-            $visitor = new Event();
+            $visitor = new VisitorsDetails();
             $visitor->eventId = $request->eventId;
             $visitor->firstName = $request->firstName;
             $visitor->lastName = $request->lastName;
-            $visitor->contactNo = $request->contactNo;
+            $visitor->mobileNo = $request->contactNo;
             $visitor->email = $request->email;
+            $visitor->password = bcrypt(123456);
             $visitor->status = 'Active';
 
             // Handle business category
