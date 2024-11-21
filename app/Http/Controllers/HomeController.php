@@ -261,6 +261,7 @@ class HomeController extends Controller
             $birthdaysToday = Member::whereMonth('birthDate', Carbon::today()->month)
                 ->whereDay('birthDate', Carbon::today()->day)
                 ->get();
+            $templates = Templatemaster::with('TemplateDetail')->get();
 
             $myInvites = MeetingInvitation::where('invitedMemberId', Auth::user()->id)->get();
 
@@ -280,6 +281,12 @@ class HomeController extends Controller
                     ->orderBy('id', 'DESC')
                     ->take(3)
                     ->get();
+
+                $birthdaysToday = Member::whereMonth('birthDate', Carbon::today()->month)
+                    ->whereDay('birthDate', Carbon::today()->day)
+                    ->get();
+
+                $templates = Templatemaster::with('TemplateDetail')->where('status', 'Active')->first();
 
                 $myCircle = Auth::user()->member->circleId;
                 $meeting = Schedule::where('circleId', Auth::user()->member->circleId)
@@ -421,10 +428,10 @@ class HomeController extends Controller
                     $this->generateBirthdayWishImage($user);
                 }
 
-                return view('home', compact('signedUrl', 'count', 'monthlyPayments', 'totalAmountDue', 'nearestEvents', 'findEventRegister', 'circlecalls', 'busGiver', 'refGiver', 'nearestTraining', 'findRegister', 'testimonials', 'meeting', 'businessCategory', 'myInvites', 'todaysBirthdays'));
+                return view('home', compact('birthdaysToday', 'templates', 'signedUrl', 'count', 'monthlyPayments', 'totalAmountDue', 'nearestEvents', 'findEventRegister', 'circlecalls', 'busGiver', 'refGiver', 'nearestTraining', 'findRegister', 'testimonials', 'meeting', 'businessCategory', 'myInvites', 'todaysBirthdays'));
             }
 
-            return view('home', compact('count', 'nearestTraining', 'businessCategory', 'myInvites', 'findRegister', 'birthdaysToday'));
+            return view('home', compact('count', 'nearestTraining', 'businessCategory', 'myInvites', 'findRegister', 'birthdaysToday', 'templates'));
         } catch (\Throwable $th) {
             // Log the error
             // throw $th;
