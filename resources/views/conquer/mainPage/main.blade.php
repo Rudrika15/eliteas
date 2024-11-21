@@ -32,7 +32,7 @@
         /* Hero Section */
         .hero {
             background: url('https://images.unsplash.com/photo-1504384308090-c894fdcc538d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600') no-repeat center center/cover;
-            height: 70vh;
+            height: 50vh;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -188,12 +188,12 @@
 
     <!-- Event Section -->
     <div class="container event-section" id="events">
-        <h2 class="text-center mb-4" style="color: #e76a35;">Upcoming Business Events</h2>
+        <h2 class="text-center mb-4" style="color: #e76a35; font-weight: bold;">Upcoming Business Events</h2>
 
         <!-- First Event -->
         <div class="row mb-4">
             <div class="col-md-6">
-                <img src="{{ asset('conEventImage/' . $event->eventImage) }}" class="img-fluid rounded"
+                <img src="{{ asset('Event/' . $event->event_banner) }}" class="img-fluid rounded"
                     alt="Event Image 1" style="height: 300px; width: 500px;">
             </div>
             <div class="col-md-6">
@@ -202,13 +202,18 @@
                     <p style="font-style: italic; font-weight: bold; color: #555;">{{ $event->event_details }}</p>
                     <p><strong>Date:</strong> {{ \Carbon\Carbon::parse($event->event_date)->format('F j, Y') }}</p>
                     <p><strong>Location:</strong> {{ $event->venue }}</p>
-                    <a href="#" class="btn btn-event" data-bs-toggle="modal" data-bs-target="#applyModal">Apply
-                        Now</a>
+                    <p><strong>Apply If you are</strong></p>
+                    <a href="{{ route('main.event.login', $event->id) }}" class="btn btn-event"
+                        style="margin-right: 10px;">UBN Member</a>
+                    <a href="{{ route('main.event.visitor', $event->id) }}" class="btn btn-event">Visitor</a>
+
+                    {{-- <a href="#" class="btn btn-event" data-bs-toggle="modal" data-bs-target="#applyModal">Apply
+                        Now</a> --}}
                 </div>
             </div>
 
             <!-- Modal -->
-            <div class="modal fade" id="applyModal" tabindex="-1" aria-labelledby="applyModalLabel" aria-hidden="true">
+            {{-- <div class="modal fade" id="applyModal" tabindex="-1" aria-labelledby="applyModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -217,12 +222,12 @@
                                 aria-label="Close"></button>
                         </div>
                         <div class="modal-body text-center">
-                            <a href="/ubn-application" class="btn btn-bg-blue me-3">YES</a>
-                            <a href="{{ route('main.event.visitor') }}" class="btn btn-bg-orange">NO</a>
+                            <a href="{{ route('main.event.login', $event->id) }}" class="btn btn-bg-blue me-3">YES</a>
+                            <a href="{{ route('main.event.visitor', $event->id) }}" class="btn btn-bg-orange">NO</a>
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> --}}
 
         </div>
     </div>

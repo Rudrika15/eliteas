@@ -76,6 +76,8 @@ Route::post('/send-otp', [OTPLoginController::class, 'sendOTP'])->name('send_otp
 // Route for verifying OTP
 Route::post('/verify-otp', [OTPLoginController::class, 'verifyOTP'])->name('verify_otp');
 
+Route::get('role-permissions', [LoginController::class, 'getRolePermissions']);
+
 
 
 Route::group(['middleware' => 'auth:sanctum'], function () {
@@ -123,6 +125,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('circle-meeting-member-references-recieved-index', [CircleMeetingMemberReferenceController::class, 'receivedRef']);
     Route::get('circle-meeting-member-references/{id}', [CircleMeetingMemberReferenceController::class, 'view']);
     Route::post('circle-meeting-member-references-create', [CircleMeetingMemberReferenceController::class, 'create']);
+    Route::post('circle-meeting-member-references-refByOtherStore', [CircleMeetingMemberReferenceController::class, 'refByOtherStore']);
     Route::post('circle-meeting-member-references-update/{id}', [CircleMeetingMemberReferenceController::class, 'update']);
     Route::get('circle-meeting-member-references-delete/{id}', [CircleMeetingMemberReferenceController::class, 'delete']);
 
@@ -298,6 +301,9 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     //change password
     Route::post('/change-password', [ChangePasswordController::class, 'changePassword']);
 
+    //My Subscriptions
+    Route::get('/member/my-subscription', [PaymentController::class, 'mySubscription']);
+
 
 
     //new api v1
@@ -384,6 +390,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     //circle admin payment history
 
     Route::get('circleAdminPaymentHistory', [PaymentController::class, 'circleAdminPaymentHistory']);
+    Route::get('myPaymentHistory', [PaymentController::class, 'getAllPayments']);
 });
 
 //get app version

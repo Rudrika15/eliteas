@@ -137,8 +137,12 @@
                     <div class="col-12">
                         <div class="card mt-3">
                             <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-center mb-5">
-                                    <h4 class="card-title">Reference Given</h4>
+                                <h4 class="card-title">Reference Given</h4>
+                                <div class="d-flex justify-content-end align-items-center mb-2">
+                                    {{-- <a href="{{ route('refGiver.refByOther') }}"
+                                        class="btn btn-bg-blue btn-sm mt-3 mr-2">Add
+                                        Reference By Other</a> --}}
+                                    {{-- &nbsp;&nbsp;&nbsp; --}}
                                     <a href="{{ route('refGiver.create') }}"
                                         class="btn btn-bg-orange btn-sm mt-3 btn-tooltip">
                                         <i class="bi bi-plus-circle"></i>

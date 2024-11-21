@@ -9,12 +9,14 @@ use App\Utils\ErrorLogger;
 use Illuminate\Http\Request;
 use App\Models\EventRegister;
 use App\Http\Controllers\Controller;
+use App\Models\EventType;
 use Illuminate\Support\Facades\Auth;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class EventController extends Controller
 {
 
-        public function __construct()
+    public function __construct()
     {
         // Apply middleware for event-related permissions
         $this->middleware('permission:event-index', ['only' => ['index', 'view']]);
@@ -49,7 +51,8 @@ class EventController extends Controller
     {
         try {
             $circle = Circle::where('status', 'Active')->get();
-            return view('admin.event.create', compact('circle'));
+            $eventType = EventType::where('status', 'Active')->get();
+            return view('admin.event.create', compact('circle', 'eventType'));
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError(
@@ -76,6 +79,8 @@ class EventController extends Controller
             $event->circleId = $request->circleId;
             $event->venue = $request->venue;
             $event->event_date = $request->event_date;
+            $event->is_slot = $request->is_slot;
+            $event->slot_date = $request->slot_date;
 
             $uniqueId = time();
 
@@ -91,7 +96,33 @@ class EventController extends Controller
 
             $event->start_time = $request->start_time;
             $event->end_time = $request->end_time;
-            $event->amount = $request->amount;
+            $event->fees = $request->fees;
+            $event->event_details = $request->event_details;
+
+            // Generate QR Code with event details
+            $qrData = json_encode([
+                'id' => $event->id,
+                'title' => $event->title,
+                'date' => \Carbon\Carbon::createFromFormat('Y-m-d', $event->event_date)->format('d-m-Y'),
+                'venue' => $event->venue ?? 'Not decided yet',
+            ]);
+
+            // Define the directory and ensure it exists
+            $qrCodeDir = public_path('eventQR');
+            if (!file_exists($qrCodeDir)) {
+                mkdir($qrCodeDir, 0755, true); // Create directory if it doesn't exist
+            }
+
+            // Define the path to save the SVG file
+            $qrCodePath = 'eventQR/' . $event->id . '.svg';
+
+            // Generate the SVG content and save it to a file
+            $qrSvg = QrCode::format('svg')->size(300)->generate($qrData);
+            file_put_contents(public_path($qrCodePath), $qrSvg);
+
+            // Save the QR code path in the database
+            $event->qr_code = $qrCodePath;
+
             $event->status = 'Active';
             $event->save();
 
@@ -111,7 +142,8 @@ class EventController extends Controller
         try {
             $event = Event::find($id);
             $circle = Circle::where('status', 'Active')->get();
-            return view('admin.event.edit', compact('event', 'circle'));
+            $eventType = EventType::where('status', 'Active')->get();
+            return view('admin.event.edit', compact('event', 'circle', 'eventType'));
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError(
@@ -122,52 +154,102 @@ class EventController extends Controller
         }
     }
 
-    public function update(Request $request)
+    public function update(Request $request, $id)
     {
-        // return $request;
+        // Validate the request data
+        $this->validate($request, [
+            'title' => 'required',
+            'event_date' => 'required',
+            'start_time' => 'required',
+            'end_time' => 'required',
+        ]);
 
         try {
-            $id = $request->id;
-            $event = Event::find($id);
-            if ($event) {
-                $event->title = $request->title;
-                $event->circleId = $request->circleId;
-                $event->venue = $request->venue;
+            // Find the event by ID
+            $event = Event::findOrFail($id);
 
-                $uniqueId = time();
+            // Update the event details
+            $event->title = $request->title;
+            $event->circleId = $request->circleId;
+            $event->venue = $request->venue;
+            $event->event_date = $request->event_date;
+            $event->is_slot = $request->is_slot;
+            $event->slot_date = $request->slot_date;
 
-                if ($request->hasFile('event_thumb')) {
-                    $event->event_thumb = $uniqueId . '_thumb.' . $request->event_thumb->extension();
-                    $request->event_thumb->move(public_path('Event'), $event->event_thumb);
+            $uniqueId = time();
+
+            // Check and update the event thumbnail if a new file is uploaded
+            if ($request->hasFile('event_thumb')) {
+                // Delete old thumbnail if it exists
+                if ($event->event_thumb && file_exists(public_path('Event/' . $event->event_thumb))) {
+                    unlink(public_path('Event/' . $event->event_thumb));
                 }
 
-                if ($request->hasFile('event_banner')) {
-                    $event->event_banner = $uniqueId . '_banner.' . $request->event_banner->extension();
-                    $request->event_banner->move(public_path('Event'), $event->event_banner);
-                }
-
-
-                $event->event_date = $request->event_date;
-                $event->start_time = $request->start_time;
-                $event->end_time = $request->end_time;
-                $event->amount = $request->amount;
-                $event->status = 'Active';
-
-                $event->save();
-
-                return redirect()->route('event.index')->with('success', 'Event Updated Successfully!');
-            } else {
-                return back()->with('error', 'Event Not Found!');
+                $event->event_thumb = $uniqueId . '_thumb.' . $request->event_thumb->extension();
+                $request->event_thumb->move(public_path('Event'), $event->event_thumb);
             }
+
+            // Check and update the event banner if a new file is uploaded
+            if ($request->hasFile('event_banner')) {
+                // Delete old banner if it exists
+                if ($event->event_banner && file_exists(public_path('Event/' . $event->event_banner))) {
+                    unlink(public_path('Event/' . $event->event_banner));
+                }
+
+                $event->event_banner = $uniqueId . '_banner.' . $request->event_banner->extension();
+                $request->event_banner->move(public_path('Event'), $event->event_banner);
+            }
+
+            // Update the other event details
+            $event->start_time = $request->start_time;
+            $event->end_time = $request->end_time;
+            $event->fees = $request->fees;
+            $event->event_details = $request->event_details;
+
+            // Delete the old QR code if it exists
+            if ($event->qr_code && file_exists(public_path($event->qr_code))) {
+                unlink(public_path($event->qr_code));
+            }
+
+            // Generate QR Code with event details
+            $qrData = json_encode([
+                'id' => $event->id,
+                'title' => $event->title,
+                'date' => \Carbon\Carbon::createFromFormat('Y-m-d', $event->event_date)->format('d-m-Y'),
+                'venue' => $event->venue ?? 'Not decided yet',
+            ]);
+
+            // Define the directory and ensure it exists
+            $qrCodeDir = public_path('eventQR');
+            if (!file_exists($qrCodeDir)) {
+                mkdir($qrCodeDir, 0755, true); // Create directory if it doesn't exist
+            }
+
+            // Define the path to save the new SVG file
+            $qrCodePath = 'eventQR/' . $event->id . '.svg';
+
+            // Generate the SVG content and save it to a file
+            $qrSvg = QrCode::format('svg')->size(300)->generate($qrData);
+            file_put_contents(public_path($qrCodePath), $qrSvg);
+
+            // Save the new QR code path in the database
+            $event->qr_code = $qrCodePath;
+
+            // Update the event status if needed
+            $event->status = 'Active';
+
+            // Save the updated event
+            $event->save();
+
+            // Redirect with success message
+            return redirect()->route('event.edit', $event->id)->with('success', 'Event Updated Successfully!');
         } catch (\Throwable $th) {
-            // throw $th;
-            ErrorLogger::logError(
-                $th,
-                $request->fullUrl()
-            );
+            // Log any errors and show a server error page
+            ErrorLogger::logError($th, $request->fullUrl());
             return view('servererror');
         }
     }
+
 
     function delete(Request $request, $id)
     {
@@ -279,7 +361,7 @@ class EventController extends Controller
     {
         try {
             $event = Event::find($id);
-            $registerList = EventRegister::paginate(10);
+            $registerList = EventRegister::where('eventId', $id)->paginate(10);
             return view('admin.event.eventRegistrationList', compact('event', 'registerList'));
         } catch (\Throwable $th) {
             // throw $th;

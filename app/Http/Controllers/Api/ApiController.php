@@ -260,7 +260,7 @@ class ApiController extends Controller
     }
 
 
-    //Max data for particular auth user 
+    //Max data for particular auth user
 
     public function maxMeetingsUser(Request $request)
     {

@@ -12,6 +12,7 @@ use App\Models\ContactDetails;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Spatie\Permission\Models\Role;
 
 class LoginController extends Controller
 {
@@ -30,12 +31,43 @@ class LoginController extends Controller
         if (Auth::attempt($request->only('email', 'password'))) {
 
             $user = Auth::user();
+            $roles = Auth::user()->getRoleNames();
+            // $permissions = $user->getAllPermissions();
             $token = $user->createToken('authToken')->plainTextToken;
 
-            return Utils::sendResponse(['token' => $token, 'user' => $user], 'Success');
+            return Utils::sendResponse(['token' => $token, 'user' => $user, 'roles' => $roles], 'Success');
         }
 
         return Utils::sendResponse(['error' => 'Unauthorized'], 401);
+    }
+
+    public function getRolePermissions()
+    {
+        // Fetch all roles that are active
+        $roles = Role::get();
+
+        // Prepare an array to store roles with their permissions
+        $rolePermissions = [];
+
+        // Iterate through roles and fetch permissions for each role
+        foreach ($roles as $role) {
+            // Fetch permissions associated with the role that are also active
+            $permissions = $role->permissions()->where('status', 'Active')->get();
+
+            // Add role and associated active permissions to the array
+            $rolePermissions[] = [
+                'role' => $role->name,
+                'permissions' => $permissions->map(function ($permission) {
+                    return [
+                        'id' => $permission->id,
+                        'name' => $permission->name,
+                    ];
+                })
+            ];
+        }
+
+        // Return the response with roles and their active permissions
+        return Utils::sendResponse($rolePermissions, 'Role and Permission List');
     }
 
 

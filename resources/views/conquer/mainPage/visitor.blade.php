@@ -158,6 +158,11 @@
                         <form method="POST" action="{{ route('conquer.visitor.form.store') }}"
                             class="needs-validation w-100 form-card" id="visitorForm" name="visitorForm" novalidate>
                             @csrf
+
+                            {{-- <input type="hidsden" name="userId" value="{{ Auth::user()->id }}"> --}}
+
+                            <input type="hidden" name="eventId" value="{{ $event->id }}">
+
                             <div class="row justify-content-between text-left">
                                 <div class="form-group col-sm-6 flex-column d-flex">
                                     <label class="form-control-label px-3">First name<span
@@ -187,23 +192,41 @@
                             </div>
                             <div class="row justify-content-between text-left">
                                 <div class="form-group col-sm-6 flex-column d-flex">
-                                    <label class="form-control-label px-3">Mobile No<span
+                                    <label class="form-control-label px-3">Contact No<span
                                             class="text-danger">*</span></label>
-                                    <input type="text" id="mobileNo" name="mobileNo"
-                                        value="{{ old('mobileNo') }}"
-                                        class="form-control @error('mobileNo') is-invalid @enderror"
+                                    <input type="text" id="contactNo" name="contactNo"
+                                        value="{{ old('contactNo') }}"
+                                        class="form-control @error('contactNo') is-invalid @enderror"
                                         oninput="if(this.value.length > 10) this.value = this.value.slice(0,10); this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');"
                                         pattern="[0-9]{10}"
                                         oninvalid="this.setCustomValidity('Please enter a valid 10-digit mobile number');"
                                         oninput="this.setCustomValidity('')" onblur="validate(3)" required>
-                                    @error('mobileNo')
+                                    @error('contactNo')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
                                     @enderror
-                                    @if ($errors->has('mobileNo') && $errors->first('mobileNo') == 'Please enter a valid 10-digit mobile number')
+                                    @if ($errors->has('contactNo') && $errors->first('contactNo') == 'Please enter a valid 10-digit mobile number')
                                         <span class="invalid-feedback" role="alert" style="color: red;">
-                                            <strong>{{ $errors->first('mobileNo') }}</strong>
+                                            <strong>{{ $errors->first('contactNo') }}</strong>
+                                        </span>
+                                    @endif
+                                </div>
+                                <div class="form-group col-sm-6 flex-column d-flex">
+                                    <label class="form-control-label px-3">Email<span
+                                            class="text-danger">*</span></label>
+                                    <input type="email" id="email" name="email" value="{{ old('email') }}"
+                                        class="form-control @error('email') is-invalid @enderror"
+                                        oninvalid="this.setCustomValidity('Please enter a valid email address');"
+                                        oninput="this.setCustomValidity('')" required>
+                                    @error('email')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                    @if ($errors->has('email') && $errors->first('email') == 'Please enter a valid email address')
+                                        <span class="invalid-feedback" role="alert" style="color: red;">
+                                            <strong>{{ $errors->first('email') }}</strong>
                                         </span>
                                     @endif
                                 </div>
@@ -255,6 +278,12 @@
                                     </script>
                                 </div>
                             </div>
+
+                            <div class="form-group col-auto">
+                                <!-- Buttons -->
+                                <button type="submit" class="btn btn-bg-blue" id="register">Submit</button>
+                            </div>
+
                         </form>
 
                     </div>
