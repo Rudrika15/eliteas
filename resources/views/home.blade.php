@@ -78,15 +78,87 @@
 
 
             <div class="row">
+                @if (count($birthdaysToday) > 0)
+                    <div class="col-md-12">
+                        <style>
+                            .birthday-card {
+                                width: 350px;
+                                height: 400px;
+                                position: relative;
+                                border: 12px solid #fff;
+                                box-shadow: 10px 10px 8px 4px rgba(10, 10, 10, 0.3);
+                                border-radius: 10px;
+                                overflow: hidden;
+                                text-align: center;
+                            }
 
-                @foreach ($todaysBirthdays as $user)
-                    <div class="birthday-card">
-                        <img src="{{ asset('birthday_images/' . $user->id . '_birthday.png') }}" alt="Happy Birthday {{ $user->firstName }}">
+                            .birthday-image {
+                                width: 400px;
+                                height: 400px;
+                                object-fit: cover;
+                                /* Ensures the image fully covers the container */
+                                position: absolute;
+                                top: 0;
+                                left: 0;
+                                z-index: 1;
+                            }
+
+                            .birthday-overlay {
+                                width: 100%;
+                                height: 100%;
+                                position: absolute;
+                                top: 0;
+                                left: 0;
+                                z-index: 2;
+                                /* Ensures the overlay is above the image */
+                                object-fit: cover;
+                                /* Makes the overlay scale properly */
+                            }
+
+                            .birthday-text {
+                                position: absolute;
+                                bottom: 10px;
+                                left: 0;
+                                right: 0;
+                                margin: 0 auto;
+                                color: white;
+                                font-size: 18px;
+                                font-weight: bold;
+                                text-align: center;
+                                background-color: rgba(0, 0, 0, 0.6);
+                                /* Semi-transparent background for text */
+                                padding: 10px;
+                                z-index: 3;
+                                /* Ensures the text is above the overlay */
+                                border-radius: 5px;
+                            }
+                        </style>
+                        <div class="row">
+                            @foreach ($birthdaysToday as $birthday)
+                                <div class="col-md-4">
+                                    <div class="card shadow w-100">
+                                        <div class="card-header">
+                                            <b style="color: #1d2856;">Birthday reminders</b>
+                                            <i class="bi bi-balloon" style="color: rgb(255, 187, 0);"></i>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="birthday-card">
+                                                <img class="birthday-image" src="{{ asset('ProfilePhoto') }}/{{ $birthday->profilePhoto }}" alt="Birthday Image">
+                                                <img class="birthday-overlay" src="{{ asset('templateImage') }}/{{ $templates->templateImage }}" alt="Template Overlay">
+                                                <div class="birthday-text">
+                                                    <p>{{ $birthday->firstName }}'s Birthday</p>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
                     </div>
-                @endforeach
-
-
+                @endif
             </div>
+
 
 
             <div>
@@ -913,105 +985,6 @@
 
 
     @role('Admin')
-        @if (count($birthdaysToday) > 0)
-            <style>
-                @keyframes fadeInRight {
-                    0% {
-                        opacity: 0;
-                        transform: translateX(100%);
-                    }
-
-                    100% {
-                        opacity: 1;
-                        transform: translateX(0);
-                    }
-                }
-
-                .notification-bar {
-                    position: fixed;
-                    top: 100px;
-                    right: 0;
-                    width: 300px;
-                    z-index: 1050;
-                    animation: fadeInRight 0.5s ease-out;
-                }
-
-                .notification-bar .card-header {
-                    background-color: #f8f9fa;
-                    border-bottom: 1px solid #dee2e6;
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                }
-
-                /* Button to reopen the notification bar */
-                .reopen-btn {
-                    display: none;
-                    position: fixed;
-                    top: 100px;
-                    right: 10px;
-                    z-index: 1051;
-                    background-color: #1d2856;
-                    color: white;
-                    border: none;
-                    padding: 8px 12px;
-                    border-radius: 4px;
-                    cursor: pointer;
-                }
-
-                .btn-orange {
-                    background-color: #ff7f00;
-                    color: #fff;
-                    padding: 5px 10px;
-                    border-radius: 5px;
-                    cursor: pointer;
-                }
-
-                .btn-orange:hover {
-                    background-color: #ff7f00;
-                }
-            </style>
-
-            <!-- Notification Bar -->
-            <div class="notification-bar" id="notificationBar">
-                <div class="card shadow w-100">
-                    <div class="card-header">
-                        <b style="color: #1d2856;">Birthday reminders</b>
-                        <i class="bi bi-balloon" style="color: rgb(255, 187, 0);"></i>
-                        <button type="button" onclick="hideNotification()" style="border: none; background: none; color: red; font-size: 1.2rem;">&times;</button>
-                    </div>
-                    <div class="card-body">
-                        <div class="list-group pt-2">
-                            @foreach ($birthdaysToday as $birthday)
-                                <li href="#" class="list-group-item list-group-item-action text-center d-flex justify-content-between" aria-current="true">
-                                    <div>
-                                        {{ $birthday->firstName }} {{ $birthday->lastName }}
-                                    </div>
-                                    <div>
-                                        <a href="{{ route('birthday.canvas', $birthday->userId) }}" class="btn btn-orange" title="Carete a post"><i class="bi bi-balloon"></i></a>
-                                    </div>
-                                </li>
-                            @endforeach
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Reopen Button -->
-            <button id="reopenButton" class="reopen-btn" onclick="showNotification()"><i class="bi bi-balloon"></i></button>
-
-            <script>
-                function hideNotification() {
-                    document.getElementById('notificationBar').style.display = 'none';
-                    document.getElementById('reopenButton').style.display = 'block';
-                }
-
-                function showNotification() {
-                    document.getElementById('notificationBar').style.display = 'block';
-                    document.getElementById('reopenButton').style.display = 'none';
-                }
-            </script>
-        @endif
 
         <div class="row">
             <div class="col-md-4">
