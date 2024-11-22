@@ -82,21 +82,21 @@
                     <div class="col-md-12">
                         <style>
                             .birthday-card {
-                                width: 350px;
-                                height: 400px;
+                                width: 100%;
+                                /* Full width of the card container */
+                                height: 500px;
                                 position: relative;
                                 border: 12px solid #fff;
-                                box-shadow: 10px 10px 8px 4px rgba(10, 10, 10, 0.3);
+                                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
                                 border-radius: 10px;
                                 overflow: hidden;
                                 text-align: center;
                             }
 
                             .birthday-image {
-                                width: 400px;
-                                height: 400px;
+                                width: 100%;
+                                height: 100%;
                                 object-fit: cover;
-                                /* Ensures the image fully covers the container */
                                 position: absolute;
                                 top: 0;
                                 left: 0;
@@ -105,31 +105,28 @@
 
                             .birthday-overlay {
                                 width: 100%;
-                                height: 100%;
+                                height: 600px;
                                 position: absolute;
                                 top: 0;
                                 left: 0;
                                 z-index: 2;
-                                /* Ensures the overlay is above the image */
                                 object-fit: cover;
-                                /* Makes the overlay scale properly */
+                                background-color: rgba(0, 0, 0, 0.2);
+                                /* Optional semi-transparent overlay */
                             }
 
                             .birthday-text {
                                 position: absolute;
-                                bottom: 10px;
+                                bottom: -20px;
                                 left: 0;
                                 right: 0;
-                                margin: 0 auto;
                                 color: white;
                                 font-size: 18px;
                                 font-weight: bold;
                                 text-align: center;
                                 background-color: rgba(0, 0, 0, 0.6);
-                                /* Semi-transparent background for text */
-                                padding: 10px;
+                                padding: 0px;
                                 z-index: 3;
-                                /* Ensures the text is above the overlay */
                                 border-radius: 5px;
                             }
                         </style>
@@ -145,9 +142,9 @@
                                             <div class="birthday-card">
                                                 <img class="birthday-image" src="{{ asset('ProfilePhoto') }}/{{ $birthday->profilePhoto }}" alt="Birthday Image">
                                                 <img class="birthday-overlay" src="{{ asset('templateImage') }}/{{ $templates->templateImage }}" alt="Template Overlay">
-                                                <div class="birthday-text">
-                                                    <p>{{ $birthday->firstName }}'s Birthday</p>
-                                                </div>
+                                            </div>
+                                            <div class="birthday-text mt-5">
+                                                <p>{{ $birthday->firstName }}'s Birthday</p>
                                             </div>
 
                                         </div>
