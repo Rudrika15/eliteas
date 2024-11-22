@@ -69,35 +69,81 @@
         <nav class="header-nav ms-auto">
             <ul class="d-flex align-items-center">
 
-                <li class="nav-item d-block d-lg-none">
-                    <a class="nav-link nav-icon search-bar-toggle" href="#">
-                        <i class="bi bi-search"></i>
-                    </a>
-                </li><!-- End Search Icon-->
-
                 <li class="nav-item dropdown pe-3">
 
-
+                    <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#"
+                        data-bs-toggle="dropdown">
+                        @if (isset(Auth::user()->profile_photo))
+                            {{-- <img class="img-profile rounded-circle" src="{{url('public/img/logo.png')}}"> --}}
+                            <img class="img-profile rounded-circle" src="public/img/logo.png">
+                        @else
+                            <span
+                                class="rounded-circle text-center p-2 fs-5 badge logobadge d-inline-block text-light h-50"
+                                style="width: 38px !important;">
+                            </span>
+                        @endif
+                        {{-- <span class="d-none d-md-block dropdown-toggle ps-2">{{Auth::user()->name}}</span> --}}
+                        <span class="d-md-none">Hello, {{ session('visitor_id') }}</span>
+                        <span class="d-none d-md-block dropdown-toggle ps-2">Hello,
+                            {{ session('visitor_name') }}</span>
+                    </a><!-- End Profile Iamge Icon -->
 
                     <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
                         <li class="dropdown-header d-md-none">
                             {{-- <h6>{{Auth::user()->name}}</h6> --}}
+                            <h6>{{ Auth::user()->firstName ?? '-' }}</h6>
                             {{-- <span>Web Designer</span> --}}
                         </li>
                         <li>
                             <hr class="dropdown-divider">
                         </li>
+                        @role('Member')
+                            <li>
+                                <a class="dropdown-item d-flex align-items-center" href="{{ route('member') }}">
+                                    <i class="bi bi-person" style="color: #e76a35"></i>
+                                    <span style="font-weight: bold; color: #1d2856">My Profile</span>
+                                </a>
+                            </li>
+
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+
+                            <li>
+                                <a class="dropdown-item d-flex align-items-center" href="{{ route('member') }}">
+                                    <i class="bi bi-cart" style="color: #e76a35"></i>
+                                    <span style="font-weight: bold; color: #1d2856">Go To UBN Mart</span>
+                                </a>
+                            </li>
+                        @endrole
+
+                        @role('Admin')
+                            <li>
+                                <a class="dropdown-item d-flex align-items-center" href="{{ route('member') }}">
+                                    <i class="bi bi-cart" style="color: #e76a35"></i>
+                                    <span style="font-weight: bold; color: #1d2856">Go To UBN Mart</span>
+                                </a>
+                            </li>
+                        @endrole
+
+
                         <li>
                             <hr class="dropdown-divider">
                         </li>
+
+                        {{-- <li>
+                            <a class="dropdown-item d-flex align-items-center"
+                                href="{{ route('changePasswordForm') }}">
+                                <i class="bi bi-key" style="color: #e76a35"></i>
+                                <span style="font-weight: bold; color: #1d2856">Change Password</span>
+                            </a>
+                        </li> --}}
                         <li>
                             <hr class="dropdown-divider">
                         </li>
 
                         <li>
-                            <a class="dropdown-item d-flex align-items-center" href="{{ route('logout') }}"
-                                onclick="event.preventDefault();
-                            document.getElementById('logout-form').submit();">
+                            <a class="dropdown-item d-flex align-items-center" href="{{ route('visitor.logout') }}">
                                 <i class="bi bi-box-arrow-right signout-style"></i>
                                 <span class="signout-style">Sign Out</span>
 
@@ -108,10 +154,10 @@
                                     }
                                 </style>
 
-                                <form id="logout-form" action="{{ route('logout') }}" method="POST"
+                                {{-- <form id="logout-form" action="{{ route('logout') }}" method="POST"
                                     class="d-none">
                                     @csrf
-                                </form>
+                                </form> --}}
                             </a>
                         </li>
 

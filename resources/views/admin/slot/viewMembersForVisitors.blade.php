@@ -1,4 +1,4 @@
-@extends('layouts.master')
+@extends('layouts.masterVisitor')
 
 @section('header', 'View Members')
 @section('content')

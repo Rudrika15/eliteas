@@ -58,6 +58,28 @@ class SlotController extends Controller
         }
     }
 
+    public function userListViewforVisitors(Request $request, $id)
+    {
+        try {
+
+            $event = Event::findOrFail($id);
+            $users = EventRegister::where('eventId', $id)
+                ->where('status', 'Active')
+                ->get();
+
+            $slots = Slot::where('status', 'Active')->get();
+
+            if ($users->isEmpty()) {
+                return redirect()->back()->with('message', 'No active users found for this event.');
+            }
+
+            return view('admin.slot.viewMembersForVisitors', compact('users', 'event', 'slots'));
+        } catch (\Throwable $th) {
+            ErrorLogger::logError($th, $request->fullUrl());
+            return view('servererror');
+        }
+    }
+
 
     public function create(Request $request)
     {

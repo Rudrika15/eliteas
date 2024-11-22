@@ -15,7 +15,9 @@ use App\Models\Visitor;
 use App\Models\VisitorEventRegister;
 use App\Models\VisitorsDetails;
 use App\Utils\ErrorLogger;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 
@@ -37,7 +39,6 @@ class ConEventController extends Controller
 
     public function visitorLoginCheck(Request $request)
     {
-
         // Validate the incoming request
         $request->validate([
             'email' => 'required|email',
@@ -53,15 +54,48 @@ class ConEventController extends Controller
                 'email' => 'Invalid credentials. Please check your email and password.',
             ])->withInput();
         }
-        // Redirect to home page if credentials are correct
-        // return redirect()->route('visitor.dashboard');->with('success', 'Welcome back!');
+
+        // Store visitor details in session
+        session([
+            'visitor_id' => $visitor->id,
+            'visitor_name' => $visitor->firstName . ' ' . $visitor->lastName,
+            'visitor_email' => $visitor->email,
+        ]);
+
+        $visitorId = session('visitor_id');
+        $visitorName = session('visitor_name');
+        $visitorEmail = session('visitor_email');
+
+        // dd($visitorId, $visitorName, $visitorEmail); // Debug and see session data
+
+
+        // Redirect to the dashboard with a success message\
         return redirect()->route('visitor.dashboard');
     }
 
 
+    public function logoutVisitor()
+    {
+        session()->flush(); // Clears all session data
+        return redirect()->route('main.event')->with('success', 'You have been logged out successfully.');
+    }
+
     public function visitorDashboard()
     {
-        return view('visitor.visitorDashboard');
+        $currentDate = Carbon::now();
+        $nearestEvents = Event::where('status', 'Active')
+            ->whereDate('event_date', '>=', $currentDate)
+            ->orderBy('event_date', 'asc')
+            ->first();
+
+        // if ($nearestEvents) {
+        //     $findEventRegister = VisitorEventRegister::where('visitorId', Auth::user()->member->id)
+        //         ->where('eventId', $nearestEvents->id)
+        //         ->get();
+        // } else {
+        //     $findEventRegister = [];
+        // }
+        return view('visitor.visitorDashboard', compact('nearestEvents'));
     }
 
 
@@ -144,6 +178,30 @@ class ConEventController extends Controller
         $event = Event::where('status', 'Active')->orderBy('created_at', 'desc')->first();
         $businessCategory = BusinessCategory::where('status', 'Active')->get();
         return view('conquer.mainPage.visitor', compact('businessCategory', 'event'));
+    }
+
+
+    public function registerFromVisitor(Request $request)
+    {
+
+        return $visitor = Visitor::get();
+
+        $visitorId = session()->get($visitor->id);
+
+        $visitors = VisitorEventRegister::where('visitorId', $visitorId)
+            ->where('eventId', $request->eventId)
+            ->first();
+
+        if ($visitors) {
+            return redirect()->back()->with('error', 'You are already registered for this event.');
+        }
+
+        $visitor = new VisitorEventRegister();
+        $visitor->visitorId = $request->visitor->id;
+        $visitor->eventId = $request->eventId;
+        $visitor->save();
+
+        return redirect()->back()->with('success', 'You have successfully registered for the event.');
     }
 
 

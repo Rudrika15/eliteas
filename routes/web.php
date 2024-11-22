@@ -663,7 +663,11 @@ Route::post('/main-event/visitor-login', [ConEventController::class, 'visitorLog
 Route::get('/visitor/dashboard', [ConEventController::class, 'visitorDashboard'])->name('visitor.dashboard');
 
 
+Route::post('/main-event/visitor-register-event', [ConEventController::class, 'registerFromVisitor'])->name('visitor.register.dash');
 
+Route::get('/event/{id}/view-members-visitors', [SlotController::class, 'userListViewforVisitors'])->name('event.viewMembersForVisitors');
+
+Route::get('/visitorLogout', [ConEventController::class, 'logoutVisitor'])->name('visitor.logout');
 
 
 
