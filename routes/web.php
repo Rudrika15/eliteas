@@ -651,12 +651,17 @@ Route::post('/main-event/conquer-user-store', [ConEventController::class, 'conqu
 Route::get('/main-event', [ConEventController::class, 'main'])->name('main.event');
 // Route::get('/main-event-thankYou', [ConEventController::class, 'thankYou'])->name('main.event.thankYou');
 Route::get('/main-event/visitor/{id?}', [ConEventController::class, 'visitor'])->name('main.event.visitor');
+Route::get('/main-event/visitor/login/{id?}', [ConEventController::class, 'visitorLogin'])->name('main.event.visitorLogin');
 Route::post('/main-event/visitor/registration', [ConEventController::class, 'handleVisitorRegistration'])->name('conquer.visitor.form.store');
 // Route::post('/main-event/conquer-visitor-store', [ConEventController::class, 'conquerVisitorStore'])->name('conquer.visitor.form.store');
 
 Route::get('/main-event-login/{id?}', [ConEventController::class, 'eventLogin'])->name('main.event.login');
 
 Route::post('/main-event/conquer-event-login', [ConEventController::class, 'conEventLogin'])->name('conquer.event.user.login');
+
+Route::post('/main-event/visitor-login', [ConEventController::class, 'visitorLoginCheck'])->name('visitor.login.check');
+Route::get('/visitor/dashboard', [ConEventController::class, 'visitorDashboard'])->name('visitor.dashboard');
+
 
 
 

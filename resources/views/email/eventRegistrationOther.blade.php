@@ -116,6 +116,11 @@
                         <td>
                             <h2>Thank You for Registering!</h2>
                             <p>Dear <b> {{ $eventDetails['firstName'] ?? 'User' }},</b></p>
+
+                            <p>If you want to register for any other events, please note that you will need to use the same
+                                email address and password as below to ensure a smooth registration process.</p>
+
+
                             <p>We are excited to confirm your registration for the event
                                 <strong>{{ $eventDetails['title'] }}</strong>!
                             </p>
@@ -133,6 +138,12 @@
                                 email address when booking your slot to ensure a smooth registration process.</p>
                             <p><a href="{{ url('/booking') }}" class="button">Reserve Your Slot</a></p>
                             <p>We look forward to seeing you there!</p>
+
+                                <b>Here is Your Email & Password</b>
+
+                            <p><strong>Email: </strong>{{ $eventDetails['email'] ?? 'Not Available' }}</p>
+                            <p><strong>Password: </strong>{{ $eventDetails['password'] ?? 'Not Available' }}</p>
+
 
 
                         </td>

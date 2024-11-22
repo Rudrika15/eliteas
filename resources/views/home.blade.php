@@ -623,12 +623,12 @@
                                     View Event Details
                                 </a> --}}
                                         </div>
-                                        <div>
+                                        {{-- <div>
                                             <button class="btn btn-bg-blue btn-sm" onclick="copyLink()">
                                                 Invite Via Link
                                             </button>
                                             <input type="hidden" id="shareableLink" value="{{ URL::signedRoute('event.link', ['slug' => $nearestEvents->event_slug, 'ref' => auth()->user()->member->id]) }}">
-                                        </div>
+                                        </div> --}}
 
                                         <style>
                                             #shareableLink {

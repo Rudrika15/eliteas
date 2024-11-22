@@ -30,13 +30,13 @@ class PaymentController extends Controller
             // Fetch paginated payments
             $payments = AllPayments::where('status', 'Active')
                 ->whereIn('memberId', $circleMembers)
-                ->paginate(10);
+                ->get();
 
             // Transform amounts after pagination
-            $payments->getCollection()->transform(function ($payment) {
-                $payment->amount = isset($payment->amount) ? number_format($payment->amount, 2) : '-';
-                return $payment;
-            });
+            // $payments->getCollection()->transform(function ($payment) {
+            //     $payment->amount = isset($payment->amount) ? number_format($payment->amount, 2) : '-';
+            //     return $payment;
+            // });
 
             return Utils::sendResponse(['payments' => $payments], 'Payment history retrieved successfully', 200);
         } catch (\Throwable $th) {

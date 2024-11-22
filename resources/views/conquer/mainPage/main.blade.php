@@ -205,7 +205,7 @@
                     <p><strong>Apply If you are</strong></p>
                     <a href="{{ route('main.event.login', $event->id) }}" class="btn btn-event"
                         style="margin-right: 10px;">UBN Member</a>
-                    <a href="{{ route('main.event.visitor', $event->id) }}" class="btn btn-event">Visitor</a>
+                    <a href="{{ route('main.event.visitorLogin', $event->id) }}" class="btn btn-event">Visitor</a>
 
                     {{-- <a href="#" class="btn btn-event" data-bs-toggle="modal" data-bs-target="#applyModal">Apply
                         Now</a> --}}

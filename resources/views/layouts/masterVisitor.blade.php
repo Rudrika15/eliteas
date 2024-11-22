@@ -64,14 +64,7 @@
             <i class="bi bi-list toggle-sidebar-btn mt-2"></i>
         </div><!-- End Logo -->
         <!-- Start Search Bar -->
-        <div class="search-bar">
-            <a class="search-form d-flex align-items-center" href="{{ route('search') }}">
-                <input type="text" name="query" placeholder="Click here to find & connect with People"
-                    title="Enter search keyword">
-                <button type="submit" title="Search"><i class="bi bi-search"></i>
-                </button>
-            </a>
-        </div><!-- End Search Bar -->
+
 
         <nav class="header-nav ms-auto">
             <ul class="d-flex align-items-center">
@@ -136,7 +129,7 @@
         <ul class="sidebar-nav" id="sidebar-nav">
 
             <li class="nav-item">
-                <a class="nav-link collapsed" href="/">
+                <a class="nav-link collapsed" href="#">
                     <i class="bi bi-grid" style="color: #e76a35"></i>
                     <span style="color: #1d2865 ;">Dashboard</span>
                 </a>

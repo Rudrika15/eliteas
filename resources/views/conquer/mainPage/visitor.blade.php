@@ -192,7 +192,7 @@
                             </div>
                             <div class="row justify-content-between text-left">
                                 <div class="form-group col-sm-6 flex-column d-flex">
-                                    <label class="form-control-label px-3">Contact No<span
+                                    <label class="form-control-label px-3">Mobile No<span
                                             class="text-danger">*</span></label>
                                     <input type="text" id="mobileNo" name="mobileNo"
                                         value="{{ old('mobileNo') }}"
@@ -229,6 +229,45 @@
                                             <strong>{{ $errors->first('email') }}</strong>
                                         </span>
                                     @endif
+                                </div>
+                            </div>
+
+                            <div class="row justify-content-between text-left">
+                                <div class="form-group col-sm-6 flex-column d-flex">
+                                    <label class="form-control-label px-3">Birth Date<span
+                                            class="text-danger">*</span></label>
+                                    <input type="date" id="birthDate" name="birthDate"
+                                        class="form-control @error('birthDate') is-invalid @enderror"
+                                        oninvalid="this.setCustomValidity('Please enter a valid date');"
+                                        oninput="this.setCustomValidity('')" required>
+                                    @error('birthDate')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                                <div class="form-group col-sm-6 flex-column d-flex">
+                                    <label class="form-control-label px-3">Gender<span
+                                            class="text-danger">*</span></label>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="gender" id="male"
+                                            value="male" required>
+                                        <label class="form-check-label" for="male">
+                                            Male
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="gender" id="female"
+                                            value="female" required>
+                                        <label class="form-check-label" for="female">
+                                            Female
+                                        </label>
+                                    </div>
+                                    @error('gender')
+                                        <div class="invalid-tooltip">
+                                            <strong>{{ $message }}</strong>
+                                        </div>
+                                    @enderror
                                 </div>
                             </div>
 
