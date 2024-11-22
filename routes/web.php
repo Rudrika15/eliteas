@@ -48,9 +48,14 @@ use App\Http\Controllers\Admin\MembershipSubscriptionController;
 use App\Http\Controllers\Admin\MembershipSubscriptionsController;
 use App\Http\Controllers\Admin\CircleMeetingMemberBusinessController;
 use App\Http\Controllers\Admin\CircleMeetingMemberReferenceController;
+use App\Http\Controllers\Admin\EventTypeController;
+use App\Http\Controllers\Admin\SlotController;
 use App\Http\Controllers\admin\TemplateDetailController;
 use App\Http\Controllers\admin\TemplatemasterController;
 use App\Http\Controllers\Admin\UpdateAppController;
+use App\Http\Controllers\Admin\SpecificAskController;
+use App\Http\Controllers\Conquer\ConEventController;
+use App\Http\Controllers\Conquer\ConquerEventController;
 
 /*
 |--------------------------------------------------------------------------
@@ -211,6 +216,23 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('circletype/update', [CircleTypeController::class, 'update'])->name('circletype.update');
     Route::get('circletype/delete/{id?}', [CircleTypeController::class, 'delete'])->name('circletype.delete');
 
+    //event Type
+
+    Route::get('eventType/index', [EventTypeController::class, 'index'])->name('eventType.index');
+    Route::get('eventType/create', [EventTypeController::class, 'create'])->name('eventType.create');
+    Route::post('eventType/store', [EventTypeController::class, 'store'])->name('eventType.store');
+    Route::get('eventType/edit/{id?}', [EventTypeController::class, 'edit'])->name('eventType.edit');
+    Route::post('eventType/update', [EventTypeController::class, 'update'])->name('eventType.update');
+    Route::get('eventType/delete/{id?}', [EventTypeController::class, 'delete'])->name('eventType.delete');
+
+    //Slot
+    Route::get('slot/index', [SlotController::class, 'index'])->name('slot.index');
+    Route::get('slot/create', [SlotController::class, 'create'])->name('slot.create');
+    Route::post('slot/store', [SlotController::class, 'store'])->name('slot.store');
+    Route::get('slot/edit/{id?}', [SlotController::class, 'edit'])->name('slot.edit');
+    Route::post('slot/update', [SlotController::class, 'update'])->name('slot.update');
+    Route::get('slot/delete/{id?}', [SlotController::class, 'delete'])->name('slot.delete');
+
     Route::get('/circle/index', [CircleController::class, 'index'])->name('circle.index');
     Route::get('circle/show/{id?}', [CircleController::class, 'show'])->name('circle.show');
     Route::get('circle/create', [CircleController::class, 'create'])->name('circle.create');
@@ -324,6 +346,11 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('refGiver/edit/{id?}', [CircleMeetingMemberReferenceController::class, 'edit'])->name('refGiver.edit');
     Route::post('refGiver/update/{id?}', [CircleMeetingMemberReferenceController::class, 'update'])->name('refGiver.update');
     Route::get('refGiver/delete/{id?}', [CircleMeetingMemberReferenceController::class, 'delete'])->name('refGiver.delete');
+
+
+    Route::get('refGiver/refByOther', [CircleMeetingMemberReferenceController::class, 'refByOther'])->name('refGiver.refByOther');
+    Route::post('refGiver/refByOtherStore', [CircleMeetingMemberReferenceController::class, 'refByOtherStore'])->name('refGiver.refByOtherStore');
+
 
     Route::get('/busGiver/index', [CircleMeetingMemberBusinessController::class, 'index'])->name('busGiver.index');
     Route::get('busGiver/show/{id?}', [CircleMeetingMemberBusinessController::class, 'show'])->name('busGiver.show');
@@ -480,6 +507,13 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::post('/renew-membership/{userId}', [PaymentController::class, 'renewMembership'])->name('renewMembership.mail');
 
+    //User View for Event
+    // Route::get('/event/userListView', [SlotController::class, 'userListView'])->name('event.slot.userListView');
+
+    //
+    Route::get('/event/{id}/view-members', [SlotController::class, 'userListView'])->name('event.viewMembers');
+
+
 
 
     // Attendance
@@ -576,8 +610,16 @@ Route::group(['middleware' => ['auth']], function () {
     // Route::post('/store-user-details', [EventController::class, 'storeUserDetails'])->name('storeUserDetails');
     // Route::post('/check-email', [EventController::class, 'checkEmail'])->name('checkEmail');
 
-    //All Activity
+    //Conquer Event
+    Route::get('conquer/event/index', [ConquerEventController::class, 'index'])->name('conquer.events.index');
+    Route::get('conquer/event/registerList/{id?}', [ConquerEventController::class, 'registerList'])->name('conquer.events.registerList');
+    Route::get('conquer/event/create', [ConquerEventController::class, 'create'])->name('conquer.events.create');
+    Route::post('conquer/event/store', [ConquerEventController::class, 'store'])->name('conquer.events.store');
+    Route::get('conquer/event/edit/{id?}', [ConquerEventController::class, 'edit'])->name('conquer.events.edit');
+    Route::post('conquer/event/update', [ConquerEventController::class, 'update'])->name('conquer.events.update');
+    Route::delete('conquer/event/delete/{id?}', [ConquerEventController::class, 'delete'])->name('conquer.events.delete');
 
+    //All Activity
     Route::get('/activity/ibm', [AllActivityController::class, 'ibm'])->name('activity.ibm');
     Route::get('/activity/refrence', [AllActivityController::class, 'refrence'])->name('activity.refrence');
     Route::get('/activity/businesses', [AllActivityController::class, 'business'])->name('activity.businesses');
@@ -585,7 +627,40 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/activity/ibm/vp', [AllActivityController::class, 'ibmVp'])->name('activity.ibmVp');
     Route::get('/activity/refrence/vp', [AllActivityController::class, 'refrenceVp'])->name('activity.refrenceVp');
     Route::get('/activity/businesses/vp', [AllActivityController::class, 'businessVp'])->name('activity.businessesVp');
+
+
+    Route::get('/circle/{id}/report', [CircleController::class, 'report'])->name('circle.report');
+
+
+    //Specific ask
+
+    Route::get('/specific-ask/all-index', [SpecificAskController::class, 'allIndex'])->name('specificask.allIndex');
+    Route::get('/specific-ask/index', [SpecificAskController::class, 'index'])->name('specificask.index');
+    Route::get('/specific-ask/create', [SpecificAskController::class, 'create'])->name('specificask.create');
+    Route::post('/specific-ask/store', [SpecificAskController::class, 'store'])->name('specificask.store');
+    Route::get('/specific-ask/edit/{id?}', [SpecificAskController::class, 'edit'])->name('specificask.edit');
+    Route::post('/specific-ask/update', [SpecificAskController::class, 'update'])->name('specificask.update');
+    Route::post('/specific-ask/delete/{id?}', [SpecificAskController::class, 'delete'])->name('specificask.delete');
 });
+
+
+Route::get('/main-event-thankYou', [ConEventController::class, 'thankYou'])->name('main.event.thankYou');
+// Route::get('/main-event-thankYouUser', [ConEventController::class, 'thankYouUser'])->name('main.event.thankYouUser');
+Route::post('/main-event/conquer-user-store', [ConEventController::class, 'conquerUserStore'])->name('conquer.user.form.store');
+
+Route::get('/main-event', [ConEventController::class, 'main'])->name('main.event');
+// Route::get('/main-event-thankYou', [ConEventController::class, 'thankYou'])->name('main.event.thankYou');
+Route::get('/main-event/visitor/{id?}', [ConEventController::class, 'visitor'])->name('main.event.visitor');
+Route::get('/main-event/visitor/login/{id?}', [ConEventController::class, 'visitorLogin'])->name('main.event.visitorLogin');
+Route::post('/main-event/visitor/registration', [ConEventController::class, 'handleVisitorRegistration'])->name('conquer.visitor.form.store');
+// Route::post('/main-event/conquer-visitor-store', [ConEventController::class, 'conquerVisitorStore'])->name('conquer.visitor.form.store');
+
+Route::get('/main-event-login/{id?}', [ConEventController::class, 'eventLogin'])->name('main.event.login');
+
+Route::post('/main-event/conquer-event-login', [ConEventController::class, 'conEventLogin'])->name('conquer.event.user.login');
+
+Route::post('/main-event/visitor-login', [ConEventController::class, 'visitorLoginCheck'])->name('visitor.login.check');
+Route::get('/visitor/dashboard', [ConEventController::class, 'visitorDashboard'])->name('visitor.dashboard');
 
 
 

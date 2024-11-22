@@ -25,7 +25,10 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-5">
                             <h4 class="card-title">Business Slip Received</h4>
-                            {{-- <a href="{{ route('busGiver.create') }}" class="btn btn-primary btn-sm mt-3">ADD</a> --}}
+                            <a href="{{ route('refGiver.refByOther') }}" class="btn btn-bg-orange btn-sm mt-3 btn-tooltip">
+                                <i class="bi bi-plus-circle"></i>
+                                <span class="btn-text">Add Reference by Other Details</span>
+                            </a>
                         </div>
                         <hr class="mb-5">
                         <!-- Table with stripped rows -->

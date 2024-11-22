@@ -61,15 +61,15 @@
                                     <div class="col-md-6">
                                         <div class="form-floating">
                                             <select class="form-select" data-error='Circle Name Field is required' required
-                                                name="circleId" id="circleId" disabled>
+                                                name="circlesId" id="circlesId" disabled>
                                                 <option value="" selected disabled> Select Circle </option>
                                                 @foreach ($circles as $circleData)
                                                     <option value="{{ $circleData->id }}"
-                                                        {{ old('circleId', $member->circleId) == $circleData->id ? 'selected' : '' }}>
+                                                        {{ old('circlesId', $member->circleId) == $circleData->id ? 'selected' : '' }}>
                                                         {{ $circleData->circleName }}</option>
                                                 @endforeach
                                             </select>
-                                            @error('circleId')
+                                            @error('circlesId')
                                                 <div class="invalid-tooltip">
                                                     {{ $message }}
                                                 </div>
@@ -96,6 +96,10 @@
                                         </div>
 
 
+
+
+
+
                                         {{-- <div class="form-floating mt-3">
                                             <select class="form-select @error('membershipType') is-invalid @enderror" id="membershipType"
                                                 name="membershipType">
@@ -115,6 +119,74 @@
                                             @enderror
                                         </div> --}}
                                     </div>
+
+
+                                    <div class="col-md-6 mt-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="isSponsered"
+                                                name="isSponsered"
+                                                {{ old('isSponsered', $member->sponsoredBy) ? 'checked' : '' }}>
+                                            <label class="form-check-label" for="isSponsered">
+                                                Is Member Sponsored?
+                                            </label>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="row mt-3">
+                                        <div class="col-md-6">
+                                            <div class="form-floating">
+                                                <select class="form-select @error('circleId') is-invalid @enderror"
+                                                    id="circleId" name="circleId">
+                                                    <option value="" selected disabled>Select Circle</option>
+                                                    @foreach ($circles as $circle)
+                                                        <option value="{{ $circle->id }}"
+                                                            {{ old('circleId') == $circle->id ? 'selected' : '' }}>
+                                                            {{ $circle->circleName }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                                <label for="circleId">Circle</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-floating">
+                                                <select class="form-select @error('memberId') is-invalid @enderror"
+                                                    id="memberId" name="memberId">
+                                                    <option value="" selected disabled>Select Member</option>
+                                                    @if ($member->sponsoredBy)
+                                                        <option value="{{ $member->sponsoredBy }}" selected>
+                                                            {{ $member->members->firstName }}
+                                                            {{ $member->members->lastName }}
+                                                        </option>
+                                                    @endif
+                                                </select>
+                                                <label for="memberId">Member</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <script>
+                                        $(document).ready(function() {
+                                            // Initially hide the fields
+                                            $('.row.mt-3').hide();
+
+                                            // Show fields if previously checked
+                                            if ($('#isSponsered').is(':checked')) {
+                                                $('.row.mt-3').show();
+                                            }
+
+                                            // Toggle visibility based on checkbox status
+                                            $('#isSponsered').on('change', function() {
+                                                if ($(this).is(':checked')) {
+                                                    $('.row.mt-3').show();
+                                                } else {
+                                                    $('.row.mt-3').hide();
+                                                }
+                                            });
+                                        });
+                                    </script>
 
 
                                     <div class="col-md-6 mt-3">
@@ -144,7 +216,8 @@
                                         <div class="form-floating">
                                             <input type="text"
                                                 class="form-control @error('firstName') is-invalid @enderror" id="firstName"
-                                                name="firstName" value="{{ $member->firstName }}" placeholder="First Name">
+                                                name="firstName" value="{{ $member->firstName }}"
+                                                placeholder="First Name">
                                             <label for="firstName">First Name</label>
                                             @error('firstName')
                                                 <div class="invalid-tooltip">
@@ -156,8 +229,9 @@
                                     <div class="col-md-6 mt-3">
                                         <div class="form-floating">
                                             <input type="text"
-                                                class="form-control @error('lastName') is-invalid @enderror" id="lastName"
-                                                name="lastName" value="{{ $member->lastName }}" placeholder="Last Name">
+                                                class="form-control @error('lastName') is-invalid @enderror"
+                                                id="lastName" name="lastName" value="{{ $member->lastName }}"
+                                                placeholder="Last Name">
                                             <label for="lastName">Last Name</label>
                                             @error('lastName')
                                                 <div class="invalid-tooltip">
@@ -168,8 +242,9 @@
                                     </div>
                                     <div class="col-md-6 mt-3">
                                         <div class="form-floating">
-                                            <input type="text" class="form-control @error('email') is-invalid @enderror"
-                                                id="email" name="email"
+                                            <input type="text"
+                                                class="form-control @error('email') is-invalid @enderror" id="email"
+                                                name="email"
                                                 value="{{ \App\Models\User::where('id', $member->userId)->value('email') ?? '' }}"
                                                 placeholder="email">
                                             <label for="email">Email</label>
@@ -1683,7 +1758,84 @@
         }
     </script>
 
+    <script>
+        $(document).ready(function() {
+            console.log('Document ready');
 
+            // Set up CSRF token for AJAX requests
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+
+            // Function to load members for a selected circle
+            function loadMembers(circleId) {
+                console.log('Loading members for circle ' + circleId);
+
+                // Clear the member dropdown
+                $('#memberId').empty().append('<option value="">Select Member</option>');
+
+                if (circleId) {
+                    $.ajax({
+                        url: '{{ route('members.byCircle') }}',
+                        method: 'GET',
+                        data: {
+                            circleId: circleId
+                        },
+                        success: function(response) {
+                            console.log('Members loaded:', response);
+                            if (response.members && response.members.length > 0) {
+                                response.members.forEach(function(member) {
+                                    $('#memberId').append('<option value="' + member.id +
+                                        '" data-user-id="' + member.userId +
+                                        '" data-first-name="' + member.firstName +
+                                        '" data-last-name="' + member.lastName + '">' +
+                                        member.firstName + ' ' + member.lastName +
+                                        '</option>');
+                                });
+                            } else {
+                                $('#memberId').append('<option value="">No Members Found</option>');
+                            }
+                        },
+                        error: function(xhr) {
+                            console.log('Error loading members:', xhr);
+                            $('#memberId').append('<option value="">Error loading members</option>');
+                        }
+                    });
+                }
+            }
+
+            // Handle circle dropdown change event using event delegation
+            $(document).on('change', '#circleId', function() {
+                var circleId = $(this).val();
+                console.log('Circle ID changed:', circleId);
+                loadMembers(circleId); // Load members based on the selected circle
+            });
+
+            // Handle member dropdown change event
+            $(document).on('change', '#memberId', function() {
+                var selectedOption = $(this).find('option:selected');
+                var memberId = selectedOption.val();
+                var userId = selectedOption.data('user-id');
+                var firstName = selectedOption.data('first-name');
+                var lastName = selectedOption.data('last-name');
+
+                console.log('Member ID changed:', memberId);
+                console.log('Member User ID:', userId);
+                console.log('Member Name:', firstName + ' ' + lastName);
+
+                // Update fields with selected member details
+                if (memberId) {
+                    $('#meetingPersonId').val(userId);
+                    $('#meetingPersonName').val(firstName + ' ' + lastName);
+                } else {
+                    $('#meetingPersonId').val('');
+                    $('#meetingPersonName').val('');
+                }
+            });
+        });
+    </script>
 
     <script>
         $(document).ready(function() {

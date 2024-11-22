@@ -137,6 +137,13 @@
             </a>
         </li>
 
+        <li class="nav-item">
+            <a class="nav-link " href="{{ route('conquer.events.index') }}">
+                <i class="bi bi-person-gear" style="color: #e76a35"></i>
+                <span>Conquer Event Master</span>
+            </a>
+        </li>
+
         {{-- <li class="nav-item">
             <a class="nav-link " href="{{ route('eventRegisterList') }}">
                 <i class="bi bi-gear-wide-connected" style="color: #e76a35"></i>
@@ -292,7 +299,7 @@
 
     <ul id="master-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
         <li class="nav-item">
-            <a class="nav-link collapsed" href="{{ route('permission.index') }}">
+            <a class="nav-link" href="{{ route('permission.index') }}">
                 <i class="bi bi-person-vcard" style="color: #e76a35"></i>
                 <span style="color: #1d2856">Permissions</span>
             </a>
@@ -313,6 +320,24 @@
             <a class="nav-link " href="{{ route('circletype.index') }}">
                 <i class="bi bi-plus-circle" style="color: #e76a35"></i>
                 <span>Circle Type</span>
+            </a>
+        </li>
+    </ul>
+
+    <ul id="master-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+        <li class="nav-item">
+            <a class="nav-link " href="{{ route('eventType.index') }}">
+                <i class="bi bi-calendar-event" style="color: #e76a35"></i>
+                <span>Event Type</span>
+            </a>
+        </li>
+    </ul>
+
+    <ul id="master-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+        <li class="nav-item">
+            <a class="nav-link " href="{{ route('slot.index') }}">
+                <i class="bi bi-clock" style="color: #e76a35"></i>
+                <span>Slot</span>
             </a>
         </li>
     </ul>

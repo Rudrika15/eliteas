@@ -16,15 +16,31 @@
             action="{{ route('event.update', $event->id) }}" novalidate>
             @csrf
             <input type="hidden" name="id" value="{{ $event->id }}">
-            <div class="row mb-3">
+            <div class="col-md-6">
+                <div class="form-check mt-3">
+                    <input class="form-check-input @error('is_slot') is-invalid @enderror" type="checkbox"
+                        value="Yes" id="is_slot" name="is_slot" {{ old('is_slot', $event->is_slot) ? 'checked' : '' }}>
+                    <label class="form-check-label" for="is_slot">
+                        Is Slot ?
+                    </label>
+                    @error('is_slot')
+                        <div class="invalid-tooltip">
+                            {{ $message }}
+                        </div>
+                    @enderror
+                </div>
+            </div>
+
+
+            <div class="row">
                 <div class="col-md-6">
-                    <div class="form-floating">
+                    <div class="form-floating mt-3">
                         <select class="form-control" name="circleId" id="circleId">
-                            <option value="" selected disabled> Select Circle </option>
+                            <option value="" {{ is_null(old('circleId', $event->circleId)) || old('circleId', $event->circleId) == '' ? 'selected' : '' }}>Select Circle</option>
                             @foreach ($circle as $circlesData)
-                                <option value="{{ $circlesData->id }}"
-                                    {{ $event->circleId == $circlesData->id ? 'selected' : '' }}>
-                                    {{ $circlesData->circleName }}</option>
+                                <option value="{{ $circlesData->id }}" {{ old('circleId', $event->circleId) == $circlesData->id ? 'selected' : '' }}>
+                                    {{ $circlesData->circleName }}
+                                </option>
                             @endforeach
                         </select>
                         @error('circleId')
@@ -35,11 +51,28 @@
                     </div>
                 </div>
 
+                <div class="col-md-6">
+                    <div class="form-floating mt-3">
+                        <select class="form-control" name="eventTypeId" id="eventTypeId">
+                            <option value="" {{ is_null(old('eventTypeId', $event->eventTypeId)) || old('eventTypeId', $event->eventTypeId) == '' ? 'selected' : '' }}>Select Event Type</option>
+                            @foreach ($eventType as $eventTypeData)
+                                <option value="{{ $eventTypeData->id }}" {{ old('eventTypeId', $event->eventTypeId) == $eventTypeData->id ? 'selected' : '' }}>
+                                    {{ $eventTypeData->eventTypeName }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('eventTypeId')
+                            <div class="invalid-tooltip">
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+                </div>
 
                 <div class="col-md-6">
-                    <div class="form-floating ">
+                    <div class="form-floating mt-3">
                         <input type="text" class="form-control @error('title') is-invalid @enderror" id="title"
-                            name="title" placeholder="Title" value="{{ $event->title }}" required>
+                            name="title" placeholder="Title" value="{{ old('title', $event->title) }}" required>
                         <label for="title">Title</label>
                         @error('title')
                             <div class="invalid-tooltip">
@@ -52,7 +85,7 @@
                 <div class="col-md-6">
                     <div class="form-floating mt-3">
                         <input type="text" class="form-control @error('venue') is-invalid @enderror" id="venue"
-                            name="venue" placeholder="venue" value="{{ $event->venue }}" required>
+                            name="venue" placeholder="Venue" value="{{ old('venue', $event->venue) }}" required>
                         <label for="venue">Venue</label>
                         @error('venue')
                             <div class="invalid-tooltip">
@@ -65,9 +98,22 @@
                 <div class="col-md-6">
                     <div class="form-floating mt-3">
                         <input type="date" class="form-control @error('event_date') is-invalid @enderror" id="event_date"
-                            name="event_date" placeholder="Event Date" value="{{ $event->event_date }}" required>
+                            name="event_date" placeholder="Event Date" value="{{ old('event_date', $event->event_date) }}" required>
                         <label for="event_date">Event Date</label>
                         @error('event_date')
+                            <div class="invalid-tooltip">
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+                </div>
+
+                <div class="col-md-6" id="slotDateField" style="visibility: hidden;">
+                    <div class="form-floating mt-3">
+                        <input type="date" class="form-control @error('slot_date') is-invalid @enderror" id="slot_date"
+                            name="slot_date" placeholder="Event Slot Date" value="{{ old('slot_date', $event->slot_date) }}">
+                        <label for="slot_date">Event Slot Date</label>
+                        @error('slot_date')
                             <div class="invalid-tooltip">
                                 {{ $message }}
                             </div>
@@ -78,17 +124,12 @@
                 <div class="col-md-6">
                     <div class="form-floating mt-3">
                         <input type="file" class="form-control @error('event_banner') is-invalid @enderror"
-                            id="event_banner" name="event_banner" accept="image/*" onchange="previewPhoto2(event)"
-                            {{ ($oldEventBanner = $event->event_banner) ? 'data-old-value="' . $oldEventBanner . '"' : '' }}>
+                            id="event_banner" name="event_banner" accept="image/*" onchange="previewPhoto2(event)" required>
                         <label for="event_banner">Event Banner</label>
                         <div class="mt-1">
-                            <img id="photoPreview2"
-                                src="{{ $oldEventBanner ? asset('Event/' . $oldEventBanner) : asset('img/profile.png') }}"
-                                alt="Event Banner"
+                            <img id="photoPreview2" src="{{ old('event_banner', asset('img/profile.png')) }}" alt="Event Banner"
                                 style="width: 100px; height: 100px; object-fit: contain; aspect-ratio: 1/1;" />
                         </div>
-                        <span style="color: red;">*Max Upload Size is 2 MB</span>
-
                         @error('event_banner')
                             <div class="invalid-tooltip">
                                 {{ $message }}
@@ -97,41 +138,15 @@
                     </div>
                 </div>
 
-                <script>
-                    function previewPhoto(event) {
-                        var reader = new FileReader();
-                        reader.onload = function() {
-                            var output = document.getElementById('photoPreview1');
-                            output.src = reader.result;
-                        };
-                        reader.readAsDataURL(event.target.files[0]);
-                    }
-
-                    function previewPhoto2(event) {
-                        var reader = new FileReader();
-                        reader.onload = function() {
-                            var output = document.getElementById('photoPreview2');
-                            output.src = reader.result;
-                        };
-                        reader.readAsDataURL(event.target.files[0]);
-                    }
-                </script>
-
-
-
                 <div class="col-md-6">
                     <div class="form-floating mt-3">
                         <input type="file" class="form-control @error('event_thumb') is-invalid @enderror"
-                            id="event_thumb" name="event_thumb" accept="image/*" onchange="previewPhoto(event)"
-                            {{ ($oldEventThumb = $event->event_thumb) ? 'data-old-value="' . $oldEventThumb . '"' : '' }}>
-                        <label for="event_thumb">Event Thumbnail</label>
+                            id="event_thumb" name="event_thumb" accept="image/*" onchange="previewPhoto(event)" required>
+                        <label for="event_thumb">Event Thumb</label>
                         <div class="mt-1">
-                            <img id="photoPreview1"
-                                src="{{ $oldEventThumb ? asset('Event/' . $oldEventThumb) : asset('img/profile.png') }}"
-                                alt="Event Thumb"
+                            <img id="photoPreview1" src="{{ old('event_thumb', asset('img/profile.png')) }}" alt="Event Thumb"
                                 style="width: 100px; height: 100px; object-fit: contain; aspect-ratio: 1/1;" />
                         </div>
-                        <span style="color: red;">*Max Upload Size is 2 MB</span>
                         @error('event_thumb')
                             <div class="invalid-tooltip">
                                 {{ $message }}
@@ -143,7 +158,7 @@
                 <div class="col-md-6">
                     <div class="form-floating mt-3">
                         <input type="time" class="form-control @error('start_time') is-invalid @enderror" id="start_time"
-                            name="start_time" placeholder="Start Time" value="{{ $event->start_time }}" required>
+                            name="start_time" placeholder="Start Time" value="{{ old('start_time', $event->start_time) }}" required>
                         <label for="start_time">Start Time</label>
                         @error('start_time')
                             <div class="invalid-tooltip">
@@ -156,7 +171,7 @@
                 <div class="col-md-6">
                     <div class="form-floating mt-3">
                         <input type="time" class="form-control @error('end_time') is-invalid @enderror" id="end_time"
-                            name="end_time" placeholder="End Time" value="{{ $event->end_time }}" required>
+                            name="end_time" placeholder="End Time" value="{{ old('end_time', $event->end_time) }}" required>
                         <label for="end_time">End Time</label>
                         @error('end_time')
                             <div class="invalid-tooltip">
@@ -168,10 +183,10 @@
 
                 <div class="col-md-6">
                     <div class="form-floating mt-3">
-                        <input type="number" class="form-control @error('amount') is-invalid @enderror" id="amount"
-                            name="amount" placeholder="amount" value="{{ $event->amount }}" required>
-                        <label for="amount">Amount</label>
-                        @error('amount')
+                        <input type="number" class="form-control @error('fees') is-invalid @enderror" id="fees"
+                            name="fees" placeholder="Fees" value="{{ old('fees', $event->fees) }}" required>
+                        <label for="fees">Fees</label>
+                        @error('fees')
                             <div class="invalid-tooltip">
                                 {{ $message }}
                             </div>
@@ -179,12 +194,69 @@
                     </div>
                 </div>
 
+                <div class="col-md-6">
+                    <div class="form-floating mt-3">
+                        <textarea class="form-control @error('event_details') is-invalid @enderror" id="event_details" name="event_details"
+                            placeholder="Event Details" required>{{ old('event_details', $event->event_details) }}</textarea>
+                        <label for="event_details">Event Details</label>
+                        @error('event_details')
+                            <div class="invalid-tooltip">
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+                </div>
 
             </div>
-            <div class="text-center">
+            <div class="text-center mt-3">
                 <button type="submit" class="btn btn-bg-blue">Submit</button>
             </div>
         </form><!-- End floating Labels Form -->
     </div>
+
+
+    <script>
+        function previewPhoto(event) {
+            var reader = new FileReader();
+            reader.onload = function() {
+                var output = document.getElementById('photoPreview1');
+                output.src = reader.result;
+            };
+            reader.readAsDataURL(event.target.files[0]);
+        }
+
+        function previewPhoto2(event) {
+            var reader = new FileReader();
+            reader.onload = function() {
+                var output = document.getElementById('photoPreview2');
+                output.src = reader.result;
+            };
+            reader.readAsDataURL(event.target.files[0]);
+        }
+    </script>
+
+    <script>
+   document.addEventListener('DOMContentLoaded', function () {
+    const isSlotCheckbox = document.getElementById('is_slot');
+    const slotDateField = document.getElementById('slotDateField');
+    const slotDateInput = document.getElementById('slot_date');
+
+    // Function to toggle visibility of slot date field and clear its value
+    function toggleSlotDateField() {
+        if (isSlotCheckbox.checked) {
+            slotDateField.style.visibility = 'visible'; // Make the slot date field visible and reserve its space
+        } else {
+            slotDateField.style.visibility = 'hidden'; // Make the slot date field hidden but still reserve its space
+            slotDateInput.value = ''; // Clear the value of the slot date input
+        }
+    }
+
+    // Call the function on page load to ensure it's in the correct state
+    toggleSlotDateField();
+
+    // Add an event listener to the checkbox to handle changes
+    isSlotCheckbox.addEventListener('change', toggleSlotDateField);
+});
+    </script>
 
 @endsection

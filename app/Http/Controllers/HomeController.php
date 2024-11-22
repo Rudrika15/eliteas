@@ -414,6 +414,8 @@ class HomeController extends Controller
                     'ref' => auth()->user()->member->id
                 ]);
 
+                // $registeredMembers = EventRegister::where('eventId', $nearestEvents->id)
+                //     ->get();
 
                 $today = Carbon::today()->format('m-d');
                 $todaysBirthdays = Member::whereRaw("DATE_FORMAT(birthDate, '%m-%d') = ?", [$today])->get();

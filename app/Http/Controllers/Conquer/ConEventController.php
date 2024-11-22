@@ -1,0 +1,355 @@
+<?php
+
+namespace App\Http\Controllers\Conquer;
+
+use App\Http\Controllers\Controller;
+use App\Mail\ConEventRegistrationMail;
+use App\Mail\VisitorRegisteredMail;
+use App\Models\BusinessCategory;
+use App\Models\ConquerEvent;
+use App\Models\EventRegister;
+use App\Models\Event;
+use App\Models\Member;
+use App\Models\User;
+use App\Models\Visitor;
+use App\Models\VisitorEventRegister;
+use App\Models\VisitorsDetails;
+use App\Utils\ErrorLogger;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+
+class ConEventController extends Controller
+{
+    public function main()
+    {
+        $event = Event::where('status', 'Active')->orderBy('created_at', 'desc')->first();
+        return view('conquer.mainPage.main', compact('event'));
+    }
+
+
+    public function eventLogin()
+    {
+        // $event = Event::where('status', 'Active')->first();
+        $event = Event::where('status', 'Active')->orderBy('created_at', 'desc')->first();
+        return view('conquer.mainPage.eventLogin', compact('event'));
+    }
+
+    public function visitorLoginCheck(Request $request)
+    {
+
+        // Validate the incoming request
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|min:6',
+        ]);
+
+        // Fetch visitor from the database
+        $visitor = Visitor::where('email', $request->email)->first();
+
+        // Validate the existence of the visitor
+        if (!$visitor || !Hash::check($request->password, $visitor->password)) {
+            return redirect()->back()->withErrors([
+                'email' => 'Invalid credentials. Please check your email and password.',
+            ])->withInput();
+        }
+        // Redirect to home page if credentials are correct
+        // return redirect()->route('visitor.dashboard');->with('success', 'Welcome back!');
+        return redirect()->route('visitor.dashboard');
+    }
+
+
+    public function visitorDashboard()
+    {
+        return view('visitor.visitorDashboard');
+    }
+
+
+
+    public function conEventLogin(Request $request)
+    {
+        // Validate the incoming request
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|min:6',
+        ]);
+
+        // Fetch user from the database
+        $user = User::where('email', $request->email)->first();
+
+        // Fetch the active event
+        $event = Event::where('status', 'Active')->orderBy('created_at', 'desc')->first();
+
+        // Validate the existence of the event
+        if (!$event) {
+            return redirect()->back()->withErrors([
+                'email' => 'No active event found.',
+            ])->withInput();
+        }
+
+        // Check if user exists and password matches
+        if ($user && Hash::check($request->password, $user->password)) {
+            // Fetch the corresponding member record
+            $member = Member::where('userId', $user->id)->first();
+
+            if (!$member) {
+                return redirect()->back()->withErrors([
+                    'email' => 'No member record found for the authenticated user.',
+                ])->withInput();
+            }
+
+            $memberId = $member->id;
+            $eventId = $event->id;
+
+            // Check if the member is already registered for the event
+            $existingRegistration = EventRegister::where('memberId', $memberId)
+                ->where('eventId', $eventId)
+                ->first();
+
+            if ($existingRegistration) {
+                return redirect()->back()->with('message', 'You are already registered for this event.');
+            }
+
+            // Register the member for the event
+            $registration = new EventRegister();
+            $registration->memberId = $memberId;
+            $registration->eventId = $eventId;
+            $registration->save();
+
+            // Prepare event details for email
+            $eventDetails = [
+                'title' => $event->title,
+                'event_date' => $event->event_date,
+                'venue' => $event->venue ?? 'Not Decided Yet',
+            ];
+
+            // Send confirmation email
+            Mail::to($user->email)->send(new ConEventRegistrationMail($user, $eventDetails));
+
+            // Redirect to the thank you page
+            return view('conquer.mainPage.thankYou', compact('memberId', 'eventId'))
+                ->with('success', 'You have successfully registered for the event.');
+        } else {
+            // Authentication failed
+            return redirect()->back()->withErrors([
+                'email' => 'The provided credentials do not match our records.',
+            ])->withInput();
+        }
+    }
+
+
+    public function visitor()
+    {
+        // $event = Event::where('status', 'Active')->first();
+        $event = Event::where('status', 'Active')->orderBy('created_at', 'desc')->first();
+        $businessCategory = BusinessCategory::where('status', 'Active')->get();
+        return view('conquer.mainPage.visitor', compact('businessCategory', 'event'));
+    }
+
+
+    // public function handleVisitorRegistration(Request $request)
+    // {
+    //     try {
+    //         // Validate the required fields
+    //         $request->validate([
+    //             'eventId' => 'required|exists:events,id',
+    //             'firstName' => 'required|string|max:255',
+    //             'lastName' => 'required|string|max:255',
+    //             'mobileNo' => 'required|digits:10',
+    //             'email' => 'required|email|max:255',
+    //             'businessCategory' => 'required|string',
+    //         ]);
+
+    //         // Check if the visitor already exists
+    //         $existingVisitor = VisitorsDetails::where('email', $request->email)
+    //             ->where('eventId', $request->eventId)
+    //             ->first();
+
+    //         if ($existingVisitor) {
+    //             return redirect()->back()->with('error', 'You are already registered for this event.');
+    //         }
+
+    //         // Create a new visitor record
+    //         $visitor = new VisitorsDetails();
+    //         $visitor->eventId = $request->eventId;
+    //         $visitor->firstName = $request->firstName;
+    //         $visitor->lastName = $request->lastName;
+    //         $visitor->mobileNo = $request->contactNo;
+    //         $visitor->email = $request->email;
+    //         $visitor->password = bcrypt(123456);
+    //         $visitor->status = 'Active';
+
+    //         // Handle business category
+    //         if ($request->businessCategory === 'other') {
+    //             // Check or create the new business category
+    //             $business = BusinessCategory::firstOrCreate(
+    //                 ['categoryName' => $request->otherCategory]
+    //             );
+    //             $visitor->businessCategory = $business->id;
+    //         } else {
+    //             $visitor->businessCategory = $request->businessCategory;
+    //         }
+
+    //         // Save the visitor record
+    //         $visitor->save();
+
+    //         // Fetch the event details
+    //         $eventRecord = Event::find($request->eventId);
+
+    //         if (!$eventRecord) {
+    //             return redirect()->back()->with('error', 'Event not found.');
+    //         }
+
+    //         // Prepare event details for the email
+    //         $eventDetails = [
+    //             'title' => $eventRecord->title,
+    //             'event_date' => $eventRecord->event_date,
+    //             'venue' => $eventRecord->venue ?? 'Not Decided Yet',
+    //             'firstName' => $visitor->firstName,
+    //             'lastName' => $visitor->lastName,
+    //         ];
+
+    //         // Send the confirmation email
+    //         Mail::to($request->email)->send(new VisitorRegisteredMail($eventDetails));
+
+    //         // Redirect to the Thank You page
+    //         return view('conquer.mainPage.thankYouUser', [
+    //             'eventId' => $request->eventId,
+    //         ])->with('success', 'Your information was submitted successfully!');
+    //     } catch (\Throwable $th) {
+    //         // Log the error
+    //         ErrorLogger::logError($th, $request->fullUrl());
+
+    //         // Redirect back with error message
+    //         return redirect()->back()->with('error', 'Failed to submit your information.');
+    //     }
+    // }
+
+    public function visitorLogin()
+    {
+        $event = Event::where('status', 'Active')->orderBy('created_at', 'desc')->first();
+        return view('visitor.visitorLogin', compact('event'));
+    }
+
+
+    public function handleVisitorRegistration(Request $request)
+    {
+        try {
+            // Validate the required fields
+            $request->validate([
+                'eventId' => 'required|exists:events,id',
+                'firstName' => 'required|string|max:255',
+                'lastName' => 'required|string|max:255',
+                'mobileNo' => 'required|digits:10',
+                'email' => 'required|email|max:255',
+                'businessCategory' => 'required|string',
+            ]);
+
+            // Check if the visitor already exists in the Visitors table
+            $existingVisitor = Visitor::where('email', $request->email)->first();
+
+            if ($existingVisitor) {
+                // Check if they are already registered for this event
+                $alreadyRegistered = VisitorEventRegister::where('eventId', $request->eventId)
+                    ->where('visitorId', $existingVisitor->id)
+                    ->exists();
+
+                if ($alreadyRegistered) {
+                    return redirect()->back()->with('error', 'You are already registered for this event.');
+                }
+
+                // If visitor exists but not registered for this event
+                return redirect()->back()->with('error', 'You are already registered as a user. Please log in to register for this event.');
+            }
+
+            // Create a new visitor record if not already in the Visitors table
+            $visitor = new Visitor();
+            $visitor->firstName = $request->firstName;
+            $visitor->lastName = $request->lastName;
+            $visitor->email = $request->email;
+            $visitor->mobileNo = $request->mobileNo;
+            $visitor->birthDate = $request->birthDate;
+            $visitor->gender = $request->gender;
+            $visitor->businessCategory = $request->businessCategory;
+            $visitor->password = bcrypt(123456); // Default password
+            $visitor->status = 'Active';
+
+            // Handle business category
+            if ($request->businessCategory === 'other') {
+                // Check or create the new business category
+                $business = BusinessCategory::firstOrCreate(
+                    ['categoryName' => $request->otherCategory]
+                );
+                $visitor->businessCategory = $business->id;
+            } else {
+                $visitor->businessCategory = $request->businessCategory;
+            }
+
+            // Save the new visitor
+            $visitor->save();
+
+            // Create a new VisitorEventRegister record
+            $eventRegister = new VisitorEventRegister();
+            $eventRegister->eventId = $request->eventId;
+            $eventRegister->visitorId = $visitor->id;
+            $eventRegister->save();
+
+            // Fetch the event details
+            $eventRecord = Event::find($request->eventId);
+
+            if (!$eventRecord) {
+                return redirect()->back()->with('error', 'Event not found.');
+            }
+
+            // Prepare event details for the email
+            $eventDetails = [
+                'title' => $eventRecord->title,
+                'event_date' => $eventRecord->event_date,
+                'venue' => $eventRecord->venue ?? 'Not Decided Yet',
+                'firstName' => $visitor->firstName,
+                'lastName' => $visitor->lastName,
+                'email' => $visitor->email,
+                'password' => '123456',
+            ];
+
+            // Send the confirmation email
+            Mail::to($visitor->email)->send(new VisitorRegisteredMail($eventDetails));
+
+            // Redirect to the Thank You page
+            return view('conquer.mainPage.thankYouUser', [
+                'eventId' => $request->eventId,
+            ])->with('success', 'Your information was submitted successfully!');
+        } catch (\Throwable $th) {
+            // Log the error
+            ErrorLogger::logError($th, $request->fullUrl());
+
+            // Redirect back with error message
+            return redirect()->back()->with('error', 'Failed to submit your information.');
+        }
+    }
+
+
+
+
+
+    // public function conquerUserStore(Request $request)
+    // {
+    //     try {
+    //         // Create a new VisitorsDetails object
+    //         $visitor = new EventRegister();
+    //         $visitor->eventId = $request->eventId;
+    //         $visitor->userId = $request->userId;
+    //         $visitor->status = 'Active';
+
+    //         // Save the visitor information
+    //         $visitor->save();
+
+    //         return redirect()->back()->with('success', 'Your Information Submitted Successfully!');
+    //     } catch (\Throwable $th) {
+    //         // throw $th;
+    //         ErrorLogger::logError($th, $request->fullUrl());
+    //         // Return a generic error view or message
+    //         return redirect()->back()->with('error', 'Failed to submit your information');
+    //     }
+    // }
+}

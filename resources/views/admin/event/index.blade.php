@@ -23,11 +23,14 @@
                                 <th>Title</th>
                                 <th>Circle</th>
                                 <th>Event Date</th>
+                                <th>Slot Date</th>
                                 <th>Event Image</th>
                                 <th>Event Banner</th>
+                                <th>Venue</th>
                                 <th>Start Time</th>
                                 <th>End Time</th>
-                                <th>Amount</th>
+                                <th>Fees</th>
+                                <th>QR Code</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -40,6 +43,7 @@
                                     <td>{{ $eventData->title ?? '-' }}</td>
                                     <td>{{ $eventData->circle->circleName ?? '-' }}</td>
                                     <td>{{ $eventData->event_date }}</td>
+                                    <td>{{ $eventData->slot_date }}</td>
                                     <td>
                                         @if ($eventData->event_thumb)
                                             <img src="{{ url('Event/' . basename($eventData->event_thumb)) }}"
@@ -58,9 +62,44 @@
                                             <span></span>
                                         @endif
                                     </td>
+                                    <td>{{ $eventData->venue }}</td>
                                     <td>{{ $eventData->start_time }}</td>
                                     <td>{{ $eventData->end_time }}</td>
-                                    <td>{{ $eventData->amount }}</td>
+                                    <td>{{ $eventData->fees }}</td>
+                                    <td>
+                                        @if ($eventData->qr_code)
+                                            <a href="javascript:void(0);" onclick="showImage('{{ url('eventQR/' . basename($eventData->qr_code)) }}')">
+                                                <img src="{{ url('eventQR/' . basename($eventData->qr_code)) }}" alt="Event QR Code"
+                                                    style="width: 50px; height: 50px; object-fit: contain; aspect-ratio: 1/1;">
+                                            </a>
+                                        @else
+                                            <span>No QR Code Found</span>
+                                        @endif
+                                    </td>
+
+                                    <!-- Modal for displaying the QR code -->
+                                    <div id="qrModal" style="display: none;">
+                                        <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 1000; text-align: center;">
+                                            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 10px;">
+                                                <img id="qrImage" src="" alt="QR Code" style="max-width: 100%; max-height: 80vh; object-fit: contain;">
+                                                <div style="margin-top: 10px; text-align: center;">
+                                                    <button class="btn btn-success mr-2" onclick="downloadQRCode('png')">Download</button>
+                                                    <button class="btn btn-primary mr-2" onclick="printQRCode()">Print</button>
+                                                    <button class="btn btn-danger" onclick="closeModal()">Close</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <script>
+                                        function downloadQRCode(type) {
+                                            var img = document.getElementById("qrImage");
+                                            var link = document.createElement('a');
+                                            link.href = img.src;
+                                            link.download = "qrCode." + type;
+                                            link.click();
+                                        }
+                                    </script>
                                     <td>
                                         <a href="{{ route('event.eventRegisterList', $eventData->id) }}"
                                             class="btn btn-bg-orange btn-sm btn-tooltip">
@@ -96,4 +135,38 @@
             </div>
         </div>
     </div>
+
+    <script>
+        // Function to show the modal with the image
+        function showImage(imageUrl) {
+            document.getElementById('qrImage').src = imageUrl;
+            document.getElementById('qrModal').style.display = 'block';
+        }
+
+        // Function to close the modal
+        function closeModal() {
+            document.getElementById('qrModal').style.display = 'none';
+        }
+
+        // Function to download the QR code
+        function downloadQRCode() {
+            var imageUrl = document.getElementById('qrImage').src;
+            var a = document.createElement('a');
+            a.href = imageUrl;
+            a.download = 'event-qr-code.png'; // You can customize the filename here
+            a.click();
+        }
+
+        // Function to print the QR code
+        function printQRCode() {
+            var printWindow = window.open('', '', 'width=800,height=600');
+            var img = document.getElementById('qrImage');
+            printWindow.document.write('<html><body><img src="' + img.src + '" style="width:100%;"></body></html>');
+            printWindow.document.close();
+            printWindow.print();
+        }
+
+            </script>
+
+
 @endsection

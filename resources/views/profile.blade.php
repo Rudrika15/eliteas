@@ -221,20 +221,85 @@
                                     </div>
                                 </div>
 
-                                <div class="col-md-6 mt-3">
-                                    <div class="form-floating">
-                                        <input type="longText"
-                                            class="form-control @error('keyWords') is-invalid @enderror" id="keyWords"
-                                            name="keyWords" value="{{ $member->keyWords ?? '-' }}"
-                                            placeholder="keyWords">
-                                        <label for="keyWords">Keywords (Comma Seperated)</label>
-                                        @error('keyWords')
-                                            <div class="invalid-tooltip">
-                                                {{ $message }}
+                                <div class="col-md-6 mt-3 position-relative">
+                                    <div id="keyword-container">
+                                        @if (old('keyWords'))
+                                            @foreach (old('keyWords') as $keyword)
+                                                <div class="form-floating mb-2 position-relative">
+                                                    <input type="text" class="form-control" name="keyWords[]"
+                                                        value="{{ $keyword }}" placeholder="Keyword">
+                                                    <label>Keyword</label>
+                                                    <button type="button"
+                                                        class="btn btn-danger position-absolute top-0 end-0 m-2 mt-2"
+                                                        onclick="this.parentElement.remove()">–</button>
+                                                </div>
+                                            @endforeach
+                                        @elseif (isset($member->keyWords) && is_array(json_decode($member->keyWords, true)))
+                                            @foreach (json_decode($member->keyWords, true) as $keyword)
+                                                <div class="form-floating mb-2 position-relative">
+                                                    <input type="text" class="form-control" name="keyWords[]"
+                                                        value="{{ $keyword }}" placeholder="Keyword">
+                                                    <label>Keyword</label>
+                                                    <button type="button"
+                                                        class="btn btn-danger position-absolute top-0 end-0 m-2 mt-2"
+                                                        onclick="this.parentElement.remove()">–</button>
+                                                </div>
+                                            @endforeach
+                                        @else
+                                            <div class="form-floating mb-2 position-relative">
+                                                <input type="text" class="form-control" name="keyWords[]"
+                                                    placeholder="Keyword">
+                                                <label>Keyword</label>
+                                                <button type="button"
+                                                    class="btn btn-danger position-absolute top-0 end-0 m-2 mt-2"
+                                                    onclick="this.parentElement.remove()">–</button>
                                             </div>
-                                        @enderror
+                                        @endif
                                     </div>
+                                    <button type="button" class="btn btn-bg-blue mt-2" id="add-keyword">Add
+                                        Keyword</button>
                                 </div>
+
+                                <script>
+                                    document.getElementById('add-keyword').addEventListener('click', function(e) {
+                                        e.preventDefault(); // Prevent default form behavior
+                                        const container = document.getElementById('keyword-container');
+
+                                        // Create a new input group
+                                        const newInputGroup = document.createElement('div');
+                                        newInputGroup.classList.add('form-floating', 'mb-2', 'position-relative');
+
+                                        const newInput = document.createElement('input');
+                                        newInput.type = 'text';
+                                        newInput.name = 'keyWords[]';
+                                        newInput.classList.add('form-control');
+                                        newInput.placeholder = 'Keyword';
+
+                                        const newLabel = document.createElement('label');
+                                        newLabel.innerText = 'Keyword';
+
+                                        const removeButton = document.createElement('button');
+                                        removeButton.type = 'button';
+                                        removeButton.classList.add('btn', 'btn-danger', 'position-absolute', 'top-0', 'end-0', 'm-2', 'mt-2');
+                                        removeButton.innerText = '–';
+                                        removeButton.addEventListener('click', function() {
+                                            container.removeChild(newInputGroup);
+                                        });
+
+                                        newInputGroup.appendChild(newInput);
+                                        newInputGroup.appendChild(newLabel);
+                                        newInputGroup.appendChild(removeButton);
+                                        container.appendChild(newInputGroup);
+                                    });
+                                </script>
+
+
+
+
+
+
+
+
 
                                 <div class="col-md-6 mt-3">
                                     <div class="form-floating">
@@ -1775,6 +1840,28 @@
             reader.readAsDataURL(input.files[0]);
         }
 </script> --}}
+
+    <script>
+        document.getElementById('add-keyword').addEventListener('click', function() {
+            const container = document.getElementById('keyword-container');
+
+            const newInputGroup = document.createElement('div');
+            newInputGroup.classList.add('form-floating', 'mb-2');
+
+            const newInput = document.createElement('input');
+            newInput.type = 'text';
+            newInput.name = 'keyWords[]';
+            newInput.classList.add('form-control');
+            newInput.placeholder = 'Keyword';
+
+            const newLabel = document.createElement('label');
+            newLabel.innerText = 'Keyword';
+
+            newInputGroup.appendChild(newInput);
+            newInputGroup.appendChild(newLabel);
+            container.appendChild(newInputGroup);
+        });
+    </script>
 
     <script>
         function previewPhoto(event, previewId) {
