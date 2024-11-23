@@ -233,6 +233,17 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('slot/update', [SlotController::class, 'update'])->name('slot.update');
     Route::get('slot/delete/{id?}', [SlotController::class, 'delete'])->name('slot.delete');
 
+    //slot booking
+    Route::get('slotbooking/index', [SlotController::class, 'index'])->name('slotbooking.index');
+    Route::get('slotbooking/create', [SlotController::class, 'create'])->name('slotbooking.create');
+    Route::post('slotbooking/slotBookingMember', [SlotController::class, 'slotBookingMember'])->name('slotbooking.member');
+    Route::get('slotbooking/edit/{id?}', [SlotController::class, 'edit'])->name('slotbooking.edit');
+    Route::post('slotbooking/update', [SlotController::class, 'update'])->name('slotbooking.update');
+    Route::get('slotbooking/delete/{id?}', [SlotController::class, 'delete'])->name('slotbooking.delete');
+
+
+
+    //circle
     Route::get('/circle/index', [CircleController::class, 'index'])->name('circle.index');
     Route::get('circle/show/{id?}', [CircleController::class, 'show'])->name('circle.show');
     Route::get('circle/create', [CircleController::class, 'create'])->name('circle.create');
@@ -669,6 +680,7 @@ Route::get('/event/{id}/view-members-visitors', [SlotController::class, 'userLis
 
 Route::get('/visitorLogout', [ConEventController::class, 'logoutVisitor'])->name('visitor.logout');
 
+Route::post('slotbooking/visitor/{id?}', [SlotController::class, 'slotBookingVisitor'])->name('slotbooking.visitor');
 
 
 //Login with otp

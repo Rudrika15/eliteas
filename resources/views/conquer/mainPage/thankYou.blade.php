@@ -67,6 +67,8 @@
             <p>Your registration for the event has been successfully completed.</p>
             <p>Details regarding slot booking will be sent to your registered email shortly.</p>
         </div>
+
+                <a href="{{route('login')}}" class="btn btn-primary">Back to Home</a>
     </div>
 
     <!-- JavaScript Section -->

@@ -10,15 +10,15 @@ class ConEventRegistrationMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $userId;
+    public $user;
     public $eventDetails;
 
     /**
      * Create a new message instance.
      */
-    public function __construct($userId, $eventDetails)
+    public function __construct($user, $eventDetails)
     {
-        $this->userId = $userId;
+        $this->user = $user;
         $this->eventDetails = $eventDetails;
     }
 
@@ -30,7 +30,7 @@ class ConEventRegistrationMail extends Mailable
         return $this->subject('Event Registration Confirmation')
             ->view('email.eventRegistration')
             ->with([
-                'userId' => $this->userId,
+                'userId' => $this->user,
                 'eventDetails' => $this->eventDetails,
             ]);
     }

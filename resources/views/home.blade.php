@@ -585,8 +585,14 @@
                                             <button type="button" class="btn btn-bg-orange btn-md" id="slotBooking"
                                             onclick="location.href='{{ route('event.viewMembers', ['id' => $nearestEvents->id]) }}'">
                                         Slot Booking
-                                    </button>
-
+                                            </button>
+                                        </div>
+                                        @else
+                                        <div class="ps-5 ms-5 mt-5">
+                                        <button type="button" class="btn btn-bg-orange btn-md" id="slotBooking"
+                                        onclick="location.href='{{ route('event.viewMembers', ['id' => $nearestEvents->id]) }}'">
+                                        View Members
+                                        </button>
                                         </div>
                                         @endif
                                         </div>

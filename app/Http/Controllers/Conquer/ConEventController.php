@@ -102,6 +102,7 @@ class ConEventController extends Controller
 
     public function conEventLogin(Request $request)
     {
+
         // Validate the incoming request
         $request->validate([
             'email' => 'required|email',
@@ -135,6 +136,7 @@ class ConEventController extends Controller
             $memberId = $member->id;
             $eventId = $event->id;
 
+
             // Check if the member is already registered for the event
             $existingRegistration = EventRegister::where('memberId', $memberId)
                 ->where('eventId', $eventId)
@@ -143,6 +145,7 @@ class ConEventController extends Controller
             if ($existingRegistration) {
                 return redirect()->back()->with('message', 'You are already registered for this event.');
             }
+
 
             // Register the member for the event
             $registration = new EventRegister();
@@ -184,9 +187,8 @@ class ConEventController extends Controller
     public function registerFromVisitor(Request $request)
     {
 
-        return $visitor = Visitor::get();
 
-        $visitorId = session()->get($visitor->id);
+        $visitorId = session('visitor_id');
 
         $visitors = VisitorEventRegister::where('visitorId', $visitorId)
             ->where('eventId', $request->eventId)
@@ -197,7 +199,7 @@ class ConEventController extends Controller
         }
 
         $visitor = new VisitorEventRegister();
-        $visitor->visitorId = $request->visitor->id;
+        $visitor->visitorId = $visitorId;
         $visitor->eventId = $request->eventId;
         $visitor->save();
 

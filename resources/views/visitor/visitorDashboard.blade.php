@@ -44,10 +44,23 @@
                                         <h5 class="text-muted text-end me-4 pt-5">Free</h5>
                                         <form method="POST" action="{{ route('visitor.register.dash', ['eventId' => $nearestEvents->id]) }}">
                                             @csrf
+
+                                            @php
+                                            $visitor = session('visitor_id');
+                                            $eventRegister = \App\Models\VisitorEventRegister::where('visitorId', $visitor)->where('eventId', $nearestEvents->id)->first();
+                                            @endphp
+
                                             <div class="d-flex justify-content-end">
+
+                                                @if ($eventRegister)
+                                                <div class="ps-5 ms-5 mt-5">
+                                                    <strong><span class="text-success">Already Joined</span></strong>
+                                                </div>
+                                                @else
                                                 <button type="submit" class="btn btn-bg-orange btn-md " id="freeRegisterBtn">
                                                     Register
                                                 </button>
+                                                @endif
                                             </div>
                                         </form>
                                         @endif
@@ -64,7 +77,22 @@
                                         <div class="ps-5 ms-5 mt-5">
                                             <strong><span class="text-success">Already Joined</span></strong> --}}
                                         {{-- </div> --}}
-                                    @if ($nearestEvents->slot_date)
+
+                                        @php
+                                        $visitor = session('visitor_id');
+                                        $eventRegister = \App\Models\VisitorEventRegister::where('visitorId', $visitor)->where('eventId', $nearestEvents->id)->first();
+                                        @endphp
+
+                                    <div class="ps-5 ms-5 mt-5 d-flex justify-content-end">
+                                        <button type="button" class="btn btn-bg-orange btn-md" id="slotBooking"
+                                        onclick="location.href='{{ route('event.viewMembersForVisitors', ['id' => $nearestEvents->id]) }}'">
+                                        View Members
+                                        </button>
+                                    </div>
+
+
+
+                                    @if ($nearestEvents->slot_date && $eventRegister)
                                     <div class="ps-5 ms-5 mt-5 d-flex justify-content-end">
                                         <button type="button" class="btn btn-bg-orange btn-md" id="slotBooking"
                                         onclick="location.href='{{ route('event.viewMembersForVisitors', ['id' => $nearestEvents->id]) }}'">
@@ -79,7 +107,6 @@
                                 @endif
                             </div>
                         </div>
-
 
                         <!-- Shareable Link Section -->
                         {{-- <div class="row mt-3">

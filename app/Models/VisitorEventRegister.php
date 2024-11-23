@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class VisitorEventRegister extends Model
 {
     use HasFactory;
+
+    public function visitors()
+    {
+        return $this->belongsTo(Visitor::class, 'visitorId', 'id');
+    }
 }

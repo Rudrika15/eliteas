@@ -81,22 +81,25 @@
     <div class="container mt-5">
         <h2 class="text-center mb-4 card-title">Registered Members</h2>
         <div class="row row-cols-1 row-cols-md-4 g-4">
-            @foreach ($users as $userData)
-                <div>
-                    <div class="profile-card">
-                        @if (file_exists(public_path('VisitorPhoto/' . $userData->visitorPhoto)))
-                            <img src="{{ asset('VisitorPhoto/' . $userData->visitorPhoto) }}" alt="Profile Picture">
-                        @else
-                            <div class="profile-placeholder">{{ strtoupper(substr($userData->personName, 0, 1)) }}</div>
-                        @endif
-                        <div class="name">{{ $userData->personName }}</div>
-                        <a href="#" class="btn btn-bg-blue btn-sm mt-3">View Profile</a>
+            @foreach ($visitorsUsers as $visitorsUsersData)
+            <div>
+                <div class="profile-card">
+                    @if (file_exists(public_path('VisitorPhoto/' . $visitorsUsersData->visitorPhoto)))
+                        <img src="{{ asset('VisitorPhoto/' . $visitorsUsersData->visitorPhoto) }}" alt="Profile Picture">
+                    @else
+                        <div class="profile-placeholder"></div>
+                    @endif
+                    <div class="name" style="color: #e76a35">{{ $visitorsUsersData->members->firstName ?? '' }} {{ $visitorsUsersData->members->lastName ?? ($visitorsUsersData->visitors->firstName ?? '')  }} {{ $visitorsUsersData->visitors->lastName ?? '' }}</div>
+                    <a href="#" class="btn btn-bg-blue btn-sm mt-3">View Profile</a>
+                    @if(isset($event) && $event->slot_date)
                         <button class="btn btn-bg-orange btn-sm mt-3" data-bs-toggle="modal" data-bs-target="#slotModal">
                             Slot Booking
                         </button>
-                    </div>
+                    @endif
+
                 </div>
-            @endforeach
+            </div>
+        @endforeach
         </div>
 
         <!-- Modal -->
@@ -112,8 +115,24 @@
                             @foreach ($slots as $slotData)
                                 <li class="slot-list-item">
                                     <span>{{ $slotData->start_time }} - {{ $slotData->end_time }}</span>
-                                    <button class="book-slot-btn" onclick="alert('Slot booking is coming soon, please check back later');">Book Slot</button>
-                                </li>
+                                    <form action="{{ route('slotbooking.member', $slotData->id) }}" method="POST">
+                                        @csrf
+                                        <input type="hidden" name="eventId" value="{{ $event->id }}">
+                                        <input type="hidden" name="slotId" value="{{ $slotData->id }}">
+                                        <input type="hidden" name="regMemberId" value="{{ $visitorsUsersData->id }}">
+                                        <button type="submit" class="book-slot-btn">
+
+                                            @php
+                                            $slotBooking = \App\Models\SlotBooking::where('eventId', $event->id)->where('slotId', $slotData->id)->first();
+                                            @endphp
+
+                                            @if ($slotBooking)
+                                            Booked
+                                            @else
+                                            Book Slot
+                                            @endif
+                                        </button>
+                                    </form>
                             @endforeach
                         </ul>
                     </div>

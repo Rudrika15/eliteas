@@ -68,7 +68,14 @@
                                 <div class="card-body">
                                     <h5 class="card-title text-center pb-0 fs-4 mb-4" style="color: #1d3268;">Login
                                     </h5>
-                                    {{-- <p class="text-center small">Enter your email & password to login</p> --}}
+
+
+                                    @if (session('message'))
+                                    <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+                                        {{ session('message') }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
+                                    @endif
 
                                     {{-- <form method="POST" action="{{ route('conEventLogin') }}" --}}
                                     <form method="POST" action="{{ route('conquer.event.user.login') }}"
@@ -120,6 +127,9 @@
                                             <button type="submit" class="btn btn-bg-blue">Login</button>
                                         </div>
 
+
+
+
                                         @if (Route::has('password.request'))
                                             <div class="mt-3 text-center">
                                                 <a href="{{ route('forget.password.get') }}" class=""
@@ -163,40 +173,6 @@
     <!-- Template Main JS File -->
     <script src="{{ asset('js/main.js') }}"></script>
 
-    {{-- Location script --}}
-    <script>
-        document.getElementById('login-form').addEventListener('submit', function(event) {
-            event.preventDefault();
-
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(function(position) {
-                    // Append the location data to the form
-                    const latitudeInput = document.createElement('input');
-                    latitudeInput.type = 'hidden';
-                    latitudeInput.name = 'latitude';
-                    latitudeInput.value = position.coords.latitude;
-
-                    const longitudeInput = document.createElement('input');
-                    longitudeInput.type = 'hidden';
-                    longitudeInput.name = 'longitude';
-                    longitudeInput.value = position.coords.longitude;
-
-                    const form = document.getElementById('login-form');
-                    form.appendChild(latitudeInput);
-                    form.appendChild(longitudeInput);
-
-                    form.submit();
-                }, function(error) {
-                    console.error("Geolocation error: ", error);
-                    document.getElementById('login-form')
-                        .submit(); // Submit the form even if geolocation fails
-                });
-            } else {
-                console.error("Geolocation is not supported by this browser.");
-                document.getElementById('login-form').submit();
-            }
-        });
-    </script>
 </body>
 
 </html>
