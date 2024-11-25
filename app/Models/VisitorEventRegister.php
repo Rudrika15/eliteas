@@ -13,4 +13,9 @@ class VisitorEventRegister extends Model
     {
         return $this->belongsTo(Visitor::class, 'visitorId', 'id');
     }
+
+    public function events()
+    {
+        return $this->belongsTo(Event::class, 'eventId', 'id');
+    }
 }

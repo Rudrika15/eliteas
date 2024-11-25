@@ -97,9 +97,9 @@
                         <li>
                             <hr class="dropdown-divider">
                         </li>
-                        @role('Member')
+                        {{-- @role('Member') --}}
                             <li>
-                                <a class="dropdown-item d-flex align-items-center" href="{{ route('member') }}">
+                                <a class="dropdown-item d-flex align-items-center" href="{{ route('visitor.profile') }}">
                                     <i class="bi bi-person" style="color: #e76a35"></i>
                                     <span style="font-weight: bold; color: #1d2856">My Profile</span>
                                 </a>
@@ -108,14 +108,7 @@
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
-
-                            <li>
-                                <a class="dropdown-item d-flex align-items-center" href="{{ route('member') }}">
-                                    <i class="bi bi-cart" style="color: #e76a35"></i>
-                                    <span style="font-weight: bold; color: #1d2856">Go To UBN Mart</span>
-                                </a>
-                            </li>
-                        @endrole
+                        {{-- @endrole --}}
 
                         @role('Admin')
                             <li>

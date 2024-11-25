@@ -10,6 +10,8 @@ use Illuminate\Http\Request;
 use App\Models\EventRegister;
 use App\Http\Controllers\Controller;
 use App\Models\EventType;
+use App\Models\SlotBooking;
+use App\Models\VisitorEventRegister;
 use Illuminate\Support\Facades\Auth;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
@@ -361,8 +363,15 @@ class EventController extends Controller
     {
         try {
             $event = Event::find($id);
+
             $registerList = EventRegister::where('eventId', $id)->paginate(10);
-            return view('admin.event.eventRegistrationList', compact('event', 'registerList'));
+            $registerListVisitor = VisitorEventRegister::where('eventId', $id)->paginate(10);
+
+            $registerLists = $registerList->merge($registerListVisitor);
+
+
+
+            return view('admin.event.eventRegistrationList', compact('event', 'registerList', 'registerLists', 'slotBooking'));
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError(
@@ -371,5 +380,35 @@ class EventController extends Controller
             );
             return view('servererror');
         }
+    }
+
+
+    public function slotBookingList(Request $request, $id)
+    {
+        try {
+            $event = Event::find($id);
+            $slotBooking = SlotBooking::where('eventId', $id)->paginate(10);
+            return view('admin.event.slotBookingList', compact('event', 'slotBooking'));
+        } catch (\Throwable $th) {
+            // throw $th;
+            ErrorLogger::logError(
+                $th,
+                $request->fullUrl()
+            );
+            return view('servererror');
+        }
+    }
+
+    public function slotBookingUpdateStatus(Request $request, $id)
+    {
+        $request->validate([
+            'bookingStatus' => 'required|in:Pending,Approved,Rejected',
+        ]);
+
+        $slotBooking = SlotBooking::findOrFail($id);
+        $slotBooking->bookingStatus = $request->bookingStatus;
+        $slotBooking->save();
+
+        return back()->with('success', 'Booking status updated successfully.');
     }
 }

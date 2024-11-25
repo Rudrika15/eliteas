@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Visitor extends Model
 {
     use HasFactory;
+
+    public function bCategory()
+    {
+        return $this->belongsTo(BusinessCategory::class, 'businessCategory', 'id');
+    }
 }

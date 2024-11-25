@@ -24,25 +24,27 @@
                                 <th>Person Email</th>
                                 <th>Person Contact</th>
                                 <th>Reference By</th>
+                                {{-- <th>Action</th> --}}
                                 {{-- <th>Payment Status</th> --}}
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($registerList as $registerListData)
+                            @foreach ($registerLists as $registerListsData)
                                 <tr>
-                                    <th>{{ ($registerList->currentPage() - 1) * $registerList->perPage() + $loop->index + 1 }}
+                                    <th>{{ ($registerLists->currentPage() - 1) * $registerLists->perPage() + $loop->index + 1 }}
 
-                                    <td>{{ $registerListData->events->title ?? '' }}</td>
-                                    <td>{{ $registerListData->members->firstName ?? '' }}
-                                        {{ $registerListData->members->lastName ?? '' }}
+                                    <td>{{ $registerListsData->events->title ?? '' }}</td>
+                                    <td>{{ $registerListsData->members->firstName ?? '' }}
+                                        {{ $registerListsData->members->lastName ?? '' }}
                                     </td>
-                                    <td>{{ $registerListData->personName ?? '' }}</td>
-                                    <td>{{ $registerListData->personEmail ?? '' }}</td>
-                                    <td>{{ $registerListData->personContact ?? '' }}</td>
-                                    <td>{{ $registerListData->refMembers->firstName ?? '' }}
-                                        {{ $registerListData->refMembers->lastName ?? '' }} </td>
-                                    {{-- <td>{{$registerListData->PaymentStatus ?? ''}}</td> --}}
+                                    <td>{{ $registerListsData->visitors->firstName ?? '' }}</td>
+                                    <td>{{ $registerListsData->visitors->lastName ?? '' }}</td>
+                                    <td>{{ $registerListsData->visitors->mobileNo ?? '' }}</td>
+                                    <td>{{ $registerListsData->refMembers->firstName ?? '' }}
+                                        {{ $registerListsData->refMembers->lastName ?? '' }} </td>
+                                    {{-- <td>{{$registerListsData->PaymentStatus ?? ''}}</td> --}}
 
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>

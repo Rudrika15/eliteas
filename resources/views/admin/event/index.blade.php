@@ -101,6 +101,12 @@
                                         }
                                     </script>
                                     <td>
+                                        <a href="{{ route('slotbooking.list', $eventData->id) }}"
+                                            class="btn btn-bg-blue btn-sm btn-tooltip">
+                                            <i class="bi bi-list"></i>
+                                            <span class="btn-text">Slot Booking Details</span>
+                                        </a>
+
                                         <a href="{{ route('event.eventRegisterList', $eventData->id) }}"
                                             class="btn btn-bg-orange btn-sm btn-tooltip">
                                             <i class="bi bi-eye"></i>

@@ -614,6 +614,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('event/store', [EventController::class, 'store'])->name('event.store');
     Route::get('event/edit/{id?}', [EventController::class, 'edit'])->name('event.edit');
     Route::get('event/eventRegisterList/{id?}', [EventController::class, 'eventRegisterList'])->name('event.eventRegisterList');
+    Route::put('/slotBooking/{id}/updateStatus', [EventController::class, 'slotBookingUpdateStatus'])->name('slotBooking.updateStatus');
+    Route::get('slotbooking/list/{id?}', [EventController::class, 'slotBookingList'])->name('slotbooking.list');
     Route::post('/event/register/{eventId}', [EventController::class, 'eventRegister'])->name('event.register');
     Route::post('event/update', [EventController::class, 'update'])->name('event.update');
     Route::delete('event/delete/{id?}', [EventController::class, 'delete'])->name('event.delete');
@@ -681,6 +683,10 @@ Route::get('/event/{id}/view-members-visitors', [SlotController::class, 'userLis
 Route::get('/visitorLogout', [ConEventController::class, 'logoutVisitor'])->name('visitor.logout');
 
 Route::post('slotbooking/visitor/{id?}', [SlotController::class, 'slotBookingVisitor'])->name('slotbooking.visitor');
+
+Route::get('/visitorProfile', [VisitorFormController::class, 'updateVisitorProfile'])->name('visitor.profile');
+
+Route::post('visitor/update/{id?}', [VisitorFormController::class, 'profileUpdate'])->name('visitor.profileUpdate');
 
 
 //Login with otp

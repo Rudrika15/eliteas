@@ -8,7 +8,9 @@ use App\Models\VisitorsDetails;
 use App\Models\BusinessCategory;
 use App\Models\MeetingInvitation;
 use App\Http\Controllers\Controller;
+use App\Models\Visitor;
 use Illuminate\Support\Facades\URL;
+use Throwable;
 
 class VisitorFormController extends Controller
 {
@@ -227,6 +229,65 @@ class VisitorFormController extends Controller
 
             // Return a generic error response
             return response()->json(['success' => false, 'message' => 'Failed to update remarks']);
+        }
+    }
+
+    // public function updateVisitorProfile(Request $request)
+    // {
+    //     return view('visitor.profile');
+    // }
+
+    public function updateVisitorProfile($id = 0)
+    {
+        try {
+            if ($id === 0) {
+                $id = session('visitor_id');
+            }
+
+            // Fetch profile data based on the provided $id
+            $visitor = Visitor::where('id', '=', $id)->first();
+            $businessCategory = BusinessCategory::where('status', 'Active')->get();
+
+            return view('visitor.profile', compact('visitor', 'businessCategory'));
+        } catch (\Throwable $th) {
+            // throw $th;
+            ErrorLogger::logError(
+                $th,
+                request()->fullUrl()
+            );
+            // In case of an error, redirect to servererror view
+            return view('servererror');
+        }
+    }
+
+
+    public function profileUpdate(Request $request)
+    {
+        // return $request;
+
+        try {
+
+            $id = $request->input('id');
+            $visitor = Visitor::find($id);
+
+            $visitor->firstName = $request->firstName;
+            $visitor->lastName = $request->lastName;
+            $visitor->email = $request->email;
+            $visitor->mobileNo = $request->mobileNo;
+            $visitor->businessCategory = $request->businessCategory;
+            $visitor->birthDate = $request->birthDate;
+            $visitor->gender = $request->gender;
+            $visitor->save();
+
+
+            return redirect()->route('visitor.profile')->with('success', 'Profile Updated Successfully!');
+        } catch (Throwable $th) {
+            // throw $th;
+            ErrorLogger::logError(
+                $th,
+                request()->fullUrl()
+            );
+            return view('servererror');
         }
     }
 }
