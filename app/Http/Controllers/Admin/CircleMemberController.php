@@ -563,8 +563,8 @@ class CircleMemberController extends Controller
 
             // Update the member
             $member = Member::findOrFail($member);
-            if ($request->has('circlesId')) {
-                $member->circleId = $request->circlesId;
+            if ($request->has('circleId')) {
+                $member->circleId = $request->circleId;
             }
             $member->title = $request->has('title') ? $request->title : $member->title;
             $member->sponsoredBy = $request->has('memberId') ? $request->memberId : $member->sponsoredBy;

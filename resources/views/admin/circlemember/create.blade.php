@@ -83,16 +83,16 @@
             <div class="row mt-3">
                 <div class="col-md-6">
                     <div class="form-floating">
-                        <select class="form-select @error('circleId') is-invalid @enderror" id="circleId" name="circleId">
+                        <select class="form-select @error('scircleId') is-invalid @enderror" id="scircleId" name="scircleId">
                             <option value="" selected disabled>Select Circle</option>
-                            <option value="{{ old('circleId') }}" selected>
-                                {{ $circles->where('id', old('circleId'))->first()->circleName ?? '' }}
+                            <option value="{{ old('scircleId') }}" selected>
+                                {{ $circles->where('id', old('scircleId'))->first()->circleName ?? '' }}
                             </option>
                             @foreach ($circles as $circle)
                                 <option value="{{ $circle->id }}">{{ $circle->circleName }}</option>
                             @endforeach
                         </select>
-                        <label for="circleId">Circle</label>
+                        <label for="scircleId">Circle</label>
                     </div>
                 </div>
                 <div class="col-md-6">

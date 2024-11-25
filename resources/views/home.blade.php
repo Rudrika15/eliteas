@@ -52,6 +52,8 @@
         </style>
 
 
+
+
         {{--
     @role('Member')
 
@@ -515,42 +517,21 @@
                                                 </div>
                                             </div>
                                         @endif
-                                    @else
-                                        <div class="d-flex justify-content-end">
-                                            <div class="ps-5 ms-5 mt-5">
-                                                <strong><span class="text-success">Already Joined</span></strong>
-                                            </div>
-                                        @if ($nearestEvents->slot_date)
-                                        <div class="ps-5 ms-5 mt-5">
-                                            <button type="button" class="btn btn-bg-orange btn-md" id="slotBooking"
-                                            onclick="location.href='{{ route('event.viewMembers', ['id' => $nearestEvents->id]) }}'">
-                                        Slot Booking
-                                            </button>
-                                        </div>
-                                        @else
-                                        <div class="ps-5 ms-5 mt-5">
-                                        <button type="button" class="btn btn-bg-orange btn-md" id="slotBooking"
-                                        onclick="location.href='{{ route('event.viewMembers', ['id' => $nearestEvents->id]) }}'">
-                                        View Members
-                                        </button>
-                                        </div>
-                                        @endif
-                                        </div>
-                                    @endif
                                     </div>
                                 </div>
                             </div>
                     </div>
                 </div>
-            </div>
-        @else
+            @else
             <div class="row">
                 <div class="col-md-12">
                     <p class="mt-3 text-muted text-center"> <b> No Training Workshop for now. </b></p>
                 </div>
             </div>
+        </div>
+            @endif
 
-        @endif
+
 
             <div class="row">
                 <div class="col-md-12">

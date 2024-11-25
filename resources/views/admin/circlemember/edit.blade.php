@@ -22,7 +22,6 @@
         </div>
     @endif
 
-
     <div class="card">
         <div class="card-body d-flex justify-content-between align-items-center">
             <h5 class="card-title">Edit Circle Member</h5>
@@ -61,21 +60,22 @@
                                     <div class="col-md-6">
                                         <div class="form-floating">
                                             <select class="form-select" data-error='Circle Name Field is required' required
-                                                name="circlesId" id="circlesId" disabled>
+                                                name="circleId" id="circleId">
                                                 <option value="" selected disabled> Select Circle </option>
                                                 @foreach ($circles as $circleData)
                                                     <option value="{{ $circleData->id }}"
-                                                        {{ old('circlesId', $member->circleId) == $circleData->id ? 'selected' : '' }}>
+                                                        {{ old('circleId', $member->circleId) == $circleData->id ? 'selected' : '' }}>
                                                         {{ $circleData->circleName }}</option>
                                                 @endforeach
                                             </select>
-                                            @error('circlesId')
+                                            @error('circleId')
                                                 <div class="invalid-tooltip">
                                                     {{ $message }}
                                                 </div>
                                             @enderror
                                         </div>
                                     </div>
+
                                     <div class="col-md-6">
                                         <div class="form-floating">
                                             <select class="form-select @error('businessCategory') is-invalid @enderror"
@@ -94,10 +94,6 @@
                                                 </div>
                                             @enderror
                                         </div>
-
-
-
-
 
 
                                         {{-- <div class="form-floating mt-3">
@@ -136,17 +132,17 @@
                                     <div class="row mt-3">
                                         <div class="col-md-6">
                                             <div class="form-floating">
-                                                <select class="form-select @error('circleId') is-invalid @enderror"
-                                                    id="circleId" name="circleId">
+                                                <select class="form-select @error('scircleId') is-invalid @enderror"
+                                                    id="scircleId" name="scircleId">
                                                     <option value="" selected disabled>Select Circle</option>
                                                     @foreach ($circles as $circle)
                                                         <option value="{{ $circle->id }}"
-                                                            {{ old('circleId') == $circle->id ? 'selected' : '' }}>
+                                                            {{ old('scircleId') == $circle->id ? 'selected' : '' }}>
                                                             {{ $circle->circleName }}
                                                         </option>
                                                     @endforeach
                                                 </select>
-                                                <label for="circleId">Circle</label>
+                                                <label for="scircleId">Circle</label>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
