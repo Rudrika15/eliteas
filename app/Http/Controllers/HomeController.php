@@ -286,6 +286,7 @@ class HomeController extends Controller
                     ->whereDay('birthDate', Carbon::today()->day)
                     ->get();
 
+
                 $templates = Templatemaster::with('TemplateDetail')->where('status', 'Active')->first();
 
                 $myCircle = Auth::user()->member->circleId;
