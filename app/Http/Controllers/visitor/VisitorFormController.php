@@ -277,6 +277,11 @@ class VisitorFormController extends Controller
             $visitor->businessCategory = $request->businessCategory;
             $visitor->birthDate = $request->birthDate;
             $visitor->gender = $request->gender;
+
+            if ($request->profilePhoto) {
+                $visitor->profilePhoto = time() . '.' . $request->profilePhoto->extension();
+                $request->profilePhoto->move(public_path('ProfilePhoto'), $visitor->profilePhoto);
+            }
             $visitor->save();
 
 

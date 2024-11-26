@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Event;
 use App\Models\EventRegister;
+use App\Models\Member;
 use App\Models\Slot;
 use App\Models\SlotBooking;
+use App\Models\Visitor;
 use App\Models\VisitorEventRegister;
 use App\Utils\ErrorLogger;
 use Illuminate\Http\Request;
@@ -90,16 +92,64 @@ class SlotController extends Controller
 
             $slots = Slot::where('status', 'Active')->get();
 
-            if ($users->isEmpty()) {
-                return redirect()->back()->with('message', 'No active users found for this event.');
-            }
-
             return view('admin.slot.viewMembersForVisitors', compact('users', 'event', 'slots', 'slotBooking', 'visitorsUsers'));
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, $request->fullUrl());
             return view('servererror');
         }
     }
+
+    // public function profileViewMember(Request $request)
+    // {
+    //     try {
+
+    //         $id = $request->id;
+
+    //         return view('visitor.profileView');
+    //     } catch (\Throwable $th) {
+    //         // throw $th;
+    //         ErrorLogger::logError(
+    //             $th,
+    //             $request->fullUrl()
+    //         );
+    //         return view('servererror');
+    //     }
+    // }
+
+
+    public function profileViewMember(Request $request)
+    {
+        try {
+            $id = $request->id;
+            $member = Member::find($id);
+            return view('visitor.profileView', compact('member'));
+        } catch (\Throwable $th) {
+            // Log error and return a server error view
+            ErrorLogger::logError(
+                $th,
+                $request->fullUrl()
+            );
+            return view('servererror');
+        }
+    }
+
+    public function profileViewUser(Request $request)
+    {
+        try {
+            $id = $request->id;
+            $visitor = Visitor::find($id);
+            return view('visitor.userProfileView', compact('visitor'));
+        } catch (\Throwable $th) {
+            // Log error and return a server error view
+            ErrorLogger::logError(
+                $th,
+                $request->fullUrl()
+            );
+            return view('servererror');
+        }
+    }
+
+
 
 
     public function create(Request $request)

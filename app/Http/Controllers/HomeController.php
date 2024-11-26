@@ -39,6 +39,7 @@ use App\Models\CircleMeetingMembersBusiness;
 use App\Models\CircleMeetingMembersReference;
 use App\Mail\MeetingInvitation as MailMeetingInvitation;
 use App\Models\Templatemaster;
+use App\Models\VisitorEventRegister;
 use SebastianBergmann\Template\Template;
 
 class HomeController extends Controller
@@ -253,6 +254,8 @@ class HomeController extends Controller
                 ->orderBy('date', 'asc')
                 ->first();
 
+
+
             $businessCategory = BusinessCategory::where('status', 'Active')->get();
 
             // $auth = Auth::user();
@@ -398,8 +401,11 @@ class HomeController extends Controller
 
                 $nearestEvents = Event::where('status', 'Active')
                     ->whereDate('event_date', '>=', $currentDate)
-                    ->orderBy('event_date', 'asc')
+                    ->orderBy('event_date', 'desc')
                     ->first();
+
+                $totalRegisterCount = VisitorEventRegister::where('eventId', $nearestEvents->id)->count() + EventRegister::where('eventId', $nearestEvents->id)->count();
+
 
                 if ($nearestEvents) {
                     $findEventRegister = EventRegister::where('memberId', Auth::user()->member->id)
@@ -431,7 +437,7 @@ class HomeController extends Controller
                     $this->generateBirthdayWishImage($user);
                 }
 
-                return view('home', compact('birthdaysToday', 'templates', 'signedUrl', 'count', 'monthlyPayments', 'totalAmountDue', 'nearestEvents', 'findEventRegister', 'circlecalls', 'busGiver', 'refGiver', 'nearestTraining', 'findRegister', 'testimonials', 'meeting', 'businessCategory', 'myInvites', 'todaysBirthdays'));
+                return view('home', compact('totalRegisterCount', 'birthdaysToday', 'templates', 'signedUrl', 'count', 'monthlyPayments', 'totalAmountDue', 'nearestEvents', 'findEventRegister', 'circlecalls', 'busGiver', 'refGiver', 'nearestTraining', 'findRegister', 'testimonials', 'meeting', 'businessCategory', 'myInvites', 'todaysBirthdays'));
             }
 
             return view('home', compact('count', 'nearestTraining', 'businessCategory', 'myInvites', 'findRegister', 'birthdaysToday', 'templates'));

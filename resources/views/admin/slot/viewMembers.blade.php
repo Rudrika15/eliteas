@@ -22,7 +22,7 @@
         width: 80px;
         height: 80px;
         border-radius: 50%;
-        margin-bottom: 10px;
+        /* margin-bottom: 10px; */
     }
 
     .profile-card .name {
@@ -77,26 +77,65 @@
     .book-slot-btn:hover {
         background-color: #0056b3;
     }
+
+    .profile-placeholder {
+    width: 80px;
+    height: 80px;
+    background-color: #ccc;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: bold;
+    color: #1d3268;
+    text-align: center; /* Ensures text is centered */
+    line-height: normal; /* Prevents text alignment issues */
+    margin-left: 100px;
+}
 </style>
-    <div class="container mt-5">
+
+
+<div class="container mt-5">
         <h2 class="text-center mb-4 card-title">Registered Members</h2>
         <div class="row row-cols-1 row-cols-md-4 g-4">
             @foreach ($visitorsUsers as $visitorsUsersData)
             <div>
                 <div class="profile-card">
-                    @if (file_exists(public_path('VisitorPhoto/' . $visitorsUsersData->visitorPhoto)))
-                        <img src="{{ asset('VisitorPhoto/' . $visitorsUsersData->visitorPhoto) }}" alt="Profile Picture">
-                    @else
-                        <div class="profile-placeholder"></div>
-                    @endif
-                    <div class="name" style="color: #e76a35">{{ $visitorsUsersData->members->firstName ?? '' }} {{ $visitorsUsersData->members->lastName ?? ($visitorsUsersData->visitors->firstName ?? '')  }} {{ $visitorsUsersData->visitors->lastName ?? '' }}</div>
+                    @php
+                    $photoPath = null;
+
+                    // Check for the image in the respective folders
+                    if (!empty($visitorsUsersData->members->id) && file_exists(public_path('ProfilePhoto/' . $visitorsUsersData->members->profilePhoto))) {
+                        $photoPath = asset('ProfilePhoto/' . $visitorsUsersData->members->profilePhoto);
+                    } elseif (!empty($visitorsUsersData->visitors->id) && file_exists(public_path('VisitorPhoto/' . $visitorsUsersData->visitorPhoto))) {
+                        $photoPath = asset('VisitorPhoto/' . $visitorsUsersData->visitorPhoto);
+                    }
+
+                    // Fallback to initials if no photo is available
+                    $firstName = $visitorsUsersData->members->firstName ?? $visitorsUsersData->visitors->firstName ?? '';
+                    $lastName = $visitorsUsersData->members->lastName ?? $visitorsUsersData->visitors->lastName ?? '';
+                    $initials = strtoupper(substr($firstName, 0, 1) . substr($lastName, 0, 1));
+                @endphp
+
+                @if ($photoPath)
+                    <img src="{{ $photoPath }}" alt="Profile Picture">
+                @else
+                    <div class="profile-placeholder">
+                        <span>{{ $initials }}</span>
+                    </div>
+                @endif
+
+                {{-- <div class="name" style="color: #e76a35">
+                    {{ $firstName }} {{ $lastName }}
+                </div> --}}
+                    <div class="name mt-3" style="color: #e76a35">{{ $visitorsUsersData->members->firstName ?? '' }} {{ $visitorsUsersData->members->lastName ?? ($visitorsUsersData->visitors->firstName ?? '')  }} {{ $visitorsUsersData->visitors->lastName ?? '' }}</div>
                     <a href="#" class="btn btn-bg-blue btn-sm mt-3">View Profile</a>
                     @if(isset($event) && $event->slot_date)
                         <button class="btn btn-bg-orange btn-sm mt-3" data-bs-toggle="modal" data-bs-target="#slotModal">
                             Slot Booking
                         </button>
                     @endif
-
                 </div>
             </div>
         @endforeach

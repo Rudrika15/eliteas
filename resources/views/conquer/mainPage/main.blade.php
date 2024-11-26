@@ -1,3 +1,4 @@
+<!-- Blade Template -->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -190,48 +191,50 @@
     <div class="container event-section" id="events">
         <h2 class="text-center mb-4" style="color: #e76a35; font-weight: bold;">Upcoming Business Events</h2>
 
-        <!-- First Event -->
-        <div class="row mb-4">
-            <div class="col-md-6">
-                <img src="{{ asset('Event/' . $event->event_banner) }}" class="img-fluid rounded"
-                    alt="Event Image 1" style="height: 300px; width: 500px;">
-            </div>
-            <div class="col-md-6">
-                <div class="event-card">
-                    <h4>{{ $event->title }}</h4>
-                    <p style="font-style: italic; font-weight: bold; color: #555;">{{ $event->event_details }}</p>
-                    <p><strong>Date:</strong> {{ \Carbon\Carbon::parse($event->event_date)->format('F j, Y') }}</p>
-                    <p><strong>Location:</strong> {{ $event->venue }}</p>
-                    <p><strong>Apply If you are</strong></p>
-                    <a href="{{ route('main.event.login', $event->id) }}" class="btn btn-event"
-                        style="margin-right: 10px;">UBN Member</a>
-                    <a href="{{ route('main.event.visitorLogin', $event->id) }}" class="btn btn-event">Visitor</a>
-
-                    {{-- <a href="#" class="btn btn-event" data-bs-toggle="modal" data-bs-target="#applyModal">Apply
-                        Now</a> --}}
+        @if (!$event || $event->event_date < \Carbon\Carbon::now())
+            <p class="text-center" style="color: #e76a35; font-weight: bold; font-size: 1.5rem;">No Event For Now, Stay Tuned With Us.</p>
+        @else
+            <!-- First Event -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <img src="{{ asset('Event/' . $event->event_banner) }}" class="img-fluid rounded"
+                        alt="Event Image 1" style="height: 300px; width: 500px;">
                 </div>
-            </div>
+                <div class="col-md-6">
+                    <div class="event-card">
+                        <h4>{{ $event->title }}</h4>
+                        <p style="font-style: italic; font-weight: bold; color: #555;">{{ $event->event_details }}</p>
+                        <p><strong>Date:</strong> {{ \Carbon\Carbon::parse($event->event_date)->format('F j, Y') }}</p>
+                        <p><strong>Location:</strong> {{ $event->venue }}</p>
+                        <p><strong>Apply If you are</strong></p>
+                        <a href="{{ route('main.event.login', $event->id) }}" class="btn btn-event"
+                            style="margin-right: 10px;">UBN Member</a>
+                        <a href="{{ route('main.event.visitorLogin', $event->id) }}" class="btn btn-event">Visitor</a>
 
-            <!-- Modal -->
-            {{-- <div class="modal fade" id="applyModal" tabindex="-1" aria-labelledby="applyModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="applyModalLabel">Are You UBN Member ?</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body text-center">
-                            <a href="{{ route('main.event.login', $event->id) }}" class="btn btn-bg-blue me-3">YES</a>
-                            <a href="{{ route('main.event.visitor', $event->id) }}" class="btn btn-bg-orange">NO</a>
-                        </div>
+                        {{-- <a href="#" class="btn btn-event" data-bs-toggle="modal" data-bs-target="#applyModal">Apply
+                            Now</a> --}}
                     </div>
                 </div>
-            </div> --}}
 
-        </div>
+                <!-- Modal -->
+                {{-- <div class="modal fade" id="applyModal" tabindex="-1" aria-labelledby="applyModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="applyModalLabel">Are You UBN Member ?</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body text-center">
+                                <a href="{{ route('main.event.login', $event->id) }}" class="btn btn-bg-blue me-3">YES</a>
+                                <a href="{{ route('main.event.visitor', $event->id) }}" class="btn btn-bg-orange">NO</a>
+                            </div>
+                        </div>
+                    </div>
+                </div> --}}
+            </div>
+        @endif
     </div>
-
 
     <!-- Highlights Section -->
     <div class="highlights" id="highlights">
@@ -248,20 +251,21 @@
                 </div>
                 <div class="col-md-4 highlight-item">
                     <span class="icon">🤝</span>
-                    <p>Strong Professional Relationships</p>
+                    <p>Build Long-Term Relationships</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Footer Section -->
+    <!-- Footer -->
     <footer id="footer">
-        <p>&copy; 2024 UBN Community | <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+        <div class="container">
+            <p>UBN Community © 2024. All rights reserved. <a href="#">Privacy Policy</a></p>
+        </div>
     </footer>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
 </body>
 
 </html>

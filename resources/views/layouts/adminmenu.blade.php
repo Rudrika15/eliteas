@@ -137,12 +137,12 @@
             </a>
         </li>
 
-        <li class="nav-item">
+        {{-- <li class="nav-item">
             <a class="nav-link " href="{{ route('conquer.events.index') }}">
                 <i class="bi bi-person-gear" style="color: #e76a35"></i>
                 <span>Conquer Event Master</span>
             </a>
-        </li>
+        </li> --}}
 
         {{-- <li class="nav-item">
             <a class="nav-link " href="{{ route('eventRegisterList') }}">

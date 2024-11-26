@@ -26,8 +26,11 @@ class ConEventController extends Controller
     public function main()
     {
         $event = Event::where('status', 'Active')->orderBy('created_at', 'desc')->first();
-        return view('conquer.mainPage.main', compact('event'));
+        $currentDate = now();
+
+        return view('conquer.mainPage.main', compact('event', 'currentDate'));
     }
+
 
 
     public function eventLogin()
@@ -85,8 +88,11 @@ class ConEventController extends Controller
         $currentDate = Carbon::now();
         $nearestEvents = Event::where('status', 'Active')
             ->whereDate('event_date', '>=', $currentDate)
-            ->orderBy('event_date', 'asc')
+            ->orderBy('event_date', 'desc')
             ->first();
+
+
+        $totalRegisterCount = VisitorEventRegister::where('eventId', $nearestEvents->id)->count() + EventRegister::where('eventId', $nearestEvents->id)->count();
 
         // if ($nearestEvents) {
         //     $findEventRegister = VisitorEventRegister::where('visitorId', Auth::user()->member->id)
@@ -95,7 +101,7 @@ class ConEventController extends Controller
         // } else {
         //     $findEventRegister = [];
         // }
-        return view('visitor.visitorDashboard', compact('nearestEvents'));
+        return view('visitor.visitorDashboard', compact('nearestEvents', 'totalRegisterCount'));
     }
 
 

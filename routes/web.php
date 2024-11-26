@@ -689,6 +689,10 @@ Route::get('/visitorProfile', [VisitorFormController::class, 'updateVisitorProfi
 Route::post('visitor/update/{id?}', [VisitorFormController::class, 'profileUpdate'])->name('visitor.profileUpdate');
 
 
+Route::get('/profileView/{id?}', [SlotController::class, 'profileViewMember'])->name('viewMember.profile');
+Route::get('/profileViewUser/{id?}', [SlotController::class, 'profileViewUser'])->name('viewMember.profileUser');
+
+
 //Login with otp
 
 // Route::get('/otp-login', [OTPLoginController::class, 'showLoginForm'])->name('otp.login.form');

@@ -184,7 +184,7 @@
                 <div class="col-md-6">
                     <div class="form-floating mt-3">
                         <input type="number" class="form-control @error('fees') is-invalid @enderror" id="fees"
-                            name="fees" placeholder="fees" required>
+                            name="fees" placeholder="fees">
                         <label for="fees">Fees</label>
                         @error('fees')
                             <div class="invalid-tooltip">

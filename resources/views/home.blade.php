@@ -543,7 +543,7 @@
                                 <div class="row">
                                     <div class="col-md-10">
                                         <h4 class="card-title">{{ $nearestEvents->title }}</h4>
-                                        <p class="card-text text-muted"> <b> Total Registered Members : {{ $nearestEvents->registrations->count() }} </b></p>
+                                        <p class="card-text text-muted"> <b> Total Registered Members : {{ $totalRegisterCount }} </b></p>
                                     </div>
 
                                     <div class="col-md-2 pt-3 text-muted text-end">
