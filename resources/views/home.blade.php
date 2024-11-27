@@ -577,14 +577,35 @@
                                                 <div class="ps-5 ms-5 mt-5">
                                                     <strong><span class="text-success">Already Joined</span></strong>
                                                 </div>
-                                                @if ($nearestEvents->slot_date)
+                                                {{-- @if ($nearestEvents->slot_date)
                                                     <div class="ps-5 ms-5 mt-5">
                                                         <button type="button" class="btn btn-bg-orange btn-md" id="slotBooking" onclick="location.href='{{ route('event.viewMembers', ['id' => $nearestEvents->id]) }}'">
                                                             Slot Booking
-                                                        </button>
-
+                                                      </button>
                                                     </div>
-                                                @endif
+                                                @endif --}}
+                                                @if ($nearestEvents->slot_date)
+                                                @php
+                                                    $isSlotBooked = \App\Models\SlotBooking::where('eventId', $nearestEvents->id)
+                                                        ->where('userId', Auth::user()->id)
+                                                        ->exists();
+                                                @endphp
+                                                <div class="ps-5 ms-5 mt-5 d-flex justify-content-end">
+                                                    @if ($isSlotBooked)
+                                                        <button type="button" class="btn btn-bg-orange btn-md" id="viewMembers"
+                                                        onclick="location.href='{{ route('event.viewMembers', ['id' => $nearestEvents->id]) }}'">
+                                                        View Members
+                                                        </button>
+                                                    @else
+                                                        <button type="button" class="btn btn-bg-orange btn-md" id="slotBooking"
+                                                        onclick="location.href='{{ route('event.viewMembers', ['id' => $nearestEvents->id]) }}'">
+                                                        Slot Booking
+                                                        </button>
+                                                    @endif
+                                                </div>
+                                            @endif
+
+
                                             </div>
                                         @endif
                                     </div>

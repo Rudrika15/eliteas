@@ -58,11 +58,15 @@ class SlotController extends Controller
 
             $slots = Slot::where('status', 'Active')->get();
 
-            if ($users->isEmpty()) {
-                return redirect()->back()->with('message', 'No active users found for this event.');
-            }
+            $slotBooking = SlotBooking::where('eventId', $id)
+                ->where('status', 'Active')
+                ->get();
 
-            return view('admin.slot.viewMembers', compact('users', 'event', 'slots', 'visitorsUsers'));
+            // if ($users->isEmpty()) {
+            //     return redirect()->back()->with('message', 'No active users found for this event.');
+            // }
+
+            return view('admin.slot.viewMembers', compact('users', 'event', 'slots', 'visitorsUsers','slotBooking'));
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, $request->fullUrl());
             return view('servererror');

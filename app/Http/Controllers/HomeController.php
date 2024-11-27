@@ -404,7 +404,8 @@ class HomeController extends Controller
                     ->orderBy('event_date', 'desc')
                     ->first();
 
-                $totalRegisterCount = VisitorEventRegister::where('eventId', $nearestEvents->id)->count() + EventRegister::where('eventId', $nearestEvents->id)->count();
+                $totalRegisterCount = isset($nearestEvents->id) ? VisitorEventRegister::where('eventId', $nearestEvents->id)->count() + EventRegister::where('eventId', $nearestEvents->id)->count() : 0;
+                // $totalRegisterCount = VisitorEventRegister::where('eventId', $nearestEvents->id)->count() + EventRegister::where('eventId', $nearestEvents->id)->count();
 
 
                 if ($nearestEvents) {

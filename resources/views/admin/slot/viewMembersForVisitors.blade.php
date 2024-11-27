@@ -182,7 +182,6 @@
                 </div>
 
                 <h5 class="card-title">
-
                     {{ $visitorsUsersData->members->firstName ?? '' }}
                     {{ $visitorsUsersData->members->lastName ?? ($visitorsUsersData->visitors->firstName ?? '') }}
                     {{ $visitorsUsersData->visitors->lastName ?? '' }}
@@ -195,11 +194,15 @@
                         <a href="{{ route('viewMember.profileUser', $visitorsUsersData->visitors->id) }}" class="btn-view-profile">View Profile</a>
                     @endif
 
-
                     @if(isset($event) && $event->slot_date)
-                        <button class="btn-slot-booking" data-bs-toggle="modal" data-bs-target="#slotModal">
-                            Slot Booking
-                        </button>
+                        @php
+                            $isBooked = \App\Models\SlotBooking::where('eventId', $event->id)->where('visitorId', session('visitor_id'))->exists();
+                        @endphp
+                        @if(!$isBooked)
+                            <button class="btn-slot-booking" data-bs-toggle="modal" data-bs-target="#slotModal">
+                                Slot Booking
+                            </button>
+                        @endif
                     @endif
                 </div>
             </div>
@@ -225,7 +228,8 @@
                                     <input type="hidden" name="eventId" value="{{ $event->id }}">
                                     <input type="hidden" name="slotId" value="{{ $slotData->id }}">
                                     <input type="hidden" name="regMemberId" value="{{ $visitorsUsersData->id }}">
-                                    <button type="submit" class="btn-slot-booking">
+                                    <button type="submit" class="btn-slot-booking"
+                                    {{ \App\Models\SlotBooking::where('eventId', $event->id)->where('slotId', $slotData->id)->exists() ? 'disabled' : '' }}>
                                         @if (\App\Models\SlotBooking::where('eventId', $event->id)->where('slotId', $slotData->id)->exists())
                                             Booked
                                         @else
