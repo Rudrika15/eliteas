@@ -170,6 +170,7 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        SimpleSoftwareIO\QrCode\QrCodeServiceProvider::class,
     ])->toArray(),
 
     /*
@@ -188,6 +189,7 @@ return [
     ])->toArray(),
 
     'Excel' => Maatwebsite\Excel\Facades\Excel::class,
+    'QrCode' => SimpleSoftwareIO\QrCode\Facades\QrCode::class,
 
 
 ];
