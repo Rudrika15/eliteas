@@ -107,16 +107,17 @@
                                             <span class="btn-text">Slot Booking Details</span>
                                         </a>
 
-                                        <a href="{{ route('event.eventRegisterList', $eventData->id) }}"
+                                        {{-- <a href="{{ route('event.eventRegisterList', $eventData->id) }}"
                                             class="btn btn-bg-orange btn-sm btn-tooltip">
                                             <i class="bi bi-eye"></i>
                                             <span class="btn-text">List of Registred User</span>
                                         </a>
+
                                         <a href="{{ route('event.edit', $eventData->id) }}"
                                             class="btn btn-bg-blue btn-sm btn-tooltip">
                                             <i class="bi bi-pen"></i>
                                             <span class="btn-text">Edit</span>
-                                        </a>
+                                        </a> --}}
 
                                         {{-- <button type="button" class="btn btn-danger btn-sm btn-tooltip delete-button"
                                             data-url="{{ route('event.delete', $eventData->id) }}">
@@ -126,7 +127,7 @@
                                         </button> --}}
 
 
-                                        <a href="{{ route('event.delete', $eventData->id) }}"
+                                        {{-- <a href="{{ route('event.delete', $eventData->id) }}"
                                             class="btn btn-danger btn-sm btn-tooltip delete-button">
                                             <i class="bi bi-trash"></i>
                                             <span class="btn-text">Delete</span>
@@ -162,7 +163,7 @@
                                                     }
                                                 });
                                             });
-                                        </script>
+                                        </script> --}}
                                     </td>
                                 </tr>
                             @endforeach
