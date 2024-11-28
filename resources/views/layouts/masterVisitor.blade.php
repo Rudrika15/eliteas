@@ -168,9 +168,13 @@
         <ul class="sidebar-nav" id="sidebar-nav">
 
             <li class="nav-item">
-                <a class="nav-link collapsed" href="#">
+                <a class="nav-link collapsed" href="{{route('visitor.dashboard')}}">
                     <i class="bi bi-grid" style="color: #e76a35"></i>
                     <span style="color: #1d2865 ;">Dashboard</span>
+                </a>
+                <a class="nav-link collapsed" href="{{route('visitor.eventIndex')}}">
+                    <i class="bi bi-calendar-event" style="color: #e76a35"></i>
+                    <span style="color: #1d2865 ;">Event</span>
                 </a>
             </li><!-- End Dashboard Nav -->
 

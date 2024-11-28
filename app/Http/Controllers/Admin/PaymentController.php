@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\MemberSubscriptions;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use App\Models\VisitorEventRegister;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Crypt;
@@ -551,7 +552,7 @@ class PaymentController extends Controller
     public function monthlyPaymentStore(Request $request)
     {
         try {
-            // Validate the request 
+            // Validate the request
 
             // Store the payment ID in the table
             $payment = new Razorpay();
@@ -599,7 +600,7 @@ class PaymentController extends Controller
     public function eventPayment(Request $request)
     {
         try {
-            // Validate the request 
+            // Validate the request
 
             // Store the payment ID in the table
             $payment = new Razorpay();
@@ -643,7 +644,7 @@ class PaymentController extends Controller
     public function userEventPayment(Request $request)
     {
         try {
-            // Validate the request 
+            // Validate the request
             $request->validate([
                 // 'paymentId' => 'required|string',
                 // 'amount' => 'required|integer',
@@ -693,10 +694,59 @@ class PaymentController extends Controller
         return response()->json(['message' => 'Failed to store payment ID'], 500);
     }
 
+    public function eventPaymentVisitor(Request $request)
+    {
+        try {
+            // Validate the request
+            $request->validate([
+                // 'paymentId' => 'required|string',
+                // 'amount' => 'required|integer',
+                // 'eventId' => 'required|integer',
+                // 'personName' => 'required|string',
+                // 'personEmail' => 'required|email',
+                // 'personContact' => 'required|string',
+                // 'refId' => 'nullable|integer' // If optional, otherwise use 'required'
+            ]);
+
+            // Store the payment ID in the Razorpay payments table
+            $payment = new Razorpay();
+            $payment->r_payment_id = $request->input('paymentId');
+            $payment->amount = $request->input('amount') / 100; // Convert paise to rupees
+            $payment->save();
+
+            // Register for the event
+            $eventPayment = new VisitorEventRegister();
+            $eventPayment->eventId = $request->eventId; // Handle null if not provided
+            $eventPayment->visitorId = $request->visitorId;
+            $eventPayment->paymentStatus = 'paid';
+            $eventPayment->save();
+
+            // Store the payment details in the AllPayments table
+            $allPayments = new AllPayments();
+            // Add memberId if relevant, but handle this carefully based on your logic
+            // $allPayments->memberId = $eventPayment->memberId ?? null;
+            $allPayments->amount = $payment->amount;
+            $allPayments->paymentType = 'RazorPay'; // Payment type
+            $allPayments->date = now()->format('Y-m-d');
+            $allPayments->paymentMode = 'Event Register Visitor Payment';
+            $allPayments->remarks = $payment->r_payment_id;
+            $allPayments->save();
+
+            // Return a success response
+            return response()->json(['message' => 'Payment Received successfully'], 200);
+        } catch (\Throwable $th) {
+            // Log the error using the ErrorLogger utility
+            ErrorLogger::logError($th, $request->fullUrl());
+            // Return an error response
+
+        }
+        return response()->json(['message' => 'Failed to store payment ID'], 500);
+    }
+
     public function userOfflinePayment(Request $request)
     {
         try {
-            // Validate the request 
+            // Validate the request
             $request->validate([]);
 
             // Store the payment ID in the Razorpay payments table

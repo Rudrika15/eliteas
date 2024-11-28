@@ -48,6 +48,40 @@ class EventController extends Controller
             return view('servererror');
         }
     }
+    public function eventIndex(Request $request)
+    {
+        try {
+            $event = Event::with('circle')
+                ->where('status', 'Active')
+                ->orderBy('id', 'DESC')
+                ->paginate(10);
+            return view('visitor.visitorEventIndex', compact('event'));
+        } catch (\Throwable $th) {
+            // throw $th;
+            ErrorLogger::logError(
+                $th,
+                $request->fullUrl()
+            );
+            return view('servererror');
+        }
+    }
+    public function memberEventIndex(Request $request)
+    {
+        try {
+            $event = Event::with('circle')
+                ->where('status', 'Active')
+                ->orderBy('id', 'DESC')
+                ->paginate(10);
+            return view('admin.event.memberEventIndex', compact('event'));
+        } catch (\Throwable $th) {
+            // throw $th;
+            ErrorLogger::logError(
+                $th,
+                $request->fullUrl()
+            );
+            return view('servererror');
+        }
+    }
 
     public function create(Request $request)
     {
@@ -100,6 +134,9 @@ class EventController extends Controller
             $event->end_time = $request->end_time;
             $event->fees = $request->fees;
             $event->event_details = $request->event_details;
+            $event->save();
+
+            $event = Event::find($event->id);
 
             // Generate QR Code with event details
             $qrData = json_encode([
@@ -122,9 +159,9 @@ class EventController extends Controller
             $qrSvg = QrCode::format('svg')->size(300)->generate($qrData);
             file_put_contents(public_path($qrCodePath), $qrSvg);
 
-            // Save the QR code path in the database
-            $event->qr_code = $qrCodePath;
 
+
+            $event->qr_code = $qrCodePath;
             $event->status = 'Active';
             $event->save();
 
@@ -247,13 +284,13 @@ class EventController extends Controller
             return redirect()->route('event.edit', $event->id)->with('success', 'Event Updated Successfully!');
         } catch (\Throwable $th) {
             // Log any errors and show a server error page
-            ErrorLogger::logError($th, $request->fullUrl());
+            ErrorLogger::logError($th, request()->fullUrl());
             return view('servererror');
         }
     }
 
 
-    function delete(Request $request, $id)
+    function delete($id)
     {
         try {
             $event = Event::find($id);
@@ -262,10 +299,7 @@ class EventController extends Controller
             return redirect()->route('event.index')->with('success', 'Event Deleted Successfully!');
         } catch (\Throwable $th) {
             // throw $th;
-            ErrorLogger::logError(
-                $th,
-                $request->fullUrl()
-            );
+            ErrorLogger::logError($th, request()->fullUrl());
             return view('servererror');
         }
     }

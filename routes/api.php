@@ -38,6 +38,7 @@ use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\PermissionController;
 use App\Http\Controllers\Api\SpecificAskController;
 use App\Http\Controllers\Api\UpdateAppController;
+use App\Http\Controllers\Api\VisitorController;
 
 // use App\Http\Controllers\Api\CircleMeetingMemberBusinessController;
 
@@ -62,6 +63,7 @@ use App\Http\Controllers\Api\UpdateAppController;
 // login
 Route::post('/login', [LoginController::class, 'login']);
 Route::post('v1/login', [ApiController::class, 'login']);
+Route::post('visitor/login', [VisitorController::class, 'visitorLogin']);
 
 //forgot password
 Route::post('/forgot-password', [ForgetPasswordController::class, 'forgotPassword']);
@@ -77,6 +79,8 @@ Route::post('/send-otp', [OTPLoginController::class, 'sendOTP'])->name('send_otp
 Route::post('/verify-otp', [OTPLoginController::class, 'verifyOTP'])->name('verify_otp');
 
 Route::get('role-permissions', [LoginController::class, 'getRolePermissions']);
+
+
 
 
 

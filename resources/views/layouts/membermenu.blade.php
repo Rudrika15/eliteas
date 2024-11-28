@@ -143,6 +143,12 @@
 </li>
 
 
+<a class="nav-link collapsed" href="{{route('member.eventIndex')}}">
+    <i class="bi bi-calendar-event" style="color: #e76a35"></i>
+    <span style="color: #1d2865 ;">Event</span>
+</a>
+
+
 
 <li class="nav-item">
     <a class="nav-link collapsed" data-bs-target="#connection-nav" data-bs-toggle="collapse" href="#">

@@ -12,6 +12,7 @@ use App\Models\Visitor;
 use App\Models\VisitorEventRegister;
 use App\Utils\ErrorLogger;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class SlotController extends Controller
 {
@@ -48,11 +49,20 @@ class SlotController extends Controller
 
             $users = EventRegister::where('eventId', $id)
                 ->where('status', 'Active')
-                ->get();
+                ->where('memberId', '!=', Auth::user()->member ? Auth::user()->member->id : null)
+                ->get()
+                ->map(function ($user) {
+                    $user->type = 'member'; // Add a type key
+                    return $user;
+                });
 
             $visitors = VisitorEventRegister::where('eventId', $id)
                 ->where('status', 'Active')
-                ->get();
+                ->get()
+                ->map(function ($visitor) {
+                    $visitor->type = 'visitor'; // Add a type key
+                    return $visitor;
+                });
 
             $visitorsUsers = $users->merge($visitors);
 
@@ -62,11 +72,8 @@ class SlotController extends Controller
                 ->where('status', 'Active')
                 ->get();
 
-            // if ($users->isEmpty()) {
-            //     return redirect()->back()->with('message', 'No active users found for this event.');
-            // }
 
-            return view('admin.slot.viewMembers', compact('users', 'event', 'slots', 'visitorsUsers','slotBooking'));
+            return view('admin.slot.viewMembers', compact('users', 'event', 'slots', 'visitorsUsers', 'slotBooking'));
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, $request->fullUrl());
             return view('servererror');
@@ -81,11 +88,20 @@ class SlotController extends Controller
 
             $users = EventRegister::where('eventId', $id)
                 ->where('status', 'Active')
-                ->get();
+                ->get()
+                ->map(function ($user) {
+                    $user->type = 'member'; // Add a type key
+                    return $user;
+                });
 
             $visitors = VisitorEventRegister::where('eventId', $id)
                 ->where('status', 'Active')
-                ->get();
+                ->where('visitorId', '!=', session()->get('visitor_id'))
+                ->get()
+                ->map(function ($visitor) {
+                    $visitor->type = 'visitor'; // Add a type key
+                    return $visitor;
+                });
 
             $visitorsUsers = $users->merge($visitors);
 
@@ -277,6 +293,50 @@ class SlotController extends Controller
             $slot->save();
 
             return back()->with('success', 'Booking Successfull!');
+        } catch (\Throwable $th) {
+            // throw $th;
+            ErrorLogger::logError(
+                $th,
+                $request->fullUrl()
+            );
+            return view('servererror');
+        }
+    }
+
+    public function visitorSlotBookingRequests(Request $request, $id)
+    {
+
+
+        try {
+
+            $visitorId = session()->get('visitor_id');
+
+            $event = Event::find($id);
+
+            $slotBooking = SlotBooking::where('eventId', $id)->where('regMemberId', $visitorId)->paginate(10);
+
+            return view('visitor.visitorSlotBookingList', compact('slotBooking', 'event'));
+        } catch (\Throwable $th) {
+            // throw $th;
+            ErrorLogger::logError(
+                $th,
+                $request->fullUrl()
+            );
+            return view('servererror');
+        }
+    }
+    public function memberSlotBookingRequests(Request $request, $id)
+    {
+
+        try {
+
+            $memberId = Auth::user()->member->id;
+
+            $event = Event::find($id);
+
+            $slotBooking = SlotBooking::where('eventId', $id)->where('regMemberId', $memberId)->paginate(10);
+
+            return view('admin.event.memberSlotBookingList', compact('slotBooking', 'event'));
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError(

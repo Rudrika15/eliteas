@@ -242,6 +242,12 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('slotbooking/delete/{id?}', [SlotController::class, 'delete'])->name('slotbooking.delete');
 
 
+    Route::get('/member/event/index', [EventController::class, 'memberEventIndex'])->name('member.eventIndex');
+
+    Route::get('memberSlotbooking/list/{id?}', [SlotController::class, 'memberSlotBookingRequests'])->name('memberSlotBooking.list');
+
+
+
 
     //circle
     Route::get('/circle/index', [CircleController::class, 'index'])->name('circle.index');
@@ -614,7 +620,6 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('event/store', [EventController::class, 'store'])->name('event.store');
     Route::get('event/edit/{id?}', [EventController::class, 'edit'])->name('event.edit');
     Route::get('event/eventRegisterList/{id?}', [EventController::class, 'eventRegisterList'])->name('event.eventRegisterList');
-    Route::put('/slotBooking/{id}/updateStatus', [EventController::class, 'slotBookingUpdateStatus'])->name('slotBooking.updateStatus');
     Route::get('slotbooking/list/{id?}', [EventController::class, 'slotBookingList'])->name('slotbooking.list');
     Route::post('/event/register/{eventId}', [EventController::class, 'eventRegister'])->name('event.register');
     Route::post('event/update', [EventController::class, 'update'])->name('event.update');
@@ -688,9 +693,17 @@ Route::get('/visitorProfile', [VisitorFormController::class, 'updateVisitorProfi
 
 Route::post('visitor/update/{id?}', [VisitorFormController::class, 'profileUpdate'])->name('visitor.profileUpdate');
 
+Route::post('/razorpay-payment-eventPaymentVisitor', [PaymentController::class, 'eventPaymentVisitor'])->name('razorpay.payment.eventPaymentVisitor');
+
+Route::get('/visitor/event/index', [EventController::class, 'eventIndex'])->name('visitor.eventIndex');
 
 Route::get('/profileView/{id?}', [SlotController::class, 'profileViewMember'])->name('viewMember.profile');
+
 Route::get('/profileViewUser/{id?}', [SlotController::class, 'profileViewUser'])->name('viewMember.profileUser');
+
+Route::put('/slotBooking/{id}/updateStatus', [EventController::class, 'slotBookingUpdateStatus'])->name('slotBooking.updateStatus');
+
+Route::get('visitorSlotbooking/list/{id?}', [SlotController::class, 'visitorSlotBookingRequests'])->name('visitorSlotBooking.list');
 
 
 //Login with otp

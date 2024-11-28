@@ -556,7 +556,7 @@
                                 <div class="row">
                                     <div class="col-md-12">
                                         @if (!is_null($findEventRegister) && count($findEventRegister) == 0)
-                                            @if ($nearestEvents->amount == 0)
+                                            @if ($nearestEvents->fees == 0)
                                                 <h5 class="text-muted text-end me-4 pt-5">Free</h5>
                                                 <form method="POST" action="{{ route('event.register', ['eventId' => $nearestEvents->id]) }}">
                                                     @csrf
@@ -565,9 +565,9 @@
                                                     </button>
                                                 </form>
                                             @else
-                                                <h5 class="text-muted text-end me-4 pt-3"> ₹ {{ $nearestEvents->amount }}</h5>
+                                                <h5 class="text-muted text-end me-4 pt-3"> ₹ {{ $nearestEvents->fees }}</h5>
                                                 <div class="d-flex justify-content-end">
-                                                    <button type="button" class="btn btn-bg-orange btn-md" id="razorpayBtnEvent" data-amount-event="{{ $nearestEvents->amount }}">
+                                                    <button type="button" class="btn btn-bg-orange btn-md" id="razorpayBtnEvent" data-amount-event="{{ $nearestEvents->fees }}">
                                                         Join Now
                                                     </button>
                                                 </div>
@@ -577,13 +577,6 @@
                                                 <div class="ps-5 ms-5 mt-5">
                                                     <strong><span class="text-success">Already Joined</span></strong>
                                                 </div>
-                                                {{-- @if ($nearestEvents->slot_date)
-                                                    <div class="ps-5 ms-5 mt-5">
-                                                        <button type="button" class="btn btn-bg-orange btn-md" id="slotBooking" onclick="location.href='{{ route('event.viewMembers', ['id' => $nearestEvents->id]) }}'">
-                                                            Slot Booking
-                                                      </button>
-                                                    </div>
-                                                @endif --}}
                                                 @if ($nearestEvents->slot_date)
                                                 @php
                                                     $isSlotBooked = \App\Models\SlotBooking::where('eventId', $nearestEvents->id)
