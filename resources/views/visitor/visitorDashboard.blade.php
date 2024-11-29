@@ -23,6 +23,7 @@
                                 <p class="card-text text-muted">
                                     <b>Total Registered Members: {{ $totalRegisterCount }}</b>
                                 </p>
+                                <b class="text-muted">Slot Date:</b> {{ \Carbon\Carbon::parse($nearestEvents->event_date)->format('j M Y') }} <br>
                             </div>
                             <div class="col-md-2 pt-3 text-muted text-end">
                                 <b>Date:</b> {{ \Carbon\Carbon::parse($nearestEvents->event_date)->format('j M Y') }} <br>
@@ -55,7 +56,7 @@
                                             onclick="location.href='{{ route('event.viewMembersForVisitors', ['id' => $nearestEvents->id]) }}'">
                                             View Members
                                         </button>
-                                    @else
+                                    @elseif (\Carbon\Carbon::parse($nearestEvents->slot_date)->format('Y-m-d') == \Carbon\Carbon::today()->format('Y-m-d'))
                                         <button type="button" class="btn btn-bg-orange btn-md" id="slotBooking"
                                             onclick="location.href='{{ route('event.viewMembersForVisitors', ['id' => $nearestEvents->id]) }}'">
                                             Slot Booking

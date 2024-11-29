@@ -420,8 +420,6 @@
                                     <button type="submit" class="btn btn-success" id="payNowMeet" disabled>
                                         Pay Now ₹ {{ $cityAmount }}
                                     </button>
-
-
                                 </div>
                             </div>
                         </form>

@@ -107,7 +107,7 @@
                                             <span class="btn-text">Slot Booking Details</span>
                                         </a>
 
-                                        {{-- <a href="{{ route('event.eventRegisterList', $eventData->id) }}"
+                                        <a href="{{ route('event.eventRegisterList', $eventData->id) }}"
                                             class="btn btn-bg-orange btn-sm btn-tooltip">
                                             <i class="bi bi-eye"></i>
                                             <span class="btn-text">List of Registred User</span>
@@ -117,31 +117,21 @@
                                             class="btn btn-bg-blue btn-sm btn-tooltip">
                                             <i class="bi bi-pen"></i>
                                             <span class="btn-text">Edit</span>
-                                        </a> --}}
-
-                                        {{-- <button type="button" class="btn btn-danger btn-sm btn-tooltip delete-button"
-                                            data-url="{{ route('event.delete', $eventData->id) }}">
-                                            <i class="bi bi-trash"></i>
-                                            <span class="btn-text">Delete</span>
-                                            <!-- Icon for delete -->
-                                        </button> --}}
+                                        </a>
 
 
-                                        {{-- <a href="{{ route('event.delete', $eventData->id) }}"
+
+                                        <a href="javascript:void(0);" data-url="{{ route('event.delete', $eventData->id) }}"
                                             class="btn btn-danger btn-sm btn-tooltip delete-button">
                                             <i class="bi bi-trash"></i>
                                             <span class="btn-text">Delete</span>
                                         </a>
 
-                                        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
                                         <script>
                                             document.addEventListener('DOMContentLoaded', function() {
                                                 document.body.addEventListener('click', function(event) {
                                                     if (event.target.closest('.delete-button')) {
                                                         event.preventDefault();
-
-                                                        console.log('Button clicked');
-
 
                                                         const deleteButton = event.target.closest('.delete-button');
                                                         const deleteUrl = deleteButton.dataset.url;
@@ -156,14 +146,47 @@
                                                             confirmButtonText: 'Yes, delete it!'
                                                         }).then((result) => {
                                                             if (result.isConfirmed) {
-                                                                // Perform delete by redirecting to the route
-                                                                window.location.href = deleteUrl;
+                                                                // Perform delete using AJAX
+                                                                fetch(deleteUrl, {
+                                                                    method: 'DELETE',
+                                                                    headers: {
+                                                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                                                    }
+                                                                })
+                                                                    .then(response => response.json())
+                                                                    .then(data => {
+                                                                        if (data.success) {
+                                                                            Swal.fire({
+                                                                                icon: 'success',
+                                                                                title: 'Deleted!',
+                                                                                text: 'Event has been deleted.'
+                                                                            }).then((result) => {
+                                                                                if (result.isConfirmed) {
+                                                                                    window.location.reload();
+                                                                                }
+                                                                            });
+                                                                        } else {
+                                                                            Swal.fire({
+                                                                                icon: 'error',
+                                                                                title: 'Oops...',
+                                                                                text: 'Something went wrong!'
+                                                                            });
+                                                                        }
+                                                                    })
+                                                                    .catch(error => {
+                                                                        console.error('Error deleting event:', error);
+                                                                        Swal.fire({
+                                                                            icon: 'error',
+                                                                            title: 'Oops...',
+                                                                            text: 'Something went wrong!'
+                                                                        });
+                                                                    });
                                                             }
                                                         });
                                                     }
                                                 });
                                             });
-                                        </script> --}}
+                                        </script>
                                     </td>
                                 </tr>
                             @endforeach

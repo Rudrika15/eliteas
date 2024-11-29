@@ -17,12 +17,12 @@
                     <table class="table table-bordered table-striped table-hover">
                         <thead>
                             <tr>
-                                <th>S.No</th>
-                                <th>Title</th>
+                                {{-- <th>S.No</th> --}}
+                                <th>Event Name</th>
                                 <th>Member Name</th>
-                                <th>Person Name</th>
-                                <th>Person Email</th>
-                                <th>Person Contact</th>
+                                <th>Visitor Name</th>
+                                {{-- <th>Person Email</th> --}}
+                                <th>Visitor Contact</th>
                                 <th>Reference By</th>
                                 {{-- <th>Action</th> --}}
                                 {{-- <th>Payment Status</th> --}}
@@ -31,14 +31,14 @@
                         <tbody>
                             @foreach ($registerLists as $registerListsData)
                                 <tr>
-                                    <th>{{ ($registerLists->currentPage() - 1) * $registerLists->perPage() + $loop->index + 1 }}
+                                    {{-- <th>{{ ($registerLists->currentPage() - 1) * $registerLists->perPage() + $loop->index + 1 }} --}}
 
                                     <td>{{ $registerListsData->events->title ?? '' }}</td>
                                     <td>{{ $registerListsData->members->firstName ?? '' }}
                                         {{ $registerListsData->members->lastName ?? '' }}
                                     </td>
-                                    <td>{{ $registerListsData->visitors->firstName ?? '' }}</td>
-                                    <td>{{ $registerListsData->visitors->lastName ?? '' }}</td>
+                                    <td>{{ $registerListsData->visitors->firstName ?? '' }} {{ $registerListsData->visitors->lastName ?? '' }}</td>
+                                    {{-- <td></td> --}}
                                     <td>{{ $registerListsData->visitors->mobileNo ?? '' }}</td>
                                     <td>{{ $registerListsData->refMembers->firstName ?? '' }}
                                         {{ $registerListsData->refMembers->lastName ?? '' }} </td>

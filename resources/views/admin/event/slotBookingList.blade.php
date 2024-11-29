@@ -18,9 +18,9 @@
                                 <th>Slot Time</th>
                                 <th>Member Name</th>
                                 <th>Visitor Name</th>
-                                <th>Reference By</th>
+                                {{-- <th>Booked By</th> --}}
                                 <th>Date</th>
-                                <th>Booking Status</th>
+                                {{-- <th>Booking Status</th> --}}
                             </tr>
                         </thead>
                         <tbody>
@@ -40,9 +40,9 @@
                                     <td>{{ $slotBookingData->slots->start_time ?? '' }} - {{ $slotBookingData->slots->end_time ?? '' }}</td>
                                     <td>{{ $slotBookingData->users->firstName ?? '' }} {{ $slotBookingData->users->lastName ?? '' }}</td>
                                     <td>{{ $slotBookingData->visitors->firstName ?? '' }} {{ $slotBookingData->visitors->lastName ?? '' }}</td>
-                                    <td>{{ $slotBookingData->refMembers->firstName ?? '' }} {{ $slotBookingData->refMembers->lastName ?? '' }}</td>
+                                    {{-- <td>{{ $slotBookingData->users->firstName ?? '' }} {{ $slotBookingData->users->lastName ?? '' }} {{ $slotBookingData->visitors->firstName ?? '' }} {{ $slotBookingData->visitors->lastName ?? '' }}</td> --}}
                                     <td>{{ \Carbon\Carbon::parse($slotBookingData->date)->format('d-m-Y') ?? '' }}</td>
-                                    <td>
+                                    {{-- <td>
                                         <form action="{{ route('slotBooking.updateStatus', $slotBookingData->id) }}" method="POST">
                                             @csrf
                                             @method('PUT')
@@ -65,9 +65,7 @@
                                                 </option>
                                             </select>
                                         </form>
-                                    </td>
-
-
+                                    </td> --}}
                                 </tr>
                             @endforeach
                         </tbody>

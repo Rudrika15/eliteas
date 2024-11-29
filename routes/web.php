@@ -619,10 +619,10 @@ Route::group(['middleware' => ['auth']], function () {
     // Route::get('/event/{slug}', [EventController::class, 'eventLink'])->name('event.link');
     Route::post('event/store', [EventController::class, 'store'])->name('event.store');
     Route::get('event/edit/{id?}', [EventController::class, 'edit'])->name('event.edit');
+    Route::post('event/update', [EventController::class, 'update'])->name('event.update');
     Route::get('event/eventRegisterList/{id?}', [EventController::class, 'eventRegisterList'])->name('event.eventRegisterList');
     Route::get('slotbooking/list/{id?}', [EventController::class, 'slotBookingList'])->name('slotbooking.list');
     Route::post('/event/register/{eventId}', [EventController::class, 'eventRegister'])->name('event.register');
-    Route::post('event/update', [EventController::class, 'update'])->name('event.update');
     Route::delete('event/delete/{id?}', [EventController::class, 'delete'])->name('event.delete');
 
     // Route::post('/store-user-details', [EventController::class, 'storeUserDetails'])->name('storeUserDetails');
@@ -661,13 +661,12 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/specific-ask/delete/{id?}', [SpecificAskController::class, 'delete'])->name('specificask.delete');
 });
 
-
-Route::get('/main-event-thankYou', [ConEventController::class, 'thankYou'])->name('main.event.thankYou');
+Route::get('/main-event-thankYouVisitor', [ConEventController::class, 'thankYouUser'])->name('main.event.thankYouUser');
 // Route::get('/main-event-thankYouUser', [ConEventController::class, 'thankYouUser'])->name('main.event.thankYouUser');
 Route::post('/main-event/conquer-user-store', [ConEventController::class, 'conquerUserStore'])->name('conquer.user.form.store');
 
 Route::get('/main-event', [ConEventController::class, 'main'])->name('main.event');
-// Route::get('/main-event-thankYou', [ConEventController::class, 'thankYou'])->name('main.event.thankYou');
+Route::get('/main-event-thankYou', [ConEventController::class, 'thankYou'])->name('main.event.thankYou');
 Route::get('/main-event/visitor/{id?}', [ConEventController::class, 'visitor'])->name('main.event.visitor');
 Route::get('/main-event/visitor/login/{id?}', [ConEventController::class, 'visitorLogin'])->name('main.event.visitorLogin');
 Route::post('/main-event/visitor/registration', [ConEventController::class, 'handleVisitorRegistration'])->name('conquer.visitor.form.store');

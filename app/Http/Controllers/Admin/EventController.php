@@ -11,6 +11,7 @@ use App\Models\EventRegister;
 use App\Http\Controllers\Controller;
 use App\Models\EventType;
 use App\Models\SlotBooking;
+use App\Models\User;
 use App\Models\VisitorEventRegister;
 use Illuminate\Support\Facades\Auth;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
@@ -165,7 +166,7 @@ class EventController extends Controller
             $event->status = 'Active';
             $event->save();
 
-            return redirect()->route('event.create')->with('success', 'Event Created Successfully!');
+            return redirect()->route('event.index')->with('success', 'Event Created Successfully!');
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError(
@@ -193,7 +194,7 @@ class EventController extends Controller
         }
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
         // Validate the request data
         $this->validate($request, [
@@ -204,6 +205,8 @@ class EventController extends Controller
         ]);
 
         try {
+
+            $id = $request->id;
             // Find the event by ID
             $event = Event::findOrFail($id);
 
@@ -281,7 +284,7 @@ class EventController extends Controller
             $event->save();
 
             // Redirect with success message
-            return redirect()->route('event.edit', $event->id)->with('success', 'Event Updated Successfully!');
+            return redirect()->route('event.index')->with('success', 'Event Updated Successfully!');
         } catch (\Throwable $th) {
             // Log any errors and show a server error page
             ErrorLogger::logError($th, request()->fullUrl());
@@ -289,18 +292,21 @@ class EventController extends Controller
         }
     }
 
-
-    function delete($id)
+    public function delete($id)
     {
         try {
             $event = Event::find($id);
+            if (!$event) {
+                return response()->json(['success' => false, 'message' => 'Event not found.'], 404);
+            }
+
             $event->status = "Deleted";
             $event->save();
-            return redirect()->route('event.index')->with('success', 'Event Deleted Successfully!');
+
+            return response()->json(['success' => true, 'message' => 'Event deleted successfully!']);
         } catch (\Throwable $th) {
-            // throw $th;
             ErrorLogger::logError($th, request()->fullUrl());
-            return view('servererror');
+            return response()->json(['success' => false, 'message' => 'An error occurred.'], 500);
         }
     }
 
@@ -374,23 +380,67 @@ class EventController extends Controller
 
     // In EventController.php
 
+    // public function checkRegistration(Request $request)
+    // {
+    //     try {
+    //         $email = $request->input('personEmail');
+    //         $eventId = $request->input('eventId');
+
+    //         $isRegistered = Eventregister::where('eventId', $eventId)
+    //             ->where('personEmail', $email)
+    //             ->exists();
+
+    //         return response()->json(['isRegistered' => $isRegistered]);
+    //     } catch (\Throwable $th) {
+    //         // throw $th;
+    //         ErrorLogger::logError($th, $request->fullUrl());
+    //         return response()->json(['error' => 'Something went wrong.'], 500);
+    //     }
+    // }
+
+
     public function checkRegistration(Request $request)
-    {
-        try {
-            $email = $request->input('personEmail');
-            $eventId = $request->input('eventId');
+{
+    try {
+        // Validate the input data
+        $request->validate([
+            'email' => 'required|email',
+            'eventId' => 'required|integer'
+        ]);
 
-            $isRegistered = Eventregister::where('eventId', $eventId)
-                ->where('personEmail', $email)
-                ->exists();
+        // Fetch the user by email
+        $user = User::where('email', $request->email)->first();
 
-            return response()->json(['isRegistered' => $isRegistered]);
-        } catch (\Throwable $th) {
-            // throw $th;
-            ErrorLogger::logError($th, $request->fullUrl());
-            return response()->json(['error' => 'Something went wrong.'], 500);
+        if (!$user) {
+            return response()->json(['isRegistered' => false]);
         }
+
+        // Fetch the active event
+        $event = Event::find($request->eventId);
+
+        if (!$event) {
+            return response()->json(['isRegistered' => false]);
+        }
+
+        // Check if the user is already registered for the event
+        $member = Member::where('userId', $user->id)->first();
+        if (!$member) {
+            return response()->json(['isRegistered' => false]);
+        }
+
+        $registration = EventRegister::where('memberId', $member->id)
+            ->where('eventId', $event->id)
+            ->first();
+
+        // Return whether the user is already registered
+        return response()->json(['isRegistered' => $registration ? true : false]);
+
+    } catch (\Exception $e) {
+        // Handle any errors
+        return response()->json(['isRegistered' => false]);
     }
+}
+
 
 
     public function eventRegisterList(Request $request, $id)
@@ -405,7 +455,7 @@ class EventController extends Controller
 
 
 
-            return view('admin.event.eventRegistrationList', compact('event', 'registerList', 'registerLists', 'slotBooking'));
+            return view('admin.event.eventRegistrationList', compact('event', 'registerList', 'registerLists'));
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError(

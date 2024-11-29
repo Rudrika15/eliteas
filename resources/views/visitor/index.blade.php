@@ -41,15 +41,15 @@
                             @foreach ($visitors as $index => $visitor)
                                 <tr>
                                     <td>{{ ($visitors->currentPage() - 1) * $visitors->perPage() + $loop->index + 1 }}</td>
-                                    <td>{{ $visitor->firstName }} {{ $visitor->lastName }}</td>
-                                    <td>{{ $visitor->mobileNo }}</td>
-                                    <td>{{ $visitor->businessName }}</td>
-                                    <td>{{ $visitor->bCategory->categoryName }}</td>
-                                    <td>{{ $visitor->networkingGroup }}</td>
-                                    <td>{{ $visitor->circleMeet }}</td>
-                                    <td>{{ $visitor->product }}</td>
+                                    <td>{{ $visitor->firstName ?? '' }} {{ $visitor->lastName ?? '' }}</td>
+                                    <td>{{ $visitor->mobileNo  ?? '' }}</td>
+                                    <td>{{ $visitor->businessName  ?? '' }}</td>
+                                    <td>{{ $visitor->bCategory->categoryName  ?? '' }}</td>
+                                    <td>{{ $visitor->networkingGroup  ?? '' }}</td>
+                                    <td>{{ $visitor->circleMeet  ?? '' }}</td>
+                                    <td>{{ $visitor->product  ?? '' }}</td>
                                     <td>{{ $visitor->member->firstName ?? '' }} {{ $visitor->member->lastName ?? '' }}</td>
-                                    <td>{{ $visitor->knowUs }}</td>
+                                    <td>{{ $visitor->knowUs  ?? '' }}</td>
                                     <td>
                                         <input type="text" class="form-control remark-field" data-id="{{ $visitor->id }}"
                                             value="{{ $visitor->remarks }}">

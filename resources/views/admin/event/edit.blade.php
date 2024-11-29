@@ -124,7 +124,7 @@
                 <div class="col-md-6">
                     <div class="form-floating mt-3">
                         <input type="file" class="form-control @error('event_banner') is-invalid @enderror"
-                            id="event_banner" name="event_banner" accept="image/*" onchange="previewPhoto2(event)" required>
+                            id="event_banner" name="event_banner" accept="image/*" onchange="previewPhoto2(event)">
                         <label for="event_banner">Event Banner</label>
                         <div class="mt-1">
                             <img id="photoPreview2" src="{{ old('event_banner', asset('img/profile.png')) }}" alt="Event Banner"
@@ -141,7 +141,7 @@
                 <div class="col-md-6">
                     <div class="form-floating mt-3">
                         <input type="file" class="form-control @error('event_thumb') is-invalid @enderror"
-                            id="event_thumb" name="event_thumb" accept="image/*" onchange="previewPhoto(event)" required>
+                            id="event_thumb" name="event_thumb" accept="image/*" onchange="previewPhoto(event)">
                         <label for="event_thumb">Event Thumb</label>
                         <div class="mt-1">
                             <img id="photoPreview1" src="{{ old('event_thumb', asset('img/profile.png')) }}" alt="Event Thumb"

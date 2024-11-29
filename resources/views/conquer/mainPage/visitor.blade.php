@@ -156,177 +156,139 @@
                         <h5 class="text-center mb-4" style="color: #1d3268;"><b>Visitor Registration Form</b></h5>
                         {{-- <h5 class="text-center mb-4">Please Fill the Form</h5> --}}
                         <form method="POST" action="{{ route('conquer.visitor.form.store') }}"
-                            class="needs-validation w-100 form-card" id="visitorForm" name="visitorForm" novalidate>
-                            @csrf
+    class="needs-validation w-100 form-card" id="visitorForm" name="visitorForm" novalidate>
+    @csrf
 
-                            {{-- <input type="hidsden" name="userId" value="{{ Auth::user()->id }}"> --}}
+    <input type="hidden" name="eventId" value="{{ $event->id }}">
 
-                            <input type="hidden" name="eventId" value="{{ $event->id }}">
+    <div class="row justify-content-between text-left">
+        <div class="form-group col-sm-6 flex-column d-flex">
+            <label class="form-control-label px-3">First name<span class="text-danger">*</span></label>
+            <input type="text" id="firstName" name="firstName"
+                value="{{ old('firstName') }}"
+                class="form-control @error('firstName') is-invalid @enderror" required>
+            @error('firstName')
+                <span class="invalid-feedback" role="alert">
+                    <strong>{{ $message }}</strong>
+                </span>
+            @enderror
+        </div>
+        <div class="form-group col-sm-6 flex-column d-flex">
+            <label class="form-control-label px-3">Last name<span class="text-danger">*</span></label>
+            <input type="text" id="lastName" name="lastName"
+                value="{{ old('lastName') }}"
+                class="form-control @error('lastName') is-invalid @enderror" required>
+            @error('lastName')
+                <span class="invalid-feedback" role="alert">
+                    <strong>{{ $message }}</strong>
+                </span>
+            @enderror
+        </div>
+    </div>
 
-                            <div class="row justify-content-between text-left">
-                                <div class="form-group col-sm-6 flex-column d-flex">
-                                    <label class="form-control-label px-3">First name<span
-                                            class="text-danger">*</span></label>
-                                    <input type="text" id="firstName" name="firstName"
-                                        value="{{ old('firstName') }}"
-                                        class="form-control @error('firstName') is-invalid @enderror"
-                                        onblur="validate(1)" required>
-                                    @error('firstName')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
-                                </div>
-                                <div class="form-group col-sm-6 flex-column d-flex">
-                                    <label class="form-control-label px-3">Last name<span
-                                            class="text-danger">*</span></label>
-                                    <input type="text" id="lastName" name="lastName" value="{{ old('lastName') }}"
-                                        class="form-control @error('lastName') is-invalid @enderror"
-                                        onblur="validate(2)" required>
-                                    @error('lastName')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div class="row justify-content-between text-left">
-                                <div class="form-group col-sm-6 flex-column d-flex">
-                                    <label class="form-control-label px-3">Mobile No<span
-                                            class="text-danger">*</span></label>
-                                    <input type="text" id="mobileNo" name="mobileNo"
-                                        value="{{ old('mobileNo') }}"
-                                        class="form-control @error('mobileNo') is-invalid @enderror"
-                                        oninput="if(this.value.length > 10) this.value = this.value.slice(0,10); this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');"
-                                        pattern="[0-9]{10}"
-                                        oninvalid="this.setCustomValidity('Please enter a valid 10-digit mobile number');"
-                                        oninput="this.setCustomValidity('')" onblur="validate(3)" required>
-                                    @error('mobileNo')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
-                                    @if ($errors->has('mobileNo') && $errors->first('mobileNo') == 'Please enter a valid 10-digit mobile number')
-                                        <span class="invalid-feedback" role="alert" style="color: red;">
-                                            <strong>{{ $errors->first('mobileNo') }}</strong>
-                                        </span>
-                                    @endif
-                                </div>
-                                <div class="form-group col-sm-6 flex-column d-flex">
-                                    <label class="form-control-label px-3">Email<span
-                                            class="text-danger">*</span></label>
-                                    <input type="email" id="email" name="email" value="{{ old('email') }}"
-                                        class="form-control @error('email') is-invalid @enderror"
-                                        oninvalid="this.setCustomValidity('Please enter a valid email address');"
-                                        oninput="this.setCustomValidity('')" required>
-                                    @error('email')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
-                                    @if ($errors->has('email') && $errors->first('email') == 'Please enter a valid email address')
-                                        <span class="invalid-feedback" role="alert" style="color: red;">
-                                            <strong>{{ $errors->first('email') }}</strong>
-                                        </span>
-                                    @endif
-                                </div>
-                            </div>
+    <div class="row justify-content-between text-left">
+        <div class="form-group col-sm-6 flex-column d-flex">
+            <label class="form-control-label px-3">Mobile No<span class="text-danger">*</span></label>
+            <input type="text" id="mobileNo" name="mobileNo"
+                value="{{ old('mobileNo') }}"
+                class="form-control @error('mobileNo') is-invalid @enderror"
+                oninput="if(this.value.length > 10) this.value = this.value.slice(0,10); this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');" required>
+            @error('mobileNo')
+                <span class="invalid-feedback" role="alert">
+                    <strong>{{ $message }}</strong>
+                </span>
+            @enderror
+        </div>
+        <div class="form-group col-sm-6 flex-column d-flex">
+            <label class="form-control-label px-3">Email<span class="text-danger">*</span></label>
+            <input type="email" id="email" name="email"
+                value="{{ old('email') }}"
+                class="form-control @error('email') is-invalid @enderror" required>
+            @error('email')
+                <span class="invalid-feedback" role="alert">
+                    <strong>Please enter a valid email address</strong>
+                </span>
+            @enderror
+        </div>
+    </div>
 
-                            <div class="row justify-content-between text-left">
-                                <div class="form-group col-sm-6 flex-column d-flex">
-                                    <label class="form-control-label px-3">Birth Date<span
-                                            class="text-danger">*</span></label>
-                                    <input type="date" id="birthDate" name="birthDate"
-                                        class="form-control @error('birthDate') is-invalid @enderror"
-                                        oninvalid="this.setCustomValidity('Please enter a valid date');"
-                                        oninput="this.setCustomValidity('')" required>
-                                    @error('birthDate')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
-                                </div>
-                                <div class="form-group col-sm-6 flex-column d-flex">
-                                    <label class="form-control-label px-3">Gender<span
-                                            class="text-danger">*</span></label>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="gender" id="male"
-                                            value="male" required>
-                                        <label class="form-check-label" for="male">
-                                            Male
-                                        </label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="gender" id="female"
-                                            value="female" required>
-                                        <label class="form-check-label" for="female">
-                                            Female
-                                        </label>
-                                    </div>
-                                    @error('gender')
-                                        <div class="invalid-tooltip">
-                                            <strong>{{ $message }}</strong>
-                                        </div>
-                                    @enderror
-                                </div>
-                            </div>
-
-                            <div class="row justify-content-between text-left">
-                                <div class="form-group col-sm-6 flex-column d-flex">
-                                    <label class="form-control-label px-3">Business Category<span
-                                            class="text-danger">*</span></label>
-                                    <select class="form-select" id="businessCategory" name="businessCategory"
-                                        class="form-control @error('businessCategory') is-invalid @enderror"
-                                        onblur="validate(5)" required>
-                                        <option value="" disabled selected>Select Business Category</option>
-                                        @foreach ($businessCategory as $businessCategoryData)
-                                            <option value="{{ $businessCategoryData->id }}"
-                                                {{ old('businessCategory') == $businessCategoryData->id ? 'selected' : '' }}>
-                                                {{ $businessCategoryData->categoryName }}
-                                            </option>
-                                        @endforeach
-                                        <option value="other"
-                                            {{ old('businessCategory') == 'other' ? 'selected' : '' }}>Other</option>
-                                    </select>
-
-                                    <!-- Input field for other category -->
-                                    <div class="mt-3"></div>
-                                    <input type="text" id="otherCategory" name="otherCategory"
-                                        placeholder="Please specify your business category"
-                                        class="form-control {{ old('businessCategory') == 'other' ? '' : 'd-none' }}"
-                                        onblur="validate(5)" value="{{ old('otherCategory') }}">
-
-                                    @error('businessCategory')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
-
-                                    <script>
-                                        const businessCategory = document.getElementById('businessCategory');
-                                        const otherCategoryInput = document.getElementById('otherCategory');
-
-                                        businessCategory.addEventListener('change', function() {
-                                            if (this.value === 'other') {
-                                                otherCategoryInput.classList.remove('d-none');
-                                            } else {
-                                                otherCategoryInput.classList.add('d-none');
-                                                otherCategoryInput.value = ''; // Clear the input if it's hidden
-                                            }
-                                        });
-                                    </script>
-                                </div>
-                            </div>
-
-                            <div class="form-group col-auto">
-                                <!-- Buttons -->
-                                <button type="submit" class="btn btn-bg-blue" id="register">Submit</button>
-                            </div>
-
-                        </form>
-
-                    </div>
+    <div class="row justify-content-between text-left">
+        <div class="form-group col-sm-6 flex-column d-flex">
+            <label class="form-control-label px-3">Birth Date<span class="text-danger">*</span></label>
+            <input type="date" id="birthDate" name="birthDate"
+                class="form-control @error('birthDate') is-invalid @enderror" required>
+            @error('birthDate')
+                <span class="invalid-feedback" role="alert">
+                    <strong>{{ $message }}</strong>
+                </span>
+            @enderror
+        </div>
+        <div class="form-group col-sm-6 flex-column d-flex">
+            <label class="form-control-label px-3">Gender<span class="text-danger">*</span></label>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="gender" id="male" value="male" required>
+                <label class="form-check-label" for="male">Male</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="gender" id="female" value="female" required>
+                <label class="form-check-label" for="female">Female</label>
+            </div>
+            @error('gender')
+                <div class="invalid-tooltip">
+                    <strong>{{ $message }}</strong>
                 </div>
+            @enderror
+        </div>
+    </div>
+
+    <div class="row justify-content-between text-left">
+        <div class="form-group col-sm-6 flex-column d-flex">
+            <label class="form-control-label px-3">Business Category<span class="text-danger">*</span></label>
+            <select id="businessCategory" name="businessCategory" class="form-select" required>
+                <option value="" disabled selected>Select Business Category</option>
+                @foreach ($businessCategory as $businessCategoryData)
+                    <option value="{{ $businessCategoryData->id }}"
+                        {{ old('businessCategory') == $businessCategoryData->id ? 'selected' : '' }}>
+                        {{ $businessCategoryData->categoryName }}
+                    </option>
+                @endforeach
+                <option value="other" {{ old('businessCategory') == 'other' ? 'selected' : '' }}>Other</option>
+            </select>
+        </div>
+    </div>
+
+    @php
+    $eventId = \App\Models\Event::find($event->id);
+    $eventFees = $event ? $event->fees : 0;
+
+    @endphp
+
+
+
+
+    <input type="hidden" id="eventFees" name="eventFees" value="{{ $event->fees }}">
+    <input type="hidden" id="eventId" name="eventId" value="{{ $event->id }}">
+
+
+                @if ($eventFees == 0 || is_null($eventFees))
+                    <button type="submit" class="btn btn-success">
+                        Register
+                    </button>
+                    <button type="submit" class="btn btn-success d-none" id="payNowMeet" disabled>
+                        Pay Now ₹ {{ $eventFees }}
+                    </button>
+                @else
+                    <button type="submit" class="btn btn-success d-none">
+                        Register
+                    </button>
+                    <button type="submit" class="btn btn-success" id="payNowMeet" disabled>
+                        Pay Now ₹ {{ $eventFees }}
+                    </button>
+                @endif
+                </form>
+
+                </div>
+            </div>
             </div>
         </div>
     </main><!-- End #main -->
@@ -352,6 +314,185 @@
 
     <!-- Template Main JS File -->
     <script src="{{ asset('js/main.js') }}"></script>
+
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('visitorForm');
+            const button = document.getElementById('payNowMeet');
+
+            const toggleButtonState = () => {
+                button.disabled = !form.checkValidity();
+            };
+
+            form.addEventListener('input', toggleButtonState);
+            form.addEventListener('change', toggleButtonState);
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Pay Now button
+            const payNowBtn = document.getElementById('payNowMeet');
+
+            // Add click event listener to pay button
+            payNowBtn.addEventListener('click', function(event) {
+                event.preventDefault();
+
+                console.log('Pay Now button clicked');
+                const eventFees = document.getElementById('eventFees').value;
+                console.log('Event Fees:', eventFees);
+
+                // Get the amount and other necessary details
+                const amount = parseInt(eventFees) * 100; // Convert to paise
+                console.log('Event Fees:', amount);
+
+                const razorpayKey = "{{ env('RAZORPAY_KEY') }}"; // Razorpay Key
+                console.log('Razorpay Key:', razorpayKey);
+
+                // const invitedBy = document.getElementById('invitedByHidden').value;
+                // console.log('Invited By:', invitedBy);
+
+                if (!razorpayKey) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Razorpay key is missing. Please contact support.',
+                    });
+                    return;
+                }
+
+                // Collect form data
+                const formData = new FormData(document.getElementById('visitorForm'));
+
+                // Razorpay payment options
+                const options = {
+                    "key": razorpayKey,
+                    "amount": amount,
+                    "currency": "INR",
+                    "name": "UBN Event",
+                    "description": "Event Payment",
+                    "image": "/img/logo.png", // Your logo
+                    "handler": function(response) {
+                        console.log('Payment successful, storing payment details');
+                        storePaymentDetails(response.razorpay_payment_id, amount, formData);
+                    },
+                    "prefill": {},
+                    "theme": {
+                        "color": "#F37254"
+                    }
+                };
+
+                console.log('Razorpay options:', options);
+
+                // Open Razorpay checkout
+                const rzp = new Razorpay(options);
+                rzp.open();
+            });
+
+            // AJAX request to store payment details along with form data
+            function storePaymentDetails(paymentId, amount, formData) {
+                console.log('Storing payment details:', {
+                    paymentId,
+                    amount
+                });
+
+                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                const url = `{{ route('conquer.visitor.form.store') }}`;
+
+                console.log(url);
+
+
+                // Ensure meetingId exists before accessing its value
+                const eventIdElement = document.getElementById('eventId');
+                const eventId = eventIdElement ? eventIdElement.value : null;
+
+                console.log(eventIdElement);
+
+
+                if (!eventId) {
+                    console.error('Event ID not found.');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Event ID is missing. Please contact support.',
+                    });
+                    return;
+                }
+
+                // Add payment details to formData
+                formData.append('paymentId', paymentId);
+                formData.append('amount', amount);
+                formData.append('eventId', eventId);
+
+                // Convert formData to JSON object
+                const formObject = {};
+
+                console.log('Form Data:', formData);
+
+
+                formData.forEach((value, key) => {
+                    formObject[key] = value;
+                });
+
+
+
+                console.log('Form Data with Payment Details:', formObject);
+
+                fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken
+                        },
+                        body: JSON.stringify(formObject) // Send the form data as JSON
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            console.error('Error response:', response);
+                            return response.json().then(errorData => {
+                                throw new Error(errorData.error || 'Failed to store payment details.');
+                            });
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Response:', data);
+                        if (data.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success',
+                                text: 'Payment successful and details stored!',
+                            });
+                            setTimeout(function() {
+                                window.location.replace("{{ route('main.event.thankYouUser') }}");
+                            }, 3000);
+                            // window.location.reload();
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Payment was successful, but storing details failed.',
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Error storing payment details: ' + error.message,
+                        });
+                    });
+            }
+        });
+    </script>
+
+
+
+
+
 
 </body>
 

@@ -544,6 +544,10 @@
                                     <div class="col-md-10">
                                         <h4 class="card-title">{{ $nearestEvents->title }}</h4>
                                         <p class="card-text text-muted"> <b> Total Registered Members : {{ $totalRegisterCount }} </b></p>
+
+                                        @if ($nearestEvents->slot_date)
+                                            <b class="text-muted">Slot Date :</b> {{ \Carbon\Carbon::parse($nearestEvents->slot_date)->format('j M Y') }}
+                                        @endif
                                     </div>
 
                                     <div class="col-md-2 pt-3 text-muted text-end">
@@ -577,7 +581,7 @@
                                                 <div class="ps-5 ms-5 mt-5">
                                                     <strong><span class="text-success">Already Joined</span></strong>
                                                 </div>
-                                                @if ($nearestEvents->slot_date)
+                                                @if ($nearestEvents->slot_date && \Carbon\Carbon::parse($nearestEvents->slot_date)->isSameDay(\Carbon\Carbon::now()))
                                                 @php
                                                     $isSlotBooked = \App\Models\SlotBooking::where('eventId', $nearestEvents->id)
                                                         ->where('userId', Auth::user()->id)
