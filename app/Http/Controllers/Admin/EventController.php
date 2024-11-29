@@ -292,21 +292,40 @@ class EventController extends Controller
         }
     }
 
-    public function delete($id)
+    // public function delete($id)
+    // {
+    //     try {
+    //         $event = Event::find($id);
+    //         if (!$event) {
+    //             return response()->json(['success' => false, 'message' => 'Event not found.'], 404);
+    //         }
+
+    //         $event->status = "Deleted";
+    //         $event->save();
+
+    //         return response()->json(['success' => true, 'message' => 'Event deleted successfully!']);
+    //     } catch (\Throwable $th) {
+    //         ErrorLogger::logError($th, request()->fullUrl());
+    //         return response()->json(['success' => false, 'message' => 'An error occurred.'], 500);
+    //     }
+    // }
+
+
+
+    public function delete(Request $request, $id)
     {
         try {
             $event = Event::find($id);
-            if (!$event) {
-                return response()->json(['success' => false, 'message' => 'Event not found.'], 404);
-            }
-
             $event->status = "Deleted";
             $event->save();
-
-            return response()->json(['success' => true, 'message' => 'Event deleted successfully!']);
+            return redirect()->route('event.index')->with('success', 'Event Deleted Successfully!');
         } catch (\Throwable $th) {
-            ErrorLogger::logError($th, request()->fullUrl());
-            return response()->json(['success' => false, 'message' => 'An error occurred.'], 500);
+            // throw $th;
+            ErrorLogger::logError(
+                $th,
+                $request->fullUrl()
+            );
+            return view('servererror');
         }
     }
 
