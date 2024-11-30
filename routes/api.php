@@ -65,6 +65,11 @@ Route::post('/login', [LoginController::class, 'login']);
 Route::post('v1/login', [ApiController::class, 'login']);
 Route::post('visitor/login', [VisitorController::class, 'visitorLogin']);
 
+Route::post('event/attendance', [VisitorController::class, 'eventAttendance']);
+
+Route::post('event/visitorIndex', [VisitorController::class, 'eventIndex']);
+
+
 //forgot password
 Route::post('/forgot-password', [ForgetPasswordController::class, 'forgotPassword']);
 // Route::post('/reset-password', [ForgetPasswordController::class, 'resetPassword']);
@@ -400,3 +405,5 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 //get app version
 Route::get('app-version', [UpdateAppController::class, 'getAppVersion']);
 Route::post('update-app-version', [UpdateAppController::class, 'updateAppVersion']);
+
+

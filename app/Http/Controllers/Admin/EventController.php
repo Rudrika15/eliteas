@@ -134,6 +134,7 @@ class EventController extends Controller
             $event->start_time = $request->start_time;
             $event->end_time = $request->end_time;
             $event->fees = $request->fees;
+            $event->visitorFees = $request->visitorFees;
             $event->event_details = $request->event_details;
             $event->save();
 
@@ -163,6 +164,7 @@ class EventController extends Controller
 
 
             $event->qr_code = $qrCodePath;
+            $event->eventStatus = 'Draft';
             $event->status = 'Active';
             $event->save();
 
@@ -246,6 +248,7 @@ class EventController extends Controller
             $event->start_time = $request->start_time;
             $event->end_time = $request->end_time;
             $event->fees = $request->fees;
+            $event->visitorFees = $request->visitorFees;
             $event->event_details = $request->event_details;
 
             // Delete the old QR code if it exists
@@ -278,9 +281,8 @@ class EventController extends Controller
             $event->qr_code = $qrCodePath;
 
             // Update the event status if needed
+            $event->eventStatus = 'Draft';
             $event->status = 'Active';
-
-            // Save the updated event
             $event->save();
 
             // Redirect with success message
@@ -291,6 +293,22 @@ class EventController extends Controller
             return view('servererror');
         }
     }
+
+
+    public function updateStatus(Request $request, $id)
+{
+    $event = Event::find($id);
+
+    if ($event) {
+        $event->eventStatus = $request->eventStatus;
+        $event->save();
+
+        return response()->json(['success' => true]);
+    }
+
+    return response()->json(['success' => false]);
+}
+
 
     // public function delete($id)
     // {

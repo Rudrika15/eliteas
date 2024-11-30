@@ -94,7 +94,7 @@
                 <div class="col-md-6">
                     <div class="form-floating mt-3">
                         <input type="date" class="form-control @error('event_date') is-invalid @enderror" id="event_date"
-                            name="event_date" placeholder="Event Date" required>
+                            name="event_date" placeholder="Event Date" required min="{{ date('Y-m-d') }}">
                         <label for="event_date">Event Date</label>
                         @error('event_date')
                             <div class="invalid-tooltip">
@@ -107,7 +107,7 @@
                 <div class="col-md-6" id="slotDateField" style="visibility: hidden;">
                     <div class="form-floating mt-3">
                         <input type="date" class="form-control @error('slot_date') is-invalid @enderror" id="slot_date"
-                            name="slot_date" placeholder="Event Slot Date">
+                            name="slot_date" placeholder="Event Slot Date" min="{{ date('Y-m-d') }}">
                         <label for="slot_date">Event Slot Date</label>
                         @error('slot_date')
                             <div class="invalid-tooltip">
@@ -187,6 +187,19 @@
                             name="fees" placeholder="fees">
                         <label for="fees">Fees</label>
                         @error('fees')
+                            <div class="invalid-tooltip">
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-floating mt-3">
+                        <input type="number" class="form-control @error('visitorFees') is-invalid @enderror" id="visitorFees"
+                            name="visitorFees" placeholder="visitorFees">
+                        <label for="visitorFees">Visitor Fees</label>
+                        @error('visitorFees')
                             <div class="invalid-tooltip">
                                 {{ $message }}
                             </div>

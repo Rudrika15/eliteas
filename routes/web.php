@@ -620,6 +620,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('event/store', [EventController::class, 'store'])->name('event.store');
     Route::get('event/edit/{id?}', [EventController::class, 'edit'])->name('event.edit');
     Route::post('event/update', [EventController::class, 'update'])->name('event.update');
+    Route::post('/event/update-status/{id}', [EventController::class, 'updateStatus'])->name('event.updateStatus');
     Route::get('event/eventRegisterList/{id?}', [EventController::class, 'eventRegisterList'])->name('event.eventRegisterList');
     Route::get('slotbooking/list/{id?}', [EventController::class, 'slotBookingList'])->name('slotbooking.list');
     Route::post('/event/register/{eventId}', [EventController::class, 'eventRegister'])->name('event.register');

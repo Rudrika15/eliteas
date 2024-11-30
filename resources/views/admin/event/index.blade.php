@@ -30,7 +30,9 @@
                                 <th>Start Time</th>
                                 <th>End Time</th>
                                 <th>Fees</th>
+                                <th>Visitor Fees</th>
                                 <th>QR Code</th>
+                                <th>Event Action</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -66,6 +68,7 @@
                                     <td>{{ $eventData->start_time }}</td>
                                     <td>{{ $eventData->end_time }}</td>
                                     <td>{{ $eventData->fees }}</td>
+                                    <td>{{ $eventData->visitorFees }}</td>
                                     <td>
                                         @if ($eventData->qr_code)
                                             <a href="javascript:void(0);" onclick="showImage('{{ url('eventQR/' . basename($eventData->qr_code)) }}')">
@@ -100,6 +103,20 @@
                                             link.click();
                                         }
                                     </script>
+
+                                    <td>
+                                        <select class="status-dropdown" data-event-id="{{ $eventData->id }}"
+                                            style="background-color:
+                                                {{ $eventData->eventStatus == 'Draft' ? '#f39c12' :
+                                                ($eventData->eventStatus == 'Publish' ? '#27ae60' : '#bdc3c7') }};
+                                                color: white; font-weight: bold;">
+                                            <option value="Draft" style="background-color: #f39c12; color: white; font-weight: bold;"
+                                                {{ $eventData->eventStatus == 'Draft' ? 'selected' : '' }}>Draft</option>
+                                            <option value="Publish" style="background-color: #27ae60; color: white; font-weight: bold;"
+                                                {{ $eventData->eventStatus == 'Publish' ? 'selected' : '' }}>Publish</option>
+                                        </select>
+                                    </td>
+
                                     <td>
                                         <a href="{{ route('slotbooking.list', $eventData->id) }}"
                                             class="btn btn-bg-blue btn-sm btn-tooltip">
@@ -129,64 +146,6 @@
                                                 <!-- Icon for delete -->
                                             </button>
                                         </form>
-
-                                        {{-- <a href="javascript:void(0);" data-url="{{ route('event.delete', $eventData->id) }}"
-                                            class="btn btn-danger btn-sm btn-tooltip delete-button">
-                                            <i class="bi bi-trash"></i>
-                                            <span class="btn-text">Delete</span>
-                                        </a>
-
-                                        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-                                        <script>
-                                            document.addEventListener('DOMContentLoaded', function() {
-                                                document.body.addEventListener('click', function(event) {
-                                                    const deleteButton = event.target.closest('.delete-button');
-                                                    if (deleteButton) {
-                                                        event.preventDefault();
-
-                                                        const deleteUrl = deleteButton.dataset.url;
-
-                                                        Swal.fire({
-                                                            title: 'Are you sure?',
-                                                            text: "You won't be able to revert this!",
-                                                            icon: 'warning',
-                                                            showCancelButton: true,
-                                                            confirmButtonColor: '#3085d6',
-                                                            cancelButtonColor: '#d33',
-                                                            confirmButtonText: 'Yes, delete it!'
-                                                        }).then((result) => {
-                                                            if (result.isConfirmed) {
-                                                                // Perform DELETE request using AJAX
-                                                                fetch(deleteUrl, {
-                                                                    method: 'DELETE',
-                                                                    headers: {
-                                                                        'X-CSRF-TOKEN': '{{ csrf_token() }}', // Include CSRF token
-                                                                    }
-                                                                })
-                                                                .then(response => response.json())
-                                                                .then(data => {
-                                                                    if (data.success) {
-                                                                        Swal.fire('Deleted!', data.message, 'success')
-                                                                        .then((result) => {
-                                                                            if (result.isConfirmed) {
-                                                                                window.location.reload();
-                                                                            }
-                                                                        });
-                                                                    } else {
-                                                                        Swal.fire('Error!', data.message, 'error');
-                                                                    }
-                                                                })
-                                                                .catch(error => {
-                                                                    Swal.fire('Error!', 'An error occurred. Please try again.', 'error');
-                                                                });
-                                                            }
-                                                        });
-                                                    }
-                                                });
-                                            });
-                                        </script> --}}
-
                                     </td>
                                 </tr>
                             @endforeach
@@ -200,6 +159,65 @@
             </div>
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    document.querySelectorAll('.status-dropdown').forEach(dropdown => {
+        dropdown.addEventListener('change', function() {
+            const eventId = this.getAttribute('data-event-id');
+            const newStatus = this.value;
+
+            // Show confirmation before updating the status
+            Swal.fire({
+                title: 'Are you sure?',
+                text: `Do you want to change the status to ${newStatus}?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, update it!',
+                cancelButtonText: 'No, cancel!',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Send AJAX request to update the status in the database
+                    fetch(`/event/update-status/${eventId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({ eventStatus: newStatus })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire(
+                                'Updated!',
+                                `The status has been updated to ${newStatus}.`,
+                                'success'
+                            );
+                        } else {
+                            Swal.fire(
+                                'Failed!',
+                                'There was an error updating the status.',
+                                'error'
+                            );
+                        }
+                    })
+                    .catch(error => {
+                        Swal.fire(
+                            'Failed!',
+                            'There was an error updating the status.',
+                            'error'
+                        );
+                    });
+                } else {
+                    // Revert to previous value if user cancels
+                    this.value = this.selectedOptions[0].value;
+                }
+            });
+        });
+    });
+</script>
 
     <script>
         // Function to show the modal with the image
