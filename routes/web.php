@@ -48,6 +48,7 @@ use App\Http\Controllers\Admin\MembershipSubscriptionController;
 use App\Http\Controllers\Admin\MembershipSubscriptionsController;
 use App\Http\Controllers\Admin\CircleMeetingMemberBusinessController;
 use App\Http\Controllers\Admin\CircleMeetingMemberReferenceController;
+use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\EventTypeController;
 use App\Http\Controllers\Admin\SlotController;
 use App\Http\Controllers\admin\TemplateDetailController;
@@ -638,6 +639,14 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('conquer/event/update', [ConquerEventController::class, 'update'])->name('conquer.events.update');
     Route::delete('conquer/event/delete/{id?}', [ConquerEventController::class, 'delete'])->name('conquer.events.delete');
 
+    //Coupon Event
+    Route::get('coupon/index', [CouponController::class, 'index'])->name('coupon.index');
+    Route::get('coupon/create', [CouponController::class, 'create'])->name('coupon.create');
+    Route::post('coupon/store', [CouponController::class, 'store'])->name('coupon.store');
+    Route::get('coupon/edit/{id?}', [CouponController::class, 'edit'])->name('coupon.edit');
+    Route::post('coupon/update', [CouponController::class, 'update'])->name('coupon.update');
+    Route::get('coupon/delete/{id?}', [CouponController::class, 'delete'])->name('coupon.delete');
+
     //All Activity
     Route::get('/activity/ibm', [AllActivityController::class, 'ibm'])->name('activity.ibm');
     Route::get('/activity/refrence', [AllActivityController::class, 'refrence'])->name('activity.refrence');
@@ -705,6 +714,8 @@ Route::put('/slotBooking/{id}/updateStatus', [EventController::class, 'slotBooki
 
 Route::get('visitorSlotbooking/list/{id?}', [SlotController::class, 'visitorSlotBookingRequests'])->name('visitorSlotBooking.list');
 
+// Route::post('/validate-coupon', [CouponController::class, 'validateCoupon'])->name('validate.coupon');
+Route::post('/validate-coupon', [CouponController::class, 'validateCouponCode'])->name('visitor.validateCouponCode');
 
 //Login with otp
 

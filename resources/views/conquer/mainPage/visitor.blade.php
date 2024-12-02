@@ -259,14 +259,14 @@
 
     @php
     $eventId = \App\Models\Event::find($event->id);
-    $eventFees = $event ? $event->fees : 0;
+    $eventFees = $event ? $event->visitorFees : 0;
 
     @endphp
 
 
 
 
-    <input type="hidden" id="eventFees" name="eventFees" value="{{ $event->fees }}">
+    <input type="hidden" id="eventFees" name="eventFees" value="{{ $event->visitorFees }}">
     <input type="hidden" id="eventId" name="eventId" value="{{ $event->id }}">
 
 

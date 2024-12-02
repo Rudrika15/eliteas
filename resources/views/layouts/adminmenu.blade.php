@@ -317,6 +317,15 @@
 
     <ul id="master-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
         <li class="nav-item">
+            <a class="nav-link " href="{{ route('coupon.index') }}">
+                <i class="bi bi-ticket-perforated" style="color: #e76a35"></i>
+                <span>Coupon</span>
+            </a>
+        </li>
+    </ul>
+
+    <ul id="master-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+        <li class="nav-item">
             <a class="nav-link " href="{{ route('circletype.index') }}">
                 <i class="bi bi-plus-circle" style="color: #e76a35"></i>
                 <span>Circle Type</span>
