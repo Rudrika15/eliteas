@@ -182,7 +182,7 @@
                     <div class="form-floating ">
                         <input type="text" class="form-control @error('description') is-invalid @enderror"
                             id="description" name="description" placeholder="description"
-                            value="{{ $refGiver->description }}" required>
+                            value="{{ $refGiver->description }}">
                         <label for="description">Description</label>
                         @error('description')
                             <div class="invalid-tooltip">

@@ -109,7 +109,6 @@
 
                 <div class="text-center mt-5">
                     <button type="submit" class="btn btn-bg-blue">Submit</button>
-                    <button type="reset" class="btn btn-bg-orange">Reset</button>
                 </div>
             </form><!-- End floating Labels Form -->
         </div>
