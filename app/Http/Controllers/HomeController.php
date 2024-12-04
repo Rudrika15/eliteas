@@ -399,7 +399,8 @@ class HomeController extends Controller
                     return $group->sum('amount');
                 })->sum();
 
-                $nearestEvents = Event::where('status', 'Active')
+                $nearestEvents = Event::where('eventStatus', 'Publish')
+                    ->where('status', 'Active')
                     ->whereDate('event_date', '>=', $currentDate)
                     ->orderBy('event_date', 'desc')
                     ->first();

@@ -231,6 +231,7 @@ class CircleMeetingMemberReferenceController extends Controller
             $busGiver->loginMemberId = Auth::user()->id;
             // $busGiver->loginMemberId = Auth::user()->id;
             $busGiver->amount = $request->amount;
+            $busGiver->remarks = $request->remarks;
             $busGiver->date = Carbon::now()->toDateString();
             $busGiver->status = 'Active';
             $busGiver->save();

@@ -55,6 +55,7 @@ class EventController extends Controller
                 $query->where('memberId', $memberId);
             }])
                 ->where('status', 'Active')
+                ->where('eventStatus', 'Publish')
                 ->where('event_date', '>=', now()) // Only get upcoming events
                 ->orderBy('event_date', 'ASC') // Order by nearest date
                 ->first(); // Get the closest event

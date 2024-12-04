@@ -28,7 +28,7 @@ class ConEventController extends Controller
 {
     public function main()
     {
-        $event = Event::where('status', 'Active')->orderBy('created_at', 'desc')->first();
+        $event = Event::where('eventStatus', 'Publish')->where('status', 'Active')->orderBy('created_at', 'desc')->first();
         $currentDate = now();
 
         return view('conquer.mainPage.main', compact('event', 'currentDate'));
@@ -89,7 +89,8 @@ class ConEventController extends Controller
     public function visitorDashboard()
     {
         $currentDate = Carbon::now();
-        $nearestEvents = Event::where('status', 'Active')
+        $nearestEvents = Event::where('eventStatus', 'Publish')
+            ->where('status', 'Active')
             ->whereDate('event_date', '>=', $currentDate)
             ->orderBy('event_date', 'desc')
             ->first();

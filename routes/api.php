@@ -36,6 +36,7 @@ use App\Http\Controllers\Api\CircleMeetingMemberBusinessController;
 use App\Http\Controllers\Api\CircleMeetingMemberReferenceController;
 use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\PermissionController;
+use App\Http\Controllers\Api\SlotController;
 use App\Http\Controllers\Api\SpecificAskController;
 use App\Http\Controllers\Api\UpdateAppController;
 use App\Http\Controllers\Api\VisitorController;
@@ -68,6 +69,11 @@ Route::post('visitor/login', [VisitorController::class, 'visitorLogin']);
 Route::post('event/attendance', [VisitorController::class, 'eventAttendance']);
 
 Route::post('event/visitorIndex', [VisitorController::class, 'eventIndex']);
+
+Route::get('/events/users/{id?}', [VisitorController::class, 'getUserListForVisitors']);
+
+Route::post('/slot-booking/visitor', [SlotController::class, 'slotBookingVisitorAPI']);
+
 
 
 //forgot password
@@ -253,6 +259,11 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('/register/{eventId}', [EventController::class, 'eventRegister']);
     // Store user details for an event
     Route::post('/store-details', [EventController::class, 'storeUserDetails']);
+    // get member list of event
+    Route::get('/events/user-list/{id?}', [VisitorController::class, 'getUserListForMembers']);
+    //slot booking for event
+    Route::post('/slot-booking/member', [SlotController::class, 'slotBookingMemberAPI']);
+
 
 
     // Retrieve all active events

@@ -14,8 +14,11 @@ use App\Models\Member;
 use App\Models\CircleCall;
 use App\Models\Event;
 use App\Models\EventRegister;
+use App\Models\Slot;
+use App\Models\SlotBooking;
 use App\Models\Visitor;
 use App\Models\VisitorEventRegister;
+use App\Utils\ErrorLogger;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
 
@@ -120,7 +123,7 @@ class VisitorController extends Controller
 
 public function eventIndex(Request $request){
 
-    $events = Event::where('status', 'Active')->get();
+    $events = Event::where('eventStatus', 'Publish')->where('status', 'Active')->get();
 
     $visitorId = $request->visitorId;
 
@@ -144,5 +147,130 @@ public function eventIndex(Request $request){
         ], 'Not Found', 404);
     }
 }
+
+public function getUserListForVisitors(Request $request, $id)
+{
+    try {
+        $event = Event::find($id);
+
+        if (!$event) {
+            return Utils::errorResponse(
+                ['error' => 'Event not found.'],
+                'Not Found',
+                404
+            );
+        }
+
+        // Fetch active users registered for the event
+        $users = EventRegister::where('eventId', $id)
+            ->where('status', 'Active')
+            ->get()
+            ->map(function ($user) {
+                $user->type = 'member'; // Add a type key
+                return $user;
+            });
+
+        // Fetch active visitors for the event excluding the current visitor
+        $visitors = VisitorEventRegister::where('eventId', $id)
+            ->where('status', 'Active')
+            ->where('visitorId', '!=', session()->get('visitor_id'))
+            ->get()
+            ->map(function ($visitor) {
+                $visitor->type = 'visitor'; // Add a type key
+                return $visitor;
+            });
+
+        // Merge users and visitors
+        $visitorsUsers = $users->merge($visitors);
+
+        // Fetch slot bookings and active slots
+        $slotBooking = SlotBooking::where('eventId', $id)
+            ->where('status', 'Active')
+            ->get();
+
+        $slots = Slot::where('status', 'Active')->get();
+
+        // Return the data as a JSON response
+        return Utils::sendResponse([
+            'event' => $event,
+            'users' => $users,
+            'visitorsUsers' => $visitorsUsers,
+            'slotBooking' => $slotBooking,
+            'slots' => $slots
+        ], 'Success');
+    } catch (\Throwable $th) {
+        ErrorLogger::logError($th, $request->fullUrl());
+
+        return Utils::errorResponse(
+            ['error' => 'An error occurred while fetching data.'],
+            'Server Error',
+            500
+        );
+    }
+}
+
+
+public function getUserListForMembers(Request $request, $id)
+{
+    try {
+        $event = Event::find($id);
+
+        if (!$event) {
+            return Utils::errorResponse(
+                ['error' => 'Event not found.'],
+                'Not Found',
+                404
+            );
+        }
+
+        // Fetch active users excluding the authenticated user's member ID
+        $users = EventRegister::where('eventId', $id)
+            ->where('status', 'Active')
+            ->where('memberId', '!=', Auth::user()->member ? Auth::user()->member->id : null)
+            ->get()
+            ->map(function ($user) {
+                $user->type = 'member'; // Add a type key
+                return $user;
+            });
+
+        // Fetch active visitors for the event
+        $visitors = VisitorEventRegister::where('eventId', $id)
+            ->where('status', 'Active')
+            ->get()
+            ->map(function ($visitor) {
+                $visitor->type = 'visitor'; // Add a type key
+                return $visitor;
+            });
+
+        // Merge users and visitors
+        $visitorsUsers = $users->merge($visitors);
+
+        // Fetch active slots and slot bookings for the event
+        $slots = Slot::where('status', 'Active')->get();
+        $slotBooking = SlotBooking::where('eventId', $id)
+            ->where('status', 'Active')
+            ->get();
+
+        // Return the data as a JSON response
+        return Utils::sendResponse([
+            'event' => $event,
+            'users' => $users,
+            'visitorsUsers' => $visitorsUsers,
+            'slots' => $slots,
+            'slotBooking' => $slotBooking
+        ], 'Success');
+    } catch (\Throwable $th) {
+        throw $th;
+        ErrorLogger::logError($th, $request->fullUrl());
+
+        return Utils::errorResponse(
+            ['error' => 'An error occurred while fetching data.'],
+            'Server Error',
+            500
+        );
+    }
+}
+
+
 
 }
