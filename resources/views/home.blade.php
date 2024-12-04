@@ -583,46 +583,26 @@
                             <form method="POST"
                                 action="{{ route('event.register', ['eventId' => $nearestEvents->id]) }}">
                                 @csrf
-                                <button type="submit" class="btn btn-bg-orange btn-md" id="freeRegisterBtn">
-                                    Register
-                                </button>
+                                <button type="submit" class="btn btn-bg-orange btn-md"
+                                    id="freeRegisterBtn">Register</button>
                             </form>
                             @else
-                            <h5 class="text-muted text-end me-4 pt-3"> ₹ {{ $nearestEvents->fees }}</h5>
-                            <div class="d-flex justify-content-end">
+                            <h5 class="text-muted text-end me-4 pt-3">₹ {{ $nearestEvents->fees }}</h5>
+                            <div class="d-flex justify-content-end align-items-center">
+                                <input type="text" id="couponCode" class="form-control me-3 w-25"
+                                    placeholder="Have you a coupon code ?">
+                                <button type="button" class="btn btn-secondary me-3" id="applyCouponBtn">Apply</button>
                                 <button type="button" class="btn btn-bg-orange btn-md" id="razorpayBtnEvent"
                                     data-amount-event="{{ $nearestEvents->fees }}">
-                                    Join Now
+                                    Pay Now
                                 </button>
+                                
                             </div>
-
-                            <!-- Coupon Modal -->
-                            <div class="modal fade" id="couponModal" tabindex="-1" style="z-index:9999"
-                                aria-labelledby="couponModalLabel" aria-hidden="true">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="couponModalLabel">Apply Coupon Code</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <label for="couponCode">Enter Coupon Code</label>
-                                            <input type="text" id="couponCode" class="form-control"
-                                                placeholder="Enter coupon code">
-                                            <div id="couponError" class="text-danger mt-2" style="display:none;">Invalid
-                                                coupon code.</div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary"
-                                                data-bs-dismiss="modal">Close</button>
-                                            <button type="button" class="btn btn-primary" id="applyCouponBtn">Apply
-                                                Coupon</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
+                            <div id="couponError" class="text-danger mt-2 text-end me-4" style="display:none;">Invalid
+                                coupon code.</div>
+                            <div id="discountSuccess" class="text-success mt-2 text-end me-4" style="display:none;">
+                                Coupon applied
+                                successfully! Discount: ₹<span id="discountAmount"></span></div>
                             @endif
                             @else
                             <div class="d-flex justify-content-end">
@@ -650,8 +630,6 @@
                                     @endif
                                 </div>
                                 @endif
-
-
                             </div>
                             @endif
                         </div>
@@ -704,9 +682,6 @@
                             </div>
                         </div>
                     </div>
-
-
-
                 </div>
                 @else
                 <div class="row">
@@ -782,135 +757,141 @@
 
     @if ($nearestEvents)
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-        var razorpayBtnEvent = document.getElementById('razorpayBtnEvent');
-        var couponModal = new bootstrap.Modal(document.getElementById('couponModal'));
-        var applyCouponBtn = document.getElementById('applyCouponBtn');
-        var couponCodeInput = document.getElementById('couponCode');
-        var couponError = document.getElementById('couponError');
-        var originalAmount = parseInt(razorpayBtnEvent.getAttribute('data-amount-event')) * 100; // convert to paise
-        var discountAmount = 0;
+        document.addEventListener('DOMContentLoaded', function () {
+    var razorpayBtnEvent = document.getElementById('razorpayBtnEvent');
+    var applyCouponBtn = document.getElementById('applyCouponBtn');
+    var couponCodeInput = document.getElementById('couponCode');
+    var couponError = document.getElementById('couponError');
+    var discountSuccess = document.getElementById('discountSuccess');
+    var discountAmountSpan = document.getElementById('discountAmount');
+    var originalAmount = parseInt(razorpayBtnEvent.getAttribute('data-amount-event')) * 100; // Convert to paise
+    var discountAmount = 0;
 
-        // When 'Join Now' button is clicked, open the coupon modal
-        if (razorpayBtnEvent) {
-        razorpayBtnEvent.addEventListener('click', function() {
-        couponModal.show(); // Show the coupon modal
-        });
-        }
+    // Apply coupon functionality
+    if (applyCouponBtn) {
+    applyCouponBtn.addEventListener('click', function () {
+    var couponCode = couponCodeInput.value.trim();
 
-        // When 'Apply Coupon' button is clicked
-        if (applyCouponBtn) {
-        applyCouponBtn.addEventListener('click', function() {
-        var couponCode = couponCodeInput.value.trim();
+    if (!couponCode) {
+    couponError.textContent = 'Please enter a coupon code.';
+    couponError.style.display = 'block';
+    return;
+    }
 
-        if (couponCode) {
-        // Send coupon code for validation (you can replace this with an AJAX call to check coupon validity)
-        fetch('/validate-coupon', { // You can replace the URL with your actual route
-        method: 'POST',
-        headers: {
-        'Content-Type': 'application/json',
-        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-        },
-        body: JSON.stringify({ coupon_code: couponCode })
-        })
-        .then(response => response.json())
-        .then(data => {
-        if (data.valid) {
-        // If the coupon is valid, apply the discount
-        discountAmount = data.discount; // This should be the discount in paise
-        couponError.style.display = 'none'; // Hide error message
-        couponModal.hide(); // Close the modal
+    // Validate coupon via API
+    fetch('/validate-coupon', {
+    method: 'POST',
+    headers: {
+    'Content-Type': 'application/json',
+    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+    },
+    body: JSON.stringify({
+    couponCode: couponCode, // Ensure it matches the backend's expected key
+    eventId: '{{ $nearestEvents->id }}' // Dynamically include the event ID
+    })
+    })
+    .then(response => response.json())
+    .then(data => {
+    if (data.success) {
+    // Coupon is valid
+    discountAmount = data.discount * 100; // Convert INR to paise
+    discountSuccess.style.display = 'block';
+    discountAmountSpan.textContent = (discountAmount / 100).toFixed(2); // Show INR format
+    couponError.style.display = 'none';
+    } else {
+    // Coupon is invalid
+    discountSuccess.style.display = 'none';
+    couponError.textContent = 'Invalid or expired coupon code.';
+    couponError.style.display = 'block';
+    }
+    })
+    .catch(error => {
+    console.error('Error validating coupon:', error);
+    discountSuccess.style.display = 'none';
+    couponError.textContent = 'An error occurred while validating the coupon.';
+    couponError.style.display = 'block';
+    });
+    });
+    }
 
-        // Update the Razorpay amount with the discounted price
-        proceedWithPayment(originalAmount - discountAmount);
-        } else {
-        // If invalid, show error message
-        couponError.style.display = 'block';
-        }
-        })
-        .catch(error => {
-        console.error('Error validating coupon:', error);
-        couponError.style.display = 'block'; // Show error message
-        });
-        } else {
-        // If no coupon code is entered
-        couponError.style.display = 'block';
-        }
-        });
-        }
+    // Proceed to payment with discount
+    if (razorpayBtnEvent) {
+    razorpayBtnEvent.addEventListener('click', function () {
+    var finalAmount = originalAmount - discountAmount;
+    proceedWithPayment(finalAmount);
+    });
+    }
 
-        // Function to proceed with payment
-        function proceedWithPayment(amount) {
-        // Razorpay options
-        var razorpayKey = "{{ env('RAZORPAY_KEY') }}";
-        var username = "{{ Auth::user()->name }}";
-        var useremail = "{{ Auth::user()->email }}";
+    // Function to initialize Razorpay and proceed with payment
+    function proceedWithPayment(amount) {
+    var razorpayKey = "{{ env('RAZORPAY_KEY') }}";
+    var username = "{{ Auth::user()->name }}";
+    var useremail = "{{ Auth::user()->email }}";
 
-        var eventOptions = {
-        "key": razorpayKey,
-        "amount": amount,
-        "currency": "INR",
-        "name": "{{ $nearestEvents->title }}",
-        "description": "Event Registration Payment",
-        "image": "/img/logo.png",
-        "handler": function(response) {
-        console.log('Payment successful, Payment ID:', response.razorpay_payment_id);
-        storeEventPaymentDetails(response.razorpay_payment_id, amount);
-        },
-        "prefill": {
-        "name": username,
-        "email": useremail
-        },
-        "theme": {
-        "color": "#F37254"
-        }
-        };
+    var eventOptions = {
+    key: razorpayKey,
+    amount: amount,
+    currency: "INR",
+    name: "{{ $nearestEvents->title }}",
+    description: "Event Registration Payment",
+    image: "/img/logo.png",
+    handler: function (response) {
+    console.log('Payment successful, Payment ID:', response.razorpay_payment_id);
+    storeEventPaymentDetails(response.razorpay_payment_id, amount);
+    },
+    prefill: {
+    name: username,
+    email: useremail
+    },
+    theme: {
+    color: "#F37254"
+    }
+    };
 
-        // Open Razorpay checkout
-        var rzp = new Razorpay(eventOptions);
-        rzp.open();
-        }
+    var rzp = new Razorpay(eventOptions);
+    rzp.open();
+    }
 
-        // Function to store payment details after successful payment
-        function storeEventPaymentDetails(paymentId, amount) {
-        var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-        var url = `{{ route('razorpay.payment.eventPayment') }}`;
-        var eventId = '{{ $nearestEvents->id }}';
+    // Store payment details after successful payment
+    function storeEventPaymentDetails(paymentId, amount) {
+    var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    var url = `{{ route('razorpay.payment.eventPayment') }}`;
+    var eventId = '{{ $nearestEvents->id }}';
 
-        fetch(url, {
-        method: 'POST',
-        headers: {
-        'Content-Type': 'application/json',
-        'X-CSRF-TOKEN': csrfToken
-        },
-        body: JSON.stringify({
-        paymentId: paymentId,
-        amount: amount,
-        eventId: eventId
-        })
-        })
-        .then(response => {
-        console.log('Payment details stored successfully.');
-        Swal.fire({
-        icon: 'success',
-        title: 'Payment Successful',
-        text: 'You have successfully registered for the event.',
-        }).then((result) => {
-        if (result.isConfirmed) {
-        window.location.reload(); // Reload page to reflect registration status
-        }
-        });
-        })
-        .catch(error => {
-        console.error('Error storing payment details:', error);
-        Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'Failed to store payment details.',
-        });
-        });
-        }
-        });
+    fetch(url, {
+    method: 'POST',
+    headers: {
+    'Content-Type': 'application/json',
+    'X-CSRF-TOKEN': csrfToken
+    },
+    body: JSON.stringify({
+    paymentId: paymentId,
+    amount: amount,
+    eventId: eventId
+    })
+    })
+    .then(response => {
+    console.log('Payment details stored successfully.');
+    Swal.fire({
+    icon: 'success',
+    title: 'Payment Successful',
+    text: 'You have successfully registered for the event.',
+    }).then((result) => {
+    if (result.isConfirmed) {
+    window.location.reload();
+    }
+    });
+    })
+    .catch(error => {
+    console.error('Error storing payment details:', error);
+    Swal.fire({
+    icon: 'error',
+    title: 'Error',
+    text: 'Failed to store payment details.',
+    });
+    });
+    }
+    });
     </script>
     @endif
 

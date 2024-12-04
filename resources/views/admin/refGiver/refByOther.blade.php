@@ -16,7 +16,7 @@
 <div class="card">
     <div class="card-body">
         <div class="d-flex justify-content-between align-items-center mb-5">
-            <h4 class="card-title">Circle Meeting Member Refference</h4>
+            <h4 class="card-title">Business Slip</h4>
             <a href="{{ route('refGiver.index') }}" class="btn btn-bg-orange btn-sm ">BACK</a>
         </div>
         <hr class="mb-5">
@@ -139,10 +139,23 @@
                             </div> --}}
                             <div class="mt-3">
                                 <div class="form-floating ">
-                                    <input type="text" class="form-control @error('description') is-invalid @enderror"
-                                        id="description" name="description" placeholder="description">
-                                    <label for="description">Description</label>
-                                    @error('description')
+                                    <input type="text" class="form-control @error('remarks') is-invalid @enderror"
+                                        id="remarks" name="remarks" placeholder="remarks">
+                                    <label for="remarks">Remarks</label>
+                                    @error('remarks')
+                                    <div class="invalid-tooltip">
+                                        {{ $message }}
+                                    </div>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="mt-3">
+                                <div class="form-floating">
+                                    <input type="number" class="form-control @error('amount') is-invalid @enderror"
+                                        id="amount" name="amount" placeholder="Amount" required>
+                                    <label for="amount">Amount</label>
+                                    @error('amount')
                                     <div class="invalid-tooltip">
                                         {{ $message }}
                                     </div>
@@ -233,7 +246,7 @@
 
 
 
-                <div class="mt-3  ">
+                {{-- <div class="mt-3  ">
                     <label for="scale">Scale [1-5]</label>
                     <div class="form-floating mt-3">
                         <input type="range" class="form-range  @error('scale') is-invalid @enderror" id="scale"
@@ -251,7 +264,7 @@
                         </div>
                         @enderror
                     </div>
-                </div>
+                </div> --}}
 
                 <div class="text-center mt-5">
                     <button type="submit" class="btn btn-bg-blue">Submit</button>

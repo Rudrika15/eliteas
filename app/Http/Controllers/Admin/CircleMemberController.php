@@ -275,7 +275,7 @@ class CircleMemberController extends Controller
         // return $request;
         $this->validate($request, [
             'title' => 'required',
-            'circleId' => 'required',
+            'circleIds' => 'required',
             'firstName' => 'required',
             'lastName' => 'required',
             'email' => 'required|unique:users,email',
@@ -348,7 +348,7 @@ class CircleMemberController extends Controller
             // Create and save the member
             $member = new Member();
             $member->createdBy = Auth::user()->id;
-            $member->circleId = $request->circleId;
+            $member->circleId = $request->circleIds;
             $member->sponsoredBy = $request->memberId;
             $member->userId = $user->id;
             $member->title = $request->title;
@@ -563,8 +563,8 @@ class CircleMemberController extends Controller
 
             // Update the member
             $member = Member::findOrFail($member);
-            if ($request->has('circleId')) {
-                $member->circleId = $request->circleId;
+            if ($request->has('circleIds')) {
+                $member->circleId = $request->circleIds;
             }
             $member->title = $request->has('title') ? $request->title : $member->title;
             $member->sponsoredBy = $request->has('memberId') ? $request->memberId : $member->sponsoredBy;
