@@ -50,6 +50,7 @@ use App\Http\Controllers\Admin\CircleMeetingMemberBusinessController;
 use App\Http\Controllers\Admin\CircleMeetingMemberReferenceController;
 use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\EventTypeController;
+use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\SlotController;
 use App\Http\Controllers\admin\TemplateDetailController;
 use App\Http\Controllers\admin\TemplatemasterController;
@@ -500,6 +501,13 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::get('/member-subscription', [MembershipSubscriptionController::class, 'index'])->name('subscription.memberSubscription');
     Route::get('/member-subscription-all', [MembershipSubscriptionController::class, 'memberData'])->name('subscription.memberSubscription.admin');
+
+    //report
+    // Route::get('/reports', [ReportController::class, 'index'])->name('report.index');
+    Route::get('/admin/reports/ibm', [ReportController::class, 'ibm'])->name('admin.report.ibm');
+    Route::get('/admin/reports/reference', [ReportController::class, 'reference'])->name('admin.report.reference');
+    Route::get('/admin/reports/business', [ReportController::class, 'business'])->name('admin.report.business');
+
 
     //admin side activity membership status changed
     Route::get('/allPayments', [PaymentController::class, 'allPayments'])->name('allPayments.index');

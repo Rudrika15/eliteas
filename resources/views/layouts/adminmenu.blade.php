@@ -428,7 +428,42 @@
             </a>
         </li>
     </ul>
+</li>
 
+<li class="nav-item">
+    <a class="nav-link collapsed" data-bs-target="#report-nav" data-bs-toggle="collapse" href="#">
+        <i class="bi bi-currency-rupee" style="color: #e76a35"></i><span>Report</span><i
+            class="bi bi-chevron-down ms-auto" style="color: #e76a35"></i>
+    </a>
+
+    <ul id="report-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="{{ route('admin.report.ibm') }}">
+                <i class="bi bi-file-earmark-text" style="color: #e76a35"></i>
+                <span class="text-blue">IBM Report</span>
+            </a>
+        </li>
+    </ul>
+
+    <ul id="report-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="{{ route('admin.report.reference') }}">
+                <i class="bi bi-file-earmark-text" style="color: #e76a35"></i>
+                <span class="text-blue">Reference Report</span>
+            </a>
+        </li>
+    </ul>
+
+    <ul id="report-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="{{ route('admin.report.business') }}">
+                <i class="bi bi-file-earmark-text" style="color: #e76a35"></i>
+                <span class="text-blue">Business Report</span>
+            </a>
+        </li>
+    </ul>
+
+</li>
 
 
 

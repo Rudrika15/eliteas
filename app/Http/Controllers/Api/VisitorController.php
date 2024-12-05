@@ -47,7 +47,7 @@ class VisitorController extends Controller
     }
 
     public function eventAttendance(Request $request)
-{
+    {
     // Validate the incoming data
     $validator = Validator::make($request->all(), [
         'eventId' => 'required|exists:events,id',  // Ensure the event exists
@@ -133,8 +133,7 @@ public function eventIndex(Request $request){
         ], 'Bad Request', 400);
     }
 
-    $eventRegisterList = VisitorEventRegister::where('visitorId', $visitorId)->get();
-
+    $eventRegisterList = VisitorEventRegister::where('visitorId', $visitorId)->with('events')->with('visitors')->get();
 
     if(count($events) > 0){
         return Utils::sendResponse([
@@ -167,6 +166,14 @@ public function getUserListForVisitors(Request $request, $id)
             ->get()
             ->map(function ($user) {
                 $user->type = 'member'; // Add a type key
+                $member = Member::where('id', $user->memberId)->first();
+                $user->details = [
+                    'id' => $member ? $member->id : null,
+                    'firstName' => $member ? $member->firstName : null,
+                    'lastName' => $member ? $member->lastName : null,
+                    'companyName' => $member ? $member->companyName : null,
+                    'profilePhoto' => $member ? $member->profilePhoto : null,
+                ];
                 return $user;
             });
 
@@ -177,11 +184,19 @@ public function getUserListForVisitors(Request $request, $id)
             ->get()
             ->map(function ($visitor) {
                 $visitor->type = 'visitor'; // Add a type key
+                $visitorDetails = Visitor::where('id', $visitor->visitorId)->first();
+                $visitor->details = [
+
+                    'id' => $visitorDetails ? $visitorDetails->id : null,
+                    'firstName' => $visitorDetails ? $visitorDetails->firstName : null,
+                    'lastName' => $visitorDetails ? $visitorDetails->lastName : null,
+                    'profilePhoto' => $visitorDetails ? $visitorDetails->profilePhoto : null,
+                ];
                 return $visitor;
             });
 
         // Merge users and visitors
-        $visitorsUsers = $users->merge($visitors);
+        $mergeredUsers = $users->merge($visitors);
 
         // Fetch slot bookings and active slots
         $slotBooking = SlotBooking::where('eventId', $id)
@@ -193,8 +208,8 @@ public function getUserListForVisitors(Request $request, $id)
         // Return the data as a JSON response
         return Utils::sendResponse([
             'event' => $event,
-            'users' => $users,
-            'visitorsUsers' => $visitorsUsers,
+            // 'users' => $users,
+            'allUsers' => $mergeredUsers,
             'slotBooking' => $slotBooking,
             'slots' => $slots
         ], 'Success');
@@ -230,6 +245,14 @@ public function getUserListForMembers(Request $request, $id)
             ->get()
             ->map(function ($user) {
                 $user->type = 'member'; // Add a type key
+                $member = Member::where('id', $user->memberId)->first();
+                $user->details = [
+                    'id' => $member ? $member->id : null,
+                    'firstName' => $member ? $member->firstName : null,
+                    'lastName' => $member ? $member->lastName : null,
+                    'companyName' => $member ? $member->companyName : null,
+                    'profilePhoto' => $member ? $member->profilePhoto : null,
+                ];
                 return $user;
             });
 
@@ -239,11 +262,18 @@ public function getUserListForMembers(Request $request, $id)
             ->get()
             ->map(function ($visitor) {
                 $visitor->type = 'visitor'; // Add a type key
+                $visitorDetails = Visitor::where('id', $visitor->visitorId)->first();
+                $visitor->details = [
+                    'id' => $visitorDetails ? $visitorDetails->id : null,
+                    'firstName' => $visitorDetails ? $visitorDetails->firstName : null,
+                    'lastName' => $visitorDetails ? $visitorDetails->lastName : null,
+                    'profilePhoto' => $visitorDetails ? $visitorDetails->profilePhoto : null,
+                ];
                 return $visitor;
             });
 
         // Merge users and visitors
-        $visitorsUsers = $users->merge($visitors);
+        $mergeredUsers = $users->merge($visitors);
 
         // Fetch active slots and slot bookings for the event
         $slots = Slot::where('status', 'Active')->get();
@@ -254,8 +284,8 @@ public function getUserListForMembers(Request $request, $id)
         // Return the data as a JSON response
         return Utils::sendResponse([
             'event' => $event,
-            'users' => $users,
-            'visitorsUsers' => $visitorsUsers,
+            // 'users' => $users,
+            'allUsers' => $mergeredUsers,
             'slots' => $slots,
             'slotBooking' => $slotBooking
         ], 'Success');

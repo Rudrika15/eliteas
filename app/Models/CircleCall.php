@@ -22,6 +22,10 @@ class CircleCall extends Model
     {
         return $this->belongsTo(Member::class, 'id');
     }
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'id');
+    }
 
     public function member()
     {
@@ -41,4 +45,7 @@ class CircleCall extends Model
     {
         return $this->belongsTo(Circle::class, 'circleId', 'id');
     }
+
+
+
 }
