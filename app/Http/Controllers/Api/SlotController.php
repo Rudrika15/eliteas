@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Models\CircleType;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Slot;
 use App\Models\SlotBooking;
 use App\Utils\ErrorLogger;
 use Illuminate\Support\Facades\Validator;
@@ -87,6 +88,24 @@ public function slotBookingMemberAPI(Request $request)
         );
     }
 }
+
+public function slotIndex(Request $request)
+    {
+        try {
+
+            // Get the nearest upcoming event that is associated with the member and exclude past events
+            $slot = Slot::where('status', 'Active')->get();
+
+            // Return the response with the nearest event and its registration details
+            return Utils::sendResponse([
+                'slot' => $slot,
+            ], 'Slot Retrieved successfully', 200);
+        } catch (\Throwable $th) {
+            return Utils::errorResponse([
+                'error' => 'Failed to retrieve slot. Please try again.'
+            ], 'Internal Server Error', 500);
+        }
+    }
 
 
 }

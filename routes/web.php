@@ -53,9 +53,9 @@ use App\Http\Controllers\Admin\EventTypeController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\SlotController;
 use App\Http\Controllers\admin\TemplateDetailController;
-use App\Http\Controllers\admin\TemplatemasterController;
 use App\Http\Controllers\Admin\UpdateAppController;
 use App\Http\Controllers\Admin\SpecificAskController;
+use App\Http\Controllers\Admin\TemplateMasterController;
 use App\Http\Controllers\Conquer\ConEventController;
 use App\Http\Controllers\Conquer\ConquerEventController;
 
@@ -574,12 +574,12 @@ Route::group(['middleware' => ['auth']], function () {
 
     //template
 
-    Route::get('/template-index', [TemplatemasterController::class, 'index'])->name('template.index');
-    Route::get('/template-create', [TemplatemasterController::class, 'create'])->name('template.create');
-    Route::post('/template/store', [TemplatemasterController::class, 'store'])->name('template.store');
-    Route::get('/template-edit/{id}', [TemplatemasterController::class, 'edit'])->name('template.edit');
-    Route::post('/template/update', [TemplatemasterController::class, 'update'])->name('template.update');
-    Route::get('/template-delete/{id}', [TemplatemasterController::class, 'destroy'])->name('template.delete');
+    Route::get('/template-index', [TemplateMasterController::class, 'index'])->name('template.index');
+    Route::get('/template-create', [TemplateMasterController::class, 'create'])->name('template.create');
+    Route::post('/template/store', [TemplateMasterController::class, 'store'])->name('template.store');
+    Route::get('/template-edit/{id}', [TemplateMasterController::class, 'edit'])->name('template.edit');
+    Route::post('/template/update', [TemplateMasterController::class, 'update'])->name('template.update');
+    Route::get('/template-delete/{id}', [TemplateMasterController::class, 'destroy'])->name('template.delete');
 
     //Template Details
     Route::get('template-detail-index/{id?}', [TemplateDetailController::class, 'index'])->name('templateDetail.index');

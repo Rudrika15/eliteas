@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\admin;
+namespace App\Http\Controllers\Admin;
 
-use App\Models\Templatemaster;
+use App\Models\TemplateMaster;
 use Illuminate\Http\Request;
 
 use App\Http\Controllers\Controller;
 
-class TemplatemasterController extends Controller
+class TemplateMasterController extends Controller
 {
     function __construct()
     {
@@ -19,7 +19,7 @@ class TemplatemasterController extends Controller
     public function index()
     {
         try {
-            $template = Templatemaster::orderBy('id', 'DESC')->paginate(10);
+            $template = TemplateMaster::orderBy('id', 'DESC')->paginate(10);
             return view("admin.template.index", compact('template'));
         } catch (\Throwable $th) {
             throw $th;
@@ -42,7 +42,7 @@ class TemplatemasterController extends Controller
         ]);
 
         try {
-            $template = new Templatemaster();
+            $template = new TemplateMaster();
             if ($request->templateImage) {
                 $template->templateImage = time() . '.' . $request->templateImage->extension();
                 $request->templateImage->move(public_path('templateImage'), $template->templateImage);
@@ -57,7 +57,7 @@ class TemplatemasterController extends Controller
     public function edit($id)
     {
         try {
-            $template = Templatemaster::find($id);
+            $template = TemplateMaster::find($id);
             return view('admin.template.edit', compact('template'));
         } catch (\Throwable $th) {
             throw $th;
@@ -72,7 +72,7 @@ class TemplatemasterController extends Controller
 
         try {
             $id = $request->id;
-            $template = Templatemaster::find($id);
+            $template = TemplateMaster::find($id);
             if ($request->templateImage) {
                 $template->templateImage = time() . '.' . $request->templateImage->extension();
                 $request->templateImage->move(public_path('templateImage'), $template->templateImage);
@@ -87,7 +87,7 @@ class TemplatemasterController extends Controller
     public function destroy($id)
     {
         try {
-            $template = Templatemaster::find($id);
+            $template = TemplateMaster::find($id);
             $template->delete();
             return redirect()->back();
         } catch (\Throwable $th) {

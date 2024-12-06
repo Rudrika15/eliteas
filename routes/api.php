@@ -74,6 +74,7 @@ Route::get('/events/users/{id?}', [VisitorController::class, 'getUserListForVisi
 
 Route::post('/slot-booking/visitor', [SlotController::class, 'slotBookingVisitorAPI']);
 
+Route::get('/slot/index', [SlotController::class, 'slotIndex']);
 
 
 //forgot password
