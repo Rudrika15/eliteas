@@ -281,7 +281,7 @@ class EventController extends Controller
             $event->qr_code = $qrCodePath;
 
             // Update the event status if needed
-            $event->eventStatus = 'Draft';
+            // $event->eventStatus = 'Draft';
             $event->status = 'Active';
             $event->save();
 

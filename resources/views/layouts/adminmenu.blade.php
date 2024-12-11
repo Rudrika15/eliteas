@@ -475,6 +475,13 @@
 </li>
 
 <li class="nav-item">
+    <a class="nav-link collapsed" href="{{ route('visitors.index') }}">
+        <i class="bi bi-people" style="color: #e76a35"></i>
+        <span class="text-blue">Visitors List</span>
+    </a>
+</li>
+
+<li class="nav-item">
     <a class="nav-link collapsed" href="{{ route('visitor.index') }}">
         <i class="bi bi-people" style="color: #e76a35"></i>
         <span class="text-blue">Visitors</span>
@@ -501,6 +508,7 @@
         <span style="color: #1d2856">App Version Update</span>
     </a>
 </li>
+
 
 
 <!-- End Forms Nav -->

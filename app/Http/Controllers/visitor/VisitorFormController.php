@@ -37,7 +37,7 @@ class VisitorFormController extends Controller
 
     public function visitorForm()
     {
-        $businessCategory = BusinessCategory::all();
+        $businessCategory = BusinessCategory::where('status', 'Active')->orderBy('categoryName', 'asc')->get();
         return view('visitor.visitorForm', compact('businessCategory'));
     }
 
@@ -156,7 +156,7 @@ class VisitorFormController extends Controller
 
     public function visitorsFormView()
     {
-        $businessCategory = BusinessCategory::all();
+        $businessCategory = BusinessCategory::where('status', 'Active')->orderBy('categoryName', 'asc')->get();
         return view('visitor.visitorForms', compact('businessCategory'));
     }
 

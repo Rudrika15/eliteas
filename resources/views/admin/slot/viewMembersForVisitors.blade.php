@@ -28,26 +28,28 @@
     }
 
     .profile-image {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    margin: 0 auto 15px;
-    background-color: #e1e9ee;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 28px;
-    color: #1d3268;
-    overflow: hidden;
-    border: 4px solid #e76a35; /* WhatsApp green border color */
-}
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        margin: 0 auto 15px;
+        background-color: #e1e9ee;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        color: #1d3268;
+        overflow: hidden;
+        border: 4px solid #e76a35;
+        /* WhatsApp green border color */
+    }
 
-.profile-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 50%;
-}
+    .profile-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+    }
+
     .card-title {
         font-weight: bold;
         font-size: 18px;
@@ -63,8 +65,9 @@
         margin-top: 15px;
     }
 
-    .btn-view-profile, .btn-slot-booking {
-        background-color: #e76a35 ;
+    .btn-view-profile,
+    .btn-slot-booking {
+        background-color: #e76a35;
         color: #fff !important;
         border-radius: 5px;
         padding: 8px 20px;
@@ -74,7 +77,8 @@
         text-decoration: none;
     }
 
-    .btn-view-profile:hover, .btn-slot-booking:hover {
+    .btn-view-profile:hover,
+    .btn-slot-booking:hover {
         background-color: #e76a35;
     }
 
@@ -151,7 +155,6 @@
         text-align: center;
         color: #1d3268;
     }
-
 </style>
 
 <div class="container mt-5">
@@ -160,100 +163,132 @@
         @foreach ($visitorsUsers as $visitorsUsersData)
 
 
-            <div class="card">
-                @php
-                $photoPath = null;
+        <div class="card">
+            @php
+            $photoPath = null;
 
-                if (!empty($visitorsUsersData->members->id) && file_exists(public_path('ProfilePhoto/' . $visitorsUsersData->members->profilePhoto))) {
-                    $photoPath = asset('ProfilePhoto/' . $visitorsUsersData->members->profilePhoto);
-                } elseif (!empty($visitorsUsersData->visitors->id) && file_exists(public_path('VisitorPhoto/' . $visitorsUsersData->visitorPhoto))) {
-                    $photoPath = asset('VisitorPhoto/' . $visitorsUsersData->visitorPhoto);
-                }
+            if (!empty($visitorsUsersData->members->id) && file_exists(public_path('ProfilePhoto/' .
+            $visitorsUsersData->members->profilePhoto))) {
+            $photoPath = asset('ProfilePhoto/' . $visitorsUsersData->members->profilePhoto);
+            } elseif (!empty($visitorsUsersData->visitors->id) && file_exists(public_path('VisitorPhoto/' .
+            $visitorsUsersData->visitorPhoto))) {
+            $photoPath = asset('VisitorPhoto/' . $visitorsUsersData->visitorPhoto);
+            }
 
-                $firstName = $visitorsUsersData->members->firstName ?? $visitorsUsersData->visitors->firstName ?? '';
-                $lastName = $visitorsUsersData->members->lastName ?? $visitorsUsersData->visitors->lastName ?? '';
-                $initials = strtoupper(substr($firstName, 0, 1) . substr($lastName, 0, 1));
-                @endphp
+            $firstName = $visitorsUsersData->members->firstName ?? $visitorsUsersData->visitors->firstName ?? '';
+            $lastName = $visitorsUsersData->members->lastName ?? $visitorsUsersData->visitors->lastName ?? '';
+            $initials = strtoupper(substr($firstName, 0, 1) . substr($lastName, 0, 1));
+            @endphp
 
-                <div class="profile-image">
-                    @if ($photoPath)
-                        <img src="{{ $photoPath }}" alt="Profile Picture">
-                    @else
-                        <span>{{ $initials }}</span>
-                    @endif
-                </div>
-
-                <h5 class="card-title">
-                    {{ $visitorsUsersData->members->firstName ?? '' }}
-                    {{ $visitorsUsersData->members->lastName ?? ($visitorsUsersData->visitors->firstName ?? '') }}
-                    {{ $visitorsUsersData->visitors->lastName ?? '' }}
-                </h5>
-
-                <div class="btn-container">
-                    @if (isset($visitorsUsersData->members->id))
-                        <a href="{{ route('viewMember.profile', $visitorsUsersData->members->id) }}" class="btn-view-profile">View Profile</a>
-                    @else
-                        <a href="{{ route('viewMember.profileUser', $visitorsUsersData->visitors->id) }}" class="btn-view-profile">View Profile</a>
-                    @endif
-
-                    @if(isset($event) && $event->slot_date)
-                        @php
-                            $isBooked = \App\Models\SlotBooking::where('eventId', $event->id)->where('visitorId', session('visitor_id'))->exists();
-                        @endphp
-                        @if(!$isBooked)
-                            <button class="btn-slot-booking" data-bs-toggle="modal" data-bs-target="#slotModal{{ $visitorsUsersData->id }}">
-                                Slot Booking
-                            </button>
-                        @endif
-                    @endif
-                </div>
+            <div class="profile-image">
+                @if ($photoPath)
+                <img src="{{ $photoPath }}" alt="Profile Picture">
+                @else
+                <span>{{ $initials }}</span>
+                @endif
             </div>
 
+            <h5 class="card-title">
+                {{ $visitorsUsersData->members->firstName ?? '' }}
+                {{ $visitorsUsersData->members->lastName ?? ($visitorsUsersData->visitors->firstName ?? '') }}
+                {{ $visitorsUsersData->visitors->lastName ?? '' }}
+            </h5>
 
-            <div class="modal fade" id="slotModal{{ $visitorsUsersData->id }}" tabindex="-1" aria-labelledby="slotModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="slotModalLabel">Available Slots</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <ul class="slot-list">
-                                @foreach ($slots as $slotData)
-                                    <li class="slot-list-item">
-                                        <span>{{ $slotData->start_time }} - {{ $slotData->end_time }}</span>
-                                        <form action="{{ route('slotbooking.visitor', $slotData->id) }}" method="POST">
-                                            @csrf
-                                            <input type="hidden" name="visitorId" value="{{ session('visitor_id') }}">
-                                            <input type="hidden" name="eventId" value="{{ $event->id }}">
-                                            <input type="hidden" name="slotId" value="{{ $slotData->id }}">
-                                            @if($visitorsUsersData->type== 'member')
-                                            <input type="hidden" name="regMemberId" value="{{ $visitorsUsersData->memberId }}">
-                                            @endif
-                                            @if($visitorsUsersData->type== 'visitor')
-                                            <input type="hidden" name="regMemberId" value="{{ $visitorsUsersData->visitorId }}">
-                                            @endif
+            <div class="btn-container">
+                @if (isset($visitorsUsersData->members->id))
+                <a href="{{ route('viewMember.profile', $visitorsUsersData->members->id) }}"
+                    class="btn-view-profile">View Profile</a>
+                @else
+                <a href="{{ route('viewMember.profileUser', $visitorsUsersData->visitors->id) }}"
+                    class="btn-view-profile">View Profile</a>
+                @endif
+
+                {{-- @if(isset($event) && $event->slot_date)
+                @php
+                $isBookedForMember = \App\Models\SlotBooking::where('eventId', $event->id)
+                ->where('visitorId', session('visitor_id'))
+                ->where('regMemberId', $visitorsUsersData->members->id ?? $visitorsUsersData->visitors->id)
+                ->exists();
+                @endphp --}}
 
 
-                                            <button type="submit" class="btn-slot-booking"
-                                            {{ \App\Models\SlotBooking::where('eventId', $event->id)->where('slotId', $slotData->id)->exists() ? 'disabled' : '' }}>
-                                                @if (\App\Models\SlotBooking::where('eventId', $event->id)->where('slotId', $slotData->id)->exists())
-                                                    Booked
-                                                @else
-                                                    Book Slot
-                                                @endif
-                                            </button>
-                                        </form>
-                                    </li>
-                                @endforeach
-                            </ul>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        </div>
+                @if(isset($event) && $event->slot_date)
+                @php
+                $visitorUserId = $visitorsUsersData->members->id ?? $visitorsUsersData->visitors->id;
+                $sessionVisitor = session('visitor_id');
+
+                $isBookedForMember = \App\Models\SlotBooking::where(function ($query) use ($event, $visitorUserId,
+                $sessionVisitor) {
+                $query->where('eventId', $event->id)
+                ->where('visitorId', $sessionVisitor)
+                ->where('regMemberId', $visitorUserId);
+
+                })->orWhere(function ($subQuery) use ($sessionVisitor, $visitorUserId, $event) {
+                $subQuery->where('eventId', $event->id)
+                ->where('visitorId', $visitorUserId)
+                ->where('regMemberId', $sessionVisitor);
+                })->exists();
+
+                @endphp
+                @endif
+
+
+
+                @if(!$isBookedForMember)
+                <button class="btn-slot-booking" data-bs-toggle="modal"
+                    data-bs-target="#slotModal{{ $visitorsUsersData->id }}">
+                    Slot Booking
+                </button>
+                @endif
+            </div>
+        </div>
+
+
+        <div class="modal fade" id="slotModal{{ $visitorsUsersData->id }}" tabindex="-1"
+            aria-labelledby="slotModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="slotModalLabel">Available Slots</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <ul class="slot-list">
+                            @foreach ($slots as $slotData)
+                            <li class="slot-list-item">
+                                <span>{{ $slotData->start_time }} - {{ $slotData->end_time }}</span>
+                                <form action="{{ route('slotbooking.visitor', $slotData->id) }}" method="POST">
+                                    @csrf
+                                    <input type="hidden" name="visitorId" value="{{ session('visitor_id') }}">
+                                    <input type="hidden" name="eventId" value="{{ $event->id }}">
+                                    <input type="hidden" name="slotId" value="{{ $slotData->id }}">
+                                    @if($visitorsUsersData->type== 'member')
+                                    <input type="hidden" name="regMemberId" value="{{ $visitorsUsersData->memberId }}">
+                                    @endif
+                                    @if($visitorsUsersData->type== 'visitor')
+                                    <input type="hidden" name="regMemberId" value="{{ $visitorsUsersData->visitorId }}">
+                                    @endif
+                                    <button type="submit" class="btn-slot-booking" {{
+                                        \App\Models\SlotBooking::where('eventId', $event->id)->where('slotId',
+                                        $slotData->id)->exists() ? 'disabled' : '' }}>
+                                        @if (\App\Models\SlotBooking::where('eventId', $event->id)->where('slotId',
+                                        $slotData->id)->exists())
+                                        Booked
+                                        @else
+                                        Book Slot
+                                        @endif
+                                    </button>
+                                </form>
+                            </li>
+                            @endforeach
+                        </ul>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>
+        </div>
 
         @endforeach
     </div>

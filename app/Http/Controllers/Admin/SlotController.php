@@ -305,8 +305,6 @@ class SlotController extends Controller
 
     public function visitorSlotBookingRequests(Request $request, $id)
     {
-
-
         try {
 
             $visitorId = session()->get('visitor_id');
@@ -325,6 +323,32 @@ class SlotController extends Controller
             return view('servererror');
         }
     }
+
+    public function visitorSlotBookingRequestedList(Request $request, $id)
+    {
+        try {
+
+            $visitorId = session()->get('visitor_id');
+
+            $event = Event::find($id);
+
+            $slotBooking = SlotBooking::where('eventId', $id)->where('regMemberId', $visitorId)->paginate(10);
+
+            return view('visitor.visitorSlotBookingList', compact('slotBooking', 'event'));
+        } catch (\Throwable $th) {
+            // throw $th;
+            ErrorLogger::logError(
+                $th,
+                $request->fullUrl()
+            );
+            return view('servererror');
+        }
+    }
+
+
+
+
+
     public function memberSlotBookingRequests(Request $request, $id)
     {
 
@@ -351,7 +375,7 @@ class SlotController extends Controller
     public function slotBookingMember(Request $request)
     {
 
-        $user = auth()->user()->id;
+        $user = auth()->user()->member->id;
 
         $this->validate($request, [
             'slotId' => 'required',
@@ -364,6 +388,7 @@ class SlotController extends Controller
             $slot->slotId = $request->slotId;
             $slot->userId = $user;
             $slot->regMemberId = $request->regMemberId;
+            $slot->date = date('Y-m-d');
             $slot->bookingStatus = 'Pending';
             $slot->status = 'Active';
             $slot->save();

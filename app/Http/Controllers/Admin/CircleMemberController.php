@@ -567,7 +567,7 @@ class CircleMemberController extends Controller
                 $member->circleId = $request->circleIds;
             }
             $member->title = $request->has('title') ? $request->title : $member->title;
-            $member->sponsoredBy = $request->has('memberId') ? $request->memberId : $member->sponsoredBy;
+            $member->sponsoredBy = $request->has('memberId') ? ($request->memberId == 0 ? null : $request->memberId) : $member->sponsoredBy;
             $member->firstName = $request->has('firstName') ? $request->firstName : $member->firstName;
             $member->lastName = $request->has('lastName') ? $request->lastName : $member->lastName;
             $member->username = $request->has('username') ? $request->username : $member->username;

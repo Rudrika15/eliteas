@@ -192,7 +192,7 @@ class PaymentController extends Controller
             $invitation->personEmail = null;
             $invitation->personContact = $visitor->mobileNo;
             $invitation->businessCategoryId = $visitor->businessCategory;
-            $invitation->paymentStatus = 'Paid';
+            $invitation->paymentStatus = 'paid';
             $invitation->save();
 
             $razorpay = new RazorPay();

@@ -9,6 +9,8 @@ class TemplateMaster extends Model
 {
     use HasFactory;
 
+    protected $table = 'templatemasters';
+
     function TemplateDetail()
     {
         return $this->hasOne(TemplateDetail::class, 'templateId', 'id');

@@ -242,6 +242,11 @@ class HomeController extends Controller
     public function index()
     {
         try {
+
+            $membersCount = Member::where('status', 'Active')->count();
+            $circleCount = Circle::where('status', 'Active')->count();
+
+
             $count = Schedule::where('status', 'Active')->count();
             $currentDate = Carbon::now()->toDateString();
             $currentDate = Carbon::now();
@@ -439,10 +444,15 @@ class HomeController extends Controller
                     $this->generateBirthdayWishImage($user);
                 }
 
-                return view('home', compact('totalRegisterCount', 'birthdaysToday', 'templates', 'signedUrl', 'count', 'monthlyPayments', 'totalAmountDue', 'nearestEvents', 'findEventRegister', 'circlecalls', 'busGiver', 'refGiver', 'nearestTraining', 'findRegister', 'testimonials', 'meeting', 'businessCategory', 'myInvites', 'todaysBirthdays'));
+
+                $membersCount = Member::where('status', 'Active')->count();
+                $circleCount = Circle::where('status', 'Active')->count();
+
+
+                return view('home', compact('circleCount','membersCount','totalRegisterCount', 'birthdaysToday', 'templates', 'signedUrl', 'count', 'monthlyPayments', 'totalAmountDue', 'nearestEvents', 'findEventRegister', 'circlecalls', 'busGiver', 'refGiver', 'nearestTraining', 'findRegister', 'testimonials', 'meeting', 'businessCategory', 'myInvites', 'todaysBirthdays'));
             }
 
-            return view('home', compact('count', 'nearestTraining', 'businessCategory', 'myInvites', 'findRegister', 'birthdaysToday', 'templates'));
+            return view('home', compact('circleCount','membersCount','count', 'nearestTraining', 'businessCategory', 'myInvites', 'findRegister', 'birthdaysToday', 'templates'));
         } catch (\Throwable $th) {
             // Log the error
             // throw $th;

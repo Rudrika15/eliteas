@@ -632,7 +632,7 @@ public function conEventLogin(Request $request)
             $eventRegister = new VisitorEventRegister();
             $eventRegister->eventId = $request->eventId;
             $eventRegister->visitorId = $visitor->id;
-            $eventRegister->PaymentStatus = 'Paid';
+            $eventRegister->PaymentStatus = 'paid';
             $eventRegister->save();
 
             // Prepare event details for the email

@@ -41,7 +41,6 @@ class SlotController extends Controller
     } catch (\Throwable $th) {
         // Log error and return server error response
         ErrorLogger::logError($th, $request->fullUrl());
-
         return Utils::errorResponse(
             ['error' => 'An error occurred while processing the booking.'],
             'Server Error',

@@ -37,8 +37,8 @@
 
 
 
-    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
-        crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"
+        integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
 
 
 
@@ -216,12 +216,12 @@
 
 
                 {{-- @role('Admin')
-                    <li class="nav-item pe-3">
-                        <a class="nav-link" href="{{ url('/visitor-form-view') }}" target="_blank"
-                            style="color: #1d3268; padding: 10px; border-radius: 5px; background-color: rgba(29, 50, 102, 0.2);">
-                            <b>Visitor Form</b>
-                        </a>
-                    </li>
+                <li class="nav-item pe-3">
+                    <a class="nav-link" href="{{ url('/visitor-form-view') }}" target="_blank"
+                        style="color: #1d3268; padding: 10px; border-radius: 5px; background-color: rgba(29, 50, 102, 0.2);">
+                        <b>Visitor Form</b>
+                    </a>
+                </li>
                 @endrole --}}
 
 
@@ -237,34 +237,32 @@
 
                 {{-- @role('member') --}}
                 @if (Auth::user()->userStatus == 'Online')
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">
-                            <span class="badge rounded-pill bg-success"
-                                style="font-size: 12px;padding: 5px 10px;color: #fff;display: inline-block;margin-top: 5px;">Online</span>
-                        </a>
-                    </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <span class="badge rounded-pill bg-success"
+                            style="font-size: 12px;padding: 5px 10px;color: #fff;display: inline-block;margin-top: 5px;">Online</span>
+                    </a>
+                </li>
                 @else
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">
-                            <span class="badge rounded-pill bg-danger"
-                                style="font-size: 12px;padding: 5px 10px;color: #fff;display: inline-block;margin-top: 5px;">Offline</span>
-                        </a>
-                    </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <span class="badge rounded-pill bg-danger"
+                            style="font-size: 12px;padding: 5px 10px;color: #fff;display: inline-block;margin-top: 5px;">Offline</span>
+                    </a>
+                </li>
                 @endif
                 {{-- @endrole --}}
 
                 <li class="nav-item dropdown pe-3">
 
-                    <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#"
-                        data-bs-toggle="dropdown">
+                    <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
                         @if (isset(Auth::user()->profile_photo))
-                            {{-- <img class="img-profile rounded-circle" src="{{url('public/img/logo.png')}}"> --}}
-                            <img class="img-profile rounded-circle" src="public/img/logo.png">
+                        {{-- <img class="img-profile rounded-circle" src="{{url('public/img/logo.png')}}"> --}}
+                        <img class="img-profile rounded-circle" src="public/img/logo.png">
                         @else
-                            <span
-                                class="rounded-circle text-center p-2 fs-5 badge logobadge d-inline-block text-light h-50"
-                                style="width: 38px !important;">
-                            </span>
+                        <span class="rounded-circle text-center p-2 fs-5 badge logobadge d-inline-block text-light h-50"
+                            style="width: 38px !important;">
+                        </span>
                         @endif
                         {{-- <span class="d-none d-md-block dropdown-toggle ps-2">{{Auth::user()->name}}</span> --}}
                         <span class="d-md-none">Hello, {{ Auth::user()->firstName ?? '-' }}</span>
@@ -282,32 +280,33 @@
                             <hr class="dropdown-divider">
                         </li>
                         @role('Member')
-                            <li>
-                                <a class="dropdown-item d-flex align-items-center" href="{{ route('member') }}">
-                                    <i class="bi bi-person" style="color: #e76a35"></i>
-                                    <span style="font-weight: bold; color: #1d2856">My Profile</span>
-                                </a>
-                            </li>
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center" href="{{ route('member') }}">
+                                <i class="bi bi-person" style="color: #e76a35"></i>
+                                <span style="font-weight: bold; color: #1d2856">My Profile</span>
+                            </a>
+                        </li>
 
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
 
-                            <li>
-                                <a class="dropdown-item d-flex align-items-center" href="{{ route('member') }}">
-                                    <i class="bi bi-cart" style="color: #e76a35"></i>
-                                    <span style="font-weight: bold; color: #1d2856">Go To UBN Mart</span>
-                                </a>
-                            </li>
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center"
+                                href="https://ubnmart.ubncommunity.com/myaccount" target="_blank">
+                                <i class="bi bi-cart" style="color: #e76a35"></i>
+                                <span style="font-weight: bold; color: #1d2856">Go To UBN Mart</span>
+                            </a>
+                        </li>
                         @endrole
 
                         @role('Admin')
-                            <li>
-                                <a class="dropdown-item d-flex align-items-center" href="{{ route('member') }}">
-                                    <i class="bi bi-cart" style="color: #e76a35"></i>
-                                    <span style="font-weight: bold; color: #1d2856">Go To UBN Mart</span>
-                                </a>
-                            </li>
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center" href="{{ route('member') }}">
+                                <i class="bi bi-cart" style="color: #e76a35"></i>
+                                <span style="font-weight: bold; color: #1d2856">Go To UBN Mart</span>
+                            </a>
+                        </li>
                         @endrole
 
 
@@ -316,8 +315,7 @@
                         </li>
 
                         <li>
-                            <a class="dropdown-item d-flex align-items-center"
-                                href="{{ route('changePasswordForm') }}">
+                            <a class="dropdown-item d-flex align-items-center" href="{{ route('changePasswordForm') }}">
                                 <i class="bi bi-key" style="color: #e76a35"></i>
                                 <span style="font-weight: bold; color: #1d2856">Change Password</span>
                             </a>
@@ -327,8 +325,7 @@
                         </li>
 
                         <li>
-                            <a class="dropdown-item d-flex align-items-center" href="{{ route('logout') }}"
-                                onclick="event.preventDefault();
+                            <a class="dropdown-item d-flex align-items-center" href="{{ route('logout') }}" onclick="event.preventDefault();
                             document.getElementById('logout-form').submit();">
                                 <i class="bi bi-box-arrow-right signout-style"></i>
                                 <span class="signout-style">Sign Out</span>
@@ -340,8 +337,7 @@
                                     }
                                 </style>
 
-                                <form id="logout-form" action="{{ route('logout') }}" method="POST"
-                                    class="d-none">
+                                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                                     @csrf
                                 </form>
                             </a>
@@ -370,11 +366,11 @@
             <!-- End Charts Nav -->
 
             @role('Admin')
-                @include('layouts.adminmenu')
+            @include('layouts.adminmenu')
             @endrole
 
             @role('Member')
-                @include('layouts.membermenu')
+            @include('layouts.membermenu')
             @endrole
 
             <!-- End Tables Nav -->
@@ -393,7 +389,7 @@
 
         {{-- <div class="pagetitle">
             {{-- <h1>Dashboard</h1> --}}
-        {{-- <nav>
+            {{-- <nav>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="index.html">Home</a></li>
                     <li class="breadcrumb-item active">Dashboard</li>
@@ -463,24 +459,24 @@
     <!-- end -->
 
     @if (Session::get('success'))
-        <script>
-            Swal.fire({
+    <script>
+        Swal.fire({
                 icon: 'success',
                 title: "{{ Session::get('success') }}",
                 showConfirmButton: true,
 
             });
-        </script>
+    </script>
     @endif
 
     @if (Session::get('error'))
-        <script>
-            Swal.fire({
+    <script>
+        Swal.fire({
                 icon: 'error',
                 title: "{{ Session::get('error') }}",
                 showConfirmButton: true,
             });
-        </script>
+    </script>
     @endif
 
 

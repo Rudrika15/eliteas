@@ -75,9 +75,82 @@
     @endrole --}}
 
 
+    @role('Admin')
+
+    <div class="col-md-12 d-flex justify-content-between">
+        <div class="card shadow" style="width: 32%">
+            <div class="card-header">
+                <b style="color: #1d3268;">Total Members</b>
+                <i class="bi bi-people-fill" style="display: inline-block; float: right; color: rgb(231, 106, 53);"></i>
+            </div>
+            <div class="card-body mt-3">
+                <h2 style="color: #1d3268;">{{$membersCount}}</h2>
+            </div>
+        </div>
+        <div class="card shadow" style="width: 32%">
+            <div class="card-header">
+                <b style="color: #1d3268;">Total Circle</b>
+                <i class="bi bi-plus-circle-dotted"
+                    style="display: inline-block; float: right; color: rgb(231, 106, 53);"></i>
+            </div>
+            <div class="card-body mt-3">
+                <h2 style="color: #1d3268;">{{$circleCount}}</h2>
+            </div>
+        </div>
+        <div class="card shadow" style="width: 32%">
+            <div class="card-header">
+                <b style="color: #1d3268;">Total City</b>
+                <i class="bi bi-geo-alt" style="display: inline-block; float: right; color: rgb(231, 106, 53);"></i>
+            </div>
+            <div class="card-body mt-3">
+                <ul style="list-style: none; padding: 0; display: flex; gap: 10px;">
+                    <li style="color: #1d3268; font-weight: bold;">Ahmedabad</li> |
+                    <li style="color: #1d3268; font-weight: bold;">Vadodara</li> |
+                    <li style="color: #1d3268; font-weight: bold;">Rajkot</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    @endrole
+
 
     @role('Member')
 
+    <div class="col-md-12 d-flex justify-content-between">
+        <div class="card shadow" style="width: 32%">
+            <div class="card-header">
+                <b style="color: #1d3268;">Total Members</b>
+                <i class="bi bi-people-fill" style="display: inline-block; float: right; color: rgb(231, 106, 53);"></i>
+            </div>
+            <div class="card-body mt-3">
+                <h2 style="color: #1d3268;">{{$membersCount}}</h2>
+            </div>
+        </div>
+        <div class="card shadow" style="width: 32%">
+            <div class="card-header">
+                <b style="color: #1d3268;">Total Circle</b>
+                <i class="bi bi-plus-circle-dotted"
+                    style="display: inline-block; float: right; color: rgb(231, 106, 53);"></i>
+            </div>
+            <div class="card-body mt-3">
+                <h2 style="color: #1d3268;">{{$circleCount}}</h2>
+            </div>
+        </div>
+        <div class="card shadow" style="width: 32%">
+            <div class="card-header">
+                <b style="color: #1d3268;">Total City</b>
+                <i class="bi bi-geo-alt" style="display: inline-block; float: right; color: rgb(231, 106, 53);"></i>
+            </div>
+            <div class="card-body mt-3">
+                <ul style="list-style: none; padding: 0; display: flex; gap: 10px;">
+                    <li style="color: #1d3268; font-weight: bold;">Ahmedabad</li> |
+                    <li style="color: #1d3268; font-weight: bold;">Vadodara</li> |
+                    <li style="color: #1d3268; font-weight: bold;">Rajkot</li>
+                </ul>
+            </div>
+        </div>
+    </div>
 
     <div class="row">
 
@@ -596,7 +669,7 @@
                                     data-amount-event="{{ $nearestEvents->fees }}">
                                     Pay Now
                                 </button>
-                                
+
                             </div>
                             <div id="couponError" class="text-danger mt-2 text-end me-4" style="display:none;">Invalid
                                 coupon code.</div>

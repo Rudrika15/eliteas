@@ -56,6 +56,7 @@ use App\Http\Controllers\admin\TemplateDetailController;
 use App\Http\Controllers\Admin\UpdateAppController;
 use App\Http\Controllers\Admin\SpecificAskController;
 use App\Http\Controllers\Admin\TemplateMasterController;
+use App\Http\Controllers\Admin\VisitorController;
 use App\Http\Controllers\Conquer\ConEventController;
 use App\Http\Controllers\Conquer\ConquerEventController;
 
@@ -571,6 +572,18 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::get('/visitor-index', [VisitorFormController::class, 'index'])->name('visitor.index');
     Route::post('/visitor/update-remark', [VisitorFormController::class, 'updateRemark'])->name('visitor.updateRemark');
+
+
+    //Visitors Crud
+
+    Route::get('visitors/index', [VisitorController::class, 'index'])->name('visitors.index');
+    Route::get('visitors/create', [VisitorController::class, 'create'])->name('visitors.create');
+    Route::post('visitors/store', [VisitorController::class, 'store'])->name('visitors.store');
+    Route::get('visitors/edit/{id?}', [VisitorController::class, 'edit'])->name('visitors.edit');
+    Route::post('visitors/update', [VisitorController::class, 'update'])->name('visitors.update');
+    Route::get('visitors/delete/{id?}', [VisitorController::class, 'delete'])->name('visitors.delete');
+
+
 
     //template
 
