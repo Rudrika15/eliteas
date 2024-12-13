@@ -57,7 +57,6 @@ class MonthlyPaymentController extends Controller
         }
     }
 
-
     public function monthlyPaymentIndex()
     {
         try {

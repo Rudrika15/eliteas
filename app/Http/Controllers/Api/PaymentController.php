@@ -28,7 +28,15 @@ class PaymentController extends Controller
             $circleMembers = Member::where('circleId', $circleId)->pluck('userId')->toArray();
 
             // Fetch paginated payments
-            $payments = AllPayments::where('status', 'Active')
+            // $payments = AllPayments::where('status', 'Active')
+            //     ->with('user:id,firstName,lastName')
+            //     ->whereIn('memberId', $circleMembers)
+            //     ->get();
+
+
+            $payments = AllPayments::select('id', 'memberId', 'paymentType', 'date', 'paymentMode', 'amount', 'remarks')
+                ->with('user:id,firstName,lastName')
+                ->where('status', 'Active')
                 ->whereIn('memberId', $circleMembers)
                 ->get();
 
