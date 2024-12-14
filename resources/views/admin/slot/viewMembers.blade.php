@@ -182,27 +182,41 @@
                             <a href="{{ route('viewMember.profileUser', $visitorsUsersData->visitors->id) }}" class="btn-view-profile">View Profile</a>
                         @endif
 
+                        @php
+                            $booking = \App\Models\SlotBooking::where(function ($query) use ($event, $visitorsUsersData) {
+                                $authUserId = auth()->user()->member->id;
+                                $visitorUserId = $visitorsUsersData->members->id ?? $visitorsUsersData->visitors->id;
 
-                        @if (isset($event) &&
-                                $event->slot_date &&
-                                !\App\Models\SlotBooking::where(function ($query) use ($event, $visitorsUsersData) {
-                                    $authUserId = auth()->user()->member->id;
-                                    $visitorUserId = $visitorsUsersData->members->id ?? $visitorsUsersData->visitors->id;
-                        
-                                    $query->where(function ($subQuery) use ($authUserId, $visitorUserId, $event) {
-                                            $subQuery->where('eventId', $event->id)->where('userId', $authUserId)->where('regMemberId', $visitorUserId);
-                                        })->orWhere(function ($subQuery) use ($authUserId, $visitorUserId, $event) {
-                                            $subQuery->where('eventId', $event->id)->where('userId', $visitorUserId)->where('regMemberId', $authUserId);
-                                        });
-                                })->exists())
+                                $query
+                                    ->where(function ($subQuery) use ($authUserId, $visitorUserId, $event) {
+                                        $subQuery
+                                            ->where('eventId', $event->id)
+                                            ->where('userId', $authUserId)
+                                            ->where('regMemberId', $visitorUserId);
+                                    })
+                                    ->orWhere(function ($subQuery) use ($authUserId, $visitorUserId, $event) {
+                                        $subQuery
+                                            ->where('eventId', $event->id)
+                                            ->where('userId', $visitorUserId)
+                                            ->where('regMemberId', $authUserId);
+                                    });
+                            })->first();
+                        @endphp
+
+                        @if ($booking)
+                            <button class="btn btn-success btn-sm btn-slot-status">
+                                Slot Booked: {{ $booking->bookingStatus }}
+                            </button>
+                        @else
                             <button class="btn-slot-booking" data-bs-toggle="modal" data-bs-target="#slotModal{{ $visitorsUsersData->id }}">
                                 Slot Booking
                             </button>
                         @endif
 
+                    </div>
+                </div>
 
-
-                        {{-- @if (isset($event) &&
+                {{-- @if (isset($event) &&
     $event->slot_date &&
     !\App\Models\SlotBooking::where('eventId', $event->id)->where('userId', auth()->user()->member->id)->where('regMemberId', $visitorsUsersData->members->id ?? $visitorsUsersData->visitors->id)->exists())
                 <button class="btn-slot-booking" data-bs-toggle="modal"
@@ -210,8 +224,9 @@
                     Slot Booking
                 </button>
                 @endif --}}
-                    </div>
-                </div>
+
+
+
 
                 <div class="modal fade" id="slotModal{{ $visitorsUsersData->id }}" tabindex="-1" aria-labelledby="slotModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">
@@ -235,11 +250,25 @@
                                                 @if ($visitorsUsersData->type == 'visitor')
                                                     <input type="hidden" name="regMemberId" value="{{ $visitorsUsersData->visitorId }}">
                                                 @endif
-                                                <button type="submit" class="btn-slot-booking" {{ \App\Models\SlotBooking::where('eventId', $event->id)->where('slotId', $slotData->id)->exists()
-                                                    ? 'disabled'
-                                                    : '' }}>
-                                                    @if (\App\Models\SlotBooking::where('eventId', $event->id)->where('slotId', $slotData->id)->exists())
-                                                        Booked
+                                                @php
+                                                    $authUserFree = !\App\Models\SlotBooking::where('eventId', $event->id)
+                                                        ->where('slotId', $slotData->id)
+                                                        ->where(function ($query) {
+                                                            $query->where('userId', Auth::user()->member->id)->orWhere('regMemberId', Auth::user()->member->id);
+                                                        })
+                                                        ->exists();
+
+                                                    $selectedUserFree = \App\Models\SlotBooking::where('eventId', $event->id)
+                                                        ->where('slotId', $slotData->id)
+                                                        ->where('regMemberId', $visitorsUsersData->memberId)
+                                                        ->orWhere('userId', $visitorsUsersData->id)
+                                                        ->first();
+                                                @endphp
+                                                <button type="submit" class="btn-slot-booking" {{ !$authUserFree || $selectedUserFree ? 'disabled' : '' }}>
+                                                    @if (!$authUserFree)
+                                                        You are busy
+                                                    @elseif ($selectedUserFree)
+                                                        Selected person is busy
                                                     @else
                                                         Book Slot
                                                     @endif
@@ -256,12 +285,11 @@
                     </div>
                 </div>
             @endforeach
+
+            <!-- Modal -->
+
         </div>
 
-        <!-- Modal -->
-
-    </div>
 
 
-
-@endsection
+    @endsection

@@ -83,7 +83,6 @@ class SlotController extends Controller
     public function userListViewforVisitors(Request $request, $id)
     {
         try {
-
             $event = Event::findOrFail($id);
 
             $users = EventRegister::where('eventId', $id)
@@ -105,7 +104,6 @@ class SlotController extends Controller
 
             $visitorsUsers = $users->merge($visitors);
 
-
             $slotBooking = SlotBooking::where('eventId', $id)
                 ->where('status', 'Active')
                 ->get();
@@ -118,6 +116,7 @@ class SlotController extends Controller
             return view('servererror');
         }
     }
+
 
     // public function profileViewMember(Request $request)
     // {
