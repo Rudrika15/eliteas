@@ -225,9 +225,6 @@
                 </button>
                 @endif --}}
 
-
-
-
                 <div class="modal fade" id="slotModal{{ $visitorsUsersData->id }}" tabindex="-1" aria-labelledby="slotModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content">
