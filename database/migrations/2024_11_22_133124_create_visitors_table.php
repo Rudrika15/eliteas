@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('businessCategory');
             $table->date('birthDate');
             $table->enum('gender', ['male', 'female', 'other']);
-            $table->enum('status', ['Active', 'Deleted']);
+            $table->enum('status', ['Active', 'Inactive', 'Hold', 'Converted'])->default('Active');
             $table->timestamps();
         });
     }

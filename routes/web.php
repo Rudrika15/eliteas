@@ -580,8 +580,14 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('visitors/create', [VisitorController::class, 'create'])->name('visitors.create');
     Route::post('visitors/store', [VisitorController::class, 'store'])->name('visitors.store');
     Route::get('visitors/edit/{id?}', [VisitorController::class, 'edit'])->name('visitors.edit');
+    Route::get('visitors/remarksView/{id?}', [VisitorController::class, 'remarksView'])->name('visitors.remarksView');
+    Route::post('visitors/remarksUpdate', [VisitorController::class, 'remarksUpdate'])->name('visitors.remarksUpdate');
     Route::post('visitors/update', [VisitorController::class, 'update'])->name('visitors.update');
     Route::get('visitors/delete/{id?}', [VisitorController::class, 'delete'])->name('visitors.delete');
+
+    Route::post('/visitors/update-status', [VisitorController::class, 'updateStatus'])->name('visitors.updateStatus');
+
+
 
 
 

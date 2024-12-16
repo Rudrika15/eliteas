@@ -18,4 +18,6 @@ class VisitorsDetails extends Model
     {
         return $this->belongsTo(BusinessCategory::class, 'businessCategory', 'id');
     }
+
+
 }
