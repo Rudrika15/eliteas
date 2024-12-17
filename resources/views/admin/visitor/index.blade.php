@@ -31,19 +31,20 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h4 class="card-title">Visitor</h4>
-                    <a href="{{ route('visitors.create') }}" class="btn btn-bg-orange btn-sm mt-2 btn-tooltip"><i class="bi bi-plus-circle"></i>
+                    <a href="{{ route('visitors.create') }}" class="btn btn-bg-orange btn-sm mt-2 btn-tooltip">
+                        <i class="bi bi-plus-circle"></i>
                         <span class="btn-text">Add New Visitor</span>
                     </a>
                 </div>
 
-                <div class="mb-4 col-md-12">
+                <div class="mb-4">
                     <form action="{{ route('visitors.index') }}" method="GET" class="d-flex align-items-end gap-2">
                         <div class="form-group">
-                            <label for="name">Name</label>
+                            <label for="name"><b>Name</b></label>
                             <input type="text" id="name" name="name" class="form-control" value="{{ request('name') }}" placeholder="Search by name">
                         </div>
                         <div class="form-group">
-                            <label for="business_category">Business Category</label>
+                            <label for="business_category"><b>Business Category</b></label>
                             <select id="business_category" name="business_category" class="form-select">
                                 <option value="">Select Category</option>
                                 @foreach ($categories as $id => $categoryName)
@@ -54,9 +55,9 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="city">City</label>
+                            <label for="city"><b>City</b></label>
                             <select id="city" name="city" class="form-select">
-                                <option value="">Select City</option>
+                                <option value="" selected>Select City</option>
                                 @foreach ($cities as $city)
                                     <option value="{{ $city }}" {{ request('city') == $city ? 'selected' : '' }}>
                                         {{ $city }}
@@ -64,8 +65,8 @@
                                 @endforeach
                             </select>
                         </div>
-                        <button type="submit" class="btn btn-primary">Filter</button>
-                        <a href="{{ route('visitors.index') }}" class="btn btn-secondary">Reset</a>
+                        <button type="submit" class="btn btn-bg-blue">Filter</button>
+                        <a href="{{ route('visitors.index') }}" class="btn btn-bg-orange">Reset</a>
                     </form>
                 </div>
 
@@ -114,9 +115,13 @@
 
                                     <td>
                                         @if (is_numeric($visitorsData->invitedBy))
-                                            {{ optional($visitorsData->member)->firstName ?? '' }} {{ optional($visitorsData->member)->lastName ?? '' }}
+                                            <span class="truncated-text" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ optional($visitorsData->member)->firstName ?? '' }} {{ optional($visitorsData->member)->lastName ?? '' }}">
+                                                {{ Str::limit(optional($visitorsData->member)->firstName . ' ' . optional($visitorsData->member)->lastName, 12) }}
+                                            </span>
                                         @else
-                                            {{ $visitorsData->invitedBy }}
+                                            <span class="truncated-text" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $visitorsData->invitedBy }}">
+                                                {{ Str::limit($visitorsData->invitedBy, 12) }}
+                                            </span>
                                         @endif
                                     </td>
 
