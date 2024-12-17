@@ -23,21 +23,54 @@ class VisitorController extends Controller
     //     $this->middleware('permission:event-type-delete', ['only' => ['delete']]);
     // }
 
+    // public function index(Request $request)
+    // {
+    //     try {
+    //         $visitors = VisitorsDetails::paginate(10);
+    //         $businessCategories = BusinessCategory::where('status', 'Active')->orderBy('categoryName', 'asc')->get();
+    //         return view('admin.visitor.index', compact('visitors', 'businessCategories'));
+    //     } catch (\Throwable $th) {
+    //         // throw $th;
+    //         ErrorLogger::logError(
+    //             $th,
+    //             $request->fullUrl()
+    //         );
+    //         return view('servererror');
+    //     }
+    // }
+
     public function index(Request $request)
     {
-        try {
-            $visitors = VisitorsDetails::paginate(10);
-            $businessCategories = BusinessCategory::where('status', 'Active')->orderBy('categoryName', 'asc')->get();
-            return view('admin.visitor.index', compact('visitors', 'businessCategories'));
-        } catch (\Throwable $th) {
-            // throw $th;
-            ErrorLogger::logError(
-                $th,
-                $request->fullUrl()
-            );
-            return view('servererror');
+        $query = VisitorsDetails::query();
+
+        // Apply filters
+        if ($request->filled('name')) {
+            $query->where(function ($q) use ($request) {
+                $q->where('firstName', 'like', '%' . $request->name . '%')
+                    ->orWhere('lastName', 'like', '%' . $request->name . '%');
+            });
         }
+
+        if ($request->filled('business_category')) {
+            $query->whereHas('bCategory', function ($q) use ($request) {
+                $q->where('categoryName', 'like', '%' . $request->business_category . '%');
+            });
+        }
+
+        if ($request->filled('city')) {
+            $query->where('city', 'like', '%' . $request->city . '%');
+        }
+
+        $visitors = $query->paginate(10);
+
+        $categories = BusinessCategory::pluck('categoryName', 'id');
+        $cities = VisitorsDetails::select('city')->distinct()->pluck('city');
+
+        return view('admin.visitor.index', compact('visitors', 'categories', 'cities'));
     }
+
+
+
 
     public function create(Request $request)
     {

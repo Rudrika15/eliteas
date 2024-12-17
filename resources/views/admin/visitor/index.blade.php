@@ -13,6 +13,18 @@
         }
     </style> --}}
 
+    <style>
+        .truncated-text {
+            display: inline-block;
+            max-width: 120px;
+            /* Adjust this width as needed */
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            vertical-align: middle;
+        }
+    </style>
+
 
     <div class="container">
         <div class="card">
@@ -23,6 +35,40 @@
                         <span class="btn-text">Add New Visitor</span>
                     </a>
                 </div>
+
+                <div class="mb-4 col-md-12">
+                    <form action="{{ route('visitors.index') }}" method="GET" class="d-flex align-items-end gap-2">
+                        <div class="form-group">
+                            <label for="name">Name</label>
+                            <input type="text" id="name" name="name" class="form-control" value="{{ request('name') }}" placeholder="Search by name">
+                        </div>
+                        <div class="form-group">
+                            <label for="business_category">Business Category</label>
+                            <select id="business_category" name="business_category" class="form-select">
+                                <option value="">Select Category</option>
+                                @foreach ($categories as $id => $categoryName)
+                                    <option value="{{ $categoryName }}" {{ request('business_category') == $categoryName ? 'selected' : '' }}>
+                                        {{ $categoryName }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="city">City</label>
+                            <select id="city" name="city" class="form-select">
+                                <option value="">Select City</option>
+                                @foreach ($cities as $city)
+                                    <option value="{{ $city }}" {{ request('city') == $city ? 'selected' : '' }}>
+                                        {{ $city }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Filter</button>
+                        <a href="{{ route('visitors.index') }}" class="btn btn-secondary">Reset</a>
+                    </form>
+                </div>
+
 
                 <!-- Table with stripped rows -->
                 <div class="table-responsive">
@@ -48,11 +94,33 @@
                                     <th>{{ ($visitors->currentPage() - 1) * $visitors->perPage() + $loop->index + 1 }}
                                     <td>{{ $visitorsData->firstName ?? '' }} {{ $visitorsData->lastName ?? '' }}</td>
                                     <td>{{ $visitorsData->mobileNo ?? '' }}</td>
-                                    <td>{{ $visitorsData->email ?? '' }}</td>
-                                    <td>{{ $visitorsData->businessName ?? '' }}</td>
+                                    <td>
+                                        <span class="truncated-text" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $visitorsData->email ?? '' }}">
+                                            {{ Str::limit($visitorsData->email, 12) }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="truncated-text" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $visitorsData->businessName ?? '' }}">
+                                            {{ Str::limit($visitorsData->businessName, 12) }}
+                                        </span>
+                                    </td>
                                     <td>{{ $visitorsData->city ?? '' }}</td>
-                                    <td>{{ $visitorsData->bCategory->categoryName ?? '' }}</td>
-                                    <td>{{ $visitorsData->invitedBy }}</td>
+                                    {{-- <td>{{ $visitorsData->bCategory->categoryName ?? '' }}</td> --}}
+                                    <td>
+                                        <span class="truncated-text" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $visitorsData->bCategory->categoryName ?? '' }}">
+                                            {{ Str::limit($visitorsData->bCategory->categoryName, 12) }}
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        @if (is_numeric($visitorsData->invitedBy))
+                                            {{ optional($visitorsData->member)->firstName ?? '' }} {{ optional($visitorsData->member)->lastName ?? '' }}
+                                        @else
+                                            {{ $visitorsData->invitedBy }}
+                                        @endif
+                                    </td>
+
+                                    {{-- <td>{{ $visitorsData->invitedBy }}</td> --}}
                                     {{-- <td>{{ $visitorsData->remarks ?? '' }}</td> --}}
                                     {{-- <td>{{ $visitorsData->status ?? '' }}</td> --}}
                                     <td>
@@ -108,6 +176,12 @@
             </div>
         </div>
     </div>
+
+    <script>
+        $(function() {
+            $('[data-bs-toggle="tooltip"]').tooltip();
+        });
+    </script>
 
     <script>
         $(document).on('change', '.status-dropdown', function() {
