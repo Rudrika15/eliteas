@@ -34,8 +34,7 @@
 @role('Vice President')
     <li class="nav-item">
         <a class="nav-link collapsed" data-bs-target="#allActivityVp-nav" data-bs-toggle="collapse" href="#">
-            <i class="bi bi-person-gear" style="color: #e76a35"></i><span>My Circle Activity</span><i
-                class="bi bi-chevron-down ms-auto" style="color: #e76a35"></i>
+            <i class="bi bi-person-gear" style="color: #e76a35"></i><span>My Circle Activity</span><i class="bi bi-chevron-down ms-auto" style="color: #e76a35"></i>
         </a>
         <ul id="allActivityVp-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
             {{-- <li class="nav-item">
@@ -73,8 +72,7 @@
 @role('Circle Admin')
     <li class="nav-item">
         <a class="nav-link collapsed" data-bs-target="#circle-nav" data-bs-toggle="collapse" href="#">
-            <i class="bi bi-plus-circle-dotted" style="color: #e76a35"></i><span>Circle</span><i
-                class="bi bi-chevron-down ms-auto" style="color: #e76a35"></i>
+            <i class="bi bi-plus-circle-dotted" style="color: #e76a35"></i><span>Circle</span><i class="bi bi-chevron-down ms-auto" style="color: #e76a35"></i>
         </a>
         <ul id="circle-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
             <li class="nav-item">
@@ -98,8 +96,7 @@
 
 <li class="nav-item">
     <a class="nav-link collapsed" data-bs-target="#activity-nav" data-bs-toggle="collapse" href="#">
-        <i class="bi bi-plus-circle-dotted" style="color: #e76a35"></i><span>Activity</span><i
-            class="bi bi-chevron-down ms-auto" style="color: #e76a35"></i>
+        <i class="bi bi-plus-circle-dotted" style="color: #e76a35"></i><span>Activity</span><i class="bi bi-chevron-down ms-auto" style="color: #e76a35"></i>
     </a>
     <ul id="activity-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
 
@@ -142,8 +139,14 @@
     </ul>
 </li>
 
+<li class="nav-item">
+    <a class="nav-link collapsed" href="{{ route('chat.index') }}">
+        <i class="bi bi-chat" style="color: #e76a35"></i>
+        <span class="text-blue">My Chats</span>
+    </a>
+</li>
 
-<a class="nav-link collapsed" href="{{route('member.eventIndex')}}">
+<a class="nav-link collapsed" href="{{ route('member.eventIndex') }}">
     <i class="bi bi-calendar-event" style="color: #e76a35"></i>
     <span style="color: #1d2865 ;">Event</span>
 </a>
@@ -152,8 +155,7 @@
 
 <li class="nav-item">
     <a class="nav-link collapsed" data-bs-target="#connection-nav" data-bs-toggle="collapse" href="#">
-        <i class="bi bi-person-heart" style="color: #e76a35"></i><span>Connection</span><i
-            class="bi bi-chevron-down ms-auto" style="color: #e76a35"></i>
+        <i class="bi bi-person-heart" style="color: #e76a35"></i><span>Connection</span><i class="bi bi-chevron-down ms-auto" style="color: #e76a35"></i>
     </a>
     <ul id="connection-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
         <li class="nav-item">

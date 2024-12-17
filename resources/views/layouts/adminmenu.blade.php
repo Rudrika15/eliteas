@@ -88,8 +88,7 @@
 
 <li class="nav-item">
     <a class="nav-link collapsed" data-bs-target="#allActivity-nav" data-bs-toggle="collapse" href="#">
-        <i class="bi bi-person-gear" style="color: #e76a35"></i><span>All Activity</span><i
-            class="bi bi-chevron-down ms-auto" style="color: #e76a35"></i>
+        <i class="bi bi-person-gear" style="color: #e76a35"></i><span>All Activity</span><i class="bi bi-chevron-down ms-auto" style="color: #e76a35"></i>
     </a>
     <ul id="allActivity-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
         <li class="nav-item">
@@ -126,8 +125,7 @@
 
 <li class="nav-item">
     <a class="nav-link collapsed" data-bs-target="#event-nav" data-bs-toggle="collapse" href="#">
-        <i class="bi bi-person-gear" style="color: #e76a35"></i><span>Event</span><i class="bi bi-chevron-down ms-auto"
-            style="color: #e76a35"></i>
+        <i class="bi bi-person-gear" style="color: #e76a35"></i><span>Event</span><i class="bi bi-chevron-down ms-auto" style="color: #e76a35"></i>
     </a>
     <ul id="event-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
         <li class="nav-item">
@@ -159,8 +157,7 @@
 
 <li class="nav-item">
     <a class="nav-link collapsed" data-bs-target="#training-nav" data-bs-toggle="collapse" href="#">
-        <i class="bi bi-person-gear" style="color: #e76a35"></i><span>Training</span><i
-            class="bi bi-chevron-down ms-auto" style="color: #e76a35"></i>
+        <i class="bi bi-person-gear" style="color: #e76a35"></i><span>Training</span><i class="bi bi-chevron-down ms-auto" style="color: #e76a35"></i>
     </a>
     <ul id="training-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
         <li class="nav-item">
@@ -196,8 +193,7 @@
 
 <li class="nav-item">
     <a class="nav-link collapsed" data-bs-target="#circle-nav" data-bs-toggle="collapse" href="#">
-        <i class="bi bi-plus-circle-dotted" style="color: #e76a35"></i><span>Circle</span><i
-            class="bi bi-chevron-down ms-auto" style="color: #e76a35"></i>
+        <i class="bi bi-plus-circle-dotted" style="color: #e76a35"></i><span>Circle</span><i class="bi bi-chevron-down ms-auto" style="color: #e76a35"></i>
     </a>
     <ul id="circle-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
         {{-- <li class="nav-item">
@@ -275,8 +271,7 @@
 
 <li class="nav-item">
     <a class="nav-link collapsed" data-bs-target="#master-nav" data-bs-toggle="collapse" href="#">
-        <i class="bi bi-gear" style="color: #e76a35"></i><span>Master</span><i class="bi bi-chevron-down ms-auto"
-            style="color: #e76a35"></i>
+        <i class="bi bi-gear" style="color: #e76a35"></i><span>Master</span><i class="bi bi-chevron-down ms-auto" style="color: #e76a35"></i>
     </a>
 
     <ul id="master-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
@@ -407,8 +402,7 @@
 
 <li class="nav-item">
     <a class="nav-link collapsed" data-bs-target="#payment-nav" data-bs-toggle="collapse" href="#">
-        <i class="bi bi-currency-rupee" style="color: #e76a35"></i><span>Payment Management</span><i
-            class="bi bi-chevron-down ms-auto" style="color: #e76a35"></i>
+        <i class="bi bi-currency-rupee" style="color: #e76a35"></i><span>Payment Management</span><i class="bi bi-chevron-down ms-auto" style="color: #e76a35"></i>
     </a>
 
     <ul id="payment-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
@@ -432,8 +426,7 @@
 
 <li class="nav-item">
     <a class="nav-link collapsed" data-bs-target="#report-nav" data-bs-toggle="collapse" href="#">
-        <i class="bi bi-currency-rupee" style="color: #e76a35"></i><span>Report</span><i
-            class="bi bi-chevron-down ms-auto" style="color: #e76a35"></i>
+        <i class="bi bi-currency-rupee" style="color: #e76a35"></i><span>Report</span><i class="bi bi-chevron-down ms-auto" style="color: #e76a35"></i>
     </a>
 
     <ul id="report-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
@@ -481,12 +474,12 @@
     </a>
 </li>
 
-<li class="nav-item">
+{{-- <li class="nav-item">
     <a class="nav-link collapsed" href="{{ route('visitor.index') }}">
         <i class="bi bi-people" style="color: #e76a35"></i>
         <span class="text-blue">Visitors</span>
     </a>
-</li>
+</li> --}}
 
 <li class="nav-item">
     <a class="nav-link collapsed" href="{{ route('userList') }}">

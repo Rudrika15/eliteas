@@ -228,6 +228,168 @@
         }
     </style>
 
+    <style>
+        /* Modal styling */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 90%;
+            max-width: 600px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            display: none;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .memberName {
+            font-weight: bold;
+            font-size: 18px;
+            margin-bottom: 10px;
+
+        }
+
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 100px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            background-color: #fff;
+            overflow: hidden;
+        }
+
+        .chat-box {
+            flex: 1;
+            padding: 10px;
+            overflow-y: scroll;
+            margin-bottom: 10px;
+            background-color: #f9f9f9;
+            scrollbar-width: none;
+            /* For Firefox */
+        }
+
+        .chat-box::-webkit-scrollbar {
+            display: none;
+            /* For Chrome, Safari, and Edge */
+        }
+
+        .input-container {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #ddd;
+            background-color: #fff;
+        }
+
+        #chatInput {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            margin-right: 10px;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        #sendButton {
+            padding: 10px 20px;
+            background-color: #e76a35;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        #sendButton:hover {
+            background-color: #1d3268;
+        }
+
+        .message {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 20px;
+            max-width: 80%;
+            /* Adjusts the maximum width of the message box */
+            word-wrap: break-word;
+            position: relative;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            font-size: 14px;
+            display: block;
+            /* Changed to block to ensure each message is on a new line */
+            clear: both;
+            /* Ensures messages don't appear on the same line */
+        }
+
+        .sender {
+            background-color: #1d3268;
+            color: white;
+            text-align: right;
+            margin-left: auto;
+            border-radius: 20px 20px 0 20px;
+            float: right;
+            /* Aligns sender messages to the right */
+        }
+
+        .receiver {
+            background-color: #e76a35;
+            color: white;
+            text-align: left;
+            margin-right: auto;
+            border-radius: 20px 20px 20px 0;
+            float: left;
+            /* Aligns receiver messages to the left */
+        }
+
+        /* Optional: add a small triangle for speech bubble effect */
+        .message::after {
+            content: "";
+            position: absolute;
+            border-width: 10px;
+            border-style: solid;
+        }
+
+        .sender::after {
+            border-color: #1d3268 transparent transparent transparent;
+            /* right: -15px; */
+            top: 10px;
+            border-width: 10px 15px 10px 0;
+        }
+
+        .receiver::after {
+            border-color: #e76a35 transparent transparent transparent;
+            left: -5px;
+            top: 10px;
+            border-width: 10px 0 10px 15px;
+        }
+    </style>
+
+
 </head>
 
 <body>
@@ -320,14 +482,27 @@
 
 
                 <!-- Small Popup Modal -->
-                <div id="chatPopup" class="modal" tabindex="-1" role="dialog">
-                    <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 300px;">
-                        <div class="modal-content">
-                            <div class="modal-body text-center">
-                                <p>Chat Feature is Coming Soon</p>
-                                <button type="button" class="btn btn-secondary btn-sm"
-                                    data-bs-dismiss="modal">Close</button>
-                            </div>
+                <div id="chatModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close">&times;</span>
+                        <div class="member-image">
+                            {{-- <img src="{{ asset('ProfilePhoto/' . $profilePhoto) }}"
+                                                    alt="profilePhoto" style="height:50px; width:50px;"
+                                                    class="rounded-circle"> --}}
+                        </div>
+                        <span class="memberName">{{ $member->user->firstName }} {{ $member->user->lastName }}</span>
+
+                        <div class="chat-container">
+                            <div id="chatBox" class="chat-box"></div>
+                            <form id="chatForm" method="POST" action="{{ route('send.message') }}">
+                                @csrf
+                                <input type="hidden" value="{{ $member->user->id }}" name="memberId" id="memberId">
+                                <input type="hidden" id="sender_id" name="sender_id" value="{{ Auth::user()->id }}">
+                                <div class="input-container">
+                                    <input type="text" id="chatInput" name="message" placeholder="Type a message..." required>
+                                    <button type="submit" id="sendButton">Send</button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -344,20 +519,16 @@
         <!-- Tabs Navigation -->
         <ul class="nav nav-tabs" id="profileTab" role="tablist">
             <li class="nav-item" role="presentation">
-                <a class="nav-link active" id="profile-tab" data-bs-toggle="tab" href="#myProfile" role="tab"
-                    aria-controls="myProfile" aria-selected="true">My Profile</a>
+                <a class="nav-link active" id="profile-tab" data-bs-toggle="tab" href="#myProfile" role="tab" aria-controls="myProfile" aria-selected="true">My Profile</a>
             </li>
             <li class="nav-item" role="presentation">
-                <a class="nav-link" id="bio-tab" data-bs-toggle="tab" href="#myBio" role="tab"
-                    aria-controls="myBio" aria-selected="false">My Bios</a>
+                <a class="nav-link" id="bio-tab" data-bs-toggle="tab" href="#myBio" role="tab" aria-controls="myBio" aria-selected="false">My Bios</a>
             </li>
             <li class="nav-item" role="presentation">
-                <a class="nav-link" id="top-profile-tab" data-bs-toggle="tab" href="#topProfile" role="tab"
-                    aria-controls="topProfile" aria-selected="false">Tops Profile</a>
+                <a class="nav-link" id="top-profile-tab" data-bs-toggle="tab" href="#topProfile" role="tab" aria-controls="topProfile" aria-selected="false">Tops Profile</a>
             </li>
             <li class="nav-item" role="presentation">
-                <a class="nav-link" id="gains-profile-tab" data-bs-toggle="tab" href="#gainsProfile" role="tab"
-                    aria-controls="gainsProfile" aria-selected="false">Gains Profile</a>
+                <a class="nav-link" id="gains-profile-tab" data-bs-toggle="tab" href="#gainsProfile" role="tab" aria-controls="gainsProfile" aria-selected="false">Gains Profile</a>
             </li>
         </ul>
 
@@ -372,31 +543,24 @@
                         {{-- <li><span class="title">Full Name:</span> <span class="value">{{ $member->firstName ?? '-' }}
                                 {{ $member->lastName ?? '-' }}</span></li> --}}
                         @if ($memberCircleId == $userCircleId)
-                            <li><span class="title">Email:</span> <span
-                                    class="value">{{ $member->user->email }}</span>
+                            <li><span class="title">Email:</span> <span class="value">{{ $member->user->email }}</span>
                             </li>
-                            <li><span class="title">Mobile:</span> <span
-                                    class="value">{{ $member->user->contactNo }}</span>
+                            <li><span class="title">Mobile:</span> <span class="value">{{ $member->user->contactNo }}</span>
                             </li>
                         @elseif (isset($memberStatus) && $memberStatus->status == 'Accepted')
-                            <li><span class="title">Email:</span> <span
-                                    class="value">{{ $member->user->email }}</span>
+                            <li><span class="title">Email:</span> <span class="value">{{ $member->user->email }}</span>
                             </li>
-                            <li><span class="title">Mobile:</span> <span
-                                    class="value">{{ $member->user->contactNo }}</span>
+                            <li><span class="title">Mobile:</span> <span class="value">{{ $member->user->contactNo }}</span>
                             </li>
                         @else
-                            <li><span class="title">Email:</span> <span
-                                    class="value">****{{ substr($member->user->email, -8) }}</span>
+                            <li><span class="title">Email:</span> <span class="value">****{{ substr($member->user->email, -8) }}</span>
                             </li>
-                            <li><span class="title">Mobile:</span> <span
-                                    class="value">****{{ substr($member->user->contactNo, -3) }}</span>
+                            <li><span class="title">Mobile:</span> <span class="value">****{{ substr($member->user->contactNo, -3) }}</span>
                             </li>
                         @endif
 
 
-                        <li><span class="title">Address:</span> <span
-                                class="value">{{ $member->billingAddress->bAddressLine1 ?? '-' }}
+                        <li><span class="title">Address:</span> <span class="value">{{ $member->billingAddress->bAddressLine1 ?? '-' }}
                                 {{ $member->billingAddress->bAddressLine2 ?? '-' }} <br>
                                 {{ $member->billingAddress->bCity ?? '-' }}
                                 {{ $member->billingAddress->bState ?? '-' }}
@@ -413,10 +577,8 @@
                     <ul>
                         {{-- <li><span class="title">Email:</span> <span
                                 class="value">{{ $member->user->email ?? 'Not Specified' }}</span></li> --}}
-                        <li><span class="title">Language:</span> <span
-                                class="value">{{ $member->language ?? 'Not Specified' }}</span></li>
-                        <li><span class="title">Hobbies & Interests:</span> <span
-                                class="value">{{ $member->language ?? 'Not Specified' }}</span></li>
+                        <li><span class="title">Language:</span> <span class="value">{{ $member->language ?? 'Not Specified' }}</span></li>
+                        <li><span class="title">Hobbies & Interests:</span> <span class="value">{{ $member->language ?? 'Not Specified' }}</span></li>
                     </ul>
                 </div>
             </div>
@@ -515,80 +677,7 @@
             }
         });
 
-        function fetchMessages() {
-            const authCheck = `{{ Auth::user()->id }}`;
-            console.log("authCheck", authCheck);
 
-            var memberIdElement = document.getElementById('memberId');
-
-            console.log('Checking for memberId element:', memberIdElement);
-            if (!memberIdElement) {
-                console.error('Element with ID "memberId" not found');
-                alert('Member ID is missing. Cannot fetch messages.');
-                return;
-            }
-
-            var receiverId = memberIdElement.value;
-            console.log('Receiver ID:', receiverId);
-
-            // Fetch messages with a POST request
-            $.post('/get-messages', {
-                receiverId: receiverId, // Pass the receiverId
-                _token: '{{ csrf_token() }}' // Include CSRF token for security
-            }).done(function(messages) {
-                console.log('Got messages');
-                chatBox.innerHTML = ''; // Clear existing messages
-                messages.forEach(function(message) {
-                    var messageElement = document.createElement("div");
-                    if (message.senderId == authCheck) {
-                        messageElement.className = "message sender"; // Sender's message
-                    } else if (message.receiverId == authCheck) {
-                        messageElement.className = "message receiver"; // Receiver's message
-                    }
-                    messageElement.textContent = message.content;
-                    chatBox.appendChild(messageElement);
-                });
-                chatBox.scrollTop = chatBox.scrollHeight; // Scroll to the bottom
-            }).fail(function(jqXHR, textStatus, errorThrown) {
-                console.error('Error fetching messages: ', textStatus, errorThrown);
-            });
-        }
-
-        function sendMessage() {
-            console.log('Sending message');
-            var message = chatInput.value.trim();
-            var memberIdElement = document.getElementById('memberId');
-
-            console.log('Checking for memberId element:', memberIdElement);
-            if (!memberIdElement) {
-                console.error('Element with ID "memberId" not found');
-                alert('Member ID is missing. Cannot send message.');
-                return;
-            }
-
-            var receiverId = memberIdElement.value;
-            console.log('Receiver ID:', receiverId);
-
-            if (message && receiverId) {
-                $.post('/send-message', {
-                    message: message,
-                    userId: receiverId,
-                    _token: '{{ csrf_token() }}'
-                }).done(function(response) {
-                    console.log('Message sent: ' + response.status);
-                    if (response.status === 'Message sent') {
-                        var messageElement = document.createElement("div");
-                        messageElement.className = "message sender"; // Sender's message
-                        messageElement.textContent = message;
-                        chatBox.appendChild(messageElement);
-                        chatInput.value = "";
-                        chatBox.scrollTop = chatBox.scrollHeight;
-                    }
-                }).fail(function(jqXHR, textStatus, errorThrown) {
-                    console.error('Error sending message: ', textStatus, errorThrown);
-                });
-            }
-        }
 
         function startPolling() {
             pollingInterval = setInterval(fetchMessages, 1000); // Poll every 1 second
@@ -597,6 +686,22 @@
         function stopPolling() {
             clearInterval(pollingInterval);
         }
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if there is a success message in the session
+            @if (session('success'))
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: '{{ session('success') }}',
+                    confirmButtonText: 'OK'
+                }).then(function() {
+                    window.location.href = "{{ route('chat.index') }}";
+                });
+            @endif
+        });
     </script>
 
 

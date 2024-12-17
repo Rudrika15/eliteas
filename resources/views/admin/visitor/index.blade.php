@@ -66,13 +66,16 @@
                         ? '#ff8c00' // Orange for Hold
                         : ($visitorsData->status == 'Converted'
                             ? '#007bff' // Blue for Converted
-                            : ''))) }};
+                            : ($visitorsData->status == 'Interested'
+                                ? '#6f42c1' // Purple for Interested
+                                : '')))) }};
             color: #fff; /* White text for better readability */
         ">
                                             <option value="Active" {{ $visitorsData->status == 'Active' ? 'selected' : '' }} style="background-color: #28a745; color: #fff;">Active</option>
                                             <option value="Inactive" {{ $visitorsData->status == 'Inactive' ? 'selected' : '' }} style="background-color: #dc3545; color: #fff;">Inactive</option>
                                             <option value="Hold" {{ $visitorsData->status == 'Hold' ? 'selected' : '' }} style="background-color: #ff8c00; color: #fff;">Hold</option>
                                             <option value="Converted" {{ $visitorsData->status == 'Converted' ? 'selected' : '' }} style="background-color: #007bff; color: #fff;">Converted</option>
+                                            <option value="Interested" {{ $visitorsData->status == 'Interested' ? 'selected' : '' }} style="background-color: #6f42c1; color: #fff;">Interested</option>
                                         </select>
                                     </td>
 

@@ -4,40 +4,35 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\User;
 use App\Models\Message;
-use App\Utils\ErrorLogger;
+use App\Models\Conversation;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 
 class ChatController extends Controller
 {
-
-    public function __construct()
-    {
-        // Apply middleware for chat-related permissions
-        $this->middleware('permission:chat-send-message', ['only' => ['sendMessage']]);
-        $this->middleware('permission:chat-get-messages', ['only' => ['getMessages']]);
-        $this->middleware('permission:chat-list-view', ['only' => ['getList', 'myChatList']]);
-        $this->middleware('permission:chat-get-chat', ['only' => ['getChat']]);
-    }
-
-
     public function sendMessage(Request $request)
     {
         // Validate the request
         $request->validate([
             'message' => 'required|string',
-            'userId' => 'required|integer|exists:users,id', // Ensure the userId exists in the users table
         ]);
 
         // Create a new message
-        $message = new Message;
-        $message->senderId = Auth::id(); // Current authenticated user's ID
-        $message->receiverId = $request->userId; // Receiver's user ID from the request
-        $message->content = encrypt($request->message);
+        $conversation = new Conversation();
+        $conversation->user_one_id = Auth::id(); // Current authenticated user's ID
+        $conversation->user_two_id = $request->memberId; // Receiver's user ID from the request
+        $conversation->save();
+
+        // Create a new message
+        $message = new Message();
+        $message->conversation_id = $conversation->id;
+        $message->sender_id = $request->sender_id;
+        $message->message = Crypt::encryptString($request->message);
         $message->save();
 
-        return response()->json(['status' => 'Message sent']);
+        return redirect()->back()->with('success', 'Message sent Successfully. You can now chat from My Chats Section.');
     }
 
     // public function getMessages()
@@ -129,15 +124,15 @@ class ChatController extends Controller
         $userId = Auth::id();
 
         try {
-            // Get distinct user IDs who have sent messages to or received messages from the current user
-            $userIds = Message::where('senderId', $userId)
-                ->orWhere('receiverId', $userId)
-                ->get()
-                ->map(function ($message) use ($userId) {
-                    return $message->senderId == $userId ? $message->receiverId : $message->senderId;
-                })
-                ->unique()
-                ->values();
+            // Get conversations where the authenticated user is a participant
+            $conversations = Conversation::where('user_one_id', $userId)
+                ->orWhere('user_two_id', $userId)
+                ->get();
+
+            // Collect distinct user IDs from these conversations
+            $userIds = $conversations->map(function ($conversation) use ($userId) {
+                return $conversation->user_one_id == $userId ? $conversation->user_two_id : $conversation->user_one_id;
+            })->unique()->values();
 
             // Fetch user details based on the unique user IDs
             $listOfUsers = User::join('members', 'users.id', '=', 'members.userId')
@@ -148,12 +143,11 @@ class ChatController extends Controller
             // Pass the data to the view
             return view('chat.index', ['listOfUsers' => $listOfUsers]);
         } catch (\Throwable $th) {
-            throw $th;
-            ErrorLogger::logError($th, $request->fullUrl());
             // Handle the error appropriately
             return back()->with('error', 'Something went wrong. Please try again.');
         }
     }
+
 
 
 
@@ -181,17 +175,33 @@ class ChatController extends Controller
 
     public function getChat($userId)
     {
+        $authUserId = Auth::id();
         $user = User::find($userId);
 
-        // Assuming you have a ChatMessage model and each message belongs to a user
-        $messages = Message::where('senderId', $userId)
-            ->orWhere('receiverId', $userId)
+        // Find the conversation between the authenticated user and the target user
+        $conversation = Conversation::where(function ($query) use ($authUserId, $userId) {
+            $query->where('user_one_id', $authUserId)
+                ->where('user_two_id', $userId);
+        })->orWhere(function ($query) use ($authUserId, $userId) {
+            $query->where('user_one_id', $userId)
+                ->where('user_two_id', $authUserId);
+        })->first();
+
+        if (!$conversation) {
+            return response()->json([
+                'user' => $user,
+                'messages' => []
+            ]);
+        }
+
+        // Retrieve messages for the conversation
+        $messages = Message::where('conversation_id', $conversation->id)
             ->orderBy('created_at', 'asc')
             ->get()
-            ->map(function ($message) use ($userId) {
+            ->map(function ($message) use ($authUserId) {
                 return [
                     'text' => $message->message,
-                    'sentByUser' => $message->senderId == $userId
+                    'sentByUser' => $message->sender_id == $authUserId
                 ];
             });
 

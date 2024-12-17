@@ -59,6 +59,8 @@ use App\Http\Controllers\Admin\TemplateMasterController;
 use App\Http\Controllers\Admin\VisitorController;
 use App\Http\Controllers\Conquer\ConEventController;
 use App\Http\Controllers\Conquer\ConquerEventController;
+use App\Http\Controllers\ConversationController;
+use App\Http\Controllers\MessageController;
 
 /*
 |--------------------------------------------------------------------------
@@ -696,6 +698,37 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/specific-ask/edit/{id?}', [SpecificAskController::class, 'edit'])->name('specificask.edit');
     Route::post('/specific-ask/update', [SpecificAskController::class, 'update'])->name('specificask.update');
     Route::post('/specific-ask/delete/{id?}', [SpecificAskController::class, 'delete'])->name('specificask.delete');
+
+
+
+    //chat
+    // Route::get('/chat-index', [ChatController::class, 'index'])->name('chat.index');
+    // routes/web.php
+
+    Route::post('/send-message', [ChatController::class, 'sendMessage'])->name('send.message');
+    // Route::post('/get-messages', [ChatController::class, 'getMessages']);
+    // Route::post('/getList', [ChatController::class, 'getList'])->name('chat.getList');
+
+    Route::get('/myChatList', [ChatController::class, 'myChatList'])->name('chat.index');
+
+    // Route::get('/get-chat/{userId}', [ChatController::class, 'getChat']);
+
+
+
+
+    // // Route::post('/typing-status', [ChatController::class, 'updateTypingStatus']);
+
+    // Route::post('/typing', [ChatController::class, 'typing']);
+    // Route::post('/stopped-typing', [ChatController::class, 'stoppedTyping']);
+    // Route::get('/typing-status', [ChatController::class, 'typingStatus']);
+
+
+    //new chat
+    Route::get('/conversations', [ConversationController::class, 'index']);
+    Route::post('/conversations', [ConversationController::class, 'store']);
+
+    Route::get('/messages/{conversationId}', [MessageController::class, 'index']);
+    Route::post('/messages', [MessageController::class, 'store']);
 });
 
 Route::get('/main-event-thankYouVisitor', [ConEventController::class, 'thankYouUser'])->name('main.event.thankYouUser');
