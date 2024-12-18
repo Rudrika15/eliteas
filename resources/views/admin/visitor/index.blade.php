@@ -97,19 +97,19 @@
                                     <td>{{ $visitorsData->mobileNo ?? '' }}</td>
                                     <td>
                                         <span class="truncated-text" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $visitorsData->email ?? '' }}">
-                                            {{ Str::limit($visitorsData->email, 12) }}
+                                            {{ Str::limit($visitorsData->email ?? '', 12) }}
                                         </span>
                                     </td>
                                     <td>
                                         <span class="truncated-text" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $visitorsData->businessName ?? '' }}">
-                                            {{ Str::limit($visitorsData->businessName, 12) }}
+                                            {{ Str::limit($visitorsData->businessName ?? '', 12) }}
                                         </span>
                                     </td>
                                     <td>{{ $visitorsData->city ?? '' }}</td>
                                     {{-- <td>{{ $visitorsData->bCategory->categoryName ?? '' }}</td> --}}
                                     <td>
                                         <span class="truncated-text" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $visitorsData->bCategory->categoryName ?? '' }}">
-                                            {{ Str::limit($visitorsData->bCategory->categoryName, 12) }}
+                                            {{ Str::limit($visitorsData->bCategory->categoryName ?? '', 12) }}
                                         </span>
                                     </td>
 
