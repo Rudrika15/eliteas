@@ -502,6 +502,13 @@
     </a>
 </li>
 
+<li class="nav-item">
+    <a class="nav-link collapsed" href="{{ route('db.index') }}">
+        <i class="bi bi-database" style="color: #e76a35"></i>
+        <span style="color: #1d2856">Database Backup</span>
+    </a>
+</li>
+
 
 
 <!-- End Forms Nav -->

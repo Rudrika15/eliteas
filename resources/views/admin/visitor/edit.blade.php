@@ -117,6 +117,20 @@
                         @enderror
                     </div>
                 </div>
+
+                <div class="row mb-3 mt-3">
+                    <div class="col-md-12">
+                        <div class="form-floating">
+                            <textarea class="form-control" id="otherDetails" name="otherDetails" placeholder="otherDetails">{{ $visitors->otherDetails }}</textarea>
+                            <label for="otherDetails">Other Details</label>
+                            @error('otherDetails')
+                                <div class="invalid-tooltip">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="text-center">
                 <button type="submit" class="btn btn-bg-blue">Submit</button>

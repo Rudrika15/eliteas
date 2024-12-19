@@ -98,6 +98,7 @@ class VisitorController extends Controller
             $visitors->businessCategory = $request->businessCategory;
             $visitors->invitedBy = $request->invitedBy;
             $visitors->city = $request->city;
+            $visitors->otherDetails = $request->otherDetails;
             $visitors->status = 'Active';
             $visitors->save();
 
@@ -158,7 +159,7 @@ class VisitorController extends Controller
             $visitors->businessCategory = $request->businessCategory;
             $visitors->invitedBy = $request->invitedBy;
             $visitors->city = $request->city;
-            $visitors->status = 'Active';
+            $visitors->otherDetails = $request->otherDetails;
             $visitors->save();
 
 

@@ -49,6 +49,7 @@ use App\Http\Controllers\Admin\MembershipSubscriptionsController;
 use App\Http\Controllers\Admin\CircleMeetingMemberBusinessController;
 use App\Http\Controllers\Admin\CircleMeetingMemberReferenceController;
 use App\Http\Controllers\Admin\CouponController;
+use App\Http\Controllers\Admin\DatabaseBackupController;
 use App\Http\Controllers\Admin\EventTypeController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\SlotController;
@@ -729,6 +730,24 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::get('/messages/{conversationId}', [MessageController::class, 'index']);
     Route::post('/messages', [MessageController::class, 'store']);
+
+
+    //database backUp
+
+    // Route::prefix('database-backup')->group(function () {
+    //     Route::get('/db-index', [DatabaseBackupController::class, 'index'])->name('backup.index');
+    //     Route::post('/create', [DatabaseBackupController::class, 'create'])->name('backup.create');
+    //     Route::get('/download/{file}', [DatabaseBackupController::class, 'download'])->name('backup.download');
+    //     Route::delete('/delete/{file}', [DatabaseBackupController::class, 'delete'])->name('backup.delete');
+    // });
+
+    Route::get('/db/backup', [DatabaseBackupController::class, 'index'])->name('db.index');
+
+    Route::get('/db/export', [DatabaseBackupController::class, 'export'])->name('db.export');
+
+    Route::get('/db/download/{file}', [DatabaseBackupController::class, 'download'])->name('db.download');
+
+    Route::delete('/db/delete/{file}', [DatabaseBackupController::class, 'delete'])->name('db.delete');
 });
 
 Route::get('/main-event-thankYouVisitor', [ConEventController::class, 'thankYouUser'])->name('main.event.thankYouUser');

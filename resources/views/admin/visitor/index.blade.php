@@ -84,7 +84,7 @@
                                 <th>City</th>
                                 <th>Business Category</th>
                                 <th>Reffered By</th>
-                                {{-- <th>Remarks</th> --}}
+                                <th>Other Details</th>
                                 <th>Status</th>
                                 <th>Action</th>
                             </tr>
@@ -123,6 +123,12 @@
                                                 {{ Str::limit($visitorsData->invitedBy, 12) }}
                                             </span>
                                         @endif
+                                    </td>
+
+                                    <td>
+                                        <span class="truncated-text" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $visitorsData->otherDetails ?? '' }}">
+                                            {{ Str::limit($visitorsData->otherDetails ?? '', 12) }}
+                                        </span>
                                     </td>
 
                                     {{-- <td>{{ $visitorsData->invitedBy }}</td> --}}
