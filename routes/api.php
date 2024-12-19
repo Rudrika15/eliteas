@@ -74,6 +74,9 @@ Route::get('/events/users/{id?}', [VisitorController::class, 'getUserListForVisi
 
 Route::post('/slot-booking/visitor', [SlotController::class, 'slotBookingVisitorAPI']);
 
+Route::post('/payment/visitor', [EventController::class, 'eventPaymentVisitor']);
+
+
 Route::get('/slot/index', [SlotController::class, 'slotIndex']);
 
 

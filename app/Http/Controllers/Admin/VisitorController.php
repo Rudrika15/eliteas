@@ -41,7 +41,7 @@ class VisitorController extends Controller
 
     public function index(Request $request)
     {
-        $query = VisitorsDetails::query();
+        $query = VisitorsDetails::where('status', '!=', 'Deleted')->query();
 
         // Apply filters
         if ($request->filled('name')) {

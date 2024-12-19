@@ -11,6 +11,8 @@ use Illuminate\Http\Request;
 use App\Models\EventRegister;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
+use App\Models\VisitorEventRegister;
+use App\Utils\ErrorLogger;
 use Illuminate\Support\Facades\Auth;
 
 class EventController extends Controller
@@ -258,6 +260,62 @@ class EventController extends Controller
             return Utils::errorResponse([
                 'error' => 'Failed to store payment ID. Please try again.'
             ], 'Internal Server Error', 500);
+        }
+    }
+
+
+    public function eventPaymentVisitor(Request $request)
+    {
+        try {
+            // Validate the request
+            $validatedData = $request->validate([
+                'paymentId' => 'required|string',
+                'amount' => 'required',
+                'eventId' => 'required|integer',
+                'visitorId' => 'required|integer',
+            ]);
+
+            // Store the payment ID in the Razorpay payments table
+            $payment = new Razorpay();
+            $payment->r_payment_id = $validatedData['paymentId'];
+            $payment->amount = $validatedData['amount']  / 100; // Convert paise to rupees
+            $payment->save();
+
+            // Register for the event
+            $eventPayment = new VisitorEventRegister();
+            $eventPayment->eventId = $validatedData['eventId'];
+            $eventPayment->visitorId = $validatedData['visitorId'];
+            $eventPayment->paymentStatus = 'paid';
+            $eventPayment->save();
+
+            // Store the payment details in the AllPayments table
+            $allPayments = new AllPayments();
+            $allPayments->amount = $payment->amount;
+            $allPayments->paymentType = 'RazorPay';
+            $allPayments->date = now()->format('Y-m-d');
+            $allPayments->paymentMode = 'Event Register Visitor Payment';
+            $allPayments->remarks = $payment->r_payment_id;
+            $allPayments->save();
+
+            // Return a success response
+            return response()->json([
+                'success' => true,
+                'message' => 'Payment received successfully',
+                'data' => [
+                    'payment_id' => $payment->r_payment_id,
+                    'amount' => $payment->amount,
+                ],
+            ], 200);
+        } catch (\Throwable $th) {
+            // Log the error using the ErrorLogger utility
+            ErrorLogger::logError($th, $request->fullUrl());
+
+            // Return an error response
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to process payment',
+                'error' => $th->getMessage(),
+            ], 500);
         }
     }
 }
