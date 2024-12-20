@@ -38,7 +38,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\CircleMeetingMembersBusiness;
 use App\Models\CircleMeetingMembersReference;
 use App\Mail\MeetingInvitation as MailMeetingInvitation;
-use App\Models\Templatemaster;
+use App\Models\TemplateMaster;
 use App\Models\VisitorEventRegister;
 use SebastianBergmann\Template\Template;
 
@@ -269,7 +269,7 @@ class HomeController extends Controller
             $birthdaysToday = Member::whereMonth('birthDate', Carbon::today()->month)
                 ->whereDay('birthDate', Carbon::today()->day)
                 ->get();
-            $templates = Templatemaster::with('TemplateDetail')->get();
+            $templates = TemplateMaster::with('TemplateDetail')->get();
 
             $myInvites = MeetingInvitation::where('invitedMemberId', Auth::user()->id)->get();
 
@@ -295,7 +295,7 @@ class HomeController extends Controller
                     ->get();
 
 
-                $templates = Templatemaster::with('TemplateDetail')->where('status', 'Active')->first();
+                $templates = TemplateMaster::with('TemplateDetail')->where('status', 'Active')->first();
 
                 $myCircle = Auth::user()->member->circleId;
                 $meeting = Schedule::where('circleId', Auth::user()->member->circleId)
@@ -449,10 +449,10 @@ class HomeController extends Controller
                 $circleCount = Circle::where('status', 'Active')->count();
 
 
-                return view('home', compact('circleCount','membersCount','totalRegisterCount', 'birthdaysToday', 'templates', 'signedUrl', 'count', 'monthlyPayments', 'totalAmountDue', 'nearestEvents', 'findEventRegister', 'circlecalls', 'busGiver', 'refGiver', 'nearestTraining', 'findRegister', 'testimonials', 'meeting', 'businessCategory', 'myInvites', 'todaysBirthdays'));
+                return view('home', compact('circleCount', 'membersCount', 'totalRegisterCount', 'birthdaysToday', 'templates', 'signedUrl', 'count', 'monthlyPayments', 'totalAmountDue', 'nearestEvents', 'findEventRegister', 'circlecalls', 'busGiver', 'refGiver', 'nearestTraining', 'findRegister', 'testimonials', 'meeting', 'businessCategory', 'myInvites', 'todaysBirthdays'));
             }
 
-            return view('home', compact('circleCount','membersCount','count', 'nearestTraining', 'businessCategory', 'myInvites', 'findRegister', 'birthdaysToday', 'templates'));
+            return view('home', compact('circleCount', 'membersCount', 'count', 'nearestTraining', 'businessCategory', 'myInvites', 'findRegister', 'birthdaysToday', 'templates'));
         } catch (\Throwable $th) {
             // Log the error
             // throw $th;
@@ -465,8 +465,8 @@ class HomeController extends Controller
     public function birthday($id)
     {
         $person  = Member::where('userId', $id)->first();
-        $templates = Templatemaster::all();
-        // $template = Templatemaster::with('TemplateDetail')->get();
+        $templates = TemplateMaster::all();
+        // $template = TemplateMaster::with('TemplateDetail')->get();
         return view('admin.birthday.index', compact('person', 'templates'));
     }
 

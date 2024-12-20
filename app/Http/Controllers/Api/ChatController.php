@@ -54,7 +54,7 @@ class ChatController extends Controller
 
             return Utils::sendResponse($response, 'Message sent successfully', 200);
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
