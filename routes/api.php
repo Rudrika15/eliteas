@@ -313,11 +313,23 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/userLocation/index', [LocationController::class, 'index']);
     Route::get('/user/userLocation', [LocationController::class, 'userLocation']);
 
+
+    // old chat
+    // //chat
+    // Route::post('/chat/sendMessage', [ChatController::class, 'sendMessage']);
+    // // Route::get('/chat/getMessages', [ChatController::class, 'getMessages']);
+    // Route::post('/get-messages', [ChatController::class, 'getMessages']);
+    // Route::get('/chat/getList', [ChatController::class, 'getList']);
+
+    // new chat module
     //chat
     Route::post('/chat/sendMessage', [ChatController::class, 'sendMessage']);
     // Route::get('/chat/getMessages', [ChatController::class, 'getMessages']);
     Route::post('/get-messages', [ChatController::class, 'getMessages']);
-    Route::get('/chat/getList', [ChatController::class, 'getList']);
+    // Route::get('/chat/getList', [ChatController::class, 'getList']);
+    Route::get('/chat/listOfUsers', [ChatController::class, 'listOfUsers']);
+
+
 
     //suggested members
     Route::get('/category-wise-member-index', [CircleMemberController::class, 'categoryWiseMember']);
@@ -420,5 +432,3 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 //get app version
 Route::get('app-version', [UpdateAppController::class, 'getAppVersion']);
 Route::post('update-app-version', [UpdateAppController::class, 'updateAppVersion']);
-
-

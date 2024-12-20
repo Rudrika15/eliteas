@@ -1,9 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Api;
 
 use App\Models\User;
+use App\Utils\Utils;
 use App\Models\Message;
+use App\Events\MessageSent;
 use App\Models\Conversation;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -14,79 +16,81 @@ class ChatController extends Controller
 {
     public function sendMessage(Request $request)
     {
+        $authId = Auth::id();
+
         // Validate the request
         $request->validate([
             'message' => 'required|string',
+            'userId' => 'required|integer|exists:users,id',
         ]);
 
-        // Create a new message
-        $conversation = new Conversation();
-        $conversation->user_one_id = Auth::id(); // Current authenticated user's ID
-        $conversation->user_two_id = $request->memberId; // Receiver's user ID from the request
-        $conversation->save();
+        try {
+            // Find or create a conversation between the authenticated user and the target user
+            $conversation = Conversation::firstOrCreate([
+                'user_one_id' => $authId,
+                'user_two_id' => $request->userId,
+            ], [
+                'user_one_id' => $authId,
+                'user_two_id' => $request->userId,
+            ]);
 
-        // Create a new message
-        $message = new Message();
-        $message->conversation_id = $conversation->id;
-        $message->sender_id = $request->sender_id;
-        $message->message = Crypt::encryptString($request->message);
-        $message->save();
+            // Encrypt and save the message
+            $message = new Message;
+            $message->conversation_id = $conversation->id;
+            $message->sender_id = $authId;
+            $message->message = Crypt::encryptString($request->message);  // Encrypt the message
+            $message->save();
 
-        return redirect()->back()->with('success', 'Message sent Successfully. You can now chat from My Chats Section.');
+            // Decrypt the message for the response (decrypted only for displaying)
+            $decryptedMessage = Crypt::decryptString($message->message);
+            $response = [
+                'message' => $decryptedMessage, // Send decrypted version
+                'senderId' => $authId,
+                'receiverId' => $request->userId,
+                'conversationId' => $conversation->id,
+            ];
+
+            broadcast(new MessageSent($message))->toOthers();
+
+            return Utils::sendResponse($response, 'Message sent successfully', 200);
+        } catch (\Throwable $th) {
+            return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
+        }
     }
-
-    // public function getMessages()
-    // {
-    //     // Get the current authenticated user's ID
-    //     $userId = Auth::id();
-
-    //     // Fetch messages where the current user is either the sender or receiver, and they are communicating with each other
-    //     $messages = Message::where(function ($query) use ($userId) {
-    //         $query->where('senderId', $userId)
-    //             ->whereIn('receiverId', function ($subQuery) use ($userId) {
-    //                 $subQuery->select('senderId')->from('messages')->where('receiverId', $userId);
-    //             })
-    //             ->orWhere('receiverId', $userId)
-    //             ->whereIn('senderId', function ($subQuery) use ($userId) {
-    //                 $subQuery->select('receiverId')->from('messages')->where('senderId', $userId);
-    //             });
-    //     })
-    //         ->orderBy('created_at', 'asc')
-    //         ->get();
-
-    //     foreach ($messages as $key => $value) {
-    //         $messages[$key]->content = decrypt($value->content);
-    //     }
-
-    //     return response()->json($messages);
-    // }
 
     public function getMessages(Request $request)
     {
-        // Get the current authenticated user's ID
         $userId = Auth::id();
-
-        // Get the receiverId from the request body
         $receiverId = $request->input('receiverId');
 
-        // Fetch messages where the current user is either the sender or the receiver
-        $messages = Message::where(function ($query) use ($userId, $receiverId) {
-            $query->where('senderId', $userId)
-                ->where('receiverId', $receiverId)
-                ->orWhere(function ($subQuery) use ($userId, $receiverId) {
-                    $subQuery->where('senderId', $receiverId)
-                        ->where('receiverId', $userId);
-                });
-        })->orderBy('created_at', 'asc')->get();
+        try {
+            // Retrieve the conversation between the authenticated user and the target user
+            $conversation = Conversation::where(function ($query) use ($userId, $receiverId) {
+                $query->where('user_one_id', $userId)
+                    ->where('user_two_id', $receiverId);
+            })->orWhere(function ($query) use ($userId, $receiverId) {
+                $query->where('user_one_id', $receiverId)
+                    ->where('user_two_id', $userId);
+            })->first();
 
-        foreach ($messages as $key => $value) {
-            $messages[$key]->content = decrypt($value->content);
+            if (!$conversation) {
+                return Utils::sendResponse(['messages' => []], 'No conversation found', 200);
+            }
+
+            // Retrieve messages for the conversation and decrypt them
+            $messages = Message::where('conversation_id', $conversation->id)
+                ->orderBy('created_at', 'asc')
+                ->get();
+
+            foreach ($messages as $key => $value) {
+                $messages[$key]->message = Crypt::decryptString($value->message);  // Decrypt the message
+            }
+
+            return Utils::sendResponse(['messages' => $messages], 'Messages retrieved successfully', 200);
+        } catch (\Throwable $th) {
+            return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
-
-        // Return the filtered messages as JSON response
-        return response()->json($messages);
     }
-
 
     public function getList()
     {
@@ -94,120 +98,53 @@ class ChatController extends Controller
 
         try {
             // Get distinct user IDs who sent messages to or received messages from the current user
-            $userIds = Message::where('senderId', $userId)
-                ->orWhere('receiverId', $userId)
-                ->pluck('senderId', 'receiverId')
-                ->flatten()
+            $userIds = Message::where('sender_id', $userId)
+                ->orWhere('receiver_id', $userId)
+                ->get()
+                ->map(function ($message) use ($userId) {
+                    return $message->sender_id == $userId ? $message->receiver_id : $message->sender_id;
+                })
                 ->unique()
-                ->filter(function ($id) use ($userId) {
-                    return $id != $userId; // Filter out the current user ID
-                });
+                ->values();
 
-            // Fetch user names based on the unique user IDs
-            $listOfUser = User::whereIn('id', $userIds)->get(['id', 'firstName', 'lastName']);
+            // Fetch user names and profile photos based on the unique user IDs
+            $listOfUsers = User::join('members', 'users.id', '=', 'members.user_id')
+                ->whereIn('users.id', $userIds)
+                ->select('users.id', 'users.first_name', 'users.last_name', 'users.email', 'members.profile_photo')
+                ->get();
 
-            // Return the view with the list of users
-            return view('home', ['listOfUser' => $listOfUser]);
+            return Utils::sendResponse(['listOfUsers' => $listOfUsers], 'List of users retrieved successfully', 200);
         } catch (\Throwable $th) {
-            // Handle the error by returning the view with an error message
-            return view('home', ['error' => $th->getMessage()]);
+            return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
 
-    // public function myChatList()
-    // {
-    //     return view('chat.index');
-    // }
 
-    public function myChatList()
+    public function listOfUsers(Request $request)
     {
-        $userId = Auth::id();
+        $authId = Auth::id();
 
         try {
-            // Get conversations where the authenticated user is a participant
-            $conversations = Conversation::where('user_one_id', $userId)
-                ->orWhere('user_two_id', $userId)
-                ->get();
+            // Retrieve distinct conversations where the authenticated user is a participant (either user_one or user_two)
+            $conversationUserIds = Conversation::where('user_one_id', $authId)
+                ->orWhere('user_two_id', $authId)
+                ->get()
+                ->map(function ($conversation) use ($authId) {
+                    // Return the other participant's user ID in the conversation
+                    return $conversation->user_one_id == $authId ? $conversation->user_two_id : $conversation->user_one_id;
+                })
+                ->unique()
+                ->values();
 
-            // Collect distinct user IDs from these conversations
-            $userIds = $conversations->map(function ($conversation) use ($userId) {
-                return $conversation->user_one_id == $userId ? $conversation->user_two_id : $conversation->user_one_id;
-            })->unique()->values();
-
-            // Fetch user details based on the unique user IDs
+            // Fetch user names and profile photos based on the unique user IDs
             $listOfUsers = User::join('members', 'users.id', '=', 'members.userId')
-                ->whereIn('users.id', $userIds)
+                ->whereIn('users.id', $conversationUserIds)
                 ->select('users.id', 'users.firstName', 'users.lastName', 'users.email', 'members.profilePhoto')
                 ->get();
 
-            // Pass the data to the view
-            return view('chat.index', ['listOfUsers' => $listOfUsers]);
+            return Utils::sendResponse(['listOfUsers' => $listOfUsers], 'List of users retrieved successfully', 200);
         } catch (\Throwable $th) {
-            // Handle the error appropriately
-            return back()->with('error', 'Something went wrong. Please try again.');
+            return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
-    }
-
-
-
-
-    // public function typing(Request $request)
-    // {
-    //     $receiverId = $request->receiverId;
-    //     // Store typing status in session or database
-    //     session()->put("typing_{$receiverId}", true);
-    // }
-
-    // public function stoppedTyping(Request $request)
-    // {
-    //     $receiverId = $request->receiverId;
-    //     // Remove typing status from session or database
-    //     session()->forget("typing_{$receiverId}");
-    // }
-
-    // public function typingStatus(Request $request)
-    // {
-    //     $receiverId = $request->receiverId;
-    //     // Check typing status
-    //     $isTyping = session()->get("typing_{$receiverId}", false);
-    //     return response()->json($isTyping);
-    // }
-
-    public function getChat($userId)
-    {
-        $authUserId = Auth::id();
-        $user = User::find($userId);
-
-        // Find the conversation between the authenticated user and the target user
-        $conversation = Conversation::where(function ($query) use ($authUserId, $userId) {
-            $query->where('user_one_id', $authUserId)
-                ->where('user_two_id', $userId);
-        })->orWhere(function ($query) use ($authUserId, $userId) {
-            $query->where('user_one_id', $userId)
-                ->where('user_two_id', $authUserId);
-        })->first();
-
-        if (!$conversation) {
-            return response()->json([
-                'user' => $user,
-                'messages' => []
-            ]);
-        }
-
-        // Retrieve messages for the conversation
-        $messages = Message::where('conversation_id', $conversation->id)
-            ->orderBy('created_at', 'asc')
-            ->get()
-            ->map(function ($message) use ($authUserId) {
-                return [
-                    'text' => $message->message,
-                    'sentByUser' => $message->sender_id == $authUserId
-                ];
-            });
-
-        return response()->json([
-            'user' => $user,
-            'messages' => $messages
-        ]);
     }
 }
