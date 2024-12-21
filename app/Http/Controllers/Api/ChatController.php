@@ -14,6 +14,51 @@ use Illuminate\Support\Facades\Crypt;
 
 class ChatController extends Controller
 {
+    // public function sendMessage(Request $request)
+    // {
+    //     $authId = Auth::id();
+
+    //     // Validate the request
+    //     $request->validate([
+    //         'message' => 'required|string',
+    //         'userId' => 'required|integer|exists:users,id',
+    //     ]);
+
+    //     try {
+    //         // Find or create a conversation between the authenticated user and the target user
+    //         $conversation = Conversation::firstOrCreate([
+    //             'user_one_id' => $authId,
+    //             'user_two_id' => $request->userId,
+    //         ], [
+    //             'user_one_id' => $authId,
+    //             'user_two_id' => $request->userId,
+    //         ]);
+
+    //         // Encrypt and save the message
+    //         $message = new Message;
+    //         $message->conversation_id = $conversation->id;
+    //         $message->sender_id = $authId;
+    //         $message->message = Crypt::encryptString($request->message);  // Encrypt the message
+    //         $message->save();
+
+    //         // Decrypt the message for the response (decrypted only for displaying)
+    //         $decryptedMessage = Crypt::decryptString($message->message);
+    //         $response = [
+    //             'message' => $decryptedMessage, // Send decrypted version
+    //             'senderId' => $authId,
+    //             'receiverId' => $request->userId,
+    //             'conversationId' => $conversation->id,
+    //         ];
+
+    //         broadcast(new MessageSent($message))->toOthers();
+
+    //         return Utils::sendResponse($response, 'Message sent successfully', 200);
+    //     } catch (\Throwable $th) {
+    //         // throw $th;
+    //         return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
+    //     }
+    // }
+
     public function sendMessage(Request $request)
     {
         $authId = Auth::id();
@@ -25,20 +70,28 @@ class ChatController extends Controller
         ]);
 
         try {
-            // Find or create a conversation between the authenticated user and the target user
-            $conversation = Conversation::firstOrCreate([
-                'user_one_id' => $authId,
-                'user_two_id' => $request->userId,
-            ], [
-                'user_one_id' => $authId,
-                'user_two_id' => $request->userId,
-            ]);
+            // Find an existing conversation between the authenticated user and the target user
+            $conversation = Conversation::where(function ($query) use ($authId, $request) {
+                $query->where('user_one_id', $authId)
+                    ->where('user_two_id', $request->userId);
+            })->orWhere(function ($query) use ($authId, $request) {
+                $query->where('user_one_id', $request->userId)
+                    ->where('user_two_id', $authId);
+            })->first();
+
+            // If no conversation exists, create a new one
+            if (!$conversation) {
+                $conversation = Conversation::create([
+                    'user_one_id' => $authId,
+                    'user_two_id' => $request->userId,
+                ]);
+            }
 
             // Encrypt and save the message
             $message = new Message;
             $message->conversation_id = $conversation->id;
             $message->sender_id = $authId;
-            $message->message = Crypt::encryptString($request->message);  // Encrypt the message
+            $message->message = Crypt::encryptString($request->message); // Encrypt the message
             $message->save();
 
             // Decrypt the message for the response (decrypted only for displaying)
@@ -50,14 +103,18 @@ class ChatController extends Controller
                 'conversationId' => $conversation->id,
             ];
 
+            // Broadcast the message using Laravel Echo
             broadcast(new MessageSent($message))->toOthers();
 
             return Utils::sendResponse($response, 'Message sent successfully', 200);
         } catch (\Throwable $th) {
-            // throw $th;
+            // Return an error response in case of an exception
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
+
+
+
 
     public function getMessages(Request $request)
     {

@@ -12,6 +12,30 @@ use Illuminate\Support\Facades\Crypt;
 
 class ChatController extends Controller
 {
+    // public function sendMessage(Request $request)
+    // {
+    //     // Validate the request
+    //     $request->validate([
+    //         'message' => 'required|string',
+    //     ]);
+
+    //     // Create a new message
+    //     $conversation = new Conversation();
+    //     $conversation->user_one_id = Auth::id(); // Current authenticated user's ID
+    //     $conversation->user_two_id = $request->memberId; // Receiver's user ID from the request
+    //     $conversation->save();
+
+    //     // Create a new message
+    //     $message = new Message();
+    //     $message->conversation_id = $conversation->id;
+    //     $message->sender_id = $request->sender_id;
+    //     $message->message = Crypt::encryptString($request->message);
+    //     $message->save();
+
+    //     return redirect()->back()->with('success', 'Message sent Successfully. You can now chat from My Chats Section.');
+    // }
+
+
     public function sendMessage(Request $request)
     {
         // Validate the request
@@ -19,21 +43,36 @@ class ChatController extends Controller
             'message' => 'required|string',
         ]);
 
-        // Create a new message
-        $conversation = new Conversation();
-        $conversation->user_one_id = Auth::id(); // Current authenticated user's ID
-        $conversation->user_two_id = $request->memberId; // Receiver's user ID from the request
-        $conversation->save();
+        $authId = Auth::id(); // Current authenticated user's ID
+        $receiverId = $request->memberId; // Receiver's user ID from the request
+
+        // Find an existing conversation between the authenticated user and the target user
+        $conversation = Conversation::where(function ($query) use ($authId, $receiverId) {
+            $query->where('user_one_id', $authId)
+                ->where('user_two_id', $receiverId);
+        })->orWhere(function ($query) use ($authId, $receiverId) {
+            $query->where('user_one_id', $receiverId)
+                ->where('user_two_id', $authId);
+        })->first();
+
+        // If no conversation exists, create a new one
+        if (!$conversation) {
+            $conversation = new Conversation();
+            $conversation->user_one_id = $authId;
+            $conversation->user_two_id = $receiverId;
+            $conversation->save();
+        }
 
         // Create a new message
         $message = new Message();
         $message->conversation_id = $conversation->id;
-        $message->sender_id = $request->sender_id;
-        $message->message = Crypt::encryptString($request->message);
+        $message->sender_id = $authId; // Authenticated user's ID as the sender
+        $message->message = Crypt::encryptString($request->message); // Encrypt the message
         $message->save();
 
         return redirect()->back()->with('success', 'Message sent Successfully. You can now chat from My Chats Section.');
     }
+
 
     // public function getMessages()
     // {

@@ -41,7 +41,7 @@ class VisitorController extends Controller
 
     public function index(Request $request)
     {
-        $query = VisitorsDetails::where('status', '!=', 'Deleted')->query();
+        $query = VisitorsDetails::query();
 
         // Apply filters
         if ($request->filled('name')) {
@@ -242,8 +242,7 @@ class VisitorController extends Controller
                 return redirect()->route('visitors.index')->with('error', 'Visitor not found.');
             }
 
-            $visitors->status = 'Deleted';
-            $visitors->save();
+            $visitors->delete();
 
             return redirect()->route('visitors.index')->with('success', 'Visitor deleted successfully.');
         } catch (\Throwable $th) {
