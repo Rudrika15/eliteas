@@ -525,7 +525,7 @@ class CircleMemberController extends Controller
             } else {
                 $circle = Circle::where('status', 'Active')->get();
             }
-            $businessCategory = BusinessCategory::where('status', 'Active')->get();
+            $businessCategory = BusinessCategory::where('status', 'Active')->orderBy('categoryName', 'asc')->get();
             $membershipType = MembershipType::where('status', 'Active')->get();
             $circles = Circle::where('status', 'Active')->get();
 

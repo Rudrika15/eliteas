@@ -112,8 +112,7 @@
                                             <td>{{ $busGiverData->amount ?? '-' }}</td>
                                             {{-- <td>{{ $busGiverData->status }}</td> --}}
                                             <td>
-                                                <a href="{{ route('busGiver.edit', $busGiverData->id) }}"
-                                                    class="btn btn-bg-orange btn-sm btn-tooltip">
+                                                <a href="{{ route('busGiver.edit', $busGiverData->id) }}" class="btn btn-bg-orange btn-sm btn-tooltip">
                                                     <i class="bi bi-plus"></i>
                                                     <span class="btn-text">Add Business Amount</span>
                                                 </a>
@@ -143,8 +142,7 @@
                                         class="btn btn-bg-blue btn-sm mt-3 mr-2">Add
                                         Reference By Other</a> --}}
                                     {{-- &nbsp;&nbsp;&nbsp; --}}
-                                    <a href="{{ route('refGiver.create') }}"
-                                        class="btn btn-bg-orange btn-sm mt-3 btn-tooltip">
+                                    <a href="{{ route('refGiver.create') }}" class="btn btn-bg-orange btn-sm mt-3 btn-tooltip">
                                         <i class="bi bi-plus-circle"></i>
                                         <span class="btn-text">Add Reference Details</span>
                                     </a>
@@ -156,6 +154,7 @@
                                         <thead>
                                             <tr>
                                                 <th>S.No</th>
+                                                <th>Date</th>
                                                 <th>Member Name</th>
                                                 <th>Reffered Person Name</th>
                                                 <th>Contact No</th>
@@ -171,6 +170,7 @@
                                                 <tr>
                                                     <th>{{ ($refGiver->currentPage() - 1) * $refGiver->perPage() + $loop->index + 1 }}
                                                     </th>
+                                                    <td>{{ \Carbon\Carbon::parse($refGiverData->created_at)->format('d-m-Y') ?? '-' }}</td>
                                                     <td>{{ $refGiverData->members->firstName ?? '-' }}
                                                         {{ $refGiverData->members->lastName ?? '-' }}</td>
                                                     <td>{{ $refGiverData->contactName ?? '-' }}</td>
@@ -182,15 +182,11 @@
                                                     {{-- <td>{{ $refGiverData->description ?? '-' }}</td> --}}
                                                     <td>{{ $refGiverData->status }}</td>
                                                     <td class="d-flex gap-1">
-                                                        <a href="{{ route('refGiver.edit', $refGiverData->id) }}"
-                                                            class="btn btn-bg-blue btn-sm btn-tooltip">
+                                                        <a href="{{ route('refGiver.edit', $refGiverData->id) }}" class="btn btn-bg-blue btn-sm btn-tooltip">
                                                             <i class="bi bi-pen"></i>
                                                             <span class="btn-text">Edit Reference Details</span>
                                                         </a>
-                                                        <a id="deleteRefGiver{{ $refGiverData->id }}"
-                                                            href="{{ route('refGiver.delete', $refGiverData->id) }}"
-                                                            class="btn btn-danger btn-sm btn-tooltip" data-toggle="tooltip"
-                                                            data-placement="top" title="Delete Reference Giver">
+                                                        <a id="deleteRefGiver{{ $refGiverData->id }}" href="{{ route('refGiver.delete', $refGiverData->id) }}" class="btn btn-danger btn-sm btn-tooltip" data-toggle="tooltip" data-placement="top" title="Delete Reference Giver">
                                                             <i class="bi bi-trash"></i>
                                                             <span class="btn-text">Delete</span>
                                                         </a>
