@@ -24,7 +24,7 @@
         <form class="m-3 needs-validation" id="meetingMemberRefForm" enctype="multipart/form-data" method="post"
             action="{{ route('refGiver.refByOtherStore') }}" novalidate>
             @csrf
-            <div class="row">
+            {{-- <div class="row">
                 <div class="col-sm-6">
                     <div class="form-check">
                         <input class="form-check-input" type="radio" name="group" id="internal" value="internal"
@@ -42,7 +42,7 @@
                         </label>
                     </div>
                 </div>
-            </div>
+            </div> --}}
             {{-- <div class="row "> --}}
                 {{-- <div class="col-md-6"> --}}
                     {{-- <div class="row pt-5"> --}}

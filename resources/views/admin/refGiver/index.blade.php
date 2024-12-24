@@ -95,7 +95,7 @@
                                         <th>Date</th>
                                         <th>Amount</th>
                                         {{-- <th>Status</th> --}}
-                                        <th>Action</th>
+                                        {{-- <th>Action</th> --}}
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -111,12 +111,12 @@
                                             </td>
                                             <td>{{ $busGiverData->amount ?? '-' }}</td>
                                             {{-- <td>{{ $busGiverData->status }}</td> --}}
-                                            <td>
+                                            {{-- <td>
                                                 <a href="{{ route('busGiver.edit', $busGiverData->id) }}" class="btn btn-bg-orange btn-sm btn-tooltip">
                                                     <i class="bi bi-plus"></i>
                                                     <span class="btn-text">Add Business Amount</span>
                                                 </a>
-                                            </td>
+                                            </td> --}}
                                         </tr>
                                     @endforeach
                                 </tbody>
