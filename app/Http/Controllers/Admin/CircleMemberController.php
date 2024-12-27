@@ -106,7 +106,7 @@ class CircleMemberController extends Controller
 
             $member = $memberQuery->paginate(10);
             $circle = Circle::where('status', 'Active')->get();
-            $bCategory = BusinessCategory::where('status', 'Active')->get();
+            $bCategory = BusinessCategory::where('status', 'Active')->orderBy('categoryName', 'asc')->get();
             $roles = Role::all();
             $membershipType = MembershipType::where('status', 'Active')->get();
 

@@ -7,6 +7,7 @@ use App\Models\Connection;
 use App\Utils\ErrorLogger;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\BusinessCategory;
 use App\Models\Circle;
 use Illuminate\Support\Facades\Auth;
 
@@ -27,8 +28,53 @@ class ConnectionController extends Controller
     public function circleList()
     {
         try {
-            $circles = Circle::where('status', '!=', 'Deleted')->where('status', 'Active')->get();
+            // Fetch circles with member counts
+            $circles = Circle::where('status', 'Active')
+                ->with(['city' => function ($query) {
+                    $query->select('id', 'cityName');
+                }])
+                ->withCount(['members' => function ($query) {
+                    $query->where('status', 'Active'); // Count only active members if needed
+                }])
+                ->get();
+
             return view('admin.connection.circleList', compact('circles'));
+        } catch (\Throwable $th) {
+            // Log the error
+            ErrorLogger::logError(
+                $th,
+                request()->fullUrl()
+            );
+            return view('servererror');
+        }
+    }
+
+    public function showMembers($id)
+    {
+        try {
+            // Fetch circle details and related active members
+            $circle = Circle::with(['members' => function ($query) {
+                $query->where('status', 'Active'); // Fetch only active members
+            }])->findOrFail($id);
+
+            return view('admin.connection.circleWiseMembers', compact('circle'));
+        } catch (\Throwable $th) {
+            // Log the error
+            ErrorLogger::logError(
+                $th,
+                request()->fullUrl()
+            );
+            return view('servererror');
+        }
+    }
+
+
+
+    public function categoryList()
+    {
+        try {
+            $category = BusinessCategory::where('status', 'Active')->paginate(20);
+            return view('admin.connection.categoryList', compact('category'));
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError(

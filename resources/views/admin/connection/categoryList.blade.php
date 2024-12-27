@@ -1,26 +1,19 @@
 @extends('layouts.master')
 @section('content')
     <div class="container mt-5">
-        <h1 class="text-center card-title mb-4">My Circle Connections</h1>
+        <h1 class="text-center card-title mb-4">Category</h1>
         <div class="row">
-            @foreach ($myConnections as $myConnectionsData)
+            @foreach ($category as $categoryData)
                 <div class="col-md-3 mb-4">
-                    <div class="profile-card bg-danger">
+                    <div class="profile-card">
                         <div class="card-body">
                             <!-- Profile Picture -->
-                            <img src="{{ asset($myConnectionsData->profilePicture ?? 'img/profile.png') }}" alt="Profile Picture" class="profile-img mb-3">
-
-                            <!-- Profile Title -->
-                            <p class="profile-title mb-3">Circle Member</p>
+                            <img src="{{ asset($categoryData->profilePicture ?? 'img/logo2.jpg') }}" alt="Profile Picture" class="profile-img mb-3 object-fit-contain">
 
                             <!-- User Name -->
                             <h3 class="profile-name mb-3">
-                                {{ $myConnectionsData->firstName ?? 'N/A' }} {{ $myConnectionsData->lastName ?? 'N/A' }}
+                                {{ $categoryData->categoryName ?? '' }}
                             </h3>
-
-                            <!-- Email -->
-                            <p style="font-size: 14px; color: #1d3268;"><b>{{ $myConnectionsData->user->email ?? 'N/A' }}</b></p>
-
                         </div>
                     </div>
                 </div>
@@ -28,7 +21,7 @@
         </div>
 
         <div class="d-flex justify-content-end custom-pagination">
-            {!! $myConnections->links() !!}
+            {!! $category->links() !!}
         </div>
     </div>
 
@@ -36,7 +29,7 @@
     <style>
         .profile-card {
             width: 250px !important;
-            height: 300px !important;
+            height: 195px !important;
             background-color: #fff !important;
             border-radius: 10px !important;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;

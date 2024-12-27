@@ -158,17 +158,25 @@
         <i class="bi bi-person-heart" style="color: #e76a35"></i><span>My Network</span><i class="bi bi-chevron-down ms-auto" style="color: #e76a35"></i>
     </a>
     <ul id="connection-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-        <li class="nav-item">
-            <a class="nav-link " href="{{ route('connection.connectionRequests') }}">
-                <i class="bi bi-person-heart" style="color: #e76a35"></i>
-                <span>Connection Request</span>
-            </a>
-        </li>
 
         <li class="nav-item">
             <a class="nav-link " href="{{ route('connection.circleList') }}">
                 <i class="bi bi-gear-wide-connected" style="color: #e76a35"></i>
                 <span>Circle</span>
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link " href="{{ route('connection.categoryList') }}">
+                <i class="bi bi-gear-wide-connected" style="color: #e76a35"></i>
+                <span>Category</span>
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link " href="{{ route('connection.connectionRequests') }}">
+                <i class="bi bi-person-heart" style="color: #e76a35"></i>
+                <span>Connection Request</span>
             </a>
         </li>
 

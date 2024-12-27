@@ -31,7 +31,7 @@
             <div class="row mb-3">
                 <div class="col-md-6">
                     <label for="photo" class="form-label">Photo</label>
-                    <input type="file" class="form-control @error('photo') is-invalid @enderror" id="photo" name="photo" accept="image/*" required onchange="previewImage(event, 'photoPreview')">
+                    <input type="file" class="form-control @error('photo') is-invalid @enderror" id="photo" name="photo" accept="image/*" onchange="previewImage(event, 'photoPreview')">
                     <img id="photoPreview" class="mt-2" width="100px" height="100px" src="#" alt="Photo Preview" style="display: none;">
                     @error('photo')
                         <div class="invalid-feedback">
@@ -42,7 +42,7 @@
 
                 <div class="col-md-6">
                     <label for="video" class="form-label">Video</label>
-                    <input type="file" class="form-control @error('video') is-invalid @enderror" id="video" name="video" accept="video/*" required onchange="previewVideo(event, 'videoPreview')">
+                    <input type="file" class="form-control @error('video') is-invalid @enderror" id="video" name="video" accept="video/*" onchange="previewVideo(event, 'videoPreview')">
                     <video id="videoPreview" class="mt-2" width="100px" height="100px" controls style="display: none;">
                         <source src="#" type="video/mp4">
                         Your browser does not support the video tag.

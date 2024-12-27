@@ -1,37 +1,48 @@
 @extends('layouts.master')
 @section('content')
     <div class="container mt-5">
-        <h1 class="text-center card-title mb-4">My Circle Connections</h1>
+        <div class="card">
+            <div class="card-body d-flex justify-content-between align-items-center">
+                <h1 class="card-title mb-0">Members of {{ $circle->circleName }} Circle</h1>
+                <a href="{{ route('connection.circleList') }}" class="btn btn-bg-orange btn-sm" style="justify-content: space-between">BACK</a>
+            </div>
+        </div>
         <div class="row">
-            @foreach ($myConnections as $myConnectionsData)
+            @forelse ($circle->members as $member)
                 <div class="col-md-3 mb-4">
-                    <div class="profile-card bg-danger">
-                        <div class="card-body">
+                    <div class="profile-card">
+                        <div class="card-body mt-3">
                             <!-- Profile Picture -->
-                            <img src="{{ asset($myConnectionsData->profilePicture ?? 'img/profile.png') }}" alt="Profile Picture" class="profile-img mb-3">
+                            <img src="{{ asset($member->profilePhoto ?? 'img/logo2.jpg') }}" alt="Profile Picture" class="profile-img mb-3 object-fit-contain">
 
                             <!-- Profile Title -->
-                            <p class="profile-title mb-3">Circle Member</p>
+                            {{-- <p class="profile-title mb-3">Circle Member</p> --}}
 
                             <!-- User Name -->
-                            <h3 class="profile-name mb-3">
-                                {{ $myConnectionsData->firstName ?? 'N/A' }} {{ $myConnectionsData->lastName ?? 'N/A' }}
+                            <h3 class="profile-name mb-3" style="color: #e76a35">
+                                {{ $member->firstName ?? 'N/A' }} {{ $member->lastName ?? 'N/A' }}
                             </h3>
 
                             <!-- Email -->
-                            <p style="font-size: 14px; color: #1d3268;"><b>{{ $myConnectionsData->user->email ?? 'N/A' }}</b></p>
+                            <p style="font-size: 14px; color: #1d3268;"><b>{{ $member->user->email ?? 'N/A' }}</b></p>
+
+                            <!-- Business Category -->
+                            <h3 class="profile-name mb-3" style="color: #e76a35">
+                                {{ $member->bCategory->categoryName ?? 'N/A' }}
+                            </h3>
+
 
                         </div>
                     </div>
                 </div>
-            @endforeach
+            @empty
+                <p class="text-center">No active members found in this circle.</p>
+            @endforelse
         </div>
-
-        <div class="d-flex justify-content-end custom-pagination">
-            {!! $myConnections->links() !!}
-        </div>
+        {{-- <div class="d-flex justify-content-end custom-pagination">
+            {!! $circle->members->links() !!}
+        </div> --}}
     </div>
-
 
     <style>
         .profile-card {

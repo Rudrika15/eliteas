@@ -1,117 +1,108 @@
 @extends('layouts.master')
 @section('content')
+    <div class="container mt-5">
+        <div class="card">
+            <h1 class="text-center card-title">Circles</h1>
+        </div>
+        <div class="row">
+            @foreach ($circles as $circlesData)
+                <div class="col-md-3 mb-4">
+                    <a href="{{ route('connection.showMembers', $circlesData->id) }}" class="text-decoration-none">
+                        <div class="profile-card">
+                            <div class="card-body">
+                                <img src="{{ asset($circlesData->profilePicture ?? 'img/logo2.jpg') }}" alt="Profile Picture" class="profile-img mb-3 object-fit-contain">
+                                <h3 class="profile-name mb-3" style="color: #e76a35">
+                                    {{ $circlesData->circleName ?? '' }}
+                                </h3>
+                                <h3 class="profile-name mb-3">
+                                    Total Members: {{ $circlesData->members_count ?? '' }}
+                                </h3>
+
+                                <h3 class="profile-name mb-3" style="color: #e76a35">
+                                    {{ $circlesData->city->cityName ?? '' }}
+                                </h3>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            @endforeach
+        </div>
+
+        <div class="d-flex justify-content-end custom-pagination">
+            {{-- {!! $circles->links() !!} --}}
+        </div>
+    </div>
+
+
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #f5f5f5;
-            margin: 0;
-            padding: 0;
+        .profile-card {
+            width: 250px !important;
+            height: 230px !important;
+            background-color: #fff !important;
+            border-radius: 10px !important;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
+            text-align: center !important;
+            margin: auto !important;
+            padding: 15px 0 !important;
+            border: 2px solid #e76a35 !important;
         }
 
-        h1 {
-            margin: 20px 0;
-            color: #333;
+        .profile-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
         }
 
-        .network-container {
-            position: relative;
-            width: 600px;
-            height: 600px;
-            margin: 50px auto;
-            border: 1px solid #ddd;
-            border-radius: 50%;
-            background-color: #fff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .center-logo {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            background-color: white;
-            border: 2px solid #007bff;
+        .card-body {
+            padding: 15px;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            font-weight: bold;
-            color: #333;
-            z-index: 2;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
         }
 
-        .circle {
-            position: absolute;
+        .card-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1d3268;
+            margin-bottom: 10px;
+        }
+
+        .profile-img {
             width: 80px;
             height: 80px;
             border-radius: 50%;
-            background-color: #ff7043;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            font-weight: bold;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            object-fit: cover;
+            margin-bottom: 10px;
+            border: 3px solid #1d3268;
         }
 
-        .line {
-            position: absolute;
-            width: 2px;
+        .profile-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #e76a35;
+            margin-bottom: 5px;
+        }
+
+        .profile-name {
+            font-size: 16px;
+            font-weight: bold;
+            color: #1d3268;
+            margin-bottom: 5px;
+        }
+
+        .profile-details {
+            font-size: 14px;
+            color: #1d3268;
+            margin-bottom: 5px;
+        }
+
+        .custom-pagination .page-link {
+            color: #007bff;
+        }
+
+        .custom-pagination .page-item.active .page-link {
             background-color: #007bff;
-            z-index: 1;
-            transform-origin: top center;
+            border-color: #007bff;
         }
     </style>
-
-    <body>
-        <h1>Circle Network</h1>
-        <div class="network-container" id="network">
-            <div class="center-logo">Company Logo</div>
-            <!-- Circles will be dynamically added here -->
-        </div>
-
-        <script>
-            // Pass the entire circles collection from the backend to JavaScript
-            const circles = @json($circles); // No need for .data anymore
-
-            // Get the container
-            const container = document.getElementById('network');
-
-            // Radius for positioning circles
-            const radius = 250; // Distance from the center
-            const centerX = 300; // Center X-coordinate
-            const centerY = 300; // Center Y-coordinate
-
-            // Add each circle to the container
-            circles.forEach((circle, index) => {
-                const angle = (index / circles.length) * 2 * Math.PI; // Calculate angle
-                const x = centerX + radius * Math.cos(angle) - 40; // Adjust X position
-                const y = centerY + radius * Math.sin(angle) - 40; // Adjust Y position
-
-                const circleDiv = document.createElement('div');
-                circleDiv.className = 'circle';
-                circleDiv.style.left = `${x}px`;
-                circleDiv.style.top = `${y}px`;
-                circleDiv.innerText = circle.circleName; // Display the circle name
-
-                // Create the connection line between the logo and the circle
-                const lineDiv = document.createElement('div');
-                lineDiv.className = 'line';
-
-                const dx = x + 40 - centerX; // Calculate horizontal distance
-                const dy = y + 40 - centerY; // Calculate vertical distance
-                const distance = Math.sqrt(dx * dx + dy * dy); // Calculate distance
-                lineDiv.style.height = `${distance}px`; // Set line height
-                lineDiv.style.top = `${centerY}px`;
-                lineDiv.style.left = `${centerX}px`;
-                lineDiv.style.transform = `rotate(${Math.atan2(dy, dx)}rad)`; // Rotate line to connect
-
-                container.appendChild(lineDiv); // Add line to the container
-                container.appendChild(circleDiv); // Add circle to the container
-            });
-        </script>
-    @endsection
+@endsection

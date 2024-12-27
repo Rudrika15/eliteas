@@ -32,7 +32,7 @@
             <div class="row mb-3">
                 <div class="col-md-6">
                     <label for="photo" class="form-label">Photo</label>
-                    <input type="file" class="form-control @error('photo') is-invalid @enderror" id="photo" name="photo" accept="image/*" value="{{ old('photo', $help->photo) }}" required>
+                    <input type="file" class="form-control @error('photo') is-invalid @enderror" id="photo" name="photo" accept="image/*" value="{{ old('photo', $help->photo) }}">
                     <!-- Display existing photo preview -->
                     <img id="photoPreview" src="{{ $help->photo ? asset('help/' . $help->photo) : '' }}" class="mt-2" width="100px" height="100px" style="display: {{ $help->photo ? '' : 'none' }};">
                     @error('photo')
@@ -44,7 +44,7 @@
 
                 <div class="col-md-6">
                     <label for="video" class="form-label">Video</label>
-                    <input type="file" class="form-control @error('video') is-invalid @enderror" id="video" name="video" accept="video/*" value="{{ old('video', $help->video) }}" required>
+                    <input type="file" class="form-control @error('video') is-invalid @enderror" id="video" name="video" accept="video/*" value="{{ old('video', $help->video) }}">
                     <!-- Display existing video preview -->
                     <video id="videoPreview" class="mt-2" width="100px" height="100px" controls style="display: {{ $help->video ? '' : 'none' }};">
                         <source src="{{ $help->video ? asset('help/' . $help->video) : '' }}" type="video/mp4">

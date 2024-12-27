@@ -412,7 +412,7 @@
                             <div class="col">
                                 <div class="profile-card">
                                     <div class="card-body">
-                                        <img src="{{ asset('ProfilePhoto/' . ($circlecalls['member']->profilePhoto ?? 'profile.png')) }}" alt="Profile Photo" class="profile-img mb-3">
+                                        <img src="{{ asset('ProfilePhoto/' . ($circlecalls['member']->profilePhoto ?? 'profile.png')) }}" alt="Profile Photo" class="profile-img mb-3 ">
                                         <p class="profile-title mb-3">Max Business Meets</p>
                                         <h3 class="profile-name mb-3">{{ $circlecalls['member']->firstName }} {{ $circlecalls['member']->lastName }}</h3>
                                         <p style="font-size: 14px; color: #1d3268;">Circle: <b>{{ $circlecalls['member']->circle->circleName }}</b></p>
@@ -863,8 +863,8 @@
 
                         // Function to initialize Razorpay and proceed with payment
                         function proceedWithPayment(amount) {
-                            // var razorpayKey = "{{ env('RAZORPAY_KEY') }}";
-                            var razorpayKey = "rzp_test_VVNmvqg0nEoaOf";
+                            var razorpayKey = "{{ env('RAZORPAY_KEY') }}";
+                            // var razorpayKey = "rzp_test_VVNmvqg0nEoaOf";
                             var username = "{{ Auth::user()->name }}";
                             var useremail = "{{ Auth::user()->email }}";
 
@@ -1032,8 +1032,8 @@
                             button.addEventListener('click', function() {
                                 var amount = parseInt(button.getAttribute('data-amount')) * 100; // Convert to paise
 
-                                // var razorpayKey = "{{ env('RAZORPAY_KEY') }}";
-                                var razorpayKey = "rzp_test_VVNmvqg0nEoaOf";
+                                var razorpayKey = "{{ env('RAZORPAY_KEY') }}";
+                                // var razorpayKey = "rzp_test_VVNmvqg0nEoaOf";
 
                                 if (!razorpayKey) {
                                     Swal.fire({
@@ -1632,8 +1632,8 @@
 
                     console.log('amount:', amount);
 
-                    // var razorpayKey = "{{ env('RAZORPAY_KEY') }}";
-                    var razorpayKey = "rzp_test_VVNmvqg0nEoaOf";
+                    var razorpayKey = "{{ env('RAZORPAY_KEY') }}";
+                    // var razorpayKey = "rzp_test_VVNmvqg0nEoaOf";
                     console.log('Razorpay Key:', razorpayKey);
 
                     // Ensure that the Razorpay key is available

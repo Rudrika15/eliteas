@@ -501,10 +501,15 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/connections/connectionRequests', [ConnectionController::class, 'connectionRequests'])->name('connection.connectionRequests');
     Route::get('/connections/myConnections', [ConnectionController::class, 'myConnections'])->name('connection.myConnections');
     Route::get('/connections/circleList', [ConnectionController::class, 'circleList'])->name('connection.circleList');
+    Route::get('/connections/categoryList', [ConnectionController::class, 'categoryList'])->name('connection.categoryList');
     Route::get('/connections/myCircleConnections', [ConnectionController::class, 'myCircleConnections'])->name('connection.myCircleConnections');
     Route::get('/connections/accept/{id?}', [ConnectionController::class, 'accept'])->name('connection.accept');
     Route::get('/connections/reject/{id?}', [ConnectionController::class, 'reject'])->name('connection.reject');
     Route::get('/connections/removeConnection/{id?}', [ConnectionController::class, 'removeConnection'])->name('connection.removeConnection');
+    Route::get('/connections/{id}/members', [ConnectionController::class, 'showMembers'])->name('connection.showMembers');
+
+
+
 
     Route::get('/member-subscription', [MembershipSubscriptionController::class, 'index'])->name('subscription.memberSubscription');
     Route::get('/member-subscription-all', [MembershipSubscriptionController::class, 'memberData'])->name('subscription.memberSubscription.admin');
