@@ -500,6 +500,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/connect', [ConnectionController::class, 'connect'])->name('connect');
     Route::get('/connections/connectionRequests', [ConnectionController::class, 'connectionRequests'])->name('connection.connectionRequests');
     Route::get('/connections/myConnections', [ConnectionController::class, 'myConnections'])->name('connection.myConnections');
+    Route::get('/connections/circleList', [ConnectionController::class, 'circleList'])->name('connection.circleList');
     Route::get('/connections/myCircleConnections', [ConnectionController::class, 'myCircleConnections'])->name('connection.myCircleConnections');
     Route::get('/connections/accept/{id?}', [ConnectionController::class, 'accept'])->name('connection.accept');
     Route::get('/connections/reject/{id?}', [ConnectionController::class, 'reject'])->name('connection.reject');

@@ -7,6 +7,7 @@ use App\Models\Connection;
 use App\Utils\ErrorLogger;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Circle;
 use Illuminate\Support\Facades\Auth;
 
 class ConnectionController extends Controller
@@ -23,6 +24,20 @@ class ConnectionController extends Controller
         $this->middleware('permission:connection-remove', ['only' => ['removeConnection']]);
     }
 
+    public function circleList()
+    {
+        try {
+            $circles = Circle::where('status', '!=', 'Deleted')->where('status', 'Active')->get();
+            return view('admin.connection.circleList', compact('circles'));
+        } catch (\Throwable $th) {
+            // throw $th;
+            ErrorLogger::logError(
+                $th,
+                request()->fullUrl()
+            );
+            return view('servererror');
+        }
+    }
 
     public function connect(Request $request)
     {

@@ -166,6 +166,13 @@
         </li>
 
         <li class="nav-item">
+            <a class="nav-link " href="{{ route('connection.circleList') }}">
+                <i class="bi bi-gear-wide-connected" style="color: #e76a35"></i>
+                <span>Circle</span>
+            </a>
+        </li>
+
+        <li class="nav-item">
             <a class="nav-link " href="{{ route('connection.myConnections') }}">
                 <i class="bi bi-gear-wide-connected" style="color: #e76a35"></i>
                 <span>My Connection</span>
