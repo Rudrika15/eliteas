@@ -1,0 +1,27 @@
+[
+    {
+        "name": "Elsener",
+        "image": "elsner1.png",
+        "category": "Gold"
+    },
+    {
+        "name": "Zero",
+        "image": "zero2.png",
+        "category": "Silver"
+    },
+    {
+        "name": "Factor HR",
+        "image": "factorHR3.png",
+        "category": "Supporting"
+    },
+    {
+        "name": "Razorpay",
+        "image": "razorpay4.jpeg",
+        "category": "IT Industry"
+    },
+    {
+        "name": "Razorpay",
+        "image": "razorpay4.jpeg",
+        "category": "Exhibitors"
+    }
+]

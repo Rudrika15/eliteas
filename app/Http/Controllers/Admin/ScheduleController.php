@@ -1,0 +1,248 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use DataTables;
+use App\Models\User;
+use App\Models\Circle;
+use App\Models\Schedule;
+use App\Models\Franchise;
+use App\Utils\ErrorLogger;
+use Illuminate\Http\Request;
+use App\Models\MeetingInvitation;
+use Illuminate\Support\Facades\URL;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Hash;
+
+class ScheduleController extends Controller
+{
+
+
+    public function __construct()
+    {
+        // Apply middleware for event-related permissions
+        $this->middleware('permission:schedule-index', ['only' => ['index', 'view']]);
+        $this->middleware('permission:schedule-show', ['only' => ['show']]);
+        $this->middleware('permission:schedule-create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:schedule-edit', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:schedule-delete', ['only' => ['delete']]);
+        $this->middleware('permission:schedule-filter', ['only' => ['filter']]);
+        $this->middleware('permission:schedule-dash-index', ['only' => ['dashIndex']]);
+        $this->middleware('permission:schedule-dash-edit', ['only' => ['dashEdit', 'dashUpdate']]);
+        $this->middleware('permission:schedule-invited-list', ['only' => ['invitedList']]);
+    }
+
+
+    public function index(Request $request)
+    {
+        try {
+
+            $schedules = Schedule::where('status', 'Active')->paginate(10);
+            $circles = Circle::where('status', 'Active')->get();
+            return view('admin.schedule.index', compact('schedules', 'circles'));
+        } catch (\Throwable $th) {
+            // throw $th;
+            ErrorLogger::logError($th, request()->fullUrl());
+            return view('servererror');
+        }
+    }
+
+    public function filter(Request $request)
+    {
+        $circle = $request->input('circle');
+        $schedules = Schedule::with('circle')
+            ->when($circle, function ($query, $circle) {
+                return $query->whereHas('circle', function ($query) use ($circle) {
+                    $query->where('circleName', 'like', '%' . $circle . '%');
+                });
+            })
+            ->get();
+
+        return response()->json(['schedules' => $schedules]);
+    }
+
+
+    public function show(Request $request, $id)
+    {
+        try {
+            $schedules = Schedule::findOrFail($id);
+            return response()->json($schedules);
+        } catch (\Throwable $th) {
+            //throw $th;
+            ErrorLogger::logError(
+                $th,
+                request()->fullUrl()
+            );
+            return view('servererror');
+        }
+    }
+
+    public function create()
+    {
+        try {
+            $schedules = Schedule::all();
+            return view('admin.schedule.create', compact('schedules'));
+        } catch (\Throwable $th) {
+            //throe $th;
+            ErrorLogger::logError(
+                $th,
+                request()->fullUrl()
+            );
+            return view('servererror');
+        }
+    }
+
+    public function store(Request $request)
+    {
+        $this->validate($request, [
+            // 'venue' => 'required',
+            // 'meetingTime' => 'required',
+            // 'remarks' => 'required',
+        ]);
+
+        try {
+            $schedules = new Schedule();
+            $schedules->venue = $request->venue;
+            $schedules->meetingTime = $request->meetingTime;
+            $schedules->remarks = $request->remarks;
+            $schedules->save();
+
+            return redirect()->route('schedule.index')->with('success', 'Mettting Created Successfully!');
+        } catch (\Throwable $th) {
+            // throw $th;
+            ErrorLogger::logError($th, request()->fullUrl());
+            return view('servererror');
+        }
+    }
+
+
+    public function edit(Request $request, $id)
+    {
+        try {
+            $schedules = Schedule::find($id);
+            return view('admin.schedule.edit', compact('schedules'));
+        } catch (\Throwable $th) {
+            // throw $th;
+            ErrorLogger::logError($th, request()->fullUrl());
+            return view('servererror');
+        }
+    }
+
+    public function update(Request $request)
+    {
+        $this->validate($request, [
+            'id' => 'required|exists:schedules,id',
+            // 'venue' => 'required',
+            // 'meetingTime' => 'required',
+            // 'remarks' => 'required',
+        ]);
+
+        try {
+            $schedules = Schedule::find($request->id);
+
+            if (!$schedules) {
+                return redirect()->route('schedule.index')->with('error', 'Schedule not found.');
+            }
+
+            $schedules->venue = $request->venue;
+            $schedules->meetingTime = $request->meetingTime;
+            $schedules->date = $request->date;
+            $schedules->remarks = $request->remarks;
+            $schedules->save();
+
+            return redirect()->route('schedule.index')->with('success', 'Schedule details updated successfully.');
+        } catch (\Throwable $th) {
+            // throw $th;
+            ErrorLogger::logError($th, request()->fullUrl());
+            return redirect()->route('schedule.index')->with('error', 'Failed to update Schedule details.');
+        }
+    }
+
+
+    public function delete($id)
+    {
+        try {
+            $schedules = Schedule::find($id);
+
+            if (!$schedules) {
+                return redirect()->route('schedule.index')->with('error', 'Schedule not found.');
+            }
+
+            $schedules->status = 'Deleted';
+            $schedules->save();
+
+            return redirect()->route('schedule.index')->with('success', 'Schedule deleted successfully.');
+        } catch (\Throwable $th) {
+            // throw $th;
+            ErrorLogger::logError($th, request()->fullUrl());
+            return redirect()->route('schedule.index')->with('error', 'Failed to delete Schedule.');
+        }
+    }
+
+    public function dashIndex(Request $request)
+    {
+        try {
+
+            $schedules = Schedule::where('status', 'Active')->get();
+            return view('admin.schedule.dashIndex', compact('schedules'));
+        } catch (\Throwable $th) {
+            // throw $th;
+            ErrorLogger::logError($th, request()->fullUrl());
+            return view('servererror');
+        }
+    }
+
+    public function dashEdit(Request $request, $id)
+    {
+        try {
+            $schedules = Schedule::find($id);
+            return view('admin.schedule.dashEdit', compact('schedules'));
+        } catch (\Throwable $th) {
+            // throw $th;
+            ErrorLogger::logError($th, request()->fullUrl());
+            return view('servererror');
+        }
+    }
+
+    public function dashUpdate(Request $request)
+    {
+        $this->validate($request, [
+            'id' => 'required|exists:schedules,id',
+            'venue' => 'required',
+            'meetingTime' => 'required',
+            'remarks' => 'required',
+        ]);
+
+        try {
+            $schedules = Schedule::find($request->id);
+
+            if (!$schedules) {
+                return redirect()->route('schedule.dashboardIndex')->with('error', 'Schedule not found.');
+            }
+
+            $schedules->venue = $request->venue;
+            $schedules->meetingTime = $request->meetingTime;
+            $schedules->remarks = $request->remarks;
+            $schedules->save();
+
+            return redirect()->route('schedule.dashIndex')->with('success', 'Schedule details updated successfully.');
+        } catch (\Throwable $th) {
+            // throw $th;
+            ErrorLogger::logError($th, request()->fullUrl());
+            return redirect()->route('schedule.dashIndex')->with('error', 'Failed to update Schedule details.');
+        }
+    }
+
+    public function invitedList(Request $request, $id)
+    {
+        try {
+            $schedules = Schedule::findOrFail($id);
+            $invitedPersonList = MeetingInvitation::where('meetingId', $id)->paginate(10);
+            return view('admin.schedule.invitedList', compact('schedules', 'invitedPersonList'));
+        } catch (\Throwable $th) {
+            // throw $th;
+            ErrorLogger::logError($th, request()->fullUrl());
+            return view('servererror');
+        }
+    }
+}

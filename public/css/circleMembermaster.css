@@ -1,0 +1,69 @@
+.circle-image {
+    width: 30px;
+    height: 30px;
+    background-color: #144681;
+    /* Blue color */
+    border-radius: 50%;
+    /* Make it round */
+    font-size: 18px;
+    line-height: 30px;
+    /* Center the text vertically */
+    color: #fff;
+    /* White text color */
+    margin: auto;
+    /* Center the circle */
+}
+
+.circle-card {
+    border: 1px solid #dee2e6;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.circle-card.active {
+    background-color: #144681;
+    color: #fff !important;
+
+    .circle-image {
+        background-color: #fff;
+        color: #144681;
+        font-weight: bold;
+    }
+}
+
+.circle-contact-card {
+    border: 1px solid #dee2e6;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.circle-contact-card.active {
+    background-color: #144681;
+    color: #fff !important;
+
+    .circle-image {
+        background-color: #fff;
+        color: #144681;
+        font-weight: bold;
+    }
+}
+
+.circle-contact-card-one {
+    border: 1px solid #dee2e6;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.circle-contact-card-one.active {
+    background-color: #144681;
+    color: #fff !important;
+
+    .circle-image {
+        background-color: #fff;
+        color: #144681;
+        font-weight: bold;
+    }
+}
