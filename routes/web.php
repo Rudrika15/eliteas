@@ -507,6 +507,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/connections/reject/{id?}', [ConnectionController::class, 'reject'])->name('connection.reject');
     Route::get('/connections/removeConnection/{id?}', [ConnectionController::class, 'removeConnection'])->name('connection.removeConnection');
     Route::get('/connections/{id}/members', [ConnectionController::class, 'showMembers'])->name('connection.showMembers');
+    Route::get('/connection/{id}/showCategoryWiseMembers', [ConnectionController::class, 'showCategoryWiseMembers'])->name('connection.showCategoryWiseMembers');
+
 
 
 

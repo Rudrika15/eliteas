@@ -1,43 +1,45 @@
 @extends('layouts.master')
 @section('content')
     <div class="container mt-5">
-        <h1 class="text-center card-title mb-4">Category</h1>
-        <div class="row">
-            @foreach ($categories as $categoryData)
-                <div class="col-md-3 mb-4">
-                    <a href="{{ route('connection.showCategoryWiseMembers', $categoryData->id) }}" class="text-decoration-none">
-                        <div class="profile-card">
-                            <div class="card-body">
-                                <!-- Profile Picture -->
-                                <img src="{{ asset($categoryData->profilePicture ?? 'img/logo2.jpg') }}" alt="Profile Picture" class="profile-img mb-3 object-fit-contain">
-
-                                <!-- Category Name -->
-                                <h3 class="profile-name mb-3" style="color: #e76a35">
-                                    {{ $categoryData->categoryName ?? '' }}
-                                </h3>
-
-                                <!-- Total Members -->
-                                <h3 class="profile-name mb-3">
-                                    Total Members: {{ $categoryData->members_count ?? '' }}
-                                </h3>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-            @endforeach
+        <div class="card">
+            <div class="p-3 d-flex justify-content-between">
+                <h1 class="card-title mb-0 p-0">Members of {{ $category->categoryName }} Category</h1>
+                <a href="{{ route('connection.categoryList') }}" class="btn btn-bg-orange btn-sm mb-0 pb-0 ">BACK</a>
+            </div>
         </div>
+        <div class="row">
+            @forelse ($members as $member)
+                <div class="col-md-3 mb-4">
+                    <div class="profile-card">
+                        <div class="card-body mt-3">
+                            <!-- Profile Picture -->
+                            <img src="{{ asset($member->profilePhoto ?? 'img/logo2.jpg') }}" alt="Profile Picture" class="profile-img mb-3 object-fit-contain">
 
-        <div class="d-flex justify-content-end custom-pagination">
-            {{-- {!! $categories->links() !!} --}}
+                            <!-- User Name -->
+                            <h3 class="profile-name mb-3" style="color: #e76a35">
+                                {{ $member->firstName ?? 'N/A' }} {{ $member->lastName ?? 'N/A' }}
+                            </h3>
+
+                            <!-- Email -->
+                            <p style="font-size: 14px; color: #1d3268;"><b>{{ $member->user->email ?? 'N/A' }}</b></p>
+
+                            <!-- Business Category -->
+                            <h3 class="profile-name mb-3" style="color: #e76a35">
+                                {{ $category->categoryName ?? 'N/A' }}
+                            </h3>
+                        </div>
+                    </div>
+                </div>
+            @empty
+                <p class="text-center">No active members found in this category.</p>
+            @endforelse
         </div>
     </div>
-
-
 
     <style>
         .profile-card {
             width: 250px !important;
-            height: 195px !important;
+            height: 300px !important;
             background-color: #fff !important;
             border-radius: 10px !important;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;

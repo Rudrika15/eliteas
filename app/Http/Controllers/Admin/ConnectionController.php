@@ -70,13 +70,40 @@ class ConnectionController extends Controller
 
 
 
+    // public function categoryList()
+    // {
+    //     try {
+    //         $category = BusinessCategory::where('status', 'Active')->paginate(20);
+    //         return view('admin.connection.categoryList', compact('category'));
+    //     } catch (\Throwable $th) {
+    //         // throw $th;
+    //         ErrorLogger::logError(
+    //             $th,
+    //             request()->fullUrl()
+    //         );
+    //         return view('servererror');
+    //     }
+    // }
+
     public function categoryList()
     {
         try {
-            $category = BusinessCategory::where('status', 'Active')->paginate(20);
-            return view('admin.connection.categoryList', compact('category'));
+            // Fetch categories that have members in the members table
+            $categories = BusinessCategory::where('status', 'Active')
+                ->whereHas('members', function ($query) {
+                    $query->where('status', 'Active'); // Only consider active members
+                })
+                ->withCount(['members' => function ($query) {
+                    $query->where('status', 'Active'); // Count only active members
+                }])
+                ->with(['members' => function ($query) {
+                    $query->where('status', 'Active'); // Load only active members
+                }])
+                ->get();
+
+            return view('admin.connection.categoryList', compact('categories'));
         } catch (\Throwable $th) {
-            // throw $th;
+            // Log the error
             ErrorLogger::logError(
                 $th,
                 request()->fullUrl()
@@ -84,6 +111,32 @@ class ConnectionController extends Controller
             return view('servererror');
         }
     }
+
+    public function showCategoryWiseMembers($id)
+    {
+        try {
+            // Fetch category details
+            $category = BusinessCategory::where('id', $id)->where('status', 'Active')->firstOrFail();
+
+            // Fetch active members related to this category
+            $members = Member::where('businessCategoryId', $id)
+                ->where('status', 'Active')
+                ->get();
+
+            return view('admin.connection.categoryWiseMembers', compact('category', 'members'));
+        } catch (\Throwable $th) {
+            // Log the error
+            ErrorLogger::logError(
+                $th,
+                request()->fullUrl()
+            );
+            return view('servererror');
+        }
+    }
+
+
+
+
 
     public function connect(Request $request)
     {

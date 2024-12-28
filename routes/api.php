@@ -308,6 +308,8 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/leaderboards/max-referral', [LeaderBoardController::class, 'maxRefferal']);
     Route::get('/leaderboards/max-visitor', [LeaderBoardController::class, 'maxVisitor']);
 
+    Route::get('/leaderboard/circle-wise', [LeaderBoardController::class, 'circleWiseLeaderboardAPI']);
+
 
     //location
     Route::get('/userLocation/index', [LocationController::class, 'index']);
@@ -398,6 +400,9 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('v1/connections/removeConnection', [ConnectionController::class, 'removeConnection']);
     Route::post('v1/connections/viewMemberProfile', [ConnectionController::class, 'viewMemberProfile']);
     Route::get('v1/connections/ConnectionsRequests', [ConnectionController::class, 'ConnectionsRequests']);
+
+    Route::get('/connections/getCircleMembers/{id?}', [ConnectionController::class, 'getCircleMembers']);
+    Route::get('/connections/getCategoryMembers/{id?}', [ConnectionController::class, 'getCategoryMembers']);
 
     //change password
     Route::post('v1/change-password', [ApiController::class, 'changePassword']);

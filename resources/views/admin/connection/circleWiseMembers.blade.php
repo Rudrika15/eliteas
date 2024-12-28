@@ -2,11 +2,12 @@
 @section('content')
     <div class="container mt-5">
         <div class="card">
-            <div class="card-body d-flex justify-content-between align-items-center">
-                <h1 class="card-title mb-0">Members of {{ $circle->circleName }} Circle</h1>
-                <a href="{{ route('connection.circleList') }}" class="btn btn-bg-orange btn-sm" style="justify-content: space-between">BACK</a>
+            <div class="p-3 d-flex justify-content-between">
+                <h1 class="card-title mb-0 p-0">Members of {{ $circle->circleName }} Circle</h1>
+                <a href="{{ route('connection.circleList') }}" class="btn btn-bg-orange btn-sm mb-0 pb-0 ">BACK</a>
             </div>
         </div>
+
         <div class="row">
             @forelse ($circle->members as $member)
                 <div class="col-md-3 mb-4">
@@ -14,6 +15,14 @@
                         <div class="card-body mt-3">
                             <!-- Profile Picture -->
                             <img src="{{ asset($member->profilePhoto ?? 'img/logo2.jpg') }}" alt="Profile Picture" class="profile-img mb-3 object-fit-contain">
+
+                            {{-- @if ($member->profilePhoto)
+                                <img src="{{ asset($member->profilePhoto) }}" alt="Profile Picture" class="profile-img mb-3 object-fit-contain">
+                            @else
+                                <div class="profile-placeholder mb-3">
+                                    {{ strtoupper(substr($member->firstName ?? 'N', 0, 1)) }}{{ strtoupper(substr($member->lastName ?? 'A', 0, 1)) }}
+                                </div>
+                            @endif --}}
 
                             <!-- Profile Title -->
                             {{-- <p class="profile-title mb-3">Circle Member</p> --}}

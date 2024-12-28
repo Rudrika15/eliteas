@@ -10,12 +10,17 @@ class BusinessCategory extends Model
     use HasFactory;
 
     protected $fillable = [
-       'categoryName',
-       'categoryIcon'
+        'categoryName',
+        'categoryIcon'
     ];
 
     public function member()
     {
         return $this->belongsTo(Member::class, 'memberId', 'id');
+    }
+
+    public function members()
+    {
+        return $this->hasMany(Member::class, 'businessCategoryId', 'id');
     }
 }

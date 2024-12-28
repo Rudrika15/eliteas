@@ -8,6 +8,9 @@ use App\Models\Member;
 use App\Models\Connection;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\BusinessCategory;
+use App\Models\Circle;
+use App\Utils\ErrorLogger;
 use Illuminate\Support\Facades\Auth;
 
 class ConnectionController extends Controller
@@ -257,6 +260,96 @@ class ConnectionController extends Controller
             return Utils::errorResponse([
                 'error' => $th->getMessage()
             ], 'Internal Server Error', 500);
+        }
+    }
+
+
+    public function getCircleMembers($id = null)
+    {
+        try {
+            // If ID is provided, show details for the specific circle
+            if ($id) {
+                // Fetch circle details and related active members
+                $circle = Circle::with(['members' => function ($query) {
+                    $query->where('status', 'Active'); // Fetch only active members
+                }])->findOrFail($id);
+
+                // Return the circle and its active members as JSON
+                return response()->json([
+                    'circle' => $circle,
+                    'members' => $circle->members,
+                ]);
+            }
+
+            // If no ID is provided, return the list of circles
+            $circles = Circle::where('status', 'Active')
+                ->with(['city' => function ($query) {
+                    $query->select('id', 'cityName');
+                }])
+                ->withCount(['members' => function ($query) {
+                    $query->where('status', 'Active'); // Count only active members if needed
+                }])
+                ->get();
+
+            // Return the list of circles with member count as JSON
+            return response()->json([
+                'circles' => $circles,
+            ]);
+        } catch (\Throwable $th) {
+            // Log the error
+            ErrorLogger::logError($th, request()->fullUrl());
+            return response()->json([
+                'error' => 'An error occurred. Please try again later.',
+            ], 500);
+        }
+    }
+
+
+    public function getCategoryMembers($id = null)
+    {
+        try {
+            // If ID is provided, show details for the specific category and its active members
+            if ($id) {
+                // Fetch category details
+                $category = BusinessCategory::where('id', $id)
+                    ->where('status', 'Active')
+                    ->firstOrFail();
+
+                // Fetch active members related to this category
+                $members = Member::where('businessCategoryId', $id)
+                    ->where('status', 'Active')
+                    ->get();
+
+                // Return the category and its members as JSON
+                return response()->json([
+                    'category' => $category,
+                    'members' => $members,
+                ]);
+            }
+
+            // If no ID is provided, return the list of categories with active members
+            $categories = BusinessCategory::where('status', 'Active')
+                ->whereHas('members', function ($query) {
+                    $query->where('status', 'Active'); // Only consider active members
+                })
+                ->withCount(['members' => function ($query) {
+                    $query->where('status', 'Active'); // Count only active members
+                }])
+                ->with(['members' => function ($query) {
+                    $query->where('status', 'Active'); // Load only active members
+                }])
+                ->get();
+
+            // Return the list of categories with member count and members as JSON
+            return response()->json([
+                'categories' => $categories,
+            ]);
+        } catch (\Throwable $th) {
+            // Log the error
+            ErrorLogger::logError($th, request()->fullUrl());
+            return response()->json([
+                'error' => 'An error occurred. Please try again later.',
+            ], 500);
         }
     }
 }
