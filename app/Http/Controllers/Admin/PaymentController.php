@@ -436,6 +436,7 @@ class PaymentController extends Controller
     public function monthlyPayments(Request $request)
     {
         $status = $request->input('status');
+        $circles = Circle::where('status', 'Active')->get();
 
         // If status is provided, filter by the given status (paid/unpaid)
         if ($status) {
@@ -445,32 +446,74 @@ class PaymentController extends Controller
             $monthlyPayments = MonthlyPayment::paginate(10);
         }
 
-        return view('admin.paymentHistory.monthlyPayments', compact('monthlyPayments', 'status'));
+        return view('admin.paymentHistory.monthlyPayments', compact('monthlyPayments', 'status', 'circles'));
     }
+
+
+    // public function generateMonthlyPayment(Request $request)
+    // {
+    //     // Get the current month and year in 'F - Y' format (e.g., "September - 2024")
+    //     $currentMonth = $request->month . " - " . now()->format('Y');
+
+    //     // Check if there are any records for the current month
+    //     $existingPayments = DB::table('monthly_payments')
+    //         ->where('month', $currentMonth)
+    //         ->exists();
+
+    //     // If payments for the current month already exist, return with a warning message
+    //     if ($existingPayments) {
+    //         return redirect()->back()->with('warning', "Current Months Payments are allready Generated.");
+    //     }
+
+    //     // Get all active members from the 'members' table
+    //     $members = Member::where('status', 'Active')->get();
+
+    //     // Insert monthly payment record for each member
+    //     foreach ($members as $member) {
+    //         DB::table('monthly_payments')->insert([
+    //             'memberId' => $member->id,
+    //             'status' => 'unpaid',
+    //             'paymentDate' => null,
+    //             'month' => $currentMonth,
+    //             'created_at' => now(),
+    //             'updated_at' => now(),
+    //         ]);
+    //     }
+
+    //     return redirect()->back()->with('success', 'Monthly payments generated successfully!');
+    // }
 
 
     public function generateMonthlyPayment(Request $request)
     {
-        // Get the current month and year in 'F - Y' format (e.g., "September - 2024")
-        $currentMonth = $request->month . " - " . now()->format('Y');
+        $request->validate([
+            'month' => 'required|string',
+            'circleId' => 'required|integer|exists:circles,id',
+        ]);
 
-        // Check if there are any records for the current month
+        $currentMonth = $request->month . " - " . now()->format('Y');
+        $circleId = $request->circleId;
+
+        // Check if payments for the current month and circle already exist
         $existingPayments = DB::table('monthly_payments')
             ->where('month', $currentMonth)
+            ->whereIn('memberId', function ($query) use ($circleId) {
+                $query->select('id')->from('members')->where('circleId', $circleId);
+            })
             ->exists();
 
-        // If payments for the current month already exist, return with a warning message
         if ($existingPayments) {
-            return redirect()->back()->with('warning', "Current Months Payments are allready Generated.");
+            return redirect()->back()->with('warning', "Payments for the selected circle and month are already generated.");
         }
 
-        // Get all active members from the 'members' table
-        $members = Member::where('status', 'Active')->get();
+        // Get all active members in the selected circle
+        $members = Member::where('status', 'Active')->where('circleId', $circleId)->get();
 
         // Insert monthly payment record for each member
         foreach ($members as $member) {
             DB::table('monthly_payments')->insert([
                 'memberId' => $member->id,
+                'circleId' => $circleId,
                 'status' => 'unpaid',
                 'paymentDate' => null,
                 'month' => $currentMonth,
@@ -479,8 +522,9 @@ class PaymentController extends Controller
             ]);
         }
 
-        return redirect()->back()->with('success', 'Monthly payments generated successfully!');
+        return redirect()->back()->with('success', 'Monthly payments generated successfully for the selected circle!');
     }
+
 
 
     public function updatePaymentStatus(Request $request)

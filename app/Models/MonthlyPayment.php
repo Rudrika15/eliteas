@@ -13,4 +13,9 @@ class MonthlyPayment extends Model
     {
         return $this->belongsTo(Member::class, 'memberId', 'id');
     }
+
+    public function circles()
+    {
+        return $this->belongsTo(Circle::class, 'circleId', 'id');
+    }
 }

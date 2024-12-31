@@ -10,8 +10,16 @@
                     <h4 class="card-title">Monthly Payment</h4>
                     @role('Admin')
                         <form action="{{ route('generate.payment') }}" method="GET" class="d-flex align-items-center">
-                            <select name="month" class="form-select form-select-sm me-2" required
-                                onchange="this.form.querySelector('button').disabled = !this.value;">
+
+                            <select name="circleId" class="form-select form-select-sm me-2" required    >
+                                <option value="" selected disabled>Select Circle</option>
+                                @foreach ($circles as $circle)
+                                    <option value="{{ $circle->id }}">{{ $circle->circleName }}</option>
+                                @endforeach
+                            </select>
+
+
+                            <select name="month" class="form-select form-select-sm me-2" required onchange="this.form.querySelector('button').disabled = !this.value;">
                                 <option value="" selected disabled>Select Month</option>
                                 <option value="January">January</option>
                                 <option value="February">February</option>
@@ -38,6 +46,7 @@
                         <thead>
                             <tr>
                                 <th>S.No</th>
+                                <th>Circle Name</th>
                                 <th>Member Name</th>
                                 <th>Payment Date</th>
                                 <th>Month & Year</th>
@@ -49,6 +58,7 @@
                                 <tr>
                                     <th>{{ ($monthlyPayments->currentPage() - 1) * $monthlyPayments->perPage() + $loop->index + 1 }}
                                     </th>
+                                    <td>{{ $payment->circles->circleName ?? '-' }}</td>
                                     <td>{{ $payment->members->firstName ?? '-' }} {{ $payment->members->lastName ?? '-' }}
                                     </td>
                                     <td>{{ $payment->paymentDate ? date('d-m-Y', strtotime($payment->paymentDate)) : '-' }}
