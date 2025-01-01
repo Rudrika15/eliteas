@@ -111,8 +111,8 @@ class BusinessCategoryController extends Controller
     {
         $this->validate($request, [
             'id' => 'required|exists:business_categories,id',
-            'categoryName' => 'required|unique:business_categories,categoryName',
-            // 'categoryIcon' => 'required',
+            'categoryName' => 'required|unique:business_categories,categoryName,' . $request->id, // Ensure the current record is excluded from the uniqueness check
+            'categoryIcon' => 'nullable|file|image|max:2048',
         ]);
 
         try {

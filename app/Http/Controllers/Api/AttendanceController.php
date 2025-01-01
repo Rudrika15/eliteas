@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\CircleMeetingsAttendances;
 use App\Models\MeetingInvitation;
 use App\Models\Schedule;
+use App\Utils\ErrorLogger;
 use App\Utils\Utils;
 
 class AttendanceController extends Controller
@@ -81,14 +82,14 @@ class AttendanceController extends Controller
     {
         try {
 
-            
+
 
             $validatedData = $request->validate([
                 'userId' => 'array',
                 'userId.*' => 'integer|exists:users,id',
                 // 'personName' => 'array',
-                'circleId' => 'required|integer|exists:circles,id',
-                'meetingId' => 'required|integer|exists:schedules,id',
+                'circleId' => 'required|integer',
+                'meetingId' => 'required|integer',
             ]);
 
             $userIds = $request->input('userId', []);
@@ -106,6 +107,7 @@ class AttendanceController extends Controller
 
             return Utils::sendResponse([], 'Attendance successfully recorded', 200);
         } catch (\Throwable $th) {
+            ErrorLogger::logError($th, request()->fullUrl());
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
@@ -116,8 +118,8 @@ class AttendanceController extends Controller
             $validatedData = $request->validate([
                 'personName' => 'array',
                 'personName.*' => 'string',
-                'circleId' => 'required|integer|exists:circles,id',
-                'meetingId' => 'required|integer|exists:schedules,id',
+                'circleId' => 'required|integer',
+                'meetingId' => 'required|integer',
             ]);
 
             $personNames = $request->input('personName', []);

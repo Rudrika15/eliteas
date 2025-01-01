@@ -2,210 +2,255 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8">
-    <meta content="width=device-width, initial-scale=1.0" name="viewport">
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-    <meta content="" name="description">
-    <meta content="" name="keywords">
+    <!-- Bootstrap CSS -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            height: 100vh;
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+        }
 
-    <!-- Favicons -->
-    <link href="{{ asset('img/favicon.png') }}" rel="icon" />
-    <link href="{{ asset('img/apple-touch-icon.png') }}" rel="apple-touch-icon" />
+        .left-section {
+            background-color: #1C2956;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
 
-    <!-- Google Fonts -->
-    <link href="https://fonts.gstatic.com" rel="preconnect">
-    <link
-        href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i"
-        rel="stylesheet">
+        .left-section h1 {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
 
-    <!-- Vendor CSS Files -->
-    <link href="{{ asset('vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet" />
-    <link href="{{ asset('vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet" />
-    <link href="{{ asset('vendor/boxicons/css/boxicons.min.css') }}" rel="stylesheet" />
-    <link href="{{ asset('vendor/quill/quill.snow.css') }}" rel="stylesheet" />
-    <link href="{{ asset('vendor/remixicon/remixicon.css') }}" rel="stylesheet" />
-    <link href="{{ asset('vendor/simple-datatables/style.css') }}" rel="stylesheet" />
+        .left-section p {
+            margin-top: 20px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .left-section img {
+            max-width: 100%;
+        }
+
+        .form-container img {
+            display: block;
+            margin: 0 auto 20px;
+            max-width: 150px;
+        }
+
+        .form-group .form-control {
+            padding-left: 0px;
+            border-radius: 0;
+            border: none;
+            border-bottom: 1px solid #ccc;
+            width: 50%;
+            margin: 0 auto;
+            margin-top: 20px;
+            color: #1C2956;
+            /* font-weight: bold; */
+            font-family: Poppins;
+            shadow: none !important;
+
+        }
+
+        ::placeholder {
+            color: #1C2956 !important;
+            opacity: 1;
+            /* Firefox */
+        }
+
+        .form-group .icon {
+            position: absolute;
+            top: 50%;
+            left: 410px;
+            transform: translateY(-50%);
+            color: #1C2956;
+        }
+
+        .form-container a {
+            text-align: right;
+            display: block;
+            font-size: 14px;
+            color: #1A2E58;
+            text-decoration: none;
+        }
+
+        .form-container a:hover {
+            text-decoration: underline;
+        }
+
+        .btn-login {
+            background-color: #1A2E58;
+            color: #ffffff;
+            border-radius: 5px;
+        }
+
+        .btn-login:hover {
+            background-color: #143a6a;
+        }
 
 
-    <!-- Template Main CSS File -->
-    <link href="{{ asset('css/style.css') }}" rel="stylesheet" />
 
-    <!-- =======================================================
-  * Template Name: NiceAdmin
-  * Updated: Jan 29 2024 with Bootstrap v5.3.2
-  * Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
-  * Author: BootstrapMade.com
-  * License: https://bootstrapmade.com/license/
-  ======================================================== -->
+        .graph-image {
+            margin-top: 100px !important;
+            height: 500px;
+        }
+
+        .globe-overlay-right {
+            position: absolute;
+            top: -80px;
+            right: -100px;
+            z-index: 10;
+            width: 300px;
+            height: auto;
+            pointer-events: none;
+            opacity: 50%;
+        }
+
+        .globe-overlay-left {
+            position: absolute;
+            top: -80px;
+            left: -100px;
+            /* Adjust for the left corner */
+            z-index: 10;
+            width: 300px;
+            /* Same dimensions as the right image */
+            height: auto;
+            pointer-events: none;
+            opacity: 50%;
+        }
 
 
+        /* Media Queries for Mobile */
+        @media (max-width: 767px) {
+            .left-section {
+                display: none;
+            }
 
+            .form-container img {
+                max-width: 100px;
+            }
 
+            .form-group .form-control {
+                width: 80%;
+            }
+
+            .btn-login {
+                width: 80%;
+            }
+
+        }
+    </style>
 </head>
 
 <body>
-
-    <main>
-        <div class="">
-            <section
-                class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
-                <div class="container res-box">
-                    <div class="row justify-content-center">
-                        <div class="col-lg-4 col-md-6 d-flex flex-column align-items-center justify-content-center">
-
-                            <div class="d-flex justify-content-center py-4">
-                                <a href="#" class="main-logo d-flex align-items-center">
-                                    <img src="{{ asset('img/logo2.jpg') }}" alt=""
-                                        style="background-color: #F5E9E2; mix-blend-mode: multiply; width: 150px; height:100px;">
-                                    {{-- <span class="d-none d-lg-block">Elite</span> --}}
-                                </a>
-                            </div><!-- End Logo -->
-
-                            <div class="card mb-3 res-box" style="width: 20rem; border: 1px solid #1d3268;">
-                                {{-- <div class=" card mb-3 res-box"
-                                    style="width: 20rem; background-image: url({{ asset('img/b2.jpg') }});"> --}}
-                                <div class="card-body">
-                                    <h5 class="card-title text-center pb-0 fs-4 mb-4" style="color: #1d3268;">Login
-                                    </h5>
-                                    {{-- <p class="text-center small">Enter your email & password to login</p> --}}
-
-                                    <form method="POST" action="{{ route('login') }}" class="needs-validation w-100"
-                                        novalidate id="login-form">
-                                        @csrf
-
-                                        <div class="mb-3 form-floating">
-                                            <input id="email" type="email"
-                                                class="form-control @error('email') is-invalid @enderror" name="email"
-                                                value="{{ old('email') }}" required autocomplete="email" autofocus
-                                                style="border-color: #1d3268 !important">
-                                            <label for="email"><b>Email Address</b></label>
-
-                                            @if (Session::has('error') && Session::get('error') === 'email')
-                                                <span class="invalid-feedback d-block" role="alert">
-                                                    <strong>Your Email is incorrect.</strong>
-                                                </span>
-                                            @endif
-
-                                            @error('email')
-                                                <span class="invalid-feedback d-block" role="alert">
-                                                    <strong>{{ $message }}</strong>
-                                                </span>
-                                            @enderror
-                                        </div>
-
-                                        <div class="mb-3 form-floating">
-                                            <input id="password" type="password"
-                                                class="form-control @error('password') is-invalid @enderror"
-                                                name="password" required autocomplete="current-password"
-                                                style="border-color: #1d3268 !important">
-                                            <label for="password"><b>Password</b></label>
-
-                                            @if (Session::has('error') && Session::get('error') === 'password')
-                                                <span class="invalid-feedback d-block" role="alert">
-                                                    <strong>Your Password is incorrect.</strong>
-                                                </span>
-                                            @endif
-
-                                            @error('password')
-                                                <span class="invalid-feedback d-block" role="alert">
-                                                    <strong>{{ $message }}</strong>
-                                                </span>
-                                            @enderror
-                                        </div>
-
-
-
-
-                                        <div class="d-grid">
-                                            <button type="submit" class="btn btn-bg-blue">Login</button>
-                                        </div>
-                                        {{-- <div class="mt-3 text-center">
-                                                <a href="{{ route('otp.request') }}" class=""
-                                                    style="color: #1d3268; font-weight: bold;">Login with
-                                                    OTP</a>
-                                            </div> --}}
-
-                                        @if (Route::has('password.request'))
-                                            <div class="mt-3 text-center">
-                                                <a href="{{ route('forget.password.get') }}" class=""
-                                                    style="color: #1d3268; font-weight: bold;">Forgot
-                                                    Your
-                                                    Password ?</a>
-                                            </div>
-                                        @endif
-
-                                        <input type="hidden" name="latitude" id="latitude">
-                                        <input type="hidden" name="longitude" id="longitude">
-                                    </form>
-                                </div>
-                            </div>
-
-                            <div class="credits">
-                                Designed by <a href="https://www.aspireotech.com/" target="_blank"
-                                    class="text-black"><b>Aspireotech
-                                        Solutions</b></a>
-                            </div>
-
-                        </div>
-                    </div>
+    <div class="container-fluid h-100">
+        <div class="row h-100">
+            <!-- Left Section -->
+            <div class="col-md-5 d-flex align-items-center justify-content-center left-section d-none d-md-flex">
+                <div class="text-center mt-5 graph-image">
+                    <img src="{{ asset('img/graphLogin.png') }}" alt="UBN" class="mt-5" style="opacity: 30%; margin-left: 30px">
                 </div>
+            </div>
+            <div class="rounded-pill position-absolute w-25 " style="background: white; color: #1C2956; margin-left: 400px;  padding: 10px; border: none; margin-top: 60px">
+                <button class="bg-transparent border-0 ms-2">
+                    <h1 class=" mb-0" style="color: #1C2956; font-family: Poppins;">Login</h1>
+                </button>
+            </div>
 
-            </section>
+            <h2 class="footer position-absolute bottom-0 " style="color: white; padding-left: 70px; font-size: 30px">Designed by Aspireotech Solutions</h2>
 
+
+
+            <!-- Right Section -->
+            <div class="col-md-7 col-12 d-flex align-items-center justify-content-center">
+                <div class="form-container w-75">
+
+                    <div class="img">
+                        <img src="{{ asset('img/ubnNewLogo.png') }}" alt="UBN" class="mb-3">
+                    </div>
+
+
+                    <form method="POST" action="{{ route('login') }}" class="needs-validation w-100" novalidate id="login-form">
+                        @csrf
+                        <!-- Email Field -->
+                        <div class="form-group position-relative mb-3">
+                            <input id="email" type="email" class="form-control shadow-none border-none @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus placeholder="Email">
+                            <img src="{{ asset('img/envelope.png') }}" alt="Email Icon" class="icon position-absolute">
+
+                            @if (Session::has('error') && Session::get('error') === 'email')
+                                <span class="invalid-feedback d-block" role="alert">
+                                    <strong>Your Email is incorrect.</strong>
+                                </span>
+                            @endif
+
+                            @error('email')
+                                <span class="invalid-feedback d-block" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+
+                        <!-- Password Field -->
+                        <div class="form-group position-relative mb-3">
+                            <input id="password" type="password" class="form-control shadow-none border-none @error('password') is-invalid @enderror" name="password" required autocomplete="current-password" placeholder="Password">
+                            {{-- <span class="icon position-absolute">&#128274;</span> --}}
+                            <img src="{{ asset('img/padlock.png') }}" alt="Email Icon" class="icon position-absolute">
+
+
+                            @if (Session::has('error') && Session::get('error') === 'password')
+                                <span class="invalid-feedback d-block" role="alert">
+                                    <strong>Your Password is incorrect.</strong>
+                                </span>
+                            @endif
+
+                            @error('password')
+                                <span class="invalid-feedback d-block" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+
+                        <!-- Forgot Password -->
+                        @if (Route::has('password.request'))
+                            <a href="{{ route('forget.password.get') }}" class="d-block mb-3" style="color: #1d3268; margin-right: 274px; font-family: Poppins;">
+                                Forgot Your Password ?
+                            </a>
+                        @endif
+
+                        <!-- Login Button -->
+                        <div class="d-flex justify-content-center align-items-center mt-5">
+                            <button type="submit" class="btn btn-login w-30 rounded-pill">Login</button>
+                        </div>
+
+                        <!-- Hidden Latitude and Longitude Fields -->
+                        <input type="hidden" name="latitude" id="latitude">
+                        <input type="hidden" name="longitude" id="longitude">
+                    </form>
+
+                    <!-- Footer -->
+                </div>
+            </div>
         </div>
-    </main><!-- End #main -->
 
-    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
-            class="bi bi-arrow-up-short"></i></a>
+        <!-- Globe Image Overlay (Right) -->
+        <img src="{{ asset('img/loginDesign.png') }}" alt="Network Globe" class="globe-overlay-right">
 
-    <!-- Vendor JS Files -->
-    <script src="{{ asset('vendor/apexcharts/apexcharts.min.js') }}"></script>
-    <script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-    <script src="{{ asset('vendor/chart.js/chart.umd.js') }}"></script>
-    <script src="{{ asset('vendor/echarts/echarts.min.js') }}"></script>
-    <script src="{{ asset('vendor/quill/quill.min.js') }}"></script>
-    <script src="{{ asset('vendor/simple-datatables/simple-datatables.js') }}"></script>
-    <script src="{{ asset('vendor/tinymce/tinymce.min.js') }}"></script>
-    <script src="{{ asset('vendor/php-email-form/validate.js') }}"></script>
+        <!-- Globe Image Overlay (Left) -->
+        <img src="{{ asset('img/loginDesign.png') }}" alt="Network Globe" class="globe-overlay-left">
 
-    <!-- Template Main JS File -->
-    <script src="{{ asset('js/main.js') }}"></script>
+    </div>
 
-    {{-- Location script --}}
-    <script>
-        document.getElementById('login-form').addEventListener('submit', function(event) {
-            event.preventDefault();
-
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(function(position) {
-                    // Append the location data to the form
-                    const latitudeInput = document.createElement('input');
-                    latitudeInput.type = 'hidden';
-                    latitudeInput.name = 'latitude';
-                    latitudeInput.value = position.coords.latitude;
-
-                    const longitudeInput = document.createElement('input');
-                    longitudeInput.type = 'hidden';
-                    longitudeInput.name = 'longitude';
-                    longitudeInput.value = position.coords.longitude;
-
-                    const form = document.getElementById('login-form');
-                    form.appendChild(latitudeInput);
-                    form.appendChild(longitudeInput);
-
-                    form.submit();
-                }, function(error) {
-                    console.error("Geolocation error: ", error);
-                    document.getElementById('login-form')
-                        .submit(); // Submit the form even if geolocation fails
-                });
-            } else {
-                console.error("Geolocation is not supported by this browser.");
-                document.getElementById('login-form').submit();
-            }
-        });
-    </script>
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>
