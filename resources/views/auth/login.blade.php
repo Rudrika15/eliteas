@@ -11,7 +11,7 @@
     <style>
         body {
             height: 100vh;
-            font-family: 'Arial', sans-serif;
+            font-family: 'Poppins';
             overflow: hidden;
         }
 
@@ -129,10 +129,11 @@
         }
 
 
+
         /* Media Queries for Mobile */
-        @media (max-width: 767px) {
+        @media (max-width: 1024px) {
             .left-section {
-                display: none;
+                display: none !important;
             }
 
             .form-container img {
@@ -157,16 +158,16 @@
             <!-- Left Section -->
             <div class="col-md-5 d-flex align-items-center justify-content-center left-section d-none d-md-flex">
                 <div class="text-center mt-5 graph-image">
-                    <img src="{{ asset('img/graphLogin.png') }}" alt="UBN" class="mt-5" style="opacity: 30%; margin-left: 30px">
+                    <img src="{{ asset('img/graphLogin.png') }}" alt="UBN" class="mt-5" style="opacity: 10%; margin-left: 30px;">
                 </div>
             </div>
-            <div class="rounded-pill position-absolute w-25 " style="background: white; color: #1C2956; margin-left: 400px;  padding: 10px; border: none; margin-top: 60px">
+            <div class="rounded-pill position-absolute w-25 " style="background: white; color: #1C2956; margin-left: 400px;  padding: 10px; border: none; margin-top: 60px;">
                 <button class="bg-transparent border-0 ms-2">
                     <h1 class=" mb-0" style="color: #1C2956; font-family: Poppins;">Login</h1>
                 </button>
             </div>
 
-            <h2 class="footer position-absolute bottom-0 " style="color: white; padding-left: 70px; font-size: 30px">Designed by Aspireotech Solutions</h2>
+            <h2 class="footer position-absolute bottom-0 " style="color: white; padding-left: 80px; font-family: Poppins; font-size: 25px">Designed by Aspireotech Solutions</h2>
 
 
 
@@ -175,7 +176,7 @@
                 <div class="form-container w-75">
 
                     <div class="img">
-                        <img src="{{ asset('img/ubnNewLogo.png') }}" alt="UBN" class="mb-3">
+                        <img src="{{ asset('img/ubnNewLogo2.png') }}" alt="UBN" class="mb-3">
                     </div>
 
 
@@ -221,14 +222,16 @@
 
                         <!-- Forgot Password -->
                         @if (Route::has('password.request'))
-                            <a href="{{ route('forget.password.get') }}" class="d-block mb-3" style="color: #1d3268; margin-right: 274px; font-family: Poppins;">
-                                Forgot Your Password ?
-                            </a>
+                            <div class="d-flex justify-content-start">
+                                <a href="{{ route('forget.password.get') }}" class="d-block mb-3" style="color: #1C2956; margin-left: 145px;  font-family: Poppins;">
+                                    Forgot Your Password ?
+                                </a>
+                            </div>
                         @endif
 
                         <!-- Login Button -->
                         <div class="d-flex justify-content-center align-items-center mt-5">
-                            <button type="submit" class="btn btn-login w-30 rounded-pill">Login</button>
+                            <button type="submit" class="btn btn-login w-30 rounded-pill" style="font-family: Poppins;">Login</button>
                         </div>
 
                         <!-- Hidden Latitude and Longitude Fields -->

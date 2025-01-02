@@ -112,6 +112,8 @@ class CircleMeetingMemberReferenceController extends Controller
 
     public function refByOtherStore(Request $request)
     {
+
+
         try {
             // Validate the request
             $this->validate($request, [
@@ -126,7 +128,7 @@ class CircleMeetingMemberReferenceController extends Controller
             ]);
 
             $refGiver = new CircleMeetingMembersReference();
-            $refGiver->referenceGiverId = $request->memberId;
+            $refGiver->referenceGiverId = $request->referenceGiverId;
             $refGiver->memberId = Auth::user()->id;
 
             if ($request->group == 'internal') {
