@@ -34,6 +34,7 @@ use App\Http\Controllers\Api\CircleMeetingMembersController;
 use App\Http\Controllers\Api\MembershipSubscriptionController;
 use App\Http\Controllers\Api\CircleMeetingMemberBusinessController;
 use App\Http\Controllers\Api\CircleMeetingMemberReferenceController;
+use App\Http\Controllers\Api\HelpController;
 use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\PermissionController;
 use App\Http\Controllers\Api\SlotController;
@@ -432,6 +433,15 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     Route::get('circleAdminPaymentHistory', [PaymentController::class, 'circleAdminPaymentHistory']);
     Route::get('myPaymentHistory', [PaymentController::class, 'getAllPayments']);
+
+    // Member Event
+    Route::get('member-events', [EventController::class, 'memberEventIndex']);
+    Route::get('member-slot-bookings/{id}', [EventController::class, 'memberSlotBookingRequests']);
+    Route::post('slot-bookings/update-status/{id}', [EventController::class, 'slotBookingUpdateStatus']);
+
+    //help
+    Route::get('help-index', [HelpController::class, 'index']);
+
 });
 
 //get app version

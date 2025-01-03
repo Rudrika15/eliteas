@@ -66,6 +66,7 @@ class EventController extends Controller
             return view('servererror');
         }
     }
+    
     public function memberEventIndex(Request $request)
     {
         try {

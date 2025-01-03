@@ -350,7 +350,6 @@ class SlotController extends Controller
 
     public function memberSlotBookingRequests(Request $request, $id)
     {
-
         try {
 
             $memberId = Auth::user()->member->id;

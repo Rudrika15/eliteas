@@ -982,7 +982,7 @@
                             </div>
                         @else
                             <div class="card-body">
-                                <p class="mt-5 text-muted text-center"><b>No Monthly Payment data available.</b></p>
+                                <p class="mt-5 text-muted text-center"><b>No Monthly Payment Details for Now.</b></p>
                             </div>
                         @endif
                     </div>

@@ -11,12 +11,118 @@ use Illuminate\Http\Request;
 use App\Models\EventRegister;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
+use App\Models\SlotBooking;
 use App\Models\VisitorEventRegister;
 use App\Utils\ErrorLogger;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class EventController extends Controller
 {
+
+    public function memberEventIndexd(Request $request)
+    {
+        try {
+            $event = Event::with('circle')
+                ->where('status', 'Active')
+                ->orderBy('id', 'DESC')
+                ->paginate(10);
+            return view('admin.event.memberEventIndex', compact('event'));
+        } catch (\Throwable $th) {
+            // throw $th;
+            ErrorLogger::logError(
+                $th,
+                $request->fullUrl()
+            );
+            return view('servererror');
+        }
+    }
+
+    public function memberEventIndex(Request $request)
+    {
+        try {
+            $event = Event::with('circle')
+                ->where('status', 'Active')
+                ->where('eventStatus', 'Publish')
+                ->orderBy('id', 'DESC')
+                ->get();
+            return Utils::sendResponse(['Event' => $event], 'Event Data Fetched Successfully', 200);
+        } catch (\Throwable $th) {
+            // Return with an error message
+            ErrorLogger::logError(
+                $th,
+                $request->fullUrl()
+            );
+            return Utils::errorResponse(['error' => 'Failed to fetch Event Data. Please try again.'], 'Internal Server Error', 500);
+        }
+    }
+
+    public function memberSlotBookingRequests(Request $request, $id)
+    {
+        try {
+            $memberId = Auth::user()->member->id;
+            // Fetch the event
+            $event = Event::where('id', $id)->where('eventStatus', 'Publish')->first();
+            if (!$event) {
+                return Utils::errorResponse(['error' => 'Event not found or not published.'], 'Event Not Found', 404);
+            }
+            // Fetch the member's slot bookings for the event
+            $slotBooking = SlotBooking::where('eventId', $id)
+                ->where('regMemberId', $memberId)
+                ->get();
+            return Utils::sendResponse([
+                'event' => $event,
+                'slotBooking' => $slotBooking,
+            ], 'Slot Booking Data Fetched Successfully', 200);
+        } catch (\Throwable $th) {
+            // Log the error and return a JSON response
+            ErrorLogger::logError(
+                $th,
+                $request->fullUrl()
+            );
+            return Utils::errorResponse(['error' => 'Failed to fetch Slot Booking Data. Please try again.'], 'Internal Server Error', 500);
+        }
+    }
+
+    public function slotBookingUpdateStatus(Request $request, $id)
+    {
+        try {
+            // Validate the request data
+            $validatedData = $request->validate([
+                'bookingStatus' => 'required|in:Pending,Approved,Rejected',
+            ]);
+
+            // Find the slot booking
+            $slotBooking = SlotBooking::findOrFail($id);
+
+            // Update the booking status
+            $slotBooking->bookingStatus = $validatedData['bookingStatus'];
+            $slotBooking->save();
+
+            // Return a success response
+            return Utils::sendResponse(
+                ['slotBooking' => $slotBooking],
+                'Booking status updated successfully.',
+                200
+            );
+        } catch (\Throwable $th) {
+            // Log the error and handle server exceptions
+            ErrorLogger::logError(
+                $th,
+                $request->fullUrl()
+            );
+
+            return Utils::errorResponse(
+                ['error' => 'Failed to update booking status. Please try again.'],
+                'Internal Server Error',
+                500
+            );
+        }
+    }
+
+
+
+
     public function eventRegister(Request $request, $eventId)
     {
         try {
@@ -82,8 +188,7 @@ class EventController extends Controller
             ], 'Nearest event retrieved successfully', 200);
         } catch (\Throwable $th) {
             // Log the error for debugging purposes
-            \Log::error('Error retrieving event: ' . $th->getMessage());
-
+            Log::error('Error retrieving event: ' . $th->getMessage());
             // Return with an error message
             return Utils::errorResponse([
                 'error' => 'Failed to retrieve event. Please try again.'
