@@ -11,7 +11,7 @@ class SpecificAskController extends Controller
 {
     public function index()
     {
-        $specificasks = SpecificAsk::where('askBy', Auth::user()->id)->paginate(10);
+        $specificasks = SpecificAsk::where('askBy', Auth::user()->id)->where('status', 'Active')->paginate(10);
         // $specificasks = SpecificAsk::paginate(10);
         return view('admin.specificask.index', compact('specificasks'));
     }
@@ -55,7 +55,7 @@ class SpecificAskController extends Controller
         return redirect()->route('specificask.index')->with('success', 'Specific Ask Updated Successfully!');
     }
 
-    public function destroy($id)
+    public function delete($id)
     {
         $specificasks = SpecificAsk::find($id);
         $specificasks->status = "Deleted";

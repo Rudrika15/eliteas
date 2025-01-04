@@ -144,7 +144,7 @@ class CircleCallController extends Controller
         $validator = Validator::make($request->all(), [
             'meetingPersonId' => 'required',
             'meetingPlace' => 'required',
-            'meetingImage' => 'mimes:jpeg,jpg,png,gif|max:2048',
+            'meetingImage' => 'mimes:jpeg,jpg,png,gif',
             'date' => 'required',
             'remarks' => 'required',
         ]);

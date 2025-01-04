@@ -15,6 +15,7 @@ use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Intervention\Image\Facades\Image;
 
 class CircleCallController extends Controller
 {
@@ -32,7 +33,6 @@ class CircleCallController extends Controller
         $this->middleware('permission:get-member', ['only' => ['getMember']]);
         $this->middleware('permission:get-member-for-ref', ['only' => ['getMemberForRef']]);
         $this->middleware('permission:get-member-for-ref-Giver', ['only' => ['getMemberForRefGiver']]);
-
     }
 
 
@@ -235,16 +235,60 @@ class CircleCallController extends Controller
     }
 
 
+    // public function store(Request $request)
+    // {
+    //     // return $request;
+
+    //     $validator = Validator::make($request->all(), [
+    //         // 'meetingPersonId' => 'required',
+    //         'meetingPlace' => 'required|regex:/^([a-zA-Z]+)(\s[a-zA-Z]+)*$/',
+    //         'date' => 'required',
+    //         'remarks' => 'required',
+    //         'meetingImage' => 'mimes:jpeg,jpg,png,gif|max:2048',
+    //     ]);
+
+    //     if ($validator->fails()) {
+    //         return redirect()->back()->withErrors($validator)->withInput();
+    //     }
+
+    //     try {
+    //         $circlecall = new CircleCall();
+    //         $circlecall->memberId = Auth::user()->id;
+    //         $circlecall->meetingPersonId = $request->meetingPersonId;
+    //         $circlecall->meetingPlace = $request->meetingPlace;
+
+    //         if ($request->meetingImage) {
+    //             $circlecall->meetingImage = time() . '.' . $request->meetingImage->extension();
+    //             $request->meetingImage->move(public_path('meetingImage'), $circlecall->meetingImage);
+    //         }
+
+    //         $circlecall->date = $request->date;
+    //         $circlecall->remarks = $request->remarks;
+    //         $circlecall->status = 'Active';
+
+
+    //         $circlecall->save();
+
+    //         return redirect()->route('circlecall.index')->with('success', 'Data Added Successfully!');
+    //     } catch (\Throwable $th) {
+    //         // throw $th;
+    //         ErrorLogger::logError(
+    //             $th,
+    //             $request->fullUrl()
+    //         );
+
+    //         return view('servererror');
+    //     }
+    // }
+
+
     public function store(Request $request)
     {
-        // return $request;
-
         $validator = Validator::make($request->all(), [
-            // 'meetingPersonId' => 'required',
             'meetingPlace' => 'required|regex:/^([a-zA-Z]+)(\s[a-zA-Z]+)*$/',
             'date' => 'required',
             'remarks' => 'required',
-            'meetingImage' => 'mimes:jpeg,jpg,png,gif|max:2048',
+            'meetingImage' => 'mimes:jpeg,jpg,png,gif|max:5120', // Allow 5MB for upload
         ]);
 
         if ($validator->fails()) {
@@ -257,29 +301,103 @@ class CircleCallController extends Controller
             $circlecall->meetingPersonId = $request->meetingPersonId;
             $circlecall->meetingPlace = $request->meetingPlace;
 
-            if ($request->meetingImage) {
-                $circlecall->meetingImage = time() . '.' . $request->meetingImage->extension();
-                $request->meetingImage->move(public_path('meetingImage'), $circlecall->meetingImage);
+            if ($request->hasFile('meetingImage')) {
+                $image = $request->file('meetingImage');
+                $imageName = time() . '.' . $image->getClientOriginalExtension();
+
+                // Create an image resource from the uploaded file
+                $img = imagecreatefromjpeg($image->getPathname());
+
+                // Resize image to a width of 800px, maintain aspect ratio
+                $width = 800;
+                $height = (imagesy($img) / imagesx($img)) * $width;
+                $resizedImg = imagescale($img, $width, $height);
+
+                // Save the resized image as a compressed JPEG
+                imagejpeg($resizedImg, public_path('meetingImage/' . $imageName), 75); // 75 for quality
+
+                // Check file size after compression
+                if (filesize(public_path('meetingImage/' . $imageName)) > 2 * 1024 * 1024) {
+                    return redirect()->back()->withErrors(['meetingImage' => 'Image could not be compressed below 2MB'])->withInput();
+                }
+
+                // Store image name in DB
+                $circlecall->meetingImage = $imageName;
             }
 
             $circlecall->date = $request->date;
             $circlecall->remarks = $request->remarks;
             $circlecall->status = 'Active';
 
-
             $circlecall->save();
 
             return redirect()->route('circlecall.index')->with('success', 'Data Added Successfully!');
         } catch (\Throwable $th) {
-            // throw $th;
-            ErrorLogger::logError(
-                $th,
-                $request->fullUrl()
-            );
-
+            ErrorLogger::logError($th, $request->fullUrl());
             return view('servererror');
         }
     }
+
+
+    // public function store(Request $request)
+    // {
+    //     $validator = Validator::make($request->all(), [
+    //         'meetingPlace' => 'required|regex:/^([a-zA-Z]+)(\s[a-zA-Z]+)*$/',
+    //         'date' => 'required',
+    //         'remarks' => 'required',
+    //         // 'meetingImage' => 'mimes:jpeg,jpg,png,gif|max:5120', // Allow up to 5MB for initial upload
+    //     ]);
+
+    //     if ($validator->fails()) {
+    //         return redirect()->back()->withErrors($validator)->withInput();
+    //     }
+
+    //     try {
+    //         $circlecall = new CircleCall();
+    //         $circlecall->memberId = Auth::user()->id;
+    //         $circlecall->meetingPersonId = $request->meetingPersonId;
+    //         $circlecall->meetingPlace = $request->meetingPlace;
+
+    //         if ($request->hasFile('meetingImage')) {
+    //             $image = $request->file('meetingImage');
+    //             $imageName = time() . '.' . $image->getClientOriginalExtension();
+
+    //             // Compress the image
+    //             $compressedImage = Image::make($image->getPathname())
+    //                 ->resize(800, null, function ($constraint) {
+    //                     $constraint->aspectRatio();
+    //                     $constraint->upsize();
+    //                 }) // Resize while maintaining aspect ratio
+    //                 ->encode('jpg', 75); // Compress to 75% quality
+
+    //             // Check if the compressed image size is less than 2MB
+    //             if (strlen($compressedImage) / 1024 > 2048) {
+    //                 return redirect()->back()->withErrors(['meetingImage' => 'Image could not be compressed below 2MB'])->withInput();
+    //             }
+
+    //             // Save the compressed image to the public folder
+    //             $compressedImage->save(public_path('meetingImage/' . $imageName));
+
+    //             $circlecall->meetingImage = $imageName;
+    //         }
+
+    //         $circlecall->date = $request->date;
+    //         $circlecall->remarks = $request->remarks;
+    //         $circlecall->status = 'Active';
+
+    //         $circlecall->save();
+
+    //         return redirect()->route('circlecall.index')->with('success', 'Data Added Successfully!');
+    //     } catch (\Throwable $th) {
+    //         ErrorLogger::logError(
+    //             $th,
+    //             $request->fullUrl()
+    //         );
+
+    //         return view('servererror');
+    //     }
+    // }
+
 
 
     public function edit(Request $request, $id)

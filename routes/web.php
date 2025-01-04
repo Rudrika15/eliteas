@@ -708,7 +708,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/specific-ask/store', [SpecificAskController::class, 'store'])->name('specificask.store');
     Route::get('/specific-ask/edit/{id?}', [SpecificAskController::class, 'edit'])->name('specificask.edit');
     Route::post('/specific-ask/update', [SpecificAskController::class, 'update'])->name('specificask.update');
-    Route::post('/specific-ask/delete/{id?}', [SpecificAskController::class, 'delete'])->name('specificask.delete');
+    Route::get('/specific-ask/delete/{id?}', [SpecificAskController::class, 'delete'])->name('specificask.delete');
 
 
 
