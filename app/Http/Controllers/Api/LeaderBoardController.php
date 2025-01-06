@@ -162,7 +162,7 @@ class LeaderBoardController extends Controller
                 return $call->member->circleId == $selectedCircleId;
             })->groupBy('memberId')->map(function ($group) {
                 return [
-                    'member' => $group->first()->member,
+                    'member' => $group->first()->member->only(['id', 'userId', 'firstName', 'lastName']),
                     'count' => $group->count(), // Count the total circle calls
                 ];
             })->sortByDesc('count')->take(1); // Get the highest circle call record per user
@@ -181,10 +181,10 @@ class LeaderBoardController extends Controller
 
                 if ($circleId == $selectedCircleId) {
                     return [
-                        'user' => $user,
+                        'user' => $user->only(['id', 'firstName', 'lastName']),
                         'amount' => $group->max('amount'), // Get highest amount for this business giver
                         'count' => $group->count(),
-                        'circle' => $member->circle // Assuming you have a circle relationship in the Member model
+                        // 'circle' => $member->circle // Assuming you have a circle relationship in the Member model
                     ];
                 }
                 return null;
@@ -195,7 +195,6 @@ class LeaderBoardController extends Controller
                 ->whereYear('created_at', $previousYear)
                 ->whereMonth('created_at', $previousMonth)
                 ->get();
-
             // Group reference givers by referenceGiverId, get only the highest count, and filter by circleId
             $refGiver = $refGiver->groupBy('referenceGiverId')->map(function ($group) use ($selectedCircleId) {
                 $user = $group->first()->refGiverName;
@@ -204,9 +203,9 @@ class LeaderBoardController extends Controller
 
                 if ($circleId == $selectedCircleId) {
                     return [
-                        'user' => $user,
+                        'user' => $user->only(['id', 'firstName', 'lastName']),
                         'count' => $group->max('count'), // Get highest count for this reference giver
-                        'circle' => $member->circle // Assuming you have a circle relationship in the Member model
+                        // 'circle' => $member->circle // Assuming you have a circle relationship in the Member model
                     ];
                 }
                 return null;
@@ -217,7 +216,7 @@ class LeaderBoardController extends Controller
                 'circlecalls' => $circlecalls,
                 'busGiver' => $busGiver,
                 'refGiver' => $refGiver,
-                'circles' => $circles,
+                // 'circles' => $circles,
                 'selectedCircleId' => $selectedCircleId
             ]);
         } catch (\Throwable $th) {

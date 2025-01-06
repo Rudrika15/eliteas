@@ -290,7 +290,8 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     //Monthly Payment APi
     Route::post('/monthly-payment/store', [MonthlyPaymentController::class, 'monthlyPaymentStore']);
     Route::get('/monthlyPayment/index', [MonthlyPaymentController::class, 'monthlyPaymentIndex']);
-
+    Route::post('/monthly-payment/update-payment-status', [MonthlyPaymentController::class, 'updatePaymentStatus']);
+    Route::get('/monthly-payments-circle-admin', [MonthlyPaymentController::class, 'monthlyPayments']);
 
     // Attendance Api
 
@@ -442,6 +443,8 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     //help
     Route::get('help-index', [HelpController::class, 'index']);
 
+    //fcmToken
+    Route::post('fcm-token', [LoginController::class, 'saveToken']);
 });
 
 //get app version

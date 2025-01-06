@@ -9,8 +9,13 @@ use App\Models\CircleCall;
 use App\Models\CircleMember;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Kreait\Firebase\Factory;
+use Kreait\Firebase\Messaging\CloudMessage;
+use Kreait\Firebase\Messaging\Notification;
 
 class CircleCallController extends Controller
 {
@@ -254,7 +259,8 @@ class CircleCallController extends Controller
                 return Utils::errorResponse(['error' => 'Unauthorized'], 'Unauthorized', 403);
             }
 
-            $circleCall->delete();
+            $circleCall->status = "Deleted";
+            $circleCall->save();
 
             return Utils::sendResponse([], 'Circle Call Deleted Successfully!', 200);
         } catch (\Throwable $th) {

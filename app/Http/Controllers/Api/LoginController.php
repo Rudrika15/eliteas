@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use App\Models\BillingAddress;
 use App\Models\ContactDetails;
 use App\Http\Controllers\Controller;
+use App\Utils\ErrorLogger;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Spatie\Permission\Models\Role;
@@ -40,6 +41,31 @@ class LoginController extends Controller
 
         return Utils::sendResponse(['error' => 'Unauthorized'], 401);
     }
+
+    public function saveToken(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'fcm_token' => 'required',
+            ]);
+
+            if ($validator->fails()) {
+                return Utils::sendResponse($request->all(), 'Invalid Input');
+            }
+
+            $user = Auth::user();
+            $user->fcm_token = $request->fcm_token;
+            $user->save();
+
+            return Utils::sendResponse(['message' => 'FCM Token saved successfully'], 200);
+        } catch (\Throwable $th) {
+            // throw $th;
+            ErrorLogger::logError($th, $request->fullUrl());
+            return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
+        }
+    }
+
+
 
     public function getRolePermissions()
     {
