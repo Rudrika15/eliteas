@@ -500,23 +500,23 @@ class CircleCallController extends Controller
         $title = 'Circle Call';
         $body = 'Circle Call Reminder';
 
-        $serviceAccountPath = storage_path('app/public/ubn-notification-firebase-adminsdk-mq0qq-c948de3bc0.json');
+        $serviceAccountPath = storage_path('app/public/ubn_notification.json');
         $factory = (new Factory)->withServiceAccount($serviceAccountPath);
         $messaging = $factory->createMessaging();
 
         foreach ($users as $user) {
-            if ($user->token) {
-                $message = CloudMessage::withTarget('token', $user->token)
+            if ($user->fcm_token) {
+                $message = CloudMessage::withTarget('token', $user->fcm_token)
                     ->withNotification(Notification::create($title, $body));
-
                 try {
                     $messaging->send($message);
+                    Log::info('Notification sent to token: ' . $user->fcm_token);
                 } catch (\Kreait\Firebase\Exception\Messaging\NotFound $e) {
-                    Log::error('Token not found: ' . $user->token);
+                    Log::error('Token not found: ' . $user->fcm_token);
                 } catch (\Kreait\Firebase\Exception\Messaging\InvalidArgument $e) {
-                    Log::error('Invalid argument error with token: ' . $user->token);
+                    Log::error('Invalid argument error with token: ' . $user->fcm_token);
                 } catch (\Exception $e) {
-                    Log::error('General error sending to token: ' . $user->token . '. Error: ' . $e->getMessage());
+                    Log::error('General error sending to token: ' . $user->fcm_token . '. Error: ' . $e->getMessage());
                 }
             }
         }
