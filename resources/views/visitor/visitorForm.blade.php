@@ -16,9 +16,7 @@
 
     <!-- Google Fonts -->
     <link href="https://fonts.gstatic.com" rel="preconnect">
-    <link
-        href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
 
     <!-- Vendor CSS Files -->
     <link href="{{ asset('vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet" />
@@ -110,8 +108,7 @@
                 <div class="col-xl-7 col-lg-8 col-md-9 col-11 text-center">
                     <div class="d-flex justify-content-center py-4">
                         <a href="#" class="main-logo d-flex align-items-center">
-                            <img src="{{ asset('img/logo2.jpg') }}" alt=""
-                                style="background-color: #F5E9E2; mix-blend-mode: multiply; width: 150px; height:100px;">
+                            <img src="{{ asset('img/logo2.jpg') }}" alt="" style="background-color: #F5E9E2; mix-blend-mode: multiply; width: 150px; height:100px;">
                             {{-- <span class="d-none d-lg-block">Elite</span> --}}
                         </a>
                     </div><!-- End Logo -->
@@ -155,17 +152,12 @@
 
                         <h5 class="text-center mb-4" style="color: #1d3268;"><b>Visitor Registration Form</b></h5>
                         {{-- <h5 class="text-center mb-4">Please Fill the Form</h5> --}}
-                        <form method="POST" action="{{ route('visitor.form.store') }}"
-                            class="needs-validation w-100 form-card" id="visitorForm" name="visitorForm" novalidate>
+                        <form method="POST" action="{{ route('visitor.form.store') }}" class="needs-validation w-100 form-card" id="visitorForm" name="visitorForm" novalidate>
                             @csrf
                             <div class="row justify-content-between text-left">
                                 <div class="form-group col-sm-6 flex-column d-flex">
-                                    <label class="form-control-label px-3">First name<span
-                                            class="text-danger">*</span></label>
-                                    <input type="text" id="firstName" name="firstName"
-                                        value="{{ old('firstName') }}"
-                                        class="form-control @error('firstName') is-invalid @enderror"
-                                        onblur="validate(1)" required>
+                                    <label class="form-control-label px-3">First name<span class="text-danger">*</span></label>
+                                    <input type="text" id="firstName" name="firstName" value="{{ old('firstName') }}" class="form-control @error('firstName') is-invalid @enderror" onblur="validate(1)" required>
                                     @error('firstName')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -173,11 +165,8 @@
                                     @enderror
                                 </div>
                                 <div class="form-group col-sm-6 flex-column d-flex">
-                                    <label class="form-control-label px-3">Last name<span
-                                            class="text-danger">*</span></label>
-                                    <input type="text" id="lastName" name="lastName" value="{{ old('lastName') }}"
-                                        class="form-control @error('lastName') is-invalid @enderror"
-                                        onblur="validate(2)" required>
+                                    <label class="form-control-label px-3">Last name<span class="text-danger">*</span></label>
+                                    <input type="text" id="lastName" name="lastName" value="{{ old('lastName') }}" class="form-control @error('lastName') is-invalid @enderror" onblur="validate(2)" required>
                                     @error('lastName')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -187,15 +176,8 @@
                             </div>
                             <div class="row justify-content-between text-left">
                                 <div class="form-group col-sm-6 flex-column d-flex">
-                                    <label class="form-control-label px-3">Mobile No<span
-                                            class="text-danger">*</span></label>
-                                    <input type="text" id="mobileNo" name="mobileNo"
-                                        value="{{ old('mobileNo') }}"
-                                        class="form-control @error('mobileNo') is-invalid @enderror"
-                                        oninput="if(this.value.length > 10) this.value = this.value.slice(0,10); this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');"
-                                        pattern="[0-9]{10}"
-                                        oninvalid="this.setCustomValidity('Please enter a valid 10-digit mobile number');"
-                                        oninput="this.setCustomValidity('')" onblur="validate(3)" required>
+                                    <label class="form-control-label px-3">Mobile No<span class="text-danger">*</span></label>
+                                    <input type="text" id="mobileNo" name="mobileNo" value="{{ old('mobileNo') }}" class="form-control @error('mobileNo') is-invalid @enderror" oninput="if(this.value.length > 10) this.value = this.value.slice(0,10); this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');" pattern="[0-9]{10}" oninvalid="this.setCustomValidity('Please enter a valid 10-digit mobile number');" oninput="this.setCustomValidity('')" onblur="validate(3)" required>
                                     @error('mobileNo')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -208,12 +190,8 @@
                                     @endif
                                 </div>
                                 <div class="form-group col-sm-6 flex-column d-flex">
-                                    <label class="form-control-label px-3">Business Name<span
-                                            class="text-danger">*</span></label>
-                                    <input type="text" id="businessName" name="businessName"
-                                        value="{{ old('businessName') }}"
-                                        class="form-control @error('businessName') is-invalid @enderror"
-                                        onblur="validate(4)" required>
+                                    <label class="form-control-label px-3">Business Name<span class="text-danger">*</span></label>
+                                    <input type="text" id="businessName" name="businessName" value="{{ old('businessName') }}" class="form-control @error('businessName') is-invalid @enderror" onblur="validate(4)" required>
                                     @error('businessName')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -222,7 +200,19 @@
                                 </div>
                             </div>
                             <div class="row justify-content-between text-left">
+
                                 <div class="form-group col-sm-6 flex-column d-flex">
+                                    <label class="form-control-label px-3">Business Category<span class="text-danger">*</span></label>
+                                    <input type="text" id="businessCategory" name="businessCategory" value="{{ old('businessCategory') }}" class="form-control @error('businessCategory') is-invalid @enderror" onblur="validate(4)" required>
+                                    @error('businessCategory')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+
+
+                                {{-- <div class="form-group col-sm-6 flex-column d-flex">
                                     <label class="form-control-label px-3">Business Category<span
                                             class="text-danger">*</span></label>
                                     <select class="form-select" id="businessCategory" name="businessCategory"
@@ -265,11 +255,10 @@
                                             }
                                         });
                                     </script>
-                                </div>
+                                </div> --}}
 
                                 <div class="form-group col-sm-6 flex-column d-flex">
-                                    <label class="form-control-label px-3">Invited by<span
-                                            class="text-danger">*</span></label>
+                                    <label class="form-control-label px-3">Invited by<span class="text-danger">*</span></label>
 
                                     @if (Auth::check())
                                         <!-- If the user is authenticated, show their name -->
@@ -282,15 +271,10 @@
                                             $cityAmount = $city ? $city->amount : 0;
                                         @endphp
 
-                                        <input type="text" id="invitedBy" name="invitedBy"
-                                            value="{{ Auth::user()->member->firstName }} {{ Auth::user()->member->lastName }}"
-                                            class="form-control @error('invitedBy') is-invalid @enderror" disabled>
-                                        <input type="hidden" id="invitedByHidden" name="invitedBy"
-                                            value="{{ Auth::user()->member->id }}">
-                                        <input type="hidden" id="meetingId" name="meetingId"
-                                            value="{{ $meetingId ?? 0 }}">
-                                        <input type="hidden" id="cityAmount" name="cityAmount"
-                                            value="{{ $cityAmount }}">
+                                        <input type="text" id="invitedBy" name="invitedBy" value="{{ Auth::user()->member->firstName }} {{ Auth::user()->member->lastName }}" class="form-control @error('invitedBy') is-invalid @enderror" disabled>
+                                        <input type="hidden" id="invitedByHidden" name="invitedBy" value="{{ Auth::user()->member->id }}">
+                                        <input type="hidden" id="meetingId" name="meetingId" value="{{ $meetingId ?? 0 }}">
+                                        <input type="hidden" id="cityAmount" name="cityAmount" value="{{ $cityAmount }}">
                                     @else
                                         <!-- If the user is not authenticated, get the member ID from the URL -->
                                         @php
@@ -300,11 +284,8 @@
                                             $member = \App\Models\Member::find($memberId); // Fetch member from the database
                                         @endphp
 
-                                        <input type="text" id="invitedBy" name="invitedBy"
-                                            value="{{ $member ? $member->firstName . ' ' . $member->lastName : 'Invited by a member' }}"
-                                            class="form-control" disabled>
-                                        <input type="hidden" id="invitedByHidden" name="invitedBy"
-                                            value="{{ $memberId ?? 0 }}"> <!-- Default to 0 if no member found -->
+                                        <input type="text" id="invitedBy" name="invitedBy" value="{{ $member ? $member->firstName . ' ' . $member->lastName : 'Invited by a member' }}" class="form-control" disabled>
+                                        <input type="hidden" id="invitedByHidden" name="invitedBy" value="{{ $memberId ?? 0 }}"> <!-- Default to 0 if no member found -->
                                         @php
                                             $meeting = \App\Models\Schedule::find($meetingId);
                                             $circle = $meeting ? $meeting->circle : null;
@@ -316,10 +297,8 @@
                                             // dump('Circle: ' . $circle);
                                             // dump('Meeting: ' . $meeting);
                                         @endphp
-                                        <input type="hidden" id="cityAmount" name="cityAmount"
-                                            value="{{ $cityAmount }}">
-                                        <input type="hidden" id="meetingId" name="meetingId"
-                                            value="{{ $meeting->id }}">
+                                        <input type="hidden" id="cityAmount" name="cityAmount" value="{{ $cityAmount }}">
+                                        <input type="hidden" id="meetingId" name="meetingId" value="{{ $meeting->id }}">
                                     @endif
 
                                     @error('invitedBy')
@@ -331,11 +310,8 @@
 
 
                                 <div class="form-group col-sm-6 flex-column d-flex">
-                                    <label class="form-control-label px-3">Product / Service</label>
-                                    <input type="text" id="product" name="product"
-                                        value="{{ old('product') }}"
-                                        class="form-control @error('product') is-invalid @enderror"
-                                        onblur="validate(6)">
+                                    <label class="form-control-label px-3">Remarks</label>
+                                    <input type="text" id="product" name="product" value="{{ old('product') }}" class="form-control @error('product') is-invalid @enderror" onblur="validate(6)">
                                     @error('product')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -346,11 +322,9 @@
                                 <div class="form-group col-sm-6 flex-column d-flex">
                                     <label class="form-control-label px-3">Are you part of any networking
                                         group?</label>
-                                    <select id="networkingGroup" name="networkingGroup"
-                                        class="form-control @error('networkingGroup') is-invalid @enderror">
+                                    <select id="networkingGroup" name="networkingGroup" class="form-control @error('networkingGroup') is-invalid @enderror">
                                         <option value="" disabled selected>Select Yes or No</option>
-                                        <option value="Yes"
-                                            {{ old('networkingGroup') == 'Yes' ? 'selected' : '' }}>Yes</option>
+                                        <option value="Yes" {{ old('networkingGroup') == 'Yes' ? 'selected' : '' }}>Yes</option>
                                         <option value="No" {{ old('networkingGroup') == 'No' ? 'selected' : '' }}>
                                             No</option>
                                     </select>
@@ -365,10 +339,26 @@
 
                                 <div class="form-group col-sm-6 flex-column d-flex">
                                     <label class="form-control-label px-3">Circle Meet</label>
-                                    <input type="text" id="circleMeet" name="circleMeet"
-                                        value="{{ old('circleMeet') }}"
-                                        class="form-control @error('circleMeet') is-invalid @enderror"
-                                        onblur="validate(8)">
+
+                                    @if (Auth::check())
+                                        <!-- If the user is authenticated, show their name -->
+
+                                        @php
+                                            $meeting = \App\Models\Schedule::find($meetingId);
+                                            $circle = $meeting ? $meeting->circle : null;
+                                            $city = $circle ? $circle->city : null;
+                                            $cityAmount = $city ? $city->amount : 0;
+                                            // // Check if you have the city amount
+                                            // dump('City amount: ' . $cityAmount);
+                                            // dump('City: ' . $city);
+                                            // dump('Circle: ' . $circle);
+                                            // dump('Meeting: ' . $meeting);
+                                        @endphp
+                                    @endif
+
+                                    <input type="text" id="circleMeet" name="circleMeet" value="{{ $circle ? $circle->circleName : '' }}" class="form-control" disabled>
+
+                                    {{-- <input type="text" id="circleMeet" name="circleMeet" value="{{ old('circleMeet') }}" class="form-control @error('circleMeet') is-invalid @enderror" onblur="validate(8)"> --}}
                                     @error('circleMeet')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -377,15 +367,13 @@
                                 </div>
                                 <div class="form-group col-sm-6 flex-column d-flex">
                                     <label class="form-control-label px-3">How do you know about us ?</label>
-                                    <select id="knowsUs" name="knowsUs"
-                                        class="form-control @error('knowsUs') is-invalid @enderror">
+                                    <select id="knowsUs" name="knowsUs" class="form-control @error('knowsUs') is-invalid @enderror">
                                         <option value="" disabled selected>Select an option</option>
                                         <option value="Facebook" {{ old('knowsUs') == 'Facebook' ? 'selected' : '' }}>
                                             Facebook</option>
                                         <option value="Twitter" {{ old('knowsUs') == 'Twitter' ? 'selected' : '' }}>
                                             Twitter</option>
-                                        <option value="Instagram"
-                                            {{ old('knowsUs') == 'Instagram' ? 'selected' : '' }}>Instagram</option>
+                                        <option value="Instagram" {{ old('knowsUs') == 'Instagram' ? 'selected' : '' }}>Instagram</option>
                                         <option value="LinkedIn" {{ old('knowsUs') == 'LinkedIn' ? 'selected' : '' }}>
                                             LinkedIn</option>
                                         <option value="Google" {{ old('knowsUs') == 'Google' ? 'selected' : '' }}>
@@ -411,8 +399,7 @@
                                 </div>
                                 <div class="form-group col-auto">
                                     <!-- Buttons -->
-                                    <button type="submit" class="btn btn-bg-blue" id="register"
-                                        style="display:none;">Register</button>
+                                    <button type="submit" class="btn btn-bg-blue" id="register" style="display:none;">Register</button>
                                     {{-- <button type="submit" class="btn btn-success" id="payNowMeet" disabled
                                         onclick="document.getElementById('cityAmount').value = {{ $cityAmount }};">Pay
                                         Now ₹ {{ $cityAmount }}</button> --}}
@@ -733,8 +720,7 @@
         }
     </script>
 
-    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
-            class="bi bi-arrow-up-short"></i></a>
+    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
     <!-- Vendor JS Files -->
     <script src="{{ asset('vendor/apexcharts/apexcharts.min.js') }}"></script>

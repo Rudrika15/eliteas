@@ -10,6 +10,7 @@ use App\Utils\ErrorLogger;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class VisitorController extends Controller
 {
@@ -68,6 +69,64 @@ class VisitorController extends Controller
 
         return view('admin.visitor.index', compact('visitors', 'categories', 'cities'));
     }
+
+    // public function RoleWiseIndex(Request $request)
+    // {
+    //     // Get authenticated user ID
+    //     $userId = Auth::id();
+
+    //     // Fetch the circleId associated with the authenticated user
+    //     $circleId = DB::table('members')
+    //         ->where('userId', $userId)
+    //         ->value('circleId');
+
+    //     // Fetch the city from the circle table based on circleId
+    //     $cityName = DB::table('cities')
+    //         ->where('id', function ($q) use ($circleId) {
+    //             $q->select('cityId')
+    //                 ->from('circles')
+    //                 ->where('id', $circleId);
+    //         })
+    //         ->value('cityName');
+
+    //     $cityId = DB::table('circles')
+    //         ->where('id', $circleId)
+    //         ->value('cityId');
+
+    //     // Query for VisitorsDetails
+    //     $query = VisitorsDetails::query();
+
+    //     // Apply filters
+    //     if ($request->filled('name')) {
+    //         $query->where(function ($q) use ($request) {
+    //             $q->where('firstName', 'like', '%' . $request->name . '%')
+    //                 ->orWhere('lastName', 'like', '%' . $request->name . '%');
+    //         });
+    //     }
+
+    //     if ($request->filled('business_category')) {
+    //         $query->whereHas('bCategory', function ($q) use ($request) {
+    //             $q->where('categoryName', 'like', '%' . $request->business_category . '%');
+    //         });
+    //     }
+
+    //     // Filter by the city based on the circleId
+    //     if ($cityId) {
+    //         $query->where(
+    //             'city',
+    //             $cityId
+    //         );
+    //     }
+
+    //     $visitors = $query->paginate(10);
+
+    //     // Get categories and distinct cities for dropdown
+    //     $categories = BusinessCategory::pluck('categoryName', 'id');
+    //     $cities = VisitorsDetails::select('city')->distinct()->pluck('city');
+
+    //     return view('admin.visitor.circleDirectorIndex', compact('visitors', 'categories', 'cities'));
+    // }
+
 
 
 

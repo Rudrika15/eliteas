@@ -9,7 +9,10 @@
                         <div class="profile-card">
                             <div class="card-body">
                                 <!-- Profile Picture -->
-                                <img src="{{ asset($categoryData->profilePicture ?? 'img/logo2.jpg') }}" alt="Profile Picture" class="profile-img mb-3 object-fit-contain">
+                                {{-- <img src="{{ asset($categoryData->categoryIcon ?? 'img/logo2.jpg') }}" alt="Category Icon" class="profile-img mb-3 object-fit-contain"> --}}
+
+                                <img src="{{ asset('BusinessCategory/' . ($categoryData->categoryIcon ?? 'logo2.jpg')) }}" alt="Category Icon" class="profile-img mb-3 object-fit-contain">
+
 
                                 <!-- Category Name -->
                                 <h3 class="profile-name mb-3" style="color: #e76a35">

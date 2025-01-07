@@ -526,6 +526,9 @@ Route::group(['middleware' => ['auth']], function () {
     //admin side activity membership status changed
     Route::get('/allPayments', [PaymentController::class, 'allPayments'])->name('allPayments.index');
     Route::get('/monthlyPayments', [PaymentController::class, 'monthlyPayments'])->name('monthlyPayments.index');
+    Route::get('/monthlyPaymentsByRole', [PaymentController::class, 'monthlyPaymentsByRole'])->name('monthlyPaymentsByRole.index');
+    Route::get('/monthly-payments', [PaymentController::class, 'monthlyPaymentsByRole'])->name('monthly.payments');
+    Route::get('/admin/monthly-payments', [PaymentController::class, 'monthlyPayments'])->name('admin.monthlyPayments');
     Route::get('/generate-payment', [PaymentController::class, 'generateMonthlyPayment'])->name('generate.payment');
     Route::post('/update-payment-status', [PaymentController::class, 'updatePaymentStatus'])->name('update.payment.status');
     Route::post('/handle-payment', [PaymentController::class, 'handlePayment'])->name('handle.payment');
@@ -590,6 +593,7 @@ Route::group(['middleware' => ['auth']], function () {
     //Visitors Crud
 
     Route::get('visitors/index', [VisitorController::class, 'index'])->name('visitors.index');
+    // Route::get('visitors/RoleWiseIndex', [VisitorController::class, 'RoleWiseIndex'])->name('visitors.RoleWiseIndex');
     Route::get('visitors/create', [VisitorController::class, 'create'])->name('visitors.create');
     Route::post('visitors/store', [VisitorController::class, 'store'])->name('visitors.store');
     Route::get('visitors/edit/{id?}', [VisitorController::class, 'edit'])->name('visitors.edit');
@@ -759,7 +763,6 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('help/delete/{id?}', [HelpController::class, 'delete'])->name('help.delete');
 
     Route::get('call-Notify', [CircleCallController::class, 'callNotify'])->name('callNotify');
-
 });
 
 Route::get('/main-event-thankYouVisitor', [ConEventController::class, 'thankYouUser'])->name('main.event.thankYouUser');

@@ -433,21 +433,88 @@ class PaymentController extends Controller
         }
     }
 
+    // public function monthlyPayments(Request $request)
+    // {
+    //     $status = $request->input('status');
+    //     $circles = Circle::where('status', 'Active')->get();
+
+    //     // If status is provided, filter by the given status (paid/unpaid)
+    //     if ($status) {
+    //         $monthlyPayments = MonthlyPayment::where('status', $status)->paginate(10);
+    //     } else {
+    //         // If no status is selected, show all monthly payments
+    //         $monthlyPayments = MonthlyPayment::paginate(10);
+    //     }
+
+
+    //     return view('admin.paymentHistory.monthlyPayments', compact('monthlyPayments', 'status', 'circles'));
+    // }
+
+
     public function monthlyPayments(Request $request)
     {
-        $status = $request->input('status');
+        $status = $request->input('status', 'unpaid'); // Default to unpaid if no status is provided
         $circles = Circle::where('status', 'Active')->get();
 
-        // If status is provided, filter by the given status (paid/unpaid)
-        if ($status) {
-            $monthlyPayments = MonthlyPayment::where('status', $status)->paginate(10);
-        } else {
-            // If no status is selected, show all monthly payments
-            $monthlyPayments = MonthlyPayment::paginate(10);
-        }
+        // Filter payments by the selected status
+        $monthlyPayments = MonthlyPayment::where('status', $status)->paginate(10);
 
         return view('admin.paymentHistory.monthlyPayments', compact('monthlyPayments', 'status', 'circles'));
     }
+
+
+    public function monthlyPaymentsByRole(Request $request)
+    {
+        try {
+            // Authenticate the user
+            if (!auth()->check()) {
+                return redirect()->route('login')->with('error', 'Unauthorized access. Please log in.');
+            }
+
+            // Get the authenticated user
+            $userId = auth()->id();
+
+            // Fetch the circleId from the members table based on the authenticated user
+            $member = Member::where('userId', $userId)->first();
+
+            if (!$member) {
+                return redirect()->back()->with('error', 'Member not found.');
+            }
+
+            $circleId = $member->circleId;
+
+            // Retrieve the 'status' from the request (default to 'unpaid')
+            $status = $request->input('status', 'unpaid');
+
+            // Retrieve circles where status is 'Active'
+            $circles = Circle::where('status', 'Active')->get();
+
+            // Fetch monthly payments filtered by circleId and status
+            $monthlyPayments = MonthlyPayment::where('circleId', $circleId)
+                ->where('status', $status) // Filter by status
+                ->paginate(10);
+
+            // Add member name to each payment record
+            foreach ($monthlyPayments as $payment) {
+                $memberDetails = Member::find($payment->memberId);
+
+                if ($memberDetails) {
+                    $user = User::find($memberDetails->userId);
+                    $payment->memberName = $user ? $user->firstName . ' ' . $user->lastName : 'Unknown User';
+                } else {
+                    $payment->memberName = 'Unknown Member';
+                }
+            }
+
+            // Return the view with the data
+            return view('admin.paymentHistory.monthlyPaymentsByRole', compact('monthlyPayments', 'status', 'circles', 'circleId'));
+        } catch (\Throwable $th) {
+            // Log the error and return an error view
+            ErrorLogger::logError($th, $request->fullUrl());
+            return redirect()->back()->with('error', 'An error occurred while fetching monthly payments.');
+        }
+    }
+
 
 
     // public function generateMonthlyPayment(Request $request)

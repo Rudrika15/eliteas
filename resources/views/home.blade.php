@@ -1373,7 +1373,7 @@
 </div> --}}
 
         <!-- Bootstrap Modal -->
-        <div class="modal fade" id="allInvitesModal" tabindex="-1" aria-labelledby="allInvitesModalLabel" aria-hidden="true">
+        {{-- <div class="modal fade" id="allInvitesModal" tabindex="-1" aria-labelledby="allInvitesModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -1395,10 +1395,10 @@
                                 <tbody>
                                     @foreach ($myInvites as $invite)
                                         <tr>
-                                            <td>{{ $invite->training->title }}</td>
-                                            <td>{{ $invite->user->firstName }} {{ $invite->user->lastName }}</td>
-                                            <td>{{ $invite->personName }}</td>
-                                            <td>{{ $invite->personEmail }}</td>
+                                            <td>{{ $invite->training->title ?? '' }}</td>
+                                            <td>{{ $invite->user->firstName ?? '' }} {{ $invite->user->lastName ?? '' }}</td>
+                                            <td>{{ $invite->personName ?? '' }}</td>
+                                            <td>{{ $invite->personEmail ?? '' }}</td>
                                             @php
                                                 $statusColors = [
                                                     'Pending' => 'red',
@@ -1419,7 +1419,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
     @endrole
 
 

@@ -3,71 +3,16 @@
 @section('title', 'UBN - Monthly Payment')
 @section('content')
 
-
-    <style>
-        .form-select[aria-selected="true"] {
-            font-weight: bold;
-        }
-    </style>
-
     <div class="container">
         <div class="card">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h4 class="card-title">Monthly Payment</h4>
-                    @role('Admin')
-                        <div>
-                            <a href="{{ route('admin.monthlyPayments', ['status' => 'unpaid']) }}" class="btn btn-danger btn-sm {{ $status == 'unpaid' ? 'active' : '' }}">
-                                Unpaid
-                            </a>
-                            <a href="{{ route('admin.monthlyPayments', ['status' => 'paid']) }}" class="btn btn-success btn-sm {{ $status == 'paid' ? 'active' : '' }}">
-                                Paid
-                            </a>
-                        </div>
-
-
-                        {{-- <select name="circleId" id="circle-select" class="form-select form-select-sm" required>
-                            <option value="" selected disabled>Select Circle</option>
-                            @foreach ($circles as $circle)
-                                <option value="{{ $circle->id }}" {{ request('circleId') == $circle->id ? 'selected' : '' }}>
-                                    {{ $circle->circleName }}
-                                </option>
-                            @endforeach
-                        </select> --}}
-
-                        
-                        <form action="{{ route('generate.payment') }}" method="GET" class="d-flex align-items-center">
-
-                            <select name="circleId" class="form-select form-select-sm me-2" required>
-                                <option value="" selected disabled>Select Circle</option>
-                                @foreach ($circles as $circle)
-                                    <option value="{{ $circle->id }}">{{ $circle->circleName }}</option>
-                                @endforeach
-                            </select>
-
-
-                            <select name="month" class="form-select form-select-sm me-2" required onchange="this.form.querySelector('button').disabled = !this.value;">
-                                <option value="" selected disabled>Select Month</option>
-                                <option value="January">January</option>
-                                <option value="February">February</option>
-                                <option value="March">March</option>
-                                <option value="April">April</option>
-                                <option value="May">May</option>
-                                <option value="June">June</option>
-                                <option value="July">July</option>
-                                <option value="August">August</option>
-                                <option value="September">September</option>
-                                <option value="October">October</option>
-                                <option value="November">November</option>
-                                <option value="December">December</option>
-                            </select>
-                            <button type="submit" class="btn btn-bg-orange btn-sm mt-3 w-100" disabled>
-                                <i class="bi bi-plus-circle"></i> Generate Monthly Payment
-                            </button>
-                        </form>
-                    @endrole
+                    <div>
+                        <a href="{{ route('monthly.payments', ['status' => 'unpaid']) }}" class="btn btn-danger btn-sm {{ $status == 'unpaid' ? 'active' : '' }}">Unpaid</a>
+                        <a href="{{ route('monthly.payments', ['status' => 'paid']) }}" class="btn btn-success btn-sm {{ $status == 'paid' ? 'active' : '' }}">Paid</a>
+                    </div>
                 </div>
-
                 <div class="table-responsive">
                     <table class="table table-bordered table-striped table-hover">
                         <thead>
@@ -126,21 +71,6 @@
     </style>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-    <script>
-        const circleSelect = document.getElementById('circle-select');
-        const unpaidBtn = document.getElementById('filter-unpaid');
-        const paidBtn = document.getElementById('filter-paid');
-
-        circleSelect.addEventListener('change', () => {
-            const circleId = circleSelect.value;
-            unpaidBtn.href = `{{ route('admin.monthlyPayments') }}?status=unpaid&circleId=${circleId}`;
-            paidBtn.href = `{{ route('admin.monthlyPayments') }}?status=paid&circleId=${circleId}`;
-        });
-    </script>
-
-
-
     <script>
         $(document).ready(function() {
             // Function to update the background color based on the status

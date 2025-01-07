@@ -12,9 +12,12 @@
             @forelse ($circle->members as $member)
                 <div class="col-md-3 mb-4">
                     <div class="profile-card">
-                        <div class="card-body mt-3">
+                        <div class="card-body">
                             <!-- Profile Picture -->
-                            <img src="{{ asset($member->profilePhoto ?? 'img/logo2.jpg') }}" alt="Profile Picture" class="profile-img mb-3 object-fit-contain">
+                            {{-- <img src="{{ asset($member->profilePhoto ?? 'img/logo2.jpg') }}" alt="Profile Picture" class="profile-img mb-3 object-fit-contain"> --}}
+
+                            <img src="{{ asset('ProfilePhoto/' . ($member->profilePhoto ?? 'logo2.jpg')) }}" alt="Profile Picture" class="profile-img mb-3 object-fit-contain">
+
 
                             {{-- @if ($member->profilePhoto)
                                 <img src="{{ asset($member->profilePhoto) }}" alt="Profile Picture" class="profile-img mb-3 object-fit-contain">
@@ -55,8 +58,8 @@
 
     <style>
         .profile-card {
-            width: 250px !important;
-            height: 300px !important;
+            width: 300px !important;
+            height: 250px !important;
             background-color: #fff !important;
             border-radius: 10px !important;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;

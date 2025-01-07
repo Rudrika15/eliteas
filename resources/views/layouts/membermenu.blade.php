@@ -258,7 +258,7 @@
     </li>
 @endif
 
-@if (Auth::user()->hasRole('Circle Admin'))
+@if (Auth::user()->hasRole('Circle Director'))
     <li class="nav-item">
         <a class="nav-link collapsed" href="{{ route('circleAdminPaymentHistory.index') }}">
             <i class="bi bi-cash-stack" style="color: #e76a35"></i>
@@ -268,14 +268,23 @@
 @endif
 
 
-@if (Auth::user()->hasRole('SP'))
+@if (Auth::user()->hasRole('ST'))
     <li class="nav-item">
-        <a class="nav-link collapsed " href="{{ route('monthlyPayments.index') }}">
+        <a class="nav-link collapsed " href="{{ route('monthlyPaymentsByRole.index') }}">
             <i class="bi bi-currency-rupee" style="color: #e76a35"></i>
             <span style="color: #1d2856">Manage Monthly Payment</span>
         </a>
     </li>
 @endif
+
+{{-- @if (Auth::user()->hasRole('Circle Director'))
+    <li class="nav-item">
+        <a class="nav-link collapsed " href="{{ route('visitors.RoleWiseIndex') }}">
+            <i class="bi bi-people-fill" style="color: #e76a35"></i>
+            <span style="color: #1d2856">Visitor List</span>
+        </a>
+    </li>
+@endif --}}
 
 @if (Auth::user()->hasRole('VC'))
     || (Auth::user()->hasRole('Admin'))
