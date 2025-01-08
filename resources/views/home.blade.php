@@ -256,7 +256,7 @@
             @else
                 <div class="container-responsive">
                     <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-md-7">
                             <div class="card-title"><b>Upcoming Circle Meetings</b></div>
                             <div class="card border-0 shadow workshopCard">
                                 <div class="card-body">
@@ -282,15 +282,15 @@
                                         </small>
                                     </p>
                                     <div class="row">
-                                        <div class="col-md-11 ps-3 card-title ">Invite people to join</div>
-                                        <div class="col-md-1 mt-2">
+                                        <div class="col-md-10 ps-3 card-title ">Invite people to join</div>
+                                        <div class="col-md-2 mt-2 pe-3">
                                             {{-- <button type="button" class="btn btn-bg-orange btn-sm mt-2"
                                     onclick="openInvitePage('{{ $meeting->cm_slug }}', '{{ $meeting->id }}', '{{ auth()->user()->member->id }}')"
                                     target="_blank">
                                     Invite
                                 </button> --}}
 
-                                            <button type="button" class="btn btn-bg-orange btn-sm mt-2" onclick="openInvitePage('{{ $signedUrl }}')">
+                                            <button type="button" class="btn btn-bg-orange btn-sm mt-2 " onclick="openInvitePage('{{ $signedUrl }}')">
                                                 Invite
                                             </button>
 
@@ -396,8 +396,29 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
+                        <div class="col-5">
+                            <div class="card-title"><b>Top Categories</b></div>
+                            <div class="card border-0 shadow workshopCard">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="row">
+                                                @foreach ($categoryNames as $categoryName)
+                                                    <div class="col-md-6">
+                                                        <div class="card mb-3 mt-3 categoryCard">
+                                                            <div class="card-body p-2">
+                                                                <h5 class="card-title">{{ $categoryName }}</h5>
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
             @endif
 
 

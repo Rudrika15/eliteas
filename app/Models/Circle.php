@@ -63,4 +63,10 @@ class Circle extends Model
     {
         return $this->belongsTo(User::class, 'createdBy', 'id');
     }
+
+    public function businessCategory()
+    {
+        return $this->hasMany(BusinessCategory::class, 'id', 'businessCategoryId');
+    }
+    
 }

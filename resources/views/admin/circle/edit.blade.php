@@ -3,6 +3,9 @@
 @section('header', 'Edit Circle')
 @section('content')
 
+
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
     {{-- Message --}}
     @if (Session::has('success'))
         <div class="alert alert-success alert-dismissible" role="alert">
@@ -25,8 +28,7 @@
         </div>
         <hr>
         <!-- Floating Labels Form -->
-        <form class="m-3 needs-validation" id="circleForm" enctype="multipart/form-data" method="post"
-            action="{{ route('circle.update', $circle->id) }}" novalidate>
+        <form class="m-3 needs-validation" id="circleForm" enctype="multipart/form-data" method="post" action="{{ route('circle.update', $circle->id) }}" novalidate>
             @csrf
             @method('POST')
 
@@ -35,9 +37,7 @@
             <div class="row mb-3">
                 <div class="col-md-6">
                     <div class="form-floating mt-3">
-                        <input type="text" class="form-control @error('circleName') is-invalid @enderror" id="circleName"
-                            name="circleName" placeholder="Circle Name" value="{{ old('circleName', $circle->circleName) }}"
-                            readonly>
+                        <input type="text" class="form-control @error('circleName') is-invalid @enderror" id="circleName" name="circleName" placeholder="Circle Name" value="{{ old('circleName', $circle->circleName) }}" readonly>
                         <label for="circleName">Circle Name</label>
                         @error('circleName')
                             <div class="invalid-tooltip">
@@ -49,12 +49,10 @@
 
                 <div class="col-md-6 mt-3">
                     <div class="form-floating">
-                        <select class="form-select @error('countryId') is-invalid @enderror" id="countryId" name="countryId"
-                            required>
+                        <select class="form-select @error('countryId') is-invalid @enderror" id="countryId" name="countryId" required>
                             <option value="" selected disabled>Select Country</option>
                             @foreach ($countries as $countryData)
-                                <option value="{{ $countryData->id }}"
-                                    {{ old('countryId', $circle->city->state->countryId) == $countryData->id ? 'selected' : '' }}>
+                                <option value="{{ $countryData->id }}" {{ old('countryId', $circle->city->state->countryId) == $countryData->id ? 'selected' : '' }}>
                                     {{ $countryData->countryName }}
                                 </option>
                             @endforeach
@@ -68,12 +66,10 @@
                 </div>
                 <div class="col-md-6 mt-3">
                     <div class="form-floating">
-                        <select class="form-select @error('stateId') is-invalid @enderror" id="stateId" name="stateId"
-                            required>
+                        <select class="form-select @error('stateId') is-invalid @enderror" id="stateId" name="stateId" required>
                             <option value="" selected disabled>Select State</option>
                             @foreach ($states as $stateData)
-                                <option value="{{ $stateData->id }}"
-                                    {{ old('stateId', $circle->city->stateId) == $stateData->id ? 'selected' : '' }}>
+                                <option value="{{ $stateData->id }}" {{ old('stateId', $circle->city->stateId) == $stateData->id ? 'selected' : '' }}>
                                     {{ $stateData->stateName }}
                                 </option>
                             @endforeach
@@ -87,12 +83,10 @@
                 </div>
                 <div class="col-md-6">
                     <div class="form-floating mt-3">
-                        <select class="form-select @error('cityId') is-invalid @enderror" id="cityId" name="cityId"
-                            required>
+                        <select class="form-select @error('cityId') is-invalid @enderror" id="cityId" name="cityId" required>
                             <option value="" selected disabled>Select City</option>
                             @foreach ($cities as $city)
-                                <option value="{{ $city->id }}"
-                                    {{ old('cityId', $circle->cityId) == $city->id ? 'selected' : '' }}>
+                                <option value="{{ $city->id }}" {{ old('cityId', $circle->cityId) == $city->id ? 'selected' : '' }}>
                                     {{ $city->cityName }}
                                 </option>
                             @endforeach
@@ -110,8 +104,7 @@
                         <select class="form-control" name="franchiseId" id="franchiseId">
                             <option value="" selected disabled> Select Franchise</option>
                             @foreach ($franchise as $franchiseData)
-                                <option value="{{ $franchiseData->id }}"
-                                    {{ $circle->franchiseId == $franchiseData->id ? 'selected' : '' }}>
+                                <option value="{{ $franchiseData->id }}" {{ $circle->franchiseId == $franchiseData->id ? 'selected' : '' }}>
                                     {{ $franchiseData->franchiseName }}</option>
                             @endforeach
                         </select>
@@ -127,8 +120,7 @@
                         <select class="form-control" name="circletypeId" id="circletypeId">
                             <option value="" selected disabled> Select Circle Type</option>
                             @foreach ($circletype as $circletypeData)
-                                <option value="{{ $circletypeData->id }}"
-                                    {{ $circle->circletypeId == $circletypeData->id ? 'selected' : '' }}>
+                                <option value="{{ $circletypeData->id }}" {{ $circle->circletypeId == $circletypeData->id ? 'selected' : '' }}>
                                     {{ $circletypeData->circleTypeName }}</option>
                             @endforeach
                         </select>
@@ -197,9 +189,7 @@
                     <div class="row mb-3">
                         <div class="col-md-3">
                             <div class="form-check mt-3">
-                                <input class="form-check-input" type="checkbox" id="weekNo1" name="weekNo[]"
-                                    value="Week 1"
-                                    {{ is_array(old('weekNo', $circle->weekNo)) && in_array('Week 1', old('weekNo', $circle->weekNo)) ? 'checked' : '' }}>
+                                <input class="form-check-input" type="checkbox" id="weekNo1" name="weekNo[]" value="Week 1" {{ is_array(old('weekNo', $circle->weekNo)) && in_array('Week 1', old('weekNo', $circle->weekNo)) ? 'checked' : '' }}>
                                 <label class="form-check-label" for="weekNo1">
                                     Week 1
                                 </label>
@@ -207,9 +197,7 @@
                         </div>
                         <div class="col-md-3">
                             <div class="form-check mt-3">
-                                <input class="form-check-input" type="checkbox" id="weekNo2" name="weekNo[]"
-                                    value="Week 2"
-                                    {{ is_array(old('weekNo', $circle->weekNo)) && in_array('Week 2', old('weekNo', $circle->weekNo)) ? 'checked' : '' }}>
+                                <input class="form-check-input" type="checkbox" id="weekNo2" name="weekNo[]" value="Week 2" {{ is_array(old('weekNo', $circle->weekNo)) && in_array('Week 2', old('weekNo', $circle->weekNo)) ? 'checked' : '' }}>
                                 <label class="form-check-label" for="weekNo2">
                                     Week 2
                                 </label>
@@ -217,9 +205,7 @@
                         </div>
                         <div class="col-md-3">
                             <div class="form-check mt-3">
-                                <input class="form-check-input" type="checkbox" id="weekNo3" name="weekNo[]"
-                                    value="Week 3"
-                                    {{ is_array(old('weekNo', $circle->weekNo)) && in_array('Week 3', old('weekNo', $circle->weekNo)) ? 'checked' : '' }}>
+                                <input class="form-check-input" type="checkbox" id="weekNo3" name="weekNo[]" value="Week 3" {{ is_array(old('weekNo', $circle->weekNo)) && in_array('Week 3', old('weekNo', $circle->weekNo)) ? 'checked' : '' }}>
                                 <label class="form-check-label" for="weekNo3">
                                     Week 3
                                 </label>
@@ -227,9 +213,7 @@
                         </div>
                         <div class="col-md-3">
                             <div class="form-check mt-3">
-                                <input class="form-check-input" type="checkbox" id="weekNo4" name="weekNo[]"
-                                    value="Week 4"
-                                    {{ is_array(old('weekNo', $circle->weekNo)) && in_array('Week 4', old('weekNo', $circle->weekNo)) ? 'checked' : '' }}>
+                                <input class="form-check-input" type="checkbox" id="weekNo4" name="weekNo[]" value="Week 4" {{ is_array(old('weekNo', $circle->weekNo)) && in_array('Week 4', old('weekNo', $circle->weekNo)) ? 'checked' : '' }}>
                                 <label class="form-check-label" for="weekNo4">
                                     Week 4
                                 </label>
@@ -239,6 +223,25 @@
                 </div>
             </div>
 
+            <div class="col-md-12 mt-3">
+                <div class="form-floating">
+                    <select class="form-select select2 js-example-basic-multiple-limit" style="height: 150px" id="businessCategoryId" name="businessCategoryId[]" multiple>
+                        @foreach ($bCategory as $bCategoryData)
+                            <option value="{{ $bCategoryData->id }}" {{ in_array($bCategoryData->id, old('businessCategoryId', [])) ? 'selected' : '' }}>
+                                {{ $bCategoryData->categoryName }}
+                            </option>
+                        @endforeach
+                    </select>
+                    {{-- <label for="bCategoryId">Business Category</label> --}}
+                    @error('bCategoryId')
+                        <div class="invalid-tooltip">
+                            {{ $message }}
+                        </div>
+                    @enderror
+                </div>
+            </div>
+
+
             <div class="text-center mt-3">
                 <button type="submit" class="btn btn-bg-blue">Update</button>
                 <a href="{{ route('circle.index') }}" class="btn btn-bg-orange">Cancel</a>
@@ -247,6 +250,21 @@
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <script>
+        // Initialize Select2 with search and selection limit
+        $(document).ready(function() {
+            $(".js-example-basic-multiple-limit").select2({
+                placeholder: "Select Business Category", // Placeholder for the dropdown
+                allowClear: true, // Adds a clear button to the dropdown
+                maximumSelectionLength: 5, // Limits selection to 2 items
+                width: '100%' // Ensures it takes the full width of the container
+            });
+        });
+    </script>
+
     <script>
         $(document).ready(function() {
             // Function to enable/disable checkboxes based on the number of checked checkboxes

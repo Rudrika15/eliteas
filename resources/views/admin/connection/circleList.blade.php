@@ -21,6 +21,10 @@
                                 <h3 class="profile-name mb-3" style="color: #e76a35">
                                     {{ $circlesData->city->cityName ?? '' }}
                                 </h3>
+
+                                <h3 class="profile-name mb-3" style="color: green;">
+                                    Business: &#x20B9;{{ number_format($circlesData->totalBusinessAmount ?? '0', 2, '.', ',') }}
+                                </h3>
                             </div>
                         </div>
                     </a>
@@ -37,7 +41,7 @@
     <style>
         .profile-card {
             width: 250px !important;
-            height: 230px !important;
+            height: 280px !important;
             background-color: #fff !important;
             border-radius: 10px !important;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;

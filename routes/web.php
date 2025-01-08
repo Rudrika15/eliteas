@@ -593,7 +593,7 @@ Route::group(['middleware' => ['auth']], function () {
     //Visitors Crud
 
     Route::get('visitors/index', [VisitorController::class, 'index'])->name('visitors.index');
-    // Route::get('visitors/RoleWiseIndex', [VisitorController::class, 'RoleWiseIndex'])->name('visitors.RoleWiseIndex');
+    Route::get('visitors/RoleWiseIndex', [VisitorController::class, 'RoleWiseIndex'])->name('visitors.RoleWiseIndex');
     Route::get('visitors/create', [VisitorController::class, 'create'])->name('visitors.create');
     Route::post('visitors/store', [VisitorController::class, 'store'])->name('visitors.store');
     Route::get('visitors/edit/{id?}', [VisitorController::class, 'edit'])->name('visitors.edit');

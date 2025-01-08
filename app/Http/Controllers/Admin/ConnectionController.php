@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\BusinessCategory;
 use App\Models\Circle;
+use App\Models\CircleMeetingMembersBusiness;
 use Illuminate\Support\Facades\Auth;
 
 class ConnectionController extends Controller
@@ -25,10 +26,35 @@ class ConnectionController extends Controller
         $this->middleware('permission:connection-remove', ['only' => ['removeConnection']]);
     }
 
+    // public function circleList()
+    // {
+    //     try {
+    //         // Fetch circles with member counts
+    //         $circles = Circle::where('status', 'Active')
+    //             ->with(['city' => function ($query) {
+    //                 $query->select('id', 'cityName');
+    //             }])
+    //             ->withCount(['members' => function ($query) {
+    //                 $query->where('status', 'Active'); // Count only active members if needed
+    //             }])
+    //             ->get();
+
+    //         return view('admin.connection.circleList', compact('circles'));
+    //     } catch (\Throwable $th) {
+    //         // Log the error
+    //         ErrorLogger::logError(
+    //             $th,
+    //             request()->fullUrl()
+    //         );
+    //         return view('servererror');
+    //     }
+    // }
+
+
     public function circleList()
     {
         try {
-            // Fetch circles with member counts
+            // Fetch circles with member counts and total business amounts
             $circles = Circle::where('status', 'Active')
                 ->with(['city' => function ($query) {
                     $query->select('id', 'cityName');
@@ -37,6 +63,22 @@ class ConnectionController extends Controller
                     $query->where('status', 'Active'); // Count only active members if needed
                 }])
                 ->get();
+
+            // Fetch business meetings
+            $businessMeetings = CircleMeetingMembersBusiness::with(['member'])
+                ->where('status', 'Active')
+                ->get();
+
+            // Add total business amount to each circle
+            $circles->each(function ($circle) use ($businessMeetings) {
+                $filteredBusinessMeetings = $businessMeetings->filter(function ($meeting) use ($circle) {
+                    $businessGiverCircleId = Member::where('userId', $meeting->businessGiverId)->value('circleId');
+                    return $businessGiverCircleId == $circle->id;
+                });
+
+                // Calculate and add the total business amount
+                $circle->totalBusinessAmount = $filteredBusinessMeetings->sum('amount');
+            });
 
             return view('admin.connection.circleList', compact('circles'));
         } catch (\Throwable $th) {
@@ -48,6 +90,7 @@ class ConnectionController extends Controller
             return view('servererror');
         }
     }
+
 
     public function showMembers($id)
     {

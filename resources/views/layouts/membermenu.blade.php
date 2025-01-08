@@ -277,14 +277,16 @@
     </li>
 @endif
 
-{{-- @if (Auth::user()->hasRole('Circle Director'))
+
+@if (Auth::user()->hasRole('Circle Director'))
     <li class="nav-item">
         <a class="nav-link collapsed " href="{{ route('visitors.RoleWiseIndex') }}">
             <i class="bi bi-people-fill" style="color: #e76a35"></i>
             <span style="color: #1d2856">Visitor List</span>
         </a>
     </li>
-@endif --}}
+@endif
+
 
 @if (Auth::user()->hasRole('VC'))
     || (Auth::user()->hasRole('Admin'))

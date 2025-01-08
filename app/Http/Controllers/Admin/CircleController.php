@@ -12,6 +12,7 @@ use App\Models\Schedule;
 use App\Models\Franchise;
 use App\Models\CircleCall;
 use App\Models\CircleType;
+use App\Models\BusinessCategory;
 use App\Utils\ErrorLogger;
 use Illuminate\Support\Str;
 use App\Models\CircleMember;
@@ -456,7 +457,7 @@ class CircleController extends Controller
     }
 
 
-  
+
 
 
     public function index(Request $request)
@@ -512,6 +513,8 @@ class CircleController extends Controller
             return view('servererror');
         }
     }
+
+
     public function create(Request $request)
     {
         try {
@@ -522,7 +525,8 @@ class CircleController extends Controller
             $circle = Circle::where('status', 'Active')->get();
             $franchise = Franchise::where('status', 'Active')->get();
             $circletype = CircleType::where('status', 'Active')->get();
-            return view('admin.circle.create', compact('circle', 'franchise', 'city', 'circletype', 'countries', 'states', 'cities'));
+            $bCategory = BusinessCategory::where('status', 'Active')->get();
+            return view('admin.circle.create', compact('circle', 'bCategory', 'franchise', 'city', 'circletype', 'countries', 'states', 'cities'));
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError(
@@ -554,6 +558,7 @@ class CircleController extends Controller
             $circle = new Circle();
             $circle->createdBy = $userId;
             $circle->circleName = $request->circleName;
+            $circle->businessCategoryId = json_encode($request->businessCategoryId);
             $circle->franchiseId = $request->franchiseId;
             $circle->cityId = $request->cityId;
             $circle->circletypeId = $request->circletypeId;
@@ -661,7 +666,8 @@ class CircleController extends Controller
             $franchise = Franchise::where('status', '!=', 'Deleted')->get();
             $city = City::where('status', '!=', 'Deleted')->get();
             $circletype = CircleType::where('status', '!=', 'Deleted')->get();
-            return view('admin.circle.edit', compact('franchise', 'circletype', 'city', 'circle', 'countries', 'states', 'cities'));
+            $bCategory = BusinessCategory::where('status', 'Active')->get();
+            return view('admin.circle.edit', compact('franchise', 'bCategory', 'circletype', 'city', 'circle', 'countries', 'states', 'cities'));
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError(
@@ -689,6 +695,7 @@ class CircleController extends Controller
             $id = $request->id;
             $circle = Circle::findOrFail($id);
             $circle->circleName = $request->circleName;
+            $circle->businessCategoryId = json_encode($request->businessCategoryId);
             $circle->franchiseId = $request->franchiseId;
             $circle->cityId = $request->cityId;
             $circle->circletypeId = $request->circletypeId;

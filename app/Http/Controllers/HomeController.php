@@ -458,8 +458,26 @@ class HomeController extends Controller
                 $membersCount = Member::where('status', 'Active')->count();
                 $circleCount = Circle::where('status', 'Active')->count();
 
+                // $authUserId = Auth::user()->member->userId;
+                // $circleId = Member::where('userId', $authUserId)->value('circleId');
+                // $businessCategoryId = Circle::where('id', $circleId)->value('businessCategoryId');
+                // // $categoryName = BusinessCategory::where('id', $businessCategoryId)->value('categoryName');
 
-                return view('home', compact('circleCount', 'membersCount', 'totalRegisterCount', 'birthdaysToday', 'templates', 'signedUrl', 'count', 'monthlyPayments', 'totalAmountDue', 'nearestEvents', 'findEventRegister', 'circlecalls', 'busGiver', 'refGiver', 'nearestTraining', 'findRegister', 'testimonials', 'meeting', 'businessCategory', 'myInvites', 'todaysBirthdays'));
+
+                $authUserId = Auth::user()->member->userId;
+                $circleId = Member::where('userId', $authUserId)->value('circleId');
+
+                $businessCategoryId = Circle::where('id', $circleId)->value('businessCategoryId');
+                $businessCategoryIdArray = explode(',', $businessCategoryId);
+
+                $businessCategories = BusinessCategory::whereIn('id', json_decode($businessCategoryId))->get();
+
+                $categoryNames = $businessCategories->pluck('categoryName');
+
+
+
+
+                return view('home', compact('circleCount', 'categoryNames', 'membersCount', 'totalRegisterCount', 'birthdaysToday', 'templates', 'signedUrl', 'count', 'monthlyPayments', 'totalAmountDue', 'nearestEvents', 'findEventRegister', 'circlecalls', 'busGiver', 'refGiver', 'nearestTraining', 'findRegister', 'testimonials', 'meeting', 'businessCategory', 'myInvites', 'todaysBirthdays'));
             }
 
             return view('home', compact('circleCount', 'membersCount', 'count', 'nearestTraining', 'businessCategory', 'myInvites', 'findRegister', 'birthdaysToday', 'templates'));

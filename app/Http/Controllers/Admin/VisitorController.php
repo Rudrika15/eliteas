@@ -70,62 +70,60 @@ class VisitorController extends Controller
         return view('admin.visitor.index', compact('visitors', 'categories', 'cities'));
     }
 
-    // public function RoleWiseIndex(Request $request)
-    // {
-    //     // Get authenticated user ID
-    //     $userId = Auth::id();
+    public function RoleWiseIndex(Request $request)
+    {
+        $userId = Auth::id();
 
-    //     // Fetch the circleId associated with the authenticated user
-    //     $circleId = DB::table('members')
-    //         ->where('userId', $userId)
-    //         ->value('circleId');
+        // Step 1: Get the user's circle and city ID
+        $circle = DB::table('circles')
+            ->join('members', 'circles.id', '=', 'members.circleId')
+            ->where('members.userId', $userId)
+            ->first(['circles.id as circleId', 'circles.cityId']);
 
-    //     // Fetch the city from the circle table based on circleId
-    //     $cityName = DB::table('cities')
-    //         ->where('id', function ($q) use ($circleId) {
-    //             $q->select('cityId')
-    //                 ->from('circles')
-    //                 ->where('id', $circleId);
-    //         })
-    //         ->value('cityName');
+        if (!$circle) {
+            abort(404, 'Circle not found for the user.');
+        }
 
-    //     $cityId = DB::table('circles')
-    //         ->where('id', $circleId)
-    //         ->value('cityId');
+        $cityId = $circle->cityId;
 
-    //     // Query for VisitorsDetails
-    //     $query = VisitorsDetails::query();
+        // Step 2: Get the city name from the `cities` table using `cityId`
+        $cityName = DB::table('cities')->where('id', $cityId)->value('cityName');
 
-    //     // Apply filters
-    //     if ($request->filled('name')) {
-    //         $query->where(function ($q) use ($request) {
-    //             $q->where('firstName', 'like', '%' . $request->name . '%')
-    //                 ->orWhere('lastName', 'like', '%' . $request->name . '%');
-    //         });
-    //     }
+        if (!$cityName) {
+            abort(404, 'City not found for the specified city ID.');
+        }
 
-    //     if ($request->filled('business_category')) {
-    //         $query->whereHas('bCategory', function ($q) use ($request) {
-    //             $q->where('categoryName', 'like', '%' . $request->business_category . '%');
-    //         });
-    //     }
+        // Step 3: Fetch data from `visitor_details` where the city matches the city name
+        $query = VisitorsDetails::query();
 
-    //     // Filter by the city based on the circleId
-    //     if ($cityId) {
-    //         $query->where(
-    //             'city',
-    //             $cityId
-    //         );
-    //     }
+        // Apply the city filter
+        $query->where('city', $cityName);
 
-    //     $visitors = $query->paginate(10);
+        // Optional filters (e.g., name and business category)
+        if ($request->filled('name')) {
+            $query->where(function ($q) use ($request) {
+                $q->where('firstName', 'like', '%' . $request->name . '%')
+                    ->orWhere('lastName', 'like', '%' . $request->name . '%');
+            });
+        }
 
-    //     // Get categories and distinct cities for dropdown
-    //     $categories = BusinessCategory::pluck('categoryName', 'id');
-    //     $cities = VisitorsDetails::select('city')->distinct()->pluck('city');
+        if ($request->filled('business_category')) {
+            $query->whereHas('bCategory', function ($q) use ($request) {
+                $q->where('categoryName', 'like', '%' . $request->business_category . '%');
+            });
+        }
 
-    //     return view('admin.visitor.circleDirectorIndex', compact('visitors', 'categories', 'cities'));
-    // }
+        // Step 4: Get the paginated results
+        $visitors = $query->paginate(10);
+
+        // Step 5: Get categories and distinct cities for dropdowns
+        $categories = BusinessCategory::pluck('categoryName', 'id');
+        $cities = VisitorsDetails::select('city')->distinct()->pluck('city');
+
+        // Step 6: Return the view
+        return view('admin.visitor.circleDirectorIndex', compact('visitors', 'categories', 'cities'));
+    }
+
 
 
 

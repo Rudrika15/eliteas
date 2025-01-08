@@ -23,4 +23,5 @@ class BusinessCategory extends Model
     {
         return $this->hasMany(Member::class, 'businessCategoryId', 'id');
     }
+    
 }
