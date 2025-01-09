@@ -762,7 +762,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('help/update', [HelpController::class, 'update'])->name('help.update');
     Route::get('help/delete/{id?}', [HelpController::class, 'delete'])->name('help.delete');
 
-    Route::get('call-Notify', [CircleCallController::class, 'callNotify'])->name('callNotify');
+    // Route::get('call-Notify', [CircleCallController::class, 'callNotify'])->name('callNotify');
 });
 
 Route::get('/main-event-thankYouVisitor', [ConEventController::class, 'thankYouUser'])->name('main.event.thankYouUser');

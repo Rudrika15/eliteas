@@ -445,6 +445,8 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     //fcmToken
     Route::post('fcm-token', [LoginController::class, 'saveToken']);
+    Route::get('call-Notify', [CircleCallController::class, 'callNotify']);
+
 });
 
 //get app version
