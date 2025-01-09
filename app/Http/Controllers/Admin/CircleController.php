@@ -751,7 +751,7 @@ class CircleController extends Controller
     {
         try {
             $circle = Circle::findOrFail($id);
-            $schedules = Schedule::where('circleId', $circle->id)->paginate(10);
+            $schedules = Schedule::where('circleId', $circle->id)->orderByDesc('id')->paginate(10);
             return view('admin.circle.show', compact('circle', 'schedules'));
         } catch (\Throwable $th) {
             // throw $th;

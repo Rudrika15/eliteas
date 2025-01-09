@@ -464,13 +464,31 @@ class HomeController extends Controller
                 // // $categoryName = BusinessCategory::where('id', $businessCategoryId)->value('categoryName');
 
 
+                // $authUserId = Auth::user()->member->userId;
+                // $circleId = Member::where('userId', $authUserId)->value('circleId');
+
+                // $businessCategoryId = Circle::where('id', $circleId)->value('businessCategoryId');
+                // $businessCategoryIdArray = explode(',', $businessCategoryId);
+
+                // $businessCategories = BusinessCategory::whereIn('id', json_decode($businessCategoryId))->get();
+
+                // $categoryNames = $businessCategories->pluck('categoryName');
+
+
                 $authUserId = Auth::user()->member->userId;
                 $circleId = Member::where('userId', $authUserId)->value('circleId');
 
                 $businessCategoryId = Circle::where('id', $circleId)->value('businessCategoryId');
-                $businessCategoryIdArray = explode(',', $businessCategoryId);
 
-                $businessCategories = BusinessCategory::whereIn('id', json_decode($businessCategoryId))->get();
+                // Safely decode the businessCategoryId
+                $businessCategoryIdArray = $businessCategoryId ? explode(',', $businessCategoryId) : [];
+
+                $businessCategories = collect(); // Default to an empty collection
+
+                // Query only if $businessCategoryIdArray is not empty
+                if (!empty($businessCategoryIdArray)) {
+                    $businessCategories = BusinessCategory::whereIn('id', $businessCategoryIdArray)->get();
+                }
 
                 $categoryNames = $businessCategories->pluck('categoryName');
 
