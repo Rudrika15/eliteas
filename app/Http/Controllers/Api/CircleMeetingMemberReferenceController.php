@@ -9,10 +9,15 @@ use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
 use App\Models\CircleMeetingMembersBusiness;
 use App\Models\CircleMeetingMembersReference;
+use App\Models\User;
 use App\Utils\ErrorLogger;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use App\Utils\Utils;
+use Illuminate\Support\Facades\Log;
+use Kreait\Firebase\Factory;
+use Kreait\Firebase\Messaging\CloudMessage;
+use Kreait\Firebase\Messaging\Notification;
 
 class CircleMeetingMemberReferenceController extends Controller
 {
@@ -72,6 +77,44 @@ class CircleMeetingMemberReferenceController extends Controller
     //     }
     // }
 
+    // public function create(Request $request)
+    // {
+    //     $this->validate($request, []);
+
+    //     try {
+    //         $refGiver = new CircleMeetingMembersReference();
+
+    //         $refGiver->referenceGiverId = Auth::user()->id;
+    //         $refGiver->memberId = $request->memberId;
+
+    //         // if ($request->group == 'internal')
+    //         //     $refGiver->contactName = $request->contactNameInternal;
+    //         // else
+    //         $refGiver->contactName = $request->contactNameExternal;
+
+    //         $refGiver->contactNo = $request->contactNo;
+    //         $refGiver->email = $request->email;
+    //         $refGiver->scale = $request->scale;
+    //         $refGiver->description = $request->description;
+    //         $refGiver->status = 'Active';
+
+    //         $refGiver->save();
+
+    //         $busGiver = new CircleMeetingMembersBusiness();
+    //         $busGiver->businessGiverId = Auth::user()->id;
+    //         $busGiver->loginMemberId = $refGiver->memberId;
+    //         $busGiver->amount = $request->amount;
+    //         $busGiver->remarks = $request->remarks;
+    //         $busGiver->date = Carbon::now()->toDateString();
+    //         $busGiver->status = 'Active';
+    //         $busGiver->save();
+
+    //         return Utils::sendResponse([], 'Circle Meeting Member Reference created successfully', 200);
+    //     } catch (\Throwable $th) {
+    //         return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
+    //     }
+    // }
+
     public function create(Request $request)
     {
         $this->validate($request, []);
@@ -82,11 +125,7 @@ class CircleMeetingMemberReferenceController extends Controller
             $refGiver->referenceGiverId = Auth::user()->id;
             $refGiver->memberId = $request->memberId;
 
-            // if ($request->group == 'internal')
-            //     $refGiver->contactName = $request->contactNameInternal;
-            // else
             $refGiver->contactName = $request->contactNameExternal;
-
             $refGiver->contactNo = $request->contactNo;
             $refGiver->email = $request->email;
             $refGiver->scale = $request->scale;
@@ -104,11 +143,42 @@ class CircleMeetingMemberReferenceController extends Controller
             $busGiver->status = 'Active';
             $busGiver->save();
 
+            // Send notification to the specified member
+            $memberId = $request->memberId;
+            $user = User::find($memberId);
+
+            if ($user && $user->fcm_token) {
+                $title = 'Reference';
+                $body = 'A new reference has been created for you by ' . Auth::user()->name;
+
+                $serviceAccountPath = storage_path('app/public/ubn_notification.json');
+                $factory = (new Factory)->withServiceAccount($serviceAccountPath);
+                $messaging = $factory->createMessaging();
+
+                $message = CloudMessage::withTarget('token', $user->fcm_token)
+                    ->withNotification(Notification::create($title, $body));
+
+                try {
+                    $messaging->send($message);
+                    Log::info('Notification sent to token: ' . $user->fcm_token);
+                } catch (\Kreait\Firebase\Exception\Messaging\NotFound $e) {
+                    Log::error('Token not found: ' . $user->fcm_token);
+                } catch (\Kreait\Firebase\Exception\Messaging\InvalidArgument $e) {
+                    Log::error('Invalid argument error with token: ' . $user->fcm_token);
+                } catch (\Exception $e) {
+                    Log::error('General error sending to token: ' . $user->fcm_token . '. Error: ' . $e->getMessage());
+                }
+            } else {
+                Log::error('No FCM token found for user ID: ' . $memberId);
+            }
+
             return Utils::sendResponse([], 'Circle Meeting Member Reference created successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
+
+
 
     public function refByOtherStore(Request $request)
     {

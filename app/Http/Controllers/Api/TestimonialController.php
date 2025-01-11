@@ -4,15 +4,18 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Testimonial;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Utils\Utils;
+use Illuminate\Support\Facades\Log;
+use Kreait\Firebase\Factory;
+use Kreait\Firebase\Messaging\CloudMessage;
+use Kreait\Firebase\Messaging\Notification;
 
 class TestimonialController extends Controller
 {
-
-
     public function myTestimonials(Request $request)
     {
         try {
@@ -70,6 +73,36 @@ class TestimonialController extends Controller
             $testimonial->status = 'Active';
             $testimonial->uploadedDate = Carbon::now()->toDateString();
             $testimonial->save();
+
+            // Send notification to the specified user
+            $circlePersonId = $request->input('circlePersonId');
+            $user = User::find($circlePersonId);
+
+            if ($user && $user->fcm_token) {
+                $title = 'Testimonial';
+                $body = $user->firstName . ' ' . $user->lastName . ' has Created Testimonial about you.';
+
+                $serviceAccountPath = storage_path('app/public/ubn_notification.json');
+                $factory = (new Factory)->withServiceAccount($serviceAccountPath);
+                $messaging = $factory->createMessaging();
+
+                $message = CloudMessage::withTarget('token', $user->fcm_token)
+                    ->withNotification(Notification::create($title, $body));
+
+                try {
+                    $messaging->send($message);
+                    Log::info('Notification sent to token: ' . $user->fcm_token);
+                    // $notificationSent = true;
+                } catch (\Kreait\Firebase\Exception\Messaging\NotFound $e) {
+                    Log::error('Token not found: ' . $user->fcm_token);
+                } catch (\Kreait\Firebase\Exception\Messaging\InvalidArgument $e) {
+                    Log::error('Invalid argument error with token: ' . $user->fcm_token);
+                } catch (\Exception $e) {
+                    Log::error('General error sending to token: ' . $user->fcm_token . '. Error: ' . $e->getMessage());
+                }
+            } else {
+                Log::error('No FCM token found for user ID: ' . $circlePersonId);
+            }
 
             return Utils::sendResponse($testimonial, 'Testimonial created successfully', 201);
         } catch (\Throwable $th) {
