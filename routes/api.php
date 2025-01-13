@@ -35,6 +35,7 @@ use App\Http\Controllers\Api\MembershipSubscriptionController;
 use App\Http\Controllers\Api\CircleMeetingMemberBusinessController;
 use App\Http\Controllers\Api\CircleMeetingMemberReferenceController;
 use App\Http\Controllers\Api\HelpController;
+use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\PermissionController;
 use App\Http\Controllers\Api\SlotController;
@@ -446,6 +447,10 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     //fcmToken
     Route::post('fcm-token', [LoginController::class, 'saveToken']);
     Route::get('call-Notify', [CircleCallController::class, 'callNotify']);
+
+    //notification
+    Route::get('notification-index', [NotificationController::class, 'notificationIndex']);
+
 
 });
 

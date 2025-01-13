@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Models\Event;
 use App\Models\Circle;
 use App\Models\Member;
+use App\Models\Notifications;
 use App\Utils\ErrorLogger;
 use Illuminate\Http\Request;
 use App\Models\EventRegister;
@@ -15,6 +16,10 @@ use App\Models\User;
 use App\Models\VisitorEventRegister;
 use Illuminate\Support\Facades\Auth;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Illuminate\Support\Facades\Log;
+use Kreait\Firebase\Factory;
+use Kreait\Firebase\Messaging\CloudMessage;
+use Kreait\Firebase\Messaging\Notification;
 
 class EventController extends Controller
 {
@@ -66,7 +71,7 @@ class EventController extends Controller
             return view('servererror');
         }
     }
-    
+
     public function memberEventIndex(Request $request)
     {
         try {
@@ -296,19 +301,76 @@ class EventController extends Controller
     }
 
 
+    //     public function updateStatus(Request $request, $id)
+    // {
+    //     $event = Event::find($id);
+
+    //     if ($event) {
+    //         $event->eventStatus = $request->eventStatus;
+    //         $event->save();
+
+    //         return response()->json(['success' => true]);
+    //     }
+
+    //     return response()->json(['success' => false]);
+    // }
+
     public function updateStatus(Request $request, $id)
-{
-    $event = Event::find($id);
+    {
+        $event = Event::find($id);
 
-    if ($event) {
-        $event->eventStatus = $request->eventStatus;
-        $event->save();
+        if ($event) {
+            $event->eventStatus = $request->eventStatus;
+            $event->save();
 
-        return response()->json(['success' => true]);
+            // Check if eventStatus is changed to "Publish"
+            if ($request->eventStatus === 'Publish') {
+                // Prepare notification details
+                $title = "New Event Published";
+                $body = "The event '{$event->title}' has been published. Don't miss it!";
+
+                // Store notification in the database
+                $notification = new Notifications();
+                $notification->title = $title;
+                $notification->body = $body;
+                $notification->data = json_encode([
+                    'event_id' => $event->id,
+                    'event_title' => $event->title,
+                ]);
+                $notification->save();
+
+                // Send notifications to all users
+                $users = User::whereNotNull('fcm_token')->get();
+                $serviceAccountPath = storage_path('app/public/ubn_notification.json');
+                $factory = (new Factory)->withServiceAccount($serviceAccountPath);
+                $messaging = $factory->createMessaging();
+
+                foreach ($users as $user) {
+                    if (!empty($user->fcm_token)) {
+                        $message = CloudMessage::withTarget('token', $user->fcm_token)
+                            ->withNotification(Notification::create($title, $body));
+
+                        try {
+                            $messaging->send($message);
+                            Log::info('Notification sent to token: ' . $user->fcm_token);
+                        } catch (\Kreait\Firebase\Exception\Messaging\NotFound $e) {
+                            Log::error('Token not found: ' . $user->fcm_token);
+                        } catch (\Kreait\Firebase\Exception\Messaging\InvalidArgument $e) {
+                            Log::error('Invalid argument error with token: ' . $user->fcm_token);
+                        } catch (\Exception $e) {
+                            Log::error('General error sending to token: ' . $user->fcm_token . '. Error: ' . $e->getMessage());
+                        }
+                    }
+                }
+            }
+
+            return response()->json(['success' => true]);
+        }
+
+        return response()->json(['success' => false]);
     }
 
-    return response()->json(['success' => false]);
-}
+
 
 
     // public function delete($id)
@@ -438,46 +500,45 @@ class EventController extends Controller
 
 
     public function checkRegistration(Request $request)
-{
-    try {
-        // Validate the input data
-        $request->validate([
-            'email' => 'required|email',
-            'eventId' => 'required|integer'
-        ]);
+    {
+        try {
+            // Validate the input data
+            $request->validate([
+                'email' => 'required|email',
+                'eventId' => 'required|integer'
+            ]);
 
-        // Fetch the user by email
-        $user = User::where('email', $request->email)->first();
+            // Fetch the user by email
+            $user = User::where('email', $request->email)->first();
 
-        if (!$user) {
+            if (!$user) {
+                return response()->json(['isRegistered' => false]);
+            }
+
+            // Fetch the active event
+            $event = Event::find($request->eventId);
+
+            if (!$event) {
+                return response()->json(['isRegistered' => false]);
+            }
+
+            // Check if the user is already registered for the event
+            $member = Member::where('userId', $user->id)->first();
+            if (!$member) {
+                return response()->json(['isRegistered' => false]);
+            }
+
+            $registration = EventRegister::where('memberId', $member->id)
+                ->where('eventId', $event->id)
+                ->first();
+
+            // Return whether the user is already registered
+            return response()->json(['isRegistered' => $registration ? true : false]);
+        } catch (\Exception $e) {
+            // Handle any errors
             return response()->json(['isRegistered' => false]);
         }
-
-        // Fetch the active event
-        $event = Event::find($request->eventId);
-
-        if (!$event) {
-            return response()->json(['isRegistered' => false]);
-        }
-
-        // Check if the user is already registered for the event
-        $member = Member::where('userId', $user->id)->first();
-        if (!$member) {
-            return response()->json(['isRegistered' => false]);
-        }
-
-        $registration = EventRegister::where('memberId', $member->id)
-            ->where('eventId', $event->id)
-            ->first();
-
-        // Return whether the user is already registered
-        return response()->json(['isRegistered' => $registration ? true : false]);
-
-    } catch (\Exception $e) {
-        // Handle any errors
-        return response()->json(['isRegistered' => false]);
     }
-}
 
 
 

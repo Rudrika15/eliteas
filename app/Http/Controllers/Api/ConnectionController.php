@@ -12,6 +12,10 @@ use App\Models\BusinessCategory;
 use App\Models\Circle;
 use App\Utils\ErrorLogger;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Kreait\Firebase\Factory;
+use Kreait\Firebase\Messaging\CloudMessage;
+use Kreait\Firebase\Messaging\Notification;
 
 class ConnectionController extends Controller
 {
@@ -102,14 +106,13 @@ class ConnectionController extends Controller
     public function sendRequest(Request $request)
     {
         try {
-
             $userId = Auth::user()->id;
             $memberId = $request->input('memberId');
 
             $isExist = Connection::where('memberId', $memberId)->where('userId', $userId)->first();
 
             if ($isExist) {
-                return Utils::sendResponse(['message' => 'You are already sent the request'], 200);
+                return Utils::sendResponse(['message' => 'You have already sent the request'], 200);
             }
 
             $connections = new Connection();
@@ -118,12 +121,46 @@ class ConnectionController extends Controller
             $connections->status = 'Pending';
             $connections->save();
 
+            // Fetch the name of the user with the provided memberId
+            $member = User::find($memberId);
+
+            if (!$member) {
+                return Utils::errorResponse(['message' => 'Member not found'], 'Not Found', 404);
+            }
+
+            $memberName = $member->firstName . ' ' . $member->lastName;
+
+            // Send notification to all users
+            $users = User::whereNotNull('fcm_token')->get();
+            $title = 'Network';
+            $body = 'A new connection request has been received by ' . $memberName;
+
+            $serviceAccountPath = storage_path('app/public/ubn_notification.json');
+            $factory = (new Factory)->withServiceAccount($serviceAccountPath);
+            $messaging = $factory->createMessaging();
+
+            foreach ($users as $user) {
+                $message = CloudMessage::withTarget('token', $user->fcm_token)
+                    ->withNotification(Notification::create($title, $body));
+
+                try {
+                    $messaging->send($message);
+                    Log::info('Notification sent to token: ' . $user->fcm_token);
+                } catch (\Kreait\Firebase\Exception\Messaging\NotFound $e) {
+                    Log::error('Token not found: ' . $user->fcm_token);
+                } catch (\Kreait\Firebase\Exception\Messaging\InvalidArgument $e) {
+                    Log::error('Invalid argument error with token: ' . $user->fcm_token);
+                } catch (\Exception $e) {
+                    Log::error('General error sending to token: ' . $user->fcm_token . '. Error: ' . $e->getMessage());
+                }
+            }
+
             return Utils::sendResponse([$memberId => $connections, 'message' => 'Connection Request sent Successfully'], 200);
         } catch (\Throwable $th) {
-            //throw $th;
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
+
 
 
     // public function search(Request $request)

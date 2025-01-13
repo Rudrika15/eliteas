@@ -183,7 +183,6 @@ class CircleMeetingMemberReferenceController extends Controller
     public function refByOtherStore(Request $request)
     {
 
-
         try {
             // Validate the request
             $this->validate($request, [

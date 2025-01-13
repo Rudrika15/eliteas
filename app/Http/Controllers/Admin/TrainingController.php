@@ -12,7 +12,12 @@ use App\Models\TrainingTrainers;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
+use App\Models\Notifications;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Kreait\Firebase\Factory;
+use Kreait\Firebase\Messaging\CloudMessage;
+use Kreait\Firebase\Messaging\Notification;
 
 class TrainingController extends Controller
 {
@@ -82,16 +87,74 @@ class TrainingController extends Controller
         }
     }
 
+    // public function store(Request $request)
+    // {
+
+    //     // return $request;
+
+
+    //     try {
+    //         // Validate the incoming request
+    //         $request->validate([]);
+    //         // return request();
+    //         // Create Training record
+    //         $training = new Training();
+    //         $training->title = $request->title;
+    //         $training->fees = $request->fees;
+    //         $training->type = $request->type;
+    //         $training->meetingLink = $request->meetingLink;
+    //         $training->venue = $request->venue;
+    //         $training->date = $request->date;
+    //         $training->time = $request->time;
+    //         $training->duration = $request->duration;
+    //         $training->note = $request->note;
+    //         $training->save();
+
+    //         // Add trainers to the Training_trainers table if present in the request
+    //         $trainers = [
+    //             'trainerId' => $request->trainerId ?? null,
+    //             'externalTrainerId' => $request->externalTrainerId ?? null,
+    //             'trainerId2' => $request->trainerId2 ?? null,
+    //             'externalTrainerId2' => $request->externalTrainerId2 ?? null,
+    //         ];
+
+    //         foreach ($trainers as $key => $value) {
+    //             if (!is_null($value)) {
+    //                 DB::table('trainings_trainers')->insert([
+    //                     ['trainingId' => $training->id, 'userId' => $value, 'status' => 'Active', 'created_at' => now(), 'updated_at' => now()],
+    //                 ]);
+    //             }
+    //         }
+
+    //         // Redirect the user after successful submission
+    //         return redirect()->route('training.index')->with('success', 'Training details saved successfully.');
+    //     } catch (\Throwable $th) {
+    //         // throw $th;
+    //         ErrorLogger::logError(
+    //             $th,
+    //             request()->fullUrl()
+    //         );
+    //         return view('servererror');
+    //     }
+    // }
+
+
     public function store(Request $request)
     {
-
-        // return $request;
-
-
         try {
             // Validate the incoming request
-            $request->validate([]);
-            // return request();
+            $request->validate([
+                'title' => 'required|string|max:255',
+                'fees' => 'required|numeric',
+                'type' => 'required|string',
+                'meetingLink' => 'nullable|url',
+                'venue' => 'nullable|string|max:255',
+                'date' => 'required|date',
+                'time' => 'required',
+                'duration' => 'required|string',
+                'note' => 'nullable|string',
+            ]);
+
             // Create Training record
             $training = new Training();
             $training->title = $request->title;
@@ -105,7 +168,7 @@ class TrainingController extends Controller
             $training->note = $request->note;
             $training->save();
 
-            // Add trainers to the Training_trainers table if present in the request
+            // Add trainers to the Trainings_trainers table if present in the request
             $trainers = [
                 'trainerId' => $request->trainerId ?? null,
                 'externalTrainerId' => $request->externalTrainerId ?? null,
@@ -121,18 +184,51 @@ class TrainingController extends Controller
                 }
             }
 
+            // Check if the training type is "Published" to trigger notifications
+
+            $title = "New Training Published";
+            $body = "The training '{$training->title}' is now available. Don't miss out!";
+
+            // Store notification in the database
+            $notification = new Notifications();
+            $notification->title = $title;
+            $notification->body = $body;
+            $notification->data = json_encode([
+                'training_title' => $training->title,
+            ]);
+            $notification->save();
+
+            // Send notifications to all users
+            $users = User::whereNotNull('fcm_token')->get();
+            $serviceAccountPath = storage_path('app/public/ubn_notification.json');
+            $factory = (new Factory)->withServiceAccount($serviceAccountPath);
+            $messaging = $factory->createMessaging();
+
+            foreach ($users as $user) {
+                if (!empty($user->fcm_token)) {
+                    $message = CloudMessage::withTarget('token', $user->fcm_token)
+                        ->withNotification(Notification::create($title, $body));
+
+                    try {
+                        $messaging->send($message);
+                        Log::info('Notification sent to token: ' . $user->fcm_token);
+                    } catch (\Kreait\Firebase\Exception\Messaging\NotFound $e) {
+                        Log::error('Token not found: ' . $user->fcm_token);
+                    } catch (\Kreait\Firebase\Exception\Messaging\InvalidArgument $e) {
+                        Log::error('Invalid argument error with token: ' . $user->fcm_token);
+                    } catch (\Exception $e) {
+                        Log::error('General error sending to token: ' . $user->fcm_token . '. Error: ' . $e->getMessage());
+                    }
+                }
+            }
+
             // Redirect the user after successful submission
             return redirect()->route('training.index')->with('success', 'Training details saved successfully.');
         } catch (\Throwable $th) {
-            // throw $th;
-            ErrorLogger::logError(
-                $th,
-                request()->fullUrl()
-            );
+            ErrorLogger::logError($th, request()->fullUrl());
             return view('servererror');
         }
     }
-
 
 
 

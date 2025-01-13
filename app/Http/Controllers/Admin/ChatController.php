@@ -9,6 +9,10 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Log;
+use Kreait\Firebase\Factory;
+use Kreait\Firebase\Messaging\CloudMessage;
+use Kreait\Firebase\Messaging\Notification;
 
 class ChatController extends Controller
 {
@@ -69,6 +73,39 @@ class ChatController extends Controller
         $message->sender_id = $authId; // Authenticated user's ID as the sender
         $message->message = Crypt::encryptString($request->message); // Encrypt the message
         $message->save();
+
+        // Assuming you have the proper user models for sender and receiver
+        $sender = Auth::user(); // Get the authenticated user
+        $receiver = User::find($receiverId); // Find the receiver by their ID
+
+        // Prepare notification details
+        $userName = $sender->firstName . ' ' . $sender->lastName;
+        $title = 'New Message';
+        $body = 'You received a new message from ' . $userName;
+
+        // Send notification to the specific receiver
+        if (!empty($receiver->fcm_token)) {
+            $serviceAccountPath = storage_path('app/public/ubn_notification.json');
+            $factory = (new Factory)->withServiceAccount($serviceAccountPath);
+            $messaging = $factory->createMessaging();
+
+            $notificationMessage = CloudMessage::withTarget('token', $receiver->fcm_token)
+                ->withNotification(Notification::create($title, $body));
+
+            try {
+                $messaging->send($notificationMessage);
+                Log::info('Notification sent to token: ' . $receiver->fcm_token);
+            } catch (\Kreait\Firebase\Exception\Messaging\NotFound $e) {
+                Log::error('Token not found: ' . $receiver->fcm_token);
+            } catch (\Kreait\Firebase\Exception\Messaging\InvalidArgument $e) {
+                Log::error('Invalid argument error with token: ' . $receiver->fcm_token);
+            } catch (\Exception $e) {
+                Log::error('General error sending to token: ' . $receiver->fcm_token . '. Error: ' . $e->getMessage());
+            }
+        }
+
+
+
 
         return redirect()->back()->with('success', 'Message sent Successfully. You can now chat from My Chats Section.');
     }
