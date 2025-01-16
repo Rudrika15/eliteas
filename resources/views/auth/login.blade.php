@@ -128,6 +128,10 @@
             opacity: 50%;
         }
 
+        .f-password {
+            margin-left: 145px !important;
+        }
+
 
 
         /* Media Queries for Mobile */
@@ -149,6 +153,40 @@
             }
 
         }
+
+
+        @media (max-width: 768px) {
+
+            .rounded-pill-top {
+                display: none;
+            }
+
+            .form-group .icon {
+                left: 267px;
+            }
+
+
+            .globe-overlay-right {
+                display: none;
+            }
+
+            .globe-overlay-left {
+                display: none;
+            }
+
+            .footer {
+                display: none;
+            }
+
+            .icon {
+                left: 80% !important;
+            }
+
+            .f-password {
+                margin-left: 10% !important;
+            }
+
+        }
     </style>
 </head>
 
@@ -161,7 +199,7 @@
                     <img src="{{ asset('img/graphLogin.png') }}" alt="UBN" class="mt-5" style="opacity: 10%; margin-left: 30px;">
                 </div>
             </div>
-            <div class="rounded-pill position-absolute w-25 " style="background: white; color: #1C2956; margin-left: 400px;  padding: 10px; border: none; margin-top: 60px;">
+            <div class="rounded-pill rounded-pill-top position-absolute w-25 " style="background: white; color: #1C2956; margin-left: 400px;  padding: 10px; border: none; margin-top: 60px;">
                 <button class="bg-transparent border-0 ms-2">
                     <h1 class=" mb-0" style="color: #1C2956; font-family: Poppins;">Login</h1>
                 </button>
@@ -172,7 +210,7 @@
 
 
             <!-- Right Section -->
-            <div class="col-md-7 col-12 d-flex align-items-center justify-content-center">
+            <div class="col-md-7 col-sm-12 col-xs-12 d-flex align-items-center justify-content-center">
                 <div class="form-container w-75">
 
                     <div class="img">
@@ -221,17 +259,19 @@
                         </div>
 
                         <!-- Forgot Password -->
-                        @if (Route::has('password.request'))
-                            <div class="d-flex justify-content-start">
-                                <a href="{{ route('forget.password.get') }}" class="d-block mb-3" style="color: #1C2956; margin-left: 145px;  font-family: Poppins;">
-                                    Forgot Your Password ?
-                                </a>
-                            </div>
-                        @endif
+                        <div class="f-password">
+                            @if (Route::has('password.request'))
+                                <div class="d-flex justify-content-start">
+                                    <a href="{{ route('forget.password.get') }}" class="d-block mb-3" style="color: #1C2956; font-family: Poppins;">
+                                        Forgot Your Password ?
+                                    </a>
+                                </div>
+                            @endif
+                        </div>
 
                         <!-- Login Button -->
                         <div class="d-flex justify-content-center align-items-center mt-5">
-                            <button type="submit" class="btn btn-login w-30 rounded-pill" style="font-family: Poppins;">Login</button>
+                            <button type="submit" class="btn btn-login w-30 rounded-pill login-footer" style="font-family: Poppins;">Login</button>
                         </div>
 
                         <!-- Hidden Latitude and Longitude Fields -->
