@@ -24,4 +24,8 @@ class TrainingRegister extends Model
         return $this->belongsTo(Training::class, 'trainingId', 'id');
     }
 
+    public function registredUsers()
+    {
+        return $this->belongsTo(User::class, 'userId', 'id');
+    }
 }

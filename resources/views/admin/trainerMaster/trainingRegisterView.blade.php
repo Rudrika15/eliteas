@@ -24,8 +24,8 @@
                             <tr>
                                 <th>{{ ($trainingRegister->currentPage() - 1) * $trainingRegister->perPage() + $loop->index + 1 }}
 
-                                <td>{{ $trainingRegisterData->user->firstName ?? '' }}
-                                    {{ $trainingRegisterData->user->lastName ?? '' }}</td>
+                                <td>{{ $trainingRegisterData->registredUsers->firstName ?? '' }}
+                                    {{ $trainingRegisterData->registredUsers->lastName ?? '' }}</td>
 
                                 <td>{{ $trainingRegisterData->training->title ?? '' }} </td>
 

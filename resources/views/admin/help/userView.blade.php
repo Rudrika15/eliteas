@@ -24,30 +24,36 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($help as $helpData)
+                            @if ($help->count() > 0)
+                                @foreach ($help as $helpData)
+                                    <tr>
+                                        <th>{{ ($help->currentPage() - 1) * $help->perPage() + $loop->index + 1 }}</th>
+                                        <td>{{ $helpData->title ?? '' }}</td>
+                                        <td>
+                                            @if ($helpData->photo)
+                                                <img src="{{ asset('help/' . $helpData->photo) }}" alt="Photo Preview" width="100" height="100" style="object-fit: cover;" class="clickable-image" data-image="{{ asset('help/' . $helpData->photo) }}">
+                                            @else
+                                                <span>No photo available</span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if ($helpData->video)
+                                                <video width="100" height="100" controls class="clickable-video" data-video="{{ asset('help/' . $helpData->video) }}">
+                                                    <source src="{{ asset('help/' . $helpData->video) }}" type="video/mp4">
+                                                    Your browser does not support the video tag.
+                                                </video>
+                                            @else
+                                                <span>No video available</span>
+                                            @endif
+                                        </td>
+                                        <td>{{ $helpData->description ?? '' }}</td>
+                                    </tr>
+                                @endforeach
+                            @else
                                 <tr>
-                                    <th>{{ ($help->currentPage() - 1) * $help->perPage() + $loop->index + 1 }}</th>
-                                    <td>{{ $helpData->title ?? '' }}</td>
-                                    <td>
-                                        @if ($helpData->photo)
-                                            <img src="{{ asset('help/' . $helpData->photo) }}" alt="Photo Preview" width="100" height="100" style="object-fit: cover;" class="clickable-image" data-image="{{ asset('help/' . $helpData->photo) }}">
-                                        @else
-                                            <span>No photo available</span>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        @if ($helpData->video)
-                                            <video width="100" height="100" controls class="clickable-video" data-video="{{ asset('help/' . $helpData->video) }}">
-                                                <source src="{{ asset('help/' . $helpData->video) }}" type="video/mp4">
-                                                Your browser does not support the video tag.
-                                            </video>
-                                        @else
-                                            <span>No video available</span>
-                                        @endif
-                                    </td>
-                                    <td>{{ $helpData->description ?? '' }}</td>
+                                    <td colspan="5" class="text-center">Coming soon</td>
                                 </tr>
-                            @endforeach
+                            @endif
                         </tbody>
                     </table>
                     <div class="d-flex justify-content-end custom-pagination">
