@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Circle;
 use App\Models\CircleCall;
 use App\Models\CircleMeetingMembersBusiness;
 use App\Models\CircleMeetingMembersReference;
+use App\Models\Member;
 use Illuminate\Http\Request;
 
 class ReportController extends Controller
@@ -47,77 +49,115 @@ class ReportController extends Controller
     }
 
     public function reference(Request $request)
-{
-    $startDate = $request->input('startDate');
-    $endDate = $request->input('endDate');
+    {
+        $startDate = $request->input('startDate');
+        $endDate = $request->input('endDate');
 
-    if (!$startDate && !$endDate) {
-        $refrences = collect();
-    } else {
-        $query = CircleMeetingMembersReference::with('refGiverName')
-            ->where('status', 'Active');
+        if (!$startDate && !$endDate) {
+            $refrences = collect();
+        } else {
+            $query = CircleMeetingMembersReference::with('refGiverName')
+                ->where('status', 'Active');
+
+            if ($startDate) {
+                $query->where('created_at', '>=', $startDate);
+            }
+            if ($endDate) {
+                $query->where('created_at', '<=', $endDate);
+            }
+
+            $refrences = $query->get()
+                ->groupBy('referenceGiverId')
+                ->map(function ($group) {
+                    $giver = $group->first()->refGiverName;
+                    return [
+                        'referenceGiverId' => $giver->id,
+                        'referenceGiverName' => $giver->firstName . ' ' . $giver->lastName,
+                        'reference_count' => $group->count(),
+                    ];
+                })
+                ->sortByDesc('reference_count')
+                ->values();
+        }
+
+        return view('admin.report.reference', compact('refrences'));
+    }
+
+
+    public function business(Request $request)
+    {
+        $startDate = $request->input('startDate');
+        $endDate = $request->input('endDate');
+
+        if (!$startDate && !$endDate) {
+            $business = collect();
+        } else {
+            $query = CircleMeetingMembersBusiness::with('businessGiver')
+                ->where('status', 'Active');
+
+            if ($startDate) {
+                $query->where('created_at', '>=', $startDate);
+            }
+            if ($endDate) {
+                $query->where('created_at', '<=', $endDate);
+            }
+
+            $business = $query->get()
+                ->groupBy('businessGiverId')
+                ->map(function ($group) {
+                    $giver = $group->first()->businessGiver;
+                    return [
+                        'businessGiverId' => $giver->id,
+                        'businessGiver' => $giver->firstName . ' ' . $giver->lastName,
+                        'business_count' => $group->count(),
+                        'total_amount' => $group->sum('amount'),
+                    ];
+                })
+                ->sortByDesc('total_amount')
+                ->values();
+        }
+
+
+        return view('admin.report.business', compact('business'));
+    }
+
+
+    public function getJoiningMembers(Request $request)
+    {
+        $startDate = $request->input('startDate');
+        $endDate = $request->input('endDate');
+        $circleId = $request->input('circleId');
+
+        $circles = Circle::where('status', 'Active')->pluck('circleName', 'id');
+
+        $query = Member::query()->where('status', 'Active');
+
+        if ($circleId) {
+            $query->where('circleId', $circleId);
+        }
 
         if ($startDate) {
             $query->where('created_at', '>=', $startDate);
         }
+
         if ($endDate) {
             $query->where('created_at', '<=', $endDate);
         }
 
-        $refrences = $query->get()
-            ->groupBy('referenceGiverId')
+        // Fetch data
+        $members = $query->get()
+            ->groupBy('circleId')
             ->map(function ($group) {
-                $giver = $group->first()->refGiverName;
+                $circle = $group->first()->circle;
                 return [
-                    'referenceGiverId' => $giver->id,
-                    'referenceGiverName' => $giver->firstName . ' ' . $giver->lastName,
-                    'reference_count' => $group->count(),
+                    'circleId' => $circle->id,
+                    'circleName' => $circle->circleName,
+                    'member_count' => $group->count(),
                 ];
             })
-            ->sortByDesc('reference_count')
+            ->sortByDesc('member_count')
             ->values();
+
+        return view('admin.report.joining', compact('members', 'circles'));
     }
-
-    return view('admin.report.reference', compact('refrences'));
 }
-
-
-public function business(Request $request)
-{
-    $startDate = $request->input('startDate');
-    $endDate = $request->input('endDate');
-
-    if (!$startDate && !$endDate) {
-        $business = collect();
-    } else {
-        $query = CircleMeetingMembersBusiness::with('businessGiver')
-            ->where('status', 'Active');
-
-        if ($startDate) {
-            $query->where('created_at', '>=', $startDate);
-        }
-        if ($endDate) {
-            $query->where('created_at', '<=', $endDate);
-        }
-
-        $business = $query->get()
-            ->groupBy('businessGiverId')
-            ->map(function ($group) {
-                $giver = $group->first()->businessGiver;
-                return [
-                    'businessGiverId' => $giver->id,
-                    'businessGiver' => $giver->firstName . ' ' . $giver->lastName,
-                    'business_count' => $group->count(),
-                    'total_amount' => $group->sum('amount'),
-                ];
-            })
-            ->sortByDesc('total_amount')
-            ->values();
-    }
-
-
-    return view('admin.report.business', compact('business'));
-}
-
-}
-

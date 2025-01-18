@@ -162,6 +162,19 @@ class TrainingController extends Controller
             $training->type = $request->type;
             $training->meetingLink = $request->meetingLink;
             $training->venue = $request->venue;
+
+            $uniqueId = time();
+
+            if ($request->hasFile('training_thumb')) {
+                $training->training_thumb = $uniqueId . '_thumb.' . $request->training_thumb->extension();
+                $request->training_thumb->move(public_path('Training'), $training->training_thumb);
+            }
+
+            if ($request->hasFile('training_banner')) {
+                $training->training_banner = $uniqueId . '_banner.' . $request->training_banner->extension();
+                $request->training_banner->move(public_path('Training'), $training->training_banner);
+            }
+
             $training->date = $request->date;
             $training->time = $request->time;
             $training->duration = $request->duration;
@@ -267,6 +280,21 @@ class TrainingController extends Controller
             $training->type = $request->type;
             $training->meetingLink = $request->meetingLink;
             $training->venue = $request->venue;
+
+            $uniqueId = time();
+
+            if ($request->hasFile('training_thumb')) {
+                $training->training_thumb = $uniqueId . '_thumb.' . $request->training_thumb->extension();
+                $request->training_thumb->move(public_path('Training'), $training->training_thumb);
+            }
+
+            if ($request->hasFile('training_banner')) {
+                $training->training_banner = $uniqueId . '_banner.' . $request->training_banner->extension();
+                $request->training_banner->move(public_path('Training'), $training->training_banner);
+            }
+
+
+
             $training->date = $request->date;
             $training->time = $request->time;
             $training->duration = $request->duration;

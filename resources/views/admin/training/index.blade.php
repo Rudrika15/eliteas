@@ -26,8 +26,7 @@
         <div class="card-body">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h4 class="card-title">Trainings</h4>
-                <a href="{{ route('training.create') }}" class="btn btn-bg-orange btn-sm mt-3 btn-tooltip"><i
-                        class="bi bi-plus-circle"></i>
+                <a href="{{ route('training.create') }}" class="btn btn-bg-orange btn-sm mt-3 btn-tooltip"><i class="bi bi-plus-circle"></i>
                     <span class="btn-text">Create Training</span>
                 </a>
             </div>
@@ -44,6 +43,8 @@
                             <th>Type</th>
                             <th>Fees</th>
                             <th>Meeting Link</th>
+                            <th>Training Banner</th>
+                            <th>Training Thumbnail</th>
                             <th>Venue</th>
                             <th>Date</th>
                             <th>Time</th>
@@ -88,13 +89,28 @@
                                 <td>{{ $trainingData->type ?? '-' }}</td>
                                 <td>{{ number_format($trainingData->fees, 2, '.', ',') }}</td>
                                 <td>{{ $trainingData->meetingLink }}</td>
+
+                                <td>
+                                    @if ($trainingData->training_thumb)
+                                        <img src="{{ url('Training/' . basename($trainingData->training_thumb)) }}" alt="Event Image" style="width: 50px; height: 50px; object-fit: contain; aspect-ratio: 1/1;">
+                                    @else
+                                        <span></span>
+                                    @endif
+                                </td>
+                                <td>
+                                    @if ($trainingData->training_banner)
+                                        <img src="{{ url('Training/' . basename($trainingData->training_banner)) }}" alt="Event Banner" style="width: 50px; height: 50px; object-fit: contain; aspect-ratio: 1/1;">
+                                    @else
+                                        <span></span>
+                                    @endif
+                                </td>
+
                                 <td>{{ $trainingData->venue ?? '-' }}</td>
                                 <td>{{ \Carbon\Carbon::parse($trainingData->date)->format('d-m-Y') ?? '-' }}</td>
                                 <td>{{ $trainingData->time ?? '-' }}</td>
                                 {{-- <td>{{$trainingData->status ?? '-'}}</td> --}}
                                 <td>
-                                    <a href="{{ route('training.edit', $trainingData->id) }}"
-                                        class="btn btn-bg-blue btn-sm btn-tooltip">
+                                    <a href="{{ route('training.edit', $trainingData->id) }}" class="btn btn-bg-blue btn-sm btn-tooltip">
                                         <i class="bi bi-pen"></i>
                                         <span class="btn-text">Edit</span>
                                     </a>
@@ -103,9 +119,7 @@
                                 <i class="bi bi-eye"></i>
                             </a> --}}
 
-                                    <a href="#"
-                                        onclick="confirmDelete('{{ route('training.delete', $trainingData->id) }}')"
-                                        class="btn btn-danger btn-sm btn-tooltip">
+                                    <a href="#" onclick="confirmDelete('{{ route('training.delete', $trainingData->id) }}')" class="btn btn-danger btn-sm btn-tooltip">
                                         <i class="bi bi-trash"></i>
                                         <span class="btn-text">Delete</span>
                                     </a>

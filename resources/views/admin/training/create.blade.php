@@ -31,8 +31,7 @@
 
 
         <!-- Form -->
-        <form class="m-3 needs-validation" id="trainingForm" enctype="multipart/form-data" method="post"
-            action="{{ route('training.store') }}" novalidate>
+        <form class="m-3 needs-validation" id="trainingForm" enctype="multipart/form-data" method="post" action="{{ route('training.store') }}" novalidate>
             @csrf
 
             {{-- Trainer 1 and Trainer 2 --}}
@@ -43,13 +42,11 @@
                     <hr>
                     <!-- Trainer selection -->
                     <div class="form-check">
-                        <input class="form-check-input trainer-radio" type="radio" name="groupMember" id="internalMember"
-                            value="internalMember" checked>
+                        <input class="form-check-input trainer-radio" type="radio" name="groupMember" id="internalMember" value="internalMember" checked>
                         <label class="form-check-label" for="internalMember">Internal</label>
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input trainer-radio" type="radio" name="groupMember" id="externalMember"
-                            value="externalMember">
+                        <input class="form-check-input trainer-radio" type="radio" name="groupMember" id="externalMember" value="externalMember">
                         <label class="form-check-label" for="externalMember">External</label>
                     </div>
 
@@ -58,8 +55,7 @@
                         @include('TrainerPerson1')
                         <div class="form-floating mt-3">
                             <input type="hidden" name="trainerId" id="trainerId">
-                            <input type="text" class="form-control" id="trainerName" name="memberName"
-                                placeholder="Select Member" readonly required>
+                            <input type="text" class="form-control" id="trainerName" name="memberName" placeholder="Select Member" readonly required>
                             <label for="trainerName">Select Member</label>
                         </div>
                     </div>
@@ -67,21 +63,18 @@
                         @include('TrainerPerson1External')
                         <div class="form-floating mt-3">
                             <input type="hidden" name="externalTrainerId" id="externalTrainerId">
-                            <input type="text" class="form-control" id="trainerNameExternal" name="trainerNameExternal"
-                                placeholder="Trainer Name External" readonly>
+                            <input type="text" class="form-control" id="trainerNameExternal" name="trainerNameExternal" placeholder="Trainer Name External" readonly>
                             <label for="trainerNameExternal">Trainer Name External</label>
                         </div>
                     </div>
 
                     <!-- Contact details -->
                     <div class="form-floating mt-3">
-                        <input type="text" class="form-control" id="trainerContact" name="contactNo"
-                            placeholder="Contact No" readonly>
+                        <input type="text" class="form-control" id="trainerContact" name="contactNo" placeholder="Contact No" readonly>
                         <label for="trainerContact">Contact No</label>
                     </div>
                     <div class="form-floating mt-3">
-                        <input type="text" class="form-control" id="trainerEmail" name="email" placeholder="Email"
-                            readonly>
+                        <input type="text" class="form-control" id="trainerEmail" name="email" placeholder="Email" readonly>
                         <label for="trainerEmail">Email</label>
                     </div>
                 </div>
@@ -92,13 +85,11 @@
                     <hr>
                     <!-- Trainer selection -->
                     <div class="form-check">
-                        <input class="form-check-input trainer-radio" type="radio" name="group" id="internal"
-                            value="internal" checked>
+                        <input class="form-check-input trainer-radio" type="radio" name="group" id="internal" value="internal" checked>
                         <label class="form-check-label" for="internal">Internal</label>
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input trainer-radio" type="radio" name="group" id="external"
-                            value="external">
+                        <input class="form-check-input trainer-radio" type="radio" name="group" id="external" value="external">
                         <label class="form-check-label" for="external">External</label>
                     </div>
 
@@ -107,8 +98,7 @@
                         @include('TrainerPerson2')
                         <input type="hidden" name="trainerId2" id="trainerId2">
                         <div class="form-floating mt-3">
-                            <input type="text" class="form-control" id="trainerName2" name="trainerNameInternal"
-                                placeholder="Trainer Name Internal" readonly>
+                            <input type="text" class="form-control" id="trainerName2" name="trainerNameInternal" placeholder="Trainer Name Internal" readonly>
                             <label for="trainerName2">Trainer Name Internal</label>
                         </div>
                     </div>
@@ -116,21 +106,18 @@
                         @include('TrainerPerson2External')
                         <input type="hidden" name="externalTrainerId2" id="externalTrainerId2">
                         <div class="form-floating mt-3">
-                            <input type="text" class="form-control" id="trainerNameExternal2"
-                                name="trainerNameExternal2" placeholder="Trainer Name External" readonly>
+                            <input type="text" class="form-control" id="trainerNameExternal2" name="trainerNameExternal2" placeholder="Trainer Name External" readonly>
                             <label for="trainerNameExternal2">Trainer Name External</label>
                         </div>
                     </div>
 
                     <!-- Contact details -->
                     <div class="form-floating mt-3">
-                        <input type="text" class="form-control" id="trainerContact2" name="contactNo2"
-                            placeholder="Contact No" readonly>
+                        <input type="text" class="form-control" id="trainerContact2" name="contactNo2" placeholder="Contact No" readonly>
                         <label for="trainerContact2">Contact No</label>
                     </div>
                     <div class="form-floating mt-3">
-                        <input type="text" class="form-control" id="trainerEmail2" name="email2"
-                            placeholder="Email" readonly>
+                        <input type="text" class="form-control" id="trainerEmail2" name="email2" placeholder="Email" readonly>
                         <label for="trainerEmail2">Email</label>
                     </div>
                 </div>
@@ -143,8 +130,7 @@
             {{-- Training Details --}}
             <div class="accordion-item mt-3 m-3">
                 <h2 class="accordion-header" id="headingSix">
-                    <button class="accordion-button collapsed show" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#collapseSix" aria-expanded="false" aria-controls="collapseSix">
+                    <button class="accordion-button collapsed show" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSix" aria-expanded="false" aria-controls="collapseSix">
                         Training Details
                     </button>
                 </h2>
@@ -154,12 +140,10 @@
                             <div class="col-md-12">
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <input type="text" class="form-control mt-3" id="title" name="title"
-                                            placeholder="Title" required>
+                                        <input type="text" class="form-control mt-3" id="title" name="title" placeholder="Title" required>
                                     </div>
                                     <div class="col-md-6">
-                                        <input type="text" class="form-control mt-3" id="fees" name="fees"
-                                            placeholder="Fees">
+                                        <input type="text" class="form-control mt-3" id="fees" name="fees" placeholder="Fees">
                                     </div>
                                     <div class="col-md-6">
                                         <select class="form-select mt-3" id="type" name="type" required>
@@ -169,29 +153,23 @@
                                         </select>
                                     </div>
                                     <div class="col-md-6">
-                                        <input type="text" class="form-control mt-3" id="meetingLink"
-                                            name="meetingLink" placeholder="Meeting Link" style="display:none;">
+                                        <input type="text" class="form-control mt-3" id="meetingLink" name="meetingLink" placeholder="Meeting Link" style="display:none;">
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <input type="text" class="form-control mt-3" id="venue" name="venue"
-                                            placeholder="Venue" style="display:none;">
+                                        <input type="text" class="form-control mt-3" id="venue" name="venue" placeholder="Venue" style="display:none;">
                                     </div>
                                     <div class="col-md-6">
-                                        <input type="date" class="form-control mt-3" id="date" name="date"
-                                            placeholder="Date" min="{{ date('Y-m-d') }}" onkeydown="return false"
-                                            required>
+                                        <input type="date" class="form-control mt-3" id="date" name="date" placeholder="Date" min="{{ date('Y-m-d') }}" onkeydown="return false" required>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <input type="time" class="form-control mt-3" id="time" name="time"
-                                            placeholder="Time" required>
+                                        <input type="time" class="form-control mt-3" id="time" name="time" placeholder="Time" required>
                                     </div>
                                     <div class="col-md-6">
-                                        <input type="text" class="form-control mt-3" id="duration" name="duration"
-                                            placeholder="Duration">
+                                        <input type="text" class="form-control mt-3" id="duration" name="duration" placeholder="Duration">
                                     </div>
                                 </div>
                                 <div class="row">
@@ -199,13 +177,45 @@
                                         <textarea class="form-control mt-3" id="note" name="note" placeholder="Note" rows="3"></textarea>
                                     </div>
                                 </div>
+
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-floating mt-3">
+                                            <input type="file" class="form-control @error('training_banner') is-invalid @enderror" id="training_banner" name="training_banner" accept="image/*" onchange="previewPhoto2(event)" required>
+                                            <label for="training_banner">Training Banner</label>
+                                            <div class="mt-1">
+                                                <img id="photoPreview2" src="{{ asset('img/profile.png') }}" alt="Training Banner" style="width: 100px; height: 100px; object-fit: contain; aspect-ratio: 1/1;" />
+                                            </div>
+                                            <span style="color: red;">*Max file size: 2MB</span>
+                                            @error('training_banner')
+                                                <div class="invalid-tooltip">
+                                                    {{ $message }}
+                                                </div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-floating mt-3">
+                                            <input type="file" class="form-control @error('training_thumb') is-invalid @enderror" id="training_thumb" name="training_thumb" accept="image/*" onchange="previewPhoto(event)" required>
+                                            <label for="training_thumb">Training Thumb</label>
+                                            <div class="mt-1">
+                                                <img id="photoPreview1" src="{{ asset('img/profile.png') }}" alt="Training Thumb" style="width: 100px; height: 100px; object-fit: contain; aspect-ratio: 1/1;" />
+                                            </div>
+                                            <span style="color: red;">*Max file size: 2MB</span>
+                                            @error('training_thumb')
+                                                <div class="invalid-tooltip">
+                                                    {{ $message }}
+                                                </div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-
-
             <div class="text-center mt-3">
                 <button type="submit" class="btn btn-bg-blue">Submit</button>
                 <button type="reset" class="btn btn-bg-orange">Reset</button>
@@ -215,6 +225,28 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+
+
+    <script>
+        function previewPhoto(training) {
+            var reader = new FileReader();
+            reader.onload = function() {
+                var output = document.getElementById('photoPreview1');
+                output.src = reader.result;
+            };
+            reader.readAsDataURL(training.target.files[0]);
+        }
+
+        function previewPhoto2(training) {
+            var reader = new FileReader();
+            reader.onload = function() {
+                var output = document.getElementById('photoPreview2');
+                output.src = reader.result;
+            };
+            reader.readAsDataURL(training.target.files[0]);
+        }
+    </script>
+
 
     <script>
         document.getElementById('toggleTrainer2Button').addEventListener('click', function() {
