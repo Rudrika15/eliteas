@@ -180,7 +180,10 @@
                         </tbody>
                     </table>
                     <div class="d-flex justify-content-end custom-pagination">
-                        {!! $visitors->links() !!}
+                        <div class="d-flex justify-content-end custom-pagination">
+                            {!! $visitors->withQueryString()->links() !!}
+                        </div>
+
                     </div>
                     <!-- End Table with stripped rows -->
                 </div>

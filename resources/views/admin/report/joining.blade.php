@@ -34,7 +34,7 @@
                             </div>
                         </form>
                     </div>
-                    <div class="col-md-4">
+                    {{-- <div class="col-md-4">
                         <form method="GET" action="{{ route('admin.report.joining') }}" id="circleFilterForm">
                             <div class="row mb-3">
                                 <div class="col-md-12">
@@ -54,7 +54,7 @@
                                 <button type="submit" class="btn btn-bg-blue btn-sm">Submit</button>
                             </div>
                         </form>
-                    </div>
+                    </div> --}}
                 </div>
 
                 <div class="table-responsive">
@@ -62,7 +62,7 @@
                         <thead>
                             <tr>
                                 <th>S.No</th>
-                                <th>Circle ID</th>
+                                <th>Circle Name</th> <!-- Updated Header -->
                                 <th>Member Count</th>
                             </tr>
                         </thead>
@@ -70,12 +70,12 @@
                             @forelse ($members as $index => $item)
                                 <tr>
                                     <td>{{ $index + 1 }}</td>
-                                    <td>{{ $item['circleName'] ?? '' }}</td>
+                                    <td>{{ $item['circleName'] }}</td> <!-- Display Circle Name -->
                                     <td>{{ $item['member_count'] }}</td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="4" class="text-center">No data found</td>
+                                    <td colspan="3" class="text-center">No data found</td>
                                 </tr>
                             @endforelse
                         </tbody>

@@ -29,7 +29,8 @@ class CircleMembersExport implements FromCollection, WithHeadings
                 'members.lastName as LastName',
                 'business_categories.categoryName as BusinessCategoryName',
                 'members.membershipType as MembershipType',
-                'users.contactNo as ContactNo'
+                'users.contactNo as ContactNo',
+                'users.email as Email'
             )
             ->get();
     }
@@ -43,7 +44,8 @@ class CircleMembersExport implements FromCollection, WithHeadings
             'Last Name',
             'Business Category ID',
             'Membership Type',
-            'Contact No'
+            'Contact No',
+            'Email'
         ];
     }
 }

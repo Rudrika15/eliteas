@@ -122,20 +122,64 @@ class ReportController extends Controller
     }
 
 
+    // public function getJoiningMembers(Request $request)
+    // {
+    //     $startDate = $request->input('startDate');
+    //     $endDate = $request->input('endDate');
+    //     $circleId = $request->input('circleId');
+
+    //     $circles = Circle::where('status', 'Active')->pluck('circleName', 'id');
+
+    //     $query = Member::query()->where('status', 'Active');
+
+    //     if ($circleId) {
+    //         $query->where('circleId', $circleId);
+    //     }
+
+    //     if ($startDate) {
+    //         $query->where('created_at', '>=', $startDate);
+    //     }
+
+    //     if ($endDate) {
+    //         $query->where('created_at', '<=', $endDate);
+    //     }
+
+    //     // Fetch data
+    //     $members = $query->get()
+    //         ->groupBy('circleId')
+    //         ->map(function ($group) {
+    //             $circle = $group->first()->circle;
+    //             return [
+    //                 'circleId' => $circle->id,
+    //                 'circleName' => $circle->circleName,
+    //                 'member_count' => $group->count(),
+    //             ];
+    //         })
+    //         ->sortByDesc('member_count')
+    //         ->values();
+
+    //     return view('admin.report.joining', compact('members', 'circles'));
+    // }
+
+
     public function getJoiningMembers(Request $request)
     {
         $startDate = $request->input('startDate');
         $endDate = $request->input('endDate');
         $circleId = $request->input('circleId');
 
+        // Fetch all active circles
         $circles = Circle::where('status', 'Active')->pluck('circleName', 'id');
 
+        // Base query for active members
         $query = Member::query()->where('status', 'Active');
 
+        // Apply circle filter if provided
         if ($circleId) {
             $query->where('circleId', $circleId);
         }
 
+        // Apply date filters if provided
         if ($startDate) {
             $query->where('created_at', '>=', $startDate);
         }
@@ -144,19 +188,19 @@ class ReportController extends Controller
             $query->where('created_at', '<=', $endDate);
         }
 
-        // Fetch data
-        $members = $query->get()
+        // Fetch data, group by circle, and count members
+        $members = $query->with('circle') // Eager load circle relationship
+            ->get()
             ->groupBy('circleId')
             ->map(function ($group) {
                 $circle = $group->first()->circle;
                 return [
-                    'circleId' => $circle->id,
-                    'circleName' => $circle->circleName,
+                    'circleName' => $circle->circleName, // Use circle name here
                     'member_count' => $group->count(),
                 ];
             })
-            ->sortByDesc('member_count')
-            ->values();
+            ->sortByDesc('member_count') // Sort by member count
+            ->values(); // Reset keys
 
         return view('admin.report.joining', compact('members', 'circles'));
     }
