@@ -136,15 +136,34 @@
                                             <span class="btn-text">Edit</span>
                                         </a>
 
+                                        <a href="javascript:void(0)" class="btn btn-danger btn-sm btn-tooltip"
+                                            onclick="confirmDelete({{ $eventData->id }})">
+                                            <i class="bi bi-trash"></i>
+                                            <span class="btn-text">Delete</span>
+                                            <!-- Icon for delete -->
+                                        </a>
+
+                                        <script>
+                                            function confirmDelete(id) {
+                                                Swal.fire({
+                                                    title: 'Are you sure?',
+                                                    text: "You won't be able to revert this!",
+                                                    icon: 'warning',
+                                                    showCancelButton: true,
+                                                    confirmButtonColor: '#3085d6',
+                                                    cancelButtonColor: '#d33',
+                                                    confirmButtonText: 'Yes, delete it!'
+                                                }).then((result) => {
+                                                    if (result.isConfirmed) {
+                                                        document.getElementById('delete-form-' + id).submit();
+                                                    }
+                                                });
+                                            }
+                                        </script>
                                         <form action="{{ route('event.delete', $eventData->id) }}" method="POST"
-                                            style="display: inline;">
+                                            id="delete-form-{{ $eventData->id }}" style="display: none;">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm btn-tooltip">
-                                                <i class="bi bi-trash"></i>
-                                                <span class="btn-text">Delete</span>
-                                                <!-- Icon for delete -->
-                                            </button>
                                         </form>
                                     </td>
                                 </tr>

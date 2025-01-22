@@ -104,11 +104,11 @@ class EventTypeController extends Controller
             $eventType->status = 'Active';
             $eventType->save();
 
-            return redirect()->route('eventType.index')->with('success', 'Circle Type updated successfully.');
+            return redirect()->route('eventType.index')->with('success', 'Event Type updated successfully.');
         } catch (\Throwable $th) {
             //throw $th;
             ErrorLogger::logError($th, $request->fullUrl());
-            return redirect()->route('eventType.index')->with('error', 'Failed to update Circle Type details.');
+            return redirect()->route('eventType.index')->with('error', 'Failed to update Event Type details.');
         }
     }
 
@@ -119,17 +119,17 @@ class EventTypeController extends Controller
             $eventType = EventType::find($id);
 
             if (!$eventType) {
-                return redirect()->route('eventType.index')->with('error', 'Circle Type not found.');
+                return redirect()->route('eventType.index')->with('error', 'Event Type not found.');
             }
 
             $eventType->status = 'Deleted';
             $eventType->save();
 
-            return redirect()->route('eventType.index')->with('success', 'Circle Type deleted successfully.');
+            return redirect()->route('eventType.index')->with('success', 'Event Type deleted successfully.');
         } catch (\Throwable $th) {
             //throw $th;
             ErrorLogger::logError($th, $request->fullUrl());
-            return redirect()->route('eventType.index')->with('error', 'Failed to delete Circle Type.');
+            return redirect()->route('eventType.index')->with('error', 'Failed to delete Event Type.');
         }
     }
 }

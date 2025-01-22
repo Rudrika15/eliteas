@@ -123,11 +123,28 @@
                                     <i class="bi bi-pen"></i>
                                     <span class="btn-text">Edit Member</span>
                                 </a>
-                                <a href="{{ route('circlemember.delete', $circlememberData->id) }}"
-                                    class="btn btn-danger btn-sm btn-tooltip">
+                                <button type="button" class="btn btn-danger btn-sm btn-tooltip" onclick="confirmDelete({{ $circlememberData->id }})">
                                     <i class="bi bi-trash"></i>
                                     <span class="btn-text">Delete Member</span>
-                                </a>
+                                </button>
+
+                                <script>
+                                    function confirmDelete(memberId) {
+                                        Swal.fire({
+                                            title: 'Are you sure?',
+                                            text: "You won't be able to revert this!",
+                                            icon: 'warning',
+                                            showCancelButton: true,
+                                            confirmButtonColor: '#3085d6',
+                                            cancelButtonColor: '#d33',
+                                            confirmButtonText: 'Yes, delete it!'
+                                        }).then((result) => {
+                                            if (result.isConfirmed) {
+                                                window.location.href = '{{ route('circlemember.delete', '') }}/' + memberId;
+                                            }
+                                        })
+                                    }
+                                </script>
                                 {{-- <a href="{{ route('circlemember.edit', $circlememberData->id) }}"
                                     class="btn btn-bg-blue btn-sm">
                                     <i class="bi bi-envelope"></i>

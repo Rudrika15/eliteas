@@ -36,8 +36,10 @@ class ScheduleController extends Controller
     public function index(Request $request)
     {
         try {
+            $schedules = Schedule::whereHas('circle', function ($query) {
+                $query->where('status', 'Active');
+            })->paginate(10);
 
-            $schedules = Schedule::where('status', 'Active')->paginate(10);
             $circles = Circle::where('status', 'Active')->get();
             return view('admin.schedule.index', compact('schedules', 'circles'));
         } catch (\Throwable $th) {

@@ -196,7 +196,7 @@ class SlotController extends Controller
             $slot->end_time = $request->end_time;
             $slot->save();
 
-            return redirect()->route('slot.index')->with('success', 'Event Type Created Successfully!');
+            return redirect()->route('slot.index')->with('success', 'Slot Created Successfully!');
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError(

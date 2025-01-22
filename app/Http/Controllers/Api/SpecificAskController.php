@@ -29,7 +29,7 @@ class SpecificAskController extends Controller
     public function indexApi()
     {
         try {
-            $specificasks = SpecificAsk::where('askBy', Auth::user()->id)->with('users:id,firstName,lastName')->get();
+            $specificasks = SpecificAsk::where('askBy', Auth::user()->id)->with('users:id,firstName,lastName')->where('status', 'Active')->get();
             return Utils::sendResponse(['specificasks' => $specificasks], 'Specific Ask retrieved successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);

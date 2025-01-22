@@ -101,7 +101,7 @@ class HelpController extends Controller
     public function update(Request $request)
     {
         $this->validate($request, [
-            'id' => 'required|exists:countries,id',
+            'id' => 'required|exists:helps,id',
             'title' => 'required',
         ]);
 

@@ -49,12 +49,35 @@
                                         <i class="bi bi-pencil"></i>
                                         <span class="btn-text">Edit User</span>
                                     </a>
-                                    {{-- {!! Form::open(['method' => 'DELETE', 'route' => ['users.destroy', $user->id], 'style' => 'display:inline']) !!}
-                                    <button type="submit" class="btn btn-danger btn-sm btn-tooltip">
+                                    <button type="button" class="btn btn-danger btn-sm btn-tooltip" onclick="confirmDelete({{ $user->id }})">
                                         <i class="bi bi-trash"></i>
                                         <span class="btn-text">Delete User</span>
                                     </button>
-                                    {!! Form::close() !!} --}}
+
+                                    <form id="delete-form-{{ $user->id }}" action="{{ route('users.destroy', $user->id) }}" method="POST" style="display: none;">
+                                        @csrf
+                                        @method('DELETE')
+                                    </form>
+
+                                    <script>
+                                        function confirmDelete(userId) {
+                                            Swal.fire({
+                                                title: 'Are you sure?',
+                                                text: "You won't be able to revert this!",
+                                                icon: 'warning',
+                                                showCancelButton: true,
+                                                confirmButtonColor: '#3085d6',
+                                                cancelButtonColor: '#d33',
+                                                confirmButtonText: 'Yes, delete it!'
+                                            }).then((result) => {
+                                                if (result.isConfirmed) {
+                                                    console.log("Delete user with ID:", userId);
+                                                    document.getElementById(`delete-form-${userId}`).submit();
+                                                }
+                                            });
+                                        }
+                                    </script>
+
                                 </td>
                             </tr>
                         @endforeach

@@ -82,8 +82,7 @@
                                 <td>{{ $schedulesData->meetingTime }}</td>
                                 <td>{{ $schedulesData->remarks }}</td>
                                 <td>
-                                    <a href="{{ route('schedule.edit', $schedulesData->id) }}"
-                                        class="btn btn-bg-blue btn-sm btn-tooltip">
+                                    <a href="{{ route('schedule.edit', $schedulesData->id) }}" class="btn btn-bg-blue btn-sm btn-tooltip">
                                         <i class="bi bi-pen"></i>
                                         <span class="btn-text">Edit</span>
                                     </a>
@@ -126,20 +125,18 @@
                     response.schedules.forEach(function(schedule) {
                         var row = `
                         <tr>
+                            <td>${schedule.id}</td>
                             <td class="circle-name">${schedule.circle.circleName}</td>
                             <td>${getDayName(schedule.day)}</td>
                             <td>${schedule.date}</td>
-                            <td>${schedule.venue}</td>
-                            <td>${schedule.meetingTime}</td>
-                            <td>${schedule.remarks}</td>
+                            <td>${schedule.venue ? schedule.venue : ''}</td>
+                            <td>${schedule.meetingTime ? schedule.meetingTime : ''}</td>
+                            <td>${schedule.remarks ? schedule.remarks : ''}</td>
+                            <td></td>
                             <td>
                                 <a href="/schedule/edit/${schedule.id}" class="btn btn-bg-blue btn-sm btn-tooltip">
                                     <i class="bi bi-pen"></i>
                                     <span class="btn-text">Edit</span>
-                                </a>
-                                <a href="/schedule/delete/${schedule.id}" class="btn btn-danger btn-sm btn-tooltip">
-                                    <i class="bi bi-trash"></i>
-                                    <span class="btn-text">Delete</span>
                                 </a>
                             </td>
                         </tr>

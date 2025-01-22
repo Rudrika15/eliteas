@@ -31,25 +31,44 @@
                                 <th>{{ ($roles->currentPage() - 1) * $roles->perPage() + $loop->iteration }}</th>
                                 <td>{{ $role->name }}</td>
                                 <td>
-                                    <a class="btn btn-bg-orange btn-sm btn-tooltip"
-                                        href="{{ route('roles.show', $role->id) }}">
+                                    <a class="btn btn-bg-orange btn-sm btn-tooltip" href="{{ route('roles.show', $role->id) }}">
                                         <i class="bi bi-eye"></i>
                                         <span class="btn-text">View Role Details</span>
                                     </a>
                                     @can('role-edit')
-                                        <a class="btn btn-bg-blue btn-sm btn-tooltip"
-                                            href="{{ route('roles.edit', $role->id) }}">
+                                        <a class="btn btn-bg-blue btn-sm btn-tooltip" href="{{ route('roles.edit', $role->id) }}">
                                             <i class="bi bi-pen"></i>
                                             <span class="btn-text">Edit Role</span>
                                         </a>
                                     @endcan
                                     @can('role-delete')
-                                        {!! Form::open(['method' => 'DELETE', 'route' => ['roles.destroy', $role->id], 'style' => 'display:inline']) !!}
-                                        <button type="submit" class="btn btn-danger btn-sm btn-tooltip">
+                                        <button type="button" class="btn btn-danger btn-sm btn-tooltip" onclick="confirmDelete({{ $role->id }})">
                                             <i class="bi bi-trash"></i>
                                             <span class="btn-text">Delete</span>
                                         </button>
-                                        {!! Form::close() !!}
+
+                                        <form id="delete-form-{{ $role->id }}" action="{{ route('roles.destroy', $role->id) }}" method="POST" style="display: none;">
+                                            @csrf
+                                            @method('DELETE')
+                                        </form>
+                                        <script>
+                                            function confirmDelete(roleId) {
+                                                Swal.fire({
+                                                    title: 'Are you sure?',
+                                                    text: "You won't be able to revert this!",
+                                                    icon: 'warning',
+                                                    showCancelButton: true,
+                                                    confirmButtonColor: '#3085d6',
+                                                    cancelButtonColor: '#d33',
+                                                    confirmButtonText: 'Yes, delete it!'
+                                                }).then((result) => {
+                                                    if (result.isConfirmed) {
+                                                        console.log("Delete role with ID:", roleId);
+                                                        document.getElementById(`delete-form-${roleId}`).submit();
+                                                    }
+                                                });
+                                            }
+                                        </script>
                                     @endcan
                                 </td>
                             </tr>
