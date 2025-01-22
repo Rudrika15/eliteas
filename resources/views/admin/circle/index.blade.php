@@ -28,8 +28,7 @@
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h4 class="card-title">Circle</h4>
                     <div class="">
-                        <a href="{{ route('circle.create') }}" class="btn btn-bg-orange btn-sm mt-3 mr-2 btn-tooltip"><i
-                                class="bi bi-plus-circle"></i>
+                        <a href="{{ route('circle.create') }}" class="btn btn-bg-orange btn-sm mt-3 mr-2 btn-tooltip"><i class="bi bi-plus-circle"></i>
                             <span class="btn-text">Create Circle</span></a>
                         @role('Admin')
                             <a href="{{ route('schedule.index') }}" class="btn btn-bg-blue btn-sm mt-3">All Meetings</a>
@@ -89,36 +88,49 @@
                                     <td>{{ $circleData->status }}</td>
                                     <td>
 
-                                        <a href="{{ route('circle.report', $circleData->id) }}"
-                                            class="btn btn-bg-blue btn-sm btn-tooltip">
+                                        <a href="{{ route('circle.report', $circleData->id) }}" class="btn btn-bg-blue btn-sm btn-tooltip">
                                             <i class="bi bi-file-earmark-text"></i>
                                             <span class="btn-text">Circle Report</span>
                                         </a>
 
 
-                                        <a href="{{ route('meetings.by.circle', $circleData->id) }}"
-                                            class="btn btn-bg-orange btn-sm btn-tooltip">
+                                        <a href="{{ route('meetings.by.circle', $circleData->id) }}" class="btn btn-bg-orange btn-sm btn-tooltip">
                                             <i class="bi bi-eye"></i>
                                             <span class="btn-text">View Circle Meetings</span>
                                         </a>
 
-                                        <a href="{{ route('circle.edit', $circleData->id) }}"
-                                            class="btn btn-bg-blue btn-sm btn-tooltip">
+                                        <a href="{{ route('circle.edit', $circleData->id) }}" class="btn btn-bg-blue btn-sm btn-tooltip">
                                             <i class="bi bi-pen"></i>
                                             <span class="btn-text">Edit</span>
                                         </a>
 
-                                        <a href="{{ route('circle.memberList', $circleData->id) }}"
-                                            class="btn btn-info btn-sm btn-tooltip">
+                                        <a href="{{ route('circle.memberList', $circleData->id) }}" class="btn btn-info btn-sm btn-tooltip">
                                             <i class="bi bi-person-lines-fill"></i>
                                             <span class="btn-text">View Members</span>
                                         </a>
 
-                                        <a href="{{ route('circle.delete', $circleData->id) }}"
-                                            class="btn btn-danger btn-sm btn-tooltip">
+                                        <a href="javascript:void(0)" onclick="confirmDelete({{ $circleData->id }})" class="btn btn-danger btn-sm btn-tooltip">
                                             <i class="bi bi-trash"></i>
                                             <span class="btn-text">Delete</span>
                                         </a>
+                                        <script>
+                                            function confirmDelete(id) {
+                                                var url = "{{ route('circle.delete', ':id') }}".replace(':id', id);
+                                                Swal.fire({
+                                                    title: "Are you sure?",
+                                                    text: "You want to delete this circle?",
+                                                    icon: "warning",
+                                                    showCancelButton: true,
+                                                    confirmButtonColor: "#3085d6",
+                                                    cancelButtonColor: "#d33",
+                                                    confirmButtonText: "Yes, delete it!"
+                                                }).then((result) => {
+                                                    if (result.isConfirmed) {
+                                                        window.location.href = url;
+                                                    }
+                                                });
+                                            }
+                                        </script>
 
                                     </td>
                                 </tr>

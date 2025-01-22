@@ -422,11 +422,15 @@ class CircleMemberController extends Controller
             $payment->membershipType = $member->membershipType;
             $payment->paymentMode = $request->has('paymentMode') ? $request->paymentMode : 'Online';
 
-            if ($member->membershipType == 2) {
-                $payment->validity = now()->addYears(5)->format('d-m-Y');
-            } elseif ($member->membershipType == 1) {
+            if ($member->membershipType == 1) {
                 $payment->validity = now()->addYear()->format('d-m-Y');
             }
+
+            // if ($member->membershipType == 2) {
+            //     $payment->validity = now()->addYears(5)->format('d-m-Y');
+            // } elseif ($member->membershipType == 1) {
+            //     $payment->validity = now()->addYear()->format('d-m-Y');
+            // }
 
             $payment->paymentDate = $request->date;
 

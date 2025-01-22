@@ -1,25 +1,8 @@
 @extends('layouts.master')
 
+{{-- naham karta shreeeharihi karta -  --}}
+
 @section('content')
-    {{-- Message --}}
-    @if (Session::has('success'))
-        <div class="alert alert-success alert-dismissible" role="alert">
-            <button type="button" class="close" data-dismiss="alert">
-                {{-- <i class="fa fa-times"></i> --}}
-            </button>
-            <strong>Success !</strong> {{ session('success') }}
-        </div>
-    @endif
-
-    @if (Session::has('error'))
-        <div class="alert alert-danger alert-dismissible" role="alert">
-            <button type="button" class="close" data-dismiss="alert">
-                {{-- <i class="fa fa-times"></i> --}}
-            </button>
-            <strong>Error !</strong> {{ session('error') }}
-        </div>
-    @endif
-
     <div class="card">
         <div class="card-body">
             <div class="d-flex justify-content-between align-items-center mb-3">
@@ -58,22 +41,20 @@
                                     @endif
                                 </td>
                                 <td>
-                                    <a class="btn btn-bg-orange btn-sm btn-tooltip"
-                                        href="{{ route('users.show', $user->id) }}">
+                                    <a class="btn btn-bg-orange btn-sm btn-tooltip" href="{{ route('users.show', $user->id) }}">
                                         <i class="bi bi-eye"></i>
                                         <span class="btn-text">View User Details</span>
                                     </a>
-                                    <a class="btn btn-bg-blue btn-sm btn-tooltip"
-                                        href="{{ route('users.edit', $user->id) }}">
+                                    <a class="btn btn-bg-blue btn-sm btn-tooltip" href="{{ route('users.edit', $user->id) }}">
                                         <i class="bi bi-pencil"></i>
                                         <span class="btn-text">Edit User</span>
                                     </a>
-                                    {!! Form::open(['method' => 'DELETE', 'route' => ['users.destroy', $user->id], 'style' => 'display:inline']) !!}
+                                    {{-- {!! Form::open(['method' => 'DELETE', 'route' => ['users.destroy', $user->id], 'style' => 'display:inline']) !!}
                                     <button type="submit" class="btn btn-danger btn-sm btn-tooltip">
                                         <i class="bi bi-trash"></i>
                                         <span class="btn-text">Delete User</span>
                                     </button>
-                                    {!! Form::close() !!}
+                                    {!! Form::close() !!} --}}
                                 </td>
                             </tr>
                         @endforeach
