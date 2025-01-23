@@ -3,32 +3,23 @@
 @section('header', 'Training')
 @section('content')
 
-    {{-- Message --}}
-    @if (session()->has('success'))
-        <div class="alert alert-success alert-dismissible" role="alert">
-            <button type="button" class="close" data-dismiss="alert">
-                &times;
-            </button>
-            <strong>Success!</strong> {{ session('success') }}
-        </div>
-    @endif
 
-    @if (session()->has('error'))
-        <div class="alert alert-danger alert-dismissible" role="alert">
-            <button type="button" class="close" data-dismiss="alert">
-                &times;
-            </button>
-            <strong>Error!</strong> {{ session('error') }}
-        </div>
-    @endif
+    <!-- Include Flatpickr CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
+    <!-- Material Blue Theme -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css">
+
+
+    <!-- Include Flatpickr JS -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+    
     <div class="card ">
         <div class="card-body d-flex justify-content-between align-items-center">
-            <h5 class="card-title">Create Training</h5>
+            <h5 class="card-title">Create Training Transactions</h5>
             <a href="{{ route('training.index') }}" class="btn btn-bg-orange btn-sm">BACK</a>
         </div>
-
-
 
         <!-- Form -->
         <form class="m-3 needs-validation" id="trainingForm" enctype="multipart/form-data" method="post" action="{{ route('training.store') }}" novalidate>
@@ -139,6 +130,17 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="row">
+
+                                    <div class="col-md-6">
+                                        <select class="form-select mt-3" id="trainingMasterId" name="trainingMasterId" required>
+                                            <option value="" selected disabled>Select Training</option>
+                                            @foreach ($trainingMaster as $trainingMasterData)
+                                                <option value="{{ $trainingMasterData->id }}">{{ $trainingMasterData->trainingName }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+
                                     <div class="col-md-6">
                                         <input type="text" class="form-control mt-3" id="title" name="title" placeholder="Title" required>
                                     </div>
@@ -161,8 +163,12 @@
                                         <input type="text" class="form-control mt-3" id="venue" name="venue" placeholder="Venue" style="display:none;">
                                     </div>
                                     <div class="col-md-6">
-                                        <input type="date" class="form-control mt-3" id="date" name="date" placeholder="Date" min="{{ date('Y-m-d') }}" onkeydown="return false" required>
+                                        <input type="text" class="form-control mt-3" id="start_date" name="start_date" placeholder="Start Date" required>
                                     </div>
+                                    <div class="col-md-6">
+                                        <input type="text" class="form-control mt-3" id="end_date" name="end_date" placeholder="End Date" required>
+                                    </div>
+
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6">
@@ -387,6 +393,25 @@
     </script>
 
 
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Initialize Flatpickr for the Start Date
+            flatpickr("#start_date", {
+                dateFormat: "d-m-Y", // Format for the date
+                minDate: "today", // Disable past dates
+                onChange: function(selectedDates, dateStr) {
+                    // Set minimum date for the End Date based on the selected Start Date
+                    endDatePicker.set("minDate", dateStr);
+                }
+            });
+
+            // Initialize Flatpickr for the End Date
+            const endDatePicker = flatpickr("#end_date", {
+                dateFormat: "d-m-Y", // Format for the date
+                minDate: "today" // Disable past dates
+            });
+        });
+    </script>
 
 
 @endsection

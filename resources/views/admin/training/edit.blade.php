@@ -3,29 +3,20 @@
 @section('header', 'Training')
 @section('content')
 
-    {{-- Message --}}
-    @if (Session::has('success'))
-        <div class="alert alert-success alert-dismissible" role="alert">
-            <button type="button" class="close" data-dismiss="alert">
-                {{-- <i class="fa fa-times"></i> --}}
-            </button>
-            <strong>Success !</strong> {{ session('success') }}
-        </div>
-    @endif
+    <!-- Include Flatpickr CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
-    @if (Session::has('error'))
-        <div class="alert alert-danger alert-dismissible" role="alert">
-            <button type="button" class="close" data-dismiss="alert">
-                {{-- <i class="fa fa-times"></i> --}}
-            </button>
-            <strong>Error !</strong> {{ session('error') }}
-        </div>
-    @endif
+    <!-- Material Blue Theme -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css">
+
+
+    <!-- Include Flatpickr JS -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 
     <div class="card">
         <div class="card-body d-flex justify-content-between align-items-center">
-            <h5 class="card-title">Edit Training</h5>
+            <h5 class="card-title">Edit Training Transactions</h5>
             <a href="{{ route('training.index') }}" class="btn btn-bg-orange btn-sm">BACK</a>
         </div>
 
@@ -125,6 +116,17 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="row">
+
+
+                                    <div class="col-md-6">
+                                        <select class="form-select mt-3" id="trainingMasterId" name="trainingMasterId" required>
+                                            <option value="" selected disabled>Select Training</option>
+                                            @foreach ($trainingMaster as $trainingMasterData)
+                                                <option value="{{ $trainingMasterData->id }}" {{ old('trainingMasterId', $training->trainingMasterId) == $trainingMasterData->id ? 'selected' : '' }}>{{ $trainingMasterData->trainingName }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
                                     <div class="col-md-6">
                                         <input type="text" class="form-control mt-3" id="title" name="title" placeholder="Title" value="{{ old('title', $training->title) }}">
                                     </div>
@@ -147,7 +149,10 @@
                                         <input type="text" class="form-control mt-3" id="venue" name="venue" placeholder="Venue" style="display:none;" value="{{ old('venue', $training->venue) }}">
                                     </div>
                                     <div class="col-md-6">
-                                        <input type="date" class="form-control mt-3" id="date" name="date" placeholder="Date" min="{{ date('Y-m-d') }}" onkeydown="return false" value="{{ old('date', $training->date) }}">
+                                        <input type="text" class="form-control mt-3" id="start_date" name="start_date" placeholder="Start Date" value="{{ old('start_date', $training->start_date) }}" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input type="text" class="form-control mt-3" id="end_date" name="end_date" placeholder="End Date" value="{{ old('end_date', $training->end_date) }}" required>
                                     </div>
 
                                 </div>
@@ -168,10 +173,10 @@
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-floating mt-3">
-                                            <input type="file" class="form-control @error('training_banner') is-invalid @enderror" id="training_banner" name="training_banner" accept="image/*" onchange="previewPhoto2(event)" value="{{ old('training_banner', $training->training_banner) }}" required>
+                                            <input type="file" class="form-control @error('training_banner') is-invalid @enderror" id="training_banner" name="training_banner" accept="image/*" onchange="previewPhoto2(event)" value="{{ old('training_banner', $training->training_banner) }}">
                                             <label for="training_banner">Training Banner</label>
                                             <div class="mt-1">
-                                                <img id="photoPreview2" src="{{ asset('img/profile.png') }}" alt="Training Banner" style="width: 100px; height: 100px; object-fit: contain; aspect-ratio: 1/1;" />
+                                                <img id="photoPreview2" src="{{ old('training_banner', $training->training_banner) ? url('Training/' . $training->training_banner) : asset('img/profile.png') }}" alt="Training Banner" style="width: 100px; height: 100px; object-fit: contain; aspect-ratio: 1/1;" />
                                             </div>
                                             <span style="color: red;">*Max file size: 2MB</span>
                                             @error('training_banner')
@@ -183,10 +188,10 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-floating mt-3">
-                                            <input type="file" class="form-control @error('training_thumb') is-invalid @enderror" id="training_thumb" name="training_thumb" accept="image/*" onchange="previewPhoto(event)" value="{{ old('training_thumb', $training->training_thumb) }}" required>
+                                            <input type="file" class="form-control @error('training_thumb') is-invalid @enderror" id="training_thumb" name="training_thumb" accept="image/*" onchange="previewPhoto(event)" value="{{ old('training_thumb', $training->training_thumb) }}">
                                             <label for="training_thumb">Training Thumb</label>
                                             <div class="mt-1">
-                                                <img id="photoPreview1" src="{{ asset('img/profile.png') }}" alt="Training Thumb" style="width: 100px; height: 100px; object-fit: contain; aspect-ratio: 1/1;" />
+                                                <img id="photoPreview1" src="{{ old('training_thumb', $training->training_thumb) ? url('Training/' . $training->training_thumb) : asset('img/profile.png') }}" alt="Training Thumb" style="width: 100px; height: 100px; object-fit: contain; aspect-ratio: 1/1;" />
                                             </div>
                                             <span style="color: red;">*Max file size: 2MB</span>
                                             @error('training_thumb')
@@ -370,5 +375,26 @@
             });
         });
     </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Initialize Flatpickr for the Start Date
+            flatpickr("#start_date", {
+                dateFormat: "d-m-Y", // Format for the date
+                minDate: "today", // Disable past dates
+                onChange: function(selectedDates, dateStr) {
+                    // Set minimum date for the End Date based on the selected Start Date
+                    endDatePicker.set("minDate", dateStr);
+                }
+            });
+
+            // Initialize Flatpickr for the End Date
+            const endDatePicker = flatpickr("#end_date", {
+                dateFormat: "d-m-Y", // Format for the date
+                minDate: "today" // Disable past dates
+            });
+        });
+    </script>
+
 
 @endsection

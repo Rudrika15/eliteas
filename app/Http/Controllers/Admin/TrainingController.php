@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
 use App\Models\Notifications;
+use App\Models\TrainingMaster;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Kreait\Firebase\Factory;
@@ -43,7 +44,9 @@ class TrainingController extends Controller
                 ->orderBy('id', 'DESC')
                 ->paginate(10);
 
-            return view('admin.training.index', compact('training'));
+            $trainingMaster = TrainingMaster::where('status', 'Active')->get();
+
+            return view('admin.training.index', compact('training', 'trainingMaster'));
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError(
@@ -72,11 +75,11 @@ class TrainingController extends Controller
     {
         try {
 
-
+            $trainingMaster = TrainingMaster::where('status', 'Active')->get();
             $trainer = Member::with('circle')->where('status', 'Active')->get();
             $training = Training::with('trainer')
                 ->get();
-            return view('admin.training.create', compact('trainer', 'training'));
+            return view('admin.training.create', compact('trainer', 'training', 'trainingMaster'));
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError(
@@ -144,12 +147,14 @@ class TrainingController extends Controller
         try {
             // Validate the incoming request
             $request->validate([
+                'trainingMasterId' => 'required|exists:training_masters,id',
                 'title' => 'required|string|max:255',
                 'fees' => 'required|numeric',
                 'type' => 'required|string',
                 'meetingLink' => 'nullable|url',
                 'venue' => 'nullable|string|max:255',
-                'date' => 'required|date',
+                'start_date' => 'required|date',
+                'end_date' => 'required|date',
                 'time' => 'required',
                 'duration' => 'required|string',
                 'note' => 'nullable|string',
@@ -157,6 +162,7 @@ class TrainingController extends Controller
 
             // Create Training record
             $training = new Training();
+            $training->trainingMasterId = $request->trainingMasterId;
             $training->title = $request->title;
             $training->fees = $request->fees;
             $training->type = $request->type;
@@ -175,7 +181,8 @@ class TrainingController extends Controller
                 $request->training_banner->move(public_path('Training'), $training->training_banner);
             }
 
-            $training->date = $request->date;
+            $training->start_date = $request->start_date;
+            $training->end_date = $request->end_date;
             $training->time = $request->time;
             $training->duration = $request->duration;
             $training->note = $request->note;
@@ -238,6 +245,7 @@ class TrainingController extends Controller
             // Redirect the user after successful submission
             return redirect()->route('training.index')->with('success', 'Training details saved successfully.');
         } catch (\Throwable $th) {
+            // throw $th;
             ErrorLogger::logError($th, request()->fullUrl());
             return view('servererror');
         }
@@ -252,10 +260,10 @@ class TrainingController extends Controller
         try {
             // $training = Training::find($id);
             $training = Training::where('id', $id)->first();
-
+            $trainingMaster = TrainingMaster::where('status', 'Active')->get();
             $trainer = TrainerMaster::where('status', 'Active')->get();
 
-            return view('admin.training.edit', compact('training', 'trainer'));
+            return view('admin.training.edit', compact('training', 'trainer', 'trainingMaster'));
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError(
@@ -275,6 +283,8 @@ class TrainingController extends Controller
 
             // Update the fields with validated data
             $training = Training::findOrFail($id);
+
+            $training->trainingMasterId = $request->trainingMasterId;
             $training->title = $request->title;
             $training->fees = $request->fees;
             $training->type = $request->type;
@@ -295,7 +305,8 @@ class TrainingController extends Controller
 
 
 
-            $training->date = $request->date;
+            $training->start_date = $request->start_date;
+            $training->end_date = $request->end_date;
             $training->time = $request->time;
             $training->duration = $request->duration;
             $training->note = $request->note;

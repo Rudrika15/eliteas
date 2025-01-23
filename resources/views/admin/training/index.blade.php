@@ -27,7 +27,7 @@
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h4 class="card-title">Trainings</h4>
                 <a href="{{ route('training.create') }}" class="btn btn-bg-orange btn-sm mt-3 btn-tooltip"><i class="bi bi-plus-circle"></i>
-                    <span class="btn-text">Create Training</span>
+                    <span class="btn-text">Create Training Transactions</span>
                 </a>
             </div>
 
@@ -38,6 +38,7 @@
                         <tr>
                             <th>S.No</th>
                             {{-- <th>Trainer Name</th> --}}
+                            <th>Master Title</th>
                             <th>Title</th>
                             {{-- <th>External Trainer</th> --}}
                             <th>Type</th>
@@ -46,7 +47,8 @@
                             <th>Training Banner</th>
                             <th>Training Thumbnail</th>
                             <th>Venue</th>
-                            <th>Date</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
                             <th>Time</th>
                             {{-- <th>Status</th> --}}
                             <th>Action</th>
@@ -70,6 +72,7 @@
                         </td> --}}
                                 <th>{{ ($training->currentPage() - 1) * $training->perPage() + $loop->index + 1 }}
 
+                                <td>{{ $trainingData->trainingMaster->trainingName ?? '-' }}</td>
                                 <td>{{ $trainingData->title ?? '-' }}</td>
                                 {{-- <td>
                             @php
@@ -106,7 +109,8 @@
                                 </td>
 
                                 <td>{{ $trainingData->venue ?? '-' }}</td>
-                                <td>{{ \Carbon\Carbon::parse($trainingData->date)->format('d-m-Y') ?? '-' }}</td>
+                                <td>{{ \Carbon\Carbon::parse($trainingData->start_date)->format('d-m-Y') ?? '-' }}</td>
+                                <td>{{ \Carbon\Carbon::parse($trainingData->end_date)->format('d-m-Y') ?? '-' }}</td>
                                 <td>{{ $trainingData->time ?? '-' }}</td>
                                 {{-- <td>{{$trainingData->status ?? '-'}}</td> --}}
                                 <td>

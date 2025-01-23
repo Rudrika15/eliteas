@@ -83,11 +83,18 @@ class VisitorController extends Controller
             });
         }
 
+        // if ($request->filled('business_category')) {
+        //     $query->whereHas('bCategory', function ($q) use ($request) {
+        //         $q->where('categoryName', 'like', '%' . $request->business_category . '%');
+        //     });
+        // }
+
         if ($request->filled('business_category')) {
             $query->whereHas('bCategory', function ($q) use ($request) {
-                $q->where('categoryName', 'like', '%' . $request->business_category . '%');
+                $q->where('categoryName', $request->business_category);
             });
         }
+
 
         if ($request->filled('city')) {
             $query->where('city', $request->city);
@@ -95,7 +102,7 @@ class VisitorController extends Controller
 
         $visitors = $query->paginate(10)->appends($request->query());
 
-        $categories = BusinessCategory::pluck('categoryName', 'id');
+        $categories = BusinessCategory::where('status', 'Active')->pluck('categoryName', 'id');
         $cities = VisitorsDetails::distinct()->pluck('city');
 
         return view('admin.visitor.index', compact('visitors', 'categories', 'cities'));

@@ -168,6 +168,13 @@
         </li>
 
         <li class="nav-item">
+            <a class="nav-link " href="{{ route('trainingMaster.index') }}">
+                <i class="bi bi-person-gear" style="color: #e76a35"></i>
+                <span>Training Master</span>
+            </a>
+        </li>
+
+        <li class="nav-item">
             <a class="nav-link " href="{{ route('training.index') }}">
                 <i class="bi bi-gear-wide-connected" style="color: #e76a35"></i>
                 <span>Training</span>

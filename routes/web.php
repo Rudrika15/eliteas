@@ -62,6 +62,8 @@ use App\Http\Controllers\Admin\VisitorController;
 use App\Http\Controllers\Conquer\ConEventController;
 use App\Http\Controllers\Conquer\ConquerEventController;
 use App\Http\Controllers\ConversationController;
+use App\Http\Controllers\Admin\TrainingMasterController;
+use App\Http\Controllers\Admin\TrainingFeedbackController;
 use App\Http\Controllers\MessageController;
 
 /*
@@ -765,6 +767,27 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('help/delete/{id?}', [HelpController::class, 'delete'])->name('help.delete');
 
     // Route::get('call-Notify', [CircleCallController::class, 'callNotify'])->name('callNotify');
+
+
+    //traininng master
+
+    Route::get('trainingMaster/index', [TrainingMasterController::class, 'index'])->name('trainingMaster.index');
+    Route::get('trainingMaster/create', [TrainingMasterController::class, 'create'])->name('trainingMaster.create');
+    Route::post('trainingMaster/store', [TrainingMasterController::class, 'store'])->name('trainingMaster.store');
+    Route::get('trainingMaster/edit/{id?}', [TrainingMasterController::class, 'edit'])->name('trainingMaster.edit');
+    Route::post('trainingMaster/update', [TrainingMasterController::class, 'update'])->name('trainingMaster.update');
+    Route::get('trainingMaster/delete/{id?}', [TrainingMasterController::class, 'delete'])->name('trainingMaster.delete');
+
+    //traininng Feedback
+
+    Route::get('trainingFeedback/adminIndex/{id?}', [TrainingFeedbackController::class, 'adminIndex'])->name('trainingFeedback.adminIndex');
+    Route::get('trainingFeedback/index', [TrainingFeedbackController::class, 'index'])->name('trainingFeedback.index');
+    Route::get('trainingFeedback/create', [TrainingFeedbackController::class, 'create'])->name('trainingFeedback.create');
+    Route::post('trainingFeedback/store', [TrainingFeedbackController::class, 'store'])->name('trainingFeedback.store');
+    Route::get('trainingFeedback/edit/{id?}', [TrainingFeedbackController::class, 'edit'])->name('trainingFeedback.edit');
+    Route::post('trainingFeedback/update', [TrainingFeedbackController::class, 'update'])->name('trainingFeedback.update');
+    Route::get('trainingFeedback/delete/{id?}', [TrainingFeedbackController::class, 'delete'])->name('trainingFeedback.delete');
+
 });
 
 Route::get('/main-event-thankYouVisitor', [ConEventController::class, 'thankYouUser'])->name('main.event.thankYouUser');
