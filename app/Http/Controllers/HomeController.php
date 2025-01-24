@@ -262,14 +262,12 @@ class HomeController extends Controller
             $currentDate = Carbon::now();
 
             $nearestTraining = Training::where('status', 'Active')
-                ->whereDate('date', '>=', $currentDate)
+                ->whereDate('start_date', '>=', $currentDate)
                 ->whereHas('trainers.user')
                 ->with('trainers.user')
                 ->whereHas('trainersTrainings.user')
-                ->orderBy('date', 'asc')
+                ->orderBy('start_date', 'asc')
                 ->first();
-
-
 
             $businessCategory = BusinessCategory::where('status', 'Active')->get();
 

@@ -667,10 +667,14 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('event/create', [EventController::class, 'create'])->name('event.create');
     // Route::get('/event/{slug}', [EventController::class, 'eventLink'])->name('event.link');
     Route::post('event/store', [EventController::class, 'store'])->name('event.store');
+    Route::post('addEventMember/event/store', [EventController::class, 'storeaddEventMember'])->name('addEventMember.store');
+    Route::get('addEventMemberPage/event/create/{id?}', [EventController::class, 'createAddEventMember'])->name('createEventMember.store');
+    Route::get('/get-members/{circleId}', [EventController::class, 'getMembers'])->name('getMembers');
     Route::get('event/edit/{id?}', [EventController::class, 'edit'])->name('event.edit');
     Route::post('event/update', [EventController::class, 'update'])->name('event.update');
     Route::post('/event/update-status/{id}', [EventController::class, 'updateStatus'])->name('event.updateStatus');
     Route::get('event/eventRegisterList/{id?}', [EventController::class, 'eventRegisterList'])->name('event.eventRegisterList');
+    Route::post('/update-payment-status', [EventController::class, 'updateEventPaymentStatus'])->name('updatePaymentStatus');
     Route::get('slotbooking/list/{id?}', [EventController::class, 'slotBookingList'])->name('slotbooking.list');
     Route::post('/event/register/{eventId}', [EventController::class, 'eventRegister'])->name('event.register');
     Route::delete('event/delete/{id?}', [EventController::class, 'delete'])->name('event.delete');
@@ -787,7 +791,6 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('trainingFeedback/edit/{id?}', [TrainingFeedbackController::class, 'edit'])->name('trainingFeedback.edit');
     Route::post('trainingFeedback/update', [TrainingFeedbackController::class, 'update'])->name('trainingFeedback.update');
     Route::get('trainingFeedback/delete/{id?}', [TrainingFeedbackController::class, 'delete'])->name('trainingFeedback.delete');
-
 });
 
 Route::get('/main-event-thankYouVisitor', [ConEventController::class, 'thankYouUser'])->name('main.event.thankYouUser');

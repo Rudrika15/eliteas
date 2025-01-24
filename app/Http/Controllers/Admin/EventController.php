@@ -594,4 +594,74 @@ class EventController extends Controller
 
         return back()->with('success', 'Booking status updated successfully.');
     }
+
+
+
+    public function storeaddEventMember(Request $request)
+    {
+        try {
+            $eventReg = new EventRegister();
+            $eventReg->eventId = $request->eventId;
+            $eventReg->memberId = $request->memberId;
+            $eventReg->personName = $request->personName;
+            $eventReg->personEmail = $request->personEmail;
+            $eventReg->personContact = $request->personContact;
+            $eventReg->refMemberId = $request->refMemberId;
+            $eventReg->paymentStatus = $request->paymentStatus;
+            $eventReg->save();
+
+            return redirect()->back()->with('success', 'Details saved successfully.');
+        } catch (\Throwable $th) {
+            ErrorLogger::logError(
+                $th,
+                $request->fullUrl()
+            );
+            return view('servererror');
+        }
+    }
+
+
+    public function createAddEventMember(Request $request)
+    {
+        try {
+            $circles = Circle::where('status', 'Active')->get();
+
+            $circleMember = Member::with('circle')
+                ->where('status', 'Active')
+                ->get(); // Ensure 'circleId' is included
+
+
+            return view('admin.event.addMember', compact('circles', 'circleMember'));
+        } catch (\Throwable $th) {
+            throw $th;
+            ErrorLogger::logError(
+                $th,
+                $request->fullUrl()
+            );
+            return view('servererror');
+        }
+    }
+
+
+    public function getMembers($circleId)
+    {
+        $members = Member::where('circleId', $circleId)->get(); // Adjust column names as per your database
+        return response()->json($members);
+    }
+
+
+    public function updateEventPaymentStatus(Request $request)
+    {
+        try {
+            $register = EventRegister::findOrFail($request->id); // Replace with your actual model
+            $register->PaymentStatus = $request->paymentStatus;
+            $register->save();
+
+            return response()->json(['success' => true, 'message' => 'Payment status updated successfully.']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Failed to update payment status.']);
+        }
+    }
+
+
 }

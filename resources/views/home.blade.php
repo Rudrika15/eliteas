@@ -559,7 +559,8 @@
                                     </div>
 
                                     <div class="col-md-2 pt-3 text-muted text-end">
-                                        <b>Date : </b> {{ \Carbon\Carbon::parse($nearestTraining->date)->format('j M Y') }}
+                                        <b>Start Date : </b> {{ \Carbon\Carbon::parse($nearestTraining->start_date)->format('j M Y') }}
+                                        <b>End Date : </b> {{ \Carbon\Carbon::parse($nearestTraining->end_date)->format('j M Y') }}
                                         <br>
                                         <b>Time :</b> {{ $nearestTraining->time }}
                                     </div>
@@ -638,6 +639,8 @@
                                         <p class="card-text text-muted"> <b> Total Registered Members : {{ $totalRegisterCount }}
                                             </b></p>
 
+                                        
+
                                         @if ($nearestEvents->slot_date)
                                             <b class="text-muted">Slot Date :</b> {{ \Carbon\Carbon::parse($nearestEvents->slot_date)->format('j M Y') }}
                                         @endif
@@ -662,18 +665,18 @@
                                             @else
                                                 <h5 class="text-muted text-end me-4 pt-3">₹ {{ $nearestEvents->fees }}</h5>
                                                 <div class="d-flex justify-content-end align-items-center">
-                                                    <input type="text" id="couponCode" class="form-control me-3 w-25" placeholder="Have you a coupon code ?">
-                                                    <button type="button" class="btn btn-secondary me-3" id="applyCouponBtn">Apply</button>
+                                                    {{-- <input type="text" id="couponCode" class="form-control me-3 w-25" placeholder="Have you a coupon code ?"> --}}
+                                                    {{-- <button type="button" class="btn btn-secondary me-3" id="applyCouponBtn">Apply</button> --}}
                                                     <button type="button" class="btn btn-bg-orange btn-md" id="razorpayBtnEvent" data-amount-event="{{ $nearestEvents->fees }}">
                                                         Pay Now
                                                     </button>
 
                                                 </div>
-                                                <div id="couponError" class="text-danger mt-2 text-end me-4" style="display:none;">Invalid
+                                                {{-- <div id="couponError" class="text-danger mt-2 text-end me-4" style="display:none;">Invalid
                                                     coupon code.</div>
                                                 <div id="discountSuccess" class="text-success mt-2 text-end me-4" style="display:none;">
                                                     Coupon applied
-                                                    successfully! Discount: ₹<span id="discountAmount"></span></div>
+                                                    successfully! Discount: ₹<span id="discountAmount"></span></div> --}}
                                             @endif
                                         @else
                                             <div class="d-flex justify-content-end">
@@ -733,13 +736,12 @@
                                         View Event Details
                                     </a> --}}
                                             </div>
-                                            {{-- <div>
-                                    <button class="btn btn-bg-blue btn-sm" onclick="copyLink()">
-                                        Invite Via Link
-                                    </button>
-                                    <input type="hidden" id="shareableLink"
-                                        value="{{ URL::signedRoute('event.link', ['slug' => $nearestEvents->event_slug, 'ref' => auth()->user()->member->id]) }}">
-                                </div> --}}
+                                            <div>
+                                                <button class="btn btn-bg-blue btn-sm" onclick="copyLink()">
+                                                    Invite Via Link
+                                                </button>
+                                                <input type="hidden" id="shareableLink" value="{{ URL::signedRoute('event.link', ['slug' => $nearestEvents->event_slug, 'ref' => auth()->user()->member->id]) }}">
+                                            </div>
 
                                             <style>
                                                 #shareableLink {

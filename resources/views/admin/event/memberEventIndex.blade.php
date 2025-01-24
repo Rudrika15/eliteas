@@ -44,18 +44,14 @@
                                     <td>{{ $eventData->slot_date }}</td>
                                     <td>
                                         @if ($eventData->event_thumb)
-                                            <img src="{{ url('Event/' . basename($eventData->event_thumb)) }}"
-                                                alt="Event Image"
-                                                style="width: 50px; height: 50px; object-fit: contain; aspect-ratio: 1/1;">
+                                            <img src="{{ url('Event/' . basename($eventData->event_thumb)) }}" alt="Event Image" style="width: 50px; height: 50px; object-fit: contain; aspect-ratio: 1/1;">
                                         @else
                                             <span></span>
                                         @endif
                                     </td>
                                     <td>
                                         @if ($eventData->event_banner)
-                                            <img src="{{ url('Event/' . basename($eventData->event_banner)) }}"
-                                                alt="Event Banner"
-                                                style="width: 50px; height: 50px; object-fit: contain; aspect-ratio: 1/1;">
+                                            <img src="{{ url('Event/' . basename($eventData->event_banner)) }}" alt="Event Banner" style="width: 50px; height: 50px; object-fit: contain; aspect-ratio: 1/1;">
                                         @else
                                             <span></span>
                                         @endif
@@ -67,10 +63,13 @@
 
                                     <td>
                                         <input type="hidden" id="visitorId" value="{{ session('visitor_id') }}">
-                                        <a href="{{ route('memberSlotBooking.list', $eventData->id) }}"
-                                            class="btn btn-bg-blue btn-sm btn-tooltip">
+                                        <a href="{{ route('memberSlotBooking.list', $eventData->id) }}" class="btn btn-bg-blue btn-sm btn-tooltip">
                                             <i class="bi bi-list"></i>
                                             <span class="btn-text">Slot Booking Requests</span>
+                                        </a>
+                                        <a href="{{ route('event.eventRegisterList', $eventData->id) }}" class="btn btn-bg-orange btn-sm btn-tooltip">
+                                            <i class="bi bi-people"></i>
+                                            <span class="btn-text">Joined People</span>
                                         </a>
                                     </td>
                                 </tr>

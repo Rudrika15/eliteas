@@ -118,6 +118,13 @@
                                     </td>
 
                                     <td>
+
+                                        <a href="{{ route('createEventMember.store', $eventData->id) }}"
+                                            class="btn btn-bg-orange btn-sm btn-tooltip">
+                                            <i class="bi bi-person-plus"></i>
+                                            <span class="btn-text">Add Members</span>
+                                        </a>
+
                                         <a href="{{ route('slotbooking.list', $eventData->id) }}"
                                             class="btn btn-bg-blue btn-sm btn-tooltip">
                                             <i class="bi bi-list"></i>

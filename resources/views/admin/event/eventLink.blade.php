@@ -33,16 +33,16 @@
                         </div>
                         <div class="col-md-4 text-end">
                             {{-- @if (!is_null($findEventRegister) && count($findEventRegister) == 0) --}}
-                            @if ($event->amount == 0)
+                            @if ($event->fees == 0)
                             <h5 class="text-muted">Free</h5>
                             <button type="button" class="btn btn-warning" data-bs-toggle="modal"
                                 data-bs-target="#registerModal">
                                 Register
                             </button>
                             @else
-                            <h5 class="text-muted">₹ {{ $event->amount }}</h5>
+                            <h5 class="text-muted">₹ {{ $event->fees }}</h5>
                             <button type="button" class="btn btn-warning" id="razorpayBtnEvent"
-                                data-amount-event="{{ $event->amount }}">
+                                data-amount-event="{{ $event->fees }}">
                                 Join Now
                             </button>
                             @endif

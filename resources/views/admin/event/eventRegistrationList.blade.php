@@ -22,10 +22,12 @@
                                 <th>Member Name</th>
                                 <th>Visitor Name</th>
                                 {{-- <th>Person Email</th> --}}
-                                <th>Visitor Contact</th>
-                                <th>Reference By</th>
-                                {{-- <th>Action</th> --}}
-                                {{-- <th>Payment Status</th> --}}
+                                @role('Admin')
+                                    <th>Visitor Contact</th>
+                                    <th>Reference By</th>
+                                    {{-- <th>Action</th> --}}
+                                    <th>Payment Status</th>
+                                @endrole
                             </tr>
                         </thead>
                         <tbody>
@@ -33,16 +35,30 @@
                                 <tr>
                                     {{-- <th>{{ ($registerLists->currentPage() - 1) * $registerLists->perPage() + $loop->index + 1 }} --}}
 
-                                    <td>{{ $registerListsData->events->title ?? '' }}</td>
-                                    <td>{{ $registerListsData->members->firstName ?? '' }}
-                                        {{ $registerListsData->members->lastName ?? '' }}
+                                    <td>{{ $registerListsData->events->title ?? '-' }}</td>
+                                    <td>{{ $registerListsData->members->firstName ?? '-' }}
+                                        {{ $registerListsData->members->lastName ?? '-' }}
                                     </td>
-                                    <td>{{ $registerListsData->visitors->firstName ?? '' }} {{ $registerListsData->visitors->lastName ?? '' }}</td>
-                                    {{-- <td></td> --}}
-                                    <td>{{ $registerListsData->visitors->mobileNo ?? '' }}</td>
-                                    <td>{{ $registerListsData->refMembers->firstName ?? '' }}
+                                    <td>{{ $registerListsData->personName ?? '-' }}</td>
+                                    @role('Admin')
+                                        <td>{{ $registerListsData->personContact ?? '-' }}</td>
+
+                                        {{-- <td>{{ $registerListsData->visitors->firstName ?? '' }} {{ $registerListsData->visitors->lastName ?? '' }}</td> --}}
+                                        {{-- <td></td> --}}
+                                        {{-- <td>{{ $registerListsData->visitors->mobileNo ?? '' }}</td> --}}
+                                        {{-- <td>{{ $registerListsData->refMembers->firstName ?? '' }}
                                         {{ $registerListsData->refMembers->lastName ?? '' }} </td>
-                                    {{-- <td>{{$registerListsData->PaymentStatus ?? ''}}</td> --}}
+                                    <td> --}}
+
+                                        <td>{{ $registerListesData->refMemberId ?? '-' }}</td>
+
+                                        <td>
+                                            <select class="form-select payment-status-dropdown" data-id="{{ $registerListsData->id }}">
+                                                <option value="Paid" {{ $registerListsData->PaymentStatus == 'Paid' ? 'selected' : '' }}>Paid</option>
+                                                <option value="Unpaid" {{ $registerListsData->PaymentStatus == 'Unpaid' ? 'selected' : '' }}>Unpaid</option>
+                                            </select>
+                                        </td>
+                                    @endrole
 
                                     </td>
                                 </tr>
@@ -57,4 +73,58 @@
             </div>
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+    <script>
+        $(document).ready(function() {
+            $('.payment-status-dropdown').change(function() {
+                const registerId = $(this).data('id');
+                const paymentStatus = $(this).val();
+
+                if (registerId) {
+                    $.ajax({
+                        url: '{{ route('updatePaymentStatus') }}', // Define the route in your web.php
+                        type: 'POST',
+                        data: {
+                            _token: '{{ csrf_token() }}', // Include CSRF token for security
+                            id: registerId,
+                            paymentStatus: paymentStatus,
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                Swal.fire({
+                                    title: 'Success!',
+                                    text: 'Payment status updated successfully.',
+                                    icon: 'success',
+                                    confirmButtonText: 'OK'
+                                });
+                            } else {
+                                Swal.fire({
+                                    title: 'Error!',
+                                    text: 'Failed to update payment status.',
+                                    icon: 'error',
+                                    confirmButtonText: 'Try Again'
+                                });
+                            }
+                        },
+                        error: function(xhr) {
+                            console.error(xhr);
+                            Swal.fire({
+                                title: 'Oops!',
+                                text: 'An error occurred while updating payment status.',
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            });
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+
+
+
+
 @endsection
