@@ -36,6 +36,7 @@
                                             <span class="btn-text">View Feedback</span>
                                         </a>
 
+
                                         <a href="{{ route('trainingMaster.edit', $trainingMasterData->id) }}" class="btn btn-bg-blue btn-sm btn-tooltip">
                                             <i class="bi bi-pen"></i>
                                             <span class="btn-text">Edit</span>

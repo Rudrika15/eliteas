@@ -1,13 +1,14 @@
 @extends('layouts.master')
 
-@section('header', 'Training Master')
+@section('header', 'Training Feedback')
 @section('content')
 
     <div class="container">
         <div class="card">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h4 class="card-title">Training Feedback List</h4>
+                    <h4 class="card-title">Training Feedback for {{ $trainingFeedback->first()->trainingMaster->trainingName ?? 'N/A' }}</h4>
+                    <a href="{{ route('trainingMaster.index') }}" class="btn btn-bg-orange btn-sm">BACK</a>
                 </div>
 
                 <!-- Table with stripped rows -->
@@ -16,26 +17,27 @@
                         <thead>
                             <tr>
                                 <th>S.No</th>
-                                <th>Title</th>
                                 <th>Feedback</th>
-                                <th>Action</th>
+                                <th>User</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($trainingFeedback as $trainingFeedbackData)
+                            @foreach ($trainingFeedback as $feedback)
                                 <tr>
-                                    <th>{{ ($trainingFeedback->currentPage() - 1) * $trainingFeedback->perPage() + $loop->index + 1 }}
-                                    <td>{{ $trainingFeedbackData->trainingMaster->trainingName ?? '' }}</td>
-                                    <td>{{ $trainingFeedbackData->users->firstName ?? '' }} {{ $trainingFeedbackData->users->lastName ?? '' }}</td>
-                                    <td>{{ $trainingFeedbackData->feedback ?? '' }}</td>
+                                    <th>{{ ($trainingFeedback->currentPage() - 1) * $trainingFeedback->perPage() + $loop->index + 1 }}</th>
+                                    <td>{{ $feedback->feedback }}</td>
+                                    @role('Admin')
+                                        <td>{{ $feedback->users->firstName ?? 'N/A' }} {{ $feedback->users->lastName ?? 'N/A' }}</td>
+                                    @endrole
                                 </tr>
                             @endforeach
                         </tbody>
                     </table>
+
+                    <!-- Pagination for feedback list -->
                     <div class="d-flex justify-content-end custom-pagination">
                         {!! $trainingFeedback->links() !!}
                     </div>
-                    <!-- End Table with stripped rows -->
                 </div>
             </div>
         </div>

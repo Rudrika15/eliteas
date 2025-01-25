@@ -1,31 +1,29 @@
 @extends('layouts.master')
 
-@section('header', 'Training Master')
+@section('header', 'Training Feedback')
 @section('content')
 
     <div class="card">
         <div class="card-body d-flex justify-content-between align-items-center">
-            <h5 class="card-title">Edit Training</h5>
-            <a href="{{ route('trainingMaster.index') }}" class="btn btn-bg-orange btn-sm">BACK</a>
+            <h5 class="card-title">Edit Training Feedback</h5>
+            <a href="{{ route('trainingFeedback.index') }}" class="btn btn-bg-orange btn-sm">BACK</a>
         </div>
 
         <!-- Floating Labels Form -->
-        <form class="m-3 needs-validation" id="trainingMasterForm" enctype="multipart/form-data" method="post"
-            action="{{ route('trainingMaster.update', $trainingMaster->id) }}" novalidate>
+        <form class="m-3 needs-validation" id="trainingFeedbackForm" enctype="multipart/form-data" method="post" action="{{ route('trainingFeedback.update', $trainingFeedback->id) }}" novalidate>
             @csrf
-            <input type="hidden" name="id" value="{{ $trainingMaster->id }}">
+            <input type="hidden" name="id" value="{{ $trainingFeedback->id }}">
             <div class="row mb-3">
                 <div class="col-md-6">
                     <div class="form-floating">
-                        <input type="text" class="form-control" id="trainingName" name="trainingName"
-                            placeholder="Title" value="{{ $trainingMaster->trainingName }}" required>
-                        <label for="trainingName">Title</label>
-                        @error('trainingName')
+                        <textarea class="form-control" id="feedback" name="feedback" placeholder="Feedback" rows="3" required>{{ $trainingFeedback->feedback }}</textarea>
+                        <label for="feedback">Feedback</label>
+                        @error('feedback')
                             <div class="invalid-tooltip">
                                 {{ $message }}
                             </div>
                         @enderror
-                        @error('trainingName')
+                        @error('feedback')
                             <div class="invalid-tooltip">
                                 {{ $message }}
                             </div>

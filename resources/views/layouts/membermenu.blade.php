@@ -145,6 +145,11 @@
     <span style="color: #1d2865 ;">Event</span>
 </a>
 
+<a class="nav-link collapsed" href="{{ route('trainingFeedback.memberIndex') }}">
+    <i class="bi bi-calendar-event" style="color: #e76a35"></i>
+    <span style="color: #1d2865 ;">Training</span>
+</a>
+
 <li class="nav-item">
     <a class="nav-link collapsed " href="{{ route('circleWiseLeaderboard.index') }}">
         <i class="bi bi-chat-quote text-orange"></i>

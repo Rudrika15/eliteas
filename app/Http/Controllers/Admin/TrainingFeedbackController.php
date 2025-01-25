@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Training;
 use App\Models\TrainingFeedback;
 use App\Models\TrainingMaster;
+use App\Models\TrainingRegister;
 use App\Utils\ErrorLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -26,17 +28,19 @@ class TrainingFeedbackController extends Controller
     public function adminIndex(Request $request, $id)
     {
         try {
-            $trainingFeedback = TrainingFeedback::find($id);
+            $trainingFeedback = TrainingFeedback::where('trainingMasterId', $id)->paginate(10);
+
+            if ($trainingFeedback->isEmpty()) {
+                return redirect()->route('trainingMaster.index')->with('error', 'No feedback found for this training.');
+            }
+
             return view('admin.trainingFeedback.adminIndex', compact('trainingFeedback'));
         } catch (\Throwable $th) {
-            // throw $th;
-            ErrorLogger::logError(
-                $th,
-                $request->fullUrl()
-            );
+            ErrorLogger::logError($th, $request->fullUrl());
             return view('servererror');
         }
     }
+
 
     public function index(Request $request)
     {
@@ -44,7 +48,7 @@ class TrainingFeedbackController extends Controller
 
             $user = auth()->user();
             $trainingFeedback = TrainingFeedback::where('status', 'Active')->where('userId', $user->id)->orderBy('id', 'desc')->paginate(10);
-            return view('admin.trainingFeedback.index', compact('trainingFeedback'));
+            return view('admin.trainingFeedback.adminIndex', compact('trainingFeedback'));
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError(
@@ -152,6 +156,27 @@ class TrainingFeedbackController extends Controller
             //throw $th;
             ErrorLogger::logError($th, $request->fullUrl());
             return redirect()->route('trainingFeedback.index')->with('error', 'Failed to delete Training Feedback.');
+        }
+    }
+
+    public function memberIndex()
+    {
+        try {
+            $trainingRegisters = TrainingRegister::where('userId', Auth::user()->id)
+                ->where('status', 'Active')
+                ->get();
+
+            $trainingIds = $trainingRegisters->pluck('trainingId');
+
+            $trainings = Training::whereIn('id', $trainingIds)->paginate(10);
+
+            return view('admin.trainingFeedback.index', compact('trainings'));
+        } catch (\Throwable $th) {
+            ErrorLogger::logError(
+                $th,
+                request()->fullUrl()
+            );
+            return view('servererror');
         }
     }
 }

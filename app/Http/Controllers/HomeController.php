@@ -258,16 +258,17 @@ class HomeController extends Controller
 
 
             $count = Schedule::where('status', 'Active')->count();
-            $currentDate = Carbon::now()->toDateString();
-            $currentDate = Carbon::now();
+            $currentDate = Carbon::now()->format('d-m-Y');
+            // $currentDate = Carbon::now();
 
             $nearestTraining = Training::where('status', 'Active')
-                ->whereDate('start_date', '>=', $currentDate)
+                ->orderByRaw('CASE WHEN start_date >= ? THEN 0 ELSE 1 END, start_date', [$currentDate])
                 ->whereHas('trainers.user')
                 ->with('trainers.user')
                 ->whereHas('trainersTrainings.user')
                 ->orderBy('start_date', 'asc')
                 ->first();
+
 
             $businessCategory = BusinessCategory::where('status', 'Active')->get();
 

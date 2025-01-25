@@ -1,30 +1,28 @@
 @extends('layouts.master')
 
-@section('header', 'Training Master')
+@section('header', 'Training Feedback')
 @section('content')
 
     <div class="card">
         <div class="card-body d-flex justify-content-between align-items-center">
-            <h5 class="card-title">Create Training</h5>
-            <a href="{{ route('trainingMaster.index') }}" class="btn btn-bg-orange btn-sm">BACK</a>
+            <h5 class="card-title">Create Training Feedback</h5>
+            <a href="{{ route('trainingFeedback.index') }}" class="btn btn-bg-orange btn-sm">BACK</a>
         </div>
 
         <!-- Floating Labels Form -->
-        <form class="m-3 needs-validation" id="trainingMasterForm" enctype="multipart/form-data" method="post"
-            action="{{ route('trainingMaster.store') }}" novalidate>
+        <form class="m-3 needs-validation" id="trainingFeedback" enctype="multipart/form-data" method="post" action="{{ route('trainingFeedback.store') }}" novalidate>
             @csrf
             <div class="row mb-3">
                 <div class="col-md-6">
                     <div class="form-floating">
-                        <input type="text" class="form-control" id="trainingName" name="trainingName"
-                            placeholder="Title" required>
-                        <label for="trainingName">Title</label>
-                        @error('trainingName')
+                        <textarea class="form-control" id="feedback" name="feedback" placeholder="Feedback" required></textarea>
+                        <label for="feedback">Feedback</label>
+                        @error('feedback')
                             <div class="invalid-tooltip">
                                 {{ $message }}
                             </div>
                         @enderror
-                        @error('trainingName')
+                        @error('feedback')
                             <div class="invalid-tooltip">
                                 {{ $message }}
                             </div>

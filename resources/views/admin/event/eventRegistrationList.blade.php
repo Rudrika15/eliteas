@@ -9,7 +9,9 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h4 class="card-title">Event Registraion List</h4>
-                    <a href="{{ route('event.index') }}" class="btn btn-bg-orange btn-sm">BACK</a>
+                    @role('Admin')
+                        <a href="{{ route('event.index') }}" class="btn btn-bg-orange btn-sm">BACK</a>
+                    @endrole
                 </div>
 
                 <!-- Table with stripped rows -->

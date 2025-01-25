@@ -639,7 +639,6 @@
                                         <p class="card-text text-muted"> <b> Total Registered Members : {{ $totalRegisterCount }}
                                             </b></p>
 
-                                        
 
                                         @if ($nearestEvents->slot_date)
                                             <b class="text-muted">Slot Date :</b> {{ \Carbon\Carbon::parse($nearestEvents->slot_date)->format('j M Y') }}
@@ -1055,7 +1054,7 @@
                         showPaymentReminder();
 
                         // Set interval to show the reminder every 15 minutes
-                        setInterval(showPaymentReminder, 1 * 60 * 1000);
+                        setInterval(showPaymentReminder, 15 * 60 * 1000); // 15 minutes in milliseconds
 
                         // Add click event to all pay buttons
                         var monthlyPayButtons = document.querySelectorAll('.monthlyPay');

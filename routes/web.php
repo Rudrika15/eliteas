@@ -786,6 +786,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::get('trainingFeedback/adminIndex/{id?}', [TrainingFeedbackController::class, 'adminIndex'])->name('trainingFeedback.adminIndex');
     Route::get('trainingFeedback/index', [TrainingFeedbackController::class, 'index'])->name('trainingFeedback.index');
+    Route::get('trainingFeedback/memberIndex', [TrainingFeedbackController::class, 'memberIndex'])->name('trainingFeedback.memberIndex');
     Route::get('trainingFeedback/create', [TrainingFeedbackController::class, 'create'])->name('trainingFeedback.create');
     Route::post('trainingFeedback/store', [TrainingFeedbackController::class, 'store'])->name('trainingFeedback.store');
     Route::get('trainingFeedback/edit/{id?}', [TrainingFeedbackController::class, 'edit'])->name('trainingFeedback.edit');
