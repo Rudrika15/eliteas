@@ -127,6 +127,11 @@
                                                 }).then((result) => {
                                                     if (result.isConfirmed) {
                                                         window.location.href = url;
+                                                        Swal.fire(
+                                                            'Deleted!',
+                                                            'Circle deleted successfully.',
+                                                            'success'
+                                                        )
                                                     }
                                                 });
                                             }

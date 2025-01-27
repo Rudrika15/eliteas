@@ -559,7 +559,7 @@
                                     </div>
 
                                     <div class="col-md-2 pt-3 text-muted text-end">
-                                        <b>Start Date : </b> {{ \Carbon\Carbon::parse($nearestTraining->start_date)->format('j M Y') }}
+                                        <b>Start Date : </b> {{ \Carbon\Carbon::parse($nearestTraining->date)->format('j M Y') }}
                                         <b>End Date : </b> {{ \Carbon\Carbon::parse($nearestTraining->end_date)->format('j M Y') }}
                                         <br>
                                         <b>Time :</b> {{ $nearestTraining->time }}

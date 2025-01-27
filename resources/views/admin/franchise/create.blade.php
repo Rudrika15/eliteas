@@ -26,20 +26,18 @@
             </div>
 
             <!-- Floating Labels Form -->
-            <form class="m-3 needs-validation" id="franchiseForm" enctype="multipart/form-data" method="post"
-                action="{{ route('franchise.store') }}" novalidate>
+            <form class="m-3 needs-validation" id="franchiseForm" enctype="multipart/form-data" method="post" action="{{ route('franchise.store') }}" novalidate>
                 @csrf
 
                 <div class="form-check mb-3">
-                    <input type="checkbox" class="form-check-input" id="managedByUbn" name="managedByUbn">
+                    <input type="checkbox" class="form-check-input" id="managedByUbn" name="managedByUbn" {{ old('managedByUbn') ? 'checked' : '' }}>
                     <label class="form-check-label" for="managedByUbn">Managed By UBN</label>
                 </div>
 
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <div class="form-floating">
-                            <input type="text" class="form-control @error('franchiseName') is-invalid @enderror"
-                                id="franchiseName" name="franchiseName" placeholder="Franchise Name" required>
+                            <input type="text" class="form-control @error('franchiseName') is-invalid @enderror" id="franchiseName" name="franchiseName" placeholder="Franchise Name" value="{{ old('franchiseName') }}" required>
                             <label for="franchiseName">Franchise Name</label>
                             @error('franchiseName')
                                 <div class="invalid-tooltip">
@@ -50,12 +48,7 @@
                     </div>
                     <div class="col-md-6">
                         <div class="form-floating">
-                            <input type="text"
-                                class="form-control @error('franchiseContactDetails') is-invalid @enderror"
-                                id="franchiseContactDetails" name="franchiseContactDetails"
-                                placeholder="Franchise Contact Details" required pattern="[0-9]{1,10}"
-                                oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');"
-                                maxlength="10">
+                            <input type="text" class="form-control @error('franchiseContactDetails') is-invalid @enderror" id="franchiseContactDetails" name="franchiseContactDetails" placeholder="Franchise Contact Details" value="{{ old('franchiseContactDetails') }}" required pattern="[0-9]{1,10}" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');" maxlength="10">
                             <label for="franchiseContactDetails">Franchise Contact Details</label>
                             @error('franchiseContactDetails')
                                 <div class="invalid-tooltip">
@@ -68,11 +61,12 @@
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <div class="form-floating">
-                            <select class="form-select @error('countryId') is-invalid @enderror" id="countryId"
-                                name="countryId" required>
-                                <option value="" selected disabled>Select Country</option>
+                            <select class="form-select @error('countryId') is-invalid @enderror" id="countryId" name="countryId" required>
+                                <option value="" disabled>Select Country</option>
                                 @foreach ($countries as $countryData)
-                                    <option value="{{ $countryData->id }}">{{ $countryData->countryName }}</option>
+                                    <option value="{{ $countryData->id }}" {{ old('countryId') == $countryData->id ? 'selected' : '' }}>
+                                        {{ $countryData->countryName }}
+                                    </option>
                                 @endforeach
                             </select>
                             @error('countryId')
@@ -84,8 +78,7 @@
                     </div>
                     <div class="col-md-6">
                         <div class="form-floating">
-                            <select class="form-select @error('stateId') is-invalid @enderror" id="stateId" name="stateId"
-                                required>
+                            <select class="form-select @error('stateId') is-invalid @enderror" id="stateId" name="stateId" required>
                                 <option value="" selected disabled>Select State</option>
                             </select>
                             @error('stateId')
@@ -97,8 +90,7 @@
                     </div>
                     <div class="col-md-6">
                         <div class="form-floating mt-3">
-                            <select class="form-select @error('cityId') is-invalid @enderror" id="cityId" name="cityId"
-                                required>
+                            <select class="form-select @error('cityId') is-invalid @enderror" id="cityId" name="cityId" required>
                                 <option value="" selected disabled>Select City</option>
                             </select>
                             @error('cityId')
@@ -110,8 +102,7 @@
                     </div>
                     <div class="col-md-6">
                         <div class="form-floating mt-3">
-                            <input type="text" class="form-control @error('email') is-invalid @enderror" id="email"
-                                name="email" placeholder="Email" required>
+                            <input type="text" class="form-control @error('email') is-invalid @enderror" id="email" name="email" placeholder="Email" value="{{ old('email') }}" required>
                             <label for="email">Email</label>
                             @error('email')
                                 <div class="invalid-tooltip">
@@ -124,8 +115,7 @@
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <div class="form-floating">
-                            <input type="text" class="form-control @error('firstName') is-invalid @enderror"
-                                id="firstName" name="firstName" placeholder="First Name" required>
+                            <input type="text" class="form-control @error('firstName') is-invalid @enderror" id="firstName" name="firstName" placeholder="First Name" value="{{ old('firstName') }}" required>
                             <label for="firstName">First Name</label>
                             @error('firstName')
                                 <div class="invalid-tooltip">
@@ -136,8 +126,7 @@
                     </div>
                     <div class="col-md-6">
                         <div class="form-floating">
-                            <input type="text" class="form-control @error('lastName') is-invalid @enderror"
-                                id="lastName" name="lastName" placeholder="Last Name" required>
+                            <input type="text" class="form-control @error('lastName') is-invalid @enderror" id="lastName" name="lastName" placeholder="Last Name" value="{{ old('lastName') }}" required>
                             <label for="lastName">Last Name</label>
                             @error('lastName')
                                 <div class="invalid-tooltip">
@@ -154,6 +143,7 @@
             </form><!-- End floating Labels Form -->
         </div>
     </div>
+
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 

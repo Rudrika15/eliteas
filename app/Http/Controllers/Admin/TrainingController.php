@@ -181,7 +181,7 @@ class TrainingController extends Controller
                 $request->training_banner->move(public_path('Training'), $training->training_banner);
             }
 
-            $training->start_date = $request->start_date;
+            $training->date = $request->start_date;
             $training->end_date = $request->end_date;
             $training->time = $request->time;
             $training->duration = $request->duration;
@@ -305,7 +305,7 @@ class TrainingController extends Controller
 
 
 
-            $training->start_date = $request->start_date;
+            $training->date = $request->start_date;
             $training->end_date = $request->end_date;
             $training->time = $request->time;
             $training->duration = $request->duration;

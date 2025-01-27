@@ -77,7 +77,7 @@ class HelpController extends Controller
             $help->status = 'Active';
             $help->save();
 
-            return redirect()->route('help.create')->with('success', 'Help Created Successfully!');
+            return redirect()->route('help.index')->with('success', 'Help Created Successfully!');
         } catch (\Throwable $th) {
             //throw $th;
             ErrorLogger::logError($th, request()->fullUrl());

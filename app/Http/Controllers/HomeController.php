@@ -262,11 +262,11 @@ class HomeController extends Controller
             // $currentDate = Carbon::now();
 
             $nearestTraining = Training::where('status', 'Active')
-                ->orderByRaw('CASE WHEN start_date >= ? THEN 0 ELSE 1 END, start_date', [$currentDate])
+                ->orderByRaw('CASE WHEN date >= ? THEN 0 ELSE 1 END, date', [$currentDate])
                 ->whereHas('trainers.user')
                 ->with('trainers.user')
                 ->whereHas('trainersTrainings.user')
-                ->orderBy('start_date', 'asc')
+                ->orderBy('date', 'asc')
                 ->first();
 
 

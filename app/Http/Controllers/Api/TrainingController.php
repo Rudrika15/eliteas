@@ -20,8 +20,8 @@ class TrainingController extends Controller
         try {
             $trainings = Training::with('trainer')
                 ->where('status', 'Active')
-                ->where('date', '>=', Carbon::now()->subDays(1))
-                // ->where('date', '>', now()->toDateString())
+                // ->where('start_date', '>=', Carbon::now()->subDays(1))
+                ->where('date', '>', now()->toDateString())
                 ->get();
 
             return Utils::sendResponse(['trainings' => $trainings], 'Trainings retrieved successfully', 200);

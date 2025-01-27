@@ -30,25 +30,21 @@
                                 <th>{{ $loop->iteration }}</th>
                                 <td>
                                     @if ($templateData->templateImage)
-                                        <img src="{{ url('templateImage/' . basename($templateData->templateImage)) }}"
-                                            alt="Template Image" style="width: 100px; height: auto; border-radius: 5px;">
+                                        <img src="{{ url('templateImage/' . basename($templateData->templateImage)) }}" alt="Template Image" style="width: 100px; height: auto; border-radius: 5px;">
                                     @else
                                         <span></span>
                                     @endif
                                 </td>
                                 <td>
-                                    <a href="{{ route('template.edit', $templateData->id) }}"
-                                        class="btn btn-bg-blue btn-sm btn-tooltip">
+                                    <a href="{{ route('template.edit', $templateData->id) }}" class="btn btn-bg-blue btn-sm btn-tooltip">
                                         <span class="btn-text">Edit Template</span>
                                         <i class="bi bi-pen"></i>
                                     </a>
-                                    <button class="btn btn-danger btn-sm btn-tooltip"
-                                        onclick="deleteRow('{{ route('template.delete', $templateData->id) }}')">
+                                    <button class="btn btn-danger btn-sm btn-tooltip" onclick="deleteRow('{{ route('template.delete', $templateData->id) }}')">
                                         <span class="btn-text">Delete</span>
                                         <i class="bi bi-trash"></i>
                                     </button>
-                                    <a href="{{ route('templateDetail.index', $templateData->id) }}"
-                                        class="btn btn-bg-orange btn-sm btn-tooltip">
+                                    <a href="{{ route('templateDetail.index', $templateData->id) }}" class="btn btn-bg-orange btn-sm btn-tooltip">
                                         <span class="btn-text">Template Details</span>
                                         <i class="bi bi-plus-circle"></i>
                                     </a>
@@ -65,6 +61,11 @@
                                             }).then((result) => {
                                                 if (result.isConfirmed) {
                                                     window.location.href = url;
+                                                    Swal.fire(
+                                                        'Deleted!',
+                                                        'Template deleted successfully.',
+                                                        'success'
+                                                    )
                                                 }
                                             })
                                         }
