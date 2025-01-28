@@ -87,6 +87,16 @@
                                             }).then((result) => {
                                                 if (result.isConfirmed) {
                                                     window.location.href = url;
+                                                    Swal.fire({
+                                                        title: 'Deleted!',
+                                                        text: 'Circle call has been deleted.',
+                                                        icon: 'success',
+                                                        timer: 1500
+                                                    }).then((result) => {
+                                                        if (result.dismiss === Swal.DismissReason.timer) {
+                                                            window.location.reload();
+                                                        }
+                                                    })
                                                 }
                                             })
                                         }

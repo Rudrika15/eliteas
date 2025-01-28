@@ -4,26 +4,6 @@
 {{-- <title>UBN - Testimonial</title> --}}
 @section('content')
 
-    {{-- Message --}}
-    @if (Session::has('success'))
-        <div class="alert alert-success alert-dismissible" role="alert">
-            <button type="button" class="close" data-dismiss="alert">
-                {{-- <i class="fa fa-times"></i> --}}
-            </button>
-            <strong>Success !</strong> {{ session('success') }}
-        </div>
-    @endif
-
-    @if (Session::has('error'))
-        <div class="alert alert-danger alert-dismissible" role="alert">
-            <button type="button" class="close" data-dismiss="alert">
-                {{-- <i class="fa fa-times"></i> --}}
-            </button>
-            <strong>Error !</strong> {{ session('error') }}
-        </div>
-    @endif
-
-
     <div class="card">
         <div class="card-body">
             <div class="d-flex justify-content-between align-items-center mb-5">
@@ -31,8 +11,7 @@
                 <a href="{{ route('testimonial.index') }}" class="btn btn-bg-orange btn-sm">BACK</a>
             </div>
             <hr class="mb-5">
-            <form class="m-3 needs-validation" id="circlecallForm" enctype="multipart/form-data" method="post"
-                action="{{ route('testimonial.store') }}" novalidate>
+            <form class="m-3 needs-validation" id="circlecallForm" enctype="multipart/form-data" method="post" action="{{ route('testimonial.store') }}" novalidate>
                 @csrf
 
                 <!-- Button trigger modal -->
@@ -43,8 +22,7 @@
                     <div class="col-md-12">
                         <div class="form-floating mt-3">
                             <input type="hidden" id="circlePersonId" name="circlePersonId" required>
-                            <input type="text" class="form-control @error('circlePersonId') is-invalid @enderror"
-                                id="circlePersonName" placeholder="Select Member" required disabled>
+                            <input type="text" class="form-control @error('circlePersonId') is-invalid @enderror" id="circlePersonName" placeholder="Select Member" required disabled>
                             <label for="meetingPersonName"><span style="color:red">*</span> Circle Member Name</label>
                             @error('circlePersonId')
                                 <div class="invalid-tooltip">
@@ -56,8 +34,7 @@
 
                     <div class="col-md-12">
                         <div class="form-floating mt-3">
-                            <textarea class="form-control @error('message') is-invalid @enderror" id="message" name="message"
-                                placeholder="Enter Message"></textarea>
+                            <textarea class="form-control @error('message') is-invalid @enderror" id="message" name="message" placeholder="Enter Message" required></textarea>
                             <label for="message"><span style="color:red">*</span> Message</label>
                             @error('message')
                                 <div class="invalid-tooltip">
@@ -67,7 +44,6 @@
                         </div>
                     </div>
                     <!-- Hidden field to store the selected member's ID -->
-
 
                     {{-- <div class="col-md-6">
                     <div class="form-floating mt-3">
@@ -85,12 +61,23 @@
 
                 </div>
                 <div class="text-center mt-5">
-                    <button type="submit" class="btn btn-bg-blue">Submit</button>
+                    <button type="submit" class="btn btn-bg-blue" onclick="return validateForm()">Submit</button>
                     <button type="reset" class="btn btn-bg-orange">Reset</button>
                 </div>
             </form><!-- End floating Labels Form -->
         </div>
     </div>
+    <script>
+        function validateForm() {
+            let circlePersonId = document.getElementById('circlePersonId').value;
+            let message = document.getElementById('message').value;
+            if (circlePersonId == '' || message == '') {
+                alert('Please fill all the required fields.');
+                return false;
+            }
+            return true;
+        }
+    </script>
 
 
 
