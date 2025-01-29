@@ -664,6 +664,7 @@ Route::group(['middleware' => ['auth']], function () {
     //event
 
     Route::get('/event/index', [EventController::class, 'index'])->name('event.index');
+    // Route::get('/event/eventRegistrationListMembers/{id?}', [EventController::class, 'eventRegistrationListMembers'])->name('event.eventRegistrationListMembers');
     Route::get('event/create', [EventController::class, 'create'])->name('event.create');
     // Route::get('/event/{slug}', [EventController::class, 'eventLink'])->name('event.link');
     Route::post('event/store', [EventController::class, 'store'])->name('event.store');
@@ -678,6 +679,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('slotbooking/list/{id?}', [EventController::class, 'slotBookingList'])->name('slotbooking.list');
     Route::post('/event/register/{eventId}', [EventController::class, 'eventRegister'])->name('event.register');
     Route::delete('event/delete/{id?}', [EventController::class, 'delete'])->name('event.delete');
+
 
     // Route::post('/store-user-details', [EventController::class, 'storeUserDetails'])->name('storeUserDetails');
     // Route::post('/check-email', [EventController::class, 'checkEmail'])->name('checkEmail');

@@ -18,7 +18,7 @@
                 <!-- Circle Dropdown -->
                 <div class="col-md-6">
                     <div class="form-floating">
-                        <select class="form-select @error('circleId') is-invalid @enderror" id="circleId" name="circleId" required>
+                        <select class="form-select @error('circleId') is-invalid @enderror" id="circleId" name="circleId">
                             <option value="" selected disabled>Select Circle</option>
                             <option value="{{ old('circleId') }}" selected>
                                 {{ $circles->where('id', old('circleId'))->first()->circleName ?? '' }}</option>
@@ -38,7 +38,7 @@
                 <!-- Member Dropdown -->
                 <div class="col-md-6">
                     <div class="form-floating">
-                        <select class="form-select @error('memberId') is-invalid @enderror" id="memberId" name="memberId" required>
+                        <select class="form-select @error('memberId') is-invalid @enderror" id="memberId" name="memberId">
                             <option value="">Select Member</option>
                             <!-- Options will be populated dynamically -->
                         </select>
@@ -90,17 +90,82 @@
                     </div>
                 </div>
 
-                <div class="col-md-6">
-                    <div class="form-floating mt-3">
-                        <input type="text" class="form-control @error('refMemberId') is-invalid @enderror" id="refMemberId" name="refMemberId" placeholder="Reference Member" value="{{ old('refMemberId') }}" />
-                        <label for="refMemberId">Invited By</label>
-                        @error('refMemberId')
-                            <div class="invalid-tooltip">
-                                This field is required.
+                <div class="row mb-3 mt-3">
+                    <!-- Checkbox to toggle fields -->
+                    <div class="col-md-12">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="toggleFields">
+                            <label class="form-check-label" for="toggleFields">
+                                Select if Invited by Member
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Circle Dropdown -->
+                    <div id="circleMemberFields" class="d-none">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-floating mt-3">
+                                    <select class="form-select @error('circleId2') is-invalid @enderror" id="circleId2" name="circleId2">
+                                        <option value="" selected disabled>Select Circle</option>
+                                        <option value="{{ old('circleId2') }}" selected>
+                                            {{ $circles->where('id', old('circleId2'))->first()->circleName ?? '' }}
+                                        </option>
+                                        @foreach ($circles as $circle)
+                                            <option value="{{ $circle->id }}">{{ $circle->circleName }}</option>
+                                        @endforeach
+                                    </select>
+                                    <label for="circleId2">Circle</label>
+                                    @error('circleId2')
+                                        <div class="invalid-tooltip">
+                                            This field is required.
+                                        </div>
+                                    @enderror
+                                </div>
                             </div>
-                        @enderror
+
+                            <div class="col-md-6">
+                                <div class="form-floating mt-3">
+                                    <select class="form-select @error('refMemberId') is-invalid @enderror" id="refMemberId" name="refMemberId">
+                                        <option value="">Select Member</option>
+                                        <!-- Options will be populated dynamically -->
+                                    </select>
+                                    <label for="refMemberId">Member</label>
+                                    @error('refMemberId')
+                                        <div class="invalid-tooltip">
+                                            This field is required.
+                                        </div>
+                                    @enderror
+                                </div>
+                            </div>
+
+
+                            {{-- <div class="col-md-6">
+                            <div class="form-floating mt-3">
+                                <input type="text" class="form-control @error('refMemberId') is-invalid @enderror" id="refMemberId" name="refMemberId" placeholder="Reference Member" value="{{ old('refMemberId') }}" />
+                                <label for="refMemberId">Invited By</label>
+                                @error('refMemberId')
+                                    <div class="invalid-tooltip">
+                                        This field is required.
+                                    </div>
+                                @enderror
+                            </div> --}}
+
+
+                        </div>
+                    </div>
+
+                    <!-- Alternative Invited By Field -->
+                    <div id="invitedBy2Field" class="d-none">
+                        <div class="col-md-6">
+                            <div class="form-floating mt-3">
+                                <input type="text" class="form-control" id="invitedBy2" name="invitedBy2" placeholder="Invited By (Alternative)">
+                                <label for="invitedBy2">Invited By (Alternative)</label>
+                            </div>
+                        </div>
                     </div>
                 </div>
+
             </div>
 
             <div class="row mb-3">
@@ -132,6 +197,27 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
 
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const toggleFields = document.getElementById("toggleFields");
+            const circleMemberFields = document.getElementById("circleMemberFields");
+            const invitedBy2Field = document.getElementById("invitedBy2Field");
+
+            // Ensure invitedBy2Field is visible by default
+            invitedBy2Field.classList.remove("d-none");
+            circleMemberFields.classList.add("d-none");
+
+            toggleFields.addEventListener("change", function() {
+                if (this.checked) {
+                    circleMemberFields.classList.remove("d-none");
+                    invitedBy2Field.classList.add("d-none");
+                } else {
+                    circleMemberFields.classList.add("d-none");
+                    invitedBy2Field.classList.remove("d-none");
+                }
+            });
+        });
+    </script>
 
     <script>
         $(document).ready(function() {
@@ -169,6 +255,46 @@
             });
         });
     </script>
+
+
+    <script>
+        $(document).ready(function() {
+            $('#circleId2').change(function() {
+                const circleId = $(this).val();
+                const memberDropdown = $('#refMemberId');
+
+                // Clear existing options
+                memberDropdown.empty().append('<option value="">Select Member</option>');
+
+                if (circleId) {
+                    $.ajax({
+                        url: '{{ url('/get-members') }}/' + circleId, // Adjust based on your route
+                        type: 'GET',
+                        data: {
+                            circleId
+                        },
+                        success: function(response) {
+                            if (response.length > 0) {
+                                response.forEach(member => {
+                                    memberDropdown.append(
+                                        `<option value="${member.id}">${member.firstName} ${member.lastName}</option>`
+                                    );
+                                });
+                            } else {
+                                memberDropdown.append('<option value="">No members available</option>');
+                            }
+                        },
+                        error: function(xhr) {
+                            console.error(xhr);
+                            alert('Failed to fetch members. Please try again.');
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+
+
 
 
 @endsection

@@ -424,6 +424,19 @@ class EventController extends Controller
         }
     }
 
+    public function eventRegistrationListMembers()
+    {
+        try {
+            return view('admin.event.eventRegistrationListMembers');
+        } catch (\Throwable $th) {
+            ErrorLogger::logError(
+                $th,
+                request()->fullUrl()
+            );
+            return view('servererror');
+        }
+    }
+
 
 
     public function storeUserDetails(Request $request)
@@ -552,9 +565,7 @@ class EventController extends Controller
 
             $registerLists = $registerList->merge($registerListVisitor);
 
-
-
-            return view('admin.event.eventRegistrationList', compact('event', 'registerList', 'registerLists'));
+            return view('admin.event.eventRegistrationListMembers', compact('event', 'registerList', 'registerLists'));
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError(
@@ -606,7 +617,14 @@ class EventController extends Controller
             $eventReg->personName = $request->personName;
             $eventReg->personEmail = $request->personEmail;
             $eventReg->personContact = $request->personContact;
-            $eventReg->refMemberId = $request->refMemberId;
+
+            if ($request->has('refMemberId')) {
+                $eventReg->refMemberId = $request->refMemberId;
+            }
+            if ($request->has('invitedBy2')) {
+                $eventReg->invitedBy = $request->invitedBy2;
+            }
+
             $eventReg->paymentStatus = $request->paymentStatus;
             $eventReg->save();
 
@@ -662,6 +680,4 @@ class EventController extends Controller
             return response()->json(['success' => false, 'message' => 'Failed to update payment status.']);
         }
     }
-
-
 }

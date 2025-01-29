@@ -8,7 +8,7 @@
         <div class="card">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h4 class="card-title">Event Registraion List</h4>
+                    <h4 class="card-title">Registraion List of {{ $event->title }} </h4>
                     @role('Admin')
                         <a href="{{ route('event.index') }}" class="btn btn-bg-orange btn-sm">BACK</a>
                     @endrole
@@ -20,9 +20,11 @@
                         <thead>
                             <tr>
                                 {{-- <th>S.No</th> --}}
-                                <th>Event Name</th>
+                                {{-- <th>Event Name</th> --}}
                                 <th>Member Name</th>
                                 <th>Visitor Name</th>
+                                <th>Business Category</th>
+                                <th>Business Name</th>
                                 {{-- <th>Person Email</th> --}}
                                 @role('Admin')
                                     <th>Visitor Contact</th>
@@ -37,11 +39,13 @@
                                 <tr>
                                     {{-- <th>{{ ($registerLists->currentPage() - 1) * $registerLists->perPage() + $loop->index + 1 }} --}}
 
-                                    <td>{{ $registerListsData->events->title ?? '-' }}</td>
+                                    {{-- <td>{{ $registerListsData->events->title ?? '-' }}</td> --}}
                                     <td>{{ $registerListsData->members->firstName ?? '-' }}
                                         {{ $registerListsData->members->lastName ?? '-' }}
                                     </td>
                                     <td>{{ $registerListsData->personName ?? '-' }}</td>
+                                    <td>{{ $registerListsData->members->bCategory->categoryName ?? '-' }}</td>
+                                    <td>{{ $registerListsData->businessName ?? '-' }}</td>
                                     @role('Admin')
                                         <td>{{ $registerListsData->personContact ?? '-' }}</td>
 
