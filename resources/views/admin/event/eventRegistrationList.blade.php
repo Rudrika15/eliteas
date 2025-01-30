@@ -1,6 +1,7 @@
-@extends('layouts.master')
+@role('Admin')
+    @extends('layouts.master')
 
-@section('header', 'Event')
+    @section('header', 'Event')
 @section('content')
 
 
@@ -9,9 +10,9 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h4 class="card-title">Registraion List of {{ $event->title }} </h4>
-                    @role('Admin')
-                        <a href="{{ route('event.index') }}" class="btn btn-bg-orange btn-sm">BACK</a>
-                    @endrole
+
+                    <a href="{{ route('event.index') }}" class="btn btn-bg-orange btn-sm">BACK</a>
+
                 </div>
 
                 <!-- Table with stripped rows -->
@@ -26,12 +27,12 @@
                                 <th>Business Category</th>
                                 <th>Business Name</th>
                                 {{-- <th>Person Email</th> --}}
-                                @role('Admin')
-                                    <th>Visitor Contact</th>
-                                    <th>Reference By</th>
-                                    {{-- <th>Action</th> --}}
-                                    <th>Payment Status</th>
-                                @endrole
+
+                                <th>Visitor Contact</th>
+                                <th>Reference By</th>
+                                {{-- <th>Action</th> --}}
+                                <th>Payment Status</th>
+
                             </tr>
                         </thead>
                         <tbody>
@@ -46,25 +47,25 @@
                                     <td>{{ $registerListsData->personName ?? '-' }}</td>
                                     <td>{{ $registerListsData->members->bCategory->categoryName ?? '-' }}</td>
                                     <td>{{ $registerListsData->businessName ?? '-' }}</td>
-                                    @role('Admin')
-                                        <td>{{ $registerListsData->personContact ?? '-' }}</td>
 
-                                        {{-- <td>{{ $registerListsData->visitors->firstName ?? '' }} {{ $registerListsData->visitors->lastName ?? '' }}</td> --}}
-                                        {{-- <td></td> --}}
-                                        {{-- <td>{{ $registerListsData->visitors->mobileNo ?? '' }}</td> --}}
-                                        {{-- <td>{{ $registerListsData->refMembers->firstName ?? '' }}
+                                    <td>{{ $registerListsData->personContact ?? '-' }}</td>
+
+                                    {{-- <td>{{ $registerListsData->visitors->firstName ?? '' }} {{ $registerListsData->visitors->lastName ?? '' }}</td> --}}
+                                    {{-- <td></td> --}}
+                                    {{-- <td>{{ $registerListsData->visitors->mobileNo ?? '' }}</td> --}}
+                                    {{-- <td>{{ $registerListsData->refMembers->firstName ?? '' }}
                                         {{ $registerListsData->refMembers->lastName ?? '' }} </td>
                                     <td> --}}
 
-                                        <td>{{ $registerListesData->refMemberId ?? '-' }}</td>
+                                    <td>{{ $registerListesData->refMemberId ?? '-' }}</td>
 
-                                        <td>
-                                            <select class="form-select payment-status-dropdown" data-id="{{ $registerListsData->id }}">
-                                                <option value="Paid" {{ $registerListsData->PaymentStatus == 'Paid' ? 'selected' : '' }}>Paid</option>
-                                                <option value="Unpaid" {{ $registerListsData->PaymentStatus == 'Unpaid' ? 'selected' : '' }}>Unpaid</option>
-                                            </select>
-                                        </td>
-                                    @endrole
+                                    <td>
+                                        <select class="form-select payment-status-dropdown" data-id="{{ $registerListsData->id }}">
+                                            <option value="Paid" {{ $registerListsData->PaymentStatus == 'Paid' ? 'selected' : '' }}>Paid</option>
+                                            <option value="Unpaid" {{ $registerListsData->PaymentStatus == 'Unpaid' ? 'selected' : '' }}>Unpaid</option>
+                                        </select>
+                                    </td>
+
 
                                     </td>
                                 </tr>
@@ -130,7 +131,5 @@
         });
     </script>
 
-
-
-
+@endrole
 @endsection

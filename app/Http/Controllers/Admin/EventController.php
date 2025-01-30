@@ -424,18 +424,18 @@ class EventController extends Controller
         }
     }
 
-    public function eventRegistrationListMembers()
-    {
-        try {
-            return view('admin.event.eventRegistrationListMembers');
-        } catch (\Throwable $th) {
-            ErrorLogger::logError(
-                $th,
-                request()->fullUrl()
-            );
-            return view('servererror');
-        }
-    }
+    // public function eventRegistrationListMembers()
+    // {
+    //     try {
+    //         return view('admin.event.eventRegistrationListMembers');
+    //     } catch (\Throwable $th) {
+    //         ErrorLogger::logError(
+    //             $th,
+    //             request()->fullUrl()
+    //         );
+    //         return view('servererror');
+    //     }
+    // }
 
 
 
@@ -562,6 +562,27 @@ class EventController extends Controller
 
             $registerList = EventRegister::where('eventId', $id)->paginate(10);
             $registerListVisitor = VisitorEventRegister::where('eventId', $id)->paginate(10);
+
+            $registerLists = $registerList->merge($registerListVisitor);
+
+            return view('admin.event.eventRegistrationList', compact('event', 'registerList', 'registerLists'));
+        } catch (\Throwable $th) {
+            // throw $th;
+            ErrorLogger::logError(
+                $th,
+                $request->fullUrl()
+            );
+            return view('servererror');
+        }
+    }
+    
+    public function eventRegistrationListMembers(Request $request, $id)
+    {
+        try {
+            $event = Event::find($id);
+
+            $registerList = EventRegister::where('eventId', $id)->get();
+            $registerListVisitor = VisitorEventRegister::where('eventId', $id)->get();
 
             $registerLists = $registerList->merge($registerListVisitor);
 

@@ -664,7 +664,7 @@ Route::group(['middleware' => ['auth']], function () {
     //event
 
     Route::get('/event/index', [EventController::class, 'index'])->name('event.index');
-    // Route::get('/event/eventRegistrationListMembers/{id?}', [EventController::class, 'eventRegistrationListMembers'])->name('event.eventRegistrationListMembers');
+    Route::get('/event/eventRegistrationListMembers/{id?}', [EventController::class, 'eventRegistrationListMembers'])->name('event.eventRegistrationListMembers');
     Route::get('event/create', [EventController::class, 'create'])->name('event.create');
     // Route::get('/event/{slug}', [EventController::class, 'eventLink'])->name('event.link');
     Route::post('event/store', [EventController::class, 'store'])->name('event.store');

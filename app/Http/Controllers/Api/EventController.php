@@ -275,8 +275,11 @@ class EventController extends Controller
     public function eventRegisterList(Request $request, $id)
     {
         try {
+            
             $event = Event::findOrFail($id);
-            $registerList = EventRegister::where('eventId', $id)->get();
+            $registerList = EventRegister::where('eventId', $id)
+                ->with('members') // Assuming 'member' is the relationship defined in the EventRegister model
+                ->get();
 
             return Utils::sendResponse([
                 'event' => $event,

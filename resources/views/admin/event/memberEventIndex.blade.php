@@ -67,7 +67,7 @@
                                             <i class="bi bi-list"></i>
                                             <span class="btn-text">Slot Booking Requests</span>
                                         </a>
-                                        <a href="{{ route('event.eventRegisterList', $eventData->id) }}" class="btn btn-bg-orange btn-sm btn-tooltip">
+                                        <a href="{{ route('event.eventRegistrationListMembers', $eventData->id) }}" class="btn btn-bg-orange btn-sm btn-tooltip">
                                             <i class="bi bi-people"></i>
                                             <span class="btn-text">Joined People</span>
                                         </a>

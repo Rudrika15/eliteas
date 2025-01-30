@@ -8,7 +8,7 @@
             <div class="p-3 d-flex justify-content-between">
                 <h1 class="card-title mb-0 p-0">Registration List of {{ $event->title }}</h1>
                 <!-- Back button can be added if necessary -->
-                <a href="{{ route('event.index') }}" class="btn btn-bg-orange btn-sm mb-0 pb-0">BACK</a>
+                {{-- <a href="{{ route('event.index') }}" class="btn btn-bg-orange btn-sm mb-0 pb-0">BACK</a> --}}
             </div>
         </div>
 
