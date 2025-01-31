@@ -29,10 +29,16 @@
                                     {{ $registerListsData->members->lastName ?? '' }}
                                 </h3>
                                 <p class="profile-companyName" style="color: #1d3268; font-size: 14px; font-weight: bold;">
+                                    {{ $registerListsData->members->circle->circleName ?? '' }}
+                                </p>
+                                <p class="profile-companyName" style="color: #1d3268; font-size: 14px; font-weight: bold;">
                                     {{ $registerListsData->members->companyName ?? '' }}
                                 </p>
                                 <p class="profile-companyName" style="color: #1d3268; font-size: 14px; font-weight: bold;">
                                     {{ $registerListsData->members->bCategory->categoryName ?? '' }}
+                                </p>
+                                <p class="profile-companyName" style="color: #1d3268; font-size: 14px; font-weight: bold;">
+                                    {{ $registerListsData->members->circle->city->cityName ?? '' }}
                                 </p>
                             @endif
                         </div>
@@ -50,8 +56,8 @@
 
     <style>
         .profile-card {
-            width: 300px !important;
-            height: 250px !important;
+            width: 250px !important;
+            height: 300px !important;
             background-color: #fff !important;
             border-radius: 10px !important;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
