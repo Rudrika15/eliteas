@@ -9,8 +9,7 @@
             <a href="{{ route('circlecall.index') }}" class="btn btn-bg-orange btn-sm">BACK</a>
         </div>
         <hr>
-        <form class="m-3 needs-validation" id="circlecallForm" enctype="multipart/form-data" method="post"
-            action="{{ route('circlecall.store') }}" novalidate>
+        <form class="m-3 needs-validation" id="circlecallForm" enctype="multipart/form-data" method="post" action="{{ route('circlecall.store') }}" novalidate>
             @csrf
 
             {{-- @include('circleMemberMaster') --}}
@@ -20,8 +19,7 @@
                 <div class="col-md-6">
 
                     <div class="form-floating">
-                        <select class="form-select @error('circleId') is-invalid @enderror" id="circleId" name="circleId"
-                            required>
+                        <select class="form-select @error('circleId') is-invalid @enderror" id="circleId" name="circleId" required>
                             <option value="" selected disabled>Select Circle</option>
                             <option value="{{ old('circleId', auth()->user()->member->circleId) }}" selected>
                                 {{ $circles->where('id', old('circleId', auth()->user()->member->circleId))->first()->circleName ?? '' }}</option>
@@ -41,8 +39,7 @@
                 <!-- Member Dropdown -->
                 <div class="col-md-6">
                     <div class="form-floating">
-                        <select class="form-select @error('memberId') is-invalid @enderror" id="memberId" name="memberId"
-                            required>
+                        <select class="form-select @error('memberId') is-invalid @enderror" id="memberId" name="memberId" required>
                             <option value="">Select Member</option>
                             <!-- Options will be populated dynamically -->
                         </select>
@@ -59,11 +56,8 @@
             <div class="row mb-3 mt-3">
                 <div class="col-md-6">
                     <div class="form-floating mt-3">
-                        <input type="hidden" id="meetingPersonId" name="meetingPersonId" required
-                            value="{{ old('meetingPersonId') }}">
-                        <input type="text" class="form-control @error('meetingPersonId') is-invalid @enderror"
-                            readonly id="meetingPersonName" placeholder="Select Member" disabled required
-                            value="{{ old('meetingPersonName') }}">
+                        <input type="hidden" id="meetingPersonId" name="meetingPersonId" required value="{{ old('meetingPersonId') }}">
+                        <input type="text" class="form-control @error('meetingPersonId') is-invalid @enderror" readonly id="meetingPersonName" placeholder="Select Member" disabled required value="{{ old('meetingPersonName') }}">
                         <label for="meetingPersonName">Meeting Person Name</label>
                         @error('meetingPersonId')
                             <div class="invalid-tooltip">
@@ -75,11 +69,7 @@
 
                 <div class="col-md-6">
                     <div class="form-floating mt-3">
-                        <input type="text" class="form-control" id="meetingPlace" name="meetingPlace"
-                            placeholder="Meeting Place Name" pattern="[A-Za-z\s]+" required
-                            oninvalid="this.setCustomValidity('Please enter correct details.')"
-                            oninput="setCustomValidity('')"
-                            value="{{ old('meetingPlace') }}">
+                        <input type="text" class="form-control" id="meetingPlace" name="meetingPlace" placeholder="Meeting Place Name" pattern="[A-Za-z\s]+" required oninvalid="this.setCustomValidity('Please enter correct details.')" oninput="setCustomValidity('')" value="{{ old('meetingPlace') }}">
                         <label for="meetingPlace">Meeting Place Name</label>
                         <span class="error-message text-danger"></span> <!-- Error message placeholder -->
                     </div>
@@ -88,9 +78,7 @@
 
                 <div class="col-md-6">
                     <div class="form-floating mt-3">
-                        <input type="file" class="form-control @error('meetingImage') is-invalid @enderror"
-                            id="meetingImage" name="meetingImage" accept="image/*" required onchange="previewPhoto(event)"
-                            value="{{ old('meetingImage') }}">
+                        <input type="file" class="form-control @error('meetingImage') is-invalid @enderror" id="meetingImage" name="meetingImage" accept="image/*" onchange="previewPhoto(event)" value="{{ old('meetingImage') }}">
                         <label for="meetingImage">Upload Meeting Image</label>
                         <span class="text-danger mt-1 d-block">*
                             File size:Max 2MB</span>
@@ -103,8 +91,7 @@
 
                     <!-- Photo Preview Section -->
                     <div class="mt-1">
-                        <img id="photoPreview" src="{{ old('meetingImage') ? url('storage/' . old('meetingImage')) : asset('img/profile.png') }}" alt="Meeting Image"
-                            style="width: 100px; height: 100px; object-fit: contain; aspect-ratio: 1/1;" />
+                        <img id="photoPreview" src="{{ old('meetingImage') ? url('storage/' . old('meetingImage')) : asset('img/profile.png') }}" alt="Meeting Image" style="width: 100px; height: 100px; object-fit: contain; aspect-ratio: 1/1;" />
                     </div>
                 </div>
 
@@ -136,16 +123,14 @@
                         $nearestDate = $nearestDate ? Carbon::parse($nearestDate)->subDay()->format('Y-m-d') : Carbon::now()->format('Y-m-d');
                         $selectedDate = request()->input('date') ?? (Carbon::now()->format('Y-m-d') == $nearestDate ? Carbon::now()->format('Y-m-d') : $nearestDate);
                         ?>
-                        <input type="date" class="form-control" id="date" name="date" placeholder="Meeting Date"
-                            required min="{{ $lastDate }}" max="{{ $nearestDate }}" value="{{ old('date', $selectedDate) }}">
+                        <input type="date" class="form-control" id="date" name="date" placeholder="Meeting Date" required min="{{ $lastDate }}" max="{{ $nearestDate }}" value="{{ old('date', $selectedDate) }}">
                         <label for="date">Date</label>
                     </div>
                 </div>
 
                 <div class="col-md-6">
                     <div class="form-floating mt-3">
-                        <input type="text" class="form-control" id="remarks" name="remarks" placeholder="Remarks"
-                            required value="{{ old('remarks') }}">
+                        <input type="text" class="form-control" id="remarks" name="remarks" placeholder="Remarks" required value="{{ old('remarks') }}">
                         <label for="remarks">Remarks</label>
                     </div>
                 </div>

@@ -451,7 +451,7 @@
                             </div>
                         @endif
 
-                        @if ($busGiver)
+                        {{-- @if ($busGiver)
                             <div class="col">
                                 <div class="profile-card">
                                     <div class="card-body">
@@ -459,12 +459,12 @@
                                         <p class="profile-title mb-3">Max Business Leader</p>
                                         <h3 class="profile-name mb-3">{{ $busGiver['user']->firstName }} {{ $busGiver['user']->lastName }}</h3>
                                         <p style="font-size: 14px; color: #1d3268;">Circle: <b>{{ $busGiver['circle']['circleName'] }}</b></p>
-                                        {{-- <p style="font-size: 14px; color: #1d3268;">Meetings Count: <b>{{ $busGiver['count'] }}</b></p> --}}
+                                        <p style="font-size: 14px; color: #1d3268;">Meetings Count: <b>{{ $busGiver['count'] }}</b></p>
                                         <p style="font-size: 14px; color: #1d3268;">Amount: <b>{{ $busGiver['amount'] }}</b></p>
                                     </div>
                                 </div>
                             </div>
-                        @endif
+                        @endif --}}
 
                         @if ($refGiver)
                             <div class="col">

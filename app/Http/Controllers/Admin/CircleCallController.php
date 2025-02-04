@@ -292,7 +292,7 @@ class CircleCallController extends Controller
             'meetingPlace' => 'required|regex:/^([a-zA-Z]+)(\s[a-zA-Z]+)*$/',
             'date' => 'required',
             'remarks' => 'required',
-            'meetingImage' => 'mimes:jpeg,jpg,png,gif|max:5120', // Allow 5MB for upload
+            // 'meetingImage' => 'mimes:jpeg,jpg,png,gif|max:5120', // Allow 5MB for upload
         ]);
 
         if ($validator->fails()) {

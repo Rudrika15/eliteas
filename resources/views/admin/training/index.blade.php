@@ -109,7 +109,7 @@
                                 </td>
 
                                 <td>{{ $trainingData->venue ?? '-' }}</td>
-                                <td>{{ \Carbon\Carbon::parse($trainingData->start_date)->format('d-m-Y') ?? '-' }}</td>
+                                <td>{{ \Carbon\Carbon::parse($trainingData->date)->format('d-m-Y') ?? '-' }}</td>
                                 <td>{{ \Carbon\Carbon::parse($trainingData->end_date)->format('d-m-Y') ?? '-' }}</td>
                                 <td>{{ $trainingData->time ?? '-' }}</td>
                                 {{-- <td>{{$trainingData->status ?? '-'}}</td> --}}

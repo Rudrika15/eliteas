@@ -149,7 +149,7 @@
                                         <input type="text" class="form-control mt-3" id="venue" name="venue" placeholder="Venue" style="display:none;" value="{{ old('venue', $training->venue) }}">
                                     </div>
                                     <div class="col-md-6">
-                                        <input type="text" class="form-control mt-3" id="start_date" name="start_date" placeholder="Start Date" value="{{ old('start_date', $training->start_date) }}" required>
+                                        <input type="text" class="form-control mt-3" id="start_date" name="start_date" placeholder="Start Date" value="{{ old('start_date', $training->date) }}" required>
                                     </div>
                                     <div class="col-md-6">
                                         <input type="text" class="form-control mt-3" id="end_date" name="end_date" placeholder="End Date" value="{{ old('end_date', $training->end_date) }}" required>

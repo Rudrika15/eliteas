@@ -14,8 +14,7 @@
                             Asks
                             by
                             Others</a>&nbsp;&nbsp;&nbsp;
-                        <a href="{{ route('specificask.create') }}" class="btn btn-bg-orange btn-sm mt-3 btn-tooltip"><i
-                                class="bi bi-plus-circle"></i>
+                        <a href="{{ route('specificask.create') }}" class="btn btn-bg-orange btn-sm mt-3 btn-tooltip"><i class="bi bi-plus-circle"></i>
                             <span class="btn-text">Add Specific Ask</span></a>
                     </div>
                 </div>
@@ -39,16 +38,31 @@
                                         {{ $specificaskData->users->lastName ?? '-' }}</td> --}}
                                     <td>{{ $specificaskData->ask ?? '-' }}</td>
                                     <td>
-                                        <a href="{{ route('specificask.edit', $specificaskData->id) }}"
-                                            class="btn btn-bg-blue btn-sm btn-tooltip">
+                                        <a href="{{ route('specificask.edit', $specificaskData->id) }}" class="btn btn-bg-blue btn-sm btn-tooltip">
                                             <i class="bi bi-pen"></i>
                                             <span class="btn-text">Edit</span>
                                         </a>
-                                        <a href="{{ route('specificask.delete', $specificaskData->id) }}"
-                                            class="btn btn-danger btn-sm btn-tooltip">
+                                        <a href="javascript:void(0)" onclick="confirmDelete({{ $specificaskData->id }})" class="btn btn-danger btn-sm btn-tooltip">
                                             <i class="bi bi-trash"></i>
                                             <span class="btn-text">Delete</span>
                                         </a>
+                                        <script>
+                                            function confirmDelete(askId) {
+                                                Swal.fire({
+                                                    title: 'Are you sure?',
+                                                    text: "You won't be able to revert this!",
+                                                    icon: 'warning',
+                                                    showCancelButton: true,
+                                                    confirmButtonColor: '#3085d6',
+                                                    cancelButtonColor: '#d33',
+                                                    confirmButtonText: 'Yes, delete it!'
+                                                }).then((result) => {
+                                                    if (result.isConfirmed) {
+                                                        window.location.href = '{{ route('specificask.delete', '') }}/' + askId;
+                                                    }
+                                                })
+                                            }
+                                        </script>
                                     </td>
                                 </tr>
                             @endforeach

@@ -345,27 +345,27 @@ class HomeController extends Controller
                     ->whereMonth('date', $previousMonth)
                     ->get();
 
-                $busGiver = $busGiver->groupBy('businessGiverId')->map(function ($group) {
-                    $user = $group->first()->users;
-                    $member = $user->member()->select('circleId', 'businessCategoryId', 'profilePhoto')->first();
-                    $circle = Circle::find($member->circleId);
-                    $businessCategory = BusinessCategory::find($member->businessCategoryId);
+                // $busGiver = $busGiver->groupBy('businessGiverId')->map(function ($group) {
+                //     $user = $group->first()->users;
+                //     $member = $user->member()->select('circleId', 'businessCategoryId', 'profilePhoto')->first();
+                //     $circle = Circle::find($member->circleId);
+                //     $businessCategory = BusinessCategory::find($member->businessCategoryId);
 
-                    return [
-                        'user' => $user,
-                        'member' => $member,
-                        'amount' => $group->sum('amount'),
-                        'count' => $group->count(),
-                        'circle' => [
-                            'id' => $circle->id,
-                            'circleName' => $circle->circleName,
-                        ],
-                        'businessCategory' => [
-                            'id' => $businessCategory->id,
-                            'categoryName' => $businessCategory->categoryName,
-                        ],
-                    ];
-                })->sortByDesc('amount')->first();
+                //     return [
+                //         'user' => $user,
+                //         'member' => $member,
+                //         'amount' => $group->sum('amount'),
+                //         'count' => $group->count(),
+                //         'circle' => [
+                //             'id' => $circle->id,
+                //             'circleName' => $circle->circleName,
+                //         ],
+                //         'businessCategory' => [
+                //             'id' => $businessCategory->id,
+                //             'categoryName' => $businessCategory->categoryName,
+                //         ],
+                //     ];
+                // })->sortByDesc('amount')->first();
 
                 $refGiver = CircleMeetingMembersReference::where('status', 'Active')
                     ->whereYear('created_at', $previousYear)
@@ -500,7 +500,7 @@ class HomeController extends Controller
             return view('home', compact('circleCount', 'membersCount', 'count', 'nearestTraining', 'businessCategory', 'myInvites', 'findRegister', 'birthdaysToday', 'templates'));
         } catch (\Throwable $th) {
             // Log the error
-            // throw $th;
+            throw $th;
             ErrorLogger::logError($th, request()->fullUrl());
             // Return a generic error view or message
             return view('servererror')->with('error', 'Failed to load the dashboard');

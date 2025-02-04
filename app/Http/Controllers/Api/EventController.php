@@ -275,12 +275,24 @@ class EventController extends Controller
     public function eventRegisterList(Request $request, $id)
     {
         try {
-            
+
             $event = Event::findOrFail($id);
             $registerList = EventRegister::where('eventId', $id)
-                ->with('members') // Assuming 'member' is the relationship defined in the EventRegister model
+                ->with([
+                    'members' => function ($query) {
+                        $query->select('id', 'firstName', 'lastName', 'profilePhoto', 'circleId', 'businessCategoryId');
+                    },
+                    'members.circle' => function ($query) {
+                        $query->select('id', 'circleName', 'cityId')
+                            ->with(['city' => function ($query) {
+                                $query->select('id', 'cityName');
+                            }]);
+                    },
+                    'members.bCategory' => function ($query) {
+                        $query->select('id', 'categoryName');
+                    }
+                ])
                 ->get();
-
             return Utils::sendResponse([
                 'event' => $event,
                 'registerList' => $registerList

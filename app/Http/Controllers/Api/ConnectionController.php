@@ -220,9 +220,21 @@ class ConnectionController extends Controller
                                 });
                         });
                 })
-                ->with(['member', 'member.circle', 'member.connections' => function ($q) use ($authUserId) {
-                    $q->where('userId', $authUserId);
-                }])
+                ->with([
+                    'member',
+                    'member.circle' => function ($q) {
+                        $q->select('id', 'circleName', 'cityId')
+                            ->with(['city' => function ($q) {
+                                $q->select('id', 'cityName');
+                            }]);
+                    },
+                    'member.bCategory' => function ($q) {
+                        $q->select('id', 'categoryName');
+                    },
+                    'member.connections' => function ($q) use ($authUserId) {
+                        $q->where('userId', $authUserId);
+                    }
+                ])
                 ->get();
 
             $message = "Search results for '$find'";
@@ -308,7 +320,10 @@ class ConnectionController extends Controller
             if ($id) {
                 // Fetch circle details and related active members
                 $circle = Circle::with(['members' => function ($query) {
-                    $query->where('status', 'Active'); // Fetch only active members
+                    $query->where('status', 'Active') // Fetch only active members
+                        ->with('bCategory:id,categoryName'); // Fetch category name
+                }, 'city' => function ($query) {
+                    $query->select('id', 'cityName'); // Fetch city name
                 }])->findOrFail($id);
 
                 // Return the circle and its active members as JSON
@@ -355,6 +370,12 @@ class ConnectionController extends Controller
                 // Fetch active members related to this category
                 $members = Member::where('businessCategoryId', $id)
                     ->where('status', 'Active')
+                    ->with(['circle' => function ($query) {
+                        $query->select('id', 'circleName', 'cityId')
+                            ->with(['city' => function ($query) {
+                                $query->select('id', 'cityName');
+                            }]);
+                    }])
                     ->get();
 
                 // Return the category and its members as JSON
