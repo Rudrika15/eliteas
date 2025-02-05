@@ -50,7 +50,7 @@
                             <th>Start Date</th>
                             <th>End Date</th>
                             <th>Time</th>
-                            {{-- <th>Status</th> --}}
+                            <th>Status</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -91,8 +91,11 @@
                         --}}
                                 <td>{{ $trainingData->type ?? '-' }}</td>
                                 <td>{{ number_format($trainingData->fees, 2, '.', ',') }}</td>
-                                <td>{{ $trainingData->meetingLink }}</td>
-
+                                <td>
+                                    <span class="truncated-text" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $trainingData->meetingLink }}">
+                                        {{ Str::limit($trainingData->meetingLink, 12) }}
+                                    </span>
+                                </td>
                                 <td>
                                     @if ($trainingData->training_thumb)
                                         <img src="{{ url('Training/' . basename($trainingData->training_thumb)) }}" alt="Event Image" style="width: 50px; height: 50px; object-fit: contain; aspect-ratio: 1/1;">
@@ -112,8 +115,21 @@
                                 <td>{{ \Carbon\Carbon::parse($trainingData->date)->format('d-m-Y') ?? '-' }}</td>
                                 <td>{{ \Carbon\Carbon::parse($trainingData->end_date)->format('d-m-Y') ?? '-' }}</td>
                                 <td>{{ $trainingData->time ?? '-' }}</td>
-                                {{-- <td>{{$trainingData->status ?? '-'}}</td> --}}
                                 <td>
+                                    <select class="form-select form-select-sm" onchange="updateStatus({{ $trainingData->id }}, this.value)">
+                                        <option value="Publish" {{ $trainingData->trainingStatus == 'Publish' ? 'selected' : '' }} style="background-color: #28a745; color: white;">
+                                            Publish
+                                        </option>
+                                        <option value="Draft" {{ $trainingData->trainingStatus == 'Draft' ? 'selected' : '' }} style="background-color: #ffc107; color: white;">
+                                            Draft
+                                        </option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <a href="{{ route('trainingFeedback.adminIndex', $trainingData->id) }}" class="btn btn-bg-orange btn-sm btn-tooltip">
+                                        <i class="bi bi-eye"></i>
+                                        <span class="btn-text">View Feedback</span>
+                                    </a>
                                     <a href="{{ route('training.edit', $trainingData->id) }}" class="btn btn-bg-blue btn-sm btn-tooltip">
                                         <i class="bi bi-pen"></i>
                                         <span class="btn-text">Edit</span>
@@ -165,4 +181,38 @@
                 <!-- End Table with stripped rows -->
             </div>
         </div>
-    @endsection
+    </div>
+
+    <script>
+        function updateStatus(trainingId, newStatus) {
+            // console.log(`Updating status of training ${trainingId} to ${newStatus}`);
+            fetch(`/training/update-status/${trainingId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        trainingStatus: newStatus
+                    })
+                })
+                .then(response => {
+                    // console.log('Response:', response);
+                    return response.json();
+                })
+                .then(data => {
+                    // console.log('Data:', data);
+                    if (data.success) {
+                        Swal.fire('Success', 'Status updated successfully!', 'success');
+                    } else {
+                        Swal.fire('Error', 'Failed to update status.', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire('Error', 'An error occurred while updating status.', 'error');
+                });
+        }
+    </script>
+
+@endsection

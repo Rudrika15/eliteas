@@ -216,6 +216,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('training/edit/{id?}', [TrainingController::class, 'edit'])->name('training.edit');
     Route::post('training/update/{id}', [TrainingController::class, 'update'])->name('training.update');
     Route::get('training/delete/{id?}', [TrainingController::class, 'delete'])->name('training.delete');
+    Route::post('/training/update-status/{id}', [TrainingController::class, 'updateStatus'])->name('training.updateStatus');
+
 
     Route::get('/circletype/index', [CircleTypeController::class, 'index'])->name('circletype.index');
     Route::get('circletype/show/{id?}', [CircleTypeController::class, 'show'])->name('circletype.show');
@@ -789,7 +791,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('trainingFeedback/adminIndex/{id?}', [TrainingFeedbackController::class, 'adminIndex'])->name('trainingFeedback.adminIndex');
     Route::get('trainingFeedback/index', [TrainingFeedbackController::class, 'index'])->name('trainingFeedback.index');
     Route::get('trainingFeedback/memberIndex', [TrainingFeedbackController::class, 'memberIndex'])->name('trainingFeedback.memberIndex');
-    Route::get('trainingFeedback/create', [TrainingFeedbackController::class, 'create'])->name('trainingFeedback.create');
+    Route::get('trainingFeedback/create/{id?}', [TrainingFeedbackController::class, 'create'])->name('trainingFeedback.create');
     Route::post('trainingFeedback/store', [TrainingFeedbackController::class, 'store'])->name('trainingFeedback.store');
     Route::get('trainingFeedback/edit/{id?}', [TrainingFeedbackController::class, 'edit'])->name('trainingFeedback.edit');
     Route::post('trainingFeedback/update', [TrainingFeedbackController::class, 'update'])->name('trainingFeedback.update');

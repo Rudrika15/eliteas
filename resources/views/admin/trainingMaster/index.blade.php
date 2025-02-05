@@ -31,12 +31,6 @@
                                     <td>{{ $trainingMasterData->trainingName }}</td>
                                     <td>{{ $trainingMasterData->status }}</td>
                                     <td>
-                                        <a href="{{ route('trainingFeedback.adminIndex', $trainingMasterData->id) }}" class="btn btn-bg-orange btn-sm btn-tooltip">
-                                            <i class="bi bi-eye"></i>
-                                            <span class="btn-text">View Feedback</span>
-                                        </a>
-
-
                                         <a href="{{ route('trainingMaster.edit', $trainingMasterData->id) }}" class="btn btn-bg-blue btn-sm btn-tooltip">
                                             <i class="bi bi-pen"></i>
                                             <span class="btn-text">Edit</span>

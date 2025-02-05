@@ -451,7 +451,7 @@
                             </div>
                         @endif
 
-                        {{-- @if ($busGiver)
+                        @if ($busGiver)
                             <div class="col">
                                 <div class="profile-card">
                                     <div class="card-body">
@@ -464,7 +464,7 @@
                                     </div>
                                 </div>
                             </div>
-                        @endif --}}
+                        @endif
 
                         @if ($refGiver)
                             <div class="col">

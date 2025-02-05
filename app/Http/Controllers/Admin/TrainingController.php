@@ -38,7 +38,6 @@ class TrainingController extends Controller
     public function index(Request $request)
     {
         try {
-
             $training = Training::with('trainer')
                 ->where('status', 'Active')
                 ->orderBy('id', 'DESC')
@@ -186,6 +185,8 @@ class TrainingController extends Controller
             $training->time = $request->time;
             $training->duration = $request->duration;
             $training->note = $request->note;
+            $training->status = 'Active';
+            $training->trainingStatus = 'Draft';
             $training->save();
 
             // Add trainers to the Trainings_trainers table if present in the request
@@ -310,6 +311,7 @@ class TrainingController extends Controller
             $training->time = $request->time;
             $training->duration = $request->duration;
             $training->note = $request->note;
+            $training->status = 'Active';
             $training->update();
 
             // Add trainers to the Training_trainers table if present in the request
@@ -345,7 +347,16 @@ class TrainingController extends Controller
     }
 
 
-
+    public function updateStatus(Request $request, $id)
+    {
+        $trainingData = Training::findOrFail($id);
+        $trainingData->trainingStatus = $request->input('trainingStatus');
+        if ($trainingData->save()) {
+            return response()->json(['success' => true]);
+        } else {
+            return response()->json(['success' => false]);
+        }
+    }
 
 
 

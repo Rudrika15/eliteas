@@ -17,14 +17,14 @@
                             <th>S.No</th>
                             <th>Master Title</th>
                             <th>Title</th>
-                            <th>Type</th>8
+                            <th>Type</th>
                             <th>Fees</th>
                             <th>Meeting Link</th>
                             <th>Venue</th>
                             <th>Start Date</th>
                             <th>End Date</th>
                             <th>Time</th>
-                            {{-- <th>Action</th> --}}
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -37,15 +37,15 @@
                                 <td>{{ number_format($trainingData->fees, 2, '.', ',') }}</td>
                                 <td>{{ $trainingData->meetingLink }}</td>
                                 <td>{{ $trainingData->venue ?? '-' }}</td>
-                                <td>{{ \Carbon\Carbon::parse($trainingData->start_date)->format('d-m-Y') ?? '-' }}</td>
+                                <td>{{ \Carbon\Carbon::parse($trainingData->date)->format('d-m-Y') ?? '-' }}</td>
                                 <td>{{ \Carbon\Carbon::parse($trainingData->end_date)->format('d-m-Y') ?? '-' }}</td>
                                 <td>{{ $trainingData->time ?? '-' }}</td>
-                                {{-- <td>
-                                    <a href="{{ route('trainingFeedback.index', $trainingData->id) }}" class="btn btn-bg-blue btn-sm btn-tooltip">
+                                <td>
+                                    <a href="{{ route('trainingFeedback.create', $trainingData->id) }}" class="btn btn-bg-blue btn-sm btn-tooltip">
                                         <i class="bi bi-plus"></i>
                                         <span class="btn-text"> Add Feedback </span>
                                     </a>
-                                </td> --}}
+                                </td>
                             </tr>
                         @endforeach
 
@@ -57,4 +57,5 @@
                 <!-- End Table with stripped rows -->
             </div>
         </div>
-    @endsection
+    </div>
+@endsection

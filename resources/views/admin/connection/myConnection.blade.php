@@ -42,6 +42,9 @@
                             <a href="{{ route('connection.removeConnection', $connection->id) }}" class="btn btn-sm btn-outline-danger mt-2">
                                 <i class="bi bi-x"></i> Remove Connection
                             </a>
+                            {{-- <a href="{{ route('foundPersonDetails', $connection->members->id) }}" class="mt-3 btn btn-sm btn-outline-primary mt-2">
+                                <i class="bi bi-person"></i> View Profile
+                            </a> --}}
                         </div>
                     </div>
                 </div>

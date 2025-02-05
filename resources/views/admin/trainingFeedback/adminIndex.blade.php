@@ -7,8 +7,9 @@
         <div class="card">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h4 class="card-title">Training Feedback for {{ $trainingFeedback->first()->trainingMaster->trainingName ?? 'N/A' }}</h4>
-                    <a href="{{ route('trainingMaster.index') }}" class="btn btn-bg-orange btn-sm">BACK</a>
+                    <h4 class="card-title">Training Feedback</h4>
+                    {{-- <h4 class="card-title">Training Feedback for {{ $trainingFeedback->first()->trainingMaster->trainingName ?? 'N/A' }}</h4> --}}
+                    <a href="{{ route('training.index') }}" class="btn btn-bg-orange btn-sm">BACK</a>
                 </div>
 
                 <!-- Table with stripped rows -->

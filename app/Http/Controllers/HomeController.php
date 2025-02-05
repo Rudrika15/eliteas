@@ -258,15 +258,16 @@ class HomeController extends Controller
 
 
             $count = Schedule::where('status', 'Active')->count();
-            $currentDate = Carbon::now()->format('d-m-Y');
-            // $currentDate = Carbon::now();
+            $currentDate = Carbon::now()->format('Y-m-d');
+            // $currentDatee = Carbon::now()->format('d-m-Y');
 
             $nearestTraining = Training::where('status', 'Active')
-                ->orderByRaw('CASE WHEN date >= ? THEN 0 ELSE 1 END, date', [$currentDate])
+                ->where('trainingStatus', 'Publish')
+                ->whereDate('date', '>', $currentDate)
+                ->orderBy('date', 'asc')
                 ->whereHas('trainers.user')
                 ->with('trainers.user')
                 ->whereHas('trainersTrainings.user')
-                ->orderBy('date', 'asc')
                 ->first();
 
 
@@ -345,27 +346,27 @@ class HomeController extends Controller
                     ->whereMonth('date', $previousMonth)
                     ->get();
 
-                // $busGiver = $busGiver->groupBy('businessGiverId')->map(function ($group) {
-                //     $user = $group->first()->users;
-                //     $member = $user->member()->select('circleId', 'businessCategoryId', 'profilePhoto')->first();
-                //     $circle = Circle::find($member->circleId);
-                //     $businessCategory = BusinessCategory::find($member->businessCategoryId);
+                $busGiver = $busGiver->groupBy('businessGiverId')->map(function ($group) {
+                    $user = $group->first()->users;
+                    $member = $user->member()->select('circleId', 'businessCategoryId', 'profilePhoto')->first();
+                    $circle = Circle::find($member->circleId);
+                    $businessCategory = BusinessCategory::find($member->businessCategoryId);
 
-                //     return [
-                //         'user' => $user,
-                //         'member' => $member,
-                //         'amount' => $group->sum('amount'),
-                //         'count' => $group->count(),
-                //         'circle' => [
-                //             'id' => $circle->id,
-                //             'circleName' => $circle->circleName,
-                //         ],
-                //         'businessCategory' => [
-                //             'id' => $businessCategory->id,
-                //             'categoryName' => $businessCategory->categoryName,
-                //         ],
-                //     ];
-                // })->sortByDesc('amount')->first();
+                    return [
+                        'user' => $user,
+                        'member' => $member,
+                        'amount' => $group->sum('amount'),
+                        'count' => $group->count(),
+                        'circle' => [
+                            'id' => $circle->id,
+                            'circleName' => $circle->circleName,
+                        ],
+                        'businessCategory' => [
+                            'id' => $businessCategory->id,
+                            'categoryName' => $businessCategory->categoryName,
+                        ],
+                    ];
+                })->sortByDesc('amount')->first();
 
                 $refGiver = CircleMeetingMembersReference::where('status', 'Active')
                     ->whereYear('created_at', $previousYear)
