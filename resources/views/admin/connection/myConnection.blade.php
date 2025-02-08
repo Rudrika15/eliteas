@@ -8,6 +8,12 @@
         {{-- <h2 class="text-center mb-4">My Connections</h2> --}}
         <h1 class="text-center card-title mb-4">My Connections</h1>
 
+        <div class="search-bar">
+            <a class="search-bar" href="{{ route('search') }}">
+                <input type="text" name="query" style="width: 1200px;" placeholder="Click Here to Go for Search Member" title="Enter search keyword">
+            </a>
+        </div>
+
 
         <!-- Connection Cards -->
         <div class="row">
@@ -15,6 +21,7 @@
                 <div class="col-md-4 mb-4">
                     <div class="profile-card">
                         <div class="card-body">
+                            {{-- {{ $connection->connectedUser->userId ?? $connection->members->id }} --}}
                             <!-- Profile Picture -->
                             <img src="{{ asset($connection->connectedUser->profilePicture ?? 'img/profile.png') }}" alt="Profile Picture" class="profile-img">
 
@@ -42,7 +49,7 @@
                             <a href="{{ route('connection.removeConnection', $connection->id) }}" class="btn btn-sm btn-outline-danger mt-2">
                                 <i class="bi bi-x"></i> Remove Connection
                             </a>
-                            {{-- <a href="{{ route('foundPersonDetails', $connection->members->id) }}" class="mt-3 btn btn-sm btn-outline-primary mt-2">
+                            {{-- <a href="{{ route('foundPersonDetails', $connection->members->id ) }}" class="mt-3 btn btn-sm btn-outline-primary mt-2">
                                 <i class="bi bi-person"></i> View Profile
                             </a> --}}
                         </div>
@@ -61,6 +68,25 @@
     </div>
 
     <style>
+        .search-bar {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 10px;
+            border: 0.5px solid #e76a35;
+            border-radius: 5px;
+            font-size: 1em;
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-bar input::placeholder {
+            color: #162e6b;
+        }
+
         .profile-card {
             width: 250px !important;
             height: 300px !important;

@@ -501,6 +501,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/foundPersonDetails/{id}', [HomeController::class, 'foundPersonDetails'])->name('foundPersonDetails');
 
     // connections
+    // Route::get('/connection/search', [ConnectionController::class, 'searchConnection'])->name('connection.search');
     Route::post('/connect', [ConnectionController::class, 'connect'])->name('connect');
     Route::get('/connections/connectionRequests', [ConnectionController::class, 'connectionRequests'])->name('connection.connectionRequests');
     Route::get('/connections/myConnections', [ConnectionController::class, 'myConnections'])->name('connection.myConnections');

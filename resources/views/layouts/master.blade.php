@@ -67,7 +67,7 @@
         <!-- Start Search Bar -->
         <div class="search-bar d-flex">
             <a class="search-form d-flex align-items-center" href="{{ route('search') }}">
-                <input type="text" name="query" style="width: 310px;" placeholder="Search Member" title="Enter search keyword">
+                <input type="text" name="query" style="width: 310px;" placeholder="Click Here to Go for Search Member" title="Enter search keyword">
                 <button type="submit" title="Search"><i class="bi bi-search"></i>
                 </button>
             </a>

@@ -200,7 +200,7 @@ class ChatController extends Controller
             }
 
             // Broadcast the message using Laravel Echo
-            broadcast(new MessageSent($message))->toOthers();
+            // broadcast(new MessageSent($message))->toOthers();
 
             return Utils::sendResponse($response, 'Message sent successfully', 200);
         } catch (\Throwable $th) {

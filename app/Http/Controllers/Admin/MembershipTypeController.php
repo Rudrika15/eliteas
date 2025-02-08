@@ -137,11 +137,11 @@ class MembershipTypeController extends Controller
             $membershipType->status = 'Deleted';
             $membershipType->save();
 
-            return redirect()->route('membershipType.index')->with('success', 'Business Category deleted successfully.');
+            return redirect()->route('membershipType.index')->with('success', 'Membership Type deleted successfully.');
         } catch (\Throwable $th) {
             //throw $th;
             ErrorLogger::logError($th, request()->fullUrl());
-            return redirect()->route('membershipType.index')->with('error', 'Failed to delete Business Category.');
+            return redirect()->route('membershipType.index')->with('error', 'Failed to delete Membership Type.');
         }
     }
 }
