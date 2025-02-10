@@ -206,39 +206,41 @@ class TrainingController extends Controller
             }
 
             // Check if the training type is "Published" to trigger notifications
+            if ($training->trainingStatus === 'Publish') {
 
-            $title = "New Training Published";
-            $body = "The training '{$training->title}' is now available. Don't miss out!";
+                $title = "New Training Published";
+                $body = "The training '{$training->title}' is now available. Don't miss out!";
 
-            // Store notification in the database
-            $notification = new Notifications();
-            $notification->title = $title;
-            $notification->body = $body;
-            $notification->data = json_encode([
-                'training_title' => $training->title,
-            ]);
-            $notification->save();
+                // Store notification in the database
+                $notification = new Notifications();
+                $notification->title = $title;
+                $notification->body = $body;
+                $notification->data = json_encode([
+                    'training_title' => $training->title,
+                ]);
+                $notification->save();
 
-            // Send notifications to all users
-            $users = User::whereNotNull('fcm_token')->get();
-            $serviceAccountPath = storage_path('app/public/ubn_notification.json');
-            $factory = (new Factory)->withServiceAccount($serviceAccountPath);
-            $messaging = $factory->createMessaging();
+                // Send notifications to all users
+                $users = User::whereNotNull('fcm_token')->get();
+                $serviceAccountPath = storage_path('app/public/ubn_notification.json');
+                $factory = (new Factory)->withServiceAccount($serviceAccountPath);
+                $messaging = $factory->createMessaging();
 
-            foreach ($users as $user) {
-                if (!empty($user->fcm_token)) {
-                    $message = CloudMessage::withTarget('token', $user->fcm_token)
-                        ->withNotification(Notification::create($title, $body));
+                foreach ($users as $user) {
+                    if (!empty($user->fcm_token)) {
+                        $message = CloudMessage::withTarget('token', $user->fcm_token)
+                            ->withNotification(Notification::create($title, $body));
 
-                    try {
-                        $messaging->send($message);
-                        Log::info('Notification sent to token: ' . $user->fcm_token);
-                    } catch (\Kreait\Firebase\Exception\Messaging\NotFound $e) {
-                        Log::error('Token not found: ' . $user->fcm_token);
-                    } catch (\Kreait\Firebase\Exception\Messaging\InvalidArgument $e) {
-                        Log::error('Invalid argument error with token: ' . $user->fcm_token);
-                    } catch (\Exception $e) {
-                        Log::error('General error sending to token: ' . $user->fcm_token . '. Error: ' . $e->getMessage());
+                        try {
+                            $messaging->send($message);
+                            Log::info('Notification sent to token: ' . $user->fcm_token);
+                        } catch (\Kreait\Firebase\Exception\Messaging\NotFound $e) {
+                            Log::error('Token not found: ' . $user->fcm_token);
+                        } catch (\Kreait\Firebase\Exception\Messaging\InvalidArgument $e) {
+                            Log::error('Invalid argument error with token: ' . $user->fcm_token);
+                        } catch (\Exception $e) {
+                            Log::error('General error sending to token: ' . $user->fcm_token . '. Error: ' . $e->getMessage());
+                        }
                     }
                 }
             }

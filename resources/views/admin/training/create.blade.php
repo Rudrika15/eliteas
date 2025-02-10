@@ -14,7 +14,7 @@
     <!-- Include Flatpickr JS -->
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
-    
+
     <div class="card ">
         <div class="card-body d-flex justify-content-between align-items-center">
             <h5 class="card-title">Create Training Transactions</h5>
@@ -163,10 +163,10 @@
                                         <input type="text" class="form-control mt-3" id="venue" name="venue" placeholder="Venue" style="display:none;">
                                     </div>
                                     <div class="col-md-6">
-                                        <input type="text" class="form-control mt-3" id="start_date" name="start_date" placeholder="Start Date" required>
+                                        <input type="date" class="form-control mt-3" id="start_date" name="start_date" placeholder="Start Date" required>
                                     </div>
                                     <div class="col-md-6">
-                                        <input type="text" class="form-control mt-3" id="end_date" name="end_date" placeholder="End Date" required>
+                                        <input type="date" class="form-control mt-3" id="end_date" name="end_date" placeholder="End Date" required>
                                     </div>
 
                                 </div>
@@ -397,7 +397,7 @@
         document.addEventListener("DOMContentLoaded", function() {
             // Initialize Flatpickr for the Start Date
             flatpickr("#start_date", {
-                dateFormat: "d-m-Y", // Format for the date
+                dateFormat: "Y-m-d", // Format for the date
                 minDate: "today", // Disable past dates
                 onChange: function(selectedDates, dateStr) {
                     // Set minimum date for the End Date based on the selected Start Date
@@ -407,7 +407,7 @@
 
             // Initialize Flatpickr for the End Date
             const endDatePicker = flatpickr("#end_date", {
-                dateFormat: "d-m-Y", // Format for the date
+                dateFormat: "Y-m-d", // Format for the date
                 minDate: "today" // Disable past dates
             });
         });

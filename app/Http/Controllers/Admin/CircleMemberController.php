@@ -371,26 +371,26 @@ class CircleMemberController extends Controller
             $member->save();
 
             // Compare circleId and add connections
-            $matchedMembers = Member::where('circleId', $member->circleId)
-                ->where('userId', '!=', $member->userId) // Exclude the current member
-                ->get();
+            // $matchedMembers = Member::where('circleId', $member->circleId)
+            //     ->where('userId', '!=', $member->userId) // Exclude the current member
+            //     ->get();
 
 
-            foreach ($matchedMembers as $matchedMember) {
-                // Create new connection entries
-                $connection = new Connection;
-                $connection->memberId = $member->userId;
-                $connection->userId = $matchedMember->userId;
-                $connection->status = 'Accepted';
-                $connection->save();
+            // foreach ($matchedMembers as $matchedMember) {
+            //     // Create new connection entries
+            //     $connection = new Connection;
+            //     $connection->memberId = $member->userId;
+            //     $connection->userId = $matchedMember->userId;
+            //     $connection->status = 'Accepted';
+            //     $connection->save();
 
-                // // Create the reverse connection
-                // $reverseConnection = new Connection;
-                // $reverseConnection->memberId = $matchedMember->userId;
-                // $reverseConnection->userId = $member->userId;
-                // $reverseConnection->status = 'Accepted';
-                // $reverseConnection->save();
-            }
+            //     // // Create the reverse connection
+            //     // $reverseConnection = new Connection;
+            //     // $reverseConnection->memberId = $matchedMember->userId;
+            //     // $reverseConnection->userId = $member->userId;
+            //     // $reverseConnection->status = 'Accepted';
+            //     // $reverseConnection->save();
+            // }
 
             // Create and save TopsProfile
             $tops = new TopsProfile();
@@ -433,7 +433,6 @@ class CircleMemberController extends Controller
             // }
 
             $payment->paymentDate = $request->date;
-
             $payment->status = 'Active';
             $payment->save();
 

@@ -411,6 +411,9 @@
 
                 @endphp
 
+                {{-- {{ $memberCircleId }}
+                {{ $userCircleId }} --}}
+
                 <!-- Keep the button as it was, just add the logic here -->
                 @if ($memberCircleId == $userCircleId)
                     <!-- Display "Connected" button, and disable it -->

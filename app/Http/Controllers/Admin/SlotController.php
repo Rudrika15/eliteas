@@ -285,7 +285,7 @@ class SlotController extends Controller
             $slot->eventId = $request->eventId;
             $slot->slotId = $request->slotId;
             $slot->visitorId = $request->visitorId;
-            $slot->regMemberId = $request->regMemberId;
+            $slot->regMemberVisitorId = $request->regMemberId;
             $slot->date = date('Y-m-d');
             $slot->bookingStatus = 'Pending';
             $slot->status = 'Active';

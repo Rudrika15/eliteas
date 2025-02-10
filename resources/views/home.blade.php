@@ -451,7 +451,7 @@
                             </div>
                         @endif
 
-                        @if ($busGiver)
+                        {{-- @if ($busGiver)
                             <div class="col">
                                 <div class="profile-card">
                                     <div class="card-body">
@@ -464,9 +464,9 @@
                                     </div>
                                 </div>
                             </div>
-                        @endif
+                        @endif --}}
 
-                        @if ($refGiver)
+                        {{-- @if ($refGiver)
                             <div class="col">
                                 <div class="profile-card">
                                     <div class="card-body">
@@ -474,12 +474,12 @@
                                         <p class="profile-title mb-3">Top Reference Giver</p>
                                         <h3 class="profile-name mb-3">{{ $refGiver['user']->firstName ?? 'N/A' }} {{ $refGiver['user']->lastName ?? 'N/A' }}</h3>
                                         <p style="font-size: 14px; color: #1d3268;">Circle: <b>{{ $refGiver['circle'] ?? 'N/A' }}</b></p>
-                                        <p style="font-size: 14px; color: #1d3268;">References Count: <b>{{ $refGiver['count'] ?? '0' }}</b></p>
-                                        {{-- <p style="font-size: 14px; color: #1d3268;">Business Category: <b>{{ $refGiver['businessCategory'] ?? 'N/A' }}</b></p> --}}
-                                    </div>
+                                        <p style="font-size: 14px; color: #1d3268;">References Count: <b>{{ $refGiver['count'] ?? '0' }}</b></p> --}}
+                        {{-- <p style="font-size: 14px; color: #1d3268;">Business Category: <b>{{ $refGiver['businessCategory'] ?? 'N/A' }}</b></p> --}}
+                        {{-- </div>
                                 </div>
                             </div>
-                        @endif
+                        @endif --}}
                     </div>
                 @endif
 
