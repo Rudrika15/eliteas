@@ -598,7 +598,6 @@ Route::group(['middleware' => ['auth']], function () {
 
 
     //Visitors Crud
-
     Route::get('visitors/index', [VisitorController::class, 'index'])->name('visitors.index');
     Route::get('visitors/RoleWiseIndex', [VisitorController::class, 'RoleWiseIndex'])->name('visitors.RoleWiseIndex');
     Route::get('visitors/create', [VisitorController::class, 'create'])->name('visitors.create');
@@ -816,7 +815,6 @@ Route::post('/main-event/conquer-event-login', [ConEventController::class, 'conE
 
 Route::post('/main-event/visitor-login', [ConEventController::class, 'visitorLoginCheck'])->name('visitor.login.check');
 Route::get('/visitor/dashboard', [ConEventController::class, 'visitorDashboard'])->name('visitor.dashboard');
-
 
 Route::post('/main-event/visitor-register-event', [ConEventController::class, 'registerFromVisitor'])->name('visitor.register.dash');
 

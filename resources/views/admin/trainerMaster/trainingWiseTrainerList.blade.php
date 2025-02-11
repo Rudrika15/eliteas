@@ -48,7 +48,8 @@
                             <tr>
                                 <th>{{ ($trainers->currentPage() - 1) * $trainers->perPage() + $loop->index + 1 }}
                                 <td>{{ $trainerData->training->title ?? '-' }}</td>
-                                <td>{{ \Carbon\Carbon::parse($trainerData->training->date)->format('d-m-y') ?? '-' }}</td>
+                                <td>{{ $trainerData->training->date ?? '-' }}</td>
+                                {{-- <td>{{ \Carbon\Carbon::parse($trainerData->training->date)->format('d-m-Y') ?? '-' }}</td> --}}
 
                                 <td>{{ $trainerData->user->firstName ?? '-' }} {{ $trainerData->user->lastName ?? '-' }}
                                 </td>
