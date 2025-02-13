@@ -51,32 +51,16 @@ class ConEventController extends Controller
             'password' => 'required|min:6',
         ]);
 
-        // Fetch visitor from the database
-        $visitor = Visitor::where('email', $request->email)->first();
-
-        // Validate the existence of the visitor
-        if (!$visitor || !Hash::check($request->password, $visitor->password)) {
-            return redirect()->back()->withErrors([
-                'email' => 'Invalid credentials. Please check your email and password.',
-            ])->withInput();
+        // Attempt login using Auth
+        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+            // Redirect to the visitor dashboard after successful login
+            return redirect()->route('visitor.dashboard')->with('success', 'Login successful.');
         }
 
-        // Store visitor details in session
-        session([
-            'visitor_id' => $visitor->id,
-            'visitor_name' => $visitor->firstName . ' ' . $visitor->lastName,
-            'visitor_email' => $visitor->email,
-        ]);
-
-        $visitorId = session('visitor_id');
-        $visitorName = session('visitor_name');
-        $visitorEmail = session('visitor_email');
-
-        // dd($visitorId, $visitorName, $visitorEmail); // Debug and see session data
-
-
-        // Redirect to the dashboard with a success message\
-        return redirect()->route('visitor.dashboard');
+        // If authentication fails, redirect back with an error message
+        return redirect()->back()->withErrors([
+            'email' => 'Invalid credentials. Please check your email and password.',
+        ])->withInput();
     }
 
 
@@ -88,6 +72,7 @@ class ConEventController extends Controller
 
     public function visitorDashboard()
     {
+
         $currentDate = Carbon::now();
         $nearestEvents = Event::where('eventStatus', 'Publish')
             ->where('status', 'Active')
@@ -199,241 +184,240 @@ class ConEventController extends Controller
     // }
 
 
-//     public function conEventLogin(Request $request)
-// {
-//     try {
-//         // Validate the incoming request
-//         $request->validate([
-//             'email' => 'required|email',
-//             'password' => 'required|min:6',
-//         ]);
+    //     public function conEventLogin(Request $request)
+    // {
+    //     try {
+    //         // Validate the incoming request
+    //         $request->validate([
+    //             'email' => 'required|email',
+    //             'password' => 'required|min:6',
+    //         ]);
 
-//         // Fetch user from the database
-//         $user = User::where('email', $request->email)->first();
+    //         // Fetch user from the database
+    //         $user = User::where('email', $request->email)->first();
 
-//         // Fetch the active event
-//         $event = Event::where('status', 'Active')->orderBy('created_at', 'desc')->first();
+    //         // Fetch the active event
+    //         $event = Event::where('status', 'Active')->orderBy('created_at', 'desc')->first();
 
-//         // Validate the existence of the event
-//         if (!$event) {
-//             return redirect()->back()->withErrors([
-//                 'email' => 'No active event found.',
-//             ])->withInput();
-//         }
+    //         // Validate the existence of the event
+    //         if (!$event) {
+    //             return redirect()->back()->withErrors([
+    //                 'email' => 'No active event found.',
+    //             ])->withInput();
+    //         }
 
-//         // Check if user exists and password matches
-//         if ($user && Hash::check($request->password, $user->password)) {
-//             // Fetch the corresponding member record
-//             $member = Member::where('userId', $user->id)->first();
+    //         // Check if user exists and password matches
+    //         if ($user && Hash::check($request->password, $user->password)) {
+    //             // Fetch the corresponding member record
+    //             $member = Member::where('userId', $user->id)->first();
 
-//             if (!$member) {
-//                 return redirect()->back()->withErrors([
-//                     'email' => 'No member record found for the authenticated user.',
-//                 ])->withInput();
-//             }
+    //             if (!$member) {
+    //                 return redirect()->back()->withErrors([
+    //                     'email' => 'No member record found for the authenticated user.',
+    //                 ])->withInput();
+    //             }
 
-//             $memberId = $member->id;
-//             $eventId = $event->id;
+    //             $memberId = $member->id;
+    //             $eventId = $event->id;
 
-//             // Check if the member is already registered for the event
-//             $existingRegistration = EventRegister::where('memberId', $memberId)
-//                 ->where('eventId', $eventId)
-//                 ->first();
+    //             // Check if the member is already registered for the event
+    //             $existingRegistration = EventRegister::where('memberId', $memberId)
+    //                 ->where('eventId', $eventId)
+    //                 ->first();
 
-//             if ($existingRegistration) {
-//                 return redirect()->back()->with('message', 'You are already registered for this event.');
-//             }
+    //             if ($existingRegistration) {
+    //                 return redirect()->back()->with('message', 'You are already registered for this event.');
+    //             }
 
-//             // Fetch the event record
-//             $eventRecord = Event::find($request->eventId);
+    //             // Fetch the event record
+    //             $eventRecord = Event::find($request->eventId);
 
-//             if (!$eventRecord) {
-//                 return redirect()->back()->with('error', 'Event not found.');
-//             }
+    //             if (!$eventRecord) {
+    //                 return redirect()->back()->with('error', 'Event not found.');
+    //             }
 
-//             if ($eventRecord->fees > 0) {
+    //             if ($eventRecord->fees > 0) {
 
-//                 $razorpay = new Razorpay();
-//                 $razorpay->r_payment_id = $request->paymentId;
-//                 $razorpay->user_email = null;
-//                 $razorpay->amount = $request->amount / 100;
-//                 $razorpay->save();
+    //                 $razorpay = new Razorpay();
+    //                 $razorpay->r_payment_id = $request->paymentId;
+    //                 $razorpay->user_email = null;
+    //                 $razorpay->amount = $request->amount / 100;
+    //                 $razorpay->save();
 
-//                 $registration = new EventRegister();
-//                 $registration->memberId = $memberId;
-//                 $registration->eventId = $eventId;
-//                 $registration->save();
+    //                 $registration = new EventRegister();
+    //                 $registration->memberId = $memberId;
+    //                 $registration->eventId = $eventId;
+    //                 $registration->save();
 
-//                 $allPayments = new AllPayments();
-//                 $allPayments->memberId = $registration->memberId;
-//                 $allPayments->amount = $razorpay->amount;
-//                 $allPayments->paymentType = 'RazorPay'; // Hardcoded for RazorPay
-//                 $allPayments->date = now()->format('Y-m-d');
-//                 $allPayments->paymentMode = 'Event Register Payment';
-//                 $allPayments->remarks = $razorpay->r_payment_id;
-//                 $allPayments->save();
+    //                 $allPayments = new AllPayments();
+    //                 $allPayments->memberId = $registration->memberId;
+    //                 $allPayments->amount = $razorpay->amount;
+    //                 $allPayments->paymentType = 'RazorPay'; // Hardcoded for RazorPay
+    //                 $allPayments->date = now()->format('Y-m-d');
+    //                 $allPayments->paymentMode = 'Event Register Payment';
+    //                 $allPayments->remarks = $razorpay->r_payment_id;
+    //                 $allPayments->save();
 
-//                 // Return success for payment details
-//                 return response()->json(['success' => 'Payment details stored successfully'], 200);
-//             }
+    //                 // Return success for payment details
+    //                 return response()->json(['success' => 'Payment details stored successfully'], 200);
+    //             }
 
-//             // Handle free event logic
-//             if ($eventRecord->fees == 0) {
-//                 // Register the member for the event
-//                 $registration = new EventRegister();
-//                 $registration->memberId = $memberId;
-//                 $registration->eventId = $eventId;
-//                 $registration->save();
+    //             // Handle free event logic
+    //             if ($eventRecord->fees == 0) {
+    //                 // Register the member for the event
+    //                 $registration = new EventRegister();
+    //                 $registration->memberId = $memberId;
+    //                 $registration->eventId = $eventId;
+    //                 $registration->save();
 
-//                 return view('conquer.mainPage.thankYouUser', [
-//                     'eventId' => $request->eventId,
-//                 ])->with('success', 'Your information was submitted successfully!');
-//             }
+    //                 return view('conquer.mainPage.thankYouUser', [
+    //                     'eventId' => $request->eventId,
+    //                 ])->with('success', 'Your information was submitted successfully!');
+    //             }
 
-//             // Prepare event details for email
-//             $eventDetails = [
-//                 'title' => $event->title,
-//                 'event_date' => $event->event_date,
-//                 'venue' => $event->venue ?? 'Not Decided Yet',
-//             ];
+    //             // Prepare event details for email
+    //             $eventDetails = [
+    //                 'title' => $event->title,
+    //                 'event_date' => $event->event_date,
+    //                 'venue' => $event->venue ?? 'Not Decided Yet',
+    //             ];
 
-//             // Send confirmation email
-//             // Mail::to($user->email)->send(new ConEventRegistrationMail($user, $eventDetails));
+    //             // Send confirmation email
+    //             // Mail::to($user->email)->send(new ConEventRegistrationMail($user, $eventDetails));
 
-//             // Redirect to the thank you page
-//             return view('conquer.mainPage.thankYou', compact('memberId', 'eventId'))
-//                 ->with('success', 'You have successfully registered for the event.');
-//         } else {
-//             // Authentication failed
-//             return redirect()->back()->withErrors([
-//                 'email' => 'The provided credentials do not match our records.',
-//             ])->withInput();
-//         }
-//     } catch (\Exception $e) {
-//         // Log the error for debugging purposes
-//         Log::error('Error during event login: ' . $e->getMessage(), [
-//             'request_data' => $request->all(),
-//             'exception' => $e
-//         ]);
+    //             // Redirect to the thank you page
+    //             return view('conquer.mainPage.thankYou', compact('memberId', 'eventId'))
+    //                 ->with('success', 'You have successfully registered for the event.');
+    //         } else {
+    //             // Authentication failed
+    //             return redirect()->back()->withErrors([
+    //                 'email' => 'The provided credentials do not match our records.',
+    //             ])->withInput();
+    //         }
+    //     } catch (\Exception $e) {
+    //         // Log the error for debugging purposes
+    //         Log::error('Error during event login: ' . $e->getMessage(), [
+    //             'request_data' => $request->all(),
+    //             'exception' => $e
+    //         ]);
 
-//         // Redirect back with an error message
-//         return redirect()->back()->with('error', 'An unexpected error occurred. Please try again later.');
-//     }
-// }
+    //         // Redirect back with an error message
+    //         return redirect()->back()->with('error', 'An unexpected error occurred. Please try again later.');
+    //     }
+    // }
 
 
-public function conEventLogin(Request $request)
-{
-    try {
-        // Validate the incoming request
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required|min:6',
-        ]);
+    public function conEventLogin(Request $request)
+    {
+        try {
+            // Validate the incoming request
+            $request->validate([
+                'email' => 'required|email',
+                'password' => 'required|min:6',
+            ]);
 
-        // Fetch user from the database
-        $user = User::where('email', $request->email)->first();
+            // Fetch user from the database
+            $user = User::where('email', $request->email)->first();
 
-        // Fetch the active event
-        $event = Event::where('status', 'Active')->orderBy('created_at', 'desc')->first();
+            // Fetch the active event
+            $event = Event::where('status', 'Active')->orderBy('created_at', 'desc')->first();
 
-        // Validate the existence of the event
-        if (!$event) {
-            return redirect()->back()->withErrors([
-                'email' => 'No active event found.',
-            ])->withInput();
-        }
-
-        // Check if user exists and password matches
-        if ($user && Hash::check($request->password, $user->password)) {
-            // Fetch the corresponding member record
-            $member = Member::where('userId', $user->id)->first();
-
-            if (!$member) {
+            // Validate the existence of the event
+            if (!$event) {
                 return redirect()->back()->withErrors([
-                    'email' => 'No member record found for the authenticated user.',
+                    'email' => 'No active event found.',
                 ])->withInput();
             }
 
-            $memberId = $member->id;
-            $eventId = $event->id;
+            // Check if user exists and password matches
+            if ($user && Hash::check($request->password, $user->password)) {
+                // Fetch the corresponding member record
+                $member = Member::where('userId', $user->id)->first();
 
-            // Check if the member is already registered for the event
-            $existingRegistration = EventRegister::where('memberId', $memberId)
-                ->where('eventId', $eventId)
-                ->first();
+                if (!$member) {
+                    return redirect()->back()->withErrors([
+                        'email' => 'No member record found for the authenticated user.',
+                    ])->withInput();
+                }
 
-            if ($existingRegistration) {
-                return redirect()->back()->with('message', 'You are already registered for this event.');
+                $memberId = $member->id;
+                $eventId = $event->id;
+
+                // Check if the member is already registered for the event
+                $existingRegistration = EventRegister::where('memberId', $memberId)
+                    ->where('eventId', $eventId)
+                    ->first();
+
+                if ($existingRegistration) {
+                    return redirect()->back()->with('message', 'You are already registered for this event.');
+                }
+
+                // Fetch the event record
+                $eventRecord = Event::find($request->eventId);
+
+                if (!$eventRecord) {
+                    return redirect()->back()->with('error', 'Event not found.');
+                }
+
+                // If event has fees, proceed to payment
+                if ($eventRecord->fees > 0) {
+                    // Store payment details (razorpay or another service)
+                    $razorpay = new Razorpay();
+                    $razorpay->r_payment_id = $request->paymentId;
+                    $razorpay->user_email = null;
+                    $razorpay->amount = $request->amount / 100;
+                    $razorpay->save();
+
+                    $registration = new EventRegister();
+                    $registration->memberId = $memberId;
+                    $registration->eventId = $eventId;
+                    $registration->save();
+
+                    $allPayments = new AllPayments();
+                    $allPayments->memberId = $registration->memberId;
+                    $allPayments->amount = $razorpay->amount;
+                    $allPayments->paymentType = 'RazorPay';
+                    $allPayments->date = now()->format('Y-m-d');
+                    $allPayments->paymentMode = 'Event Register Payment';
+                    $allPayments->remarks = $razorpay->r_payment_id;
+                    $allPayments->save();
+
+                    return response()->json(['success' => 'Payment details stored successfully'], 200);
+                }
+
+                // Handle free event logic
+                if ($eventRecord->fees == 0) {
+                    // Register the member for the event
+                    $registration = new EventRegister();
+                    $registration->memberId = $memberId;
+                    $registration->eventId = $eventId;
+                    $registration->save();
+
+                    return view('conquer.mainPage.thankYou', [
+                        'eventId' => $request->eventId,
+                    ])->with('success', 'Your information was submitted successfully!');
+                }
+
+                // Other logic (sending confirmation email, etc.)
+                return view('conquer.mainPage.thankYou', compact('memberId', 'eventId'))
+                    ->with('success', 'You have successfully registered for the event.');
+            } else {
+                // Authentication failed
+                return redirect()->back()->withErrors([
+                    'email' => 'The provided credentials do not match our records.',
+                ])->withInput();
             }
+        } catch (\Exception $e) {
+            // Log the error for debugging purposes
+            Log::error('Error during event login: ' . $e->getMessage(), [
+                'request_data' => $request->all(),
+                'exception' => $e
+            ]);
 
-            // Fetch the event record
-            $eventRecord = Event::find($request->eventId);
-
-            if (!$eventRecord) {
-                return redirect()->back()->with('error', 'Event not found.');
-            }
-
-            // If event has fees, proceed to payment
-            if ($eventRecord->fees > 0) {
-                // Store payment details (razorpay or another service)
-                $razorpay = new Razorpay();
-                $razorpay->r_payment_id = $request->paymentId;
-                $razorpay->user_email = null;
-                $razorpay->amount = $request->amount / 100;
-                $razorpay->save();
-
-                $registration = new EventRegister();
-                $registration->memberId = $memberId;
-                $registration->eventId = $eventId;
-                $registration->save();
-
-                $allPayments = new AllPayments();
-                $allPayments->memberId = $registration->memberId;
-                $allPayments->amount = $razorpay->amount;
-                $allPayments->paymentType = 'RazorPay';
-                $allPayments->date = now()->format('Y-m-d');
-                $allPayments->paymentMode = 'Event Register Payment';
-                $allPayments->remarks = $razorpay->r_payment_id;
-                $allPayments->save();
-
-                return response()->json(['success' => 'Payment details stored successfully'], 200);
-            }
-
-            // Handle free event logic
-            if ($eventRecord->fees == 0) {
-                // Register the member for the event
-                $registration = new EventRegister();
-                $registration->memberId = $memberId;
-                $registration->eventId = $eventId;
-                $registration->save();
-
-                return view('conquer.mainPage.thankYou', [
-                    'eventId' => $request->eventId,
-                ])->with('success', 'Your information was submitted successfully!');
-            }
-
-            // Other logic (sending confirmation email, etc.)
-            return view('conquer.mainPage.thankYou', compact('memberId', 'eventId'))
-                ->with('success', 'You have successfully registered for the event.');
-
-        } else {
-            // Authentication failed
-            return redirect()->back()->withErrors([
-                'email' => 'The provided credentials do not match our records.',
-            ])->withInput();
+            // Redirect back with an error message
+            return redirect()->back()->with('error', 'An unexpected error occurred. Please try again later.');
         }
-    } catch (\Exception $e) {
-        // Log the error for debugging purposes
-        Log::error('Error during event login: ' . $e->getMessage(), [
-            'request_data' => $request->all(),
-            'exception' => $e
-        ]);
-
-        // Redirect back with an error message
-        return redirect()->back()->with('error', 'An unexpected error occurred. Please try again later.');
     }
-}
 
 
 
@@ -570,12 +554,12 @@ public function conEventLogin(Request $request)
             ]);
 
             // Check if the visitor already exists in the Visitors table
-            $existingVisitor = Visitor::where('email', $request->email)->first();
+            $existingVisitor = User::where('email', $request->email)->first();
 
             if ($existingVisitor) {
                 // Check if they are already registered for this event
                 $alreadyRegistered = VisitorEventRegister::where('eventId', $request->eventId)
-                    ->where('visitorId', $existingVisitor->id)
+                    ->where('userId', $existingVisitor->id)
                     ->exists();
 
                 if ($alreadyRegistered) {
@@ -587,16 +571,25 @@ public function conEventLogin(Request $request)
             }
 
             // Create a new visitor record if not already in the Visitors table
-            $visitor = new Visitor();
+            $visitor = new User();
             $visitor->firstName = $request->firstName;
             $visitor->lastName = $request->lastName;
             $visitor->email = $request->email;
-            $visitor->mobileNo = $request->mobileNo;
-            $visitor->birthDate = $request->birthDate;
-            $visitor->gender = $request->gender;
-            $visitor->businessCategory = $request->businessCategory;
+            $visitor->contactNo = $request->mobileNo;
             $visitor->password = bcrypt(123456); // Default password
             $visitor->status = 'Active';
+            $visitor->save();
+            $visitor->assignRole('Visitor');
+
+            $visitorDetails = new VisitorsDetails();
+            $visitorDetails->userId = $visitor->id;
+            $visitorDetails->firstName = $request->firstName;
+            $visitorDetails->lastName = $request->lastName;
+            $visitorDetails->email = $request->email;
+            $visitorDetails->mobileNo = $request->mobileNo;
+            $visitorDetails->birthDate = $request->birthDate;
+            $visitorDetails->gender = $request->gender;
+            $visitorDetails->businessCategory = $request->businessCategory;
 
             // Handle business category
             if ($request->businessCategory === 'other') {
@@ -604,13 +597,14 @@ public function conEventLogin(Request $request)
                 $business = BusinessCategory::firstOrCreate(
                     ['categoryName' => $request->otherCategory]
                 );
-                $visitor->businessCategory = $business->id;
+                $visitorDetails->businessCategory = $business->id;
             } else {
-                $visitor->businessCategory = $request->businessCategory;
+                $visitorDetails->businessCategory = $request->businessCategory;
             }
 
-            // Save the new visitor
-            $visitor->save();
+            $visitorDetails->isUser = 'Yes';
+            $visitorDetails->status = 'Active';
+            $visitorDetails->save();
 
             // Fetch the event details
             $eventRecord = Event::find($request->eventId);
@@ -623,7 +617,7 @@ public function conEventLogin(Request $request)
                 // Create a new Razorpay record
                 $razorpay = new Razorpay();
                 $razorpay->r_payment_id = $request->paymentId;
-                $razorpay->user_email = null;
+                $razorpay->user_email = $visitor->email;
                 $razorpay->amount = $request->amount / 100;
                 $razorpay->save();
             }

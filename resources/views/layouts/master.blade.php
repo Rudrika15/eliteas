@@ -65,12 +65,20 @@
             <i class="bi bi-list toggle-sidebar-btn mt-2"></i>
         </div><!-- End Logo -->
         <!-- Start Search Bar -->
-        <div class="search-bar d-flex">
-            <a class="search-form d-flex align-items-center" href="{{ route('search') }}">
-                <input type="text" name="query" style="width: 310px;" placeholder="Click Here to Go for Search Member" title="Enter search keyword">
+        {{-- <a class="search-form d-flex align-items-center" style="margin-left: 150px" href="{{ route('search') }}">
                 <button type="submit" title="Search"><i class="bi bi-search"></i>
                 </button>
+            </a> --}}
+
+
+        <div class="header-info ms-2 me-3 d-flex align-items-center gap-2 ms-5 text-nowrap px-3 rounded-3">
+            <a class="search-form d-flex align-items-center" style="margin-left: 30px" href="{{ route('search') }}">
+                <button type="submit" title="Search" style="color: white; font-weight: bold;">Click To Search
+                <i class="bi bi-search" style="color: white; "></i></button>
             </a>
+        </div>
+
+        <div class="search-bar d-flex">
 
             <div class="header-info ms-2 me-3 d-flex align-items-center gap-2 ms-5 text-nowrap px-3 rounded-3">
                 <span class="info-item">Members: {{ $membersCount }}</span>

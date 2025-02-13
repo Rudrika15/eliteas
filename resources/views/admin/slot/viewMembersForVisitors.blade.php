@@ -193,31 +193,50 @@
                     <div class="btn-container">
                         @if (isset($visitorsUsersData->members->id))
                             <a href="{{ route('viewMember.profile', $visitorsUsersData->members->id) }}" class="btn-view-profile">View Profile</a>
-                        @else
+                        @elseif (isset($visitorsUsersData->visitors->id))
                             <a href="{{ route('viewMember.profileUser', $visitorsUsersData->visitors->id) }}" class="btn-view-profile">View Profile</a>
                         @endif
 
-                        @if (isset($event) && $event->slot_date)
+                        {{-- @if (isset($event) && $event->slot_date)
                             @php
                                 $visitorUserId = $visitorsUsersData->members->id ?? $visitorsUsersData->visitors->id;
-                                $sessionVisitor = session('visitor_id');
+                                $visitor = Auth::user()->id;
 
                                 // Check if a booking exists for the authenticated user and the selected person
-                                $booking = \App\Models\SlotBooking::where(function ($query) use ($event, $visitorUserId, $sessionVisitor) {
-                                    $query
-                                        ->where('eventId', $event->id)
-                                        ->where('visitorId', $sessionVisitor)
-                                        ->where('regMemberId', $visitorUserId);
+                                $booking = \App\Models\SlotBooking::where(function ($query) use ($event, $visitorUserId, $visitor) {
+                                    $query->where('eventId', $event->id)->where('visitorId', $visitor)->where('regMemberId', $visitorUserId);
                                 })
-                                    ->orWhere(function ($subQuery) use ($sessionVisitor, $visitorUserId, $event) {
-                                        $subQuery
-                                            ->where('eventId', $event->id)
-                                            ->where('visitorId', $visitorUserId)
-                                            ->where('regMemberId', $sessionVisitor);
+                                    ->orWhere(function ($subQuery) use ($visitor, $visitorUserId, $event) {
+                                        $subQuery->where('eventId', $event->id)->where('visitorId', $visitorUserId)->where('regMemberId', $visitor);
                                     })
                                     ->first(); // Retrieve the first booking if it exists
                             @endphp
-                        @endif
+                        @endif --}}
+
+                        @php
+                            $visitorUserId = null;
+
+                            if (!empty($visitorsUsersData)) {
+                                $visitorUserId = $visitorsUsersData->members->id ?? ($visitorsUsersData->visitors->id ?? null);
+                            }
+
+                            $visitor = Auth::user()->id ?? null; // Ensure Auth user exists
+
+                            // Proceed only if $visitorUserId and $visitor are valid
+                            if ($visitorUserId && $visitor) {
+                                $booking = \App\Models\SlotBooking::where(function ($query) use ($event, $visitorUserId, $visitor) {
+                                    $query->where('eventId', $event->id)->where('visitorId', $visitor)->where('regMemberId', $visitorUserId);
+                                })
+                                    ->orWhere(function ($subQuery) use ($visitor, $visitorUserId, $event) {
+                                        $subQuery->where('eventId', $event->id)->where('visitorId', $visitorUserId)->where('regMemberId', $visitor);
+                                    })
+                                    ->first();
+                            } else {
+                                $booking = null; // No valid booking found
+                            }
+                        @endphp
+
+
 
                         @if (!$booking)
                             <!-- Show Slot Booking Button if no booking exists -->
@@ -249,7 +268,7 @@
                                             <span>{{ $slotData->start_time }} - {{ $slotData->end_time }}</span>
                                             <form action="{{ route('slotbooking.visitor', $slotData->id) }}" method="POST">
                                                 @csrf
-                                                <input type="hidden" name="visitorId" value="{{ session('visitor_id') }}">
+                                                <input type="hidden" name="visitorId" value="{{ Auth::user()->id }}">
                                                 <input type="hidden" name="eventId" value="{{ $event->id }}">
                                                 <input type="hidden" name="slotId" value="{{ $slotData->id }}">
                                                 @if ($visitorsUsersData->type == 'member')
@@ -263,7 +282,7 @@
                                                     $authUserFree = !\App\Models\SlotBooking::where('eventId', $event->id)
                                                         ->where('slotId', $slotData->id)
                                                         ->where(function ($query) {
-                                                            $query->where('visitorId', session('visitor_id'))->orWhere('regMemberId', session('visitor_id'));
+                                                            $query->where('visitorId', Auth::user()->id)->orWhere('regMemberId', Auth::user()->id);
                                                         })
                                                         ->exists();
 
@@ -273,12 +292,19 @@
                                                     //         $query->where('visitorId', $visitorsUsersData->id)->orWhere('regMemberId', $visitorsUsersData->id);
                                                     //     })
                                                     //     ->exists();
-                                                    $selectedUserFree = App\Models\SlotBooking::where('eventId', $event->id)
-                                                        ->where('slotId', $slotData->id)
-                                                        ->where('regMemberId', $visitorsUsersData->memberId)
-                                                        ->orWhere('visitorId', $visitorsUsersData->id)
-                                                        ->first();
+                                                    // $selectedUserFree = App\Models\SlotBooking::where('eventId', $event->id)->where('slotId', $slotData->id)->where('regMemberId', $visitorsUsersData->memberId)->orWhere('visitorId', $visitorsUsersData->id)->first();
 
+                                                    $selectedUserFree = \App\Models\SlotBooking::where('eventId', $event->id)
+                                                        ->where('slotId', $slotData->id)
+                                                        ->where(function ($query) use ($visitorsUsersData) {
+                                                            // Ensure we check based on whether the selected user is a member or a visitor
+                                                            if ($visitorsUsersData->type == 'member') {
+                                                                $query->where('userId', $visitorsUsersData->members->userId)->orWhere('regMemberId', $visitorsUsersData->members->userId);
+                                                            } elseif ($visitorsUsersData->type == 'visitor') {
+                                                                $query->where('visitorId', $visitorsUsersData->visitors->id)->orWhere('regMemberId', $visitorsUsersData->visitors->id);
+                                                            }
+                                                        })
+                                                        ->exists();
                                                 @endphp
                                                 <button type="submit" class="btn-slot-booking" {{ !$authUserFree || $selectedUserFree ? 'disabled' : '' }}>
                                                     @if (!$authUserFree)

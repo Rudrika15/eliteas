@@ -184,21 +184,15 @@
 
                         @php
                             $booking = \App\Models\SlotBooking::where(function ($query) use ($event, $visitorsUsersData) {
-                                $authUserId = auth()->user()->member->id;
-                                $visitorUserId = $visitorsUsersData->members->id ?? $visitorsUsersData->visitors->id;
+                                $authUserId = auth()->user()->id;
+                                $visitorUserId = $visitorsUsersData->members->userId ?? $visitorsUsersData->visitors->id;
 
                                 $query
                                     ->where(function ($subQuery) use ($authUserId, $visitorUserId, $event) {
-                                        $subQuery
-                                            ->where('eventId', $event->id)
-                                            ->where('userId', $authUserId)
-                                            ->where('regMemberId', $visitorUserId);
+                                        $subQuery->where('eventId', $event->id)->where('userId', $authUserId)->where('regMemberId', $visitorUserId);
                                     })
                                     ->orWhere(function ($subQuery) use ($authUserId, $visitorUserId, $event) {
-                                        $subQuery
-                                            ->where('eventId', $event->id)
-                                            ->where('userId', $visitorUserId)
-                                            ->where('regMemberId', $authUserId);
+                                        $subQuery->where('eventId', $event->id)->where('userId', $visitorUserId)->where('regMemberId', $authUserId);
                                     });
                             })->first();
                         @endphp
@@ -239,28 +233,34 @@
                                             <span>{{ $slotData->start_time }} - {{ $slotData->end_time }}</span>
                                             <form action="{{ route('slotbooking.member', $slotData->id) }}" method="POST">
                                                 @csrf
-                                                <input type="hidden" name="eventId" value="{{ $event->id }}">
-                                                <input type="hidden" name="slotId" value="{{ $slotData->id }}">
+                                                <input type="hidsden" name="eventId" value="{{ $event->id }}">
+                                                <input type="hidsden" name="slotId" value="{{ $slotData->id }}">
                                                 @if ($visitorsUsersData->type == 'member')
-                                                    <input type="hidden" name="regMemberId" value="{{ $visitorsUsersData->memberId }}">
+                                                    <input type="hiddden" name="regMemberId" value="{{ $visitorsUsersData->members->userId }}">
                                                 @endif
                                                 @if ($visitorsUsersData->type == 'visitor')
-                                                    <input type="hidden" name="regMemberId" value="{{ $visitorsUsersData->visitorId }}">
+                                                    <input type="hiddden" name="regMemberId" value="{{ $visitorsUsersData->visitors->id }}">
                                                 @endif
                                                 @php
                                                     $authUserFree = !\App\Models\SlotBooking::where('eventId', $event->id)
                                                         ->where('slotId', $slotData->id)
                                                         ->where(function ($query) {
-                                                            $query->where('userId', Auth::user()->member->id)->orWhere('regMemberId', Auth::user()->member->id);
+                                                            $query->where('userId', Auth::user()->id)->orWhere('regMemberId', Auth::user()->id);
                                                         })
                                                         ->exists();
-
                                                     $selectedUserFree = \App\Models\SlotBooking::where('eventId', $event->id)
                                                         ->where('slotId', $slotData->id)
-                                                        ->where('regMemberId', $visitorsUsersData->memberId)
-                                                        ->orWhere('userId', $visitorsUsersData->id)
-                                                        ->first();
+                                                        ->where(function ($query) use ($visitorsUsersData) {
+                                                            // Ensure we check based on whether the selected user is a member or a visitor
+                                                            if ($visitorsUsersData->type == 'member') {
+                                                                $query->where('userId', $visitorsUsersData->members->userId)->orWhere('regMemberId', $visitorsUsersData->members->userId);
+                                                            } elseif ($visitorsUsersData->type == 'visitor') {
+                                                                $query->where('visitorId', $visitorsUsersData->visitors->id)->orWhere('regMemberId', $visitorsUsersData->visitors->id);
+                                                            }
+                                                        })
+                                                        ->exists();
                                                 @endphp
+
                                                 <button type="submit" class="btn-slot-booking" {{ !$authUserFree || $selectedUserFree ? 'disabled' : '' }}>
                                                     @if (!$authUserFree)
                                                         You are busy

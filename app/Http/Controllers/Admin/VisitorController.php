@@ -73,7 +73,8 @@ class VisitorController extends Controller
 
     public function index(Request $request)
     {
-        $query = VisitorsDetails::query();
+        // $query = VisitorsDetails::query();
+        $query = VisitorsDetails::where('isUser', 'No'); // Filter where isUser = 'No'
 
         // Apply filters
         if ($request->filled('name')) {
@@ -94,7 +95,6 @@ class VisitorController extends Controller
                 $q->where('categoryName', $request->business_category);
             });
         }
-
 
         if ($request->filled('city')) {
             $query->where('city', $request->city);

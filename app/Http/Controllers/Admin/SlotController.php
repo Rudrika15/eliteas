@@ -10,6 +10,7 @@ use App\Models\Slot;
 use App\Models\SlotBooking;
 use App\Models\Visitor;
 use App\Models\VisitorEventRegister;
+use App\Models\VisitorsDetails;
 use App\Utils\ErrorLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -72,7 +73,6 @@ class SlotController extends Controller
                 ->where('status', 'Active')
                 ->get();
 
-
             return view('admin.slot.viewMembers', compact('users', 'event', 'slots', 'visitorsUsers', 'slotBooking'));
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, $request->fullUrl());
@@ -83,22 +83,23 @@ class SlotController extends Controller
     public function userListViewforVisitors(Request $request, $id)
     {
         try {
+
             $event = Event::findOrFail($id);
 
             $users = EventRegister::where('eventId', $id)
                 ->where('status', 'Active')
                 ->get()
                 ->map(function ($user) {
-                    $user->type = 'member'; // Add a type key
+                    $user->type = 'member';
                     return $user;
                 });
 
             $visitors = VisitorEventRegister::where('eventId', $id)
                 ->where('status', 'Active')
-                ->where('visitorId', '!=', session()->get('visitor_id'))
+                ->where('visitorId', '!=', Auth::user()->id)
                 ->get()
                 ->map(function ($visitor) {
-                    $visitor->type = 'visitor'; // Add a type key
+                    $visitor->type = 'visitor';
                     return $visitor;
                 });
 
@@ -156,7 +157,7 @@ class SlotController extends Controller
     {
         try {
             $id = $request->id;
-            $visitor = Visitor::find($id);
+            $visitor = VisitorsDetails::where('userId', $id)->first();
             return view('visitor.userProfileView', compact('visitor'));
         } catch (\Throwable $th) {
             // Log error and return a server error view
@@ -285,7 +286,7 @@ class SlotController extends Controller
             $slot->eventId = $request->eventId;
             $slot->slotId = $request->slotId;
             $slot->visitorId = $request->visitorId;
-            $slot->regMemberVisitorId = $request->regMemberId;
+            $slot->regMemberId = $request->regMemberId;
             $slot->date = date('Y-m-d');
             $slot->bookingStatus = 'Pending';
             $slot->status = 'Active';
@@ -306,7 +307,7 @@ class SlotController extends Controller
     {
         try {
 
-            $visitorId = session()->get('visitor_id');
+            $visitorId = Auth::user()->id;
 
             $event = Event::find($id);
 
@@ -327,7 +328,7 @@ class SlotController extends Controller
     {
         try {
 
-            $visitorId = session()->get('visitor_id');
+            $visitorId = Auth::user()->id;
 
             $event = Event::find($id);
 
@@ -352,7 +353,7 @@ class SlotController extends Controller
     {
         try {
 
-            $memberId = Auth::user()->member->id;
+            $memberId = Auth::user()->member->userId;
 
             $event = Event::find($id);
 
@@ -373,7 +374,7 @@ class SlotController extends Controller
     public function slotBookingMember(Request $request)
     {
 
-        $user = auth()->user()->member->id;
+        $user = auth()->user()->id;
 
         $this->validate($request, [
             'slotId' => 'required',

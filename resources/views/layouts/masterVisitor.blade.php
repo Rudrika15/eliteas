@@ -19,9 +19,7 @@
 
     <!-- Google Fonts -->
     <link href="https://fonts.gstatic.com" rel="preconnect">
-    <link
-        href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
 
     <!-- Vendor CSS Files -->
     <link href="{{ asset('vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet" />
@@ -37,8 +35,7 @@
 
 
 
-    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
-        crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
 
 
 
@@ -58,8 +55,8 @@
 
         <div class="d-flex justify-content-between">
             {{-- <a href="{{ route('home') }}" class="logo"> --}}
-                {{-- <img src="assets/img/logo.png" alt=""> --}}
-                <img src="{{ asset('img/logo2.jpg') }}" alt="UBN" width="100">
+            {{-- <img src="assets/img/logo.png" alt=""> --}}
+            <img src="{{ asset('img/logo2.jpg') }}" alt="UBN" width="100">
             </a>
             <i class="bi bi-list toggle-sidebar-btn mt-2"></i>
         </div><!-- End Logo -->
@@ -71,21 +68,20 @@
 
                 <li class="nav-item dropdown pe-3">
 
-                    <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#"
-                        data-bs-toggle="dropdown">
+                    <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
                         @if (isset(Auth::user()->profile_photo))
                             {{-- <img class="img-profile rounded-circle" src="{{url('public/img/logo.png')}}"> --}}
                             <img class="img-profile rounded-circle" src="public/img/logo.png">
                         @else
-                            <span
-                                class="rounded-circle text-center p-2 fs-5 badge logobadge d-inline-block text-light h-50"
-                                style="width: 38px !important;">
+                            <span class="rounded-circle text-center p-2 fs-5 badge logobadge d-inline-block text-light h-50" style="width: 38px !important;">
                             </span>
                         @endif
                         {{-- <span class="d-none d-md-block dropdown-toggle ps-2">{{Auth::user()->name}}</span> --}}
-                        <span class="d-md-none">Hello, {{ session('visitor_id') }}</span>
+                        <span class="d-md-none">Hello, {{ Auth::user()->firstName }}</span>
+
+
                         <span class="d-none d-md-block dropdown-toggle ps-2">Hello,
-                            {{ session('visitor_name') }}</span>
+                            {{ Auth::user()->firstName ?? '-' }}</span>
                     </a><!-- End Profile Iamge Icon -->
 
                     <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
@@ -98,16 +94,16 @@
                             <hr class="dropdown-divider">
                         </li>
                         {{-- @role('Member') --}}
-                            <li>
-                                <a class="dropdown-item d-flex align-items-center" href="{{ route('visitor.profile') }}">
-                                    <i class="bi bi-person" style="color: #e76a35"></i>
-                                    <span style="font-weight: bold; color: #1d2856">My Profile</span>
-                                </a>
-                            </li>
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center" href="{{ route('visitor.profile') }}">
+                                <i class="bi bi-person" style="color: #e76a35"></i>
+                                <span style="font-weight: bold; color: #1d2856">My Profile</span>
+                            </a>
+                        </li>
 
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
                         {{-- @endrole --}}
 
                         @role('Admin')
@@ -168,11 +164,11 @@
         <ul class="sidebar-nav" id="sidebar-nav">
 
             <li class="nav-item">
-                <a class="nav-link collapsed" href="{{route('visitor.dashboard')}}">
+                <a class="nav-link collapsed" href="{{ route('visitor.dashboard') }}">
                     <i class="bi bi-grid" style="color: #e76a35"></i>
                     <span style="color: #1d2865 ;">Dashboard</span>
                 </a>
-                <a class="nav-link collapsed" href="{{route('visitor.eventIndex')}}">
+                <a class="nav-link collapsed" href="{{ route('visitor.eventIndex') }}">
                     <i class="bi bi-calendar-event" style="color: #e76a35"></i>
                     <span style="color: #1d2865 ;">Event</span>
                 </a>
@@ -180,7 +176,7 @@
 
             <!-- End Charts Nav -->
 
-                @include('layouts.visitorMenu')
+            @include('layouts.visitorMenu')
 
             <!-- End Tables Nav -->
 
@@ -253,8 +249,7 @@
         </div>
     </footer><!-- End Footer -->
 
-    <a href="#" class="back-to-top d-flex align-items-center justify-content-center "
-        style="background-color: #1d2865; "><i class="bi bi-arrow-up-short"></i></a>
+    <a href="#" class="back-to-top d-flex align-items-center justify-content-center " style="background-color: #1d2865; "><i class="bi bi-arrow-up-short"></i></a>
 
     <!-- Vendor JS Files -->
     <script>
