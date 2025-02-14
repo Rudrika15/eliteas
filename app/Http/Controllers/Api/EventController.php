@@ -60,7 +60,7 @@ class EventController extends Controller
     public function memberSlotBookingRequests(Request $request, $id)
     {
         try {
-            $memberId = Auth::user()->member->id;
+            $memberId = Auth::user()->id;
             // Fetch the event
             $event = Event::where('id', $id)->where('eventStatus', 'Publish')->first();
             if (!$event) {
@@ -111,7 +111,6 @@ class EventController extends Controller
                 $th,
                 $request->fullUrl()
             );
-
             return Utils::errorResponse(
                 ['error' => 'Failed to update booking status. Please try again.'],
                 'Internal Server Error',
