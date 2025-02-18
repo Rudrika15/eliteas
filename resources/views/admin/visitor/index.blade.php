@@ -65,8 +65,28 @@
                                 @endforeach
                             </select>
                         </div>
+                        <div class="form-group">
+                            <label for="status"><b>Status</b></label>
+                            <select id="status" name="status" class="form-select">
+                                <option value="" selected>Select Status</option>
+                                <option value="Active" {{ request('status') == 'Active' ? 'selected' : '' }}>Active</option>
+                                <option value="InActive" {{ request('status') == 'InActive' ? 'selected' : '' }}>InActive</option>
+                                <option value="Hold" {{ request('status') == 'Hold' ? 'selected' : '' }}>Hold</option>
+                                <option value="Converted" {{ request('status') == 'Converted' ? 'selected' : '' }}>Converted</option>
+                                <option value="Interested" {{ request('status') == 'Interested' ? 'selected' : '' }}>Interested</option>
+                            </select>
+                        </div>
                         <button type="submit" class="btn btn-bg-blue">Filter</button>
                         <a href="{{ route('visitors.index') }}" class="btn btn-bg-orange">Reset</a>
+
+                        <!-- Export Button -->
+                        <button type="submit" name="export" value="excel" class="btn btn-success">Export to Excel</button>
+
+                        {{-- <button type="submit" name="export" value="export" class="btn btnsuccess btn-sm mt-2 btn-tooltip">
+                            <i class="bi bi-excel"></i>
+                            <span class="btn-text">Export Excel</span>
+                        </button> --}}
+
                     </form>
                 </div>
 

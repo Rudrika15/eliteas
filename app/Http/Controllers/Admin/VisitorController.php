@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exports\VisitorsExport;
 use App\Http\Controllers\Controller;
 use App\Models\BusinessCategory;
 use App\Models\VisitorRemarks;
@@ -11,6 +12,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class VisitorController extends Controller
 {
@@ -71,10 +73,44 @@ class VisitorController extends Controller
     // }
 
 
+    // public function index(Request $request)
+    // {
+    //     // $query = VisitorsDetails::query();
+    //     $query = VisitorsDetails::where('isUser', 'No'); // Filter where isUser = 'No'
+
+    //     // Apply filters
+    //     if ($request->filled('name')) {
+    //         $query->where(function ($q) use ($request) {
+    //             $q->where('firstName', 'like', '%' . $request->name . '%')
+    //                 ->orWhere('lastName', 'like', '%' . $request->name . '%');
+    //         });
+    //     }
+
+    //     if ($request->filled('business_category')) {
+    //         $query->whereHas('bCategory', function ($q) use ($request) {
+    //             $q->where('categoryName', $request->business_category);
+    //         });
+    //     }
+
+    //     if ($request->filled('city')) {
+    //         $query->where('city', $request->city);
+    //     }
+
+    //     if ($request->filled('status')) {
+    //         $query->where('status', $request->status);
+    //     }
+
+    //     $visitors = $query->paginate(10)->appends($request->query());
+
+    //     $categories = BusinessCategory::where('status', 'Active')->pluck('categoryName', 'id');
+    //     $cities = VisitorsDetails::distinct()->pluck('city');
+
+    //     return view('admin.visitor.index', compact('visitors', 'categories', 'cities'));
+    // }
+
     public function index(Request $request)
     {
-        // $query = VisitorsDetails::query();
-        $query = VisitorsDetails::where('isUser', 'No'); // Filter where isUser = 'No'
+        $query = VisitorsDetails::where('isUser', 'No');
 
         // Apply filters
         if ($request->filled('name')) {
@@ -83,12 +119,6 @@ class VisitorController extends Controller
                     ->orWhere('lastName', 'like', '%' . $request->name . '%');
             });
         }
-
-        // if ($request->filled('business_category')) {
-        //     $query->whereHas('bCategory', function ($q) use ($request) {
-        //         $q->where('categoryName', 'like', '%' . $request->business_category . '%');
-        //     });
-        // }
 
         if ($request->filled('business_category')) {
             $query->whereHas('bCategory', function ($q) use ($request) {
@@ -100,8 +130,15 @@ class VisitorController extends Controller
             $query->where('city', $request->city);
         }
 
-        $visitors = $query->paginate(10)->appends($request->query());
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
 
+        if ($request->has('export') && $request->export == 'excel') {
+            return Excel::download(new VisitorsExport($query->get()), 'visitors.xlsx');
+        }
+
+        $visitors = $query->paginate(10)->appends($request->query());
         $categories = BusinessCategory::where('status', 'Active')->pluck('categoryName', 'id');
         $cities = VisitorsDetails::distinct()->pluck('city');
 
