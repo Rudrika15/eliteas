@@ -274,12 +274,11 @@ class EventController extends Controller
     public function eventRegisterList(Request $request, $id)
     {
         try {
-
             $event = Event::findOrFail($id);
             $registerList = EventRegister::where('eventId', $id)
                 ->with([
                     'members' => function ($query) {
-                        $query->select('id', 'firstName', 'lastName', 'profilePhoto', 'circleId', 'businessCategoryId');
+                        $query->select('id', 'userId', 'firstName', 'lastName', 'profilePhoto', 'circleId', 'businessCategoryId');
                     },
                     'members.circle' => function ($query) {
                         $query->select('id', 'circleName', 'cityId')

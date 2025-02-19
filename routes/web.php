@@ -537,7 +537,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/monthly-payments', [PaymentController::class, 'monthlyPaymentsByRole'])->name('monthly.payments');
     Route::get('/admin/monthly-payments', [PaymentController::class, 'monthlyPayments'])->name('admin.monthlyPayments');
     Route::get('/generate-payment', [PaymentController::class, 'generateMonthlyPayment'])->name('generate.payment');
-    Route::post('/update-payment-status', [PaymentController::class, 'updatePaymentStatus'])->name('update.payment.status');
+    Route::post('/update-payment-statuss', [PaymentController::class, 'updatePaymentStatus'])->name('update.payment.statuss');
     Route::post('/handle-payment', [PaymentController::class, 'handlePayment'])->name('handle.payment');
 
     //circle admin payment history

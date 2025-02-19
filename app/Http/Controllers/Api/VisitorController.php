@@ -48,259 +48,258 @@ class VisitorController extends Controller
 
     public function eventAttendance(Request $request)
     {
-    // Validate the incoming data
-    $validator = Validator::make($request->all(), [
-        'eventId' => 'required|exists:events,id',  // Ensure the event exists
-        'type' => 'required|in:user,visitor',  // Type should either be 'user' or 'visitor'
-        'userId' => 'nullable|exists:users,id',  // Optional, check if user exists
-        'visitorId' => 'nullable|exists:visitors,id',  // Optional, check if visitor exists
-    ]);
+        // Validate the incoming data
+        $validator = Validator::make($request->all(), [
+            'eventId' => 'required|exists:events,id',  // Ensure the event exists
+            'type' => 'required|in:user,visitor',  // Type should either be 'user' or 'visitor'
+            'userId' => 'nullable|exists:users,id',  // Optional, check if user exists
+            'visitorId' => 'nullable|exists:visitors,id',  // Optional, check if visitor exists
+        ]);
 
-    // If validation fails, return the response using the Utils::sendResponse method
-    if ($validator->fails()) {
-        return Utils::sendResponse($request->all(), 'Invalid Input');
-    }
-
-    // Retrieve the event
-    $event = Event::findOrFail($request->eventId);
-
-    // Case 1: If the type is 'user', mark attendance for the user
-    if ($request->type === 'user' && $request->has('userId')) {
-        $userId = $request->userId;
-        $member = Member::where('userId', $userId)->first();
-        if (!$member) {
-            return Utils::sendResponse(['error' => 'User not found'], 404);
+        // If validation fails, return the response using the Utils::sendResponse method
+        if ($validator->fails()) {
+            return Utils::sendResponse($request->all(), 'Invalid Input');
         }
 
-        // Check if the user has already registered for this event
-        $attendance = EventRegister::where('eventId', $event->id)
-                                   ->where('memberId', $member->id)
-                                   ->first();
+        // Retrieve the event
+        $event = Event::findOrFail($request->eventId);
 
-        if ($attendance) {
-            // Update attendance status or mark as present
-            $attendance->attendance = 'Present';  // Assuming you use 'status' to mark attendance
-            $attendance->save();
+        // Case 1: If the type is 'user', mark attendance for the user
+        if ($request->type === 'user' && $request->has('userId')) {
+            $userId = $request->userId;
+            $member = Member::where('userId', $userId)->first();
+            if (!$member) {
+                return Utils::sendResponse(['error' => 'User not found'], 404);
+            }
 
-            // Return response using Utils::sendResponse
-            return Utils::sendResponse([
-                'attendance' => $attendance,
-                'message' => 'User attendance marked successfully!',
-            ], 'Success');
-        } else {
-            return Utils::sendResponse([], 'User not registered for this event', 404);
+            // Check if the user has already registered for this event
+            $attendance = EventRegister::where('eventId', $event->id)
+                ->where('memberId', $member->id)
+                ->first();
+
+            if ($attendance) {
+                // Update attendance status or mark as present
+                $attendance->attendance = 'Present';  // Assuming you use 'status' to mark attendance
+                $attendance->save();
+
+                // Return response using Utils::sendResponse
+                return Utils::sendResponse([
+                    'attendance' => $attendance,
+                    'message' => 'User attendance marked successfully!',
+                ], 'Success');
+            } else {
+                return Utils::sendResponse([], 'User not registered for this event', 404);
+            }
         }
+
+        // Case 2: If the type is 'visitor', mark attendance for the visitor
+        if ($request->type === 'visitor' && $request->has('visitorId')) {
+            $visitorId = $request->visitorId;
+
+            // Check if the visitor has already registered for this event
+            $attendance = VisitorEventRegister::where('eventId', $event->id)
+                ->where('visitorId', $visitorId)
+                ->first();
+
+            if ($attendance) {
+                // Update attendance status or mark as present
+                $attendance->attendance = 'Present';  // Assuming you use 'status' to mark attendance
+                $attendance->save();
+
+                // Return response using Utils::sendResponse
+                return Utils::sendResponse([
+                    'attendance' => $attendance,
+                    'message' => 'Visitor attendance marked successfully!',
+                ], 'Success');
+            } else {
+                return Utils::sendResponse([], 'Visitor not registered for this event', 404);
+            }
+        }
+
+        // If the type is not 'user' or 'visitor', return an error response
+        return Utils::sendResponse([], 'Invalid type specified', 400);
     }
 
-    // Case 2: If the type is 'visitor', mark attendance for the visitor
-    if ($request->type === 'visitor' && $request->has('visitorId')) {
+
+    public function eventIndex(Request $request)
+    {
+
+        $events = Event::where('eventStatus', 'Publish')->where('status', 'Active')->get();
+
         $visitorId = $request->visitorId;
 
-        // Check if the visitor has already registered for this event
-        $attendance = VisitorEventRegister::where('eventId', $event->id)
-                                          ->where('visitorId', $visitorId)
-                                          ->first();
+        if (!$visitorId) {
+            return Utils::errorResponse([
+                'error' => 'Please provide visitorId.'
+            ], 'Bad Request', 400);
+        }
 
-        if ($attendance) {
-            // Update attendance status or mark as present
-            $attendance->attendance = 'Present';  // Assuming you use 'status' to mark attendance
-            $attendance->save();
+        $eventRegisterList = VisitorEventRegister::where('visitorId', $visitorId)->with('events')->with('visitors')->get();
 
-            // Return response using Utils::sendResponse
+        if (count($events) > 0) {
             return Utils::sendResponse([
-                'attendance' => $attendance,
-                'message' => 'Visitor attendance marked successfully!',
+                'events' => $events,
+                'eventRegisterList' => $eventRegisterList
             ], 'Success');
         } else {
-            return Utils::sendResponse([], 'Visitor not registered for this event', 404);
+            return Utils::errorResponse([
+                'error' => 'No events found for the visitor.'
+            ], 'Not Found', 404);
         }
     }
 
-    // If the type is not 'user' or 'visitor', return an error response
-    return Utils::sendResponse([], 'Invalid type specified', 400);
-}
+    public function getUserListForVisitors(Request $request, $id)
+    {
+        try {
+            $event = Event::find($id);
 
+            if (!$event) {
+                return Utils::errorResponse(
+                    ['error' => 'Event not found.'],
+                    'Not Found',
+                    404
+                );
+            }
 
-public function eventIndex(Request $request){
+            // Fetch active users registered for the event
+            $users = EventRegister::where('eventId', $id)
+                ->where('status', 'Active')
+                ->get()
+                ->map(function ($user) {
+                    $user->type = 'member'; // Add a type key
+                    $member = Member::where('id', $user->memberId)->first();
+                    $user->details = [
+                        'id' => $member ? $member->id : null,
+                        'firstName' => $member ? $member->firstName : null,
+                        'lastName' => $member ? $member->lastName : null,
+                        'companyName' => $member ? $member->companyName : null,
+                        'profilePhoto' => $member ? $member->profilePhoto : null,
+                    ];
+                    return $user;
+                });
 
-    $events = Event::where('eventStatus', 'Publish')->where('status', 'Active')->get();
+            // Fetch active visitors for the event excluding the current visitor
+            $visitors = VisitorEventRegister::where('eventId', $id)
+                ->where('status', 'Active')
+                ->where('visitorId', '!=', session()->get('visitor_id'))
+                ->get()
+                ->map(function ($visitor) {
+                    $visitor->type = 'visitor'; // Add a type key
+                    $visitorDetails = Visitor::where('id', $visitor->visitorId)->first();
+                    $visitor->details = [
 
-    $visitorId = $request->visitorId;
+                        'id' => $visitorDetails ? $visitorDetails->id : null,
+                        'firstName' => $visitorDetails ? $visitorDetails->firstName : null,
+                        'lastName' => $visitorDetails ? $visitorDetails->lastName : null,
+                        'profilePhoto' => $visitorDetails ? $visitorDetails->profilePhoto : null,
+                    ];
+                    return $visitor;
+                });
 
-    if(!$visitorId){
-        return Utils::errorResponse([
-            'error' => 'Please provide visitorId.'
-        ], 'Bad Request', 400);
-    }
+            // Merge users and visitors
+            $mergeredUsers = $users->merge($visitors);
 
-    $eventRegisterList = VisitorEventRegister::where('visitorId', $visitorId)->with('events')->with('visitors')->get();
+            // Fetch slot bookings and active slots
+            $slotBooking = SlotBooking::where('eventId', $id)
+                ->where('status', 'Active')
+                ->get();
 
-    if(count($events) > 0){
-        return Utils::sendResponse([
-            'events' => $events,
-            'eventRegisterList' => $eventRegisterList
-        ], 'Success');
-    } else {
-        return Utils::errorResponse([
-            'error' => 'No events found for the visitor.'
-        ], 'Not Found', 404);
-    }
-}
+            $slots = Slot::where('status', 'Active')->get();
 
-public function getUserListForVisitors(Request $request, $id)
-{
-    try {
-        $event = Event::find($id);
+            // Return the data as a JSON response
+            return Utils::sendResponse([
+                'event' => $event,
+                // 'users' => $users,
+                'allUsers' => $mergeredUsers,
+                'slotBooking' => $slotBooking,
+                'slots' => $slots
+            ], 'Success');
+        } catch (\Throwable $th) {
+            ErrorLogger::logError($th, $request->fullUrl());
 
-        if (!$event) {
             return Utils::errorResponse(
-                ['error' => 'Event not found.'],
-                'Not Found',
-                404
+                ['error' => 'An error occurred while fetching data.'],
+                'Server Error',
+                500
             );
         }
-
-        // Fetch active users registered for the event
-        $users = EventRegister::where('eventId', $id)
-            ->where('status', 'Active')
-            ->get()
-            ->map(function ($user) {
-                $user->type = 'member'; // Add a type key
-                $member = Member::where('id', $user->memberId)->first();
-                $user->details = [
-                    'id' => $member ? $member->id : null,
-                    'firstName' => $member ? $member->firstName : null,
-                    'lastName' => $member ? $member->lastName : null,
-                    'companyName' => $member ? $member->companyName : null,
-                    'profilePhoto' => $member ? $member->profilePhoto : null,
-                ];
-                return $user;
-            });
-
-        // Fetch active visitors for the event excluding the current visitor
-        $visitors = VisitorEventRegister::where('eventId', $id)
-            ->where('status', 'Active')
-            ->where('visitorId', '!=', session()->get('visitor_id'))
-            ->get()
-            ->map(function ($visitor) {
-                $visitor->type = 'visitor'; // Add a type key
-                $visitorDetails = Visitor::where('id', $visitor->visitorId)->first();
-                $visitor->details = [
-
-                    'id' => $visitorDetails ? $visitorDetails->id : null,
-                    'firstName' => $visitorDetails ? $visitorDetails->firstName : null,
-                    'lastName' => $visitorDetails ? $visitorDetails->lastName : null,
-                    'profilePhoto' => $visitorDetails ? $visitorDetails->profilePhoto : null,
-                ];
-                return $visitor;
-            });
-
-        // Merge users and visitors
-        $mergeredUsers = $users->merge($visitors);
-
-        // Fetch slot bookings and active slots
-        $slotBooking = SlotBooking::where('eventId', $id)
-            ->where('status', 'Active')
-            ->get();
-
-        $slots = Slot::where('status', 'Active')->get();
-
-        // Return the data as a JSON response
-        return Utils::sendResponse([
-            'event' => $event,
-            // 'users' => $users,
-            'allUsers' => $mergeredUsers,
-            'slotBooking' => $slotBooking,
-            'slots' => $slots
-        ], 'Success');
-    } catch (\Throwable $th) {
-        ErrorLogger::logError($th, $request->fullUrl());
-
-        return Utils::errorResponse(
-            ['error' => 'An error occurred while fetching data.'],
-            'Server Error',
-            500
-        );
     }
-}
 
 
-public function getUserListForMembers(Request $request, $id)
-{
-    try {
-        $event = Event::find($id);
+    public function getUserListForMembers(Request $request, $id)
+    {
+        try {
+            $event = Event::find($id);
 
-        if (!$event) {
+            if (!$event) {
+                return Utils::errorResponse(
+                    ['error' => 'Event not found.'],
+                    'Not Found',
+                    404
+                );
+            }
+
+            // Fetch active users excluding the authenticated user's member ID
+            $users = EventRegister::where('eventId', $id)
+                ->where('status', 'Active')
+                ->where('memberId', '!=', Auth::user()->member ? Auth::user()->member->userId : null)
+                ->get()
+                ->map(function ($user) {
+                    $user->type = 'member'; // Add a type key
+                    $member = Member::where('id', $user->memberId)->first();
+                    $user->details = [
+                        'id' => $member ? $member->id : null,
+                        'userId' => $member ? $member->userId : null,
+                        'firstName' => $member ? $member->firstName : null,
+                        'lastName' => $member ? $member->lastName : null,
+                        'companyName' => $member ? $member->companyName : null,
+                        'profilePhoto' => $member ? $member->profilePhoto : null,
+                    ];
+                    return $user;
+                });
+
+            // Fetch active visitors for the event
+            $visitors = VisitorEventRegister::where('eventId', $id)
+                ->where('status', 'Active')
+                ->get()
+                ->map(function ($visitor) {
+                    $visitor->type = 'visitor'; // Add a type key
+                    $visitorDetails = Visitor::where('id', $visitor->visitorId)->first();
+                    $visitor->details = [
+                        'id' => $visitorDetails ? $visitorDetails->id : null,
+                        'firstName' => $visitorDetails ? $visitorDetails->firstName : null,
+                        'lastName' => $visitorDetails ? $visitorDetails->lastName : null,
+                        'profilePhoto' => $visitorDetails ? $visitorDetails->profilePhoto : null,
+                    ];
+                    return $visitor;
+                });
+
+            // Merge users and visitors
+            $mergeredUsers = $users->merge($visitors);
+
+            // Fetch active slots and slot bookings for the event
+            $slots = Slot::where('status', 'Active')->get();
+            $slotBooking = SlotBooking::where('eventId', $id)
+                ->where('status', 'Active')
+                ->get();
+
+            // Return the data as a JSON response
+            return Utils::sendResponse([
+                'event' => $event,
+                // 'users' => $users,
+                'allUsers' => $mergeredUsers,
+                'slots' => $slots,
+                'slotBooking' => $slotBooking
+            ], 'Success');
+        } catch (\Throwable $th) {
+            throw $th;
+            ErrorLogger::logError($th, $request->fullUrl());
+
             return Utils::errorResponse(
-                ['error' => 'Event not found.'],
-                'Not Found',
-                404
+                ['error' => 'An error occurred while fetching data.'],
+                'Server Error',
+                500
             );
         }
-
-        // Fetch active users excluding the authenticated user's member ID
-        $users = EventRegister::where('eventId', $id)
-            ->where('status', 'Active')
-            ->where('memberId', '!=', Auth::user()->member ? Auth::user()->member->id : null)
-            ->get()
-            ->map(function ($user) {
-                $user->type = 'member'; // Add a type key
-                $member = Member::where('id', $user->memberId)->first();
-                $user->details = [
-                    'id' => $member ? $member->id : null,
-                    'firstName' => $member ? $member->firstName : null,
-                    'lastName' => $member ? $member->lastName : null,
-                    'companyName' => $member ? $member->companyName : null,
-                    'profilePhoto' => $member ? $member->profilePhoto : null,
-                ];
-                return $user;
-            });
-
-        // Fetch active visitors for the event
-        $visitors = VisitorEventRegister::where('eventId', $id)
-            ->where('status', 'Active')
-            ->get()
-            ->map(function ($visitor) {
-                $visitor->type = 'visitor'; // Add a type key
-                $visitorDetails = Visitor::where('id', $visitor->visitorId)->first();
-                $visitor->details = [
-                    'id' => $visitorDetails ? $visitorDetails->id : null,
-                    'firstName' => $visitorDetails ? $visitorDetails->firstName : null,
-                    'lastName' => $visitorDetails ? $visitorDetails->lastName : null,
-                    'profilePhoto' => $visitorDetails ? $visitorDetails->profilePhoto : null,
-                ];
-                return $visitor;
-            });
-
-        // Merge users and visitors
-        $mergeredUsers = $users->merge($visitors);
-
-        // Fetch active slots and slot bookings for the event
-        $slots = Slot::where('status', 'Active')->get();
-        $slotBooking = SlotBooking::where('eventId', $id)
-            ->where('status', 'Active')
-            ->get();
-
-        // Return the data as a JSON response
-        return Utils::sendResponse([
-            'event' => $event,
-            // 'users' => $users,
-            'allUsers' => $mergeredUsers,
-            'slots' => $slots,
-            'slotBooking' => $slotBooking
-        ], 'Success');
-    } catch (\Throwable $th) {
-        throw $th;
-        ErrorLogger::logError($th, $request->fullUrl());
-
-        return Utils::errorResponse(
-            ['error' => 'An error occurred while fetching data.'],
-            'Server Error',
-            500
-        );
     }
-}
-
-
-
 }

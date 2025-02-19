@@ -35,7 +35,7 @@
                             @endforeach
                         </select> --}}
 
-                        
+
                         <form action="{{ route('generate.payment') }}" method="GET" class="d-flex align-items-center">
 
                             <select name="circleId" class="form-select form-select-sm me-2" required>
@@ -173,7 +173,7 @@
 
                 // Send an AJAX request to update the status
                 $.ajax({
-                    url: '{{ route('update.payment.status') }}',
+                    url: '{{ route('update.payment.statuss') }}',
                     type: 'POST',
                     data: {
                         _token: '{{ csrf_token() }}',
