@@ -152,7 +152,7 @@
         </div>
     </div> --}}
 
-            <div class="row">
+            {{-- <div class="row">
 
                 @if (!empty($birthdaysToday) && $birthdaysToday->count() > 0)
                     <div class="col-md-12">
@@ -230,7 +230,7 @@
                         </div>
                     </div>
                 @endif
-            </div>
+            </div> --}}
 
 
 
@@ -639,13 +639,13 @@
                                         <h4 class="card-title">{{ $nearestEvents->title }}</h4>
                                         <p class="card-text text-muted"> <b> Total Registered Members : {{ $totalRegisterCount }}
                                             </b></p>
-
-
                                         @if ($nearestEvents->slot_date)
                                             <b class="text-muted">Slot Date :</b> {{ \Carbon\Carbon::parse($nearestEvents->slot_date)->format('j M Y') }}
                                         @endif
                                     </div>
-
+                                    {{-- <div class="col-md-3 pt-3">
+                                        <img src="{{ asset('img/logo.png') }}" alt="Event Image" class="img-fluid">
+                                    </div> --}}
                                     <div class="col-md-2 pt-3 text-muted text-end">
                                         <b>Date : </b> {{ \Carbon\Carbon::parse($nearestEvents->event_date)->format('j M Y') }}
                                         <br>
