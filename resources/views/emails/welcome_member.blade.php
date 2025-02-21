@@ -6,7 +6,7 @@ Your username is: <b>{{ $username }}</b>
 
 Your Mobile No is: <b>{{ $contactNo }}</b>
 
-{{-- Your password is: {{$password}} --}}
+Your password is: {{$password}}
 
 You can now Login with your Mobile No using <b>OTP</b>.
 
