@@ -23,8 +23,6 @@ class ConnectionController extends Controller
     {
         try {
             $userId = Auth::user()->id;
-
-
             $connections = Connection::where('memberId', $userId)
                 ->where('status', 'Pending')
                 ->with([
@@ -40,7 +38,6 @@ class ConnectionController extends Controller
             if ($connections->isEmpty()) {
                 return Utils::sendResponse([], 'No pending connections requests', 200);
             }
-
             return Utils::sendResponse(['connections' => $connections], 'My Connections Requests retrieved successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
@@ -51,8 +48,6 @@ class ConnectionController extends Controller
         try {
 
             $userId = Auth::user()->id;
-
-
             $connections = Connection::where('memberId', $userId)
                 ->where('status', 'Pending')
                 ->with([
@@ -68,7 +63,6 @@ class ConnectionController extends Controller
             if ($connections->isEmpty()) {
                 return Utils::sendResponse([], 'No pending connections requests', 200);
             }
-
             return Utils::sendResponse(['connections' => $connections], 'My Connections Requests retrieved successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
@@ -78,8 +72,7 @@ class ConnectionController extends Controller
     public function myConnections(Request $request)
     {
         try {
-            $userId = Auth::id();
-
+            $userId = Auth::user()->id;
             // Fetch connections where the authenticated user is either the userId or memberId
             $connections = Connection::where(function ($query) use ($userId) {
                 $query->where('userId', $userId)
@@ -92,7 +85,6 @@ class ConnectionController extends Controller
                         ->with('user:id,email,firstName,lastName');
                 }])
                 ->get();
-
             // Include connected user's details for convenience
             // $connections->each(function ($connection) {
             //     $connection->connectedUser = $connection->connected_user;
@@ -108,13 +100,10 @@ class ConnectionController extends Controller
         try {
             $userId = Auth::user()->id;
             $memberId = $request->input('memberId');
-
             $isExist = Connection::where('memberId', $memberId)->where('userId', $userId)->first();
-
             if ($isExist) {
                 return Utils::sendResponse(['message' => 'You have already sent the request'], 200);
             }
-
             $connections = new Connection();
             $connections->memberId = $memberId;
             $connections->userId = $userId;
@@ -123,11 +112,9 @@ class ConnectionController extends Controller
 
             // Fetch the name of the user with the provided memberId
             $member = User::find($memberId);
-
             if (!$member) {
                 return Utils::errorResponse(['message' => 'Member not found'], 'Not Found', 404);
             }
-
             $memberName = $member->firstName . ' ' . $member->lastName;
 
             // Send notification to all users
@@ -283,18 +270,66 @@ class ConnectionController extends Controller
     }
 
 
+    // public function viewMemberProfile(Request $request)
+    // {
+    //     try {
+
+    //         $user = Auth::user()->id;
+    //         $member = Member::where('userId', $request->input('userId'))
+    //             ->with('user', 'circle', 'billingAddress', 'contactDetails', 'topsProfile', 'connections', 'bCategory')
+    //             ->first();
+
+    //         if ($member) {
+    //             // Check if the authenticated user's circleId matches the member's circleId
+    //             $authUserCircleId = Member::where('userId', $user)->value('circleId');
+    //             $member->status = ($authUserCircleId == $member->circleId) ? 'Connected' : null;
+
+    //             $status = $member->connections->isEmpty() ? null : $member->connections->first()->status;
+    //             $member->status = $status == 'Accepted' ? 'Connected' : ($status == 'Pending' ? 'Pending' : null);
+
+    //             // Get businessCategoryName
+    //             $member->businessCategoryName = $member->bCategory ? $member->bCategory->categoryName : null;
+    //         }
+
+    //         return Utils::sendResponse([
+    //             'message' => 'Member Profile',
+    //             'connectionStatus ' => $member ? $member->connections->first() : null,
+    //             'member' => $member
+    //         ], 200);
+    //     } catch (\Throwable $th) {
+    //         return Utils::errorResponse([
+    //             'error' => $th->getMessage()
+    //         ], 'Internal Server Error', 500);
+    //     }
+    // }
+
+
     public function viewMemberProfile(Request $request)
     {
         try {
+            $authUserId = Auth::user()->id; // Get authenticated user ID
 
             $member = Member::where('userId', $request->input('userId'))
                 ->with('user', 'circle', 'billingAddress', 'contactDetails', 'topsProfile', 'connections', 'bCategory')
                 ->first();
 
             if ($member) {
-                // Determine the status of the connection
-                $status = $member->connections->isEmpty() ? null : $member->connections->first()->status;
-                $member->status = $status == 'Accepted' ? 'Connected' : ($status == 'Pending' ? 'Pending' : null);
+                // Get authenticated user's circleId
+                $authUserCircleId = Member::where('userId', $authUserId)->value('circleId');
+
+                // Check if both users belong to the same circle
+                $isSameCircle = ($authUserCircleId == $member->circleId);
+
+                // Check connection status from `connections` relationship
+                $connectionStatus = $member->connections->first() ? $member->connections->first()->status : null;
+
+                if ($isSameCircle || $connectionStatus === 'Accepted') {
+                    $member->status = 'Connected';
+                } elseif ($connectionStatus === 'Pending') {
+                    $member->status = 'Pending';
+                } else {
+                    $member->status = null;
+                }
 
                 // Get businessCategoryName
                 $member->businessCategoryName = $member->bCategory ? $member->bCategory->categoryName : null;
@@ -302,7 +337,7 @@ class ConnectionController extends Controller
 
             return Utils::sendResponse([
                 'message' => 'Member Profile',
-                'connectionStatus ' => $member ? $member->connections->first() : null,
+                'connectionStatus' => $connectionStatus,
                 'member' => $member
             ], 200);
         } catch (\Throwable $th) {

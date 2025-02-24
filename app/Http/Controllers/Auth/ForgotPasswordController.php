@@ -47,6 +47,12 @@ class ForgotPasswordController extends Controller
                 'email' => 'required|email|exists:users',
             ]);
 
+            $user = User::whereEmail($request->email)->first();
+
+            if (!$user) {
+                return back()->withErrors(['email' => 'Email is not matched with our records!']);
+            }
+
             $token = Str::random(64);
 
             DB::table('password_resets')->insert([
@@ -59,10 +65,9 @@ class ForgotPasswordController extends Controller
                 $message->to($request->email);
                 $message->subject('Reset Password');
             });
-
             return back()->with('message', 'Email has been sent to your email address!');
         } catch (\Throwable $th) {
-            // throw $th;
+            throw $th;
             ErrorLogger::logError($th, request()->fullurl());
             return view('servererror');
         }

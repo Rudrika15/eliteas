@@ -51,7 +51,7 @@ class CircleMemberController extends Controller
         $this->middleware('permission:circle-member-edit', ['only' => ['edit', 'update']]);
         $this->middleware('permission:circle-member-delete', ['only' => ['delete']]);
         $this->middleware('permission:circle-member-filter', ['only' => ['filter']]);
-        $this->middleware('permission:circle-member-payment', ['only' => ['memberPayment']]);
+        // $this->middleware('permission:circle-member-payment', ['only' => ['memberPayment']]);
         $this->middleware('permission:get-membership-amount', ['only' => ['getMembershipAmount']]);
         $this->middleware('permission:circle-members-activity', ['only' => ['activity']]);
         $this->middleware('permission:circle-member-assignRole', ['only' => ['assignRole']]);
