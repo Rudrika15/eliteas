@@ -363,7 +363,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     //Personal Details update
     Route::get('v1/user/profile', [ApiController::class, 'profile']);
-    Route::post('v1/user/member/update', [ApiController::class, 'memberUpdate']);
+    Route::post('v1/user/member/update', [ApiController::class, 'meberUpdate']);
     Route::post('v1/user/member/updateBillingAddress', [ApiController::class, 'billingAddressUpdate']);
     Route::post('v1/user/member/updateContactDetails', [ApiController::class, 'contactDetailsUpdate']);
     Route::post('v1/user/member/updateTopsProfile', [ApiController::class, 'topsProfileUpdate']);

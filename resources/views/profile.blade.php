@@ -26,16 +26,13 @@
     @endif
 
 
-
-
     <div class="card">
         <div class="card-body d-flex justify-content-between align-items-center">
             <h5 class="card-title">My Profile</h5>
         </div>
 
         <!-- Floating Labels Form -->
-        <form class="m-3 needs-validation" id="memberForm" enctype="multipart/form-data" method="post"
-            action="{{ route('member.update', $member->userId) }}" novalidate>
+        <form class="m-3 needs-validation" id="memberForm" enctype="multipart/form-data" method="post" action="{{ route('member.update', $member->userId) }}" novalidate>
             @csrf
 
             @if ($errors->has('file'))
@@ -50,19 +47,16 @@
                 <!-- Section 1 -->
                 <div class="accordion-item mt-3">
                     <h2 class="accordion-header" id="headingOne">
-                        <button class="accordion-button" type="button" data-bs-toggle="collapse"
-                            data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
                             Personal Information
                         </button>
                     </h2>
-                    <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
-                        data-bs-parent="#accordionExample">
+                    <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
                         <div class="accordion-body">
                             <div class="row">
                                 <div class="col-md-6 mt-3">
                                     <div class="form-floating">
-                                        <select class="form-select @error('title') is-invalid @enderror" id="title"
-                                            name="title">
+                                        <select class="form-select @error('title') is-invalid @enderror" id="title" name="title">
                                             <option value="" disabled selected>Select Title</option>
                                             <option value="Mr" {{ $member->title == 'Mr' ? 'selected' : '' }}>Mr
                                             </option>
@@ -83,9 +77,7 @@
                                 </div>
                                 <div class="col-md-6 mt-3">
                                     <div class="form-floating">
-                                        <input type="text" class="form-control @error('firstName') is-invalid @enderror"
-                                            id="firstName" name="firstName" value="{{ $user->firstName ?? '-' }}"
-                                            placeholder="First Name">
+                                        <input type="text" class="form-control @error('firstName') is-invalid @enderror" id="firstName" name="firstName" value="{{ $user->firstName ?? '-' }}" placeholder="First Name">
                                         <label for="firstName">First Name</label>
                                         @error('firstName')
                                             <div class="invalid-tooltip">
@@ -96,9 +88,7 @@
                                 </div>
                                 <div class="col-md-6 mt-3">
                                     <div class="form-floating">
-                                        <input type="text" class="form-control @error('lastName') is-invalid @enderror"
-                                            id="lastName" name="lastName" value="{{ $user->lastName ?? '-' }}"
-                                            placeholder="Last Name">
+                                        <input type="text" class="form-control @error('lastName') is-invalid @enderror" id="lastName" name="lastName" value="{{ $user->lastName ?? '-' }}" placeholder="Last Name">
                                         <label for="lastName">Last Name</label>
                                         @error('lastName')
                                             <div class="invalid-tooltip">
@@ -110,9 +100,7 @@
 
                                 <div class="col-md-6 mt-3">
                                     <div class="form-floating">
-                                        <input type="text" class="form-control @error('email') is-invalid @enderror"
-                                            id="email" name="email" value="{{ $user->email ?? '-' }}"
-                                            placeholder="email">
+                                        <input type="text" class="form-control @error('email') is-invalid @enderror" id="email" name="email" value="{{ $user->email ?? '-' }}" placeholder="email">
                                         <label for="email">Email</label>
                                         @error('email')
                                             <div class="invalid-tooltip">
@@ -124,9 +112,7 @@
 
                                 <div class="col-md-6 mt-3">
                                     <div class="form-floating">
-                                        <input type="text" class="form-control @error('contactNo') is-invalid @enderror"
-                                            id="contactNo" name="contactNo" value="{{ $user->contactNo ?? '-' }}"
-                                            placeholder="Mobile No">
+                                        <input type="text" class="form-control @error('contactNo') is-invalid @enderror" id="contactNo" name="contactNo" value="{{ $user->contactNo ?? '-' }}" placeholder="Mobile No">
                                         <label for="contactNo">Mobile No</label>
                                         @error('contactNo')
                                             <div class="invalid-tooltip">
@@ -146,15 +132,13 @@
                                 ?>
                                     <div class="form-floating">
                                         <div class="form-check">
-                                            <input class="form-check-input" checked type="radio" name="gender"
-                                                id="gender" value="male" checked>
+                                            <input class="form-check-input" checked type="radio" name="gender" id="gender" value="male" checked>
                                             <label class="form-check-label" for="gender">
                                                 Male
                                             </label>
                                         </div>
                                         <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="gender" id="gender"
-                                                value="female">
+                                            <input class="form-check-input" type="radio" name="gender" id="gender" value="female">
                                             <label class="form-check-label" for="gender">
                                                 Female
                                             </label>
@@ -170,15 +154,13 @@
                                 else {?>
                                     <div class="form-floating">
                                         <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="gender" id="gender"
-                                                value="male">
+                                            <input class="form-check-input" type="radio" name="gender" id="gender" value="male">
                                             <label class="form-check-label" for="gender">
                                                 Male
                                             </label>
                                         </div>
                                         <div class="form-check">
-                                            <input class="form-check-input" checked type="radio" name="gender"
-                                                id="gender" value="female" checked>
+                                            <input class="form-check-input" checked type="radio" name="gender" id="gender" value="female" checked>
                                             <label class="form-check-label" for="gender">
                                                 Female
                                             </label>
@@ -195,10 +177,7 @@
 
                                 <div class="col-md-6 mt-3">
                                     <div class="form-floating">
-                                        <input type="text"
-                                            class="form-control @error('companyName') is-invalid @enderror"
-                                            id="companyName" name="companyName"
-                                            value="{{ $member->companyName ?? '-' }}" placeholder="Company Name">
+                                        <input type="text" class="form-control @error('companyName') is-invalid @enderror" id="companyName" name="companyName" value="{{ $member->companyName ?? '-' }}" placeholder="Company Name">
                                         <label for="companyName">Company Name</label>
                                         @error('companyName')
                                             <div class="invalid-tooltip">
@@ -209,9 +188,7 @@
                                 </div>
                                 <div class="col-md-6 mt-3">
                                     <div class="form-floating">
-                                        <input type="text" class="form-control @error('gStinPan') is-invalid @enderror"
-                                            id="gStinPan" name="gStinPan" value="{{ $member->gstinPan ?? '-' }}"
-                                            placeholder="GSTIN / PAN">
+                                        <input type="text" class="form-control @error('gStinPan') is-invalid @enderror" id="gStinPan" name="gStinPan" value="{{ $member->gstinPan ?? '-' }}" placeholder="GSTIN / PAN">
                                         <label for="gStinPan">GSTIN / PAN </label>
                                         @error('gStinPan')
                                             <div class="invalid-tooltip">
@@ -221,7 +198,7 @@
                                     </div>
                                 </div>
 
-                                <div class="col-md-6 mt-3 position-relative">
+                                {{-- <div class="col-md-6 mt-3 position-relative">
                                     <div id="keyword-container">
                                         @if (old('keyWords'))
                                             @foreach (old('keyWords') as $keyword)
@@ -291,6 +268,46 @@
                                         newInputGroup.appendChild(removeButton);
                                         container.appendChild(newInputGroup);
                                     });
+                                </script> --}}
+
+
+
+                                @php
+                                    $keywords = old('keyWords', $member->keyWords ?? []);
+                                    if (is_string($keywords)) {
+                                        $keywords = json_decode($keywords, true) ?? explode(',', $keywords);
+                                    }
+                                @endphp
+
+                                <div class="col-md-6 mt-3">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="keyword1" name="keyword1" value="{{ old('keyword1', $keywords[0] ?? '') }}" placeholder="Keyword 1" pattern="[a-zA-Z\s]+" title="Only alphabets and spaces are allowed" oninput="checkKeyword(this)">
+                                        <label for="keyword1">Keyword 1</label>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 mt-3">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="keyword2" name="keyword2" value="{{ old('keyword2', $keywords[1] ?? '') }}" placeholder="Keyword 2" pattern="[a-zA-Z\s]+" title="Only alphabets and spaces are allowed" oninput="checkKeyword(this)">
+                                        <label for="keyword2">Keyword 2</label>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 mt-3">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="keyword3" name="keyword3" value="{{ old('keyword3', $keywords[2] ?? '') }}" placeholder="Keyword 3" pattern="[a-zA-Z\s]+" title="Only alphabets and spaces are allowed" oninput="checkKeyword(this)">
+                                        <label for="keyword3">Keyword 3</label>
+                                    </div>
+                                </div>
+
+                                <script>
+                                    function checkKeyword(input) {
+                                        if (!input.value.match(/^[a-zA-Z\s]+$/)) {
+                                            input.setCustomValidity("Only alphabets and spaces are allowed");
+                                        } else {
+                                            input.setCustomValidity("");
+                                        }
+                                    }
                                 </script>
 
 
@@ -301,13 +318,10 @@
 
 
 
+
                                 <div class="col-md-6 mt-3">
                                     <div class="form-floating">
-                                        <input type="text"
-                                            class="form-control @error('addressLine1') is-invalid @enderror"
-                                            id="addressLine1" name="addressLine1"
-                                            value="{{ $contactDetails->addressLine1 ?? '-' }}"
-                                            placeholder="Billing Address Line 1">
+                                        <input type="text" class="form-control @error('addressLine1') is-invalid @enderror" id="addressLine1" name="addressLine1" value="{{ $contactDetails->addressLine1 ?? '-' }}" placeholder="Billing Address Line 1">
                                         <label for="addressLine1">Address Line 1</label>
                                         @error('addressLine1')
                                             <div class="invalid-tooltip">
@@ -318,11 +332,7 @@
                                 </div>
                                 <div class="col-md-6 mt-3">
                                     <div class="form-floating">
-                                        <input type="text"
-                                            class="form-control @error('addressLine2') is-invalid @enderror"
-                                            id="addressLine2" name="addressLine2"
-                                            value="{{ $contactDetails->addressLine2 ?? '-' }}"
-                                            placeholder="addressLine2">
+                                        <input type="text" class="form-control @error('addressLine2') is-invalid @enderror" id="addressLine2" name="addressLine2" value="{{ $contactDetails->addressLine2 ?? '-' }}" placeholder="addressLine2">
                                         <label for="addressLine2">Address Line 2 </label>
                                         @error('addressLine2')
                                             <div class="invalid-tooltip">
@@ -333,9 +343,7 @@
                                 </div>
                                 <div class="col-md-6 mt-3">
                                     <div class="form-floating">
-                                        <input type="text" class="form-control @error('webSite') is-invalid @enderror"
-                                            id="webSite" name="webSite" value="{{ $member->webSite ?? '-' }}"
-                                            placeholder="webSite">
+                                        <input type="text" class="form-control @error('webSite') is-invalid @enderror" id="webSite" name="webSite" value="{{ $member->webSite ?? '-' }}" placeholder="webSite">
                                         <label for="webSite">Website</label>
                                         @error('webSite')
                                             <div class="invalid-tooltip">
@@ -346,11 +354,7 @@
                                 </div>
                                 <div class="col-md-6 mt-3">
                                     <div class="form-floating">
-                                        <input type="text"
-                                            class="form-control @error('businessCategory') is-invalid @enderror"
-                                            id="businessCategory" name="businessCategory"
-                                            value="{{ $member->bCategory->categoryName ?? '-' }}"
-                                            placeholder="businessCategory" readonly>
+                                        <input type="text" class="form-control @error('businessCategory') is-invalid @enderror" id="businessCategory" name="businessCategory" value="{{ $member->bCategory->categoryName ?? '-' }}" placeholder="businessCategory" readonly>
                                         <label for="businessCategory">Business Category</label>
                                         @error('businessCategory')
                                             <div class="invalid-tooltip">
@@ -361,10 +365,7 @@
                                 </div>
                                 <div class="col-md-6 mt-3">
                                     <div class="form-floating">
-                                        <input type="date"
-                                            class="form-control @error('birthDate') is-invalid @enderror" id="birthDate"
-                                            name="birthDate" value="{{ $member->birthDate ?? '' }}"
-                                            placeholder="birthDate">
+                                        <input type="date" class="form-control @error('birthDate') is-invalid @enderror" id="birthDate" name="birthDate" value="{{ $member->birthDate ?? '' }}" placeholder="birthDate">
                                         <label for="birthDate">Birth Date</label>
                                         @error('birthDate')
                                             <div class="invalid-tooltip">
@@ -442,19 +443,12 @@
                                         <!-- Profile Photo Input -->
                                         <div class="col-md-6">
                                             <div class="form-label-group mt-3">
-                                                <label for="profilePhoto" class="fw-bold">Profile Photo <sup
-                                                        class="text-danger">*</sup></label>
-                                                <input type="file"
-                                                    class="form-control @error('profilePhoto') is-invalid @enderror"
-                                                    id="profilePhoto" name="profilePhoto" accept="image/*"
-                                                    onchange="previewPhoto(event, 'photoPreview')">
+                                                <label for="profilePhoto" class="fw-bold">Profile Photo <sup class="text-danger">*</sup></label>
+                                                <input type="file" class="form-control @error('profilePhoto') is-invalid @enderror" id="profilePhoto" name="profilePhoto" accept="image/*" onchange="previewPhoto(event, 'photoPreview')">
                                                 <span class="text-danger mt-1 d-block">*
                                                     File size:Max 2MB</span>
-                                                <div style="width: 100px; height: 100px; position: relative;"
-                                                    class="mt-3">
-                                                    <img id="photoPreview"
-                                                        src="{{ asset('ProfilePhoto/' . ($member->profilePhoto ?? 'default.jpg')) }}"
-                                                        style="width: 100%; height: 100%; object-fit: contain; aspect-ratio: 1/1;">
+                                                <div style="width: 100px; height: 100px; position: relative;" class="mt-3">
+                                                    <img id="photoPreview" src="{{ asset('ProfilePhoto/' . ($member->profilePhoto ?? 'default.jpg')) }}" style="width: 100%; height: 100%; object-fit: contain; aspect-ratio: 1/1;">
                                                 </div>
 
                                                 <!-- Display Profile Photo Error -->
@@ -468,19 +462,12 @@
                                         <!-- Company Logo Input -->
                                         <div class="col-md-6">
                                             <div class="form-label-group mt-3">
-                                                <label for="companyLogo" class="fw-bold">Company Logo <sup
-                                                        class="text-danger">*</sup></label>
-                                                <input type="file"
-                                                    class="form-control @error('companyLogo') is-invalid @enderror"
-                                                    id="companyLogo" name="companyLogo" accept="image/*"
-                                                    onchange="previewPhoto(event, 'logoPreview')">
+                                                <label for="companyLogo" class="fw-bold">Company Logo <sup class="text-danger">*</sup></label>
+                                                <input type="file" class="form-control @error('companyLogo') is-invalid @enderror" id="companyLogo" name="companyLogo" accept="image/*" onchange="previewPhoto(event, 'logoPreview')">
                                                 <span class="text-danger mt-1 d-block">*
                                                     File size:Max 2MB</span>
-                                                <div style="width: 100px; height: 100px; position: relative;"
-                                                    class="mt-3">
-                                                    <img id="logoPreview"
-                                                        src="{{ asset('CompanyLogo/' . ($member->companyLogo ?? 'default.jpg')) }}"
-                                                        style="width: 100%; height: 100%; object-fit: contain; aspect-ratio: 1/1;">
+                                                <div style="width: 100px; height: 100px; position: relative;" class="mt-3">
+                                                    <img id="logoPreview" src="{{ asset('CompanyLogo/' . ($member->companyLogo ?? 'default.jpg')) }}" style="width: 100%; height: 100%; object-fit: contain; aspect-ratio: 1/1;">
                                                 </div>
 
                                                 <!-- Display Company Logo Error -->

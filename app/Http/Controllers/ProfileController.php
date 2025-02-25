@@ -113,7 +113,8 @@ class ProfileController extends Controller
             // $member->shareRevenue = $request->shareRevenue;
             // $member->membershipStatus = $request->membershipStatus;
             // $member->keyWords = $request->keyWords;
-            $member->keyWords = $request->keyWords ? json_encode($request->keyWords) : null;
+            $keywords = array_filter([$request->keyword1, $request->keyword2, $request->keyword3]);
+            $member->keyWords = $keywords;
             $member->status = 'Active';
             $member->save();
 

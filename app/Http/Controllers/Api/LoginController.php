@@ -375,7 +375,21 @@ class LoginController extends Controller
         $member->chapter = $request->input('chapter', $member->chapter);
         $member->renewalDueDate = $request->input('renewalDueDate', $member->renewalDueDate);
         $member->membershipStatus = $request->input('membershipStatus', $member->membershipStatus);
-        $member->keyWords = $request->input('keyWords', $member->keyWords);
+
+        // $member->keyWords = $request->input('keyWords', $member->keyWords);
+
+        $keyWords = [];
+        if ($request->has('keyword1')) {
+            array_push($keyWords, $request->input('keyword1'));
+        }
+        if ($request->has('keyword2')) {
+            array_push($keyWords, $request->input('keyword2'));
+        }
+        if ($request->has('keyword3')) {
+            array_push($keyWords, $request->input('keyword3'));
+        }
+        $member->keyWords = json_encode($keyWords);
+
         $member->language = $request->input('language', $member->language);
         $member->timeZone = $request->input('timeZone', $member->timeZone);
 
@@ -391,6 +405,7 @@ class LoginController extends Controller
             $file->move(public_path('ProfilePhoto'),  $filename);
             $member->profilePhoto = $filename;
         }
+
 
         if ($request->hasFile('companyLogo')) {
             $file = $request->file('companyLogo');
