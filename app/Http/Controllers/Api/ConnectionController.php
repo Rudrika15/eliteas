@@ -43,6 +43,37 @@ class ConnectionController extends Controller
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
+
+    public function sentConnectionsRequests(Request $request)
+    {
+        try {
+            $userId = Auth::id();
+
+            $connections = Connection::where('userId', $userId)
+                ->where('status', 'Pending')
+                ->with([
+                    'receiver' => function ($query) { 
+                        $query->select('id', 'email', 'firstName', 'lastName');
+                    },
+                    'receiverMember' => function ($query) { 
+                        $query->select('userId', 'id', 'profilePhoto');
+                    }
+                ])
+                ->get();
+
+            if ($connections->isEmpty()) {
+                return Utils::sendResponse([], 'No pending connection requests sent', 200);
+            }
+
+            return Utils::sendResponse(['connections' => $connections], 'Sent connection requests retrieved successfully', 200);
+        } catch (\Throwable $th) {
+            return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
+        }
+    }
+
+
+
+
     public function ConnectionsRequests(Request $request)
     {
         try {

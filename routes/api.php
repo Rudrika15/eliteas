@@ -244,6 +244,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     // Connections
 
     Route::get('/connections/receivedConnectionsRequests', [ConnectionController::class, 'receivedConnectionsRequests']);
+    Route::get('/connections/sentConnectionsRequests', [ConnectionController::class, 'sentConnectionsRequests']);
     Route::get('/connections/myConnections', [ConnectionController::class, 'myConnections']);
     Route::post('/connections/sendRequest', [ConnectionController::class, 'sendRequest']);
     Route::post('/connections/search', [ConnectionController::class, 'search']);

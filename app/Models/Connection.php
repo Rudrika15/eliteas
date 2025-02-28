@@ -39,5 +39,13 @@ class Connection extends Model
         return $this->user;
     }
 
+    public function receiver()
+    {
+        return $this->belongsTo(User::class, 'memberId', 'id');
+    }
 
+    public function receiverMember()
+    {
+        return $this->hasOne(Member::class, 'userId', 'memberId'); // userId in members == memberId in connections
+    }
 }
