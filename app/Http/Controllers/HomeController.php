@@ -744,13 +744,14 @@ class HomeController extends Controller
                 ->orWhere('memberId', $aid)
                 ->first();
 
-            $memberStatus = Connection::where('memberId', $member->userId)
-                ->orWhere('userId', $member->userId)
-                ->first();
+            // $memberStatus = Connection::where('memberId', $member->userId)
+            //     ->orWhere('userId', $member->userId)
+            //     ->first();
+
             // Alternatively, if you want to get all connections related to the authenticated user:
             // $connections = Connection::where('userId', $aid)->get();
 
-            return view('foundPersonDetails', compact('member', 'connection', 'memberStatus'));
+            return view('foundPersonDetails', compact('member', 'connection'));
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError($th, request()->fullUrl());
