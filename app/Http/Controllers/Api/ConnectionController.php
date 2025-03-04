@@ -109,11 +109,11 @@ class ConnectionController extends Controller
                     ->orWhere('memberId', $userId);
             })
                 ->where('status', 'Accepted')
-                ->with(['user:id,firstName,lastName,email', 'members:id,userId,profilePhoto'])
-                // ->with(['member' => function ($query) {
-                //     $query->select('id', 'userId', 'profilePhoto')
-                //         ->with('user:id,email,firstName,lastName');
-                // }])
+                // ->with(['user:id,firstName,lastName,email', 'members:id,userId,profilePhoto'])
+                ->with(['member' => function ($query) {
+                    $query->select('id', 'userId', 'profilePhoto')
+                        ->with('user:id,email,firstName,lastName');
+                }])
                 ->get();
             // Include connected user's details for convenience
             // $connections->each(function ($connection) {
@@ -437,7 +437,7 @@ class ConnectionController extends Controller
 
 
 
-    public function getCircleMembers($id = null)
+    public function getCircleMembers(Request $request, $id = null)
     {
         try {
             // If ID is provided, show details for the specific circle
