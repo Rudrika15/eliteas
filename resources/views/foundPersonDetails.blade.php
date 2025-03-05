@@ -405,9 +405,9 @@
                         $userCircleId = \App\Models\Member::where('userId', auth()->user()->id)->value('circleId');
                     }
 
-                    $memberStatus = \App\Models\Connection::where('memberId', $member->id)
-                        ->where('userId', auth()->user()->id)
-                        ->first();
+                    // $memberStatus = \App\Models\Connection::where('memberId', $member->id)
+                    //     ->where('userId', auth()->user()->id)
+                    //     ->first();
 
                 @endphp
 

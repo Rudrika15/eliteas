@@ -708,6 +708,28 @@ class PaymentController extends Controller
             return response()->json(['message' => 'Failed to store payment ID'], 500);
         }
     }
+
+
+    public function handleEventRegistration(Request $request)
+    {
+        try {
+            $eventPayment = new EventRegister();
+            $eventPayment->eventId = $request->eventId;
+            $eventPayment->memberId = Auth::user()->member->id;
+            $eventPayment->paymentStatus = 'unpaid';
+            $eventPayment->save();
+
+            return response()->json(['message' => 'You are registered for the event'], 200);
+        } catch (\Throwable $th) {
+            // throw $th;
+            // Log the error using the ErrorLogger utility
+            ErrorLogger::logError($th, $request->fullUrl());
+            // Return an error response
+            return response()->json(['message' => 'Failed to register for the event, please try again'], 500);
+        }
+    }
+
+
     public function eventPayment(Request $request)
     {
         try {

@@ -180,7 +180,13 @@
         <li class="nav-item">
             <a class="nav-link " href="{{ route('connection.connectionRequests') }}">
                 <i class="bi bi-person-heart" style="color: #e76a35"></i>
-                <span>Connection Request</span>
+                <span>Received Connection Request</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link " href="{{ route('connection.sentConnectionRequests') }}">
+                <i class="bi bi-person-heart" style="color: #e76a35"></i>
+                <span>Sent Connection Request</span>
             </a>
         </li>
 

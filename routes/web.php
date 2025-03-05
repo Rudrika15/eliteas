@@ -451,6 +451,9 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/razorpay-payment-eventPayment', [PaymentController::class, 'eventPayment'])->name('razorpay.payment.eventPayment');
     Route::post('/razorpay-payment-invite', [PaymentController::class, 'invitePayment'])->name('razorpay.payment.invite');
 
+    Route::post('/event-register-payLater', [PaymentController::class, 'handleEventRegistration'])->name('handle.EventRegistration');
+
+
     // invite person
     Route::post('/invite', [HomeController::class, 'invitation'])->name('invite.person');
 
@@ -504,6 +507,7 @@ Route::group(['middleware' => ['auth']], function () {
     // Route::get('/connection/search', [ConnectionController::class, 'searchConnection'])->name('connection.search');
     Route::post('/connect', [ConnectionController::class, 'connect'])->name('connect');
     Route::get('/connections/connectionRequests', [ConnectionController::class, 'connectionRequests'])->name('connection.connectionRequests');
+    Route::get('/connections/sentConnectionRequests', [ConnectionController::class, 'sentConnectionRequests'])->name('connection.sentConnectionRequests');
     Route::get('/connections/myConnections', [ConnectionController::class, 'myConnections'])->name('connection.myConnections');
     Route::get('/connections/circleList', [ConnectionController::class, 'circleList'])->name('connection.circleList');
     Route::get('/connections/categoryList', [ConnectionController::class, 'categoryList'])->name('connection.categoryList');

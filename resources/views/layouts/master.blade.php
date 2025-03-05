@@ -83,7 +83,7 @@
             <div class="header-info ms-2 me-3 d-flex align-items-center gap-2 ms-5 text-nowrap px-3 rounded-3">
                 <span class="info-item">Members: {{ $membersCount }}</span>
                 <span class="info-item">Circles: {{ $circleCount }}</span>
-                <span class="info-item">City: 3</span>
+                <span class="info-item">City: 4</span>
             </div>
 
 

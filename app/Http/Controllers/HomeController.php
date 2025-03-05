@@ -483,7 +483,7 @@ class HomeController extends Controller
                 // Safely decode the businessCategoryId
                 $businessCategoryIdArray = $businessCategoryId ? explode(',', $businessCategoryId) : [];
 
-                $businessCategories = collect(); // Default to an empty collection
+                // $businessCategories = collect(); // Default to an empty collection
 
                 // Query only if $businessCategoryIdArray is not empty
                 if (!empty($businessCategoryIdArray)) {
@@ -744,14 +744,14 @@ class HomeController extends Controller
                 ->orWhere('memberId', $aid)
                 ->first();
 
-            // $memberStatus = Connection::where('memberId', $member->userId)
-            //     ->orWhere('userId', $member->userId)
-            //     ->first();
+            $memberStatus = Connection::where('memberId', $member->userId)
+                ->orWhere('userId', $member->userId)
+                ->first();
 
             // Alternatively, if you want to get all connections related to the authenticated user:
             // $connections = Connection::where('userId', $aid)->get();
 
-            return view('foundPersonDetails', compact('member', 'connection'));
+            return view('foundPersonDetails', compact('member', 'connection', 'memberStatus'));
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError($th, request()->fullUrl());

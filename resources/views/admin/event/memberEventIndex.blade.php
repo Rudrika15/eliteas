@@ -62,11 +62,14 @@
                                     <td>{{ $eventData->fees }}</td>
 
                                     <td>
-                                        <input type="hidden" id="visitorId" value="{{ session('visitor_id') }}">
-                                        <a href="{{ route('memberSlotBooking.list', $eventData->id) }}" class="btn btn-bg-blue btn-sm btn-tooltip">
-                                            <i class="bi bi-list"></i>
-                                            <span class="btn-text">Slot Booking Requests</span>
-                                        </a>
+                                        {{-- <input type="hidden" id="visitorId" value="{{ session('visitor_id') }}"> --}}
+
+                                        @if ($eventData->slot_date)
+                                            <a href="{{ route('memberSlotBooking.list', $eventData->id) }}" class="btn btn-bg-blue btn-sm btn-tooltip">
+                                                <i class="bi bi-list"></i>
+                                                <span class="btn-text">Slot Booking Requests</span>
+                                            </a>
+                                        @endif
                                         <a href="{{ route('event.eventRegistrationListMembers', $eventData->id) }}" class="btn btn-bg-orange btn-sm btn-tooltip">
                                             <i class="bi bi-people"></i>
                                             <span class="btn-text">Joined People</span>

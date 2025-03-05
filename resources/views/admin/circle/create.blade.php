@@ -181,7 +181,7 @@
                 </div>
             </div>
 
-            <div class="col-md-12 mt-3">
+            {{-- <div class="col-md-12 mt-3">
                 <div class="form-floating">
                     <select class="form-select select2 js-example-basic-multiple-limit" style="height: 150px" id="businessCategoryId" name="businessCategoryId[]" multiple>
                         @foreach ($bCategory as $bCategoryData)
@@ -196,7 +196,7 @@
                         </div>
                     @enderror
                 </div>
-            </div>
+            </div> --}}
 
 
 

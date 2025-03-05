@@ -232,6 +232,37 @@ class ConnectionController extends Controller
         }
     }
 
+    public function sentConnectionRequests()
+    {
+        try {
+            // Get the authenticated user's ID
+            $userId = Auth::id();
+
+            $connections = Connection::where('userId', $userId)
+                ->where('status', 'Pending')
+                ->with([
+                    'receiver' => function ($query) {
+                        $query->select('id', 'email', 'firstName', 'lastName');
+                    },
+                    'receiverMember' => function ($query) {
+                        $query->select('userId', 'id', 'profilePhoto');
+                    }
+                ])
+                ->paginate(10);
+
+            // Return the view with the connections data
+            return view('admin.connection.sentConnectionRequests', compact('connections'));
+        } catch (\Throwable $th) {
+            // Log the error using the ErrorLogger utility
+            ErrorLogger::logError($th, request()->fullUrl());
+
+            // Return a custom error view or redirect with an error message
+            return view('servererror');
+        }
+    }
+
+
+
 
     // public function myConnections()
     // {

@@ -667,8 +667,14 @@
                                                 <div class="d-flex justify-content-end align-items-center">
                                                     {{-- <input type="text" id="couponCode" class="form-control me-3 w-25" placeholder="Have you a coupon code ?"> --}}
                                                     {{-- <button type="button" class="btn btn-secondary me-3" id="applyCouponBtn">Apply</button> --}}
-                                                    <button type="button" class="btn btn-bg-orange btn-md" id="razorpayBtnEvent" data-amount-event="{{ $nearestEvents->fees }}">
+                                                    <button type="button" class="btn btn-bg-orange btn-md me-3" id="razorpayBtnEvent" data-amount-event="{{ $nearestEvents->fees }}">
                                                         Pay Now
+                                                    </button>
+
+
+
+                                                    <button type="button" class="btn btn-bg-blue btn-md" id="registerWithoutPaymentBtn" data-event-id="{{ $nearestEvents->id }}">
+                                                        Register & Pay Later
                                                     </button>
 
                                                 </div>
@@ -1813,6 +1819,39 @@
             return emailRegex.test(email);
         }
     </script>
+
+    <script>
+        $(document).ready(function() {
+            $('#registerWithoutPaymentBtn').on('click', function() {
+                var eventId = $(this).data('event-id');
+
+                $.ajax({
+                    url: "{{ route('handle.EventRegistration') }}",
+                    type: "POST",
+                    data: {
+                        eventId: eventId,
+                        _token: "{{ csrf_token() }}"
+                    },
+                    success: function(response) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success!',
+                            text: response.message,
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.reload();
+                            }
+                        });
+                    },
+                    error: function(xhr) {
+                        alert(xhr.responseJSON.message || "Failed to register for the event.");
+                    }
+                });
+            });
+        });
+    </script>
+
+
 
     <!-- sweetalert -->
 @endsection
