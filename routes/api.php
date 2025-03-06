@@ -275,6 +275,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     // Retrieve all active events
     Route::get('/event/index', [EventController::class, 'index']);
+    Route::post('/event/registerPayLater', [EventController::class, 'handleEventRegistration']);
 
     // Check if a user is registered for an event
     Route::post('/check-registration-user', [EventController::class, 'checkRegistrationUser']);
@@ -451,8 +452,6 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     //notification
     Route::get('notification-index', [NotificationController::class, 'notificationIndex']);
-
-
 });
 
 //get app version

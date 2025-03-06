@@ -560,8 +560,8 @@ class EventController extends Controller
         try {
             $event = Event::find($id);
 
-            $registerList = EventRegister::where('eventId', $id)->paginate(10);
-            $registerListVisitor = VisitorEventRegister::where('eventId', $id)->paginate(10);
+            $registerList = EventRegister::where('eventId', $id)->where('status', 'Active')->paginate(10);
+            $registerListVisitor = VisitorEventRegister::where('eventId', $id)->where('status', 'Active')->paginate(10);
 
             $registerLists = $registerList->merge($registerListVisitor);
 
@@ -575,7 +575,7 @@ class EventController extends Controller
             return view('servererror');
         }
     }
-    
+
     public function eventRegistrationListMembers(Request $request, $id)
     {
         try {

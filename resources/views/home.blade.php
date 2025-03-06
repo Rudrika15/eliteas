@@ -1850,8 +1850,5 @@
             });
         });
     </script>
-
-
-
     <!-- sweetalert -->
 @endsection

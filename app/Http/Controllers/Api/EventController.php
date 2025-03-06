@@ -163,7 +163,7 @@ class EventController extends Controller
             }])
                 ->where('status', 'Active')
                 ->where('eventStatus', 'Publish')
-                ->where('event_date', '>=', now()) // Only get upcoming events
+                ->whereDate('event_date', '>=', now()->format('Y-m-d')) // Only get upcoming events including today
                 ->orderBy('event_date', 'ASC') // Order by nearest date
                 ->first(); // Get the closest event
 
@@ -341,6 +341,26 @@ class EventController extends Controller
             ], 'Internal Server Error', 500);
         }
     }
+
+    public function handleEventRegistration(Request $request)
+    {
+        try {
+            $eventPayment = new EventRegister();
+            $eventPayment->eventId = $request->eventId;
+            $eventPayment->memberId = Auth::user()->member->id;
+            $eventPayment->paymentStatus = 'unpaid';
+            $eventPayment->save();
+
+            // Return a success response
+            return Utils::sendResponse([], 'You are registered for the event', 200);
+        } catch (\Throwable $th) {
+            // Return with an error message
+            return Utils::errorResponse([
+                'error' => 'Failed to register for the event, please try again.'
+            ], 'Internal Server Error', 500);
+        }
+    }
+
 
     public function userEventPayment(Request $request)
     {

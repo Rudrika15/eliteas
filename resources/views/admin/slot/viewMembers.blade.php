@@ -233,13 +233,13 @@
                                             <span>{{ $slotData->start_time }} - {{ $slotData->end_time }}</span>
                                             <form action="{{ route('slotbooking.member', $slotData->id) }}" method="POST">
                                                 @csrf
-                                                <input type="hidsden" name="eventId" value="{{ $event->id }}">
-                                                <input type="hidsden" name="slotId" value="{{ $slotData->id }}">
+                                                <input type="hidden" name="eventId" value="{{ $event->id }}">
+                                                <input type="hidden" name="slotId" value="{{ $slotData->id }}">
                                                 @if ($visitorsUsersData->type == 'member')
-                                                    <input type="hiddden" name="regMemberId" value="{{ $visitorsUsersData->members->userId }}">
+                                                    <input type="hidden" name="regMemberId" value="{{ $visitorsUsersData->members->userId }}">
                                                 @endif
                                                 @if ($visitorsUsersData->type == 'visitor')
-                                                    <input type="hiddden" name="regMemberId" value="{{ $visitorsUsersData->visitors->id }}">
+                                                    <input type="hidden" name="regMemberId" value="{{ $visitorsUsersData->visitors->id }}">
                                                 @endif
                                                 @php
                                                     $authUserFree = !\App\Models\SlotBooking::where('eventId', $event->id)

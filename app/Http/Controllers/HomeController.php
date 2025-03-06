@@ -483,7 +483,7 @@ class HomeController extends Controller
                 // Safely decode the businessCategoryId
                 $businessCategoryIdArray = $businessCategoryId ? explode(',', $businessCategoryId) : [];
 
-                // $businessCategories = collect(); // Default to an empty collection
+                $businessCategories = collect($businessCategoryIdArray); // Default to an empty collection
 
                 // Query only if $businessCategoryIdArray is not empty
                 if (!empty($businessCategoryIdArray)) {
