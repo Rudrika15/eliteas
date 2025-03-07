@@ -480,15 +480,21 @@ class HomeController extends Controller
 
                 $businessCategoryId = Circle::where('id', $circleId)->value('businessCategoryId');
 
-                // Safely decode the businessCategoryId
-                $businessCategoryIdArray = $businessCategoryId ? explode(',', $businessCategoryId) : [];
+                // Decode JSON properly instead of explode
+                $businessCategoryIdArray = $businessCategoryId ? json_decode($businessCategoryId, true) : [];
 
-                $businessCategories = collect($businessCategoryIdArray); // Default to an empty collection
+                $businessCategories = collect(); // Default empty collection
 
-                // Query only if $businessCategoryIdArray is not empty
                 if (!empty($businessCategoryIdArray)) {
                     $businessCategories = BusinessCategory::whereIn('id', $businessCategoryIdArray)->get();
                 }
+
+                // Debugging
+                // dd([
+                //     'businessCategoryId' => $businessCategoryId,
+                //     'businessCategoryIdArray' => $businessCategoryIdArray,
+                //     'businessCategories' => $businessCategories
+                // ]);
 
                 $categoryNames = $businessCategories->pluck('categoryName');
 

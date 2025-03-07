@@ -259,7 +259,7 @@
                         @if ($categoryNames->isNotEmpty())
                             <div class="col-md-7">
                             @else
-                                <div class="col-md-12 ">
+                                <div class="col-md-12">
                         @endif
                         <div class="card-title"><b>Upcoming Circle Meetings</b></div>
                         <div class="card border-0 shadow workshopCard">
@@ -635,107 +635,111 @@
                         @if ($nearestEvents)
                             <div class="card-body">
                                 <div class="row">
-                                    <div class="col-md-10">
+                                    <div class="col-md-3 d-flex justify-content-center align-items-center">
+                                        <div class="event-banner text-center">
+                                            <img src="{{ $nearestEvents->event_banner ? url('Event/' . $nearestEvents->event_banner) : asset('images/event_default.png') }}" alt="Event Banner" class="img-fluid rounded" style="height: 200px; width: 350px;">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-9 text-end">
                                         <h4 class="card-title">{{ $nearestEvents->title }}</h4>
                                         <p class="card-text text-muted"> <b> Total Registered Members : {{ $totalRegisterCount }}
                                             </b></p>
-                                        @if ($nearestEvents->slot_date)
-                                            <b class="text-muted">Slot Date :</b> {{ \Carbon\Carbon::parse($nearestEvents->slot_date)->format('j M Y') }}
-                                        @endif
-                                    </div>
-                                    {{-- <div class="col-md-3 pt-3">
+                                        <div class="text-muted">
+                                            @if ($nearestEvents->slot_date)
+                                                <b>Slot Date :</b> {{ \Carbon\Carbon::parse($nearestEvents->slot_date)->format('j M Y') }}
+                                            @endif
+
+                                            {{-- <div class="col-md-3 pt-3">
                                         <img src="{{ asset('img/logo.png') }}" alt="Event Image" class="img-fluid">
                                     </div> --}}
-                                    <div class="col-md-2 pt-3 text-muted text-end">
-                                        <b>Date : </b> {{ \Carbon\Carbon::parse($nearestEvents->event_date)->format('j M Y') }}
-                                        <br>
-                                        <b>Start Time :</b> {{ $nearestEvents->start_time }} <br>
-                                        <b>End Time :</b> {{ $nearestEvents->end_time }}
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        @if (!is_null($findEventRegister) && count($findEventRegister) == 0)
-                                            @if ($nearestEvents->fees == 0)
-                                                <h5 class="text-muted text-end me-4 pt-5">Free</h5>
-                                                <form method="POST" action="{{ route('event.register', ['eventId' => $nearestEvents->id]) }}">
-                                                    @csrf
-                                                    <button type="submit" class="btn btn-bg-orange btn-md" id="freeRegisterBtn">Register</button>
-                                                </form>
-                                            @else
-                                                <h5 class="text-muted text-end me-4 pt-3">₹ {{ $nearestEvents->fees }}</h5>
-                                                <div class="d-flex justify-content-end align-items-center">
-                                                    {{-- <input type="text" id="couponCode" class="form-control me-3 w-25" placeholder="Have you a coupon code ?"> --}}
-                                                    {{-- <button type="button" class="btn btn-secondary me-3" id="applyCouponBtn">Apply</button> --}}
-                                                    <button type="button" class="btn btn-bg-orange btn-md me-3" id="razorpayBtnEvent" data-amount-event="{{ $nearestEvents->fees }}">
-                                                        Pay Now
-                                                    </button>
+                                            <div class=" text-muted ">
+                                                <b>Event Date : </b> {{ \Carbon\Carbon::parse($nearestEvents->event_date)->format('j M Y') }}
+                                                <br>
+                                                <b>Start Time :</b> {{ \Carbon\Carbon::parse($nearestEvents->start_time)->format('h:i A') }} <br>
+                                                <b>End Time :</b> {{ \Carbon\Carbon::parse($nearestEvents->end_time)->format('h:i A') }}
+                                            </div>
+                                        </div>
+                                        <div class="mt-3">
+                                            @if (!is_null($findEventRegister) && count($findEventRegister) == 0)
+                                                @if ($nearestEvents->fees == 0)
+                                                    <h5 class="text-muted text-end me-4 pt-5">Free</h5>
+                                                    <form method="POST" action="{{ route('event.register', ['eventId' => $nearestEvents->id]) }}">
+                                                        @csrf
+                                                        <button type="submit" class="btn btn-bg-orange btn-md" id="freeRegisterBtn">Register</button>
+                                                    </form>
+                                                @else
+                                                    <h5 class="text-muted text-end me-4 pt-3">₹ {{ $nearestEvents->fees }}</h5>
+                                                    <div class="d-flex justify-content-end align-items-center">
+                                                        {{-- <input type="text" id="couponCode" class="form-control me-3 w-25" placeholder="Have you a coupon code ?"> --}}
+                                                        {{-- <button type="button" class="btn btn-secondary me-3" id="applyCouponBtn">Apply</button> --}}
+                                                        <button type="button" class="btn btn-bg-orange btn-md me-3" id="razorpayBtnEvent" data-amount-event="{{ $nearestEvents->fees }}">
+                                                            Pay Now
+                                                        </button>
 
 
 
-                                                    <button type="button" class="btn btn-bg-blue btn-md" id="registerWithoutPaymentBtn" data-event-id="{{ $nearestEvents->id }}">
-                                                        Register & Pay Later
-                                                    </button>
+                                                        <button type="button" class="btn btn-bg-blue btn-md" id="registerWithoutPaymentBtn" data-event-id="{{ $nearestEvents->id }}">
+                                                            Register & Pay Later
+                                                        </button>
 
-                                                </div>
-                                                {{-- <div id="couponError" class="text-danger mt-2 text-end me-4" style="display:none;">Invalid
+                                                    </div>
+                                                    {{-- <div id="couponError" class="text-danger mt-2 text-end me-4" style="display:none;">Invalid
                                                     coupon code.</div>
                                                 <div id="discountSuccess" class="text-success mt-2 text-end me-4" style="display:none;">
                                                     Coupon applied
                                                     successfully! Discount: ₹<span id="discountAmount"></span></div> --}}
-                                            @endif
-                                        @else
-                                            <div class="d-flex justify-content-end">
-                                                <div class="ps-5 ms-5 mt-5">
-                                                    <strong><span class="text-success">Already Joined</span></strong>
-                                                </div>
-                                                @if ($nearestEvents->slot_date && \Carbon\Carbon::parse($nearestEvents->slot_date)->isSameDay(\Carbon\Carbon::now()))
-                                                    @php
-                                                        $isSlotBooked = \App\Models\SlotBooking::where('eventId', $nearestEvents->id)
-                                                            ->where('userId', Auth::user()->id)
-                                                            ->exists();
-                                                    @endphp
-                                                    <div class="ps-5 ms-5 mt-5 d-flex justify-content-end">
-                                                        @if ($isSlotBooked)
-                                                            <button type="button" class="btn btn-bg-orange btn-md" id="viewMembers" onclick="location.href='{{ route('event.viewMembers', ['id' => $nearestEvents->id]) }}'">
-                                                                View Members
-                                                            </button>
-                                                        @else
-                                                            <button type="button" class="btn btn-bg-orange btn-md" id="slotBooking" onclick="location.href='{{ route('event.viewMembers', ['id' => $nearestEvents->id]) }}'">
-                                                                Slot Booking
-                                                            </button>
-                                                        @endif
-                                                    </div>
                                                 @endif
-                                            </div>
-                                        @endif
-                                    </div>
-                                </div>
+                                            @else
+                                                <div class="d-flex justify-content-end">
+                                                    <div class="ps-5 ms-5 mt-5">
+                                                        <strong><span class="text-success">Already Joined</span></strong>
+                                                    </div>
+                                                    @if ($nearestEvents->slot_date && \Carbon\Carbon::parse($nearestEvents->slot_date)->isSameDay(\Carbon\Carbon::now()))
+                                                        @php
+                                                            $isSlotBooked = \App\Models\SlotBooking::where('eventId', $nearestEvents->id)
+                                                                ->where('userId', Auth::user()->id)
+                                                                ->exists();
+                                                        @endphp
+                                                        <div class="ps-5 ms-5 mt-5 d-flex justify-content-end">
+                                                            @if ($isSlotBooked)
+                                                                <button type="button" class="btn btn-bg-orange btn-md" id="viewMembers" onclick="location.href='{{ route('event.viewMembers', ['id' => $nearestEvents->id]) }}'">
+                                                                    View Members
+                                                                </button>
+                                                            @else
+                                                                <button type="button" class="btn btn-bg-orange btn-md" id="slotBooking" onclick="location.href='{{ route('event.viewMembers', ['id' => $nearestEvents->id]) }}'">
+                                                                    Slot Booking
+                                                                </button>
+                                                            @endif
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                            @endif
+                                        </div>
 
 
-                                <!-- Shareable Link Section -->
-                                {{-- <div class="row mt-3">
-                        <div class="col-md-12">
-                            <div class="d-flex justify-content-between">
-                                <div>
-                                    <a href="{{ route('event.link', $nearestEvents->event_slug) }}" target="_blank">
-                                        View Event Details
-                                    </a>
-                                </div>
-                                <div>
-                                    <button class="btn btn-bg-blue btn-sm" onclick="copyLink()">
-                                        Copy Shareable Link
-                                    </button>
-                                    <input type="hidden" id="shareableLink"
-                                        value="{{ route('event.link', $nearestEvents->event_slug) }}">
-                                </div>
-                            </div>
-                        </div>
-                    </div> --}}
 
-                                <div class="row mt-3">
+                                        <!-- Shareable Link Section -->
+                                        {{-- <div class="row mt-3">
                                     <div class="col-md-12">
                                         <div class="d-flex justify-content-between">
+                                            <div>
+                                                <a href="{{ route('event.link', $nearestEvents->event_slug) }}" target="_blank">
+                                                    View Event Details
+                                                </a>
+                                            </div>
+                                            <div>
+                                                <button class="btn btn-bg-blue btn-sm" onclick="copyLink()">
+                                                    Copy Shareable Link
+                                                </button>
+                                                <input type="hidden" id="shareableLink"
+                                                    value="{{ route('event.link', $nearestEvents->event_slug) }}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div> --}}
+
+                                        <div class="mt-3 d-flex justify-content-between">
                                             <div>
                                                 {{-- <a href="{{ route('event.link', $nearestEvents->event_slug) }}"
                                         target="_blank">
@@ -759,496 +763,499 @@
                                     </div>
                                 </div>
                             </div>
-                        @else
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <p class="mt-3 text-muted text-center"><b>No Events for now.</b></p>
-                                </div>
-                            </div>
-                        @endif
                     </div>
                 </div>
             </div>
-
-
-            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
-            <script>
-                function copyLink() {
-                    var copyText = document.getElementById("shareableLink").value;
-                    navigator.clipboard.writeText(copyText).then(function() {
-                        alert("Link copied to clipboard");
-                    }, function(err) {
-                        alert("Could not copy link");
-                    });
-                }
-            </script>
-            <script>
-                function copyLink() {
-                    var copyText = document.getElementById("shareableLink").value;
-                    navigator.clipboard.writeText(copyText).then(function() {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Link copied!',
-                            text: 'The link has been copied to your clipboard.',
-                            confirmButtonText: 'OK'
-                        });
-                    }, function(err) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error!',
-                            text: 'Could not copy the link. Please try again.',
-                            confirmButtonText: 'OK'
-                        });
-                    });
-                }
-            </script>
-            <script>
-                function copyMeetingLink() {
-                    var copyText = document.getElementById("shareableMeetingLink").value;
-                    navigator.clipboard.writeText(copyText).then(function() {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Link copied!',
-                            text: 'The link has been copied to your clipboard.',
-                            confirmButtonText: 'OK'
-                        });
-                    }, function(err) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error!',
-                            text: 'Could not copy the link. Please try again.',
-                            confirmButtonText: 'OK'
-                        });
-                    });
-                }
-            </script>
-
-
-
-
-            <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-            @if ($nearestEvents)
-                <script>
-                    document.addEventListener('DOMContentLoaded', function() {
-                        var razorpayBtnEvent = document.getElementById('razorpayBtnEvent');
-                        var applyCouponBtn = document.getElementById('applyCouponBtn');
-                        var couponCodeInput = document.getElementById('couponCode');
-                        var couponError = document.getElementById('couponError');
-                        var discountSuccess = document.getElementById('discountSuccess');
-                        var discountAmountSpan = document.getElementById('discountAmount');
-                        var originalAmount = parseInt(razorpayBtnEvent.getAttribute('data-amount-event')) * 100; // Convert to paise
-                        var discountAmount = 0;
-
-                        // Apply coupon functionality
-                        if (applyCouponBtn) {
-                            applyCouponBtn.addEventListener('click', function() {
-                                var couponCode = couponCodeInput.value.trim();
-
-                                if (!couponCode) {
-                                    couponError.textContent = 'Please enter a coupon code.';
-                                    couponError.style.display = 'block';
-                                    return;
-                                }
-
-                                // Validate coupon via API
-                                fetch('/validate-coupon', {
-                                        method: 'POST',
-                                        headers: {
-                                            'Content-Type': 'application/json',
-                                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                                        },
-                                        body: JSON.stringify({
-                                            couponCode: couponCode, // Ensure it matches the backend's expected key
-                                            eventId: '{{ $nearestEvents->id }}' // Dynamically include the event ID
-                                        })
-                                    })
-                                    .then(response => response.json())
-                                    .then(data => {
-                                        if (data.success) {
-                                            // Coupon is valid
-                                            discountAmount = data.discount * 100; // Convert INR to paise
-                                            discountSuccess.style.display = 'block';
-                                            discountAmountSpan.textContent = (discountAmount / 100).toFixed(2); // Show INR format
-                                            couponError.style.display = 'none';
-                                        } else {
-                                            // Coupon is invalid
-                                            discountSuccess.style.display = 'none';
-                                            couponError.textContent = 'Invalid or expired coupon code.';
-                                            couponError.style.display = 'block';
-                                        }
-                                    })
-                                    .catch(error => {
-                                        console.error('Error validating coupon:', error);
-                                        discountSuccess.style.display = 'none';
-                                        couponError.textContent = 'An error occurred while validating the coupon.';
-                                        couponError.style.display = 'block';
-                                    });
-                            });
-                        }
-
-                        // Proceed to payment with discount
-                        if (razorpayBtnEvent) {
-                            razorpayBtnEvent.addEventListener('click', function() {
-                                var finalAmount = originalAmount - discountAmount;
-                                proceedWithPayment(finalAmount);
-                            });
-                        }
-
-                        // Function to initialize Razorpay and proceed with payment
-                        function proceedWithPayment(amount) {
-                            var razorpayKey = "{{ env('RAZORPAY_KEY') }}";
-                            // var razorpayKey = "rzp_test_VVNmvqg0nEoaOf";
-                            var username = "{{ Auth::user()->name }}";
-                            var useremail = "{{ Auth::user()->email }}";
-
-                            var eventOptions = {
-                                key: razorpayKey,
-                                amount: amount,
-                                currency: "INR",
-                                name: "{{ $nearestEvents->title }}",
-                                description: "Event Registration Payment",
-                                image: "/img/logo.png",
-                                handler: function(response) {
-                                    console.log('Payment successful, Payment ID:', response.razorpay_payment_id);
-                                    storeEventPaymentDetails(response.razorpay_payment_id, amount);
-                                },
-                                prefill: {
-                                    name: username,
-                                    email: useremail
-                                },
-                                theme: {
-                                    color: "#F37254"
-                                }
-                            };
-
-                            var rzp = new Razorpay(eventOptions);
-                            rzp.open();
-                        }
-
-                        // Store payment details after successful payment
-                        function storeEventPaymentDetails(paymentId, amount) {
-                            var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-                            var url = `{{ route('razorpay.payment.eventPayment') }}`;
-                            var eventId = '{{ $nearestEvents->id }}';
-
-                            fetch(url, {
-                                    method: 'POST',
-                                    headers: {
-                                        'Content-Type': 'application/json',
-                                        'X-CSRF-TOKEN': csrfToken
-                                    },
-                                    body: JSON.stringify({
-                                        paymentId: paymentId,
-                                        amount: amount,
-                                        eventId: eventId
-                                    })
-                                })
-                                .then(response => {
-                                    console.log('Payment details stored successfully.');
-                                    Swal.fire({
-                                        icon: 'success',
-                                        title: 'Payment Successful',
-                                        text: 'You have successfully registered for the event.',
-                                    }).then((result) => {
-                                        if (result.isConfirmed) {
-                                            window.location.reload();
-                                        }
-                                    });
-                                })
-                                .catch(error => {
-                                    console.error('Error storing payment details:', error);
-                                    Swal.fire({
-                                        icon: 'error',
-                                        title: 'Error',
-                                        text: 'Failed to store payment details.',
-                                    });
-                                });
-                        }
-                    });
-                </script>
-            @endif
-
-
-
-
-
-
-
+        @else
             <div class="row">
                 <div class="col-md-12">
-                    <div class="card-title"><b>Monthly Meeting Payment</b></div>
-                    <div class="card border-0 shadow workshopCard">
-                        @if ($monthlyPayments->isNotEmpty())
-                            <div class="card-body">
-                                @foreach ($monthlyPayments as $month => $payments)
-                                    @php
-                                        $currentMonth = now()->format('F - Y');
-                                        $isCurrentMonth = $month == $currentMonth;
-                                        $isUnpaid = $payments->first()->status == 'unpaid';
-                                    @endphp
-
-                                    @if ($isUnpaid)
-                                        <div class="alert alert-warning mt-3">
-                                            <strong>Payment Pending!</strong> Your payment is pending for
-                                            <b>{{ $month }}</b>.
-                                        </div>
-                                        <ul>
-                                            @foreach ($payments as $payment)
-                                                <li class="mt-3">
-                                                    <b>{{ $month }}:</b> <span class="text-danger">Pending</span>
-                                                </li>
-                                            @endforeach
-                                        </ul>
-                                    @else
-                                        <div class="alert alert-success">
-                                            <strong>Payment Completed!</strong> Your payment for <b>{{ $month }}</b> has
-                                            already been made.
-                                        </div>
-                                    @endif
-                                @endforeach
-
-                                <div class="d-flex justify-content-end mt-4">
-                                    <button type="button" class="btn btn-bg-orange btn-md monthlyPay" data-amount="{{ $totalAmountDue }}">
-                                        Pay ₹{{ $totalAmountDue }}
-                                    </button>
-                                </div>
-                            </div>
-                        @else
-                            <div class="card-body">
-                                <p class="mt-5 text-muted text-center"><b>No Monthly Payment Details for Now.</b></p>
-                            </div>
-                        @endif
-                    </div>
+                    <p class="mt-3 text-muted text-center"><b>No Events for now.</b></p>
                 </div>
             </div>
+            @endif
+        </div>
+        </div>
+        </div>
+
+
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+        <script>
+            function copyLink() {
+                var copyText = document.getElementById("shareableLink").value;
+                navigator.clipboard.writeText(copyText).then(function() {
+                    alert("Link copied to clipboard");
+                }, function(err) {
+                    alert("Could not copy link");
+                });
+            }
+        </script>
+        <script>
+            function copyLink() {
+                var copyText = document.getElementById("shareableLink").value;
+                navigator.clipboard.writeText(copyText).then(function() {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Link copied!',
+                        text: 'The link has been copied to your clipboard.',
+                        confirmButtonText: 'OK'
+                    });
+                }, function(err) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: 'Could not copy the link. Please try again.',
+                        confirmButtonText: 'OK'
+                    });
+                });
+            }
+        </script>
+        <script>
+            function copyMeetingLink() {
+                var copyText = document.getElementById("shareableMeetingLink").value;
+                navigator.clipboard.writeText(copyText).then(function() {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Link copied!',
+                        text: 'The link has been copied to your clipboard.',
+                        confirmButtonText: 'OK'
+                    });
+                }, function(err) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: 'Could not copy the link. Please try again.',
+                        confirmButtonText: 'OK'
+                    });
+                });
+            }
+        </script>
 
 
 
 
-            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-            <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+        <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-            @if ($monthlyPayments)
-                <script>
-                    document.addEventListener('DOMContentLoaded', function() {
-                        var unpaidMonths = [];
+        @if ($nearestEvents)
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    var razorpayBtnEvent = document.getElementById('razorpayBtnEvent');
+                    var applyCouponBtn = document.getElementById('applyCouponBtn');
+                    var couponCodeInput = document.getElementById('couponCode');
+                    var couponError = document.getElementById('couponError');
+                    var discountSuccess = document.getElementById('discountSuccess');
+                    var discountAmountSpan = document.getElementById('discountAmount');
+                    var originalAmount = parseInt(razorpayBtnEvent.getAttribute('data-amount-event')) * 100; // Convert to paise
+                    var discountAmount = 0;
 
-                        @if ($monthlyPayments->isNotEmpty())
-                            @foreach ($monthlyPayments as $month => $payments)
-                                @if ($payments->first()->status == 'unpaid')
-                                    unpaidMonths.push("{{ $month }}");
-                                @endif
-                            @endforeach
-                        @endif
+                    // Apply coupon functionality
+                    if (applyCouponBtn) {
+                        applyCouponBtn.addEventListener('click', function() {
+                            var couponCode = couponCodeInput.value.trim();
 
-                        function showPaymentReminder() {
-                            if (unpaidMonths.length > 0) {
-                                var paymentMonthElement = document.getElementById('paymentMonth');
-                                if (paymentMonthElement) {
-                                    paymentMonthElement.textContent = unpaidMonths.join(", ");
-                                }
-
-                                var reminderModal = new bootstrap.Modal(document.getElementById('paymentReminderModal'));
-                                reminderModal.show();
+                            if (!couponCode) {
+                                couponError.textContent = 'Please enter a coupon code.';
+                                couponError.style.display = 'block';
+                                return;
                             }
-                        }
 
-                        // Show the modal on page load if unpaid payments exist
-                        showPaymentReminder();
-
-                        // Set interval to show the reminder every 15 minutes
-                        setInterval(showPaymentReminder, 15 * 60 * 1000); // 15 minutes in milliseconds
-
-                        // Add click event to all pay buttons
-                        var monthlyPayButtons = document.querySelectorAll('.monthlyPay');
-                        monthlyPayButtons.forEach(function(button) {
-                            button.addEventListener('click', function() {
-                                var amount = parseInt(button.getAttribute('data-amount')) * 100; // Convert to paise
-
-                                var razorpayKey = "{{ env('RAZORPAY_KEY') }}";
-                                // var razorpayKey = "rzp_test_VVNmvqg0nEoaOf";
-
-                                if (!razorpayKey) {
-                                    Swal.fire({
-                                        icon: 'error',
-                                        title: 'Error',
-                                        text: 'Payment configuration error. Please contact support.',
-                                    });
-                                    return;
-                                }
-
-                                var username = "{{ Auth::user()->name }}";
-                                var useremail = "{{ Auth::user()->email }}";
-
-                                var payOptions = {
-                                    "key": razorpayKey,
-                                    "amount": amount,
-                                    "currency": "INR",
-                                    "name": "UBN",
-                                    "description": "Monthly payment",
-                                    "image": "/img/logo.png",
-                                    "handler": function(response) {
-                                        storeMonthlyPaymentId(response.razorpay_payment_id, amount);
-                                    },
-                                    "prefill": {
-                                        "name": username,
-                                        "email": useremail
-                                    },
-                                    "theme": {
-                                        "color": "#012e6f"
-                                    }
-                                };
-
-                                var rzp = new Razorpay(payOptions);
-                                rzp.open();
-                            });
-                        });
-
-                        document.querySelector('.payNowButton').addEventListener('click', function() {
-                            var firstUnpaidButton = document.querySelector('.monthlyPay');
-                            if (firstUnpaidButton) {
-                                firstUnpaidButton.click();
-                            }
-                        });
-
-                        function storeMonthlyPaymentId(paymentId = '', amount = '') {
-                            var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-                            var url = `{{ route('razorpay.payment.monthlyPaymentStore') }}`;
-
-                            fetch(url, {
+                            // Validate coupon via API
+                            fetch('/validate-coupon', {
                                     method: 'POST',
                                     headers: {
                                         'Content-Type': 'application/json',
-                                        'X-CSRF-TOKEN': csrfToken,
+                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                                     },
                                     body: JSON.stringify({
-                                        paymentId: paymentId,
-                                        amount: amount,
-                                    }),
+                                        couponCode: couponCode, // Ensure it matches the backend's expected key
+                                        eventId: '{{ $nearestEvents->id }}' // Dynamically include the event ID
+                                    })
                                 })
                                 .then(response => response.json())
                                 .then(data => {
-                                    Swal.fire({
-                                        icon: 'success',
-                                        title: 'Success',
-                                        text: 'Payment Successful',
-                                    }).then((result) => {
-                                        if (result.isConfirmed) {
-                                            window.location.reload();
-                                        }
-                                    });
+                                    if (data.success) {
+                                        // Coupon is valid
+                                        discountAmount = data.discount * 100; // Convert INR to paise
+                                        discountSuccess.style.display = 'block';
+                                        discountAmountSpan.textContent = (discountAmount / 100).toFixed(2); // Show INR format
+                                        couponError.style.display = 'none';
+                                    } else {
+                                        // Coupon is invalid
+                                        discountSuccess.style.display = 'none';
+                                        couponError.textContent = 'Invalid or expired coupon code.';
+                                        couponError.style.display = 'block';
+                                    }
                                 })
                                 .catch(error => {
-                                    Swal.fire({
-                                        icon: 'error',
-                                        title: 'Error',
-                                        text: 'Failed to store payment ID',
-                                    });
+                                    console.error('Error validating coupon:', error);
+                                    discountSuccess.style.display = 'none';
+                                    couponError.textContent = 'An error occurred while validating the coupon.';
+                                    couponError.style.display = 'block';
                                 });
+                        });
+                    }
+
+                    // Proceed to payment with discount
+                    if (razorpayBtnEvent) {
+                        razorpayBtnEvent.addEventListener('click', function() {
+                            var finalAmount = originalAmount - discountAmount;
+                            proceedWithPayment(finalAmount);
+                        });
+                    }
+
+                    // Function to initialize Razorpay and proceed with payment
+                    function proceedWithPayment(amount) {
+                        var razorpayKey = "{{ env('RAZORPAY_KEY') }}";
+                        // var razorpayKey = "rzp_test_VVNmvqg0nEoaOf";
+                        var username = "{{ Auth::user()->name }}";
+                        var useremail = "{{ Auth::user()->email }}";
+
+                        var eventOptions = {
+                            key: razorpayKey,
+                            amount: amount,
+                            currency: "INR",
+                            name: "{{ $nearestEvents->title }}",
+                            description: "Event Registration Payment",
+                            image: "/img/logo.png",
+                            handler: function(response) {
+                                console.log('Payment successful, Payment ID:', response.razorpay_payment_id);
+                                storeEventPaymentDetails(response.razorpay_payment_id, amount);
+                            },
+                            prefill: {
+                                name: username,
+                                email: useremail
+                            },
+                            theme: {
+                                color: "#F37254"
+                            }
+                        };
+
+                        var rzp = new Razorpay(eventOptions);
+                        rzp.open();
+                    }
+
+                    // Store payment details after successful payment
+                    function storeEventPaymentDetails(paymentId, amount) {
+                        var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                        var url = `{{ route('razorpay.payment.eventPayment') }}`;
+                        var eventId = '{{ $nearestEvents->id }}';
+
+                        fetch(url, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': csrfToken
+                                },
+                                body: JSON.stringify({
+                                    paymentId: paymentId,
+                                    amount: amount,
+                                    eventId: eventId
+                                })
+                            })
+                            .then(response => {
+                                console.log('Payment details stored successfully.');
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Payment Successful',
+                                    text: 'You have successfully registered for the event.',
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        window.location.reload();
+                                    }
+                                });
+                            })
+                            .catch(error => {
+                                console.error('Error storing payment details:', error);
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: 'Failed to store payment details.',
+                                });
+                            });
+                    }
+                });
+            </script>
+        @endif
+
+
+
+
+
+
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card-title"><b>Monthly Meeting Payment</b></div>
+                <div class="card border-0 shadow workshopCard">
+                    @if ($monthlyPayments->isNotEmpty())
+                        <div class="card-body">
+                            @foreach ($monthlyPayments as $month => $payments)
+                                @php
+                                    $currentMonth = now()->format('F - Y');
+                                    $isCurrentMonth = $month == $currentMonth;
+                                    $isUnpaid = $payments->first()->status == 'unpaid';
+                                @endphp
+
+                                @if ($isUnpaid)
+                                    <div class="alert alert-warning mt-3">
+                                        <strong>Payment Pending!</strong> Your payment is pending for
+                                        <b>{{ $month }}</b>.
+                                    </div>
+                                    <ul>
+                                        @foreach ($payments as $payment)
+                                            <li class="mt-3">
+                                                <b>{{ $month }}:</b> <span class="text-danger">Pending</span>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                @else
+                                    <div class="alert alert-success">
+                                        <strong>Payment Completed!</strong> Your payment for <b>{{ $month }}</b> has
+                                        already been made.
+                                    </div>
+                                @endif
+                            @endforeach
+
+                            <div class="d-flex justify-content-end mt-4">
+                                <button type="button" class="btn btn-bg-orange btn-md monthlyPay" data-amount="{{ $totalAmountDue }}">
+                                    Pay ₹{{ $totalAmountDue }}
+                                </button>
+                            </div>
+                        </div>
+                    @else
+                        <div class="card-body">
+                            <p class="mt-5 text-muted text-center"><b>No Monthly Payment Details for Now.</b></p>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        </div>
+
+
+
+
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+        @if ($monthlyPayments)
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    var unpaidMonths = [];
+
+                    @if ($monthlyPayments->isNotEmpty())
+                        @foreach ($monthlyPayments as $month => $payments)
+                            @if ($payments->first()->status == 'unpaid')
+                                unpaidMonths.push("{{ $month }}");
+                            @endif
+                        @endforeach
+                    @endif
+
+                    function showPaymentReminder() {
+                        if (unpaidMonths.length > 0) {
+                            var paymentMonthElement = document.getElementById('paymentMonth');
+                            if (paymentMonthElement) {
+                                paymentMonthElement.textContent = unpaidMonths.join(", ");
+                            }
+
+                            var reminderModal = new bootstrap.Modal(document.getElementById('paymentReminderModal'));
+                            reminderModal.show();
+                        }
+                    }
+
+                    // Show the modal on page load if unpaid payments exist
+                    showPaymentReminder();
+
+                    // Set interval to show the reminder every 15 minutes
+                    setInterval(showPaymentReminder, 15 * 60 * 1000); // 15 minutes in milliseconds
+
+                    // Add click event to all pay buttons
+                    var monthlyPayButtons = document.querySelectorAll('.monthlyPay');
+                    monthlyPayButtons.forEach(function(button) {
+                        button.addEventListener('click', function() {
+                            var amount = parseInt(button.getAttribute('data-amount')) * 100; // Convert to paise
+
+                            var razorpayKey = "{{ env('RAZORPAY_KEY') }}";
+                            // var razorpayKey = "rzp_test_VVNmvqg0nEoaOf";
+
+                            if (!razorpayKey) {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: 'Payment configuration error. Please contact support.',
+                                });
+                                return;
+                            }
+
+                            var username = "{{ Auth::user()->name }}";
+                            var useremail = "{{ Auth::user()->email }}";
+
+                            var payOptions = {
+                                "key": razorpayKey,
+                                "amount": amount,
+                                "currency": "INR",
+                                "name": "UBN",
+                                "description": "Monthly payment",
+                                "image": "/img/logo.png",
+                                "handler": function(response) {
+                                    storeMonthlyPaymentId(response.razorpay_payment_id, amount);
+                                },
+                                "prefill": {
+                                    "name": username,
+                                    "email": useremail
+                                },
+                                "theme": {
+                                    "color": "#012e6f"
+                                }
+                            };
+
+                            var rzp = new Razorpay(payOptions);
+                            rzp.open();
+                        });
+                    });
+
+                    document.querySelector('.payNowButton').addEventListener('click', function() {
+                        var firstUnpaidButton = document.querySelector('.monthlyPay');
+                        if (firstUnpaidButton) {
+                            firstUnpaidButton.click();
                         }
                     });
-                </script>
-            @endif
+
+                    function storeMonthlyPaymentId(paymentId = '', amount = '') {
+                        var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                        var url = `{{ route('razorpay.payment.monthlyPaymentStore') }}`;
+
+                        fetch(url, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': csrfToken,
+                                },
+                                body: JSON.stringify({
+                                    paymentId: paymentId,
+                                    amount: amount,
+                                }),
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Success',
+                                    text: 'Payment Successful',
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        window.location.reload();
+                                    }
+                                });
+                            })
+                            .catch(error => {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: 'Failed to store payment ID',
+                                });
+                            });
+                    }
+                });
+            </script>
+        @endif
 
 
-            {{-- payment reminder code  --}}
+        {{-- payment reminder code  --}}
 
-            <!-- Payment Reminder Modal -->
-            <div class="modal fade" id="paymentReminderModal" tabindex="-1" role="dialog" aria-labelledby="paymentReminderModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered" role="document">
-                    <div class="modal-content shadow-lg rounded">
-                        <div class="modal-header text-white">
-                            <h5 class="modal-title" id="paymentReminderModalLabel">Payment Reminder</h5>
-                            <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        <!-- Payment Reminder Modal -->
+        <div class="modal fade" id="paymentReminderModal" tabindex="-1" role="dialog" aria-labelledby="paymentReminderModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content shadow-lg rounded">
+                    <div class="modal-header text-white">
+                        <h5 class="modal-title" id="paymentReminderModalLabel">Payment Reminder</h5>
+                        <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-center">
+                        <div class="mb-3">
+                            <img src="/img/timePayment4.png" alt="Reminder Icon" style="width: 80px;">
                         </div>
-                        <div class="modal-body text-center">
-                            <div class="mb-3">
-                                <img src="/img/timePayment4.png" alt="Reminder Icon" style="width: 80px;">
-                            </div>
-                            <h6 class="text-danger">
-                                <strong>Your payment for <span id="paymentMonth" class="text-primary"></span> is pending.</strong>
-                            </h6>
-                            <p class="text-muted">Please complete your payment to avoid interruptions.</p>
-                        </div>
-                        <div class="modal-footer justify-content-center">
-                            <button type="button" class="btn btn-outline-secondary px-4 py-2" data-bs-dismiss="modal">
-                                <i class="bi bi-clock"></i> Later
-                            </button>
-                            <button type="button" class="btn btn-primary px-4 py-2 payNowButton">
-                                <i class="bi bi-wallet2"></i> Pay Now
-                            </button>
-                        </div>
+                        <h6 class="text-danger">
+                            <strong>Your payment for <span id="paymentMonth" class="text-primary"></span> is pending.</strong>
+                        </h6>
+                        <p class="text-muted">Please complete your payment to avoid interruptions.</p>
+                    </div>
+                    <div class="modal-footer justify-content-center">
+                        <button type="button" class="btn btn-outline-secondary px-4 py-2" data-bs-dismiss="modal">
+                            <i class="bi bi-clock"></i> Later
+                        </button>
+                        <button type="button" class="btn btn-primary px-4 py-2 payNowButton">
+                            <i class="bi bi-wallet2"></i> Pay Now
+                        </button>
                     </div>
                 </div>
             </div>
+        </div>
 
 
-            <style>
-                #paymentReminderModal .modal-content {
-                    border-radius: 12px;
-                    overflow: hidden;
-                }
+        <style>
+            #paymentReminderModal .modal-content {
+                border-radius: 12px;
+                overflow: hidden;
+            }
 
-                #paymentReminderModal .modal-header {
-                    border-bottom: none;
-                    background-color: #1d3268;
-                }
+            #paymentReminderModal .modal-header {
+                border-bottom: none;
+                background-color: #1d3268;
+            }
 
-                #paymentReminderModal .modal-footer {
-                    border-top: none;
-                }
+            #paymentReminderModal .modal-footer {
+                border-top: none;
+            }
 
-                #paymentReminderModal .btn-outline-secondary:hover {
-                    background-color: #e0e0e0;
-                    color: #333;
-                }
+            #paymentReminderModal .btn-outline-secondary:hover {
+                background-color: #e0e0e0;
+                color: #333;
+            }
 
-                #paymentReminderModal .btn-primary {
-                    background-color: #1d3268;
-                    border-color: #1d3268;
-                }
+            #paymentReminderModal .btn-primary {
+                background-color: #1d3268;
+                border-color: #1d3268;
+            }
 
-                #paymentReminderModal .btn-primary:hover {
-                    background-color: #1d3268;
-                    border-color: #1d3268;
-                }
-            </style>
-
-
-
-
-        @endrole
+            #paymentReminderModal .btn-primary:hover {
+                background-color: #1d3268;
+                border-color: #1d3268;
+            }
+        </style>
 
 
 
 
-        @role('Admin')
+    @endrole
 
-            <div class="row">
-                <div class="col-md-4">
-                    <a href="{{ route('schedule.dashIndex') }}" class="card-link">
-                        <div class="card shadow">
-                            <div class="card-header">
-                                <b style="color: #1d2856;">Upcoming Circle Meetings</b>
-                                <i class="bi bi-calendar3" style="display: inline-block; float: right; color: rgb(255, 187, 0);"></i>
-                            </div>
-                            <div class="card-body">
-                                @if (session('status'))
-                                    <div class="alert alert-success" role="alert">
-                                        {{ session('status') }}
-                                    </div>
-                                @endif
-                                {{-- <h2>{{ $count }}</h2> --}}
-                            </div>
+
+
+
+    @role('Admin')
+
+        <div class="row">
+            <div class="col-md-4">
+                <a href="{{ route('schedule.dashIndex') }}" class="card-link">
+                    <div class="card shadow">
+                        <div class="card-header">
+                            <b style="color: #1d2856;">Upcoming Circle Meetings</b>
+                            <i class="bi bi-calendar3" style="display: inline-block; float: right; color: rgb(255, 187, 0);"></i>
                         </div>
-                    </a>
-                </div>
+                        <div class="card-body">
+                            @if (session('status'))
+                                <div class="alert alert-success" role="alert">
+                                    {{ session('status') }}
+                                </div>
+                            @endif
+                            {{-- <h2>{{ $count }}</h2> --}}
+                        </div>
+                    </div>
+                </a>
+            </div>
 
-                {{-- <div class="col-md-4">
+            {{-- <div class="col-md-4">
             <a href="{{ route('pendingPayments.index') }}" class="card-link">
                 <div class="card shadow">
                     <div class="card-header">
@@ -1268,7 +1275,7 @@
             </a>
         </div> --}}
 
-                {{-- <div class="col-md-4">
+            {{-- <div class="col-md-4">
             <a href="{{ route('maxMeetings.index') }}" class="card-link">
                 <div class="card shadow">
                     <div class="card-header">
@@ -1287,7 +1294,7 @@
             </a>
         </div> --}}
 
-                {{-- <div class="col-md-4">
+            {{-- <div class="col-md-4">
             <a href="{{ route('maxBusiness.index') }}" class="card-link">
                 <div class="card shadow">
                     <div class="card-header">
@@ -1307,7 +1314,7 @@
             </a>
         </div> --}}
 
-                {{-- <div class="col-md-4">
+            {{-- <div class="col-md-4">
             <a href="{{ route('maxReference.index') }}" class="card-link">
                 <div class="card shadow">
                     <div class="card-header">
@@ -1327,7 +1334,7 @@
             </a>
         </div> --}}
 
-                {{-- <div class="col-md-4">
+            {{-- <div class="col-md-4">
             <a href="{{ route('maxRefferal.index') }}" class="card-link">
                 <div class="card shadow">
                     <div class="card-header">
@@ -1347,7 +1354,7 @@
             </a>
         </div> --}}
 
-                {{-- <div class="col-md-4">
+            {{-- <div class="col-md-4">
             <a href="{{ route('maxVisitor.index') }}" class="card-link">
                 <div class="card shadow">
                     <div class="card-header">
@@ -1366,7 +1373,7 @@
                 </div>
             </a>
         </div> --}}
-            </div>
+        </div>
         </div>
     @endrole
 

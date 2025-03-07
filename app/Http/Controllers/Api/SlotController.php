@@ -68,6 +68,7 @@ class SlotController extends Controller
             $slot->userId = $userId;
             $slot->regMemberId = $request->regMemberId;
             $slot->bookingStatus = 'Pending';
+            $slot->date = now()->toDateString();
             $slot->status = 'Active';
             $slot->save();
 
