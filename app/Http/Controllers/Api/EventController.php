@@ -67,11 +67,20 @@ class EventController extends Controller
                 return Utils::errorResponse(['error' => 'Event not found or not published.'], 'Event Not Found', 404);
             }
             // Fetch the member's slot bookings for the event
-            $slotBooking = SlotBooking::where('eventId', $id)
+            $slotBooking = SlotBooking::select('id', 'eventId', 'slotId', 'userId', 'regMemberId', 'bookingStatus', 'date')
+                ->where('eventId', $id)
+                ->with(['slots' => function ($query) {
+                    $query->select('id', 'start_time', 'end_time');
+                }])
+                ->where('bookingStatus', 'Pending')
+                ->where('status', 'Active')
                 ->where('regMemberId', $memberId)
+                ->with(['user' => function ($query) {
+                    $query->select('id', 'userId', 'firstName', 'lastName', 'profilePhoto');
+                }])
                 ->get();
             return Utils::sendResponse([
-                'event' => $event,
+                //'event' => $event,
                 'slotBooking' => $slotBooking,
             ], 'Slot Booking Data Fetched Successfully', 200);
         } catch (\Throwable $th) {
@@ -96,8 +105,13 @@ class EventController extends Controller
             $slotBooking = SlotBooking::findOrFail($id);
 
             // Update the booking status
-            $slotBooking->bookingStatus = $validatedData['bookingStatus'];
-            $slotBooking->save();
+            if ($validatedData['bookingStatus'] === 'Rejected') {
+                $slotBooking->status = 'Deleted';
+                $slotBooking->save();
+            } else {
+                $slotBooking->bookingStatus = $validatedData['bookingStatus'];
+                $slotBooking->save();
+            }
 
             // Return a success response
             return Utils::sendResponse(

@@ -621,6 +621,13 @@ class EventController extends Controller
         ]);
 
         $slotBooking = SlotBooking::findOrFail($id);
+
+        if ($request->bookingStatus === 'Rejected') {
+            $slotBooking->status = 'Deleted';
+            $slotBooking->save();
+            return back()->with('success', 'Slot Booking status updated successfully.');
+        }
+
         $slotBooking->bookingStatus = $request->bookingStatus;
         $slotBooking->save();
 

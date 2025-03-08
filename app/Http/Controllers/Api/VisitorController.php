@@ -242,7 +242,9 @@ class VisitorController extends Controller
             // Fetch active users excluding the authenticated user's member ID
             $users = EventRegister::where('eventId', $id)
                 ->where('status', 'Active')
-                ->where('memberId', '!=', Auth::user()->member ? Auth::user()->member->userId : null)
+                ->where('memberId', '!=', Auth::user()->member->userId ? Auth::user()->member->userId : null)
+                // ->where('memberId', '!=', Auth::user()->id)
+                // ->orWhere('userId', '!=', Auth::user()->id)
                 ->get()
                 ->map(function ($user) {
                     $user->type = 'member'; // Add a type key

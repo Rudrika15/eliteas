@@ -34,8 +34,13 @@ class SlotBooking extends Model
         return $this->belongsTo(User::class, 'userId', 'id');
     }
 
+    public function user()
+    {
+        return $this->belongsTo(Member::class, 'userId', 'userId');
+    }
+
     public function visitors()
     {
         return $this->belongsTo(User::class, 'visitorId', 'id');
-    }   
+    }
 }

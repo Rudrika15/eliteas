@@ -353,7 +353,7 @@ class SlotController extends Controller
     {
         try {
 
-            $memberId = Auth::user()->member->userId;
+            return $memberId = Auth::user()->id;
 
             $event = Event::find($id);
 
