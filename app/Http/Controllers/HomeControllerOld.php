@@ -417,20 +417,20 @@ class HomeController extends Controller
                 $nearestEvents = Event::where('eventStatus', 'Publish')
                     ->where('status', 'Active')
                     ->whereDate('event_date', '>=', $currentDate)
-                    ->orderBy('event_date', 'asc')
-                    ->get();
+                    ->orderBy('event_date', 'desc')
+                    ->first();
 
-                // $totalRegisterCount = isset($nearestEvents->id) ? VisitorEventRegister::where('eventId', $nearestEvents->id)->count() + EventRegister::where('eventId', $nearestEvents->id)->count() : 0;
+                $totalRegisterCount = isset($nearestEvents->id) ? VisitorEventRegister::where('eventId', $nearestEvents->id)->count() + EventRegister::where('eventId', $nearestEvents->id)->count() : 0;
                 // $totalRegisterCount = VisitorEventRegister::where('eventId', $nearestEvents->id)->count() + EventRegister::where('eventId', $nearestEvents->id)->count();
 
 
-                // if ($nearestEvents) {
-                //     $findEventRegister = EventRegister::where('memberId', Auth::user()->member->id)
-                //         ->where('eventId', $nearestEvents->id)
-                //         ->get();
-                // } else {
-                //     $findEventRegister = [];
-                // }
+                if ($nearestEvents) {
+                    $findEventRegister = EventRegister::where('memberId', Auth::user()->member->id)
+                        ->where('eventId', $nearestEvents->id)
+                        ->get();
+                } else {
+                    $findEventRegister = [];
+                }
 
                 $signedUrl = URL::signedRoute('visitor.form', [
                     'slug' => $meeting->cm_slug,
@@ -501,7 +501,7 @@ class HomeController extends Controller
 
 
 
-                return view('home', compact('circleCount', 'categoryNames', 'membersCount', 'signedUrl', 'birthdaysToday', 'templates', 'count', 'monthlyPayments', 'totalAmountDue', 'nearestEvents', 'circlecalls', 'busGiver', 'refGiver', 'nearestTraining', 'findRegister', 'testimonials', 'meeting', 'businessCategory', 'myInvites', 'todaysBirthdays'));
+                return view('home', compact('circleCount', 'categoryNames', 'membersCount', 'totalRegisterCount', 'birthdaysToday', 'templates', 'signedUrl', 'count', 'monthlyPayments', 'totalAmountDue', 'nearestEvents', 'findEventRegister', 'circlecalls', 'busGiver', 'refGiver', 'nearestTraining', 'findRegister', 'testimonials', 'meeting', 'businessCategory', 'myInvites', 'todaysBirthdays'));
             }
 
             return view('home', compact('circleCount', 'membersCount', 'count', 'nearestTraining', 'businessCategory', 'myInvites', 'findRegister', 'birthdaysToday', 'templates'));

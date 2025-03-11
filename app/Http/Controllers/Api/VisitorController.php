@@ -239,10 +239,12 @@ class VisitorController extends Controller
                 );
             }
 
+            $usersId = Auth::user()->member->id;
+
             // Fetch active users excluding the authenticated user's member ID
             $users = EventRegister::where('eventId', $id)
                 ->where('status', 'Active')
-                ->where('memberId', '!=', Auth::user()->member->userId ? Auth::user()->member->userId : null)
+                ->where('memberId', '!=', $usersId)
                 // ->where('memberId', '!=', Auth::user()->id)
                 // ->orWhere('userId', '!=', Auth::user()->id)
                 ->get()

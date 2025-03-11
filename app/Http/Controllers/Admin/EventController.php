@@ -72,6 +72,21 @@ class EventController extends Controller
         }
     }
 
+    public function eventDetails($id)
+    {
+        $event = Event::findOrFail($id);
+
+        $totalRegisterCount = VisitorEventRegister::where('eventId', $id)->count()
+            + EventRegister::where('eventId', $id)->count();
+
+        $findEventRegister = EventRegister::where('memberId', Auth::user()->member->id)
+            ->where('eventId', $event->id)
+            ->get();
+
+        return view('admin.event.eventDetails', compact('event', 'totalRegisterCount', 'findEventRegister'));
+    }
+
+
     public function memberEventIndex(Request $request)
     {
         try {
@@ -468,7 +483,7 @@ class EventController extends Controller
             $eventRegister->PaymentStatus = "Event Is Free";
             $eventRegister->save();
 
-            return redirect()->back()->with('success', 'Your data is saved successfully.');
+            return redirect()->back()->with('success', 'You are registered successfully for this event.');
         } catch (\Throwable $th) {
             ErrorLogger::logError(
                 $th,

@@ -155,6 +155,61 @@ class EventController extends Controller
         }
     }
 
+    // public function index(Request $request)
+    // {
+    //     try {
+    //         // Get the authenticated user based on the Bearer token
+    //         $authUser = auth()->user();
+
+    //         // Check if the user exists and get their member ID from the members table
+    //             $memberId = Member::where('userId', $authUser->id)->value('id');
+
+    //         if (!$memberId) {
+    //             return Utils::errorResponse([
+    //                 'error' => 'Member not found.'
+    //             ], 'Not Found', 404);
+    //         }
+
+    //         // Get the nearest upcoming event that is associated with the member and exclude past events
+    //         $event = Event::with(['circle', 'registrations' => function ($query) use ($memberId) {
+    //             // Get the registration details from event_registers table for the member
+    //             $query->where('memberId', $memberId);
+    //         }])
+    //             ->where('status', 'Active')
+    //             ->where('eventStatus', 'Publish')
+    //             ->whereDate('event_date', '>=', now()->format('Y-m-d')) // Only get upcoming events including today
+    //             ->orderBy('event_date', 'ASC') // Order by nearest date
+    //             ->get(); // Get the closest event
+
+    //         // Check if no upcoming event is found
+    //         if (!$event) {
+    //             return Utils::sendResponse([
+    //                 'message' => 'No events for now.'
+    //             ], 'No upcoming events', 200);
+    //         }
+
+    //         // Create the signed URL for the event link
+    //         $signedUrl = URL::signedRoute('event.link', [
+    //             'slug' => $event->event_slug, // Correct the parameter name to match the route
+    //             'ref' => $memberId // Using the correct member ID here
+    //         ], now()->addMinutes(60));
+
+    //         // Return the response with the nearest event and its registration details
+    //         return Utils::sendResponse([
+    //             'event' => $event,
+    //             'eventLink' => $signedUrl
+    //         ], 'Nearest event retrieved successfully', 200);
+    //     } catch (\Throwable $th) {
+    //         // Log the error for debugging purposes
+    //         Log::error('Error retrieving event: ' . $th->getMessage());
+    //         // Return with an error message
+    //         return Utils::errorResponse([
+    //             'error' => 'Failed to retrieve event. Please try again.'
+    //         ], 'Internal Server Error', 500);
+    //     }
+    // }
+
+
     public function index(Request $request)
     {
         try {
@@ -170,46 +225,68 @@ class EventController extends Controller
                 ], 'Not Found', 404);
             }
 
-            // Get the nearest upcoming event that is associated with the member and exclude past events
-            $event = Event::with(['circle', 'registrations' => function ($query) use ($memberId) {
+            // Get all future events that are associated with the member and exclude past events
+            $events = Event::with(['circle', 'registrations' => function ($query) use ($memberId) {
                 // Get the registration details from event_registers table for the member
                 $query->where('memberId', $memberId);
             }])
                 ->where('status', 'Active')
                 ->where('eventStatus', 'Publish')
                 ->whereDate('event_date', '>=', now()->format('Y-m-d')) // Only get upcoming events including today
-                ->orderBy('event_date', 'ASC') // Order by nearest date
-                ->first(); // Get the closest event
+                ->orderBy('event_date', 'ASC') // Order by date in ascending order (from the earliest)
+                ->get(); // Get all future events
 
-            // Check if no upcoming event is found
-            if (!$event) {
+            // Check if no future events are found
+            if ($events->isEmpty()) {
                 return Utils::sendResponse([
-                    'message' => 'No events for now.'
+                    'message' => 'No upcoming events for now.'
                 ], 'No upcoming events', 200);
             }
 
-            // Create the signed URL for the event link
-            $signedUrl = URL::signedRoute('event.link', [
-                'slug' => $event->event_slug, // Correct the parameter name to match the route
-                'ref' => $memberId // Using the correct member ID here
-            ], now()->addMinutes(60));
+            // Create signed URLs for the events' links
+            $eventLinks = $events->map(function ($event) use ($memberId) {
+                return [
+                    'eventSlug' => $event->event_slug,
+                    'eventLink' => URL::signedRoute('event.link', [
+                        'slug' => $event->event_slug, // Correct the parameter name to match the route
+                        'ref' => $memberId // Using the correct member ID here
+                    ], now()->addMinutes(60))
+                ];
+            });
 
-            // Return the response with the nearest event and its registration details
+            // Return the response with the future events and their registration details
             return Utils::sendResponse([
-                'event' => $event,
-                'eventLink' => $signedUrl
-            ], 'Nearest event retrieved successfully', 200);
+                'events' => $events->map(function ($event) use ($memberId) {
+                    // Convert the event to an array
+                    $eventArray = $event->toArray();
+
+                    // Generate the event link
+                    $eventLink = [
+                        'eventLink' => URL::signedRoute('event.link', [
+                            'slug' => $event->event_slug, // Ensure parameter name matches the route
+                            'ref' => $memberId // Using the correct member ID
+                        ], now()->addMinutes(60))
+                    ];
+
+                    // Reorder the array to place eventLink before registrations
+                    $reorderedEvent = array_merge(
+                        array_slice($eventArray, 0, array_search('registrations', array_keys($eventArray)), true),
+                        $eventLink,
+                        array_slice($eventArray, array_search('registrations', array_keys($eventArray)), null, true)
+                    );
+
+                    return $reorderedEvent;
+                })
+            ], 'Upcoming events retrieved successfully', 200);
         } catch (\Throwable $th) {
             // Log the error for debugging purposes
-            Log::error('Error retrieving event: ' . $th->getMessage());
+            Log::error('Error retrieving events: ' . $th->getMessage());
             // Return with an error message
             return Utils::errorResponse([
-                'error' => 'Failed to retrieve event. Please try again.'
+                'error' => 'Failed to retrieve events. Please try again.'
             ], 'Internal Server Error', 500);
         }
     }
-
-
 
 
 
