@@ -12,15 +12,55 @@ use Illuminate\Http\Request;
 
 class ReportController extends Controller
 {
+    // public function ibm(Request $request)
+    // {
+    //     $startDate = $request->input('startDate');
+    //     $endDate = $request->input('endDate');
+
+    //     if (!$startDate && !$endDate) {
+    //         $ibms = collect();
+    //     } else {
+
+    //         $query = CircleCall::with('member')
+    //             ->where('status', 'active');
+
+    //         if ($startDate) {
+    //             $query->where('created_at', '>=', $startDate);
+    //         }
+    //         if ($endDate) {
+    //             $query->where('created_at', '<=', $endDate);
+    //         }
+
+    //         $ibms = $query->get()
+    //             ->groupBy('memberId')
+    //             ->map(function ($group) {
+    //                 $member = $group->first()->member;
+    //                 return [
+    //                     'memberId' => $member->id,
+    //                     'memberName' => $member->firstName . ' ' . $member->lastName,
+    //                     'member_count' => $group->count(),
+    //                 ];
+    //             })
+    //             ->sortByDesc('member_count')
+    //             ->values();
+    //     }
+
+    //     return view('admin.report.ibm', compact('ibms'));
+    // }
+
+
     public function ibm(Request $request)
     {
         $startDate = $request->input('startDate');
         $endDate = $request->input('endDate');
+        $circleId = $request->input('circleId');
 
-        if (!$startDate && !$endDate) {
+        // Fetch all circles for the dropdown
+        $circles = Circle::select('id', 'circleName')->get();
+
+        if (!$startDate && !$endDate && !$circleId) {
             $ibms = collect();
         } else {
-
             $query = CircleCall::with('member')
                 ->where('status', 'active');
 
@@ -31,6 +71,12 @@ class ReportController extends Controller
                 $query->where('created_at', '<=', $endDate);
             }
 
+            if ($circleId) {
+                $query->whereHas('member', function ($q) use ($circleId) {
+                    $q->where('circleId', $circleId);
+                });
+            }
+
             $ibms = $query->get()
                 ->groupBy('memberId')
                 ->map(function ($group) {
@@ -38,6 +84,7 @@ class ReportController extends Controller
                     return [
                         'memberId' => $member->id,
                         'memberName' => $member->firstName . ' ' . $member->lastName,
+                        'circleName' => $member->circle->circleName,
                         'member_count' => $group->count(),
                     ];
                 })
@@ -45,18 +92,60 @@ class ReportController extends Controller
                 ->values();
         }
 
-        return view('admin.report.ibm', compact('ibms'));
+        return view('admin.report.ibm', compact('ibms', 'circles'));
     }
+
+
+
+    // public function reference(Request $request)
+    // {
+    //     $startDate = $request->input('startDate');
+    //     $endDate = $request->input('endDate');
+
+    //     if (!$startDate && !$endDate) {
+    //         $refrences = collect();
+    //     } else {
+    //         $query = CircleMeetingMembersReference::with('refGiver')
+    //             ->where('status', 'Active');
+
+    //         if ($startDate) {
+    //             $query->where('created_at', '>=', $startDate);
+    //         }
+    //         if ($endDate) {
+    //             $query->where('created_at', '<=', $endDate);
+    //         }
+
+    //         $refrences = $query->get()
+    //             ->groupBy('referenceGiverId')
+    //             ->map(function ($group) {
+    //                 $giver = $group->first()->refGiverName;
+    //                 return [
+    //                     'referenceGiverId' => $giver->id,
+    //                     'referenceGiverName' => $giver->firstName . ' ' . $giver->lastName,
+    //                     'reference_count' => $group->count(),
+    //                 ];
+    //             })
+    //             ->sortByDesc('reference_count')
+    //             ->values();
+    //     }
+
+    //     return view('admin.report.reference', compact('refrences'));
+    // }
+
 
     public function reference(Request $request)
     {
         $startDate = $request->input('startDate');
         $endDate = $request->input('endDate');
+        $circleId = $request->input('circleId');
 
-        if (!$startDate && !$endDate) {
+        // Fetch all circles for the dropdown
+        $circles = Circle::select('id', 'circleName')->get();
+
+        if (!$startDate && !$endDate && !$circleId) {
             $refrences = collect();
         } else {
-            $query = CircleMeetingMembersReference::with('refGiverName')
+            $query = CircleMeetingMembersReference::with('refGiver')
                 ->where('status', 'Active');
 
             if ($startDate) {
@@ -66,12 +155,18 @@ class ReportController extends Controller
                 $query->where('created_at', '<=', $endDate);
             }
 
+            if ($circleId) {
+                $query->whereHas('refGiver', function ($q) use ($circleId) {
+                    $q->where('circleId', $circleId);
+                });
+            }
+
             $refrences = $query->get()
                 ->groupBy('referenceGiverId')
                 ->map(function ($group) {
-                    $giver = $group->first()->refGiverName;
+                    $giver = $group->first()->refGiver;
                     return [
-                        'referenceGiverId' => $giver->id,
+                        'referenceGiverId' => $giver->userId,
                         'referenceGiverName' => $giver->firstName . ' ' . $giver->lastName,
                         'reference_count' => $group->count(),
                     ];
@@ -80,19 +175,65 @@ class ReportController extends Controller
                 ->values();
         }
 
-        return view('admin.report.reference', compact('refrences'));
+        return view('admin.report.reference', compact('refrences', 'circles'));
     }
+
+
+
+
+
+
+    // public function business(Request $request)
+    // {
+    //     $startDate = $request->input('startDate');
+    //     $endDate = $request->input('endDate');
+
+    //     if (!$startDate && !$endDate) {
+    //         $business = collect();
+    //     } else {
+    //         $query = CircleMeetingMembersBusiness::with('businessGiver')
+    //             ->where('status', 'Active');
+
+    //         if ($startDate) {
+    //             $query->where('created_at', '>=', $startDate);
+    //         }
+    //         if ($endDate) {
+    //             $query->where('created_at', '<=', $endDate);
+    //         }
+
+    //         $business = $query->get()
+    //             ->groupBy('businessGiverId')
+    //             ->map(function ($group) {
+    //                 $giver = $group->first()->businessGiver;
+    //                 return [
+    //                     'businessGiverId' => $giver->id,
+    //                     'businessGiver' => $giver->firstName . ' ' . $giver->lastName,
+    //                     'business_count' => $group->count(),
+    //                     'total_amount' => $group->sum('amount'),
+    //                 ];
+    //             })
+    //             ->sortByDesc('total_amount')
+    //             ->values();
+    //     }
+
+
+    //     return view('admin.report.business', compact('business'));
+    // }
 
 
     public function business(Request $request)
     {
         $startDate = $request->input('startDate');
         $endDate = $request->input('endDate');
+        $circleId = $request->input('circleId');
 
-        if (!$startDate && !$endDate) {
+        // Fetch all circles for the dropdown
+        $circles = Circle::select('id', 'circleName')->get();
+
+        if (!$startDate && !$endDate && !$circleId) {
             $business = collect();
         } else {
-            $query = CircleMeetingMembersBusiness::with('businessGiver')
+            $query = CircleMeetingMembersBusiness::with('member')
                 ->where('status', 'Active');
 
             if ($startDate) {
@@ -101,14 +242,19 @@ class ReportController extends Controller
             if ($endDate) {
                 $query->where('created_at', '<=', $endDate);
             }
+            if ($circleId) {
+                $query->whereHas('member', function ($q) use ($circleId) {
+                    $q->where('circleId', $circleId);
+                });
+            }
 
             $business = $query->get()
                 ->groupBy('businessGiverId')
                 ->map(function ($group) {
-                    $giver = $group->first()->businessGiver;
+                    $giver = $group->first()->member;
                     return [
-                        'businessGiverId' => $giver->id,
-                        'businessGiver' => $giver->firstName . ' ' . $giver->lastName,
+                        'businessGiverId' => $giver->userId,
+                        'member' => $giver->firstName . ' ' . $giver->lastName,
                         'business_count' => $group->count(),
                         'total_amount' => $group->sum('amount'),
                     ];
@@ -117,9 +263,9 @@ class ReportController extends Controller
                 ->values();
         }
 
-
-        return view('admin.report.business', compact('business'));
+        return view('admin.report.business', compact('business', 'circles'));
     }
+
 
 
     // public function getJoiningMembers(Request $request)

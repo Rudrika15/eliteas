@@ -74,7 +74,7 @@
         <div class="header-info ms-2 me-3 d-flex align-items-center gap-2 ms-5 text-nowrap px-3 rounded-3">
             <a class="search-form d-flex align-items-center" style="margin-left: 30px" href="{{ route('search') }}">
                 <button type="submit" title="Search" style="color: white; font-weight: bold;">Click To Search
-                <i class="bi bi-search" style="color: white; "></i></button>
+                    <i class="bi bi-search" style="color: white; "></i></button>
             </a>
         </div>
 
@@ -83,6 +83,7 @@
             <div class="header-info ms-2 me-3 d-flex align-items-center gap-2 ms-5 text-nowrap px-3 rounded-3">
                 <span class="info-item">Members: {{ $membersCount }}</span>
                 <span class="info-item">Circles: {{ $circleCount }}</span>
+                {{-- <span class="info-item">City: {{ $cityCount }}</span> --}}
                 <span class="info-item">City: 4</span>
             </div>
 

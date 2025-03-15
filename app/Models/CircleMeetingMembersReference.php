@@ -29,4 +29,10 @@ class CircleMeetingMembersReference extends Model
     {
         return $this->belongsTo(User::class, 'referenceGiverId', 'id');
     }
+
+
+    public function refGiver()
+    {
+        return $this->belongsTo(Member::class, 'referenceGiverId', 'userId');
+    }
 }
