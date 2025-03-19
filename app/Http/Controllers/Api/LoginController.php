@@ -380,15 +380,17 @@ class LoginController extends Controller
 
         $keyWords = [];
         if ($request->has('keyword1')) {
-            array_push($keyWords, $request->input('keyword1'));
+            array_push($keyWords, $request->input('keyword1', '') ?? '');
         }
         if ($request->has('keyword2')) {
-            array_push($keyWords, $request->input('keyword2'));
+            array_push($keyWords, $request->input('keyword2', '') ?? '');
         }
         if ($request->has('keyword3')) {
-            array_push($keyWords, $request->input('keyword3'));
+            array_push($keyWords, $request->input('keyword3', '') ?? '');
         }
+
         $member->keyWords = json_encode($keyWords);
+
 
         $member->language = $request->input('language', $member->language);
         $member->timeZone = $request->input('timeZone', $member->timeZone);
