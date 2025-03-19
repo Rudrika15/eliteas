@@ -560,7 +560,7 @@
 
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
-        <script>
+        {{-- <script>
             function copyLink() {
                 var copyText = document.getElementById("shareableLink").value;
                 navigator.clipboard.writeText(copyText).then(function() {
@@ -589,7 +589,59 @@
                     });
                 });
             }
+        </script> --}}
+
+
+        <script>
+            function copyLink() {
+                var copyText = document.getElementById("shareableLink").value;
+
+                if (navigator.clipboard && window.isSecureContext) {
+                    // Modern Clipboard API
+                    navigator.clipboard.writeText(copyText).then(function() {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Link copied!',
+                            text: 'The link has been copied to your clipboard.',
+                            confirmButtonText: 'OK'
+                        });
+                    }).catch(function(err) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: 'Could not copy the link. Please try again.',
+                            confirmButtonText: 'OK'
+                        });
+                    });
+                } else {
+                    // Fallback for older browsers
+                    var textArea = document.createElement("textarea");
+                    textArea.value = copyText;
+                    document.body.appendChild(textArea);
+                    textArea.focus();
+                    textArea.select();
+                    try {
+                        document.execCommand('copy');
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Link copied!',
+                            text: 'The link has been copied to your clipboard.',
+                            confirmButtonText: 'OK'
+                        });
+                    } catch (err) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: 'Could not copy the link. Please try again.',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                    document.body.removeChild(textArea);
+                }
+            }
         </script>
+
+
 
         <script>
             document.addEventListener("scroll", function() {
