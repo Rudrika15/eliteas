@@ -430,10 +430,26 @@
                         </button>
                     @endif
 
+                    {{-- <button class="upcoming text-white px-3 border-0 fw-bold" onclick="copyLink()" style="background-color: #1d2368;">
+                        Invite
+                    </button>
+
+                    <input type="hidden" id="shareableLink" value="{{ URL::signedRoute('event.link', ['slug' => $event->event_slug, 'ref' => auth()->user()->member->id]) }}"> --}}
+
+
+
                     <button class="upcoming text-white px-3 border-0 fw-bold" onclick="copyLink()" style="background-color: #1d2368;">
                         Invite
                     </button>
                     <input type="hidden" id="shareableLink" value="{{ URL::signedRoute('event.link', ['slug' => $event->event_slug, 'ref' => auth()->user()->member->id]) }}">
+
+
+                    <style>
+                        #shareableLink {
+                            display: none;
+                        }
+                    </style>
+
 
 
                     <button type="button" class="upcoming text-white px-3 border-0 fw-bold" style="background-color: #d6460d;">
@@ -541,6 +557,39 @@
         <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+        <script>
+            function copyLink() {
+                var copyText = document.getElementById("shareableLink").value;
+                navigator.clipboard.writeText(copyText).then(function() {
+                    alert("Link copied to clipboard");
+                }, function(err) {
+                    alert("Could not copy link");
+                });
+            }
+        </script>
+        <script>
+            function copyLink() {
+                var copyText = document.getElementById("shareableLink").value;
+                navigator.clipboard.writeText(copyText).then(function() {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Link copied!',
+                        text: 'The link has been copied to your clipboard.',
+                        confirmButtonText: 'OK'
+                    });
+                }, function(err) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: 'Could not copy the link. Please try again.',
+                        confirmButtonText: 'OK'
+                    });
+                });
+            }
+        </script>
 
         <script>
             document.addEventListener("scroll", function() {

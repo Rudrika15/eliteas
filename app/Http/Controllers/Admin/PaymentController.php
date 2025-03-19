@@ -49,9 +49,9 @@ class PaymentController extends Controller
         $this->middleware('permission:payment-generate-monthly-payment', ['only' => ['generateMonthlyPayment']]);
         $this->middleware('permission:payment-update-payment-status', ['only' => ['updatePaymentStatus']]);
         $this->middleware('permission:payment-monthly-payment-store', ['only' => ['monthlyPaymentStore']]);
-        $this->middleware('permission:payment-user-event-payment', ['only' => ['userEventPayment']]);
+        // $this->middleware('permission:payment-user-event-payment', ['only' => ['userEventPayment']]);
         $this->middleware('permission:payment-event-payment', ['only' => ['eventPayment']]);
-        $this->middleware('permission:payment-user-offline-payment', ['only' => ['userOfflinePayment']]);
+        // $this->middleware('permission:payment-user-offline-payment', ['only' => ['userOfflinePayment']]);
         $this->middleware('permission:payment-monthly-payment-index', ['only' => ['monthlyPaymentIndex']]);
     }
 

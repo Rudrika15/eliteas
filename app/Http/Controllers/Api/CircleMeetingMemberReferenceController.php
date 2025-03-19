@@ -149,7 +149,7 @@ class CircleMeetingMemberReferenceController extends Controller
 
             if ($user && $user->fcm_token) {
                 $title = 'Reference';
-                $body = 'A new reference has been created for you by ' . Auth::user()->name;
+                $body = 'A new reference has been created for you by ' . $user->firstName . ' ' . $user->lastName . '.';
 
                 $serviceAccountPath = storage_path('app/public/ubn_notification.json');
                 $factory = (new Factory)->withServiceAccount($serviceAccountPath);

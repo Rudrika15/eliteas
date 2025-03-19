@@ -31,9 +31,9 @@ class EventController extends Controller
         $this->middleware('permission:event-create', ['only' => ['create', 'store']]);
         $this->middleware('permission:event-edit', ['only' => ['edit', 'update']]);
         $this->middleware('permission:event-delete', ['only' => ['delete']]);
-        $this->middleware('permission:event-register', ['only' => ['eventRegister', 'storeUserDetails']]);
+        // $this->middleware('permission:event-register', ['only' => ['eventRegister', 'storeUserDetails']]);
         $this->middleware('permission:event-view-register-list', ['only' => ['eventRegisterList']]);
-        $this->middleware('permission:event-link', ['only' => ['eventLink']]);
+        // $this->middleware('permission:event-link', ['only' => ['eventLink']]);
     }
 
 
@@ -431,13 +431,16 @@ class EventController extends Controller
             $event = Event::where('event_slug', $slug)->firstOrFail();
             return view('admin.event.eventLink', compact('event'));
         } catch (\Throwable $th) {
+            throw $th;
             ErrorLogger::logError(
                 $th,
                 request()->fullUrl()
             );
             return view('servererror');
+            // return "error found";
         }
     }
+
 
     // public function eventRegistrationListMembers()
     // {

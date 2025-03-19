@@ -98,6 +98,9 @@ Route::get('/visitor-form', [VisitorFormController::class, 'visitorForm'])->name
 Route::post('visitor-form-store', [VisitorFormController::class, 'store'])->name('visitor.form.store');
 Route::post('/razorpay-payment-visitor', [PaymentController::class, 'storePaymentDetails'])->name('razorpay.payment.store.visitor');
 
+Route::get('/event-link/{slug}', [EventController::class, 'eventLink'])->name('event.link')->middleware('signed');
+
+
 // event invite
 // Route::get('/event-link', [EventController::class, 'showEvent'])->name('event.link')->middleware('signed');
 
@@ -881,7 +884,8 @@ Route::post('/membership-payment', [PaymentController::class, 'membershipPayment
 
 
 //event registration for outsider
-Route::get('/event-link/{slug}', [EventController::class, 'eventLink'])->name('event.link')->middleware('signed');
+// Route::get('/event-link/{slug}', [EventController::class, 'eventLink'])->name('event.link')->middleware('signed');
+// Route::get('/event-link/{slug}', [EventController::class, 'eventLink'])->name('event.link');
 
 // Route::get('/event/{slug}', [EventController::class, 'eventLink'])->name('event.link');
 Route::post('/store-user-details', [EventController::class, 'storeUserDetails'])->name('storeUserDetails');
