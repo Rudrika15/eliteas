@@ -256,11 +256,14 @@
             @else
                 <div class="container-responsive">
                     <div class="row">
-                        @if ($categoryNames->isNotEmpty())
+                        {{-- @if ($categoryNames->isNotEmpty())
                             <div class="col-md-7">
                             @else
                                 <div class="col-md-12">
-                        @endif
+                        @endif --}}
+
+                        {{ $categoryNames }}
+
                         <div class="card-title"><b>Upcoming Circle Meetings</b></div>
                         <div class="card border-0 shadow workshopCard">
                             <div class="card-body">

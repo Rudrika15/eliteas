@@ -52,6 +52,7 @@ use App\Http\Controllers\Admin\CircleMeetingMemberReferenceController;
 use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\DatabaseBackupController;
 use App\Http\Controllers\Admin\EventTypeController;
+use App\Http\Controllers\Admin\MemberCardController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\SlotController;
 use App\Http\Controllers\admin\TemplateDetailController;
@@ -804,6 +805,10 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('trainingFeedback/edit/{id?}', [TrainingFeedbackController::class, 'edit'])->name('trainingFeedback.edit');
     Route::post('trainingFeedback/update', [TrainingFeedbackController::class, 'update'])->name('trainingFeedback.update');
     Route::get('trainingFeedback/delete/{id?}', [TrainingFeedbackController::class, 'delete'])->name('trainingFeedback.delete');
+
+
+    // new card design
+    Route::get('memberCard', [MemberCardController::class, 'card'])->name('memberCard.card');
 });
 
 Route::get('/main-event-thankYouVisitor', [ConEventController::class, 'thankYouUser'])->name('main.event.thankYouUser');

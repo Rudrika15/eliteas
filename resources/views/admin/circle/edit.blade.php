@@ -172,68 +172,46 @@
                 </div>
             </div>
 
+            @php
+                $selectedWeeks = old('weekNo', is_array($circle->weekNo) ? $circle->weekNo : json_decode($circle->weekNo, true));
+            @endphp
+
             <div class="form-control">
                 <div class="row">
-                    <div class="col-md-6">
-                        <div class=" mt-3">
-                            <label class="form-label" for="weekNo">
-                                Number of Weeks
-                            </label>
-                            @error('weekNo')
-                                <div class="invalid-tooltip">
-                                    {{ $message }}
-                                </div>
-                            @enderror
-                        </div>
+                    <div class="col-md-6 mt-3">
+                        <label class="form-label" for="weekNo">Number of Weeks</label>
+                        @error('weekNo')
+                            <div class="invalid-tooltip">{{ $message }}</div>
+                        @enderror
                     </div>
                     <div class="row mb-3">
-                        <div class="col-md-3">
-                            <div class="form-check mt-3">
-                                <input class="form-check-input" type="checkbox" id="weekNo1" name="weekNo[]" value="Week 1" {{ is_array(old('weekNo', $circle->weekNo)) && in_array('Week 1', old('weekNo', $circle->weekNo)) ? 'checked' : '' }}>
-                                <label class="form-check-label" for="weekNo1">
-                                    Week 1
-                                </label>
+                        @foreach (['Week 1', 'Week 2', 'Week 3', 'Week 4'] as $week)
+                            <div class="col-md-3">
+                                <div class="form-check mt-3">
+                                    <input class="form-check-input" type="checkbox" id="{{ $week }}" name="weekNo[]" value="{{ $week }}" {{ is_array($selectedWeeks) && in_array($week, $selectedWeeks) ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="{{ $week }}">{{ $week }}</label>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-check mt-3">
-                                <input class="form-check-input" type="checkbox" id="weekNo2" name="weekNo[]" value="Week 2" {{ is_array(old('weekNo', $circle->weekNo)) && in_array('Week 2', old('weekNo', $circle->weekNo)) ? 'checked' : '' }}>
-                                <label class="form-check-label" for="weekNo2">
-                                    Week 2
-                                </label>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-check mt-3">
-                                <input class="form-check-input" type="checkbox" id="weekNo3" name="weekNo[]" value="Week 3" {{ is_array(old('weekNo', $circle->weekNo)) && in_array('Week 3', old('weekNo', $circle->weekNo)) ? 'checked' : '' }}>
-                                <label class="form-check-label" for="weekNo3">
-                                    Week 3
-                                </label>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-check mt-3">
-                                <input class="form-check-input" type="checkbox" id="weekNo4" name="weekNo[]" value="Week 4" {{ is_array(old('weekNo', $circle->weekNo)) && in_array('Week 4', old('weekNo', $circle->weekNo)) ? 'checked' : '' }}>
-                                <label class="form-check-label" for="weekNo4">
-                                    Week 4
-                                </label>
-                            </div>
-                        </div>
+                        @endforeach
                     </div>
                 </div>
             </div>
+
+
+            @php
+                $selectedCategories = old('businessCategoryId', $circle->businessCategoryId ?? []);
+            @endphp
 
             <div class="col-md-12 mt-3">
                 <div class="form-floating">
                     <select class="form-select select2 js-example-basic-multiple-limit" style="height: 150px" id="businessCategoryId" name="businessCategoryId[]" multiple>
                         @foreach ($bCategory as $bCategoryData)
-                            <option value="{{ $bCategoryData->id }}" {{ in_array($bCategoryData->id, old('businessCategoryId', [])) ? 'selected' : '' }}>
+                            <option value="{{ $bCategoryData->id }}" {{ in_array($bCategoryData->id, $selectedCategories) ? 'selected' : '' }}>
                                 {{ $bCategoryData->categoryName }}
                             </option>
                         @endforeach
                     </select>
-                    {{-- <label for="bCategoryId">Business Category</label> --}}
-                    @error('bCategoryId')
+                    @error('businessCategoryId')
                         <div class="invalid-tooltip">
                             {{ $message }}
                         </div>

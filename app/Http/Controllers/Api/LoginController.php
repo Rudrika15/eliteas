@@ -32,8 +32,12 @@ class LoginController extends Controller
         if (Auth::attempt($request->only('email', 'password'))) {
 
             $user = Auth::user();
-            $roles = Auth::user()->getRoleNames();
-            // $permissions = $user->getAllPermissions();
+            $roles = $user->getRoleNames();
+
+            if ($roles->contains('admin')) {
+                return Utils::sendResponse(['error' => 'Unauthorized'], 401);
+            }
+
             $token = $user->createToken('authToken')->plainTextToken;
 
             return Utils::sendResponse(['token' => $token, 'user' => $user, 'roles' => $roles], 'Success');

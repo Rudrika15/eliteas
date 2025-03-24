@@ -667,6 +667,9 @@ class CircleController extends Controller
             $city = City::where('status', '!=', 'Deleted')->get();
             $circletype = CircleType::where('status', '!=', 'Deleted')->get();
             $bCategory = BusinessCategory::where('status', 'Active')->get();
+
+            // Decode the saved businessCategoryId so it becomes an array
+            $circle->businessCategoryId = json_decode($circle->businessCategoryId ?? '[]', true);
             return view('admin.circle.edit', compact('franchise', 'bCategory', 'circletype', 'city', 'circle', 'countries', 'states', 'cities'));
         } catch (\Throwable $th) {
             // throw $th;
@@ -786,6 +789,7 @@ class CircleController extends Controller
     public function generateMeetings(Request $request, $circleId)
     {
         try {
+
             $circle = Circle::findOrFail($circleId);
 
             // Logic for creating scheduled meetings

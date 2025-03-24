@@ -325,13 +325,21 @@ class HomeController extends Controller
 
                 if ($meeting) {
                     $meeting->date = Carbon::parse($meeting->date);
+                    $myInvites = MeetingInvitation::where('invitedMemberId', Auth::user()->member->id)
+                        ->where('meetingId', $meeting->id)
+                        ->get();
+
+                    $signedUrl = URL::signedRoute('visitor.form', [
+                        'slug' => $meeting->cm_slug,
+                        'meetingId' => $meeting->id,
+                        'ref' => auth()->user()->member->id
+                    ]);
                 } else {
-                    return view('home', ['meeting' => 'No meeting found for now']);
+                    $signedUrl = '';
+                    // $categoryNames = '';
+                    // return view('home', ['meeting', 'categoryNames' => 'No meeting found for now']);
                 }
 
-                $myInvites = MeetingInvitation::where('invitedMemberId', Auth::user()->member->id)
-                    ->where('meetingId', $meeting->id)
-                    ->get();
 
                 $previousMonth = Carbon::now()->subMonth()->month;
                 $previousYear = Carbon::now()->subMonth()->year;
@@ -563,11 +571,7 @@ class HomeController extends Controller
                 //     $findEventRegister = [];
                 // }
 
-                $signedUrl = URL::signedRoute('visitor.form', [
-                    'slug' => $meeting->cm_slug,
-                    'meetingId' => $meeting->id,
-                    'ref' => auth()->user()->member->id
-                ]);
+
 
                 // $registeredMembers = EventRegister::where('eventId', $nearestEvents->id)
                 //     ->get();
@@ -628,7 +632,6 @@ class HomeController extends Controller
                 // ]);
 
                 $categoryNames = $businessCategories->pluck('categoryName');
-
 
 
 
