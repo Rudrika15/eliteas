@@ -1,4 +1,4 @@
-{{-- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -93,7 +93,7 @@
     <div class="profile-card">
         <img src="https://picsum.photos/600/100" class="header-image" alt="Header Image">
         <div class="text-center p-3">
-            <img src="https://randomuser.me/api/portraits/men/75.jpg" class="profile-img" alt="Profile">
+            <img src="https://randomuser.me/api/portraits/men/76.jpg" class="profile-img" alt="Profile">
             <h5 class="mt-2 mb-0">John Doshi</h5>
             <p class="text-muted mb-2" style="font-size: 14px;">Vice President at UBN</p>
             <div class="d-flex justify-content-around text-center mt-3 mb-3">
@@ -127,7 +127,7 @@
     </div>
 </body>
 
-</html> --}}
+</html>
 
 
 
@@ -242,7 +242,7 @@
 </html> --}}
 
 
-<!DOCTYPE html>
+{{-- <!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -360,4 +360,4 @@
     </div>
 </body>
 
-</html>
+</html> --}}

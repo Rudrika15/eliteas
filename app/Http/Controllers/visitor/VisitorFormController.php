@@ -139,7 +139,7 @@ class VisitorFormController extends Controller
             $invitation->personEmail = null;
             $invitation->personContact = $visitor->mobileNo;
             $invitation->businessCategoryId = $visitor->businessCategory;
-            $invitation->personEmail = 'Unpaid';
+            // $invitation->personEmail = 'Unpaid';
             $invitation->save();
 
 

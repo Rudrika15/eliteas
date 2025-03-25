@@ -176,11 +176,9 @@
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
 
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-
         <div id="searchResults"></div>
 
-        {{-- <style>
+        <style>
             /* LinkedIn-inspired styling */
             .card-container {
                 display: grid;
@@ -253,97 +251,8 @@
             .btn-view-profile:hover {
                 background-color: #e76a35;
             }
-        </style> --}}
-
-
-        <style>
-            .profile-card {
-                width: 320px;
-                border-radius: 15px;
-                overflow: hidden;
-                box-shadow: 0 0 20px rgba(0, 0, 0, 0.08);
-                background-color: #fff;
-                margin: 20px auto;
-            }
-
-            .header-image {
-                width: 100%;
-                height: 100px;
-                object-fit: cover;
-            }
-
-            .profile-img {
-                width: 90px;
-                height: 90px;
-                object-fit: cover;
-                border-radius: 50%;
-                border: 3px solid #fff;
-                margin-top: -45px;
-            }
-
-            .icon-text {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                text-align: center;
-                font-size: 13px;
-            }
-
-            .icon-text i {
-                font-size: 20px;
-                color: #5f6368;
-                margin-bottom: 4px;
-            }
-
-            .company-name {
-                font-weight: 600;
-                margin-bottom: 2px;
-            }
-
-            .category-text {
-                color: #888;
-                font-size: 13px;
-                margin-bottom: 8px;
-            }
-
-            .keyword-btn {
-                border-radius: 50px;
-                font-size: 12px;
-                padding: 4px 12px;
-                background-color: #f1f1f1;
-                border: none;
-                margin: 4px;
-            }
-
-            .profile-actions {
-                border-top: 1px solid #f0f0f0;
-                padding: 10px 20px;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-            }
-
-            .profile-actions a {
-                text-decoration: none;
-                font-weight: 500;
-            }
-
-            /* .btn-message {
-                        background-color: #ff6b6b;
-                        color: white;
-                        border-radius: 50px;
-                        padding: 6px 14px;
-                        border: none;
-                    } */
-
-            .card-container {
-                display: grid;
-                grid-template-columns: repeat(3, 1fr);
-                /* You can adjust column count */
-                gap: 20px;
-                justify-items: center;
-            }
         </style>
+
 
 
         <script>
@@ -382,107 +291,70 @@
                 if (response && response.members && Array.isArray(response.members)) {
                     response.members.forEach(function(member) {
                         var cardElement = document.createElement('div');
-                        cardElement.classList.add('profile-card');
+                        cardElement.classList.add('card');
 
-                        // Header image
-                        var headerImg = document.createElement('img');
-                        headerImg.src = 'https://picsum.photos/600/100'; // You can replace with dynamic header if available
-                        headerImg.classList.add('header-image');
-                        cardElement.appendChild(headerImg);
-
-                        // Card body container
                         var cardBody = document.createElement('div');
-                        cardBody.classList.add('text-center', 'p-3');
+                        cardBody.classList.add('card-body');
 
-                        // Profile Image
-                        var profileImg = document.createElement('img');
-                        profileImg.classList.add('profile-img');
+                        // Profile image or initials
+                        var profileImage = document.createElement('div');
+                        profileImage.classList.add('profile-image');
+
                         if (member.profilePhoto) {
-                            profileImg.src = '/ProfilePhoto/' + member.profilePhoto;
+                            var imgElement = document.createElement('img');
+                            imgElement.src = '/ProfilePhoto/' + member.profilePhoto;
+                            profileImage.appendChild(imgElement);
                         } else {
-                            // If no photo, show a placeholder image
-                            profileImg.src = 'https://randomuser.me/api/portraits/men/75.jpg';
+                            profileImage.textContent = member.firstName.charAt(0) + member.lastName.charAt(0);
                         }
-                        cardBody.appendChild(profileImg);
 
-                        // Member Name
-                        var memberName = document.createElement('h5');
-                        memberName.classList.add('mt-2', 'mb-0');
-                        memberName.textContent =
+                        var cardTitle = document.createElement('h5');
+                        cardTitle.classList.add('card-title');
+                        cardTitle.textContent =
                             member.firstName.charAt(0).toUpperCase() +
                             member.firstName.slice(1) +
                             ' ' +
                             member.lastName.charAt(0).toUpperCase() +
                             member.lastName.slice(1);
-                        cardBody.appendChild(memberName);
+                        cardTitle.addEventListener('click', function() {
+                            var routeURL = '/foundPersonDetails/' + member.id;
+                            window.location.href = routeURL;
+                        });
 
-                        // Role or position
-                        var position = document.createElement('p');
-                        position.classList.add('text-muted', 'mb-2');
-                        position.style.fontSize = '14px';
-                        position.textContent = member.designation || 'Member at ' + (member.circle.circleName || '');
-                        cardBody.appendChild(position);
+                        var emailText = document.createElement('p');
+                        emailText.classList.add('card-text');
+                        emailText.textContent = member.user && member.user.email ? 'Email: ' + member.user.email : '';
 
-                        // Icons row
-                        var iconRow = document.createElement('div');
-                        iconRow.classList.add('d-flex', 'justify-content-around', 'text-center', 'mt-3', 'mb-3');
+                        var circleText = document.createElement('p');
+                        circleText.classList.add('card-text');
+                        circleText.textContent = 'Circle Name: ' + member.circle.circleName;
 
-                        // Email Icon Text
-                        var emailIconText = document.createElement('div');
-                        emailIconText.classList.add('icon-text');
-                        emailIconText.innerHTML = `<i class="bi bi-envelope-fill"></i><div>${member.user && member.user.email ? member.user.email.slice(0, 14) + '...' : 'No Email'}</div>`;
-                        iconRow.appendChild(emailIconText);
+                        var viewProfileButton = document.createElement('button');
+                        viewProfileButton.classList.add('btn', 'btn-view-profile');
+                        viewProfileButton.textContent = 'View Profile';
+                        viewProfileButton.addEventListener('click', function() {
+                            var routeURL = '/foundPersonDetails/' + member.id;
+                            window.location.href = routeURL;
+                        });
 
-                        // Phone Icon Text
-                        var phoneIconText = document.createElement('div');
-                        phoneIconText.classList.add('icon-text');
-                        phoneIconText.innerHTML = `<i class="bi bi-telephone-fill"></i><div>${member.phoneNumber || 'N/A'}</div>`;
-                        iconRow.appendChild(phoneIconText);
-
-                        // Circle Icon Text
-                        var circleIconText = document.createElement('div');
-                        circleIconText.classList.add('icon-text');
-                        circleIconText.innerHTML = `<i class="bi bi-people-fill"></i><div>${member.circle.circleName || 'N/A'}</div>`;
-                        iconRow.appendChild(circleIconText);
-
-                        cardBody.appendChild(iconRow);
-
-                        // Company & Category section
-                        var companyDiv = document.createElement('div');
-                        companyDiv.classList.add('text-center');
-                        companyDiv.innerHTML = `
-                <div class="company-name">${member.companyName || 'Company Name'}</div>
-                <div class="category-text">Category: ${member.category || 'N/A'}</div>
-                <div>
-                    <button class="keyword-btn">${member.keyword1 || 'Keyword 1'}</button>
-                    <button class="keyword-btn">${member.keyword2 || 'Keyword 2'}</button>
-                    <button class="keyword-btn">${member.keyword3 || 'Keyword 3'}</button>
-                </div>
-            `;
-                        cardBody.appendChild(companyDiv);
-
+                        // Append elements to card
+                        cardBody.appendChild(profileImage);
+                        cardBody.appendChild(cardTitle);
+                        cardBody.appendChild(emailText);
+                        cardBody.appendChild(circleText);
+                        cardBody.appendChild(viewProfileButton);
                         cardElement.appendChild(cardBody);
 
-                        // Footer actions
-                        var actionFooter = document.createElement('div');
-                        actionFooter.classList.add('profile-actions');
-                        actionFooter.innerHTML = `
-                <a href="/foundPersonDetails/${member.id}">View Profile</a>
-                `;
-
-                        cardElement.appendChild(actionFooter);
-
-                        cardContainer.appendChild(cardElement);
+                        cardContainer.appendChild(cardElement); // Append card to card container
                     });
                 } else {
-                    searchResultsElement.innerHTML = '<p>No members found.</p>';
+                    console.error('Invalid response format or missing data');
                 }
 
-                searchResultsElement.appendChild(cardContainer);
+                searchResultsElement.appendChild(cardContainer); // Append card container to results
             }
         </script>
 
-{{-- <button class="btn-message" onclick="window.location.href='/chatWith/${member.id}'">Message</button> --}}
 
         {{-- <script>
         // Paste your JavaScript code here

@@ -56,7 +56,7 @@ class ReportController extends Controller
         $circleId = $request->input('circleId');
 
         // Fetch all circles for the dropdown
-        $circles = Circle::select('id', 'circleName')->get();
+        $circles = Circle::where('status', 'Active')->select('id', 'circleName')->get();
 
         if (!$startDate && !$endDate && !$circleId) {
             $ibms = collect();
@@ -140,7 +140,9 @@ class ReportController extends Controller
         $circleId = $request->input('circleId');
 
         // Fetch all circles for the dropdown
-        $circles = Circle::select('id', 'circleName')->get();
+        // $circles = Circle::select('id', 'circleName')->get();
+        $circles = Circle::where('status', 'Active')->select('id', 'circleName')->get();
+
 
         if (!$startDate && !$endDate && !$circleId) {
             $refrences = collect();
@@ -228,7 +230,9 @@ class ReportController extends Controller
         $circleId = $request->input('circleId');
 
         // Fetch all circles for the dropdown
-        $circles = Circle::select('id', 'circleName')->get();
+        // $circles = Circle::select('id', 'circleName')->get();
+        $circles = Circle::where('status', 'Active')->select('id', 'circleName')->get();
+
 
         if (!$startDate && !$endDate && !$circleId) {
             $business = collect();
