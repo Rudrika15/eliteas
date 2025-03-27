@@ -1,51 +1,35 @@
 @extends('layouts.master')
 @section('content')
     <div class="container mt-5">
-        <div class="card">
-            <h1 class="text-center card-title">Circles</h1>
-        </div>
+        <h1 class="text-center card-title mb-4">Circles</h1>
         <div class="row">
             @foreach ($circles as $circlesData)
                 <div class="col-md-4 mb-4">
-                    <a href="{{ route('connection.showMembers', $circlesData->id) }}" class="text-decoration-none">
-                        <div class="profile-card">
-                            <img src="https://picsum.photos/600/100" class="header-image" alt="Header Image">
-                            <div class="text-center p-3">
-                                <img src="{{ asset($circlesData->profilePicture ?? 'img/logo2.jpg') }}" class="profile-img" alt="Profile Picture">
-                                <h5 class="mt-2 mb-0" style="color: #e76a35; font-weight: bold;">{{ $circlesData->circleName ?? '' }}</h5>
-                                {{-- <p class="text-muted mb-2" style="font-size: 14px;">
-                                    Total Members: {{ $circlesData->members_count ?? 0 }}
-                                </p> --}}
-                                <div class="d-flex justify-content-around text-center mt-3 mb-3">
-                                    <div class="icon-text">
-                                        <i class="bi bi-geo-alt-fill"></i>
-                                        <div style="font-size: 14px; font-weight: bold; color: #e76a35;">{{ $circlesData->city->cityName ?? 'N/A' }}</div>
-                                    </div>
-                                    <div class="icon-text">
-                                        <i class="bi bi-currency-rupee"></i>
-                                        <div style="font-size: 14px; font-weight: bold; color: #e76a35;">{{ number_format($circlesData->totalBusinessAmount ?? 0, 2, '.', ',') }}</div>
-                                    </div>
-                                    <div class="icon-text">
-                                        <i class="bi bi-people-fill"></i>
-                                        <div style="font-size: 14px; font-weight: bold; color: #e76a35;">{{ $circlesData->members_count }}</div>
-                                    </div>
+                    <div class="profile-card">
+                        <img src="https://picsum.photos/600/120" class="header-image" alt="Header Image">
+                        <div class="text-center p-3">
+                            <img src="{{ asset($circlesData->profilePicture ?? 'img/logo2.jpg') }}" class="profile-img" alt="Profile Picture">
+                            <h5 style="color: #e76a35; font-weight: bold;">{{ $circlesData->circleName ?? 'N/A' }}</h5>
+                            {{-- <p class="text-muted">Active Circle</p> --}}
+                            <div class="info-section">
+                                <div class="icon-text">
+                                    <i class="bi bi-geo-alt-fill" style="color: #e76a35;"></i>
+                                    <div style="color: #1d3268; font-weight: bold;">{{ $circlesData->city->cityName ?? 'N/A' }}</div>
                                 </div>
-                                {{-- <div class="text-center">
-                                    <div class="company-name">{{ $circlesData->circleName }}</div>
-                                    <div class="category-text">Active Circle</div>
-                                    <div>
-                                        <button class="keyword-btn">Business</button>
-                                        <button class="keyword-btn">Members</button>
-                                        <button class="keyword-btn">View</button>
-                                    </div>
-                                </div> --}}
-                            </div>
-                            <div class="profile-actions d-flex justify-content-center">
-                                {{-- <a href="{{ route('connection.showMembers', $circlesData->id) }}">View Members</a> --}}
-                                <button class="btn-message " onclick="window.location.href='{{ route('connection.showMembers', $circlesData->id) }}'">View Members</button>
+                                <div class="icon-text">
+                                    <i class="bi bi-currency-rupee" style="color: #e76a35;"></i>
+                                    <div style="color: #1d3268; font-weight: bold;">{{ number_format($circlesData->totalBusinessAmount ?? 0, 2, '.', ',') }}</div>
+                                </div>
+                                <div class="icon-text">
+                                    <i class="bi bi-people-fill" style="color: #e76a35"></i>
+                                    <div style="color: #1d3268; font-weight: bold;">{{ $circlesData->members_count }}</div>
+                                </div>
                             </div>
                         </div>
-                    </a>
+                        <div class="bottom-actions">
+                            <button class="btn-message" onclick="window.location.href='{{ route('connection.showMembers', $circlesData->id) }}'">View Members</button>
+                        </div>
+                    </div>
                 </div>
             @endforeach
         </div>
@@ -63,7 +47,7 @@
 
         .header-image {
             width: 100%;
-            height: 100px;
+            height: 120px;
             object-fit: cover;
         }
 
@@ -76,12 +60,18 @@
             margin-top: -45px;
         }
 
+        .info-section {
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+            margin-top: 10px;
+        }
+
         .icon-text {
             display: flex;
             flex-direction: column;
             align-items: center;
-            text-align: center;
-            font-size: 13px;
+            font-size: 14px;
         }
 
         .icon-text i {
@@ -90,42 +80,14 @@
             margin-bottom: 4px;
         }
 
-        .company-name {
-            font-weight: 600;
-            margin-bottom: 2px;
-        }
-
-        .category-text {
-            color: #888;
-            font-size: 13px;
-            margin-bottom: 8px;
-        }
-
-        .keyword-btn {
-            border-radius: 50px;
-            font-size: 12px;
-            padding: 4px 12px;
-            background-color: #f1f1f1;
-            border: none;
-            margin: 4px;
-        }
-
-        .profile-actions {
+        .bottom-actions {
+            text-align: center;
+            padding: 10px;
             border-top: 1px solid #f0f0f0;
-            padding: 10px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .profile-actions a {
-            text-decoration: none;
-            font-weight: 500;
-            color: #1d3268;
         }
 
         .btn-message {
-            background-color: #ff6b6b;
+            background-color: #1d3268;
             color: white;
             border-radius: 50px;
             padding: 6px 14px;
@@ -136,7 +98,7 @@
             font-size: 28px;
             font-weight: bold;
             color: #1d3268;
-            margin: 30px 0 20px;
+            margin-bottom: 20px;
         }
     </style>
 @endsection

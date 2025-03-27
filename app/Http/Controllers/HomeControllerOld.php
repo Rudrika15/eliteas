@@ -711,7 +711,7 @@ class HomeController extends Controller
                 // ->whereHas('circle', function ($q) use ($query) {
                 //     $q->where('circleName', 'like', '%' . $query . '%');
                 // })
-                ->with('user', 'circle')
+                ->with('user', 'circle', 'bCategory')
                 ->get();
 
 

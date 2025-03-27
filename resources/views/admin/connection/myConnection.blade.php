@@ -5,39 +5,32 @@
 
     <div class="container my-5">
         <!-- Page Header -->
-        {{-- <h2 class="text-center mb-4">My Connections</h2> --}}
         <h1 class="text-center card-title mb-4">My Connections</h1>
 
+        <!-- Search Bar -->
         <div class="search-bar">
             <a class="search-bar" href="{{ route('search') }}">
                 <input type="text" name="query" style="width: 1200px;" placeholder="Click Here to Go for Search Member" title="Enter search keyword">
             </a>
         </div>
 
-
         <!-- Connection Cards -->
         <div class="row">
             @foreach ($connections as $connection)
                 <div class="col-md-4 mb-4">
                     <div class="profile-card">
-                        <div class="card-body">
-                            {{-- {{ $connection->connectedUser->userId ?? $connection->members->id }} --}}
+                        <img src="https://picsum.photos/600/120" class="header-image" alt="Header Image">
+                        <div class="text-center p-3">
                             <!-- Profile Picture -->
-                            <img src="{{ asset($connection->connectedUser->profilePicture ?? 'img/profile.png') }}" alt="Profile Picture" class="profile-img">
+                            <img src="{{ asset($connection->connectedUser->profilePicture ?? 'img/profile.png') }}" class="profile-img" alt="Profile">
 
                             <!-- User Name -->
-                            <h3 class="profile-name mb-3">
-                                {{ $connection->connectedUser->firstName ?? '-' }} {{ $connection->connectedUser->lastName ?? '-' }}
-                            </h3>
-
-                            {{-- <!-- Email -->
-                            <p class="profile-details">
-                                <strong>Email:</strong> {{ $connection->connectedUser->email ?? '-' }}
-                            </p> --}}
+                            <h5 class="profile-name">
+                                {{ $connection->connectedUser->firstName ?? 'N/A' }} {{ $connection->connectedUser->lastName ?? 'N/A' }}
+                            </h5>
 
                             <!-- Connection Status -->
-                            <p class="profile-details mb-3">
-                                {{-- <strong>Status:</strong> --}}
+                            <p class="profile-details">
                                 @if ($connection->status === 'Accepted')
                                     <span class="badge bg-success">Connected</span>
                                 @else
@@ -45,26 +38,27 @@
                                 @endif
                             </p>
 
+                            <!-- Company & Contact Info -->
+                            {{-- <div class="info-section">
+                                <div class="icon-text" title="{{ $connection->connectedUser->email ?? 'N/A' }}">
+                                    <i class="bi bi-envelope-fill"></i>
+                                    <div>{{ Str::limit($connection->connectedUser->email ?? 'N/A', 15) }}</div>
+                                </div>
+                                <div class="icon-text" title="{{ $connection->connectedUser->contactNo ?? 'N/A' }}">
+                                    <i class="bi bi-telephone-fill"></i>
+                                    <div>{{ Str::limit($connection->connectedUser->contactNo ?? 'N/A', 10) }}</div>
+                                </div>
+                            </div> --}}
+
                             <!-- Remove Connection Button -->
                             <a href="{{ route('connection.removeConnection', $connection->id) }}" class="btn btn-sm btn-outline-danger mt-2">
                                 <i class="bi bi-x"></i> Remove Connection
                             </a>
-                            {{-- <a href="{{ route('foundPersonDetails', $connection->members->id ) }}" class="mt-3 btn btn-sm btn-outline-primary mt-2">
-                                <i class="bi bi-person"></i> View Profile
-                            </a> --}}
                         </div>
                     </div>
                 </div>
             @endforeach
         </div>
-
-        {{-- <!-- Pagination -->
-        <div class="d-flex justify-content-end custom-pagination">
-            {!! $connections->links() !!}
-        </div> --}}
-
-        <!-- My Circle Connections -->
-
     </div>
 
     <style>
@@ -72,15 +66,17 @@
             margin-bottom: 15px;
             display: flex;
             align-items: center;
+            justify-content: center;
         }
 
         .search-bar input {
-            width: 100%;
-            padding: 10px;
-            border: 0.5px solid #e76a35;
-            border-radius: 5px;
+            width: 80%;
+            padding: 12px;
+            border: 1px solid #e76a35;
+            border-radius: 8px;
             font-size: 1em;
             box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
         }
 
         .search-bar input::placeholder {
@@ -88,51 +84,32 @@
         }
 
         .profile-card {
-            width: 250px !important;
-            height: 300px !important;
-            background-color: #fff !important;
-            border-radius: 10px !important;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
-            text-align: center !important;
-            margin: auto !important;
-            padding: 15px 0 !important;
-            border: 2px solid #e76a35 !important;
+            width: 250px;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            background-color: #fff;
+            transition: all 0.3s ease;
         }
 
         .profile-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
         }
 
-        .card-body {
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .card-title {
-            font-size: 24px;
-            font-weight: bold;
-            color: #1d3268;
-            margin-bottom: 10px;
+        .header-image {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
         }
 
         .profile-img {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
+            width: 100px;
+            height: 100px;
             object-fit: cover;
-            margin-bottom: 10px;
-            border: 3px solid #1d3268;
-        }
-
-        .profile-title {
-            font-size: 14px;
-            font-weight: bold;
-            color: #e76a35;
-            margin-bottom: 5px;
+            border-radius: 50%;
+            border: 4px solid #fff;
+            margin-top: -50px;
         }
 
         .profile-name {
@@ -148,13 +125,35 @@
             margin-bottom: 5px;
         }
 
-        .custom-pagination .page-link {
-            color: #007bff;
+        .info-section {
+            display: flex;
+            justify-content: center;
+            margin-top: 15px;
         }
 
-        .custom-pagination .page-item.active .page-link {
-            background-color: #007bff;
-            border-color: #007bff;
+        .icon-text {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            font-size: 13px;
+            font-weight: bold;
+            color: #1d3268;
+            flex: 1;
+        }
+
+        .btn-outline-danger {
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 20px;
+            padding: 8px 15px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-danger:hover {
+            /* background-color: #ff4b5c; */
+            background-color: #e76a35;
+            color: white;
         }
     </style>
 @endsection

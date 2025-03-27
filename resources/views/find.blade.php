@@ -256,7 +256,7 @@
         </style> --}}
 
 
-        <style>
+        {{-- <style>
             .profile-card {
                 width: 320px;
                 border-radius: 15px;
@@ -329,12 +329,12 @@
             }
 
             /* .btn-message {
-                        background-color: #ff6b6b;
-                        color: white;
-                        border-radius: 50px;
-                        padding: 6px 14px;
-                        border: none;
-                    } */
+                            background-color: #ff6b6b;
+                            color: white;
+                            border-radius: 50px;
+                            padding: 6px 14px;
+                            border: none;
+                        } */
 
             .card-container {
                 display: grid;
@@ -342,6 +342,579 @@
                 /* You can adjust column count */
                 gap: 20px;
                 justify-items: center;
+            }
+        </style> --}}
+
+
+        {{-- <style>
+            .profile-card {
+                width: 400px;
+                border-radius: 20px;
+                overflow: hidden;
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+                background-color: #fff;
+                margin: 50px auto;
+                transition: all 0.3s ease;
+            }
+
+            .profile-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+            }
+
+            .header-image {
+                width: 100%;
+                height: 120px;
+                object-fit: cover;
+            }
+
+            .profile-img {
+                width: 100px;
+                height: 100px;
+                object-fit: cover;
+                border-radius: 50%;
+                border: 4px solid #fff;
+                margin-top: -50px;
+            }
+
+            h5 {
+                margin-top: 10px;
+                margin-bottom: 4px;
+                font-weight: 700;
+            }
+
+            .text-muted {
+                color: #6c757d;
+                font-size: 14px;
+            }
+
+            .info-section {
+                display: flex;
+                justify-content: space-around;
+                margin-top: 15px;
+                margin-bottom: 20px;
+            }
+
+            .icon-text {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                font-size: 13px;
+                flex: 1;
+            }
+
+            .icon-text i {
+                font-size: 22px;
+                color: #4a4a4a;
+                margin-bottom: 5px;
+            }
+
+            .company-category-section {
+                display: flex;
+                border-top: 1px solid #f0f0f0;
+                border-bottom: 1px solid #f0f0f0;
+                padding: 15px 0;
+            }
+
+            .company-section,
+            .category-section {
+                flex: 1;
+                text-align: center;
+            }
+
+            .divider {
+                width: 1px;
+                background-color: #ccc;
+                height: auto;
+                margin: 0 15px;
+            }
+
+            .logo {
+                font-size: 28px;
+                font-weight: bold;
+                color: #ff6b6b;
+            }
+
+            .company-section h2,
+            .category-section h3 {
+                margin: 6px 0;
+                color: #1d2951;
+                font-size: 16px;
+            }
+
+            .category-section .label {
+                color: gray;
+                font-size: 12px;
+                margin-bottom: 4px;
+            }
+
+            .keywords-container {
+                text-align: center;
+                margin: 15px 20px 10px;
+            }
+
+            .keyword-pill {
+                display: inline-block;
+                background-color: #f3f5fb;
+                color: #3a3a3a;
+                font-size: 12px;
+                padding: 6px 12px;
+                margin: 5px 5px;
+                border-radius: 20px;
+                border: 1px solid #e0e4f0;
+                cursor: default;
+            }
+
+            .bottom-actions {
+                display: flex;
+                border-top: 1px solid #e6e6e6;
+                padding: 10px 0;
+                text-align: center;
+            }
+
+            .bottom-actions div {
+                flex: 1;
+                cursor: pointer;
+                font-weight: 600;
+                color: #1d2951;
+                transition: color 0.2s;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 6px;
+            }
+
+            .bottom-actions div:hover {
+                color: #ff6b6b;
+            }
+
+            .bottom-divider {
+                width: 1px;
+                background-color: #e0e0e0;
+                height: auto;
+
+            }
+        </style> --}}
+
+
+        {{-- <style>
+            /* Container for profile cards */
+            .card-container {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                /* Centers the cards */
+                gap: 20px;
+                /* Adds spacing between cards */
+                padding: 20px;
+            }
+
+            /* Profile card styling */
+            .profile-card {
+                width: 400px;
+                /* Maintain the width */
+                flex: 1 1 calc(33.33% - 40px);
+                /* Allow 3 cards per row */
+                min-width: 300px;
+                /* Prevents cards from getting too small */
+                border-radius: 20px;
+                overflow: hidden;
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+                background-color: #fff;
+                margin: 20px;
+                transition: all 0.3s ease;
+            }
+
+            .profile-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+            }
+
+            /* Header image */
+            .header-image {
+                width: 100%;
+                height: 120px;
+                object-fit: cover;
+            }
+
+            /* Profile Image */
+            .profile-img {
+                width: 100px;
+                height: 100px;
+                object-fit: cover;
+                border-radius: 50%;
+                border: 4px solid #fff;
+                margin-top: -50px;
+            }
+
+            /* Member Name */
+            h5 {
+                margin-top: 10px;
+                margin-bottom: 4px;
+                font-weight: 700;
+            }
+
+            /* Role/Position */
+            .text-muted {
+                color: #6c757d;
+                font-size: 14px;
+            }
+
+            /* Info section (Email, Phone, Circle) */
+            .info-section {
+                display: flex;
+                justify-content: space-around;
+                margin-top: 15px;
+                margin-bottom: 20px;
+            }
+
+            /* Icon text styling */
+            .icon-text {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                font-size: 13px;
+                flex: 1;
+            }
+
+            .icon-text i {
+                font-size: 22px;
+                color: #4a4a4a;
+                margin-bottom: 5px;
+            }
+
+            /* Company & Category section */
+            .company-category-section {
+                display: flex;
+                border-top: 1px solid #f0f0f0;
+                border-bottom: 1px solid #f0f0f0;
+                padding: 15px 0;
+            }
+
+            .company-section,
+            .category-section {
+                flex: 1;
+                text-align: center;
+            }
+
+            /* Divider between company & category */
+            .divider {
+                width: 1px;
+                background-color: #ccc;
+                height: auto;
+                margin: 0 15px;
+            }
+
+            /* Company Name */
+            .logo {
+                font-size: 28px;
+                font-weight: bold;
+                color: #ff6b6b;
+            }
+
+            .company-section h2,
+            .category-section h3 {
+                margin: 6px 0;
+                color: #1d2951;
+                font-size: 16px;
+            }
+
+            .category-section .label {
+                color: gray;
+                font-size: 12px;
+                margin-bottom: 4px;
+            }
+
+            /* Keywords section */
+            .keywords-container {
+                text-align: center;
+                margin: 15px 20px 10px;
+            }
+
+            .keyword-pill {
+                display: inline-block;
+                background-color: #f3f5fb;
+                color: #3a3a3a;
+                font-size: 12px;
+                padding: 6px 12px;
+                margin: 5px 5px;
+                border-radius: 20px;
+                border: 1px solid #e0e4f0;
+                cursor: default;
+            }
+
+            /* Bottom Actions */
+            .bottom-actions {
+                display: flex;
+                border-top: 1px solid #e6e6e6;
+                padding: 10px 0;
+                text-align: center;
+            }
+
+            .bottom-actions div {
+                flex: 1;
+                cursor: pointer;
+                font-weight: 600;
+                color: #1d2951;
+                transition: color 0.2s;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 6px;
+            }
+
+            .bottom-actions div:hover {
+                color: #ff6b6b;
+            }
+
+            /* Divider between bottom actions */
+            .bottom-divider {
+                width: 1px;
+                background-color: #e0e0e0;
+                height: auto;
+            }
+
+            /* Responsive Design */
+
+            /* For tablets: 2 cards per row */
+            @media (max-width: 1024px) {
+                .profile-card {
+                    flex: 1 1 calc(50% - 40px);
+                }
+            }
+
+            /* For mobile: 1 card per row */
+            @media (max-width: 768px) {
+                .profile-card {
+                    flex: 1 1 100%;
+                }
+            }
+        </style> --}}
+
+        <style>
+            .card-container {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 30px;
+                /* spacing between cards */
+            }
+
+            .profile-card {
+                width: 350px;
+                /* slightly reduced to fit 3 in a row nicely */
+                border-radius: 20px;
+                overflow: hidden;
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+                background-color: #fff;
+                margin: 20px;
+                /* changed from centered to spaced for flexbox */
+                transition: all 0.3s ease;
+            }
+
+            .profile-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+            }
+
+            .header-image {
+                width: 100%;
+                height: 120px;
+                object-fit: cover;
+            }
+
+            .profile-img {
+                width: 100px;
+                height: 100px;
+                object-fit: cover;
+                border-radius: 50%;
+                border: 4px solid #fff;
+                margin-top: -50px;
+            }
+
+            h5 {
+                margin-top: 10px;
+                margin-bottom: 4px;
+                font-weight: 700;
+                color: #e76a35;
+            }
+
+            .position {
+                color: #1d3268;
+                font-size: 14px;
+                font-weight: bold;
+            }
+
+            .info-section {
+                display: flex;
+                justify-content: space-around;
+                margin-top: 15px;
+                margin-bottom: 20px;
+            }
+
+            .icon-text {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                font-size: 13px;
+                flex: 1;
+            }
+
+            .icon-text i {
+                font-size: 22px;
+                color: #4a4a4a;
+                margin-bottom: 5px;
+            }
+
+            .company-category-section {
+                display: flex;
+                align-items: center;
+                padding: 20px;
+                border-top: 1px solid #f0f0f0;
+                border-bottom: 1px solid #f0f0f0;
+                gap: 20px;
+            }
+
+            .company-section,
+            .category-section {
+                flex: 1;
+                min-width: 0;
+                /* prevents overflow issues */
+                text-align: center;
+                word-wrap: break-word;
+            }
+
+            .company-section h2,
+            .category-section h3 {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .divider {
+                width: 1px;
+                background-color: #dcdcdc;
+                height: 60px;
+            }
+
+
+            .logo-section {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                margin-bottom: 8px;
+            }
+
+            .logo-section img {
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                object-fit: cover;
+                border: 1px solid #e0e0e0;
+            }
+
+            .company-section h2,
+            .category-section h3 {
+                margin: 6px 0;
+                color: #1d2951;
+                font-size: 16px;
+                font-weight: bold;
+            }
+
+            .category-section .label {
+                color: gray;
+                font-size: 12px;
+                margin-bottom: 4px;
+            }
+
+            .keywords-container {
+                text-align: center;
+                margin: 15px 20px 10px;
+            }
+
+            .keyword-pill {
+                display: inline-block;
+                background-color: #f3f5fb;
+                color: #3a3a3a;
+                font-size: 12px;
+                padding: 6px 12px;
+                margin: 5px 5px;
+                border-radius: 20px;
+                border: 1px solid #e0e4f0;
+                cursor: default;
+            }
+
+            .bottom-actions {
+                display: flex;
+                border-top: 1px solid #e6e6e6;
+                padding: 10px 0;
+                text-align: center;
+            }
+
+            .bottom-actions {
+                cursor: pointer;
+                font-weight: 600;
+                color: #1d2951;
+                transition: color 0.2s;
+                /* display: flex; */
+                justify-content: center;
+                align-items: center;
+                gap: 20px;
+            }
+
+            .bottom-actions div {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 6px;
+            }
+
+            .bottom-actions div:hover {
+                color: #e76a35;
+            }
+
+            .bottom-divider {
+                width: 1px;
+                background-color: #e0e0e0;
+                height: 25px;
+            }
+
+            /* Responsive adjustments */
+            @media screen and (max-width: 1200px) {
+                .profile-card {
+                    width: 300px;
+                }
+            }
+
+            @media screen and (max-width: 992px) {
+                .profile-card {
+                    width: 45%;
+                }
+            }
+
+            @media screen and (max-width: 576px) {
+                .profile-card {
+                    width: 100%;
+                }
+            }
+
+
+            .initials {
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                background-color: #c1c1c1;
+                color: white;
+                font-weight: bold;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 18px;
+                /* mix-blend-mode: color-burn; */
+
             }
         </style>
 
@@ -373,20 +946,27 @@
             }
 
             function displaySearchResults(response) {
+
+                console.warn(response);
+
+
                 var searchResultsElement = document.getElementById('searchResults');
                 searchResultsElement.innerHTML = ''; // Clear previous results
 
-                var cardContainer = document.createElement('div');
-                cardContainer.classList.add('card-container');
+                var rowContainer = document.createElement('div');
+                rowContainer.classList.add('row', 'g-4'); // g-4 for spacing between columns
 
                 if (response && response.members && Array.isArray(response.members)) {
                     response.members.forEach(function(member) {
+                        var col = document.createElement('div');
+                        col.classList.add('col-md-4'); // 3 cards per row on md and above
+
                         var cardElement = document.createElement('div');
                         cardElement.classList.add('profile-card');
 
                         // Header image
                         var headerImg = document.createElement('img');
-                        headerImg.src = 'https://picsum.photos/600/100'; // You can replace with dynamic header if available
+                        headerImg.src = 'https://picsum.photos/600/120';
                         headerImg.classList.add('header-image');
                         cardElement.appendChild(headerImg);
 
@@ -397,92 +977,167 @@
                         // Profile Image
                         var profileImg = document.createElement('img');
                         profileImg.classList.add('profile-img');
-                        if (member.profilePhoto) {
-                            profileImg.src = '/ProfilePhoto/' + member.profilePhoto;
-                        } else {
-                            // If no photo, show a placeholder image
-                            profileImg.src = 'https://randomuser.me/api/portraits/men/75.jpg';
-                        }
+                        profileImg.src = member.profilePhoto ?
+                            `/ProfilePhoto/${member.profilePhoto}` :
+                            'https://randomuser.me/api/portraits/men/75.jpg';
                         cardBody.appendChild(profileImg);
 
                         // Member Name
                         var memberName = document.createElement('h5');
-                        memberName.classList.add('mt-2', 'mb-0');
-                        memberName.textContent =
-                            member.firstName.charAt(0).toUpperCase() +
-                            member.firstName.slice(1) +
-                            ' ' +
-                            member.lastName.charAt(0).toUpperCase() +
-                            member.lastName.slice(1);
+                        memberName.textContent = `${capitalize(member.firstName)} ${capitalize(member.lastName)}`;
                         cardBody.appendChild(memberName);
 
                         // Role or position
                         var position = document.createElement('p');
-                        position.classList.add('text-muted', 'mb-2');
-                        position.style.fontSize = '14px';
-                        position.textContent = member.designation || 'Member at ' + (member.circle.circleName || '');
+                        position.classList.add('position');
+                        position.textContent = member.designation || `Member at ${member.circle.circleName || ''}`;
                         cardBody.appendChild(position);
 
-                        // Icons row
-                        var iconRow = document.createElement('div');
-                        iconRow.classList.add('d-flex', 'justify-content-around', 'text-center', 'mt-3', 'mb-3');
+                        // Info Section (Email, Phone, Circle)
+                        // var infoSection = document.createElement('div');
+                        // infoSection.classList.add('info-section');
 
-                        // Email Icon Text
-                        var emailIconText = document.createElement('div');
-                        emailIconText.classList.add('icon-text');
-                        emailIconText.innerHTML = `<i class="bi bi-envelope-fill"></i><div>${member.user && member.user.email ? member.user.email.slice(0, 14) + '...' : 'No Email'}</div>`;
-                        iconRow.appendChild(emailIconText);
+                        // var emailIconText = createIconText('bi bi-envelope-fill', member.user?.email ? truncateText(member.user.email, 14) : 'No Email');
+                        // var phoneIconText = createIconText('bi bi-telephone-fill', member.user?.contactNo || 'N/A');
+                        // var circleIconText = createIconText('bi bi-people-fill', member.circle?.circleName || 'N/A');
 
-                        // Phone Icon Text
-                        var phoneIconText = document.createElement('div');
-                        phoneIconText.classList.add('icon-text');
-                        phoneIconText.innerHTML = `<i class="bi bi-telephone-fill"></i><div>${member.phoneNumber || 'N/A'}</div>`;
-                        iconRow.appendChild(phoneIconText);
+                        // infoSection.appendChild(emailIconText);
+                        // infoSection.appendChild(phoneIconText);
+                        // infoSection.appendChild(circleIconText);
+                        // cardBody.appendChild(infoSection);
 
-                        // Circle Icon Text
-                        var circleIconText = document.createElement('div');
-                        circleIconText.classList.add('icon-text');
-                        circleIconText.innerHTML = `<i class="bi bi-people-fill"></i><div>${member.circle.circleName || 'N/A'}</div>`;
-                        iconRow.appendChild(circleIconText);
+                        // Company & Category Section
+                        var companyCategorySection = document.createElement('div');
+                        companyCategorySection.classList.add('company-category-section');
 
-                        cardBody.appendChild(iconRow);
+                        var companySection = document.createElement('div');
+                        companySection.classList.add('company-section');
+                        companySection.innerHTML = `
+  <div class="logo-section">
+    <img class="company-logo" src="${member.companyLogo ? `/CompanyLogo/${member.companyLogo}` : '/default-company-logo.png'}" 
+      alt="Company Logo" 
+      onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+    <div class="initials" style="display:none;">
+      ${member.companyName ? member.companyName.charAt(0).toUpperCase() : 'C'}
+    </div>
+  </div>
+  <h2 title="${member.companyName || 'Company Name'}">${member.companyName || 'Company Name'}</h2>
+`;
 
-                        // Company & Category section
-                        var companyDiv = document.createElement('div');
-                        companyDiv.classList.add('text-center');
-                        companyDiv.innerHTML = `
-                <div class="company-name">${member.companyName || 'Company Name'}</div>
-                <div class="category-text">Category: ${member.category || 'N/A'}</div>
-                <div>
-                    <button class="keyword-btn">${member.keyword1 || 'Keyword 1'}</button>
-                    <button class="keyword-btn">${member.keyword2 || 'Keyword 2'}</button>
-                    <button class="keyword-btn">${member.keyword3 || 'Keyword 3'}</button>
-                </div>
-            `;
-                        cardBody.appendChild(companyDiv);
 
+
+                        var categorySection = document.createElement('div');
+                        categorySection.classList.add('category-section');
+                        categorySection.innerHTML = `<div class="label">Category</div><h3>${member.b_category?.categoryName || 'N/A'}</h3>`;
+
+                        console.log('Member business category:', member.b_category?.categoryName);
+
+                        var divider = document.createElement('div');
+                        divider.classList.add('divider');
+
+                        companyCategorySection.appendChild(companySection);
+                        companyCategorySection.appendChild(divider);
+                        companyCategorySection.appendChild(categorySection);
+                        cardBody.appendChild(companyCategorySection);
+
+                        // Keywords Section
+                        var keywordsContainer = document.createElement('div');
+                        keywordsContainer.classList.add('keywords-container', 'row');
+
+                        console.log('Member keywords raw value:', member.keyWords); // Debugging log
+
+                        if (member.keyWords) {
+                            try {
+                                var keywordsArray = JSON.parse(member.keyWords);
+                                console.log('Parsed keywords array:', keywordsArray); // Debugging log
+
+                                if (Array.isArray(keywordsArray) && keywordsArray.length > 0) {
+                                    keywordsArray.forEach(keyword => {
+                                        if (keyword) {
+                                            var keywordPill = document.createElement('span');
+                                            keywordPill.classList.add('keyword-pill', 'col');
+                                            keywordPill.textContent = keyword;
+                                            keywordsContainer.appendChild(keywordPill);
+                                        }
+                                    });
+                                } else {
+                                    console.log('Keywords are empty or not an array');
+                                    var noKeywordsPill = document.createElement('span');
+                                    noKeywordsPill.classList.add('keyword-pill');
+                                    noKeywordsPill.textContent = 'No Keywords';
+                                    keywordsContainer.appendChild(noKeywordsPill);
+                                }
+                            } catch (e) {
+                                console.error('Error parsing keywords:', e);
+                                var errorPill = document.createElement('span');
+                                errorPill.classList.add('keyword-pill');
+                                errorPill.textContent = 'No Keywords';
+                                keywordsContainer.appendChild(errorPill);
+                            }
+                        } else {
+                            console.log('No keywords found for member:', member.id);
+                            var noKeywordsPill = document.createElement('span');
+                            noKeywordsPill.classList.add('keyword-pill');
+                            noKeywordsPill.textContent = 'No Keywords';
+                            keywordsContainer.appendChild(noKeywordsPill);
+                        }
+
+                        cardBody.appendChild(keywordsContainer);
                         cardElement.appendChild(cardBody);
 
-                        // Footer actions
-                        var actionFooter = document.createElement('div');
-                        actionFooter.classList.add('profile-actions');
-                        actionFooter.innerHTML = `
-                <a href="/foundPersonDetails/${member.id}">View Profile</a>
-                `;
+                        // Bottom Actions
+                        var bottomActions = document.createElement('div');
+                        bottomActions.classList.add('bottom-actions', 'text-center'); // Center align
 
-                        cardElement.appendChild(actionFooter);
+                        var viewProfile = createActionButton('bi bi-person-lines-fill', 'View Profile', `/foundPersonDetails/${member.id}`);
 
-                        cardContainer.appendChild(cardElement);
+                        bottomActions.appendChild(viewProfile);
+
+                        cardElement.appendChild(bottomActions);
+
+                        col.appendChild(cardElement);
+                        rowContainer.appendChild(col);
+
                     });
                 } else {
                     searchResultsElement.innerHTML = '<p>No members found.</p>';
                 }
 
-                searchResultsElement.appendChild(cardContainer);
+                searchResultsElement.appendChild(rowContainer);
+            }
+
+
+            // Helper function to create icon-text elements
+            function createIconText(iconClass, text) {
+                var div = document.createElement('div');
+                div.classList.add('icon-text');
+                div.innerHTML = `<i class="${iconClass}"></i><div>${text}</div>`;
+                return div;
+            }
+
+            // Helper function to create bottom action buttons
+            function createActionButton(iconClass, text, link) {
+                var div = document.createElement('div');
+                div.innerHTML = `<i class="${iconClass}"></i>${text}`;
+                div.style.cursor = 'pointer';
+                div.onclick = function() {
+                    window.location.href = link;
+                };
+                return div;
+            }
+
+            // Helper function to capitalize first letter of name
+            function capitalize(str) {
+                return str ? str.charAt(0).toUpperCase() + str.slice(1) : '';
+            }
+
+            // Helper function to truncate text
+            function truncateText(text, maxLength) {
+                return text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
             }
         </script>
 
-{{-- <button class="btn-message" onclick="window.location.href='/chatWith/${member.id}'">Message</button> --}}
+        {{-- <button class="btn-message" onclick="window.location.href='/chatWith/${member.id}'">Message</button> --}}
 
         {{-- <script>
         // Paste your JavaScript code here

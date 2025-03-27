@@ -4,108 +4,92 @@
         <h1 class="text-center card-title mb-4">Category</h1>
         <div class="row">
             @foreach ($categories as $categoryData)
-                <div class="col-md-3 mb-4">
-                    <a href="{{ route('connection.showCategoryWiseMembers', $categoryData->id) }}" class="text-decoration-none">
-                        <div class="profile-card">
-                            <div class="card-body">
-                                <!-- Profile Picture -->
-                                {{-- <img src="{{ asset($categoryData->categoryIcon ?? 'img/logo2.jpg') }}" alt="Category Icon" class="profile-img mb-3 object-fit-contain"> --}}
-
-                                <img src="{{ asset('BusinessCategory/' . ($categoryData->categoryIcon ?? 'logo2.jpg')) }}" alt="Category Icon" class="profile-img mb-3 object-fit-contain">
-
-
-                                <!-- Category Name -->
-                                <h3 class="profile-name mb-3" style="color: #e76a35">
-                                    {{ $categoryData->categoryName ?? '' }}
-                                </h3>
-
-                                <!-- Total Members -->
-                                <h3 class="profile-name mb-3">
-                                    Total Members: {{ $categoryData->members_count ?? '' }}
-                                </h3>
+                <div class="col-md-4 mb-4">
+                    <div class="profile-card">
+                        <img src="https://picsum.photos/600/120" class="header-image" alt="Header Image">
+                        <div class="text-center p-3">
+                            <img src="{{ asset('BusinessCategory/' . ($categoryData->categoryIcon ?? 'logo2.jpg')) }}" class="profile-img" alt="Category Icon">
+                            <h5 style="color: #e76a35; font-weight: bold;">{{ $categoryData->categoryName ?? 'N/A' }}</h5>
+                            <div class="info-section">
+                                <div class="icon-text">
+                                    <i class="bi bi-people-fill" style="color: #e76a35"></i>
+                                    <div style="color: #1d3268; font-weight: bold;">Total Members: {{ $categoryData->members_count ?? '0' }}</div>
+                                </div>
                             </div>
                         </div>
-                    </a>
+                        <div class="bottom-actions">
+                            <button class="btn-message" onclick="window.location.href='{{ route('connection.showCategoryWiseMembers', $categoryData->id) }}'">View Members</button>
+                        </div>
+                    </div>
                 </div>
             @endforeach
         </div>
-
-        <div class="d-flex justify-content-end custom-pagination">
-            {{-- {!! $categories->links() !!} --}}
-        </div>
     </div>
-
-
 
     <style>
         .profile-card {
-            width: 250px !important;
-            height: 195px !important;
-            background-color: #fff !important;
-            border-radius: 10px !important;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
-            text-align: center !important;
-            margin: auto !important;
-            padding: 15px 0 !important;
-            border: 2px solid #e76a35 !important;
+            width: 320px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.08);
+            background-color: #fff;
+            margin: 20px auto;
         }
 
-        .profile-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-        }
-
-        .card-body {
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .card-title {
-            font-size: 24px;
-            font-weight: bold;
-            color: #1d3268;
-            margin-bottom: 10px;
+        .header-image {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
         }
 
         .profile-img {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
+            width: 90px;
+            height: 90px;
             object-fit: cover;
-            margin-bottom: 10px;
-            border: 3px solid #1d3268;
+            border-radius: 50%;
+            border: 3px solid #fff;
+            margin-top: -45px;
         }
 
-        .profile-title {
+        .info-section {
+            display: flex;
+            justify-content: center;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .icon-text {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             font-size: 14px;
-            font-weight: bold;
-            color: #e76a35;
-            margin-bottom: 5px;
         }
 
-        .profile-name {
-            font-size: 16px;
+        .icon-text i {
+            font-size: 20px;
+            color: #5f6368;
+            margin-bottom: 4px;
+        }
+
+        .bottom-actions {
+            text-align: center;
+            padding: 10px;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .btn-message {
+            background-color: #1d3268;
+            color: white;
+            border-radius: 50px;
+            padding: 6px 14px;
+            border: none;
+        }
+
+        .card-title {
+            font-size: 28px;
             font-weight: bold;
             color: #1d3268;
-            margin-bottom: 5px;
-        }
-
-        .profile-details {
-            font-size: 14px;
-            color: #1d3268;
-            margin-bottom: 5px;
-        }
-
-        .custom-pagination .page-link {
-            color: #007bff;
-        }
-
-        .custom-pagination .page-item.active .page-link {
-            background-color: #007bff;
-            border-color: #007bff;
+            margin-bottom: 20px;
         }
     </style>
 @endsection

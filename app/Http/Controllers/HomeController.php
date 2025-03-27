@@ -833,6 +833,7 @@ class HomeController extends Controller
     public function search(Request $request)
     {
         try {
+            
             $query = $request->input('query');
             $members = Member::where('userId', '!=', Auth::user()->id)
                 ->where('status', 'Active')
@@ -845,9 +846,10 @@ class HomeController extends Controller
                 // ->whereHas('circle', function ($q) use ($query) {
                 //     $q->where('circleName', 'like', '%' . $query . '%');
                 // })
-                ->with('user', 'circle')
+                ->with('user', 'circle', 'bCategory')
                 ->get();
 
+                
 
             // $members = Member::where('keyWords', 'like', '%' . $query . '%')->get();
 
