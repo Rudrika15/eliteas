@@ -411,11 +411,61 @@
 
                 @endphp
 
+
+                @if ($memberCircleId == $userCircleId)
+                    <!-- Display "Connected" button if both users are in the same circle -->
+                    <button type="button" class="btn btn-connect shadow-none">
+                        Connected &nbsp;<i class="bi bi-check-circle-fill"></i>
+                    </button>
+                    <button id="messageButton" class="btn btn-connect ms-2">
+                        Message
+                    </button>
+                @elseif ($connections->isEmpty())
+                    <!-- Display "Connect" button if no connection exists -->
+                    <form action="{{ route('connect') }}" id="connectForm" method="POST">
+                        @csrf
+                        <input type="hidden" value="{{ $member->id }}" name="memberId" id="memberId">
+                        <button type="submit" class="btn btn-connect shadow-none" id="connectBtn">
+                            Connect &nbsp;<i class="bi bi-person-plus-fill"></i>
+                        </button>
+                    </form>
+                @else
+                    @php
+                        $connection = $connections->first(); // Get the latest connection
+                    @endphp
+
+                    @if ($connection->status == 'Accepted')
+                        <!-- Display "Connected" button -->
+                        <button type="button" class="btn btn-connect shadow-none">
+                            Connected &nbsp;<i class="bi bi-check-circle-fill"></i>
+                        </button>
+                        <button id="messageButton" class="btn btn-connect ms-2">
+                            Message
+                        </button>
+                    @elseif ($connection->status == 'Pending')
+                        <!-- Display "Pending" button -->
+                        <button type="button" class="btn btn-connect shadow-none">
+                            Requested &nbsp;<i class="bi bi-clock"></i>
+                        </button>
+                    @elseif ($connection->status == 'Rejected')
+                        <!-- Display "Connect" button again after rejection -->
+                        <form action="{{ route('connect') }}" id="connectForm" method="POST">
+                            @csrf
+                            <input type="hidden" value="{{ $member->id }}" name="memberId" id="memberId">
+                            <button type="submit" class="btn btn-connect shadow-none" id="connectBtn">
+                                Connect &nbsp;<i class="bi bi-person-plus-fill"></i>
+                            </button>
+                        </form>
+                    @endif
+                @endif
+
+
+
                 {{-- {{ $memberCircleId }}
                 {{ $userCircleId }} --}}
 
                 <!-- Keep the button as it was, just add the logic here -->
-                @if ($memberCircleId == $userCircleId)
+                {{-- @if ($memberCircleId == $userCircleId)
                     <!-- Display "Connected" button, and disable it -->
                     <button type="submit" class="btn btn-connect shadow-none">
                         Connected &nbsp;<i class="bi bi-check-circle-fill"></i>
@@ -464,13 +514,13 @@
                 @endif --}}
 
 
-                @if (!empty($memberStatus) && $memberStatus->status == 'Accepted')
+                {{-- @if (!empty($memberStatus) && $memberStatus->status == 'Accepted')
                     <button id="messageButton" class="btn btn-connect ms-2">
                         Message
                     </button>
-                @else
-                    <!-- No button is rendered in the else block -->
-                @endif
+                @else --}}
+                <!-- No button is rendered in the else block -->
+                {{-- @endif --}}
 
 
                 <!-- Small Popup Modal -->
@@ -539,11 +589,15 @@
                             </li>
                             <li><span class="title">Mobile:</span> <span class="value">{{ $member->user->contactNo }}</span>
                             </li>
-                        @elseif (isset($memberStatus) && $memberStatus->status == 'Accepted')
+                            {{-- @elseif (isset($memberStatus) && $memberStatus->status == 'Accepted')
                             <li><span class="title">Email:</span> <span class="value">{{ $member->user->email }}</span>
                             </li>
                             <li><span class="title">Mobile:</span> <span class="value">{{ $member->user->contactNo }}</span>
                             </li>
+                        @else --}}
+                        @elseif ($connections->isNotEmpty() && $connections->first()->status == 'Accepted')
+                            <li><span class="title">Email:</span> <span class="value">{{ $member->user->email }}</span></li>
+                            <li><span class="title">Mobile:</span> <span class="value">{{ $member->user->contactNo }}</span></li>
                         @else
                             <li><span class="title">Email:</span> <span class="value">****{{ substr($member->user->email, -8) }}</span>
                             </li>

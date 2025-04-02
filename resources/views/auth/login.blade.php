@@ -17,8 +17,12 @@
         .left-side {
             background: url("{{ asset('img/logNew.png') }}") no-repeat center center;
             background-size: cover;
+            /* Ensures the image covers the entire div */
             height: 100vh;
+            margin-top: 1px;
+            /* width: 100%; */
         }
+
 
         .login-box {
             max-width: 400px;
@@ -89,7 +93,7 @@
 </head>
 
 <body>
-    <div class="container-fluid">
+    <div class="">
         <div class="row g-0">
             <div class="col-lg-7 left-side d-none d-lg-block"></div>
             <div class="col-lg-5 d-flex align-items-center">

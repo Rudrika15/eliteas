@@ -183,7 +183,8 @@ class ConnectionController extends Controller
 
     public function connect(Request $request)
     {
-        $memberId = $request->input('memberId');
+        $member = Member::find($request->input('memberId'));
+        $memberId = $member->userId;
         $userId = Auth::user()->id;
 
         // $connection = Connection::where('memberId', $memberId)

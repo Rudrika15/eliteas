@@ -830,77 +830,196 @@ class HomeController extends Controller
         }
     }
 
+
     public function search(Request $request)
     {
         try {
-            
             $query = $request->input('query');
-            $members = Member::where('userId', '!=', Auth::user()->id)
+            $authId = Auth::id(); // Get authenticated user ID
+
+            // Fetch the authenticated user's circle ID from the Members table
+            $authMember = Member::where('userId', $authId)->first();
+            $authCircleId = $authMember ? $authMember->circleId : null;
+
+            $members = Member::where('userId', '!=', $authId)
                 ->where('status', 'Active')
                 ->where(function ($q) use ($query) {
-                    $q
-                        ->where('firstName', 'like', '%' . $query . '%')
+                    $q->where('firstName', 'like', '%' . $query . '%')
                         ->orWhere('lastName', 'like', '%' . $query . '%')
                         ->orWhere('keyWords', 'like', '%' . $query . '%');
                 })
-                // ->whereHas('circle', function ($q) use ($query) {
-                //     $q->where('circleName', 'like', '%' . $query . '%');
-                // })
-                ->with('user', 'circle', 'bCategory')
+                ->with(['user', 'circle', 'bCategory'])
                 ->get();
 
-                
+            // Add connection status for each member
+            $members->map(function ($member) use ($authId, $authCircleId) {
+                // Check if the member is in the same circle
+                if ($authCircleId !== null && $member->circleId == $authCircleId) {
+                    $member->connection_status = 'Connected';
+                } else {
+                    // Fetch actual connection status
+                    $connection = Connection::where(function ($query) use ($authId, $member) {
+                        $query->where('userId', $authId)->where('memberId', $member->userId)
+                            ->orWhere(function ($query) use ($authId, $member) {
+                                $query->where('userId', $member->userId)->where('memberId', $authId);
+                            });
+                    })->first();
 
-            // $members = Member::where('keyWords', 'like', '%' . $query . '%')->get();
+                    $member->connection_status = $connection ? $connection->status : 'Not Connected';
+                }
 
-            $message = "Search results for '$query'";
-
+                // If connection exists and is 'Accepted', always mark as 'Connected'
+                if ($member->connection_status !== 'Connected' && isset($connection) && $connection->status === 'Accepted') {
+                    $member->connection_status = 'Connected';
+                }
+            });
 
             return response()->json([
-                'message' => $message,
+                'message' => "Search results for '$query'",
                 'members' => $members,
             ]);
         } catch (\Throwable $th) {
-            // Log the error
-            // throw $th;
             ErrorLogger::logError($th, request()->fullUrl());
-
-            // Return with an error message
             return response()->json(['error' => 'Failed to perform search. Please try again.'], 500);
         }
     }
 
 
+    // public function search(Request $request)
+    // {
+    //     try {
+    //         $query = $request->input('query');
+    //         $authId = Auth::id(); // Get authenticated user ID
+
+    //         $members = Member::where('userId', '!=', $authId)
+    //             ->where('status', 'Active')
+    //             ->where(function ($q) use ($query) {
+    //                 $q->where('firstName', 'like', '%' . $query . '%')
+    //                     ->orWhere('lastName', 'like', '%' . $query . '%')
+    //                     ->orWhere('keyWords', 'like', '%' . $query . '%');
+    //             })
+    //             ->with(['user', 'circle', 'bCategory'])
+    //             ->get();
+
+    //         // Add connection status for each member
+    //         $members->map(function ($member) use ($authId) {
+    //             $connection = Connection::where(function ($query) use ($authId, $member) {
+    //                 $query->where('userId', $authId)->where('memberId', $member->id)
+    //                     ->orWhere(function ($query) use ($authId, $member) {
+    //                         $query->where('userId', $member->id)->where('memberId', $authId);
+    //                     });
+    //             })->first();
+
+    //             // Set connection status
+    //             $member->connection_status = $connection ? $connection->status : 'Not Connected';
+    //         });
+
+    //         return response()->json([
+    //             'message' => "Search results for '$query'",
+    //             'members' => $members,
+    //         ]);
+    //     } catch (\Throwable $th) {
+    //         ErrorLogger::logError($th, request()->fullUrl());
+    //         return response()->json(['error' => 'Failed to perform search. Please try again.'], 500);
+    //     }
+    // }
+    // public function search(Request $request)
+    // {
+    //     try {
+
+    //         $query = $request->input('query');
+    //         $members = Member::where('userId', '!=', Auth::user()->id)
+    //             ->where('status', 'Active')
+    //             ->where(function ($q) use ($query) {
+    //                 $q
+    //                     ->where('firstName', 'like', '%' . $query . '%')
+    //                     ->orWhere('lastName', 'like', '%' . $query . '%')
+    //                     ->orWhere('keyWords', 'like', '%' . $query . '%');
+    //             })
+    //             // ->whereHas('circle', function ($q) use ($query) {
+    //             //     $q->where('circleName', 'like', '%' . $query . '%');
+    //             // })
+    //             ->with('user', 'circle', 'bCategory')
+    //             ->get();
 
 
+
+    //         // $members = Member::where('keyWords', 'like', '%' . $query . '%')->get();
+
+    //         $message = "Search results for '$query'";
+
+
+    //         return response()->json([
+    //             'message' => $message,
+    //             'members' => $members,
+    //         ]);
+    //     } catch (\Throwable $th) {
+    //         // Log the error
+    //         // throw $th;
+    //         ErrorLogger::logError($th, request()->fullUrl());
+
+    //         // Return with an error message
+    //         return response()->json(['error' => 'Failed to perform search. Please try again.'], 500);
+    //     }
+    // }
+
+
+
+
+
+    // public function foundPersonDetails($id)
+    // {
+    //     try {
+    //         $aid = Auth::id(); // Get the ID of the authenticated user
+    //         $member = Member::find($id);
+
+
+    //         // Find connection based on the authenticated user's ID and member ID
+    //         $connection = Connection::where('userId', $aid)
+    //             ->orWhere('memberId', $aid)
+    //             ->first();
+
+    //         $memberStatus = Connection::where('memberId', $aid)
+    //             ->orWhere('userId', $aid)
+    //             ->first();
+
+    //         // Alternatively, if you want to get all connections related to the authenticated user:
+    //         // $connections = Connection::where('userId', $aid)->get();
+
+    //         return view('foundPersonDetails', compact('member', 'connection', 'memberStatus'));
+    //     } catch (\Throwable $th) {
+    //         // throw $th;
+    //         ErrorLogger::logError($th, request()->fullUrl());
+    //         // In case of an error, redirect to servererror view
+    //         return view('servererror');
+    //     }
+    // }
 
     public function foundPersonDetails($id)
     {
         try {
-            $aid = Auth::id(); // Get the ID of the authenticated user
+            $aid = Auth::id(); // Get the authenticated user ID
             $member = Member::find($id);
 
+            if (!$member) {
+                return redirect()->back()->with('error', 'Member not found.');
+            }
 
-            // Find connection based on the authenticated user's ID and member ID
-            $connection = Connection::where('userId', $aid)
-                ->orWhere('memberId', $aid)
-                ->first();
+            // Get all connections where the authenticated user and the found member are connected
+            $connections = Connection::where(function ($query) use ($aid, $member) {
+                $query->where('userId', $aid)->where('memberId', $member->id)
+                    ->orWhere(function ($query) use ($aid, $member) {
+                        $query->where('userId', $member->id)->where('memberId', $aid);
+                    });
+            })->get();
 
-            $memberStatus = Connection::where('memberId', $aid)
-                ->orWhere('userId', $aid)
-                ->first();
-
-            // Alternatively, if you want to get all connections related to the authenticated user:
-            // $connections = Connection::where('userId', $aid)->get();
-
-            return view('foundPersonDetails', compact('member', 'connection', 'memberStatus'));
+            return view('foundPersonDetails', compact('member', 'connections'));
         } catch (\Throwable $th) {
-            // throw $th;
             ErrorLogger::logError($th, request()->fullUrl());
-            // In case of an error, redirect to servererror view
             return view('servererror');
         }
     }
+
 
     public function accepted($id)
     {

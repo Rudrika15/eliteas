@@ -70,7 +70,7 @@ Route::post('visitor/login', [VisitorController::class, 'visitorLogin']);
 
 Route::post('event/attendance', [VisitorController::class, 'eventAttendance']);
 
-Route::post('event/visitorIndex', [VisitorController::class, 'eventIndex']);
+// Route::post('event/visitorIndex', [VisitorController::class, 'eventIndex']);
 
 Route::get('/events/users/{id?}', [VisitorController::class, 'getUserListForVisitors']);
 
@@ -275,6 +275,8 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     // Retrieve all active events
     Route::get('/event/index', [EventController::class, 'index']);
+    Route::get('event/visitorIndex', [VisitorController::class, 'eventIndex']);
+
     Route::post('/event/registerPayLater', [EventController::class, 'handleEventRegistration']);
 
     // Check if a user is registered for an event

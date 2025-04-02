@@ -10,8 +10,7 @@
         </div>
         <hr>
         <!-- Floating Labels Form -->
-        <form class="m-3 needs-validation" id="callForm" enctype="multipart/form-data" method="post"
-            action="{{ route('circlecall.update', $circlecall->id) }}" novalidate>
+        <form class="m-3 needs-validation" id="callForm" enctype="multipart/form-data" method="post" action="{{ route('circlecall.update', $circlecall->id) }}" novalidate>
             @csrf
             <input type="hidden" name="id" value="{{ $circlecall->id }}">
 
@@ -22,8 +21,7 @@
                 <div class="col-md-6">
 
                     <div class="form-floating">
-                        <select class="form-select @error('circleId') is-invalid @enderror" id="circleId" name="circleId"
-                            required>
+                        <select class="form-select @error('circleId') is-invalid @enderror" id="circleId" name="circleId" required>
                             <option value="" selected disabled>Select Circle</option>
                             @if (old('circleId'))
                                 <option value="{{ old('circleId') }}" selected>{{ old('circleName') }}</option>
@@ -48,8 +46,7 @@
                 <!-- Member Dropdown -->
                 <div class="col-md-6">
                     <div class="form-floating">
-                        <select class="form-select @error('memberId') is-invalid @enderror" id="memberId" name="memberId"
-                            required>
+                        <select class="form-select @error('memberId') is-invalid @enderror" id="memberId" name="memberId" required>
                             <option value="" selected disabled>Select Member</option>
                             @if (old('memberId'))
                                 <option value="{{ old('memberId') }}" selected> {{ old('memberName') }}</option>
@@ -73,13 +70,9 @@
             <div class="row mb-3 mt-3">
                 <div class="col-md-6">
                     <div class="form-floating mt-3">
-                        <input type="hidden" id="meetingPersonId" name="meetingPersonId"
-                            value="{{ $circlecall->meetingPersonId }}" required>
+                        <input type="hidden" id="meetingPersonId" name="meetingPersonId" value="{{ $circlecall->meetingPersonId }}" required>
 
-                        <input type="text" class="form-control " readonly id="meetingPersonName"
-                            placeholder="Select Member"
-                            value="{{ $circlecall->meetingPerson->firstName }} {{ $circlecall->meetingPerson->lastName }}"
-                            disabled required>
+                        <input type="text" class="form-control " readonly id="meetingPersonName" placeholder="Select Member" value="{{ $circlecall->meetingPerson->firstName }} {{ $circlecall->meetingPerson->lastName }}" disabled required>
                         <label for="memberName">Meeting Person Name</label>
                         @error('meetingPersonId')
                             <div class="invalid-tooltip">
@@ -91,11 +84,7 @@
 
                 <div class="col-md-6">
                     <div class="form-floating mt-3">
-                        <input type="text" class="form-control" id="meetingPlace" name="meetingPlace"
-                            placeholder="Meeting Place Name" pattern="[A-Za-z\s]+" required
-                            value="{{ old('meetingPlace', $circlecall->meetingPlace) }}"
-                            oninvalid="this.setCustomValidity('Please enter correct details.')"
-                            oninput="setCustomValidity('')">
+                        <input type="text" class="form-control" id="meetingPlace" name="meetingPlace" placeholder="Meeting Place Name" required value="{{ old('meetingPlace', $circlecall->meetingPlace) }}">
                         <label for="meetingPlace">Meeting Place Name</label>
                         <span class="error-message text-danger"></span> <!-- Error message placeholder -->
                     </div>
@@ -104,9 +93,7 @@
 
                 <div class="col-md-6">
                     <div class="form-floating mt-3">
-                        <input type="file" class="form-control @error('meetingImage') is-invalid @enderror"
-                            id="meetingImage" name="meetingImage" accept="image/*" required onchange="previewPhoto(event)"
-                            {{ ($oldMeetingImage = old('meetingImage')) ? 'data-old-value="' . $oldMeetingImage . '"' : '' }}>
+                        <input type="file" class="form-control @error('meetingImage') is-invalid @enderror" id="meetingImage" name="meetingImage" accept="image/*" required onchange="previewPhoto(event)" {{ ($oldMeetingImage = old('meetingImage')) ? 'data-old-value="' . $oldMeetingImage . '"' : '' }}>
                         <label for="meetingImage">Upload Meeting Image</label>
                         <span class="text-danger mt-1 d-block">*
                             File size:Max 2MB</span>
@@ -119,10 +106,7 @@
 
                     <!-- Photo Preview Section -->
                     <div class="mt-1">
-                        <img id="photoPreview"
-                            src="{{ $circlecall->meetingImage ? asset('meetingImage/' . $circlecall->meetingImage) : asset('img/profile.png') }}"
-                            alt="Meeting Image"
-                            style="width: 100px; height: 100px; object-fit: contain; aspect-ratio: 1/1;" />
+                        <img id="photoPreview" src="{{ $circlecall->meetingImage ? asset('meetingImage/' . $circlecall->meetingImage) : asset('img/profile.png') }}" alt="Meeting Image" style="width: 100px; height: 100px; object-fit: contain; aspect-ratio: 1/1;" />
                     </div>
                 </div>
 
@@ -154,17 +138,14 @@
                         $nearestDate = $nearestDate ? Carbon::parse($nearestDate)->subDay()->format('Y-m-d') : Carbon::now()->format('Y-m-d');
                         $selectedDate = request()->input('date') ?? (Carbon::now()->format('Y-m-d') == $nearestDate ? Carbon::now()->format('Y-m-d') : $nearestDate);
                         ?>
-                        <input type="date" class="form-control" id="date" name="date" placeholder="Meeting Date"
-                            required min="{{ $lastDate }}" max="{{ $nearestDate }}"
-                            value="{{ old('date', $circlecall->date) }}" disabled>
+                        <input type="date" class="form-control" id="date" name="date" placeholder="Meeting Date" required min="{{ $lastDate }}" max="{{ $nearestDate }}" value="{{ old('date', $circlecall->date) }}" disabled>
                         <label for="date">Date</label>
                     </div>
                 </div>
 
                 <div class="col-md-6">
                     <div class="form-floating mt-3">
-                        <input type="text" class="form-control" id="remarks" name="remarks" placeholder="Remarks"
-                            required value="{{ old('remarks', $circlecall->remarks) }}">
+                        <input type="text" class="form-control" id="remarks" name="remarks" placeholder="Remarks" required value="{{ old('remarks', $circlecall->remarks) }}">
                         <label for="remarks">Remarks</label>
                     </div>
                 </div>

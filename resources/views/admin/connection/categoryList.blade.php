@@ -2,18 +2,18 @@
 @section('content')
     <div class="container mt-5">
         <h1 class="text-center card-title mb-4">Category</h1>
-        <div class="row">
+        <div class="row justify-content-center">
             @foreach ($categories as $categoryData)
-                <div class="col-md-4 mb-4">
+                <div class="col-lg-4 col-md-6 col-sm-12 mb-4 d-flex justify-content-center">
                     <div class="profile-card">
                         <img src="https://picsum.photos/600/120" class="header-image" alt="Header Image">
                         <div class="text-center p-3">
-                            <img src="{{ asset('BusinessCategory/' . ($categoryData->categoryIcon ?? 'logo2.jpg')) }}" class="profile-img" alt="Category Icon">
-                            <h5 style="color: #e76a35; font-weight: bold;">{{ $categoryData->categoryName ?? 'N/A' }}</h5>
+                            <img src="{{ $categoryData->categoryIcon ? asset('BusinessCategory/' . $categoryData->categoryIcon) : asset('img/logo2.jpg') }}" class="profile-img" alt="Category Icon">
+                            <h5 class="category-title">{{ $categoryData->categoryName ?? 'N/A' }}</h5>
                             <div class="info-section">
                                 <div class="icon-text">
-                                    <i class="bi bi-people-fill" style="color: #e76a35"></i>
-                                    <div style="color: #1d3268; font-weight: bold;">Total Members: {{ $categoryData->members_count ?? '0' }}</div>
+                                    <i class="bi bi-people-fill"></i>
+                                    <div class="member-count">Total Members: {{ $categoryData->members_count ?? '0' }}</div>
                                 </div>
                             </div>
                         </div>
@@ -28,12 +28,13 @@
 
     <style>
         .profile-card {
-            width: 320px;
+            width: 100%;
+            max-width: 320px;
             border-radius: 15px;
             overflow: hidden;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.08);
             background-color: #fff;
-            margin: 20px auto;
+            margin: auto;
         }
 
         .header-image {
@@ -49,6 +50,11 @@
             border-radius: 50%;
             border: 3px solid #fff;
             margin-top: -45px;
+        }
+
+        .category-title {
+            color: #e76a35;
+            font-weight: bold;
         }
 
         .info-section {
@@ -71,6 +77,11 @@
             margin-bottom: 4px;
         }
 
+        .member-count {
+            color: #1d3268;
+            font-weight: bold;
+        }
+
         .bottom-actions {
             text-align: center;
             padding: 10px;
@@ -90,6 +101,12 @@
             font-weight: bold;
             color: #1d3268;
             margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .profile-card {
+                max-width: 100%;
+            }
         }
     </style>
 @endsection

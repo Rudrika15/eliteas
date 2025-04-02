@@ -56,7 +56,7 @@
                                         <span class="keyword-pill">{{ $keyWord }}</span>
                                     @endforeach
                                 @else
-                                    <span class="keyword-pill">No Keywords</span>
+                                    {{-- <span class="keyword-pill">No Keywords</span> --}}
                                 @endif
                             </div>
 
@@ -254,6 +254,67 @@
             width: 1px;
             background-color: #e0e0e0;
             height: auto;
+        }
+
+
+        @media (max-width: 1500px) {
+            .profile-card {
+                max-width: 100%;
+            }
+
+            .profile-img {
+                width: 70px;
+                height: 70px;
+                margin-top: -35px;
+            }
+
+            .icon-text {
+                font-size: 12px;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .profile-card {
+                max-width: 100%;
+            }
+
+            .profile-img {
+                width: 70px;
+                height: 70px;
+                margin-top: -35px;
+            }
+
+            .icon-text {
+                font-size: 12px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .profile-card {
+                max-width: 100%;
+            }
+
+            .profile-img {
+                width: 70px;
+                height: 70px;
+                margin-top: -35px;
+            }
+
+            .icon-text {
+                font-size: 8px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .profile-card {
+                max-width: 100%;
+            }
+
+            .profile-img {
+                width: 60px;
+                height: 60px;
+                margin-top: -30px;
+            }
         }
     </style>
 @endsection

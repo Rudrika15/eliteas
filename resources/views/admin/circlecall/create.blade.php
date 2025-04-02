@@ -69,7 +69,7 @@
 
                 <div class="col-md-6">
                     <div class="form-floating mt-3">
-                        <input type="text" class="form-control" id="meetingPlace" name="meetingPlace" placeholder="Meeting Place Name" pattern="[A-Za-z\s]+" required oninvalid="this.setCustomValidity('Please enter correct details.')" oninput="setCustomValidity('')" value="{{ old('meetingPlace') }}">
+                        <input type="text" class="form-control" id="meetingPlace" name="meetingPlace" placeholder="Meeting Place Name" required value="{{ old('meetingPlace') }}">
                         <label for="meetingPlace">Meeting Place Name</label>
                         <span class="error-message text-danger"></span> <!-- Error message placeholder -->
                     </div>

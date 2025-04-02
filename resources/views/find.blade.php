@@ -703,7 +703,7 @@
             }
 
             .profile-card {
-                width: 350px;
+                width: 400px;
                 /* slightly reduced to fit 3 in a row nicely */
                 border-radius: 20px;
                 overflow: hidden;
@@ -726,8 +726,8 @@
             }
 
             .profile-img {
-                width: 100px;
-                height: 100px;
+                width: 150px;
+                height: 150px;
                 object-fit: cover;
                 border-radius: 50%;
                 border: 4px solid #fff;
@@ -738,13 +738,13 @@
                 margin-top: 10px;
                 margin-bottom: 4px;
                 font-weight: 700;
-                color: #e76a35;
+                color: #1d3268;
             }
 
             .position {
                 color: #1d3268;
                 font-size: 14px;
-                font-weight: bold;
+                /* font-weight: bold; */
             }
 
             .info-section {
@@ -765,7 +765,7 @@
 
             .icon-text i {
                 font-size: 22px;
-                color: #4a4a4a;
+                color: #e76a35;
                 margin-bottom: 5px;
             }
 
@@ -789,12 +789,21 @@
 
             .company-section h2,
             .category-section h3 {
-                white-space: nowrap;
+                white-space: normal;
+                /* Allows text to wrap */
                 overflow: hidden;
                 text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                /* Limits to 2 lines */
+                -webkit-box-orient: vertical;
+                word-wrap: break-word;
+                line-height: 1.4;
+                /* Adjust for better readability */
+                max-width: 100%;
             }
 
-            .divider {
+            .B-divider {
                 width: 1px;
                 background-color: #dcdcdc;
                 height: 60px;
@@ -849,28 +858,47 @@
 
             .bottom-actions {
                 display: flex;
+                justify-content: space-between;
+                /* Move buttons to corners */
+                align-items: center;
                 border-top: 1px solid #e6e6e6;
                 padding: 10px 0;
                 text-align: center;
+                width: 100%;
+
             }
 
-            .bottom-actions {
-                cursor: pointer;
-                font-weight: 600;
-                color: #1d2951;
-                transition: color 0.2s;
-                /* display: flex; */
-                justify-content: center;
-                align-items: center;
-                gap: 20px;
-            }
-
-            .bottom-actions div {
+            .action-button {
+                flex: 1;
                 display: flex;
                 justify-content: center;
                 align-items: center;
-                gap: 6px;
+                font-weight: 600;
+                color: #1d2951;
+                transition: color 0.2s;
+                text-decoration: none;
+                padding: 10px;
+                gap: 8px;
+                /* Space between icon and text */
             }
+
+            .action-button.connected {
+                color: #e76a35 !important;
+                /* Orange color for connected users */
+            }
+
+
+            .action-button i {
+                font-size: 16px;
+                /* Adjust icon size if needed */
+            }
+
+            .divider {
+                width: 1px;
+                background-color: #e6e6e6;
+                height: 100px;
+            }
+
 
             .bottom-actions div:hover {
                 color: #e76a35;
@@ -885,19 +913,45 @@
             /* Responsive adjustments */
             @media screen and (max-width: 1200px) {
                 .profile-card {
-                    width: 300px;
+                    width: 280px;
+                }
+            }
+
+            @media screen and (max-width: 1500px) {
+                .profile-card {
+                    width: 280px;
                 }
             }
 
             @media screen and (max-width: 992px) {
                 .profile-card {
-                    width: 45%;
+                    width: 200px;
+                }
+            }
+
+            @media screen and (max-width: 768px) {
+                .profile-card {
+                    width: 220px;
+                }
+
+                .icon-text {
+                    font-size: 10px;
                 }
             }
 
             @media screen and (max-width: 576px) {
                 .profile-card {
                     width: 100%;
+                }
+            }
+
+            @media screen and (max-width: 320px) {
+                .profile-card {
+                    width: 220px;
+                }
+
+                .icon-text {
+                    font-size: 9px;
                 }
             }
 
@@ -959,10 +1013,12 @@
                 if (response && response.members && Array.isArray(response.members)) {
                     response.members.forEach(function(member) {
                         var col = document.createElement('div');
-                        col.classList.add('col-md-4'); // 3 cards per row on md and above
+                        col.classList.add('col-12', 'col-sm-6', 'col-lg-4');
+                        // 3 cards per row on md and above
 
                         var cardElement = document.createElement('div');
-                        cardElement.classList.add('profile-card');
+                        // cardElement.classList.add('profile-card');
+                        cardElement.classList.add('profile-card', 'shadow-sm', 'rounded', 'border-0');
 
                         // Header image
                         var headerImg = document.createElement('img');
@@ -976,35 +1032,123 @@
 
                         // Profile Image
                         var profileImg = document.createElement('img');
-                        profileImg.classList.add('profile-img');
+                        profileImg.classList.add('profile-img', 'img-fluid', 'rounded-circle', 'mx-auto', 'd-block');
                         profileImg.src = member.profilePhoto ?
                             `/ProfilePhoto/${member.profilePhoto}` :
-                            'https://randomuser.me/api/portraits/men/75.jpg';
+                            'img/profile.png';
+
                         cardBody.appendChild(profileImg);
+
 
                         // Member Name
                         var memberName = document.createElement('h5');
                         memberName.textContent = `${capitalize(member.firstName)} ${capitalize(member.lastName)}`;
+                        memberName.classList.add('member-name'); // Add class for easier debugging
                         cardBody.appendChild(memberName);
 
-                        // Role or position
-                        var position = document.createElement('p');
-                        position.classList.add('position');
-                        position.textContent = member.designation || `Member at ${member.circle.circleName || ''}`;
-                        cardBody.appendChild(position);
+                        // Function to fetch roles from the database (users table) using member.userId
+                        function getRoleFromDatabase(userId) {
+                            console.log(`Fetching role from database for userId: ${userId}`);
+
+                            return new Promise((resolve, reject) => {
+                                $.ajax({
+                                    url: `/get-user-role/${userId}`, // Adjust this URL based on your Laravel route
+                                    method: "GET",
+                                    dataType: "json",
+                                    success: function(response) {
+                                        console.log("Raw Roles from DB:", response.roles);
+
+                                        // Ensure roles exist, filter out "Member"
+                                        let roles = response.roles ? response.roles.filter(role => role !== "Member") : [];
+
+                                        console.log("Filtered Roles (excluding 'Member'):", roles);
+                                        resolve(roles);
+                                    },
+                                    error: function(error) {
+                                        console.error("Error fetching roles:", error);
+                                        reject(error);
+                                    }
+                                });
+                            });
+                        }
+
+                        // Fetch the role and update UI
+                        getRoleFromDatabase(member.userId)
+                            .then(roles => {
+                                // Create position element
+                                var position = document.createElement('p');
+                                position.classList.add('position');
+                                console.log("Created position element.");
+
+                                // Check if there's a valid role to display
+                                if (roles.length > 0) {
+                                    position.textContent = `${roles[0]} at ${member.circle.circleName || ''}`;
+                                    console.log(`Displaying Role: ${roles[0]} at ${member.circle.circleName || ''}`);
+                                } else {
+                                    position.textContent = `Member at ${member.circle.circleName || ''}`;
+                                    console.log(`No valid role found. Displaying default: Member at ${member.circle.circleName || ''}`);
+                                }
+
+                                // Insert the position element **just after** the member name
+                                memberName.insertAdjacentElement('afterend', position);
+                                console.log("Inserted position element just below member name.");
+                            })
+                            .catch(error => {
+                                console.error("Failed to fetch role:", error);
+                            });
+
+
 
                         // Info Section (Email, Phone, Circle)
-                        // var infoSection = document.createElement('div');
-                        // infoSection.classList.add('info-section');
+                        var infoSection = document.createElement('div');
+                        infoSection.classList.add('info-section');
 
-                        // var emailIconText = createIconText('bi bi-envelope-fill', member.user?.email ? truncateText(member.user.email, 14) : 'No Email');
-                        // var phoneIconText = createIconText('bi bi-telephone-fill', member.user?.contactNo || 'N/A');
-                        // var circleIconText = createIconText('bi bi-people-fill', member.circle?.circleName || 'N/A');
+                        // Check if the user is connected (Accepted) or belongs to the same circle (Connected)
+                        var isConnected = member.connection_status === 'Accepted' || member.connection_status === 'Connected';
 
-                        // infoSection.appendChild(emailIconText);
-                        // infoSection.appendChild(phoneIconText);
-                        // infoSection.appendChild(circleIconText);
-                        // cardBody.appendChild(infoSection);
+                        function createIconText(iconClass, text, tooltipText = '') {
+                            var container = document.createElement('div');
+                            container.classList.add('icon-text');
+
+                            var icon = document.createElement('i');
+                            icon.classList.add(...iconClass.split(' '));
+                            icon.style.color = '#787c80'; // Set icon color
+
+                            var span = document.createElement('span');
+                            span.textContent = text;
+
+                            // Add tooltip only if tooltipText is provided
+                            if (tooltipText) {
+                                span.setAttribute('title', tooltipText);
+                                span.classList.add('tooltip-text'); // Optional, for styling
+                            }
+
+                            container.appendChild(icon);
+                            container.appendChild(span);
+
+                            return container;
+                        }
+
+                        // Email text with tooltip for full email
+                        var emailText = isConnected ?
+                            (member.user?.email ? truncateText(member.user.email, 14) : 'No Email') :
+                            '****';
+                        var emailTooltip = isConnected ? (member.user?.email || '') : ''; // Full email for tooltip
+
+                        var phoneText = isConnected ? (member.user?.contactNo || 'N/A') : '****';
+                        var circleText = member.circle?.circleName || 'N/A';
+
+                        var emailIconText = createIconText('bi bi-envelope-fill', emailText, emailTooltip);
+                        var phoneIconText = createIconText('bi bi-telephone-fill', phoneText);
+                        var circleIconText = createIconText('bi bi-people-fill', circleText);
+
+                        infoSection.appendChild(emailIconText);
+                        infoSection.appendChild(phoneIconText);
+                        infoSection.appendChild(circleIconText);
+                        cardBody.appendChild(infoSection);
+
+
+
 
                         // Company & Category Section
                         var companyCategorySection = document.createElement('div');
@@ -1046,6 +1190,8 @@
 
                         console.log('Member keywords raw value:', member.keyWords); // Debugging log
 
+                        var hasKeywords = false; // Flag to track if valid keywords exist
+
                         if (member.keyWords) {
                             try {
                                 var keywordsArray = JSON.parse(member.keyWords);
@@ -1058,45 +1204,120 @@
                                             keywordPill.classList.add('keyword-pill', 'col');
                                             keywordPill.textContent = keyword;
                                             keywordsContainer.appendChild(keywordPill);
+                                            hasKeywords = true; // Set flag to true if at least one keyword exists
                                         }
                                     });
-                                } else {
-                                    console.log('Keywords are empty or not an array');
-                                    var noKeywordsPill = document.createElement('span');
-                                    noKeywordsPill.classList.add('keyword-pill');
-                                    noKeywordsPill.textContent = 'No Keywords';
-                                    keywordsContainer.appendChild(noKeywordsPill);
                                 }
                             } catch (e) {
                                 console.error('Error parsing keywords:', e);
-                                var errorPill = document.createElement('span');
-                                errorPill.classList.add('keyword-pill');
-                                errorPill.textContent = 'No Keywords';
-                                keywordsContainer.appendChild(errorPill);
                             }
-                        } else {
-                            console.log('No keywords found for member:', member.id);
-                            var noKeywordsPill = document.createElement('span');
-                            noKeywordsPill.classList.add('keyword-pill');
-                            noKeywordsPill.textContent = 'No Keywords';
-                            keywordsContainer.appendChild(noKeywordsPill);
+                        }
+
+                        // Hide the keywords container if no keywords are found
+                        if (!hasKeywords) {
+                            keywordsContainer.style.display = 'none';
                         }
 
                         cardBody.appendChild(keywordsContainer);
                         cardElement.appendChild(cardBody);
 
+
                         // Bottom Actions
                         var bottomActions = document.createElement('div');
-                        bottomActions.classList.add('bottom-actions', 'text-center'); // Center align
+                        bottomActions.classList.add('bottom-actions');
 
+                        // View Profile Button
                         var viewProfile = createActionButton('bi bi-person-lines-fill', 'View Profile', `/foundPersonDetails/${member.id}`);
+                        viewProfile.classList.add('action-button', 'left-action'); // Add custom class
 
+                        // Divider Line
+                        var divider = document.createElement('div');
+                        divider.classList.add('B-divider');
+
+                        // Connect Button
+                        var connectButton;
+                        if (member.connection_status === 'Connected') {
+                            connectButton = createActionButton('bi bi-check-circle-fill', 'Connected', '#', true);
+                            connectButton.classList.add('connected'); // Add class for orange color
+                        } else if (member.connection_status === 'Accepted') {
+                            connectButton = createActionButton('bi bi-check-circle-fill', 'Connected', '#', true);
+                            connectButton.classList.add('connected'); // Add class for orange color
+                        } else if (member.connection_status === 'Pending') {
+                            connectButton = createActionButton('bi bi-hourglass-split', 'Requested', '#', true);
+                        } else {
+                            connectButton = createActionButton('bi bi-person-plus-fill', 'Connect', '#');
+                            connectButton.addEventListener('click', function() {
+                                sendConnectionRequest(member.id, connectButton);
+                            });
+                        }
+                        connectButton.classList.add('action-button', 'right-action', 'btn', 'w-100'); // Add custom class
+
+
+                        // Append elements
                         bottomActions.appendChild(viewProfile);
-
+                        bottomActions.appendChild(divider);
+                        bottomActions.appendChild(connectButton);
                         cardElement.appendChild(bottomActions);
-
                         col.appendChild(cardElement);
                         rowContainer.appendChild(col);
+
+
+
+                        // Function to send connection request
+                        function sendConnectionRequest(memberId, button) {
+                            fetch('/connect', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content') // Ensure CSRF token is included
+                                    },
+                                    body: JSON.stringify({
+                                        memberId: memberId
+                                    })
+                                })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.status === 'success') {
+                                        // Update button UI
+                                        button.innerText = 'Requested';
+                                        button.classList.remove('bi-person-plus-fill');
+                                        button.classList.add('bi-hourglass-split');
+                                        button.disabled = true; // Disable button after request
+
+                                        // Show SweetAlert confirmation
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: 'Connection Request Sent!',
+                                            text: 'Your request has been successfully sent.',
+                                            confirmButtonColor: '#3085d6',
+                                            confirmButtonText: 'OK'
+                                        });
+                                    } else {
+                                        // Show error alert if request failed
+                                        Swal.fire({
+                                            icon: 'error',
+                                            title: 'Oops!',
+                                            text: data.message || 'Something went wrong. Please try again.',
+                                            confirmButtonColor: '#d33',
+                                            confirmButtonText: 'OK'
+                                        });
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Error:', error);
+                                    // Show error alert in case of fetch failure
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error!',
+                                        text: 'Failed to send request. Please try again later.',
+                                        confirmButtonColor: '#d33',
+                                        confirmButtonText: 'OK'
+                                    });
+                                });
+                        }
+
+
+
 
                     });
                 } else {

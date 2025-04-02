@@ -1,83 +1,6 @@
 @extends('layouts.master')
 
 @section('content')
-    <div class="container mt-5">
-        <h1 class="text-center card-title mb-4">Members of {{ $circle->circleName }} Circle</h1>
-        <div class="row">
-            @forelse ($circle->members as $member)
-                <div class="col-md-4 mb-4">
-                    <div class="profile-card">
-                        <img src="https://picsum.photos/600/120" class="header-image" alt="Header Image">
-                        <div class="text-center p-3">
-                            <img src="{{ asset('ProfilePhoto/' . ($member->profilePhoto ?? 'logo2.jpg')) }}" class="profile-img" alt="Profile">
-                            <h5 style="color: #e76a35; font-weight: bold;">{{ $member->firstName ?? 'N/A' }} {{ $member->lastName ?? 'N/A' }}</h5>
-                            {{-- <p class="text-muted">Circle Member</p> --}}
-
-                            <div class="info-section">
-                                <div class="icon-text" title="{{ $member->user->email ?? 'N/A' }}">
-                                    <i class="bi bi-envelope-fill" style="color: #e76a35;"></i>
-                                    <div>{{ Str::limit($member->user->email ?? 'N/A', 10) }}</div>
-                                </div>
-                                <div class="icon-text" title="{{ $member->user->contactNo ?? 'N/A' }}">
-                                    <i class="bi bi-telephone-fill" style="color: #e76a35;"></i>
-                                    <div>{{ Str::limit($member->user->contactNo ?? 'N/A', 10) }}</div>
-                                </div>
-                                <div class="icon-text">
-                                    <i class="bi bi-people-fill" style="color: #e76a35;"></i>
-                                    <div>{{ $circle->circleName ?? 'N/A' }}</div>
-                                </div>
-                            </div>
-
-                            <div class="company-category-section">
-                                <div class="company-section">
-                                    <div class="logo-section">
-                                        @if (!empty($member->companyLogo))
-                                            <img src="{{ asset('CompanyLogo/' . $member->companyLogo) }}" class="company-logo" alt="Company Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                                        @endif
-                                        <div class="initials" style="{{ empty($member->companyLogo) ? 'display:flex;' : 'display:none;' }}">
-                                            {{ strtoupper(substr($member->companyName ?? 'C', 0, 1)) }}
-                                        </div>
-                                    </div>
-                                    <h2 title="{{ $member->companyName ?? 'Company Name' }}">
-                                        {{ $member->companyName ?? 'Company Name' }}
-                                    </h2>
-                                </div>
-                                <div class="divider"></div>
-                                <div class="category-section">
-                                    <div class="label">Category</div>
-                                    <h3>{{ $member->bCategory->categoryName ?? 'N/A' }}</h3>
-                                </div>
-                            </div>
-
-                            <div class="keywords-container">
-                                @php
-                                    $keyWords = json_decode($member->keyWords ?? '[]', true);
-                                @endphp
-
-
-                                @if (is_array($keyWords))
-                                    @foreach ($keyWords as $keyWord)
-                                        <span class="keyword-pill">{{ $keyWord }}</span>
-                                    @endforeach
-                                @else
-                                    <div></div>
-                                    <span class="keyword-pill">No </span>
-                                @endif
-                            </div>
-                        </div>
-                        <div class="bottom-actions">
-                            <div>
-                                <i class="bi bi-person-lines-fill"></i>
-                                View Profile
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            @empty
-                <p class="text-center">No active members found in this circle.</p>
-            @endforelse
-        </div>
-    </div>
 
     <style>
         .initials {
@@ -91,8 +14,6 @@
             align-items: center;
             justify-content: center;
             font-size: 18px;
-            /* mix-blend-mode: color-burn; */
-
         }
 
         .profile-card {
@@ -253,5 +174,138 @@
             background-color: #e0e0e0;
             height: auto;
         }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .profile-card {
+                width: 80%;
+            }
+        }
+       
+        @media (max-width: 1440px) {
+            .profile-card {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .profile-card {
+                width: 90%;
+            }
+
+            .info-section {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .company-category-section {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .divider {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .profile-card {
+                width: 95%;
+                margin: 20px auto;
+            }
+
+            h5 {
+                font-size: 16px;
+            }
+
+            .profile-img {
+                width: 80px;
+                height: 80px;
+            }
+
+            .icon-text i {
+                font-size: 18px;
+            }
+        }
     </style>
+
+
+
+    <div class="container mt-5">
+        <h1 class="text-center card-title mb-4">Members of {{ $circle->circleName }} Circle</h1>
+        <div class="row">
+            @forelse ($circle->members as $member)
+                <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
+                    <div class="profile-card">
+                        <img src="https://picsum.photos/600/120" class="header-image img-fluid" alt="Header Image">
+                        <div class="text-center p-3">
+                            <img src="{{ asset('ProfilePhoto/' . ($member->profilePhoto ?? 'logo2.jpg')) }}" class="profile-img img-fluid" alt="Profile">
+                            <h5 style="color: #e76a35; font-weight: bold;">{{ $member->firstName ?? 'N/A' }} {{ $member->lastName ?? 'N/A' }}</h5>
+
+                            <div class="info-section">
+                                <div class="icon-text" title="{{ $member->user->email ?? 'N/A' }}">
+                                    <i class="bi bi-envelope-fill" style="color: #e76a35;"></i>
+                                    <div>{{ Str::limit($member->user->email ?? 'N/A', 10) }}</div>
+                                </div>
+                                <div class="icon-text" title="{{ $member->user->contactNo ?? 'N/A' }}">
+                                    <i class="bi bi-telephone-fill" style="color: #e76a35;"></i>
+                                    <div>{{ Str::limit($member->user->contactNo ?? 'N/A', 10) }}</div>
+                                </div>
+                                <div class="icon-text">
+                                    <i class="bi bi-people-fill" style="color: #e76a35;"></i>
+                                    <div>{{ $circle->circleName ?? 'N/A' }}</div>
+                                </div>
+                            </div>
+
+                            <div class="company-category-section">
+                                <div class="company-section">
+                                    <div class="logo-section">
+                                        @if (!empty($member->companyLogo))
+                                            <img src="{{ asset('CompanyLogo/' . $member->companyLogo) }}" class="company-logo img-fluid" alt="Company Logo">
+                                        @endif
+                                        <div class="initials" style="{{ empty($member->companyLogo) ? 'display:flex;' : 'display:none;' }}">
+                                            {{ strtoupper(substr($member->companyName ?? 'C', 0, 1)) }}
+                                        </div>
+                                    </div>
+                                    <h2 title="{{ $member->companyName ?? 'Company Name' }}">
+                                        {{ $member->companyName ?? 'Company Name' }}
+                                    </h2>
+                                </div>
+                                <div class="divider"></div>
+                                <div class="category-section">
+                                    <div class="label">Category</div>
+                                    <h3>{{ $member->bCategory->categoryName ?? 'N/A' }}</h3>
+                                </div>
+                            </div>
+
+                            <div class="keywords-container">
+                                @php
+                                    $keyWords = json_decode($member->keyWords ?? '[]', true);
+                                @endphp
+
+                                @if (is_array($keyWords))
+                                    @foreach ($keyWords as $keyWord)
+                                        <span class="keyword-pill">{{ $keyWord }}</span>
+                                    @endforeach
+                                @else
+                                    <span class="keyword-pill">No Keywords</span>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="bottom-actions">
+                            <div>
+                                <i class="bi bi-person-lines-fill"></i>
+                                View Profile
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @empty
+                <p class="text-center">No active members found in this circle.</p>
+            @endforelse
+        </div>
+    </div>
+
+
+
 @endsection

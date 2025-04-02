@@ -31,6 +31,10 @@
                                     <i class="bi bi-telephone-fill" style="color: #e76a35;"></i>
                                     <div>{{ Str::limit($member->user->contactNo ?? 'N/A', 10) }}</div>
                                 </div>
+                                <div class="icon-text">
+                                    <i class="bi bi-people-fill" style="color: #e76a35;"></i>
+                                    <div>{{ $member->circle->circleName ?? 'N/A' }}</div>
+                                </div>
                             </div>
 
                             <!-- Company & Category Section -->
@@ -66,7 +70,7 @@
                                         <span class="keyword-pill">{{ $keyWord }}</span>
                                     @endforeach
                                 @else
-                                    <span class="keyword-pill">No Keywords</span>
+                                    {{-- <span class="keyword-pill"></span> --}}
                                 @endif
                             </div>
                         </div>
@@ -235,6 +239,54 @@
 
         .bottom-actions div:hover {
             color: #e76a35;
+        }
+
+        @media (max-width: 768px) {
+            .profile-card {
+                width: 100%;
+                margin: 20px auto;
+            }
+
+            .info-section {
+                flex-direction: column;
+            }
+
+            /* .company-category-section {
+                    flex-direction: column;
+                    align-items: center;
+                }
+
+                .divider {
+                    width: 80%;
+                    height: 1px;
+                    margin: 10px 0;
+                } */
+
+            .icon-text {
+                margin-bottom: 8px;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .profile-card {
+                width: 100%;
+                margin: 20px auto;
+            }
+
+            .icon-text {
+                font-size: 10px;
+            }
+        }
+
+        @media (max-width: 1440px) {
+            .profile-card {
+                width: 100%;
+                margin: 20px auto;
+            }
+
+            .icon-text {
+                font-size: 10px;
+            }
         }
     </style>
 @endsection

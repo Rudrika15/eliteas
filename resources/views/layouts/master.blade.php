@@ -290,7 +290,7 @@
 
 
                 {{-- @role('member') --}}
-                @if (Auth::user()->userStatus == 'Online')
+                {{-- @if (Auth::user()->userStatus == 'Online')
                     <li class="nav-item">
                         <a class="nav-link" href="#">
                             <span class="badge rounded-pill bg-success" style="font-size: 12px;padding: 5px 10px;color: #fff;display: inline-block;margin-top: 5px;">Online</span>
@@ -302,15 +302,17 @@
                             <span class="badge rounded-pill bg-danger" style="font-size: 12px;padding: 5px 10px;color: #fff;display: inline-block;margin-top: 5px;">Offline</span>
                         </a>
                     </li>
-                @endif
+                @endif --}}
                 {{-- @endrole --}}
 
                 <li class="nav-item dropdown pe-3">
 
+
+
+
                     <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-                        @if (isset(Auth::user()->profile_photo))
-                            {{-- <img class="img-profile rounded-circle" src="{{url('public/img/logo.png')}}"> --}}
-                            <img class="img-profile rounded-circle" src="public/img/logo.png">
+                        @if (isset(Auth::user()->member->profilePhoto) && file_exists(public_path('ProfilePhoto/' . Auth::user()->member->profilePhoto)))
+                            <img class="img-profile rounded-circle" style="width: 38px !important; height: 38px !important;" src="{{ asset('ProfilePhoto/' . Auth::user()->member->profilePhoto) }}">
                         @else
                             <span class="rounded-circle text-center p-2 fs-5 badge logobadge d-inline-block text-light h-50" style="width: 38px !important;">
                             </span>
@@ -320,6 +322,11 @@
                         <span class="d-none d-md-block dropdown-toggle ps-2">Hello,
                             {{ Auth::user()->firstName ?? '-' }}</span>
                     </a><!-- End Profile Iamge Icon -->
+
+
+
+
+
 
                     <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
                         <li class="dropdown-header d-md-none">
@@ -452,7 +459,7 @@
             <div class="row">
 
                 <!-- Left side columns -->
-                <div class="container-fluid p-5">
+                <div class="container-fluid p-3">
                     <!-- Page Heading -->
                     @yield('content')
                 </div>

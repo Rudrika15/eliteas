@@ -16,6 +16,7 @@ use App\Models\Event;
 use App\Models\EventRegister;
 use App\Models\Slot;
 use App\Models\SlotBooking;
+use App\Models\User;
 use App\Models\Visitor;
 use App\Models\VisitorEventRegister;
 use App\Utils\ErrorLogger;
@@ -126,7 +127,15 @@ class VisitorController extends Controller
 
         $events = Event::where('eventStatus', 'Publish')->where('status', 'Active')->get();
 
-        $visitorId = $request->visitorId;
+        // $visitorId = $request->visitorId;
+
+
+        // Get the authenticated user based on the Bearer token
+        $authUser = auth()->user();
+
+        // Check if the user exists and get their member ID from the members table
+        $visitorId = User::where('id', $authUser->id)->value('id');
+
 
         if (!$visitorId) {
             return Utils::errorResponse([

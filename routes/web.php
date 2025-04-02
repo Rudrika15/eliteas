@@ -66,6 +66,7 @@ use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\Admin\TrainingMasterController;
 use App\Http\Controllers\Admin\TrainingFeedbackController;
 use App\Http\Controllers\MessageController;
+use App\Models\User;
 
 /*
 |--------------------------------------------------------------------------
@@ -138,6 +139,20 @@ Route::group(['middleware' => ['auth']], function () {
     //update App
     Route::get('updateApp/edit/{id?}', [UpdateAppController::class, 'edit'])->name('updateApp.edit');
     Route::post('update-app-version/update', [UpdateAppController::class, 'updateAppVersion'])->name('updateApp.update');
+
+
+    Route::get('/get-user-role/{userId}', function ($userId) {
+        $user = User::find($userId);
+
+        if (!$user) {
+            return response()->json(['error' => 'User not found'], 404);
+        }
+
+        // Assuming roles are stored in a relationship like $user->roles
+        $roles = $user->roles->pluck('name')->toArray(); // Modify as per your DB structure
+
+        return response()->json(['roles' => $roles]);
+    });
 
 
     //permission
