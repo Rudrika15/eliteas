@@ -1082,7 +1082,8 @@
 
                                 // Check if there's a valid role to display
                                 if (roles.length > 0) {
-                                    position.textContent = `${roles[0]} at ${member.circle.circleName || ''}`;
+                                    position.textContent = `${roles[0]}`;
+                                    // position.textContent = `${roles[0]} at ${member.circle.circleName || ''}`;
                                     console.log(`Displaying Role: ${roles[0]} at ${member.circle.circleName || ''}`);
                                 } else {
                                     position.textContent = `Member at ${member.circle.circleName || ''}`;

@@ -95,12 +95,41 @@ class ConnectionController extends Controller
     public function showMembers($id)
     {
         try {
-            // Fetch circle details and related active members
             $circle = Circle::with(['members' => function ($query) {
                 $query->where('status', 'Active'); // Fetch only active members
             }])->findOrFail($id);
 
-            return view('admin.connection.circleWiseMembers', compact('circle'));
+            $members = $circle->members;
+
+            $authId = Auth::id(); // Get authenticated user ID
+
+            // Fetch the authenticated user's circle ID from the Members table
+            $authMember = Member::where('userId', $authId)->first();
+            $authCircleId = $authMember ? $authMember->circleId : null;
+
+            $members->each(function ($member) use ($authId, $authCircleId) {
+                // Check if the member is in the same circle
+                if ($authCircleId !== null && $member->circleId == $authCircleId) {
+                    $member->connection_status = 'Connected';
+                } else {
+                    // Fetch actual connection status
+                    $connection = Connection::where(function ($query) use ($authId, $member) {
+                        $query->where('userId', $authId)->where('memberId', $member->userId)
+                            ->orWhere(function ($query) use ($authId, $member) {
+                                $query->where('userId', $member->userId)->where('memberId', $authId);
+                            });
+                    })->first();
+
+                    $member->connection_status = $connection ? $connection->status : 'Not Connected';
+                }
+
+                // If connection exists and is 'Accepted', always mark as 'Connected'
+                if ($member->connection_status !== 'Connected' && isset($connection) && $connection->status === 'Accepted') {
+                    $member->connection_status = 'Connected';
+                }
+            });
+
+            return view('admin.connection.circleWiseMembers', compact('circle', 'members', 'authCircleId'));
         } catch (\Throwable $th) {
             // Log the error
             ErrorLogger::logError(
@@ -158,6 +187,12 @@ class ConnectionController extends Controller
     public function showCategoryWiseMembers($id)
     {
         try {
+            $authId = Auth::id(); // Get authenticated user ID
+
+            // Fetch the authenticated user's circle ID from the Members table
+            $authMember = Member::where('userId', $authId)->first();
+            $authCircleId = $authMember ? $authMember->circleId : null;
+
             // Fetch category details
             $category = BusinessCategory::where('id', $id)->where('status', 'Active')->firstOrFail();
 
@@ -166,13 +201,32 @@ class ConnectionController extends Controller
                 ->where('status', 'Active')
                 ->get();
 
-            return view('admin.connection.categoryWiseMembers', compact('category', 'members'));
+            $members->each(function ($member) use ($authId, $authCircleId) {
+                // Check if the member is in the same circle
+                if ($authCircleId !== null && $member->circleId == $authCircleId) {
+                    $member->connection_status = 'Connected';
+                } else {
+                    // Fetch actual connection status
+                    $connection = Connection::where(function ($query) use ($authId, $member) {
+                        $query->where('userId', $authId)->where('memberId', $member->userId)
+                            ->orWhere(function ($query) use ($authId, $member) {
+                                $query->where('userId', $member->userId)->where('memberId', $authId);
+                            });
+                    })->first();
+
+                    $member->connection_status = $connection ? $connection->status : 'Not Connected';
+                }
+
+                // If connection exists and is 'Accepted', always mark as 'Connected'
+                if ($member->connection_status !== 'Connected' && isset($connection) && $connection->status === 'Accepted') {
+                    $member->connection_status = 'Connected';
+                }
+            });
+
+            return view('admin.connection.categoryWiseMembers', compact('category', 'members', 'authCircleId'));
         } catch (\Throwable $th) {
             // Log the error
-            ErrorLogger::logError(
-                $th,
-                request()->fullUrl()
-            );
+            ErrorLogger::logError($th, request()->fullUrl());
             return view('servererror');
         }
     }

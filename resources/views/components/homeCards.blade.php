@@ -130,6 +130,59 @@
     }
 </style>
 
+ <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .section-header a {
+            text-decoration: none;
+            color: #000;
+            font-weight: 500;
+        }
+        .event-card {
+            border: none;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #fff;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            transition: 0.3s;
+        }
+        .event-card:hover {
+            transform: scale(1.02);
+        }
+        .event-img {
+            height: 180px;
+            object-fit: cover;
+            width: 100%;
+            border-radius: 10px 10px 0 0;
+        }
+        .event-details {
+            padding: 15px;
+        }
+        .event-meta {
+            font-size: 14px;
+            color: #6c757d;
+            display: flex;
+            align-items: center;
+        }
+        .event-meta i {
+            margin-right: 5px;
+        }
+        .badge-price {
+            background-color: #f8d7da;
+            color: #dc3545;
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 14px;
+        }
+    </style>
 
 
 
@@ -187,7 +240,6 @@
 
             <div class="row">
                 <div class="fw-bold text-center mb-3">Leaderboard</div>
-
                 @if ($circlecalls)
                     <div class="col-md-4">
                         <div class="profile-card">
@@ -238,6 +290,52 @@
                     </div>
                 @endif
             </div>
+
+            <div class="container mt-4">
+                <!-- Section Header -->
+                <div class="section-header">
+                    <h5>Upcoming Events</h5>
+                    <a href="#">See All &gt;</a>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <div class="card event-card">
+                            <img src="https://via.placeholder.com/300x180" class="event-img" alt="Event 1">
+                            <div class="event-details">
+                                <h6 class="mb-2">Business Excellence 2025 - Business Growth Workshop</h6>
+                                <p class="event-meta"><i class="bi bi-geo-alt"></i> RPJ Hotel, Ahmedabad &bull; Pinnacle</p>
+                                <p class="event-meta">18 Mar 2025 | 14:00 | 2 Hours</p>
+                                <span class="badge badge-price">₹ 800</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card event-card">
+                            <img src="https://via.placeholder.com/300x180" class="event-img" alt="Event 2">
+                            <div class="event-details">
+                                <h6 class="mb-2">Mumbai International Finance Expo</h6>
+                                <p class="event-meta"><i class="bi bi-geo-alt"></i> RPJ Hotel, Ahmedabad &bull; Pinnacle</p>
+                                <p class="event-meta">18 Mar 2025 | 14:00 | 2 Hours</p>
+                                <span class="badge badge-price">₹ 800</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card event-card">
+                            <img src="https://via.placeholder.com/300x180" class="event-img" alt="Event 3">
+                            <div class="event-details">
+                                <h6 class="mb-2">KIDS CARNIVAL AND EXPO 2025 - MUMBAI</h6>
+                                <p class="event-meta"><i class="bi bi-geo-alt"></i> RPJ Hotel, Ahmedabad &bull; Pinnacle</p>
+                                <p class="event-meta">18 Mar 2025 | 14:00 | 2 Hours</p>
+                                <span class="badge badge-price">₹ 800</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
         </div>
 
         <!-- Right Section (5 Columns) -->
@@ -292,9 +390,9 @@
                             </div>
                         </div>
                     </div>
+                    <input type="hidden" id="shareableMeetingLink" value="{{ URL::signedRoute('visitor.form', ['slug' => $meeting->cm_slug, 'meetingId' => $meeting->id, 'ref' => auth()->user()->member->id]) }}">
                 @endif
 
-                <input type="hidden" id="shareableMeetingLink" value="{{ URL::signedRoute('visitor.form', ['slug' => $meeting->cm_slug, 'meetingId' => $meeting->id, 'ref' => auth()->user()->member->id]) }}">
 
                 <script>
                     function copyMeetingLink() {
