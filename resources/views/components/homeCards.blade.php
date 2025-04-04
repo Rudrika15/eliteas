@@ -58,8 +58,8 @@
     }
 
     .btn-connect {
-        background-color: #e76a35;
-        color: white;
+        /* background-color: #e76a35; */
+        /* color: white; */
     }
 
     /* Stats Cards Styling */
@@ -190,6 +190,11 @@
         padding: 5px 10px;
         border-radius: 15px;
         font-size: 14px;
+    }
+
+
+    .event-card-upcoming {
+        background-color: #fafafd;
     }
 </style>
 
@@ -625,7 +630,7 @@
 
     .leaderboard .keywords-container {
         text-align: center;
-        margin: 15px 20px 10px;
+        /* margin: 15px 20px 10px; */
     }
 
     .leaderboard .keyword-pill {
@@ -894,6 +899,155 @@
 </style>
 
 
+{{-- upcoming events css start --}}
+
+{{-- <style>
+    .upcoming-events {
+        max-width: 1100px;
+        margin: auto;
+        background: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Horizontal Scroll */
+    .upcoming-events .events-container {
+        display: flex;
+        gap: 16px;
+        overflow-x: auto;
+        scroll-behavior: smooth;
+        padding-bottom: 10px;
+    }
+
+    .upcoming-events .events-container::-webkit-scrollbar {
+        display: none;
+        /* Hide scrollbar */
+    }
+
+    .upcoming-events .event-card {
+        min-width: 300px;
+        max-width: 320px;
+        border-radius: 10px;
+        overflow: hidden;
+        position: relative;
+        background: #fff;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .upcoming-events .event-card img {
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+    }
+
+    .upcoming-events .event-info {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
+        padding: 10px;
+        color: white;
+    }
+
+    .upcoming-events .event-details {
+        padding: 12px;
+    }
+
+    .upcoming-events .price-tag {
+        background: #ffe0e0;
+        color: #d9534f;
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-weight: 600;
+    }
+</style> --}}
+
+<style>
+    .upcoming-events {
+        max-width: 1100px;
+        margin: auto;
+        background: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Horizontal Scroll */
+    .upcoming-events .events-container {
+        display: flex;
+        gap: 16px;
+        overflow-x: auto;
+        scroll-behavior: smooth;
+        padding-bottom: 10px;
+    }
+
+    .upcoming-events .events-container::-webkit-scrollbar {
+        display: none;
+        /* Hide scrollbar */
+    }
+
+    .upcoming-events .event-card {
+        min-width: 300px;
+        max-width: 320px;
+        border-radius: 10px;
+        overflow: hidden;
+        position: relative;
+        background: #fff;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .upcoming-events .event-card img {
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+    }
+
+    /* Overlay for Text */
+    .upcoming-events .event-info {
+        position: relative;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        /* background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent); */
+        padding: 10px;
+        color: #1d3268;
+    }
+
+    .upcoming-events .event-info h6 {
+        margin-bottom: 5px;
+        font-size: 15px;
+        font-weight: 600;
+    }
+
+    .upcoming-events .event-info small {
+        font-size: 12px;
+        display: block;
+        opacity: 0.9;
+    }
+
+    /* Event Details Below */
+    .upcoming-events .event-details {
+        padding: 12px;
+    }
+
+    .upcoming-events .price-tag {
+        background: #ffe0e0;
+        color: #d9534f;
+        padding: 5px 10px;
+        border-radius: 30px;
+        font-weight: 600;
+    }
+</style>
+
+
+{{-- upcoming events css end --}}
+
 <div class="container mt-4">
     <div class="row">
         <!-- Left Section (7 Columns) -->
@@ -1011,45 +1165,112 @@
                                     <h5 class="member-name" style="color: #e76a35; font-weight: bold;">
                                         {{ $circlecalls['member']->firstName }} {{ $circlecalls['member']->lastName }}
                                     </h5>
-                                    <p class="position">Max Business Meets</p>
+                                    {{-- <p class="position">Max Business Meets</p> --}}
 
                                     <div class="info-section">
                                         <div class="icon-text">
                                             <i class="bi bi-people-fill" style="color: #787c80;"></i>
-                                            <span>Pinnacle</span>
+                                            {{ $circlecalls['member']->circle->circleName }}
                                         </div>
                                         <div class="icon-text">
                                             <i class="bi bi-calendar-event-fill" style="color: #787c80;"></i>
-                                            <span>Meetings: 51</span>
+                                            <b>{{ $circlecalls['count'] }}</b>
                                         </div>
+                                        {{-- <div class="icon-text">
+                                            <i class="bi bi-envelope-fill" style="color: #787c80;"></i>
+                                            <span>{{ $circlecalls['member']->user->email ?? '****' }}</span>
+                                        </div>
+                                        <div class="icon-text">
+                                            <i class="bi bi-telephone-fill" style="color: #787c80;"></i>
+                                            <span>{{ $circlecalls['member']->user->contactNo ?? '****' }}</span>
+                                        </div> --}}
                                     </div>
 
                                     <div class="company-category-section">
                                         <div class="company-section">
-                                            <h2 title="Static Company">Static Company</h2>
+                                            <div class="logo-section">
+                                                @if (!empty($circlecalls['member']->companyLogo))
+                                                    <img src="{{ asset('CompanyLogo/' . $circlecalls['member']->companyLogo) }}" class="company-logo" alt="Company Logo">
+                                                @endif
+                                                <div class="initials" style="{{ empty($circlecalls['member']->companyLogo) ? 'display:flex;' : 'display:none;' }}">
+                                                    {{ strtoupper(substr($circlecalls['member']->companyName ?? 'C', 0, 1)) }}
+                                                </div>
+                                            </div>
+                                            <h2 title="{{ $circlecalls['member']->companyName ?? 'Company Name' }}">
+                                                {{ $circlecalls['member']->companyName ?? 'Company Name' }}
+                                            </h2>
                                         </div>
                                         <div class="divider"></div>
                                         <div class="category-section">
                                             <div class="label">Category</div>
-                                            <h3>Static Category</h3>
+                                            <h3>{{ $circlecalls['member']->bCategory->categoryName ?? 'N/A' }}</h3>
                                         </div>
                                     </div>
-                                    <div class="bottom-actions">
-                                        <div id="viewProfile" class="action-button left-action">
-                                            <a href="#"><i class="bi bi-person-lines-fill" style="color: #1d3268;"></i><span style="color: #1d3268;"> View Profile</span></a>
-                                        </div>
-                                        <div class="B-divider"></div>
-                                        <div class="action-button right-action">
-                                            <a style="color: #1d3268;" href="#"><i class="bi bi-person-plus-fill" style="color: #e76a35;"></i> Connect</a>
-                                        </div>
+
+
+                                    <div class="keywords-container row">
+                                        @php
+                                            $keyWords = json_decode($circlecalls['member']->keyWords ?? '[]', true);
+                                        @endphp
+                                        @if (is_array($keyWords) && count($keyWords) > 0)
+                                            @foreach ($keyWords as $keyWord)
+                                                <span class="keyword-pill col">{{ $keyWord }}</span>
+                                            @endforeach
+                                        @endif
+                                    </div>
+                                </div>
+
+                                <div class="bottom-actions">
+                                    <div id="viewProfile" class="action-button left-action">
+                                        <a href="#">
+                                            {{-- <i class="bi bi-person-lines-fill" style="color: #1d3268;"></i> --}}
+                                            <span style="color: #1d3268;"> View Profile</span>
+                                        </a>
+                                    </div>
+                                    <div class="B-divider"></div>
+                                    <div id="connectButton" class="action-button right-action btn w-100">
+                                        @if ($circlecalls['member']->circleId == $authCircleId || $circlecalls['member']->connection_status == 'Connected')
+                                            <button type="button" class="btn btn-connect fw-bold shadow-none">
+                                                Connected &nbsp;
+                                                {{-- <i class="bi bi-check-circle-fill"></i> --}}
+                                            </button>
+                                        @elseif ($circlecalls['member']->connection_status == 'Not Connected')
+                                            <form action="{{ route('connect') }}" method="POST" class="d-inline-block">
+                                                @csrf
+                                                <input type="hidden" value="{{ $circlecalls['member']->id }}" name="memberId">
+                                                <button type="submit" class="btn  shadow-none fw-bold" style="color: #1d3268;">
+                                                    Connect &nbsp;
+                                                    {{-- <i class="bi bi-person-plus-fill fw-bold" style="color: #1d3268;"></i> --}}
+                                                </button>
+                                            </form>
+                                        @elseif ($circlecalls['member']->connection_status == 'Accepted')
+                                            <button id="messageButton" class="btn btn-connect ms-2">
+                                                Message
+                                            </button>
+                                        @elseif ($circlecalls['member']->connection_status == 'Pending')
+                                            <button type="button" class="btn btn-connect fw-bold shadow-none" style="color: #e76a35;">
+                                                Requested &nbsp;
+                                                {{-- <i class="bi bi-clock" style="color: #e76a35;"></i> --}}
+                                            </button>
+                                        @elseif ($circlecalls['member']->connection_status == 'Rejected')
+                                            <form action="{{ route('connect') }}" method="POST" class="d-inline-block">
+                                                @csrf
+                                                <input type="hidden" value="{{ $circlecalls['member']->id }}" name="memberId">
+                                                <button type="submit" class="btn btn-connect shadow-none fw-bold" style="color: #1d3268;">
+                                                    Connect &nbsp;
+                                                    {{-- <i class="bi bi-person-plus-fill fw-bold" style="color: #1d3268;"></i> --}}
+                                                </button>
+                                            </form>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
                         </div>
+
                     @endif
 
                     @if ($busGiver)
-                        <div class=" col-sm-6 col-lg-4">
+                        <div class="col-sm-6 col-lg-4">
                             <div class="profile-card shadow-sm rounded border-0">
                                 <span class="heading">Top Business Leader</span>
                                 <img src="https://picsum.photos/600/120" class="header-image" alt="Header Image">
@@ -1058,45 +1279,99 @@
                                     <h5 class="member-name" style="color: #e76a35; font-weight: bold;">
                                         {{ $busGiver['user']->firstName }} {{ $busGiver['user']->lastName }}
                                     </h5>
-                                    <p class="position">Business Leader</p>
+                                    {{-- <p class="position">Business Leader</p> --}}
 
                                     <div class="info-section">
                                         <div class="icon-text">
                                             <i class="bi bi-people-fill" style="color: #787c80;"></i>
-                                            <span>Pinnacle</span>
+                                            {{ $busGiver['circle']['circleName'] }}
                                         </div>
                                         <div class="icon-text">
                                             <i class="bi bi-calendar-event-fill" style="color: #787c80;"></i>
-                                            <span>Meetings: 51</span>
+                                            <b>{{ $busGiver['count'] }}</b>
                                         </div>
+                                        <div class="icon-text">
+                                            <i class="bi bi-currency-rupee" style="color: #787c80;"></i>
+                                            <b>{{ $busGiver['amount'] }}</b>
+                                        </div>
+                                        {{-- <div class="icon-text">
+                                            <i class="bi bi-envelope-fill" style="color: #787c80;"></i>
+                                            <span>{{ $busGiver['user']->email ?? '****' }}</span>
+                                        </div>
+                                        <div class="icon-text">
+                                            <i class="bi bi-telephone-fill" style="color: #787c80;"></i>
+                                            <span>{{ $busGiver['user']->contactNo ?? '****' }}</span>
+                                        </div> --}}
                                     </div>
 
                                     <div class="company-category-section">
                                         <div class="company-section">
-                                            <h2 title="Static Company">Static Company</h2>
+                                            <div class="logo-section">
+                                                @if (!empty($busGiver['member']->companyLogo))
+                                                    <img src="{{ asset('CompanyLogo/' . $busGiver['member']->companyLogo) }}" class="company-logo" alt="Company Logo">
+                                                @endif
+                                                <div class="initials" style="{{ empty($busGiver['member']->companyLogo) ? 'display:flex;' : 'display:none;' }}">
+                                                    {{ strtoupper(substr($busGiver['member']->companyName ?? 'C', 0, 1)) }}
+                                                </div>
+                                            </div>
+                                            <h2 title="{{ $busGiver['member']->companyName ?? 'Company Name' }}">
+                                                {{ $busGiver['member']->companyName ?? 'Company Name' }}
+                                            </h2>
                                         </div>
                                         <div class="divider"></div>
                                         <div class="category-section">
                                             <div class="label">Category</div>
-                                            <h3>Static Category</h3>
+                                            <h3>{{ $busGiver['member']->bCategory->categoryName ?? 'N/A' }}</h3>
                                         </div>
                                     </div>
-                                    <div class="bottom-actions">
-                                        <div id="viewProfile" class="action-button left-action">
-                                            <a href="#"><i class="bi bi-person-lines-fill" style="color: #1d3268;"></i><span style="color: #1d3268;"> View Profile</span></a>
-                                        </div>
-                                        <div class="B-divider"></div>
-                                        <div class="action-button right-action">
-                                            <a style="color: #1d3268;" href="#"><i class="bi bi-person-plus-fill" style="color: #e76a35;"></i> Connect</a>
-                                        </div>
+
+                                    <div class="keywords-container row">
+                                        @php
+                                            $keyWords = json_decode($busGiver['member']->keyWords ?? '[]', true);
+                                        @endphp
+                                        @if (is_array($keyWords) && count($keyWords) > 0)
+                                            @foreach ($keyWords as $keyWord)
+                                                <span class="keyword-pill col">{{ $keyWord }}</span>
+                                            @endforeach
+                                        @endif
+                                    </div>
+                                </div>
+
+                                <div class="bottom-actions">
+                                    <div id="viewProfile" class="action-button left-action">
+                                        <a href="#"><i class="bi bi-person-lines-fill" style="color: #1d3268;"></i><span style="color: #1d3268;"> View Profile</span></a>
+                                    </div>
+                                    <div class="B-divider"></div>
+                                    <div id="connectButton" class="action-button right-action btn w-100">
+                                        @if ($busGiver['member']->circleId == $authCircleId || $busGiver['member']->connection_status == 'Connected')
+                                            <button type="button" class="btn btn-connect fw-bold shadow-none">
+                                                Connected
+                                            </button>
+                                        @elseif ($busGiver['member']->connection_status == 'Accepted')
+                                            <button id="messageButton" class="btn btn-connect ms-2">Message</button>
+                                        @elseif ($busGiver['member']->connection_status == 'Pending')
+                                            <button type="button" class="btn btn-connect fw-bold shadow-none" style="color: #e76a35;">
+                                                Requested
+                                            </button>
+                                        @elseif ($busGiver['member']->connection_status == 'Rejected' || $busGiver['member']->connection_status == 'Not Connected')
+                                            <form action="{{ route('connect') }}" method="POST" class="d-inline-block">
+                                                @csrf
+                                                <input type="hidden" value="{{ $busGiver['member']->id }}" name="memberId">
+                                                <button type="submit" class="btn shadow-none fw-bold" style="color: #1d3268;">
+                                                    Connect
+                                                </button>
+                                            </form>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
                         </div>
                     @endif
 
+
+
                     @if ($refGiver)
-                        <div class=" col-sm-6 col-lg-4">
+                        <div class="col-sm-6 col-lg-4">
                             <div class="profile-card shadow-sm rounded border-0">
                                 <span class="heading">Top Reference Giver</span>
                                 <img src="https://picsum.photos/600/120" class="header-image" alt="Header Image">
@@ -1105,91 +1380,186 @@
                                     <h5 class="member-name" style="color: #e76a35; font-weight: bold;">
                                         {{ $refGiver['user']->firstName ?? 'N/A' }} {{ $refGiver['user']->lastName ?? 'N/A' }}
                                     </h5>
-                                    <p class="position">Top Reference Giver</p>
+                                    {{-- <p class="position">Top Reference Giver</p> --}}
 
                                     <div class="info-section">
                                         <div class="icon-text">
                                             <i class="bi bi-people-fill" style="color: #787c80;"></i>
-                                            <span>Pinnacle</span>
+                                            {{ $refGiver['circle'] ?? 'N/A' }}
                                         </div>
                                         <div class="icon-text">
                                             <i class="bi bi-calendar-event-fill" style="color: #787c80;"></i>
-                                            <span>Meetings: 51</span>
+                                            {{ $refGiver['count'] ?? '0' }}
                                         </div>
+                                        {{-- <div class="icon-text">
+                                            <i class="bi bi-envelope-fill" style="color: #787c80;"></i>
+                                            <span>{{ $refGiver['user']->email ?? '****' }}</span>
+                                        </div>
+                                        <div class="icon-text">
+                                            <i class="bi bi-telephone-fill" style="color: #787c80;"></i>
+                                            <span>{{ $refGiver['user']->contactNo ?? '****' }}</span>
+                                        </div> --}}
                                     </div>
-
 
                                     <div class="company-category-section">
                                         <div class="company-section">
-                                            <h2 title="Static Company">Static Company</h2>
+                                            <div class="logo-section">
+                                                @if (!empty($refGiver['companyLogo']))
+                                                    <img src="{{ asset('CompanyLogo/' . $refGiver['companyLogo']) }}" class="company-logo" alt="Company Logo">
+                                                @endif
+                                                <div class="initials" style="{{ empty($refGiver['companyLogo']) ? 'display:flex;' : 'display:none;' }}">
+                                                    {{ strtoupper(substr($refGiver['companyName'] ?? 'C', 0, 1)) }}
+                                                </div>
+                                            </div>
+                                            <h2 title="{{ $refGiver['companyName'] ?? 'Company Name' }}">
+                                                {{ $refGiver['companyName'] ?? 'Company Name' }}
+                                            </h2>
                                         </div>
                                         <div class="divider"></div>
                                         <div class="category-section">
                                             <div class="label">Category</div>
-                                            <h3>Static Category</h3>
+                                            <h3>{{ $refGiver['bCategory']['categoryName'] ?? 'N/A' }}</h3>
                                         </div>
                                     </div>
-                                    <div class="bottom-actions">
-                                        <div id="viewProfile" class="action-button left-action">
-                                            <a href="#"><i class="bi bi-person-lines-fill" style="color: #1d3268;"></i><span style="color: #1d3268;"> View Profile</span></a>
-                                        </div>
-                                        <div class="B-divider"></div>
-                                        <div class="action-button right-action">
-                                            <a style="color: #1d3268;" href="#"><i class="bi bi-person-plus-fill" style="color: #e76a35;"></i> Connect</a>
-                                        </div>
+
+                                    <div class="keywords-container row">
+                                        @php
+                                            $keyWords = json_decode($refGiver['keyWords'] ?? '[]', true);
+                                        @endphp
+                                        @if (is_array($keyWords) && count($keyWords) > 0)
+                                            @foreach ($keyWords as $keyWord)
+                                                <span class="keyword-pill col">{{ $keyWord }}</span>
+                                            @endforeach
+                                        @endif
+                                    </div>
+                                </div>
+
+                                <div class="bottom-actions">
+                                    <div id="viewProfile" class="action-button left-action">
+                                        <a href="#"><i class="bi bi-person-lines-fill" style="color: #1d3268;"></i><span style="color: #1d3268;"> View Profile</span></a>
+                                    </div>
+                                    <div class="B-divider"></div>
+                                    <div id="connectButton" class="action-button right-action btn w-100">
+                                        @if ($refGiver['circleId'] == $authCircleId || $refGiver['connection_status'] == 'Connected')
+                                            <button type="button" class="btn btn-connect fw-bold shadow-none">Connected</button>
+                                        @elseif ($refGiver['connection_status'] == 'Accepted')
+                                            <button id="messageButton" class="btn btn-connect ms-2">Message</button>
+                                        @elseif ($refGiver['connection_status'] == 'Pending')
+                                            <button type="button" class="btn btn-connect fw-bold shadow-none" style="color: #e76a35;">Requested</button>
+                                        @elseif ($refGiver['connection_status'] == 'Rejected' || $refGiver['connection_status'] == 'Not Connected')
+                                            <form action="{{ route('connect') }}" method="POST" class="d-inline-block">
+                                                @csrf
+                                                <input type="hidden" value="{{ $refGiver['id'] }}" name="memberId">
+                                                <button type="submit" class="btn shadow-none fw-bold" style="color: #1d3268;">
+                                                    Connect
+                                                </button>
+                                            </form>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
                         </div>
                     @endif
+
+
                 </div>
 
             </div>
 
 
-            <div class="container mt-4">
-                <!-- Section Header -->
-                <div class="section-header">
-                    <h5>Upcoming Events</h5>
-                    <a href="#">See All &gt;</a>
-                </div>
+            @if (count($nearestEvents) != 0)
+                <div class="bg-light py-5">
+                    <div class="upcoming-events">
+                        <!-- Header -->
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h4 class="fw-bold" style="color: #1d3268;">Upcoming Events</h4>
+                            <a href="#" class="fw-bold text-decoration-none" style="color: #1d3268;">See All</a>
+                        </div>
 
-                <div class="row g-3">
-                    <div class="col-md-4">
-                        <div class="card event-card">
-                            <img src="https://via.placeholder.com/300x180" class="event-img" alt="Event 1">
-                            <div class="event-details">
-                                <h6 class="mb-2">Business Excellence 2025 - Business Growth Workshop</h6>
-                                <p class="event-meta"><i class="bi bi-geo-alt"></i> RPJ Hotel, Ahmedabad &bull; Pinnacle</p>
-                                <p class="event-meta">18 Mar 2025 | 14:00 | 2 Hours</p>
-                                <span class="badge badge-price">₹ 800</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card event-card">
-                            <img src="https://via.placeholder.com/300x180" class="event-img" alt="Event 2">
-                            <div class="event-details">
-                                <h6 class="mb-2">Mumbai International Finance Expo</h6>
-                                <p class="event-meta"><i class="bi bi-geo-alt"></i> RPJ Hotel, Ahmedabad &bull; Pinnacle</p>
-                                <p class="event-meta">18 Mar 2025 | 14:00 | 2 Hours</p>
-                                <span class="badge badge-price">₹ 800</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card event-card">
-                            <img src="https://via.placeholder.com/300x180" class="event-img" alt="Event 3">
-                            <div class="event-details">
-                                <h6 class="mb-2">KIDS CARNIVAL AND EXPO 2025 - MUMBAI</h6>
-                                <p class="event-meta"><i class="bi bi-geo-alt"></i> RPJ Hotel, Ahmedabad &bull; Pinnacle</p>
-                                <p class="event-meta">18 Mar 2025 | 14:00 | 2 Hours</p>
-                                <span class="badge badge-price">₹ 800</span>
-                            </div>
+                        <!-- Horizontal Scrollable Cards -->
+                        <div class="events-container d-flex">
+                            @foreach ($nearestEvents as $event)
+                                <div class="event-card">
+                                    <a href="{{ route('events.details', $event->id) }}" class="text-decoration-none">
+                                        <img src="{{ $event->event_banner ? url('Event/' . $event->event_banner) : asset('images/event_default.png') }}" alt="{{ $event->title }}">
+
+                                        <!-- Event Info Overlay -->
+                                        <div class="event-info">
+                                            <h6 class="fw-bold">{{ $event->title }}</h6>
+                                            <small class="fw-bold">📍 {{ $event->venue }}</small>
+                                            {{-- <small>📍 {{ $event->venue }}, {{ $event->location }}</small> --}}
+                                        </div>
+
+                                        <!-- Event Details -->
+                                        <div class="event-details d-flex justify-content-between align-items-center text-muted small">
+                                            <span class="fw-bold" style="color: #1d3268;">{{ \Carbon\Carbon::parse($event->date)->format('d M Y') }} | {{ \Carbon\Carbon::parse($event->start_time)->format('H:i') }} To {{ \Carbon\Carbon::parse($event->end_time)->format('H:i') }}</span>
+                                            {{-- <span>⏳ Time {{ $event->duration }}</span> --}}
+                                            <span class="price-tag fw-bold">₹ {{ $event->fees }}</span>
+                                        </div>
+                                    </a>
+                                </div>
+                            @endforeach
                         </div>
                     </div>
                 </div>
-            </div>
+            @else
+                <div class="bg-light py-5">
+                    <div class="upcoming-events">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h4 class="fw-bold" style="color: #1d3268;">Upcoming Events</h4>
+                        </div>
+                        <p class="text-muted text-center"><b>No Events for now.</b></p>
+                    </div>
+                </div>
+            @endif
+
+
+            @if (count($nearestEvents) != 0)
+                <div class="bg-light py-5">
+                    <div class="upcoming-events">
+                        <!-- Header -->
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h4 class="fw-bold" style="color: #1d3268;">Upcoming Training Workshops</h4>
+                            <a href="#" class="fw-bold text-decoration-none" style="color: #1d3268;">See All</a>
+                        </div>
+
+                        <!-- Horizontal Scrollable Cards -->
+                        <div class="events-container d-flex">
+                            @foreach ($nearestEvents as $event)
+                                <div class="event-card">
+                                    <a href="{{ route('events.details', $event->id) }}" class="text-decoration-none">
+                                        <img src="{{ $event->event_banner ? url('Event/' . $event->event_banner) : asset('images/event_default.png') }}" alt="{{ $event->title }}">
+
+                                        <!-- Event Info Overlay -->
+                                        <div class="event-info">
+                                            <h6 class="fw-bold">{{ $event->title }}</h6>
+                                            <small class="fw-bold">📍 {{ $event->venue }}</small>
+                                            {{-- <small>📍 {{ $event->venue }}, {{ $event->location }}</small> --}}
+                                        </div>
+
+                                        <!-- Event Details -->
+                                        <div class="event-details d-flex justify-content-between align-items-center text-muted small">
+                                            <span class="fw-bold" style="color: #1d3268;">{{ \Carbon\Carbon::parse($event->date)->format('d M Y') }} | {{ \Carbon\Carbon::parse($event->start_time)->format('H:i') }} To {{ \Carbon\Carbon::parse($event->end_time)->format('H:i') }}</span>
+                                            {{-- <span>⏳ Time {{ $event->duration }}</span> --}}
+                                            <span class="price-tag fw-bold">₹ {{ $event->fees }}</span>
+                                        </div>
+                                    </a>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+            @else
+                <div class="bg-light py-5">
+                    <div class="upcoming-events">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h4 class="fw-bold" style="color: #1d3268;">Upcoming Events</h4>
+                        </div>
+                        <p class="text-muted text-center"><b>No Events for now.</b></p>
+                    </div>
+                </div>
+            @endif
+
 
 
         </div>
@@ -1222,26 +1592,45 @@
                     </div>
                 @else
                     <div class="col-lg-12 col-md-12">
-                        <div class="card shadow-sm p-4">
-                            <h4 class="mb-4 fw-bold" style="font-size: 18px;">&nbsp;Upcoming Circle Meetings
-                                <i class="bi bi-people me-2"></i>{{ $meeting->circle->members->count() }}
+                        <div class="card shadow-sm p-4 ">
+                            <h4 class="mb-4 fw-bold" style="font-size: 18px; color:#1d3268;">&nbsp;Upcoming {{ $meeting->circle->circleName }} Circle Meetings
                             </h4>
-                            <div class="card shadow-sm p-3 mb-3">
+                            <div class="card event-card-upcoming shadow-sm p-3 mb-3">
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <span class="fw-bold">1.</span>
+                                    {{-- <span class="fw-bold">1.</span> --}}
+                                    {{-- <div class="fw-bold" style="color: #1d3268;"></div> --}}
                                     <span class="fw-bold">{{ $meeting->date->format('j M Y') }} | {{ $meeting->meetingTime }}</span>
                                     <i class="bi bi-clipboard" onclick="copyMeetingLink()"></i>
                                     <button class="btn btn-outline-primary btn-sm" onclick="openInvitePage('{{ $signedUrl }}')">Invite</button>
                                 </div>
-                                <div class="d-flex align-items-center mt-2">
+                                {{-- <div class="d-flex align-items-center mt-2">
                                     <i class="bi bi-clock me-2"></i> 2 Hours
-                                </div>
+                                </div> --}}
                                 <div class="d-flex align-items-center mt-2">
-                                    <i class="bi bi-geo-alt me-2"></i> {{ $meeting->circle->circleName }}, {{ $meeting->circle->city->cityName }}
+                                    <i class="bi bi-people-fill me-2 text-muted"></i> <span class="fw-bold text-muted">{{ $meeting->circle->members->count() }}</span>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-geo-alt-fill me-2 text-muted"></i> <span class="fw-bold text-muted">{{ $meeting->circle->city->cityName }}</span>
                                 </div>
                                 <hr>
-                                <div class="text-primary fw-semibold">
+                                <div class="text-primary fw-semibold" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
                                     Invited People - {{ $myInvites->count() }} <i class="bi bi-chevron-down"></i>
+                                </div>
+                                <div class="collapse" id="collapseExample">
+                                    <table class="table mt-2">
+                                        <tbody>
+                                            @foreach ($myInvites as $invite)
+                                                <tr>
+                                                    <td><small class="text-muted">{{ $invite->personName }}</small>
+                                                    </td>
+                                                    <td><small class="text-muted">{{ $invite->personEmail }}</small>
+                                                    </td>
+                                                    <td><small class="text-muted">{{ $invite->personContact }}</small>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>

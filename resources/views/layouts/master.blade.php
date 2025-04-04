@@ -41,6 +41,7 @@
 
     <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
 
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 
 
     <!-- =======================================================
@@ -51,6 +52,58 @@
   * License: https://bootstrapmade.com/license/
   ======================================================== -->
 </head>
+
+<style>
+    .payment-alert {
+        display: flex;
+        align-items: center;
+        background-color: #ffeaea;
+        padding: 10px 20px;
+        border-radius: 30px;
+        color: red;
+        font-size: 18px;
+        font-weight: bold;
+        width: fit-content;
+    }
+
+    .payment-alert i {
+        margin-right: 10px;
+        font-size: 20px;
+    }
+</style>
+
+{{-- searchbar new css start --}}
+<style>
+    .search-container {
+        display: flex;
+        align-items: center;
+        background-color: #f6f7fc;
+        border-radius: 30px;
+        padding: 10px 15px;
+        width: 350px;
+        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .search-icon {
+        font-size: 18px;
+        color: #a0a3b1;
+        margin-right: 10px;
+    }
+
+    .search-input {
+        border: none;
+        outline: none;
+        background: transparent;
+        font-size: 16px;
+        width: 100%;
+        color: #707070;
+    }
+
+    .search-form {
+        border: none;
+    }
+</style>
+{{-- searchbar new css end --}}
 
 <body>
 
@@ -71,58 +124,124 @@
             </a> --}}
 
 
-        <div class="header-info ms-2 me-3 d-flex align-items-center gap-2 ms-5 text-nowrap px-3 rounded-3">
+        {{-- <div class="header-info ms-2 me-3 d-flex align-items-center gap-2 ms-5 text-nowrap px-3 rounded-3">
             <a class="search-form d-flex align-items-center" style="margin-left: 30px" href="{{ route('search') }}">
                 <button type="submit" title="Search" style="color: white; font-weight: bold;">Click To Search
                     <i class="bi bi-search" style="color: white; "></i></button>
             </a>
-        </div>
+        </div> --}}
+
+
+        {{-- <div class="search-container">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" class="search-input" placeholder="Search Member or Circle Name">
+        </div> --}}
+
+
+
 
         <div class="search-bar d-flex">
 
-            <div class="header-info ms-2 me-3 d-flex align-items-center gap-2 ms-5 text-nowrap px-3 rounded-3">
+            {{-- <div class="header-info ms-2 me-3 d-flex align-items-center gap-2 ms-5 text-nowrap px-3 rounded-3">
                 <span class="info-item">Members: {{ $membersCount }}</span>
                 <span class="info-item">Circles: {{ $circleCount }}</span>
-                {{-- <span class="info-item">City: {{ $cityCount }}</span> --}}
+                <span class="info-item">City: {{ $cityCount }}</span>
                 <span class="info-item">City: 4</span>
-            </div>
+            </div> --}}
+
+            @role('Member')
+                {{-- <div class="payment-alert">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    @php
+                        $dueMonths = [];
+                        $totalAmountDue = 0;
+                    @endphp
+
+                    @foreach ($monthlyPayments as $month => $payments)
+                        @if ($payments->first()->status == 'unpaid')
+                            @php
+                                $dueMonths[] = $month;
+                                $totalAmountDue += $payments->sum('amount'); // Assuming 'amount' is the column for payment amount
+                            @endphp
+                        @endif
+                    @endforeach
+
+                    @if (!empty($dueMonths))
+                        Payment Due: ₹ {{ $totalAmountDue }} for {{ implode(', ', $dueMonths) }}
+                    @else
+                        <span class="text-success">No Pending Payments!</span>
+                    @endif
+                </div> --}}
 
 
-            <style>
-                .header-info {
-                    background: linear-gradient(90deg, #1d3268, #e76a35);
-                    color: white;
-                    padding: 10px 20px;
-                    border-radius: 10px;
-                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-                    font-weight: bold;
-                    font-size: 1rem;
-                    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-                }
+                @php
 
-                .header-info:hover {
-                    transform: translateY(-5px);
-                    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-                }
+                    $monthlyPayments = \App\Models\MonthlyPayment::where('memberId', Auth::user()->member->id)
+                        ->where('status', 'unpaid')
+                        ->get()
+                        ->groupBy('month');
 
-                .info-item {
-                    background: rgba(255, 255, 255, 0.15);
-                    padding: 5px 15px;
-                    border-radius: 5px;
-                    font-size: 0.9rem;
-                    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-                    transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
-                }
+                    // Sum the total unpaid amounts
+                    $totalAmountDue = $monthlyPayments
+                        ->map(function ($group) {
+                            return $group->sum('amount');
+                        })
+                        ->sum();
+                @endphp
 
-                .info-item:hover {
-                    background: rgba(255, 255, 255, 0.3);
-                    color: #e76a35;
-                }
+                <div class="payment-alert">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    {{-- Payment Due: ₹ 800 --}}
+                    Monthly Payment Due: ₹ {{ $totalAmountDue }}
+                </div>
+            @endrole
 
-                .info-item:not(:last-child) {
-                    margin-right: 10px;
-                }
-            </style>
+        </div>
+
+
+        <div class="ms-auto d-flex justify-content-end search-container">
+            <a class="search-form d-flex align-items-center" href="{{ route('search') }}">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" class="search-input" placeholder="Search Member or Circle Name">
+            </a>
+        </div>
+
+
+        <style>
+            .header-info {
+                background: linear-gradient(90deg, #1d3268, #e76a35);
+                color: white;
+                padding: 10px 20px;
+                border-radius: 10px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+                font-weight: bold;
+                font-size: 1rem;
+                transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            }
+
+            .header-info:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            }
+
+            .info-item {
+                background: rgba(255, 255, 255, 0.15);
+                padding: 5px 15px;
+                border-radius: 5px;
+                font-size: 0.9rem;
+                text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+                transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
+            }
+
+            .info-item:hover {
+                background: rgba(255, 255, 255, 0.3);
+                color: #e76a35;
+            }
+
+            .info-item:not(:last-child) {
+                margin-right: 10px;
+            }
+        </style>
 
 
         </div><!-- End Search Bar -->

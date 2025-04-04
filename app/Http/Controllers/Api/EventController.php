@@ -501,8 +501,9 @@ class EventController extends Controller
                 'paymentId' => 'required|string',
                 'amount' => 'required',
                 'eventId' => 'required|integer',
-                'visitorId' => 'required|integer',
             ]);
+
+            $visitorId = Auth()->id();
 
             // Store the payment ID in the Razorpay payments table
             $payment = new Razorpay();
@@ -512,8 +513,8 @@ class EventController extends Controller
 
             // Register for the event
             $eventPayment = new VisitorEventRegister();
-            $eventPayment->eventId = $validatedData['eventId'];
-            $eventPayment->visitorId = $validatedData['visitorId'];
+            $eventPayment->eventId = $visitorId;
+            $eventPayment->visitorId = $visitorId;
             $eventPayment->paymentStatus = 'paid';
             $eventPayment->save();
 

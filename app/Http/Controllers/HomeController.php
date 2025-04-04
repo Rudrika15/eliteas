@@ -424,10 +424,132 @@ class HomeController extends Controller
 
 
                 // Get the authenticated user
+                // $authUser = auth()->user();
+
+                // // Retrieve the member record for the authenticated user
+                // $member = Member::where('userId', $authUser->id)->where('status', 'Active')->first();
+
+                // if (!$member) {
+                //     return response()->json(['message' => 'Member not found'], 404);
+                // }
+
+                // // Get the circle ID
+                // $circleId = $member->circleId;
+
+                // // Get the city ID from the circles table
+                // $cityId = Circle::where('id', $circleId)->value('cityId');
+
+                // if (!$cityId) {
+                //     return response()->json(['message' => 'City not found'], 404);
+                // }
+
+
+                // $authId = Auth::id(); // Get authenticated user ID
+
+                // // Fetch the authenticated user's circle ID from the Members table
+                // $authMember = Member::where('userId', $authId)->first();
+                // $authCircleId = $authMember ? $authMember->circleId : null;
+
+                // // Get Circle Calls
+                // $circlecalls = CircleCall::with(['member', 'meetingPerson'])
+                //     ->whereHas('member', function ($query) use ($cityId) {
+                //         $query->whereHas('circle', function ($q) use ($cityId) {
+                //             $q->where('cityId', $cityId);
+                //         });
+                //     })
+                //     ->where('status', 'Active')
+                //     ->whereYear('date', $previousYear)
+                //     ->whereMonth('date', $previousMonth)
+                //     ->get()
+                //     ->groupBy('memberId')
+                //     ->map(function ($group) {
+                //         return [
+                //             'member' => $group->first()->member,
+                //             'count' => $group->count()
+                //         ];
+                //     })
+                //     ->sortByDesc('count')
+                //     ->first();
+
+                // // Get Business Giver
+                // $busGiver = CircleMeetingMembersBusiness::where('status', 'Active')
+                //     ->whereYear('date', $previousYear)
+                //     ->whereMonth('date', $previousMonth)
+                //     ->whereHas('users.member.circle', function ($query) use ($cityId) {
+                //         $query->where('cityId', $cityId);
+                //     })
+                //     ->get()
+                //     ->groupBy('businessGiverId')
+                //     ->map(function ($group) {
+                //         $user = $group->first()->users;
+                //         $member = $user->member()->select('circleId', 'businessCategoryId', 'profilePhoto')->first();
+                //         $circle = Circle::find($member->circleId);
+                //         $businessCategory = BusinessCategory::find($member->businessCategoryId);
+
+                //         return [
+                //             'user' => $user,
+                //             'member' => $member,
+                //             'amount' => $group->sum('amount'),
+                //             'count' => $group->count(),
+                //             'circle' => [
+                //                 'id' => $circle->id,
+                //                 'circleName' => $circle->circleName,
+                //             ],
+                //             'businessCategory' => [
+                //                 'id' => $businessCategory->id,
+                //                 'categoryName' => $businessCategory->categoryName,
+                //             ],
+                //         ];
+                //     })
+                //     ->sortByDesc('amount')
+                //     ->first();
+
+                // // Get Reference Giver
+                // $refGiver = CircleMeetingMembersReference::where('status', 'Active')
+                //     ->whereYear('created_at', $previousYear)
+                //     ->whereMonth('created_at', $previousMonth)
+                //     ->whereHas('refGiver', function ($query) use ($cityId) {
+                //         $query->whereHas('circle', function ($subQuery) use ($cityId) {
+                //             $subQuery->where('cityId', $cityId);
+                //         });
+                //     })
+                //     ->get()
+                //     ->groupBy('referenceGiverId')
+                //     ->map(function ($group) {
+                //         $referenceGiverId = $group->first()->referenceGiverId ?? null;
+
+                //         if ($referenceGiverId === null) {
+                //             return null;
+                //         }
+
+                //         $user = User::find($referenceGiverId);
+
+                //         if ($user && $user->status === 'Active') {
+                //             $member = Member::where('userId', $referenceGiverId)->where('status', 'Active')->first();
+
+                //             return [
+                //                 'user' => $user,
+                //                 'count' => $group->count(),
+                //                 'businessCategoryId' => $member ? $member->businessCategoryId : null,
+                //                 'businessCategory' => $member ? $member->bcategory->categoryName : null,
+                //                 'circleId' => $member ? $member->circleId : null,
+                //                 'circle' => $member ? $member->circle->circleName : null,
+                //                 'profilePhoto' => $member ? $member->profilePhoto : null,
+                //             ];
+                //         }
+
+                //         return null;
+                //     })
+                //     ->filter()
+                //     ->sortByDesc('count')
+                //     ->first();
+
                 $authUser = auth()->user();
 
                 // Retrieve the member record for the authenticated user
-                $member = Member::where('userId', $authUser->id)->where('status', 'Active')->first();
+                $member = Member::where('userId', $authUser->id)
+                    ->where('status', 'Active')
+                    ->first();
 
                 if (!$member) {
                     return response()->json(['message' => 'Member not found'], 404);
@@ -443,12 +565,20 @@ class HomeController extends Controller
                     return response()->json(['message' => 'City not found'], 404);
                 }
 
+                $authId = auth()->id(); // Get authenticated user ID
+
+                // Fetch the authenticated user's circle ID from the Members table
+                $authMember = Member::where('userId', $authId)->first();
+                $authCircleId = $authMember ? $authMember->circleId : null;
+
+                // Get previous month and year
+                $previousYear = now()->subMonth()->year;
+                $previousMonth = now()->subMonth()->month;
+
                 // Get Circle Calls
                 $circlecalls = CircleCall::with(['member', 'meetingPerson'])
-                    ->whereHas('member', function ($query) use ($cityId) {
-                        $query->whereHas('circle', function ($q) use ($cityId) {
-                            $q->where('cityId', $cityId);
-                        });
+                    ->whereHas('member.circle', function ($query) use ($cityId) {
+                        $query->where('cityId', $cityId);
                     })
                     ->where('status', 'Active')
                     ->whereYear('date', $previousYear)
@@ -458,7 +588,7 @@ class HomeController extends Controller
                     ->map(function ($group) {
                         return [
                             'member' => $group->first()->member,
-                            'count' => $group->count()
+                            'count' => $group->count(),
                         ];
                     })
                     ->sortByDesc('count')
@@ -476,6 +606,11 @@ class HomeController extends Controller
                     ->map(function ($group) {
                         $user = $group->first()->users;
                         $member = $user->member()->select('circleId', 'businessCategoryId', 'profilePhoto')->first();
+
+                        if (!$member) {
+                            return null;
+                        }
+
                         $circle = Circle::find($member->circleId);
                         $businessCategory = BusinessCategory::find($member->businessCategoryId);
 
@@ -484,16 +619,14 @@ class HomeController extends Controller
                             'member' => $member,
                             'amount' => $group->sum('amount'),
                             'count' => $group->count(),
-                            'circle' => [
-                                'id' => $circle->id,
-                                'circleName' => $circle->circleName,
-                            ],
-                            'businessCategory' => [
+                            'circle' => $circle ? ['id' => $circle->id, 'circleName' => $circle->circleName] : null,
+                            'businessCategory' => $businessCategory ? [
                                 'id' => $businessCategory->id,
                                 'categoryName' => $businessCategory->categoryName,
-                            ],
+                            ] : null,
                         ];
                     })
+                    ->filter()
                     ->sortByDesc('amount')
                     ->first();
 
@@ -501,41 +634,43 @@ class HomeController extends Controller
                 $refGiver = CircleMeetingMembersReference::where('status', 'Active')
                     ->whereYear('created_at', $previousYear)
                     ->whereMonth('created_at', $previousMonth)
-                    ->whereHas('refGiver', function ($query) use ($cityId) {
-                        $query->whereHas('circle', function ($subQuery) use ($cityId) {
-                            $subQuery->where('cityId', $cityId);
-                        });
+                    ->whereHas('refGiver.circle', function ($query) use ($cityId) {
+                        $query->where('cityId', $cityId);
                     })
                     ->get()
                     ->groupBy('referenceGiverId')
                     ->map(function ($group) {
                         $referenceGiverId = $group->first()->referenceGiverId ?? null;
 
-                        if ($referenceGiverId === null) {
+                        if (!$referenceGiverId) {
                             return null;
                         }
 
                         $user = User::find($referenceGiverId);
 
-                        if ($user && $user->status === 'Active') {
-                            $member = Member::where('userId', $referenceGiverId)->where('status', 'Active')->first();
-
-                            return [
-                                'user' => $user,
-                                'count' => $group->count(),
-                                'businessCategoryId' => $member ? $member->businessCategoryId : null,
-                                'businessCategory' => $member ? $member->bcategory->categoryName : null,
-                                'circleId' => $member ? $member->circleId : null,
-                                'circle' => $member ? $member->circle->circleName : null,
-                                'profilePhoto' => $member ? $member->profilePhoto : null,
-                            ];
+                        if (!$user || $user->status !== 'Active') {
+                            return null;
                         }
 
-                        return null;
+                        $member = Member::where('userId', $referenceGiverId)
+                            ->where('status', 'Active')
+                            ->first();
+
+                        return [
+                            'user' => $user,
+                            'count' => $group->count(),
+                            'businessCategoryId' => $member?->businessCategoryId,
+                            'businessCategory' => $member?->bcategory->categoryName,
+                            'circleId' => $member?->circleId,
+                            'circle' => $member?->circle->circleName,
+                            'profilePhoto' => $member?->profilePhoto,
+                        ];
                     })
                     ->filter()
                     ->sortByDesc('count')
                     ->first();
+
+                // Leaderboard code end
 
 
                 // leaderboard code end
@@ -635,7 +770,7 @@ class HomeController extends Controller
 
 
 
-                return view('home', compact('circleCount', 'categoryNames', 'membersCount', 'signedUrl', 'birthdaysToday', 'templates', 'count', 'monthlyPayments', 'totalAmountDue', 'nearestEvents', 'circlecalls', 'busGiver', 'refGiver', 'nearestTraining', 'findRegister', 'testimonials', 'meeting', 'businessCategory', 'myInvites', 'todaysBirthdays'));
+                return view('home', compact('circleCount', 'authCircleId', 'categoryNames', 'membersCount', 'signedUrl', 'birthdaysToday', 'templates', 'count', 'monthlyPayments', 'totalAmountDue', 'nearestEvents', 'circlecalls', 'busGiver', 'refGiver', 'nearestTraining', 'findRegister', 'testimonials', 'meeting', 'businessCategory', 'myInvites', 'todaysBirthdays'));
             }
 
             return view('home', compact('circleCount', 'membersCount', 'count', 'nearestTraining', 'businessCategory', 'myInvites', 'findRegister', 'birthdaysToday', 'templates'));

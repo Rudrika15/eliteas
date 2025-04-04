@@ -149,6 +149,7 @@
                                                             <td><small class="text-muted">{{ $invite->personName }}</small>
                                                             </td>
                                                             <td><small class="text-muted">{{ $invite->personEmail }}</small>
+                                                            </td>
                                                             <td><small class="text-muted">{{ $invite->personContact }}</small>
                                                             </td>
                                                         </tr>

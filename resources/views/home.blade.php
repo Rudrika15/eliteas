@@ -23,7 +23,7 @@
             {{-- Home Card Count end --}}
 
             {{-- Upcoming Circle Meeting start --}}
-            @include('components.circleMeetings')
+            {{-- @include('components.circleMeetings') --}}
             {{-- Upcoming Circle Meeting end --}}
 
 
@@ -38,7 +38,7 @@
 
 
             {{-- Upcoming Event start --}}
-            @include('components.upcomingEvent')
+            {{-- @include('components.upcomingEvent') --}}
             {{-- Upcoming Event end --}}
 
 
@@ -89,7 +89,7 @@
 
 
         {{-- monthly payment reminder and view code start --}}
-        @include('components.monthlyPaymentReminder')
+        {{-- @include('components.monthlyPaymentReminder') --}}
         {{-- monthly payment reminder and view code end --}}
     @endrole
 
