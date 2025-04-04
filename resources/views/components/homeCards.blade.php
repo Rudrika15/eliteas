@@ -1440,7 +1440,7 @@
                                     </div>
                                     <div class="B-divider"></div>
                                     <div id="connectButton" class="action-button right-action btn w-100">
-                                        @if ($refGiver['circleId'] == $authCircleId || $refGiver['connection_status'] == 'Connected')
+                                        {{-- @if ($refGiver['circleId'] == $authCircleId || $refGiver['connection_status'] == 'Connected')
                                             <button type="button" class="btn btn-connect fw-bold shadow-none">Connected</button>
                                         @elseif ($refGiver['connection_status'] == 'Accepted')
                                             <button id="messageButton" class="btn btn-connect ms-2">Message</button>
@@ -1454,7 +1454,10 @@
                                                     Connect
                                                 </button>
                                             </form>
-                                        @endif
+                                        @endif --}}
+                                        <button type="submit" class="btn shadow-none fw-bold" style="color: #1d3268;">
+                                            Connect
+                                        </button>
                                     </div>
                                 </div>
                             </div>
