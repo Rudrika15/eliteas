@@ -1133,27 +1133,50 @@ class HomeController extends Controller
     public function foundPersonDetails($id)
     {
         try {
-            $aid = Auth::id(); // Get the authenticated user ID
-            $member = Member::find($id);
+            $authId = Auth::id();
+            $member = Member::with('circle')->find($id); // include relationship to avoid N+1
 
             if (!$member) {
                 return redirect()->back()->with('error', 'Member not found.');
             }
 
-            // Get all connections where the authenticated user and the found member are connected
-            $connections = Connection::where(function ($query) use ($aid, $member) {
-                $query->where('userId', $aid)->where('memberId', $member->id)
-                    ->orWhere(function ($query) use ($aid, $member) {
-                        $query->where('userId', $member->id)->where('memberId', $aid);
+            $authMember = Member::where('userId', $authId)->first();
+            $userCircleId = $authMember ? $authMember->circleId : null;
+            $memberCircleId = $member->circleId;
+
+            // Get all connections between the authenticated user and the found member
+            $connections = Connection::where(function ($query) use ($authId, $member) {
+                $query->where('userId', $authId)->where('memberId', $member->userId)
+                    ->orWhere(function ($query) use ($authId, $member) {
+                        $query->where('userId', $member->userId)->where('memberId', $authId);
                     });
             })->get();
 
-            return view('foundPersonDetails', compact('member', 'connections'));
+            $connection = $connections->first(); // Single connection (if needed in the view)
+
+            // Determine connection status
+            if ($userCircleId !== null && $memberCircleId == $userCircleId) {
+                $member->connection_status = 'Connected';
+            } elseif ($connection && $connection->status === 'Accepted') {
+                $member->connection_status = 'Connected';
+            } else {
+                $member->connection_status = $connection ? $connection->status : 'Not Connected';
+            }
+
+            return view('foundPersonDetails', compact(
+                'member',
+                'connections',
+                'connection',
+                'userCircleId',
+                'memberCircleId'
+            ));
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, request()->fullUrl());
             return view('servererror');
         }
     }
+
+
 
 
     public function accepted($id)

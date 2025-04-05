@@ -747,11 +747,12 @@
         }
 
         .leaderboard .bottom-actions {
-            font-size: 8px;
+            font-size: 12px;
         }
 
         .leaderboard .btn-connect {
-            font-size: 8px;
+            font-size: 12px;
+            color: #1d3268;
         }
 
         .leaderboard .position {
@@ -1339,7 +1340,8 @@
 
                                 <div class="bottom-actions">
                                     <div id="viewProfile" class="action-button left-action">
-                                        <a href="#"><i class="bi bi-person-lines-fill" style="color: #1d3268;"></i><span style="color: #1d3268;"> View Profile</span></a>
+                                        <a href="#"><span style="color: #1d3268;"> View Profile</span></a>
+                                        {{-- <i class="bi bi-person-lines-fill" style="color: #1d3268;"></i> --}}
                                     </div>
                                     <div class="B-divider"></div>
                                     <div id="connectButton" class="action-button right-action btn w-100">
@@ -1436,7 +1438,8 @@
 
                                 <div class="bottom-actions">
                                     <div id="viewProfile" class="action-button left-action">
-                                        <a href="#"><i class="bi bi-person-lines-fill" style="color: #1d3268;"></i><span style="color: #1d3268;"> View Profile</span></a>
+                                        <a href="#"><span style="color: #1d3268;"> View Profile</span></a>
+                                        {{-- <i class="bi bi-person-lines-fill" style="color: #1d3268;"></i> --}}
                                     </div>
                                     <div class="B-divider"></div>
                                     <div id="connectButton" class="action-button right-action btn w-100">
