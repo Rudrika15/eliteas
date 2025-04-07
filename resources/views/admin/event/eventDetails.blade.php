@@ -208,6 +208,75 @@
             display: none;
         }
 
+        @media (max-width:1440px) {
+            .mobile-426 {
+                display: block;
+                width: 100%;
+            }
+
+            .laptop-device {
+                display: block;
+            }
+
+            .main-content {
+                width: 100%;
+                padding-bottom: 40px;
+            }
+
+            .left-content {
+                width: 100%;
+                padding: 10px;
+                margin-top: 10px;
+            }
+
+            .right-content {
+                width: 100%;
+            }
+
+            .header-top-tablet {
+                width: 100%;
+                position: sticky;
+                top: 0;
+                background-color: #fff;
+                z-index: 1000;
+            }
+
+            .hero img {
+                width: 100%;
+                height: auto;
+            }
+
+            .mobile-navbar {
+                display: none;
+            }
+
+            .bottomBookTickets {
+                background-color: #d6460d;
+                font-family: "Poppins", sans-serif;
+                font-size: 15px;
+                display: block;
+                padding: 14px;
+            }
+
+            .tablet-768 {
+                margin-top: 20px;
+                padding-top: 4px;
+            }
+
+            .event {
+                margin-top: 20px;
+            }
+
+            ::-webkit-scrollbar {
+                width: 4px;
+                background-color: #fff;
+            }
+
+            ::-webkit-scrollbar-thumb {
+                background: #d6460d;
+            }
+        }
+
         @media (max-width:769px) {
             .mobile-426 {
                 display: block;

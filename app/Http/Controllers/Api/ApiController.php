@@ -89,6 +89,57 @@ class ApiController extends Controller
     }
 
 
+    public function homeCounts()
+    {
+        try {
+            $membersCount = Member::where('status', 'Active')->count();
+            $circleCount = Circle::where('status', 'Active')->count();
+            $cityCount = Circle::where('status', 'Active')
+                ->select('cityId')
+                ->distinct()
+                ->count('cityId');
+
+            return Utils::sendResponse(['membersCount' => $membersCount, 'circleCount' => $circleCount, 'cityCount' => $cityCount], 'Success', 200);
+        } catch (\Throwable $th) {
+            return Utils::errorResponses(['error' => $th->getMessage()], 'Internal Server Error', 500);
+        }
+    }
+
+    public function membersActivityCount(Request $request, $id)
+    {
+        try {
+            $member = Member::where('userId', $id)->get();
+
+            if (!$member) {
+                return Utils::errorResponses(['error' => 'Member not found'], 'Not Found', 404);
+            }
+
+            // Get the count of each activity
+            $totalMeetingCount = CircleCall::where('memberId', $id)->count();
+            $refReceivedCount = CircleMeetingMembersReference::where('memberId', $id)->count();
+            $busTakenCount = CircleMeetingMembersBusiness::where('loginMemberId', $id)->count();
+            $busTaken = CircleMeetingMembersBusiness::where('loginMemberId', $id)->get();
+            // $busTakenCount = $busTaken->count();
+            $busTakenAmount = $busTaken->sum('amount');
+
+            //get the another count (viceVersa)
+            $busGiverCount = CircleMeetingMembersBusiness::where('businessGiverId', $id)->count();
+            $refGiverCount = CircleMeetingMembersReference::where('referenceGiverId', $id)->count();
+
+
+            return Utils::sendResponse([
+                'totalMeetingCount' => $totalMeetingCount,
+                'refReceivedCount' => $refReceivedCount,
+                'busTakenCount' => $busTakenCount,
+                'businessAmount' => $busTakenAmount,
+                'busGiverCount' => $busGiverCount,
+                'refGiverCount' => $refGiverCount
+            ], 'Success', 200);
+        } catch (\Throwable $th) {
+            return Utils::errorResponses(['error' => $th->getMessage()], 'Internal Server Error', 500);
+        }
+    }
+
 
     //lead board
     public function maxMeetings(Request $request)

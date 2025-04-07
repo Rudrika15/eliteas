@@ -110,6 +110,11 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('/user/member/updateTopsProfile', [LoginController::class, 'topsProfileUpdate']);
 
 
+
+    Route::get('/home-counts', [ApiController::class, 'homeCounts']);
+    Route::get('/members-activity-counts/{id?}', [ApiController::class, 'membersActivityCount']);
+
+
     // Admin side profile change
     Route::post('/members/{id}', [LoginController::class, 'memberUpdateAdmin']);
     // Route::put('/members/{id}', [MemberController::class, 'update']);

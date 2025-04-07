@@ -1022,7 +1022,7 @@
 
                         // Header image
                         var headerImg = document.createElement('img');
-                        headerImg.src = 'https://picsum.photos/600/120';
+                        headerImg.src = '{{ asset('img/coverImage.png') }}';
                         headerImg.classList.add('header-image');
                         cardElement.appendChild(headerImg);
 

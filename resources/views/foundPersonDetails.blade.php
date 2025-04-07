@@ -42,16 +42,23 @@
     <div class="container my-4">
         <div class="profile-wrapper shadow">
             <!-- Header -->
-            <div class="cover-bg" style="background-image: url('https://images.unsplash.com/photo-1503264116251-35a269479413?auto=format&fit=crop&w=1200&q=80');"></div>
+            <div class="cover-bg" style="background-image: url('{{ asset('img/coverImage.png') }}');"></div>
 
-            <div class="text-center">
+            <div class="text-center relative inline-block">
                 @php $profilePhoto = $member->profilePhoto; @endphp
+
                 @if ($profilePhoto && file_exists(public_path('ProfilePhoto/' . $profilePhoto)))
-                    <img src="{{ asset('ProfilePhoto/' . $profilePhoto) }}" alt="Profile Picture" class="profile-image" />
+                    <img src="{{ asset('ProfilePhoto/' . $profilePhoto) }}" alt="Profile Picture" class="profile-image w-32 h-32 rounded-full border-4 border-white shadow-lg" />
                 @else
-                    <img src="{{ asset('ProfilePhoto/profile.png') }}" alt="ProfilePhoto" class="profile-image" />
+                    <img src="{{ asset('ProfilePhoto/profile.png') }}" alt="ProfilePhoto" class="profile-image w-32 h-32 rounded-full border-4 border-white shadow-lg" />
                 @endif
+
+                <!-- G Badge SVG -->
+                {{-- <div class="absolute bottom-0 right-0 transform translate-x-1/4 translate-y-1/4 w-8 h-8">
+                    <img src="{{ asset('img/g-badge.svg') }}" alt="G Badge" class="w-full h-full">
+                </div> --}}
             </div>
+
 
             <!-- Name & Info -->
             <div class="text-center mt-2">

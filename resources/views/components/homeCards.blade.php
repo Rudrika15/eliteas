@@ -765,6 +765,70 @@
     }
 
 
+    @media screen and (max-width: 1440px) {
+        .leaderboard .profile-card {
+            width: 195px !important;
+        }
+
+        .leaderboard .info-section .icon-text {
+            font-size: 12px;
+        }
+
+        .leaderboard .company-category-section {
+            padding: 0%;
+            gap: 0%;
+        }
+
+        .leaderboard .company-section,
+        .leaderboard .category-section {
+            flex: 1;
+            min-width: 0;
+            /* prevents overflow issues */
+            text-align: center;
+            word-wrap: break-word;
+        }
+
+        .leaderboard .company-section h2,
+        .leaderboard .category-section h3 {
+            margin: 0px 0;
+            color: #1d2951;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .leaderboard .profile-img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid #e0e0e0;
+        }
+
+        .leaderboard .header-image {
+            width: 100%;
+            height: 60px;
+            object-fit: cover;
+        }
+
+        .leaderboard .bottom-actions {
+            font-size: 12px;
+        }
+
+        .leaderboard .btn-connect {
+            font-size: 12px;
+        }
+
+        .leaderboard .position {
+            font-size: 12px;
+        }
+
+        .leaderboard .member-name {
+            font-size: 15px;
+        }
+
+
+    }
+
     @media screen and (max-width: 1024px) {
         .leaderboard .profile-card {
             width: 195px !important;
@@ -1160,7 +1224,7 @@
                         <div class="col-sm-6 col-lg-4">
                             <div class="profile-card shadow-sm rounded border-0">
                                 <span class="heading">Top IBM Member</span>
-                                <img src="https://picsum.photos/600/120" class="header-image" alt="Header Image">
+                                <img src="{{ asset('img/coverImage.png') }}" class="header-image" alt="Header Image">
                                 <div class="text-center p-3">
                                     <img src="{{ asset('ProfilePhoto/' . ($circlecalls['member']->profilePhoto ?? 'profile.png')) }}" class="profile-img img-fluid rounded-circle mx-auto d-block" alt="Profile Image">
                                     <h5 class="member-name" style="color: #e76a35; font-weight: bold;">
@@ -1274,7 +1338,8 @@
                         <div class="col-sm-6 col-lg-4">
                             <div class="profile-card shadow-sm rounded border-0">
                                 <span class="heading">Top Business Leader</span>
-                                <img src="https://picsum.photos/600/120" class="header-image" alt="Header Image">
+                                <img src="{{ asset('img/coverImage.png') }}" class="header-image" alt="Header Image">
+
                                 <div class="text-center p-3">
                                     <img src="{{ asset('ProfilePhoto/' . ($busGiver['member']->profilePhoto ?? 'profile.png')) }}" class="profile-img img-fluid rounded-circle mx-auto d-block" alt="Profile Image">
                                     <h5 class="member-name" style="color: #e76a35; font-weight: bold;">
@@ -1376,7 +1441,7 @@
                         <div class="col-sm-6 col-lg-4">
                             <div class="profile-card shadow-sm rounded border-0">
                                 <span class="heading">Top Reference Giver</span>
-                                <img src="https://picsum.photos/600/120" class="header-image" alt="Header Image">
+                                <img src="{{ asset('img/coverImage.png') }}" class="header-image" alt="Header Image">
                                 <div class="text-center p-3">
                                     <img src="{{ asset('ProfilePhoto/' . ($refGiver['profilePhoto'] ?? 'profile.png')) }}" class="profile-img img-fluid rounded-circle mx-auto d-block" alt="Profile Image">
                                     <h5 class="member-name" style="color: #e76a35; font-weight: bold;">
@@ -1559,9 +1624,9 @@
                 <div class="bg-light py-5">
                     <div class="upcoming-events">
                         <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h4 class="fw-bold" style="color: #1d3268;">Upcoming Events</h4>
+                            <h4 class="fw-bold" style="color: #1d3268;">Upcoming Training Workshops</h4>
                         </div>
-                        <p class="text-muted text-center"><b>No Events for now.</b></p>
+                        <p class="text-muted text-center"><b>No Training Workshops for now.</b></p>
                     </div>
                 </div>
             @endif

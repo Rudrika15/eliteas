@@ -11,6 +11,26 @@
             height: 180px;
         }
 
+        .profile-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .g-badge {
+            position: absolute;
+            bottom: 0;
+            /* Aligns it to the bottom of the image */
+            left: 50%;
+            /* Center horizontally */
+            transform: translate(-50%, 50%);
+            /* Move down & center */
+            width: 32px;
+            /* Adjust size as needed */
+            height: 32px;
+        }
+
+
+
         .profile-image {
             width: 110px;
             height: 110px;
@@ -99,7 +119,7 @@
             font-size: 12px;
             font-weight: 500;
             display: flex;
-            
+
             align-items: center;
             gap: 8px;
             transition: all 0.2s ease-in-out;

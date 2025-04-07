@@ -14,6 +14,7 @@ use App\Models\EventType;
 use App\Models\SlotBooking;
 use App\Models\User;
 use App\Models\VisitorEventRegister;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Support\Facades\Log;
@@ -92,6 +93,7 @@ class EventController extends Controller
         try {
             $event = Event::with('circle')
                 ->where('status', 'Active')
+                ->whereDate('event_date', '>=', Carbon::today())
                 ->orderBy('id', 'DESC')
                 ->paginate(10);
             return view('admin.event.memberEventIndex', compact('event'));
