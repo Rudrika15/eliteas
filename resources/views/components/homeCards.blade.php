@@ -1108,6 +1108,10 @@
         border-radius: 30px;
         font-weight: 600;
     }
+
+    .card-title {
+        padding: 0% !important;
+    }
 </style>
 
 
@@ -1165,7 +1169,7 @@
                 </div>
             </div>
 
-            <h1 class="text-center card-title mb-4">Leaderboard</h1>
+            <h1 class="text-center card-title">Leaderboard</h1>
             <div class="leaderboard">
 
                 {{-- <div class="">
@@ -1574,20 +1578,26 @@
                     </div>
                 </div>
             @else
-                <div class="bg-light py-5">
+
+             <style>
+                    .upcoming-events  {
+                        display: none;
+                    }
+                </style>
+                {{-- <div class="bg-light py-5">
                     <div class="upcoming-events">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h4 class="fw-bold" style="color: #1d3268;">Upcoming Events</h4>
                         </div>
                         <p class="text-muted text-center"><b>No Events for now.</b></p>
                     </div>
-                </div>
+                </div> --}}
             @endif
 
 
             @if (count($nearestEvents) != 0)
                 <div class="bg-light py-5">
-                    <div class="upcoming-events">
+                    <div class="upcoming-events trainings">
                         <!-- Header -->
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h4 class="fw-bold" style="color: #1d3268;">Upcoming Training Workshops</h4>
@@ -1621,14 +1631,19 @@
                     </div>
                 </div>
             @else
-                <div class="bg-light py-5">
-                    <div class="upcoming-events">
+                <style>
+                    .upcoming-events .trainings {
+                        display: none;
+                    }
+                </style>
+                {{-- <div class="bg-light py-5">
+                    <div class="upcoming-events trainings">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h4 class="fw-bold" style="color: #1d3268;">Upcoming Training Workshops</h4>
                         </div>
                         <p class="text-muted text-center"><b>No Training Workshops for now.</b></p>
                     </div>
-                </div>
+                </div> --}}
             @endif
 
 
@@ -1663,7 +1678,7 @@
                     </div>
                 @else
                     <div class="col-lg-12 col-md-12">
-                        <div class="card shadow-sm p-4 ">
+                        <div class="card circleMeeting shadow-sm p-4 ">
                             <h4 class="mb-4 fw-bold" style="font-size: 18px; color:#1d3268;">&nbsp;Upcoming {{ $meeting->circle->circleName }} Circle Meetings
                             </h4>
                             <div class="card event-card-upcoming shadow-sm p-3 mb-3">

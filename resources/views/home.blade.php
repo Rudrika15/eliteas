@@ -33,7 +33,7 @@
 
 
             {{-- Upcoming Training start --}}
-            @include('components.trainingSection')
+            {{-- @include('components.trainingSection') --}}
             {{-- Upcoming Training end --}}
 
 
