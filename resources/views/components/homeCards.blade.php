@@ -1407,6 +1407,7 @@
                                     </div>
                                 </div>
 
+                                
                                 <div class="bottom-actions">
                                     <div id="viewProfile" class="action-button left-action">
                                         <a href="#"><span style="color: #1d3268;"> View Profile</span></a>
@@ -1511,8 +1512,8 @@
                                         {{-- <i class="bi bi-person-lines-fill" style="color: #1d3268;"></i> --}}
                                     </div>
                                     <div class="B-divider"></div>
-                                    <div id="connectButton" class="action-button right-action btn w-100">
-                                        {{-- @if ($refGiver['circleId'] == $authCircleId || $refGiver['connection_status'] == 'Connected')
+                                    {{-- <div id="connectButton" class="action-button right-action btn w-100">
+                                        @if ($refGiver['circleId'] == $authCircleId || $refGiver['connection_status'] == 'Connected')
                                             <button type="button" class="btn btn-connect fw-bold shadow-none">Connected</button>
                                         @elseif ($refGiver['connection_status'] == 'Accepted')
                                             <button id="messageButton" class="btn btn-connect ms-2">Message</button>
@@ -1526,11 +1527,8 @@
                                                     Connect
                                                 </button>
                                             </form>
-                                        @endif --}}
-                                        <button type="submit" class="btn shadow-none fw-bold" style="color: #1d3268;">
-                                            Connect
-                                        </button>
-                                    </div>
+                                        @endif
+                                    </div> --}}
                                 </div>
                             </div>
                         </div>
@@ -1578,9 +1576,8 @@
                     </div>
                 </div>
             @else
-
-             <style>
-                    .upcoming-events  {
+                <style>
+                    .upcoming-events {
                         display: none;
                     }
                 </style>

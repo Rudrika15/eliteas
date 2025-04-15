@@ -1,6 +1,5 @@
 @extends('layouts.master')
 @section('content')
-
     @extends('components.foundPersonDetailsCSS')
 
 
@@ -53,11 +52,25 @@
                     <img src="{{ asset('ProfilePhoto/profile.png') }}" alt="ProfilePhoto" class="profile-image w-32 h-32 rounded-full border-4 border-white shadow-lg" />
                 @endif
 
-                <!-- G Badge SVG -->
-                {{-- <div class="absolute bottom-0 right-0 transform translate-x-1/4 translate-y-1/4 w-8 h-8">
-                    <img src="{{ asset('img/g-badge.svg') }}" alt="G Badge" class="w-full h-full">
-                </div> --}}
+
+                @if ($memberInduction >= 4)
+                    <!-- S Badge using updated SVG -->
+                    <div class="absolute bottom-0 right-0 transform translate-x-1/4 translate-y-1/4 w-8 h-8">
+                        <img src="{{ asset('img/s-badge.svg') }}" alt="S Badge" class="w-full h-full">
+                    </div>
+                @elseif ($memberInduction >= 8)
+                    <!-- G Badge using updated SVG -->
+                    <div class="absolute bottom-0 right-0 transform translate-x-1/4 translate-y-1/4 w-8 h-8">
+                        <img src="{{ asset('img/g-badge.svg') }}" alt="G Badge" class="w-full h-full">
+                    </div>
+                @elseif ($memberInduction >= 25 || $memberInduction > 25)
+                    <!-- P Badge using updated SVG -->
+                    <div class="absolute bottom-0 right-0 transform translate-x-1/4 translate-y-1/4 w-8 h-8">
+                        <img src="{{ asset('img/p-badge.svg') }}" alt="P Badge" class="w-full h-full">
+                    </div>
+                @endif
             </div>
+
 
 
             <!-- Name & Info -->

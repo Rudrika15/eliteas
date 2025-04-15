@@ -342,6 +342,9 @@ Route::group(['middleware' => ['auth']], function () {
     // old get member
     Route::get('get-member', [CircleCallController::class, 'getMember'])->name('getMember');
 
+    Route::get('/get-circle-members/{circleId}', [ConnectionController::class, 'getMembers']);
+
+
     // get external trainer list
     // Route::get('get-external-trainers' , [TrainingController::class, 'getExternalTrainers'])->name('getExternalTrainers');
 
@@ -536,6 +539,9 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/connections/removeConnection/{id?}', [ConnectionController::class, 'removeConnection'])->name('connection.removeConnection');
     Route::get('/connections/{id}/members', [ConnectionController::class, 'showMembers'])->name('connection.showMembers');
     Route::get('/connection/{id}/showCategoryWiseMembers', [ConnectionController::class, 'showCategoryWiseMembers'])->name('connection.showCategoryWiseMembers');
+
+    Route::get('/connection/{categoryId}/categoryList', [ConnectionController::class, 'categoryMembers'])->name('connection.category.members');
+
 
 
 
@@ -824,6 +830,24 @@ Route::group(['middleware' => ['auth']], function () {
 
     // new card design
     Route::get('memberCard', [MemberCardController::class, 'card'])->name('memberCard.card');
+
+
+
+    // new design netwwork
+
+    Route::prefix('admin/network')->middleware(['auth'])->group(function () {
+        Route::get('/circles', [App\Http\Controllers\Admin\ConnectionController::class, 'circleList'])->name('admin.circles');
+
+        Route::get('/circle-members/{id}', function ($id) {
+            $circle = App\Models\Circle::with(['members' => function ($q) {
+                $q->where('status', 'Active')->with('user');
+            }])->findOrFail($id);
+
+            return response()->json([
+                'members' => $circle->members
+            ]);
+        })->name('admin.circle.members');
+    });
 });
 
 Route::get('/main-event-thankYouVisitor', [ConEventController::class, 'thankYouUser'])->name('main.event.thankYouUser');

@@ -217,18 +217,72 @@ class ConnectionController extends Controller
     // }
 
 
+    // public function search(Request $request)
+    // {
+    //     try {
+    //         $find = $request->input('find');
+
+    //         // Get the authenticated user's userId
+    //         $authUserId = Auth::user()->id;
+
+    //         $members = User::where('status', 'Active') // Ensure the user is active
+    //             ->whereHas('member', function ($q) use ($find, $authUserId) {
+    //                 $q->where('status', 'Active') // Ensure the member is active
+    //                     ->where('userId', '!=', $authUserId) // Exclude the logged-in user's member data
+    //                     ->where(function ($q) use ($find) {
+    //                         $q->where('firstName', 'like', '%' . $find . '%')
+    //                             ->orWhere('lastName', 'like', '%' . $find . '%')
+    //                             ->orWhereHas('circle', function ($q) use ($find) {
+    //                                 $q->where('circleName', 'like', '%' . $find . '%');
+    //                             });
+    //                     });
+    //             })
+    //             ->with([
+    //                 'member',
+    //                 'member.circle' => function ($q) {
+    //                     $q->select('id', 'circleName', 'cityId')
+    //                         ->with(['city' => function ($q) {
+    //                             $q->select('id', 'cityName');
+    //                         }]);
+    //                 },
+    //                 'member.bCategory' => function ($q) {
+    //                     $q->select('id', 'categoryName');
+    //                 },
+    //                 'member.connections' => function ($q) use ($authUserId) {
+    //                     $q->where('userId', $authUserId);
+    //                 }
+    //             ])
+    //             ->get();
+
+    //         $message = "Search results for '$find'";
+
+    //         return Utils::sendResponse([
+    //             'message' => $message,
+    //             'members' => $members
+    //         ], 200);
+    //     } catch (\Throwable $th) {
+    //         return Utils::errorResponse([
+    //             'error' => $th->getMessage()
+    //         ], 'Internal Server Error', 500);
+    //     }
+    // }
+
+
+
     public function search(Request $request)
     {
         try {
             $find = $request->input('find');
+            $authUserId = Auth::id();
 
-            // Get the authenticated user's userId
-            $authUserId = Auth::user()->id;
+            // Get the logged-in user's member record to find their circle
+            $authMember = Member::where('userId', $authUserId)->first();
+            $authCircleId = $authMember ? $authMember->circleId : null;
 
-            $members = User::where('status', 'Active') // Ensure the user is active
+            $members = User::where('status', 'Active')
                 ->whereHas('member', function ($q) use ($find, $authUserId) {
-                    $q->where('status', 'Active') // Ensure the member is active
-                        ->where('userId', '!=', $authUserId) // Exclude the logged-in user's member data
+                    $q->where('status', 'Active')
+                        ->where('userId', '!=', $authUserId)
                         ->where(function ($q) use ($find) {
                             $q->where('firstName', 'like', '%' . $find . '%')
                                 ->orWhere('lastName', 'like', '%' . $find . '%')
@@ -240,19 +294,41 @@ class ConnectionController extends Controller
                 ->with([
                     'member',
                     'member.circle' => function ($q) {
-                        $q->select('id', 'circleName', 'cityId')
-                            ->with(['city' => function ($q) {
-                                $q->select('id', 'cityName');
-                            }]);
+                        $q->select('id', 'circleName', 'cityId')->with('city:id,cityName');
                     },
-                    'member.bCategory' => function ($q) {
-                        $q->select('id', 'categoryName');
-                    },
+                    'member.bCategory:id,categoryName',
                     'member.connections' => function ($q) use ($authUserId) {
                         $q->where('userId', $authUserId);
                     }
                 ])
                 ->get();
+
+            // Loop through members to determine connection_status
+            foreach ($members as $user) {
+                $member = $user->member;
+
+                if (!$member) {
+                    $user->connection_status = 'Not Connected';
+                    continue;
+                }
+
+                if ($authCircleId !== null && $member->circleId == $authCircleId) {
+                    $user->connection_status = 'Connected';
+                } else {
+                    $connection = Connection::where(function ($query) use ($authUserId, $member) {
+                        $query->where('userId', $authUserId)->where('memberId', $member->userId)
+                            ->orWhere(function ($query) use ($authUserId, $member) {
+                                $query->where('userId', $member->userId)->where('memberId', $authUserId);
+                            });
+                    })->first();
+
+                    if ($connection && $connection->status === 'Accepted') {
+                        $user->connection_status = 'Connected';
+                    } else {
+                        $user->connection_status = $connection ? $connection->status : 'Not Connected';
+                    }
+                }
+            }
 
             $message = "Search results for '$find'";
 
@@ -270,17 +346,98 @@ class ConnectionController extends Controller
 
 
 
-    public function requestAction(Request $request)
+    public function chatConnectionSearch(Request $request)
     {
         try {
-            $connection = Connection::find($request->input('connectionId'));
-            $connection->status = $request->input('action');
-            $connection->save();
-            return Utils::sendResponse(['message' => 'Connection Request Action done Successfully.'], 200);
+            $userId = Auth::id();
+            $keyword = $request->input('keyword');
+
+            // Get the authenticated user's Member record
+            $member = Member::where('userId', $userId)->first();
+
+            if (!$member || !$member->circleId) {
+                return Utils::errorResponse(['error' => 'User does not belong to any circle.'], 'No Circle Found', 404);
+            }
+
+            $circleId = $member->circleId;
+
+            // === Fetch Connections (excluding auth user) ===
+            $connections = Connection::where(function ($query) use ($userId) {
+                $query->where('userId', $userId)
+                    ->orWhere('memberId', $userId);
+            })
+                ->where('status', 'Accepted')
+                ->with(['member' => function ($query) use ($keyword, $userId) {
+                    $query->select('id', 'userId', 'profilePhoto')
+                        ->whereHas('user', function ($q) use ($userId) {
+                            $q->where('id', '!=', $userId); // Exclude auth user
+                        })
+                        ->with(['user' => function ($q) use ($keyword, $userId) {
+                            $q->select('id', 'firstName', 'lastName', 'email')
+                                ->where('id', '!=', $userId) // Exclude auth user again for safety
+                                ->when($keyword, function ($q) use ($keyword) {
+                                    $q->where(function ($subQuery) use ($keyword) {
+                                        $subQuery->where('firstName', 'like', '%' . $keyword . '%')
+                                            ->orWhere('lastName', 'like', '%' . $keyword . '%');
+                                    });
+                                });
+                        }]);
+                }])
+                ->get();
+
+            // === Fetch Circle & Active Members (excluding auth user) ===
+            $circle = Circle::with([
+                'members' => function ($query) use ($keyword, $userId) {
+                    $query->where('status', 'Active')
+                        ->whereHas('user', function ($q) use ($userId) {
+                            $q->where('id', '!=', $userId); // Exclude auth user
+                        })
+                        ->with(['user:id,firstName,lastName,email', 'bCategory:id,categoryName'])
+                        ->when($keyword, function ($q) use ($keyword) {
+                            $q->whereHas('user', function ($userQuery) use ($keyword) {
+                                $userQuery->where('firstName', 'like', '%' . $keyword . '%')
+                                    ->orWhere('lastName', 'like', '%' . $keyword . '%');
+                            });
+                        });
+                },
+                'city:id,cityName'
+            ])->findOrFail($circleId);
+
+            return Utils::sendResponse([
+                'message' => 'Chat connections and circle members retrieved successfully.',
+                'connections' => $connections,
+                'circle' => $circle,
+                'members' => $circle->members,
+            ], 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
+
+
+    public function requestAction(Request $request)
+    {
+        try {
+            $connection = Connection::find($request->input('connectionId'));
+
+            if (!$connection) {
+                return Utils::errorResponse(['error' => 'Connection not found.'], 'Not Found', 404);
+            }
+
+            if ($request->input('action') === 'Rejected') {
+                $connection->delete();
+                return Utils::sendResponse(['message' => 'Connection request rejected and deleted successfully.'], 200);
+            }
+
+            $connection->status = $request->input('action');
+            $connection->save();
+
+            return Utils::sendResponse(['message' => 'Connection request action completed successfully.'], 200);
+        } catch (\Throwable $th) {
+            return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
+        }
+    }
+
 
     public function removeConnection(Request $request)
     {

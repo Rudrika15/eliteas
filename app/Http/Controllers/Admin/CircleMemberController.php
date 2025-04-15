@@ -120,6 +120,20 @@ class CircleMemberController extends Controller
         }
     }
 
+
+    public function induction($id)
+    {
+        try {
+
+
+            return view('admin.circlemember.index', compact('memberInduction'));
+        } catch (\Throwable $th) {
+            ErrorLogger::logError($th, request()->fullUrl());
+            return view('servererror');
+        }
+    }
+
+
     public function assignCircle(Request $request)
     {
 

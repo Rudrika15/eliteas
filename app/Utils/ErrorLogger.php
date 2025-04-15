@@ -3,6 +3,7 @@
 namespace App\Utils;
 
 use App\Models\ErrorLog;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 class ErrorLogger
@@ -21,7 +22,10 @@ class ErrorLogger
             return;
         }
 
+        // $userId = Auth::user()->id;
+
         $errorLog = new ErrorLog();
+        // $errorLog->authUserId = $userId ?? null;
         $errorLog->url = $url ?? request()->fullUrl();
         $errorLog->error_message = $exception->getMessage();
         $errorLog->date = now()->toDateString();

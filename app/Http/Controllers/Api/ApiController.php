@@ -88,6 +88,20 @@ class ApiController extends Controller
         }
     }
 
+    public function induction($id)
+    {
+        try {
+
+            $memberInduction = Member::where('sponsoredBy', $id)->count();
+            if (!$memberInduction) {
+                return Utils::errorResponses(['error' => 'Member not found'], 'Not Found', 404);
+            }
+            return Utils::sendResponse(['count' => $memberInduction], 'Success', 200);
+        } catch (\Throwable $th) {
+            return Utils::errorResponses(['error' => $th->getMessage()], 'Internal Server Error', 500);
+        }
+    }
+
 
     public function homeCounts()
     {
@@ -198,7 +212,17 @@ class ApiController extends Controller
 
             $busGiver = $busGiver->groupBy('businessGiverId')->map(function ($group) {
                 $user = $group->first()->users;
+
+                if (!$user) {
+                    return null; // Skip if user not found
+                }
+
                 $member = $user->member()->select('circleId', 'businessCategoryId', 'profilePhoto')->first();
+
+                if (!$member) {
+                    return null; // Skip if member details not found
+                }
+
                 $circle = Circle::find($member->circleId);
                 $businessCategory = BusinessCategory::find($member->businessCategoryId);
 
@@ -207,16 +231,20 @@ class ApiController extends Controller
                     'member' => $member,
                     'amount' => $group->sum('amount'),
                     'count' => $group->count(),
-                    'circle' => [
+                    'circle' => $circle ? [
                         'id' => $circle->id,
-                        'circleName ' => $circle->circleName
-                    ],
-                    'businessCategory' => [
+                        'circleName' => $circle->circleName
+                    ] : null,
+                    'businessCategory' => $businessCategory ? [
                         'id' => $businessCategory->id,
                         'categoryName' => $businessCategory->categoryName
-                    ]
+                    ] : null
                 ];
-            })->sortByDesc('amount')->values();
+            })
+                ->filter() // Remove null entries
+                ->sortByDesc('amount')
+                ->values();
+
 
             return Utils::sendResponse(
                 ['busGiver' => $busGiver],
@@ -227,6 +255,48 @@ class ApiController extends Controller
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
+    // public function maxBusiness(Request $request)
+    // {
+    //     try {
+    //         $previousMonth = Carbon::now()->subMonth()->month;
+    //         $previousYear = Carbon::now()->subMonth()->year;
+
+    //         $busGiver = CircleMeetingMembersBusiness::where('status', 'Active')
+    //             ->whereYear('date', $previousYear)
+    //             ->whereMonth('date', $previousMonth)
+    //             ->get();
+
+    //         $busGiver = $busGiver->groupBy('businessGiverId')->map(function ($group) {
+    //             $user = $group->first()->users;
+    //             $member = $user->member()->select('circleId', 'businessCategoryId', 'profilePhoto')->first();
+    //             $circle = Circle::find($member->circleId);
+    //             $businessCategory = BusinessCategory::find($member->businessCategoryId);
+
+    //             return [
+    //                 'user' => $user,
+    //                 'member' => $member,
+    //                 'amount' => $group->sum('amount'),
+    //                 'count' => $group->count(),
+    //                 'circle' => [
+    //                     'id' => $circle->id,
+    //                     'circleName ' => $circle->circleName
+    //                 ],
+    //                 'businessCategory' => [
+    //                     'id' => $businessCategory->id,
+    //                     'categoryName' => $businessCategory->categoryName
+    //                 ]
+    //             ];
+    //         })->sortByDesc('amount')->values();
+
+    //         return Utils::sendResponse(
+    //             ['busGiver' => $busGiver],
+    //             'Business data retrieved successfully',
+    //             200
+    //         );
+    //     } catch (\Throwable $th) {
+    //         return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
+    //     }
+    // }
 
     public function maxReference(Request $request)
     {

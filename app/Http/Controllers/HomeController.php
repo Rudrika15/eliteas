@@ -1144,6 +1144,8 @@ class HomeController extends Controller
             $userCircleId = $authMember ? $authMember->circleId : null;
             $memberCircleId = $member->circleId;
 
+            $memberInduction = Member::where('sponsoredBy', $id)->count();
+
             // Get all connections between the authenticated user and the found member
             $connections = Connection::where(function ($query) use ($authId, $member) {
                 $query->where('userId', $authId)->where('memberId', $member->userId)
@@ -1168,7 +1170,8 @@ class HomeController extends Controller
                 'connections',
                 'connection',
                 'userCircleId',
-                'memberCircleId'
+                'memberCircleId',
+                'memberInduction'
             ));
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, request()->fullUrl());

@@ -51,94 +51,210 @@ class ConnectionController extends Controller
     // }
 
 
-    public function circleList()
+    public function circleList(Request $request)
     {
         try {
-            // Fetch circles with member counts and total business amounts
-            $circles = Circle::where('status', 'Active')
-                ->with(['city' => function ($query) {
-                    $query->select('id', 'cityName');
-                }])
-                ->withCount(['members' => function ($query) {
-                    $query->where('status', 'Active'); // Count only active members if needed
-                }])
-                ->get();
 
-            // Fetch business meetings
-            $businessMeetings = CircleMeetingMembersBusiness::with(['member'])
-                ->where('status', 'Active')
-                ->get();
-
-            // Add total business amount to each circle
-            $circles->each(function ($circle) use ($businessMeetings) {
-                $filteredBusinessMeetings = $businessMeetings->filter(function ($meeting) use ($circle) {
-                    $businessGiverCircleId = Member::where('userId', $meeting->businessGiverId)->value('circleId');
-                    return $businessGiverCircleId == $circle->id;
-                });
-
-                // Calculate and add the total business amount
-                $circle->totalBusinessAmount = $filteredBusinessMeetings->sum('amount');
-            });
-
-            return view('admin.connection.circleList', compact('circles'));
-        } catch (\Throwable $th) {
-            // Log the error
-            ErrorLogger::logError(
-                $th,
-                request()->fullUrl()
-            );
-            return view('servererror');
-        }
-    }
-
-
-    public function showMembers($id)
-    {
-        try {
-            $circle = Circle::with(['members' => function ($query) {
-                $query->where('status', 'Active'); // Fetch only active members
-            }])->findOrFail($id);
-
-            $members = $circle->members;
-
-            $authId = Auth::id(); // Get authenticated user ID
-
-            // Fetch the authenticated user's circle ID from the Members table
+            $authId = Auth::id();
             $authMember = Member::where('userId', $authId)->first();
             $authCircleId = $authMember ? $authMember->circleId : null;
 
-            $members->each(function ($member) use ($authId, $authCircleId) {
-                // Check if the member is in the same circle
-                if ($authCircleId !== null && $member->circleId == $authCircleId) {
-                    $member->connection_status = 'Connected';
-                } else {
-                    // Fetch actual connection status
-                    $connection = Connection::where(function ($query) use ($authId, $member) {
-                        $query->where('userId', $authId)->where('memberId', $member->userId)
-                            ->orWhere(function ($query) use ($authId, $member) {
-                                $query->where('userId', $member->userId)->where('memberId', $authId);
-                            });
-                    })->first();
+            $authCircle = $authCircleId ? Circle::withCount('members')->with('city')->find($authCircleId) : null;
 
-                    $member->connection_status = $connection ? $connection->status : 'Not Connected';
-                }
+            // $businessMeetings = CircleMeetingMembersBusiness::with('member')
+            //     ->where('status', 'Active')
+            //     ->get();
 
-                // If connection exists and is 'Accepted', always mark as 'Connected'
-                if ($member->connection_status !== 'Connected' && isset($connection) && $connection->status === 'Accepted') {
-                    $member->connection_status = 'Connected';
-                }
+
+
+            $circles = Circle::where('status', 'Active')
+                ->with('city:id,cityName')
+                ->withCount(['members' => fn($q) => $q->where('status', 'Active')])
+                ->get();
+
+            $businessMeetings = CircleMeetingMembersBusiness::with('member')
+                ->where('status', 'Active')
+                ->get();
+
+            $circles->each(function ($circle) use ($businessMeetings) {
+                $filtered = $businessMeetings->filter(
+                    fn($m) =>
+                    Member::where('userId', $m->businessGiverId)->value('circleId') == $circle->id
+                );
+                $circle->totalBusinessAmount = $filtered->sum('amount');
             });
 
-            return view('admin.connection.circleWiseMembers', compact('circle', 'members', 'authCircleId'));
+            // Calculate business amount
+            if ($authCircle) {
+                $filtered = $businessMeetings->filter(function ($m) use ($authCircle) {
+                    $circleId = Member::where('userId', $m->businessGiverId)->value('circleId');
+                    return $circleId == $authCircle->id;
+                });
+
+                $authCircle->totalBusinessAmount = $filtered->sum('amount');
+            }
+
+            $defaultCircle = $circles->first(); // first circle to show members initially
+            $members = $defaultCircle
+                ? Circle::with(['members' => function ($q) {
+                    $q->where('status', 'Active');
+                }])->find($defaultCircle->id)->members
+                : collect();
+
+            return view('admin.connection.circleList', compact('circles', 'members', 'defaultCircle', 'authCircle', 'authCircleId'));
         } catch (\Throwable $th) {
-            // Log the error
-            ErrorLogger::logError(
-                $th,
-                request()->fullUrl()
-            );
+            ErrorLogger::logError($th, request()->fullUrl());
             return view('servererror');
         }
     }
+
+
+    // public function getMembers($circleId)
+    // {
+    //     $circle = Circle::with(['members.user', 'members.bCategory'])->find($circleId);
+
+    //     if (!$circle) {
+    //         return response()->json(['error' => 'Circle not found'], 404);
+    //     }
+
+    //     return view('partials.member-cards', ['members' => $circle->members, 'circleName' => $circle->circleName]);
+    // }
+
+
+    public function getMembers($circleId)
+    {
+        $circle = Circle::with(['members.user', 'members.bCategory'])->find($circleId);
+
+        if (!$circle) {
+            return response()->json(['error' => 'Circle not found'], 404);
+        }
+
+        $authId = Auth::id();
+        $authMember = Member::where('userId', $authId)->first();
+        $authCircleId = $authMember ? $authMember->circleId : null;
+
+        $members = $circle->members;
+
+        $members->each(function ($member) use ($authId, $authCircleId) {
+            // Check if the member is in the same circle
+            if ($authCircleId !== null && $member->circleId == $authCircleId) {
+                $member->connection_status = 'Connected';
+            } else {
+                // Fetch actual connection status
+                $connection = Connection::where(function ($query) use ($authId, $member) {
+                    $query->where('userId', $authId)->where('memberId', $member->userId)
+                        ->orWhere(function ($query) use ($authId, $member) {
+                            $query->where('userId', $member->userId)->where('memberId', $authId);
+                        });
+                })->first();
+
+                $member->connection_status = $connection ? $connection->status : 'Not Connected';
+            }
+
+            // If connection exists and is 'Accepted', always mark as 'Connected'
+            if ($member->connection_status !== 'Connected' && isset($connection) && $connection->status === 'Accepted') {
+                $member->connection_status = 'Connected';
+            }
+        });
+
+
+        return view('partials.member-cards', [
+            'members' => $circle->members,
+            'circleName' => $circle->circleName,
+            'authCircleId' => $authCircleId, // ✅ pass this to the view
+            'success' => 'Request Sent Successfully!'
+        ]);
+    }
+
+
+    // public function circleList()
+    // {
+    //     try {
+    //         // Fetch circles with member counts and total business amounts
+    //         $circles = Circle::where('status', 'Active')
+    //             ->with(['city' => function ($query) {
+    //                 $query->select('id', 'cityName');
+    //             }])
+    //             ->withCount(['members' => function ($query) {
+    //                 $query->where('status', 'Active'); // Count only active members if needed
+    //             }])
+    //             ->get();
+
+    //         // Fetch business meetings
+    //         $businessMeetings = CircleMeetingMembersBusiness::with(['member'])
+    //             ->where('status', 'Active')
+    //             ->get();
+
+    //         // Add total business amount to each circle
+    //         $circles->each(function ($circle) use ($businessMeetings) {
+    //             $filteredBusinessMeetings = $businessMeetings->filter(function ($meeting) use ($circle) {
+    //                 $businessGiverCircleId = Member::where('userId', $meeting->businessGiverId)->value('circleId');
+    //                 return $businessGiverCircleId == $circle->id;
+    //             });
+
+    //             // Calculate and add the total business amount
+    //             $circle->totalBusinessAmount = $filteredBusinessMeetings->sum('amount');
+    //         });
+
+    //         return view('admin.connection.circleList', compact('circles'));
+    //     } catch (\Throwable $th) {
+    //         // Log the error
+    //         ErrorLogger::logError(
+    //             $th,
+    //             request()->fullUrl()
+    //         );
+    //         return view('servererror');
+    //     }
+    // }
+
+
+    // public function showMembers($id)
+    // {
+    //     try {
+    //         $circle = Circle::with(['members' => function ($query) {
+    //             $query->where('status', 'Active'); // Fetch only active members
+    //         }])->findOrFail($id);
+
+    //         $members = $circle->members;
+
+    //         $authId = Auth::id(); // Get authenticated user ID
+
+    //         // Fetch the authenticated user's circle ID from the Members table
+    //         $authMember = Member::where('userId', $authId)->first();
+    //         $authCircleId = $authMember ? $authMember->circleId : null;
+
+    //         $members->each(function ($member) use ($authId, $authCircleId) {
+    //             // Check if the member is in the same circle
+    //             if ($authCircleId !== null && $member->circleId == $authCircleId) {
+    //                 $member->connection_status = 'Connected';
+    //             } else {
+    //                 // Fetch actual connection status
+    //                 $connection = Connection::where(function ($query) use ($authId, $member) {
+    //                     $query->where('userId', $authId)->where('memberId', $member->userId)
+    //                         ->orWhere(function ($query) use ($authId, $member) {
+    //                             $query->where('userId', $member->userId)->where('memberId', $authId);
+    //                         });
+    //                 })->first();
+
+    //                 $member->connection_status = $connection ? $connection->status : 'Not Connected';
+    //             }
+
+    //             // If connection exists and is 'Accepted', always mark as 'Connected'
+    //             if ($member->connection_status !== 'Connected' && isset($connection) && $connection->status === 'Accepted') {
+    //                 $member->connection_status = 'Connected';
+    //             }
+    //         });
+
+    //         return view('admin.connection.circleWiseMembers', compact('circle', 'members', 'authCircleId'));
+    //     } catch (\Throwable $th) {
+    //         // Log the error
+    //         ErrorLogger::logError(
+    //             $th,
+    //             request()->fullUrl()
+    //         );
+    //         return view('servererror');
+    //     }
+    // }
 
 
 
@@ -184,29 +300,73 @@ class ConnectionController extends Controller
         }
     }
 
-    public function showCategoryWiseMembers($id)
+    // public function showCategoryWiseMembers($id)
+    // {
+    //     try {
+    //         $authId = Auth::id(); // Get authenticated user ID
+
+    //         // Fetch the authenticated user's circle ID from the Members table
+    //         $authMember = Member::where('userId', $authId)->first();
+    //         $authCircleId = $authMember ? $authMember->circleId : null;
+
+    //         // Fetch category details
+    //         $category = BusinessCategory::where('id', $id)->where('status', 'Active')->firstOrFail();
+
+    //         // Fetch active members related to this category
+    //         $members = Member::where('businessCategoryId', $id)
+    //             ->where('status', 'Active')
+    //             ->get();
+
+    //         $members->each(function ($member) use ($authId, $authCircleId) {
+    //             // Check if the member is in the same circle
+    //             if ($authCircleId !== null && $member->circleId == $authCircleId) {
+    //                 $member->connection_status = 'Connected';
+    //             } else {
+    //                 // Fetch actual connection status
+    //                 $connection = Connection::where(function ($query) use ($authId, $member) {
+    //                     $query->where('userId', $authId)->where('memberId', $member->userId)
+    //                         ->orWhere(function ($query) use ($authId, $member) {
+    //                             $query->where('userId', $member->userId)->where('memberId', $authId);
+    //                         });
+    //                 })->first();
+
+    //                 $member->connection_status = $connection ? $connection->status : 'Not Connected';
+    //             }
+
+    //             // If connection exists and is 'Accepted', always mark as 'Connected'
+    //             if ($member->connection_status !== 'Connected' && isset($connection) && $connection->status === 'Accepted') {
+    //                 $member->connection_status = 'Connected';
+    //             }
+    //         });
+
+    //         return view('admin.connection.categoryWiseMembers', compact('category', 'members', 'authCircleId'));
+    //     } catch (\Throwable $th) {
+    //         // Log the error
+    //         ErrorLogger::logError($th, request()->fullUrl());
+    //         return view('servererror');
+    //     }
+    // }
+
+
+    public function categoryMembers($categoryId)
     {
         try {
-            $authId = Auth::id(); // Get authenticated user ID
-
-            // Fetch the authenticated user's circle ID from the Members table
+            $authId = Auth::id();
             $authMember = Member::where('userId', $authId)->first();
             $authCircleId = $authMember ? $authMember->circleId : null;
 
-            // Fetch category details
-            $category = BusinessCategory::where('id', $id)->where('status', 'Active')->firstOrFail();
+            $category = BusinessCategory::with(['members' => function ($query) {
+                $query->where('status', 'Active');
+            }])->find($categoryId);
 
-            // Fetch active members related to this category
-            $members = Member::where('businessCategoryId', $id)
-                ->where('status', 'Active')
-                ->get();
+            if (!$category) {
+                return response()->json(['message' => 'Category not found.'], 404);
+            }
 
-            $members->each(function ($member) use ($authId, $authCircleId) {
-                // Check if the member is in the same circle
+            foreach ($category->members as $member) {
                 if ($authCircleId !== null && $member->circleId == $authCircleId) {
                     $member->connection_status = 'Connected';
                 } else {
-                    // Fetch actual connection status
                     $connection = Connection::where(function ($query) use ($authId, $member) {
                         $query->where('userId', $authId)->where('memberId', $member->userId)
                             ->orWhere(function ($query) use ($authId, $member) {
@@ -215,19 +375,17 @@ class ConnectionController extends Controller
                     })->first();
 
                     $member->connection_status = $connection ? $connection->status : 'Not Connected';
-                }
 
-                // If connection exists and is 'Accepted', always mark as 'Connected'
-                if ($member->connection_status !== 'Connected' && isset($connection) && $connection->status === 'Accepted') {
-                    $member->connection_status = 'Connected';
+                    if ($connection && $connection->status === 'Accepted') {
+                        $member->connection_status = 'Connected';
+                    }
                 }
-            });
+            }
 
-            return view('admin.connection.categoryWiseMembers', compact('category', 'members', 'authCircleId'));
+            return view('partials.member-cards', ['members' => $category->members], compact('authCircleId'));
         } catch (\Throwable $th) {
-            // Log the error
             ErrorLogger::logError($th, request()->fullUrl());
-            return view('servererror');
+            return response()->json(['message' => 'Server error'], 500);
         }
     }
 
@@ -339,10 +497,46 @@ class ConnectionController extends Controller
 
     //     return view('admin.connection.myConnection', compact('connections'));
     // }
-    public function myConnections()
+    // public function myConnections()
+    // {
+    //     try {
+    //         $userId = Auth::id();
+
+    //         // Fetch connections where the authenticated user is either the userId or memberId
+    //         $connections = Connection::where(function ($query) use ($userId) {
+    //             $query->where('userId', $userId)
+    //                 ->orWhere('memberId', $userId);
+    //         })
+    //             ->where('status', 'Accepted')
+    //             ->with(['user:id,firstName,lastName,email'])
+    //             ->paginate(10);
+
+    //         // Include connected user's details for convenience
+    //         $connections->each(function ($connection) {
+    //             $connection->connectedUser = $connection->connected_user;
+    //         });
+
+    //         // Fetch circleId from member table based on the userId
+    //         $circleId = Member::where('userId', $userId)->pluck('circleId')->first();
+
+    //         // Fetch all members with the same circleId
+    //         $myConnections = Member::where('circleId', $circleId)->where('userId', '!=', $userId)->paginate(10);
+
+    //         return view('admin.connection.myConnection', compact('connections', 'myConnections'));
+    //     } catch (\Throwable $th) {
+    //         // throw $th;
+    //         // Log the error using the ErrorLogger utility
+    //         ErrorLogger::logError($th, request()->fullUrl());
+
+    //         return view('servererror');
+    //     }
+    // }
+
+    public function myConnectionsOld()
     {
         try {
             $userId = Auth::id();
+
 
             // Fetch connections where the authenticated user is either the userId or memberId
             $connections = Connection::where(function ($query) use ($userId) {
@@ -351,7 +545,7 @@ class ConnectionController extends Controller
             })
                 ->where('status', 'Accepted')
                 ->with(['user:id,firstName,lastName,email'])
-                ->paginate(10);
+                ->get();
 
             // Include connected user's details for convenience
             $connections->each(function ($connection) {
@@ -370,6 +564,64 @@ class ConnectionController extends Controller
             // Log the error using the ErrorLogger utility
             ErrorLogger::logError($th, request()->fullUrl());
 
+            return view('servererror');
+        }
+    }
+
+
+    public function myConnections()
+    {
+        try {
+            $userId = Auth::id();
+
+            // My Connections
+            $connections = Connection::where(function ($query) use ($userId) {
+                $query->where('userId', $userId)->orWhere('memberId', $userId);
+            })
+                ->where('status', 'Accepted')
+                ->with([
+                    'user:id,firstName,lastName,email,contactNo',
+                    'members:id,userId,profilePhoto,circleId,companyName,companyLogo,keyWords,businessCategoryId' // Include data from members table
+                ])
+                ->get();
+
+            $connections->each(function ($connection) {
+                $connection->connectedUser = $connection->connected_user;
+            });
+
+            // Sent Requests
+            $sentRequests = Connection::where('userId', $userId)
+                ->where('status', 'Pending')
+                ->with([
+                    'receiver' => function ($query) {
+                        $query->select('id', 'email', 'firstName', 'lastName', 'contactNo');
+                    },
+                    'receiverMember' => function ($query) {
+                        $query->select('userId', 'id', 'profilePhoto', 'circleId', 'companyName', 'companyLogo', 'keyWords', 'businessCategoryId');
+                    }
+                ])
+                ->get();
+
+            // Received Requests
+            $receivedRequests = Connection::where('memberId', $userId)
+                ->where('status', 'Pending')
+                ->with([
+                    'user' => function ($query) {
+                        $query->select('id', 'email', 'firstName', 'lastName', 'contactNo');
+                    },
+                    'members' => function ($query) {
+                        $query->select('id', 'userId', 'profilePhoto', 'circleId', 'companyName', 'companyLogo', 'keyWords', 'businessCategoryId');
+                    }
+                ])
+                ->get();
+
+            return view('admin.connection.myConnection', compact(
+                'connections',
+                'sentRequests',
+                'receivedRequests'
+            ));
+        } catch (\Throwable $th) {
+            ErrorLogger::logError($th, request()->fullUrl());
             return view('servererror');
         }
     }
@@ -423,8 +675,7 @@ class ConnectionController extends Controller
         try {
             $connection = Connection::findOrFail($id);
 
-            $connection->status = "Rejected";
-            $connection->save();
+            $connection->delete();
 
             return redirect()->route('connection.myConnections')
                 ->with('success', 'Rejected Successfully');

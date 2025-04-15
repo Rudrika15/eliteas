@@ -134,6 +134,9 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('circlecalls-delete/{id}', [CircleCallController::class, 'delete']);
 
 
+    //Member Indution Count
+
+    Route::get('member-induction-count/{id?}', [ApiController::class, 'induction']);
 
 
     // Circle Meeting Business Giver
@@ -415,6 +418,10 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     Route::get('/connections/getCircleMembers/{id?}', [ConnectionController::class, 'getCircleMembers']);
     Route::get('/connections/getCategoryMembers/{id?}', [ConnectionController::class, 'getCategoryMembers']);
+
+    // Search Members for Chat Modules
+
+    Route::get('/chat-connection-search', [ConnectionController::class, 'chatConnectionSearch']);
 
     //change password
     Route::post('v1/change-password', [ApiController::class, 'changePassword']);
