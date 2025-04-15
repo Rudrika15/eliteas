@@ -93,7 +93,8 @@ class EventController extends Controller
         try {
             $event = Event::with('circle')
                 ->where('status', 'Active')
-                ->whereDate('event_date', '>=', Carbon::today())
+                ->whereDate('event_date', '>=', Carbon::today()->startOfDay())
+                // ->whereDate('event_date', '>=', Carbon::today())
                 ->orderBy('id', 'DESC')
                 ->paginate(10);
             return view('admin.event.memberEventIndex', compact('event'));
