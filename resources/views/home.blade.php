@@ -41,7 +41,6 @@
             {{-- @include('components.upcomingEvent') --}}
             {{-- Upcoming Event end --}}
 
-
         </div>
 
 
