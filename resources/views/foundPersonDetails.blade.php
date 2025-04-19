@@ -231,6 +231,57 @@
 
             </div>
         </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container mt-5">
+
+        <!-- Tabs Navigation -->
+        <ul class="nav nav-tabs" id="profileTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <a class="nav-link active" id="profile-tab" data-bs-toggle="tab" href="#myProfile" role="tab" aria-controls="myProfile" aria-selected="true">My Profile</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="bio-tab" data-bs-toggle="tab" href="#myBio" role="tab" aria-controls="myBio" aria-selected="false">My Bios</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="top-profile-tab" data-bs-toggle="tab" href="#topProfile" role="tab" aria-controls="topProfile" aria-selected="false">Tops Profile</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="gains-profile-tab" data-bs-toggle="tab" href="#gainsProfile" role="tab" aria-controls="gainsProfile" aria-selected="false">Gains Profile</a>
+            </li>
+        </ul>
+
+        <!-- Tabs Content -->
+        <div class="tab-content mt-3" id="profileTabContent">
+
+            <!-- My Profile Tab -->
+            <div class="tab-pane fade show active" id="myProfile" role="tabpanel" aria-labelledby="profile-tab">
+                <div class="content-section">
+                    <h5>My Profile</h5>
+                    <ul>
+                        {{-- <li><span class="title">Full Name:</span> <span class="value">{{ $member->firstName ?? '-' }}
+                                {{ $member->lastName ?? '-' }}</span></li> --}}
+                        {{-- @if ($memberCircleId == $userCircleId) --}}
+                        <li><span class="title">Email:</span> <span class="value">{{ $member->user->email }}</span>
+                        </li>
+                        <li><span class="title">Mobile:</span> <span class="value">{{ $member->user->contactNo }}</span>
+                        </li>
+                        {{-- @elseif (isset($memberStatus) && $memberStatus->status == 'Accepted')
+                            <li><span class="title">Email:</span> <span class="value">{{ $member->user->email }}</span>
+                            </li>
+                            <li><span class="title">Mobile:</span> <span class="value">{{ $member->user->contactNo }}</span>
+                            </li>
+                        @else --}}
+                        {{-- @elseif ($connections->isNotEmpty() && $connections->first()->status == 'Accepted')
+                            <li><span class="title">Email:</span> <span class="value">{{ $member->user->email }}</span></li>
+                            <li><span class="title">Mobile:</span> <span class="value">{{ $member->user->contactNo }}</span></li>
+                        @else --}}
+                        {{-- <li><span class="title">Email:</span> <span class="value">****{{ substr($member->user->email, -8) }}</span>
+                            </li>
+                            <li><span class="title">Mobile:</span> <span class="value">****{{ substr($member->user->contactNo, -3) }}</span>
+                            </li> --}}
+                        {{-- @endif --}}
 
 
 

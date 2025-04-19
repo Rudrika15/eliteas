@@ -69,24 +69,46 @@
                 </div>
 
 
-                <!-- Table with stripped rows -->
-                <div class="table-responsive">
-                    <table class="table table-bordered table-striped table-hover">
-                        <thead>
-                            <tr>
-                                <th>S.No</th>
-                                <th>Created By</th>
-                                <th>Sponsored By</th>
-                                <th>Circle Name</th>
-                                <th>Member Name</th>
-                                <th>Business Category</th>
-                                <th>Membership Type</th>
-                                <th>Roles</th> <!-- New column for roles -->
-                                <th>Action</th>
-                                <th>Role Action</th> <!-- New column for assigning role -->
-                                <th>Assign Circle</th> <!-- New column for assigning role -->
-                            </tr>
-                        </thead>
+            <!-- Table with stripped rows -->
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>S.No</th>
+                            <th>Circle Name</th>
+                            <th>Member Name</th>
+                            <th>Sponsored By</th>
+                            <th>Business Category</th>
+                            <th>Membership Type</th>
+                            <th>Roles</th> <!-- New column for roles -->
+                            <th>Action</th>
+                            <th>Role Action</th> <!-- New column for assigning role -->
+                            <th>Assign Circle</th> <!-- New column for assigning role -->
+                            <th>Created By</th>
+                        </tr>
+                    </thead>
+                    
+                    <tbody>
+                        {{-- {{$member}} --}}
+                        @foreach ($member as $circlememberData)
+                        <tr>
+                            <th>{{ ($member->currentPage() - 1) * $member->perPage() + $loop->index + 1 }}</th>
+                            
+                            <td>{{ $circlememberData->circle->circleName ?? '-' }}</td>
+                            <td>{{ $circlememberData->firstName ?? '-' }} {{ $circlememberData->lastName ?? '' }}
+                            </td>
+                            <td>{{ $circlememberData->sponsors->firstName ?? '' }} {{
+                                $circlememberData->sponsors->lastName ?? '' }}</td>
+                            <td>{{ $circlememberData->bCategory->categoryName ?? '-' }}</td>
+                            <td>{{ $circlememberData->membershipType ?? '-' }} </td>
+                            {{-- <td>
+                                @foreach ($circlememberData->user->roles as $role)
+                                <span class="badge rounded-pill bg-success">{{ $role->name }}</span>
+                                @if (!$loop->last)
+                                ,
+                                @endif
+                                @endforeach
+                            </td> --}}
 
                         <tbody>
                             {{-- {{$member}} --}}
@@ -153,12 +175,36 @@
 
                                         {{-- Modal --}}
 
-                                        <div class="modal fade" id="assignRoleModal{{ $circlememberData->id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="assignRoleModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog modal-dialog-centered">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title" id="assignRoleModalLabel">Assign Role</h5>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                <div class="modal fade" id="assignRoleModal{{ $circlememberData->id }}"
+                                    data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                                    aria-labelledby="assignRoleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="assignRoleModalLabel">Assign Role</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form action="{{ route('assign.role') }}" method="POST">
+                                                    @csrf
+                                                    <input type="hidden" name="memberId"
+                                                        value="{{ $circlememberData->id }}">
+                                                    {{-- <select name="roleId" class="form-select">
+                                                        <option value="">Select Role</option>
+                                                        @foreach ($roles as $role)
+                                                        @if (
+                                                        !in_array($role->name, ['Franchise Admin', 'Member', 'Admin',
+                                                        'Trainer']) &&
+                                                        !$circlememberData->user->roles->contains($role->id))
+                                                        <option value="{{ $role->id }}">
+                                                            {{ $role->name }}</option>
+                                                        @endif
+                                                        @endforeach
+                                                    </select> --}}
+                                                    <div class="d-flex justify-content-end mt-3">
+                                                        <button type="submit"
+                                                            class="btn btn-bg-blue btn-sm">Assign</button>
                                                     </div>
                                                     <div class="modal-body">
                                                         <form action="{{ route('assign.role') }}" method="POST">
@@ -189,12 +235,34 @@
                                         </button>
                                         {{-- Modal --}}
 
-                                        <div class="modal fade" id="removeRoleModal{{ $circlememberData->id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="removeRoleModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog modal-dialog-centered">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title" id="removeRoleModalLabel">Remove Role</h5>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                <div class="modal fade" id="removeRoleModal{{ $circlememberData->id }}"
+                                    data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                                    aria-labelledby="removeRoleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="removeRoleModalLabel">Remove Role</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form action="{{ route('remove.role') }}" method="POST">
+                                                    @csrf
+                                                    <input type="hidden" name="memberId"
+                                                        value="{{ $circlememberData->id }}">
+                                                    {{-- <select name="roleId" class="form-select">
+                                                        <option value="">Select Role</option>
+                                                        @foreach ($circlememberData->user->roles as $role)
+                                                        @if (!in_array($role->name, ['Member', 'Trainer', 'Admin']))
+                                                        <option value="{{ $role->id }}">
+                                                            {{ $role->name }}</option>
+                                                        @endif
+                                                        @endforeach
+                                                    </select> --}}
+
+                                                    <div class="d-flex justify-content-end mt-3">
+                                                        <button type="submit"
+                                                            class="btn btn-bg-orange btn-sm">Remove</button>
                                                     </div>
                                                     <div class="modal-body">
                                                         <form action="{{ route('remove.role') }}" method="POST">
@@ -254,7 +322,11 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </td>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>{{ $circlememberData->users->firstName ?? '' }}
+                                {{ $circlememberData->users->lastName ?? '' }}</td>
 
                                 </tr>
                             @endforeach
@@ -339,10 +411,9 @@
                                                         $('tbody').append(`
                                     <tr>
                                         <th>${index + 1}</th>
-                                        <td>${row.firstName} ${row.lastName}</td>
-                                        <td></td>
                                         <td>${row.circle.circleName}</td>
                                         <td>${row.firstName} ${row.lastName}</td>
+                                        <td>${row.sponsors.firstName} ${row.sponsors.lastName}</td>
                                         <td>${row.b_category.categoryName}</td>
                                         <td>${row.membershipType}</td>
                                         <td>${rolesHTML}</td>
@@ -451,7 +522,65 @@
                                         td >
 
                                             <
-                                            td >
+                                            button type = "submit"
+                                            class = "btn btn-danger btn-sm" > Remove < /button> < /
+                                            div > <
+                                                /form> < /
+                                            div > <
+                                                /div> < /
+                                            div > <
+                                                /div> < /
+                                            td > 
+                                            
+    <td>
+                                    <button type="button" class="btn btn-bg-blue btn-sm btn-tooltip" data-bs-toggle="modal"
+                                        data-bs-target="#assignCircleModal${row.id}"><i
+                                            class="bi bi-person-plus"></i>
+                                        <span class="btn-text">Assign Circle</span>
+                                    </button>
+
+                                    {{-- Modal --}}
+
+                                    <div class="modal fade" id="assignCircleModal${row.id}"
+                                        data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                                        aria-labelledby="assignCircleModalLabel${row.id}" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="assignCircleModalLabel${row.id}">Assign Circle
+                                                    </h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <form action="{{ route('assign.circle') }}" method="POST">
+                                                        @csrf
+                                                        <input type="hidden" name="memberId"
+                                                            value="${row.id}">
+                                                        
+
+<select name="circleId" class="form-select">
+    <option value="">Select Circle</option>
+    ${Array.isArray(response.circles) ? 
+        response.circles.map(function(circle) {
+            return `<option value="${circle.id}">${circle.circleName}</option>`;
+        }).join('') 
+        : '<option value="">No circles available</option>'}
+</select>
+
+                                                        <div class="d-flex justify-content-end mt-3">
+                                                            <button type="submit" class="btn btn-bg-blue btn-sm">Assign
+                                                                Circle</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                        <td>Admin</td>
+
+                                            
                                             <
                                             button type = "button"
                                         class = "btn btn-bg-blue btn-sm btn-tooltip"

@@ -111,7 +111,7 @@ class EventController extends Controller
     public function create(Request $request)
     {
         try {
-            $circle = Circle::where('status', 'Active')->get();
+            $circle = Circle::where('status', 'Active')->orderBy('circleName', 'asc')->get();
             $eventType = EventType::where('status', 'Active')->get();
             return view('admin.event.create', compact('circle', 'eventType'));
         } catch (\Throwable $th) {

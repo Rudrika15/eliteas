@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\BusinessCategory;
 use App\Models\Circle;
+use App\Models\CircleMeetingMembersBusiness;
 use App\Utils\ErrorLogger;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -594,48 +595,261 @@ class ConnectionController extends Controller
 
 
 
+    // public function getCircleMembers(Request $request, $id = null)
+    // {
+    //     try {
+    //         // If ID is provided, show details for the specific circle
+    //         if ($id) {
+    //             // Fetch circle details and related active members
+    //             $circle = Circle::with(['members' => function ($query) {
+    //                 $query->where('status', 'Active') // Fetch only active members
+    //                     ->with('bCategory:id,categoryName'); // Fetch category name
+    //             }, 'city' => function ($query) {
+    //                 $query->select('id', 'cityName'); // Fetch city name
+    //             }])->findOrFail($id);
+
+    //             // Return the circle and its active members as JSON
+    //             return response()->json([
+    //                 'circle' => $circle,
+    //                 'members' => $circle->members,
+    //             ]);
+    //         }
+
+    //         // If no ID is provided, return the list of circles
+    //         $circles = Circle::where('status', 'Active')
+    //             ->with(['city' => function ($query) {
+    //                 $query->select('id', 'cityName');
+    //             }])
+    //             ->withCount(['members' => function ($query) {
+    //                 $query->where('status', 'Active'); // Count only active members if needed
+    //             }])
+    //             ->get();
+
+    //         // Return the list of circles with member count as JSON
+    //         return response()->json([
+    //             'circles' => $circles,
+    //         ]);
+    //     } catch (\Throwable $th) {
+    //         // Log the error
+    //         ErrorLogger::logError($th, request()->fullUrl());
+    //         return response()->json([
+    //             'error' => 'An error occurred. Please try again later.',
+    //         ], 500);
+    //     }
+    // }
+
+
+    // public function getCircleMembers(Request $request, $id = null)
+    // {
+    //     try {
+    //         // Fetch all active business meetings
+    //         $businessMeetings = CircleMeetingMembersBusiness::where('status', 'Active')->get();
+
+    //         // If ID is provided, show details for the specific circle
+    //         if ($id) {
+    //             $circle = Circle::with(['members' => function ($query) {
+    //                 $query->where('status', 'Active')
+    //                     ->with('bCategory:id,categoryName');
+    //             }, 'city' => function ($query) {
+    //                 $query->select('id', 'cityName');
+    //             }])->findOrFail($id);
+
+    //             // Calculate business amount for this circle
+    //             $circle->totalBusinessAmount = $businessMeetings->filter(function ($meeting) use ($id) {
+    //                 $businessGiverCircleId = Member::where('userId', $meeting->businessGiverId)->value('circleId');
+    //                 return $businessGiverCircleId == $id;
+    //             })->sum('amount');
+
+    //             return response()->json([
+    //                 'circle' => $circle,
+    //                 'members' => $circle->members,
+    //                 'totalBusinessAmount' => $circle->totalBusinessAmount,
+    //             ]);
+    //         }
+
+    //         // For all active circles
+    //         $circles = Circle::where('status', 'Active')
+    //             ->with(['city' => function ($query) {
+    //                 $query->select('id', 'cityName');
+    //             }])
+    //             ->withCount(['members' => function ($query) {
+    //                 $query->where('status', 'Active');
+    //             }])
+    //             ->get();
+
+    //         // Calculate business amount for each circle
+    //         $circles->each(function ($circle) use ($businessMeetings) {
+    //             $circle->totalBusinessAmount = $businessMeetings->filter(function ($meeting) use ($circle) {
+    //                 $businessGiverCircleId = Member::where('userId', $meeting->businessGiverId)->value('circleId');
+    //                 return $businessGiverCircleId == $circle->id;
+    //             })->sum('amount');
+    //         });
+
+    //         return response()->json([
+    //             'circles' => $circles,
+    //         ]);
+    //     } catch (\Throwable $th) {
+    //         ErrorLogger::logError($th, request()->fullUrl());
+    //         return response()->json([
+    //             'error' => 'An error occurred. Please try again later.',
+    //         ], 500);
+    //     }
+    // }
+
+
+    // public function getCircleMembers(Request $request, $id = null)
+    // {
+    //     try {
+    //         // Fetch all active business meetings
+    //         $businessMeetings = CircleMeetingMembersBusiness::where('status', 'Active')->get();
+
+    //         // If ID is provided, show details for the specific circle
+    //         if ($id) {
+    //             $circle = Circle::with(['members' => function ($query) {
+    //                 $query->where('status', 'Active')
+    //                     ->with('bCategory:id,categoryName');
+    //             }, 'city' => function ($query) {
+    //                 $query->select('id', 'cityName');
+    //             }])->findOrFail($id);
+
+    //             // Calculate business amount for this circle
+    //             $circle->totalBusinessAmount = $businessMeetings->filter(function ($meeting) use ($id) {
+    //                 $businessGiverCircleId = Member::where('userId', $meeting->businessGiverId)->value('circleId');
+    //                 return $businessGiverCircleId == $id;
+    //             })->sum('amount');
+
+    //             return response()->json([
+    //                 'success' => true,
+    //                 'circle' => $circle,
+    //                 // 'totalBusinessAmount' => $circle->totalBusinessAmount,
+    //             ]);
+    //         }
+
+    //         // For all active circles
+    //         $circles = Circle::where('status', 'Active')
+    //             ->with(['city' => function ($query) {
+    //                 $query->select('id', 'cityName');
+    //             }])
+    //             ->withCount(['members' => function ($query) {
+    //                 $query->where('status', 'Active');
+    //             }])
+    //             ->get();
+
+    //         // Calculate business amount for each circle
+    //         $circles->each(function ($circle) use ($businessMeetings) {
+    //             $circle->totalBusinessAmount = $businessMeetings->filter(function ($meeting) use ($circle) {
+    //                 $businessGiverCircleId = Member::where('userId', $meeting->businessGiverId)->value('circleId');
+    //                 return $businessGiverCircleId == $circle->id;
+    //             })->sum('amount');
+    //         });
+
+    //         return response()->json([
+    //             'success' => true,
+    //             'circles' => $circles,
+    //         ]);
+    //     } catch (\Throwable $th) {
+    //         ErrorLogger::logError($th, request()->fullUrl());
+    //         return response()->json([
+    //             'success' => false,
+    //             'error' => 'An error occurred. Please try again later.',
+    //         ], 500);
+    //     }
+    // }
+
     public function getCircleMembers(Request $request, $id = null)
     {
         try {
-            // If ID is provided, show details for the specific circle
-            if ($id) {
-                // Fetch circle details and related active members
-                $circle = Circle::with(['members' => function ($query) {
-                    $query->where('status', 'Active') // Fetch only active members
-                        ->with('bCategory:id,categoryName'); // Fetch category name
-                }, 'city' => function ($query) {
-                    $query->select('id', 'cityName'); // Fetch city name
-                }])->findOrFail($id);
+            $businessMeetings = CircleMeetingMembersBusiness::with('member')->where('status', 'Active')->get();
 
-                // Return the circle and its active members as JSON
+            if ($id) {
+                $circle = Circle::with([
+                    'members' => function ($query) {
+                        $query->where('status', 'Active')
+                            ->with([
+                                'bCategory:id,categoryName',
+                                'user:id,email,contactNo'
+                            ]);
+                    },
+                    'city:id,cityName'
+                ])->findOrFail($id);
+
+                $circle->totalBusinessAmount = 0;
+
+                // Initialize businessAmount = 0 for all members
+                foreach ($circle->members as $member) {
+                    $member->businessAmount = 0;
+                }
+
+                foreach ($businessMeetings as $meeting) {
+                    $businessGiverCircleId = Member::where('userId', $meeting->businessGiverId)->value('circleId');
+                    if ($businessGiverCircleId == $circle->id) {
+                        $circle->totalBusinessAmount += $meeting->amount;
+
+                        foreach ($circle->members as $member) {
+                            if ($member->id == $meeting->member->id) {
+                                $member->businessAmount += $meeting->amount;
+                            }
+                        }
+                    }
+                }
+
                 return response()->json([
+                    'success' => true,
                     'circle' => $circle,
-                    'members' => $circle->members,
                 ]);
             }
 
-            // If no ID is provided, return the list of circles
             $circles = Circle::where('status', 'Active')
-                ->with(['city' => function ($query) {
-                    $query->select('id', 'cityName');
-                }])
+                ->with([
+                    'members' => function ($query) {
+                        $query->where('status', 'Active')
+                            ->with([
+                                'bCategory:id,categoryName',
+                                'user:id,email,contactNo'
+                            ]);
+                    },
+                    'city:id,cityName'
+                ])
                 ->withCount(['members' => function ($query) {
-                    $query->where('status', 'Active'); // Count only active members if needed
+                    $query->where('status', 'Active');
                 }])
                 ->get();
 
-            // Return the list of circles with member count as JSON
+            foreach ($circles as $circle) {
+                $circle->totalBusinessAmount = 0;
+
+                // Initialize businessAmount = 0 for all members
+                foreach ($circle->members as $member) {
+                    $member->businessAmount = 0;
+                }
+
+                foreach ($businessMeetings as $meeting) {
+                    $businessGiverCircleId = Member::where('userId', $meeting->businessGiverId)->value('circleId');
+                    if ($businessGiverCircleId == $circle->id) {
+                        $circle->totalBusinessAmount += $meeting->amount;
+
+                        foreach ($circle->members as $member) {
+                            if ($member->id == $meeting->member->id) {
+                                $member->businessAmount += $meeting->amount;
+                            }
+                        }
+                    }
+                }
+            }
+
             return response()->json([
+                'success' => true,
                 'circles' => $circles,
             ]);
         } catch (\Throwable $th) {
-            // Log the error
             ErrorLogger::logError($th, request()->fullUrl());
             return response()->json([
+                'success' => false,
                 'error' => 'An error occurred. Please try again later.',
             ], 500);
         }
     }
+
 
 
     public function getCategoryMembers($id = null)

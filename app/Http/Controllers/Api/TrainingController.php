@@ -19,6 +19,7 @@ class TrainingController extends Controller
     {
         try {
             $trainings = Training::with('trainer')
+                ->with('registerTraining')
                 ->where('status', 'Active')
                 // ->where('start_date', '>=', Carbon::now()->subDays(1))
                 ->where('date', '>', now()->toDateString())

@@ -28,4 +28,9 @@ class TrainingRegister extends Model
     {
         return $this->belongsTo(User::class, 'userId', 'id');
     }
+
+    public function registredUsersList()
+    {
+        return $this->belongsToMany(User::class, 'userId', 'id');
+    }
 }

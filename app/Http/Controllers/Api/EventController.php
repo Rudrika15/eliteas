@@ -288,6 +288,278 @@ class EventController extends Controller
         }
     }
 
+    // public function eventDetails(Request $request, $id = null)
+    // {
+    //     try {
+    //         if ($id) {
+    //             // Get specific event by ID with related circle and all registrations
+    //             $event = Event::with(['circle', 'registrations.members' => function ($query) {
+    //                 $query->select('id', 'userId', 'firstName', 'lastName');
+    //             }])
+    //                 ->where('status', 'Active')
+    //                 ->where('eventStatus', 'Publish')
+    //                 ->whereDate('event_date', '>=', now()->format('Y-m-d'))
+    //                 ->find($id);
+
+    //             if (!$event) {
+    //                 return Utils::errorResponse([
+    //                     'error' => 'Event not found or inactive.'
+    //                 ], 'Not Found', 404);
+    //             }
+
+    //             return Utils::sendResponse([
+    //                 'event' => $event,
+    //                 'registration_count' => $event->registrations->count()
+    //             ], 'Event details retrieved successfully', 200);
+    //         }
+
+    //         // If no ID, return all future or current events
+    //         $events = Event::with(['circle', 'registrations'])
+    //             ->where('status', 'Active')
+    //             ->where('eventStatus', 'Publish')
+    //             ->whereDate('event_date', '>=', now()->format('Y-m-d'))
+    //             ->orderBy('event_date', 'ASC')
+    //             ->get();
+
+    //         return Utils::sendResponse([
+    //             'events' => $events->map(function ($event) {
+    //                 return [
+    //                     'id' => $event->id,
+    //                     'eventName' => $event->event_name,
+    //                     'eventDate' => $event->event_date,
+    //                     'eventStatus' => $event->eventStatus,
+    //                     'circle' => $event->circle,
+    //                     'registration_count' => $event->registrations->count(),
+    //                     'registrations' => $event->registrations
+    //                 ];
+    //             })
+    //         ], 'Events retrieved successfully', 200);
+    //     } catch (\Throwable $th) {
+    //         return Utils::errorResponse([
+    //             'error' => $th->getMessage()
+    //         ], 'Internal Server Error', 500);
+    //     }
+    // }
+
+
+    // public function eventDetails(Request $request, $id)
+    // {
+    //     try {
+    //         // Get the authenticated user
+    //         $authUser = auth()->user();
+
+    //         // Get the member ID from the members table
+    //         $memberId = Member::where('userId', $authUser->id)->value('id');
+
+    //         if (!$memberId) {
+    //             return Utils::errorResponse([
+    //                 'error' => 'Member not found.'
+    //             ], 'Not Found', 404);
+    //         }
+
+    //         // Get specific event by ID with related circle and all registrations
+    //         $event = Event::with(['circle', 'registrations.members' => function ($query) {
+    //             $query->select('id', 'userId', 'firstName', 'lastName');
+    //         }])
+    //             ->where('status', 'Active')
+    //             ->where('eventStatus', 'Publish')
+    //             ->whereDate('event_date', '>=', now()->format('Y-m-d'))
+    //             ->find($id);
+
+    //         if (!$event) {
+    //             return Utils::errorResponse([
+    //                 'error' => 'Event not found or inactive.'
+    //             ], 'Not Found', 404);
+    //         }
+
+    //         // Generate signed link
+    //         $eventLink = URL::signedRoute('event.link', [
+    //             'slug' => $event->event_slug,
+    //             'ref' => $memberId
+    //         ], now()->addMinutes(60));
+
+    //         return Utils::sendResponse([
+    //             'event' => $event,
+    //             'eventLink' => $eventLink,
+    //             'registration_count' => $event->registrations->count()
+    //         ], 'Event details retrieved successfully', 200);
+    //     } catch (\Throwable $th) {
+    //         return Utils::errorResponse([
+    //             'error' => $th->getMessage()
+    //         ], 'Internal Server Error', 500);
+    //     }
+    // }
+
+    public function eventDetails(Request $request, $id)
+    {
+        try {
+            // Get the authenticated user
+            $authUser = auth()->user();
+
+            // Get the member ID from the members table
+            $memberId = Member::where('userId', $authUser->id)->value('id');
+
+            if (!$memberId) {
+                return Utils::errorResponse([
+                    'error' => 'Member not found.'
+                ], 'Not Found', 404);
+            }
+
+            // Get specific event by ID with related circle and all registrations
+            $event = Event::with(['circle', 'registrations.members' => function ($query) {
+                $query->select('id', 'userId', 'firstName', 'lastName');
+            }])
+                ->where('status', 'Active')
+                ->where('eventStatus', 'Publish')
+                ->whereDate('event_date', '>=', now()->format('Y-m-d'))
+                ->find($id);
+
+            if (!$event) {
+                return Utils::errorResponse([
+                    'error' => 'Event not found or inactive.'
+                ], 'Not Found', 404);
+            }
+
+            // Check if the member is registered for this event
+            $isRegistered = $event->registrations()->where('memberId', $memberId)->exists();
+
+            // Generate signed link
+            $eventLink = URL::signedRoute('event.link', [
+                'slug' => $event->event_slug,
+                'ref' => $memberId
+            ], now()->addMinutes(60));
+
+            return Utils::sendResponse([
+                'event' => $event,
+                'eventLink' => $eventLink,
+                'registration_count' => $event->registrations->count(),
+                'isRegistered' => $isRegistered
+            ], 'Event details retrieved successfully', 200);
+        } catch (\Throwable $th) {
+            return Utils::errorResponse([
+                'error' => $th->getMessage()
+            ], 'Internal Server Error', 500);
+        }
+    }
+
+
+    // public function eventDetails(Request $request, $id = null)
+    // {
+    //     try {
+    //         // Get the authenticated user
+    //         $authUser = auth()->user();
+
+    //         // Get the member ID from the members table
+    //         $memberId = Member::where('userId', $authUser->id)->value('id');
+
+    //         if (!$memberId) {
+    //             return response()->json([
+    //                 'success' => false,
+    //                 'message' => 'Member not found.',
+    //                 'data' => null
+    //             ], 404);
+    //         }
+
+    //         // If specific event ID is passed
+    //         if ($id) {
+    //             // Get the event with circle and member data
+    //             $event = Event::with([
+    //                 'circle',
+    //                 'registrations.members' => function ($query) {
+    //                     $query->select('id', 'userId', 'firstName', 'lastName');
+    //                 }
+    //             ])
+    //                 ->where('status', 'Active')
+    //                 ->where('eventStatus', 'Publish')
+    //                 ->whereDate('event_date', '>=', now()->format('Y-m-d'))
+    //                 ->find($id);
+
+    //             if (!$event) {
+    //                 return response()->json([
+    //                     'success' => false,
+    //                     'message' => 'Event not found or inactive.',
+    //                     'data' => null
+    //                 ], 404);
+    //             }
+
+    //             // Generate signed link
+    //             $eventLink = URL::signedRoute('event.link', [
+    //                 'slug' => $event->event_slug,
+    //                 'ref' => $memberId
+    //             ], now()->addMinutes(60));
+
+    //             // Return cleaned single event response
+    //             return response()->json([
+    //                 'success' => true,
+    //                 'message' => 'Event details retrieved successfully',
+    //                 'data' => [
+    //                     'id' => $event->id,
+    //                     'eventName' => $event->eventName,
+    //                     'eventDate' => $event->event_date,
+    //                     'eventStatus' => $event->eventStatus,
+    //                     'circle' => $event->circle,
+    //                     'registration_count' => $event->registrations->count(),
+    //                     'eventLink' => $eventLink,
+    //                     'registrations' => $event->registrations->map(function ($reg) {
+    //                         return [
+    //                             'id' => $reg->id,
+    //                             'memberId' => $reg->memberId,
+    //                             'member' => $reg->members
+    //                         ];
+    //                     }),
+    //                 ]
+    //             ], 200);
+    //         }
+
+    //         // If no ID is passed, return all upcoming events
+    //         $events = Event::with([
+    //             'circle',
+    //             'registrations.members' => function ($query) {
+    //                 $query->select('id', 'userId', 'firstName', 'lastName');
+    //             }
+    //         ])
+    //             ->where('status', 'Active')
+    //             ->where('eventStatus', 'Publish')
+    //             ->whereDate('event_date', '>=', now()->format('Y-m-d'))
+    //             ->orderBy('event_date', 'ASC')
+    //             ->get();
+
+    //         // Return mapped list of events
+    //         return response()->json([
+    //             'success' => true,
+    //             'message' => 'Events retrieved successfully',
+    //             'data' => $events->map(function ($event) use ($memberId) {
+    //                 return [
+    //                     'id' => $event->id,
+    //                     'eventName' => $event->eventName,
+    //                     'eventDate' => $event->event_date,
+    //                     'eventStatus' => $event->eventStatus,
+    //                     'circle' => $event->circle,
+    //                     'registration_count' => $event->registrations->count(),
+    //                     'eventLink' => URL::signedRoute('event.link', [
+    //                         'slug' => $event->event_slug,
+    //                         'ref' => $memberId
+    //                     ], now()->addMinutes(60)),
+    //                     'registrations' => $event->registrations->map(function ($reg) {
+    //                         return [
+    //                             'id' => $reg->id,
+    //                             'memberId' => $reg->memberId,
+    //                             'member' => $reg->members
+    //                         ];
+    //                     }),
+    //                 ];
+    //             })
+    //         ], 200);
+    //     } catch (\Throwable $th) {
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => 'Internal Server Error',
+    //             'data' => null,
+    //             'error' => $th->getMessage()
+    //         ], 500);
+    //     }
+    // }
+
 
 
     public function storeUserDetails(Request $request)
