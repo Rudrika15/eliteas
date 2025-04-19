@@ -540,51 +540,145 @@ class ConnectionController extends Controller
     // }
 
 
+    // public function getCircleMembers(Request $request, $id = null)
+    // {
+    //     try {
+    //         // Fetch all active business meetings
+    //         $businessMeetings = CircleMeetingMembersBusiness::where('status', 'Active')->get();
+
+    //         // If ID is provided, show details for the specific circle
+    //         if ($id) {
+    //             $circle = Circle::with(['members' => function ($query) {
+    //                 $query->where('status', 'Active')
+    //                     ->with('bCategory:id,categoryName');
+    //             }, 'city' => function ($query) {
+    //                 $query->select('id', 'cityName');
+    //             }])->findOrFail($id);
+
+    //             // Calculate business amount for this circle
+    //             $circle->totalBusinessAmount = $businessMeetings->filter(function ($meeting) use ($id) {
+    //                 $businessGiverCircleId = Member::where('userId', $meeting->businessGiverId)->value('circleId');
+    //                 return $businessGiverCircleId == $id;
+    //             })->sum('amount');
+
+    //             return response()->json([
+    //                 'success' => true,
+    //                 'circle' => $circle,
+    //                 // 'totalBusinessAmount' => $circle->totalBusinessAmount,
+    //             ]);
+    //         }
+
+    //         // For all active circles
+    //         $circles = Circle::where('status', 'Active')
+    //             ->with(['city' => function ($query) {
+    //                 $query->select('id', 'cityName');
+    //             }])
+    //             ->withCount(['members' => function ($query) {
+    //                 $query->where('status', 'Active');
+    //             }])
+    //             ->get();
+
+    //         // Calculate business amount for each circle
+    //         $circles->each(function ($circle) use ($businessMeetings) {
+    //             $circle->totalBusinessAmount = $businessMeetings->filter(function ($meeting) use ($circle) {
+    //                 $businessGiverCircleId = Member::where('userId', $meeting->businessGiverId)->value('circleId');
+    //                 return $businessGiverCircleId == $circle->id;
+    //             })->sum('amount');
+    //         });
+
+    //         return response()->json([
+    //             'success' => true,
+    //             'circles' => $circles,
+    //         ]);
+    //     } catch (\Throwable $th) {
+    //         ErrorLogger::logError($th, request()->fullUrl());
+    //         return response()->json([
+    //             'success' => false,
+    //             'error' => 'An error occurred. Please try again later.',
+    //         ], 500);
+    //     }
+    // }
+
     public function getCircleMembers(Request $request, $id = null)
     {
         try {
-            // Fetch all active business meetings
-            $businessMeetings = CircleMeetingMembersBusiness::where('status', 'Active')->get();
+            $businessMeetings = CircleMeetingMembersBusiness::with('member')->where('status', 'Active')->get();
 
-            // If ID is provided, show details for the specific circle
             if ($id) {
-                $circle = Circle::with(['members' => function ($query) {
-                    $query->where('status', 'Active')
-                        ->with('bCategory:id,categoryName');
-                }, 'city' => function ($query) {
-                    $query->select('id', 'cityName');
-                }])->findOrFail($id);
+                $circle = Circle::with([
+                    'members' => function ($query) {
+                        $query->where('status', 'Active')
+                            ->with([
+                                'bCategory:id,categoryName',
+                                'user:id,email,contactNo'
+                            ]);
+                    },
+                    'city:id,cityName'
+                ])->findOrFail($id);
 
-                // Calculate business amount for this circle
-                $circle->totalBusinessAmount = $businessMeetings->filter(function ($meeting) use ($id) {
+                $circle->totalBusinessAmount = 0;
+
+                // Initialize businessAmount = 0 for all members
+                foreach ($circle->members as $member) {
+                    $member->businessAmount = 0;
+                }
+
+                foreach ($businessMeetings as $meeting) {
                     $businessGiverCircleId = Member::where('userId', $meeting->businessGiverId)->value('circleId');
-                    return $businessGiverCircleId == $id;
-                })->sum('amount');
+                    if ($businessGiverCircleId == $circle->id) {
+                        $circle->totalBusinessAmount += $meeting->amount;
+
+                        foreach ($circle->members as $member) {
+                            if ($member->id == $meeting->member->id) {
+                                $member->businessAmount += $meeting->amount;
+                            }
+                        }
+                    }
+                }
 
                 return response()->json([
                     'success' => true,
                     'circle' => $circle,
-                    // 'totalBusinessAmount' => $circle->totalBusinessAmount,
                 ]);
             }
 
-            // For all active circles
             $circles = Circle::where('status', 'Active')
-                ->with(['city' => function ($query) {
-                    $query->select('id', 'cityName');
-                }])
+                ->with([
+                    'members' => function ($query) {
+                        $query->where('status', 'Active')
+                            ->with([
+                                'bCategory:id,categoryName',
+                                'user:id,email,contactNo'
+                            ]);
+                    },
+                    'city:id,cityName'
+                ])
                 ->withCount(['members' => function ($query) {
                     $query->where('status', 'Active');
                 }])
                 ->get();
 
-            // Calculate business amount for each circle
-            $circles->each(function ($circle) use ($businessMeetings) {
-                $circle->totalBusinessAmount = $businessMeetings->filter(function ($meeting) use ($circle) {
+            foreach ($circles as $circle) {
+                $circle->totalBusinessAmount = 0;
+
+                // Initialize businessAmount = 0 for all members
+                foreach ($circle->members as $member) {
+                    $member->businessAmount = 0;
+                }
+
+                foreach ($businessMeetings as $meeting) {
                     $businessGiverCircleId = Member::where('userId', $meeting->businessGiverId)->value('circleId');
-                    return $businessGiverCircleId == $circle->id;
-                })->sum('amount');
-            });
+                    if ($businessGiverCircleId == $circle->id) {
+                        $circle->totalBusinessAmount += $meeting->amount;
+
+                        foreach ($circle->members as $member) {
+                            if ($member->id == $meeting->member->id) {
+                                $member->businessAmount += $meeting->amount;
+                            }
+                        }
+                    }
+                }
+            }
 
             return response()->json([
                 'success' => true,
@@ -598,6 +692,7 @@ class ConnectionController extends Controller
             ], 500);
         }
     }
+
 
 
     public function getCategoryMembers($id = null)
