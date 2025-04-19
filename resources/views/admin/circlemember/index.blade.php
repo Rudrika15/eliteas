@@ -76,16 +76,16 @@
                     <thead>
                         <tr>
                             <th>S.No</th>
-                            <th>Created By</th>
-                            <th>Sponsored By</th>
                             <th>Circle Name</th>
                             <th>Member Name</th>
+                            <th>Sponsored By</th>
                             <th>Business Category</th>
                             <th>Membership Type</th>
                             <th>Roles</th> <!-- New column for roles -->
                             <th>Action</th>
                             <th>Role Action</th> <!-- New column for assigning role -->
                             <th>Assign Circle</th> <!-- New column for assigning role -->
+                            <th>Created By</th>
                         </tr>
                     </thead>
                     
@@ -94,23 +94,22 @@
                         @foreach ($member as $circlememberData)
                         <tr>
                             <th>{{ ($member->currentPage() - 1) * $member->perPage() + $loop->index + 1 }}</th>
-                            <td>{{ $circlememberData->users->firstName ?? '' }}
-                                {{ $circlememberData->users->lastName ?? '' }}</td>
-                            <td>{{ $circlememberData->members->firstName ?? '' }} {{
-                                $circlememberData->members->lastName ?? '' }}</td>
+                            
                             <td>{{ $circlememberData->circle->circleName ?? '-' }}</td>
                             <td>{{ $circlememberData->firstName ?? '-' }} {{ $circlememberData->lastName ?? '' }}
                             </td>
+                            <td>{{ $circlememberData->sponsors->firstName ?? '' }} {{
+                                $circlememberData->sponsors->lastName ?? '' }}</td>
                             <td>{{ $circlememberData->bCategory->categoryName ?? '-' }}</td>
                             <td>{{ $circlememberData->membershipType ?? '-' }} </td>
-                            <td>
+                            {{-- <td>
                                 @foreach ($circlememberData->user->roles as $role)
                                 <span class="badge rounded-pill bg-success">{{ $role->name }}</span>
                                 @if (!$loop->last)
                                 ,
                                 @endif
                                 @endforeach
-                            </td>
+                            </td> --}}
 
                             <td>
                                 <a href="{{ route('circlemember.activity', $circlememberData->id) }}"
@@ -174,7 +173,7 @@
                                                     @csrf
                                                     <input type="hidden" name="memberId"
                                                         value="{{ $circlememberData->id }}">
-                                                    <select name="roleId" class="form-select">
+                                                    {{-- <select name="roleId" class="form-select">
                                                         <option value="">Select Role</option>
                                                         @foreach ($roles as $role)
                                                         @if (
@@ -185,7 +184,7 @@
                                                             {{ $role->name }}</option>
                                                         @endif
                                                         @endforeach
-                                                    </select>
+                                                    </select> --}}
                                                     <div class="d-flex justify-content-end mt-3">
                                                         <button type="submit"
                                                             class="btn btn-bg-blue btn-sm">Assign</button>
@@ -220,7 +219,7 @@
                                                     @csrf
                                                     <input type="hidden" name="memberId"
                                                         value="{{ $circlememberData->id }}">
-                                                    <select name="roleId" class="form-select">
+                                                    {{-- <select name="roleId" class="form-select">
                                                         <option value="">Select Role</option>
                                                         @foreach ($circlememberData->user->roles as $role)
                                                         @if (!in_array($role->name, ['Member', 'Trainer', 'Admin']))
@@ -228,7 +227,7 @@
                                                             {{ $role->name }}</option>
                                                         @endif
                                                         @endforeach
-                                                    </select>
+                                                    </select> --}}
 
                                                     <div class="d-flex justify-content-end mt-3">
                                                         <button type="submit"
@@ -282,6 +281,8 @@
                                     </div>
                                 </div>
                             </td>
+                            <td>{{ $circlememberData->users->firstName ?? '' }}
+                                {{ $circlememberData->users->lastName ?? '' }}</td>
 
                         </tr>
                         @endforeach
@@ -366,10 +367,9 @@
                                                             $('tbody').append(`
                                     <tr>
                                         <th>${index + 1}</th>
-                                        <td>${row.firstName} ${row.lastName}</td>
-                                        <td></td>
                                         <td>${row.circle.circleName}</td>
                                         <td>${row.firstName} ${row.lastName}</td>
+                                        <td>${row.sponsors.firstName} ${row.sponsors.lastName}</td>
                                         <td>${row.b_category.categoryName}</td>
                                         <td>${row.membershipType}</td>
                                         <td>${rolesHTML}</td>
@@ -523,6 +523,8 @@
                                         </div>
                                     </div>
                                 </td>
+                                        <td>Admin</td>
+
                                             
                                             <
                                                 /tr>

@@ -277,6 +277,11 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/event/index', [EventController::class, 'index']);
     Route::get('event/visitorIndex', [VisitorController::class, 'eventIndex']);
 
+    //get event by id 
+    // For listing all events and getting event by ID
+    Route::get('/eventDetails/{id?}', [EventController::class, 'eventDetails']);
+
+
     Route::post('/event/registerPayLater', [EventController::class, 'handleEventRegistration']);
 
     // Check if a user is registered for an event

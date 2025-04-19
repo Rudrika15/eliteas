@@ -962,6 +962,7 @@ class ApiController extends Controller
             $authMemberId = $authMember->id;
             $authCircleId = $authMember->circleId;
 
+            // Get all active members from the same circle
             $allmembers = Member::where('status', 'Active')
                 ->where('id', '!=', $authMemberId)
                 ->where('circleId', $authCircleId)
@@ -969,18 +970,66 @@ class ApiController extends Controller
                     $query->where('status', 'Active');
                 })
                 ->with('user')
-                ->with('circle:id,circleName')
+                ->with(['circle:id,circleName,cityId', 'circle.city:id,cityName'])
                 ->get();
 
+            // Get business meeting records
+            $businessMeetings = CircleMeetingMembersBusiness::with(['member'])
+                ->where('status', 'Active')
+                ->get();
+
+            // Calculate total business amount for the circle
+            $totalBusinessAmount = 0;
+            foreach ($businessMeetings as $meeting) {
+                $businessGiverCircleId = Member::where('userId', $meeting->businessGiverId)->value('circleId');
+                if ($businessGiverCircleId == $authCircleId) {
+                    $totalBusinessAmount += $meeting->amount;
+                }
+            }
+
             return Utils::sendResponse(
-                ['allmembers' => $allmembers],
-                'All members retrieved successfully',
+                [
+                    'allmembers' => $allmembers,
+                    'totalBusinessAmount' => $totalBusinessAmount,
+                ],
+                'All members and total business amount retrieved successfully',
                 200
             );
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
+
+    // public function allMembers(Request $request)
+    // {
+    //     try {
+    //         if (!auth()->check()) {
+    //             return Utils::errorResponse([], 'Unauthorized', 401);
+    //         }
+
+    //         $authMember = auth()->user()->member;
+    //         $authMemberId = $authMember->id;
+    //         $authCircleId = $authMember->circleId;
+
+    //         $allmembers = Member::where('status', 'Active')
+    //             ->where('id', '!=', $authMemberId)
+    //             ->where('circleId', $authCircleId)
+    //             ->whereHas('user', function ($query) {
+    //                 $query->where('status', 'Active');
+    //             })
+    //             ->with('user')
+    //             ->with('circle:id,circleName')
+    //             ->get();
+
+    //         return Utils::sendResponse(
+    //             ['allmembers' => $allmembers],
+    //             'All members retrieved successfully',
+    //             200
+    //         );
+    //     } catch (\Throwable $th) {
+    //         return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
+    //     }
+    // }
 
 
 

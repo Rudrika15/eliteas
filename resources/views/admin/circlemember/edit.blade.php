@@ -153,8 +153,8 @@
                                                 <option value="0" selected>Select Member</option>
                                                 @if ($member->sponsoredBy)
                                                 <option value="{{ $member->sponsoredBy }}" selected>
-                                                    {{ $member->members->firstName }}
-                                                    {{ $member->members->lastName }}
+                                                    {{ $member->sponsors->firstName }}
+                                                    {{ $member->sponsors->lastName }}
                                                 </option>
                                                 @endif
                                             </select>

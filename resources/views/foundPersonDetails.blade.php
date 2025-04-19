@@ -584,26 +584,26 @@
                     <ul>
                         {{-- <li><span class="title">Full Name:</span> <span class="value">{{ $member->firstName ?? '-' }}
                                 {{ $member->lastName ?? '-' }}</span></li> --}}
-                        @if ($memberCircleId == $userCircleId)
-                            <li><span class="title">Email:</span> <span class="value">{{ $member->user->email }}</span>
-                            </li>
-                            <li><span class="title">Mobile:</span> <span class="value">{{ $member->user->contactNo }}</span>
-                            </li>
-                            {{-- @elseif (isset($memberStatus) && $memberStatus->status == 'Accepted')
+                        {{-- @if ($memberCircleId == $userCircleId) --}}
+                        <li><span class="title">Email:</span> <span class="value">{{ $member->user->email }}</span>
+                        </li>
+                        <li><span class="title">Mobile:</span> <span class="value">{{ $member->user->contactNo }}</span>
+                        </li>
+                        {{-- @elseif (isset($memberStatus) && $memberStatus->status == 'Accepted')
                             <li><span class="title">Email:</span> <span class="value">{{ $member->user->email }}</span>
                             </li>
                             <li><span class="title">Mobile:</span> <span class="value">{{ $member->user->contactNo }}</span>
                             </li>
                         @else --}}
-                        @elseif ($connections->isNotEmpty() && $connections->first()->status == 'Accepted')
+                        {{-- @elseif ($connections->isNotEmpty() && $connections->first()->status == 'Accepted')
                             <li><span class="title">Email:</span> <span class="value">{{ $member->user->email }}</span></li>
                             <li><span class="title">Mobile:</span> <span class="value">{{ $member->user->contactNo }}</span></li>
-                        @else
-                            <li><span class="title">Email:</span> <span class="value">****{{ substr($member->user->email, -8) }}</span>
+                        @else --}}
+                        {{-- <li><span class="title">Email:</span> <span class="value">****{{ substr($member->user->email, -8) }}</span>
                             </li>
                             <li><span class="title">Mobile:</span> <span class="value">****{{ substr($member->user->contactNo, -3) }}</span>
-                            </li>
-                        @endif
+                            </li> --}}
+                        {{-- @endif --}}
 
 
                         <li><span class="title">Address:</span> <span class="value">{{ $member->billingAddress->bAddressLine1 ?? '-' }}
