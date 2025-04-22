@@ -79,7 +79,7 @@
 </div>
 
 
-<div class="modal fade" id="paymentReminderModal" tabindex="-1" role="dialog" aria-labelledby="paymentReminderModalLabel" aria-hidden="true">
+{{-- <div class="modal fade" id="paymentReminderModal" tabindex="-1" role="dialog" aria-labelledby="paymentReminderModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content shadow-lg rounded">
             <div class="modal-header text-white">
@@ -105,7 +105,7 @@
             </div>
         </div>
     </div>
-</div>
+</div> --}}
 
 
 
