@@ -22,7 +22,8 @@ class ConnectionController extends Controller
     public function receivedConnectionsRequests(Request $request)
     {
         try {
-            $userId = Auth::user()->id;
+            $userId = Auth::id();
+
             $connections = Connection::where('memberId', $userId)
                 ->where('status', 'Pending')
                 ->with([
@@ -34,9 +35,18 @@ class ConnectionController extends Controller
                     }
                 ])
                 ->get();
+
             if ($connections->isEmpty()) {
                 return Utils::sendResponse([], 'No pending connections requests', 200);
             }
+
+            // Loop through connections and calculate induction count based on members->id == sponsoredBy
+            $connections->transform(function ($connection) {
+                $sponsorMemberId = optional($connection->members)->id;
+                $connection->induction_count = Member::where('sponsoredBy', $sponsorMemberId)->count();
+                return $connection;
+            });
+
             return Utils::sendResponse(['connections' => $connections], 'My Connections Requests retrieved successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
@@ -64,6 +74,13 @@ class ConnectionController extends Controller
                 return Utils::sendResponse([], 'No pending connection requests sent', 200);
             }
 
+            // Calculate induction count based on receiverMember->id == sponsoredBy
+            $connections->transform(function ($connection) {
+                $receiverMemberId = optional($connection->receiverMember)->id;
+                $connection->induction_count = Member::where('sponsoredBy', $receiverMemberId)->count();
+                return $connection;
+            });
+
             return Utils::sendResponse(['connections' => $connections], 'Sent connection requests retrieved successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
@@ -76,8 +93,8 @@ class ConnectionController extends Controller
     public function ConnectionsRequests(Request $request)
     {
         try {
-
             $userId = Auth::user()->id;
+
             $connections = Connection::where('memberId', $userId)
                 ->where('status', 'Pending')
                 ->with([
@@ -89,41 +106,54 @@ class ConnectionController extends Controller
                     }
                 ])
                 ->get();
-            // check if there are any connections
+
             if ($connections->isEmpty()) {
                 return Utils::sendResponse([], 'No pending connections requests', 200);
             }
+
+            // Add induction_count for each connection
+            $connections->transform(function ($connection) {
+                $memberId = optional($connection->members)->id;
+                $connection->induction_count = Member::where('sponsoredBy', $memberId)->count();
+                return $connection;
+            });
+
             return Utils::sendResponse(['connections' => $connections], 'My Connections Requests retrieved successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
 
+
     public function myConnections(Request $request)
     {
         try {
             $userId = Auth::user()->id;
-            // Fetch connections where the authenticated user is either the userId or memberId
+
             $connections = Connection::where(function ($query) use ($userId) {
                 $query->where('userId', $userId)
                     ->orWhere('memberId', $userId);
             })
                 ->where('status', 'Accepted')
-                // ->with(['user:id,firstName,lastName,email', 'members:id,userId,profilePhoto'])
                 ->with(['member' => function ($query) {
                     $query->select('id', 'userId', 'profilePhoto')
                         ->with('user:id,email,firstName,lastName');
                 }])
                 ->get();
-            // Include connected user's details for convenience
-            // $connections->each(function ($connection) {
-            //     $connection->connectedUser = $connection->connected_user;
-            // });
+
+            // Add induction count
+            $connections->transform(function ($connection) {
+                $memberId = optional($connection->member)->id;
+                $connection->induction_count = Member::where('sponsoredBy', $memberId)->count();
+                return $connection;
+            });
+
             return Utils::sendResponse(['connections' => $connections], 'My Connections retrieved successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
+
 
     public function sendRequest(Request $request)
     {
@@ -303,14 +333,18 @@ class ConnectionController extends Controller
                 ])
                 ->get();
 
-            // Loop through members to determine connection_status
+            // Loop through members to determine connection_status and induction_count
             foreach ($members as $user) {
                 $member = $user->member;
 
                 if (!$member) {
                     $user->connection_status = 'Not Connected';
+                    $user->induction_count = 0;
                     continue;
                 }
+
+                // Count of members sponsored by this member
+                $user->induction_count = Member::where('sponsoredBy', $member->id)->count();
 
                 if ($authCircleId !== null && $member->circleId == $authCircleId) {
                     $user->connection_status = 'Connected';
@@ -342,6 +376,7 @@ class ConnectionController extends Controller
             ], 'Internal Server Error', 500);
         }
     }
+
 
 
 
@@ -537,9 +572,8 @@ class ConnectionController extends Controller
     public function viewMemberProfile(Request $request)
     {
         try {
-            $authUserId = Auth::id(); // Get authenticated user ID
+            $authUserId = Auth::id();
 
-            // Fetch the member with relationships
             $member = Member::where('userId', $request->input('userId'))
                 ->with('user', 'circle', 'billingAddress', 'contactDetails', 'topsProfile', 'connections', 'bCategory')
                 ->first();
@@ -551,13 +585,9 @@ class ConnectionController extends Controller
                 ], 404);
             }
 
-            // Get authenticated user's circleId
             $authUserCircleId = Member::where('userId', $authUserId)->value('circleId');
-
-            // Check if both users belong to the same circle
             $isSameCircle = ($authUserCircleId == $member->circleId);
 
-            // Retrieve the connection status correctly
             $connection = Connection::where(function ($query) use ($authUserId, $member) {
                 $query->where('userId', $authUserId)
                     ->where('memberId', $member->userId);
@@ -568,7 +598,6 @@ class ConnectionController extends Controller
 
             $connectionStatus = $connection?->status;
 
-            // Set the connection status
             if ($isSameCircle || $connectionStatus === 'Accepted') {
                 $member->status = 'Connected';
             } elseif ($connectionStatus === 'Pending') {
@@ -577,8 +606,11 @@ class ConnectionController extends Controller
                 $member->status = null;
             }
 
-            // Get business category name
+            // Add business category name
             $member->businessCategoryName = $member->bCategory?->categoryName;
+
+            // ✅ Add induction count
+            $member->induction_count = Member::where('sponsoredBy', $member->id)->count();
 
             return Utils::sendResponse([
                 'message' => 'Member Profile',
@@ -590,6 +622,7 @@ class ConnectionController extends Controller
             ], 'Internal Server Error', 500);
         }
     }
+
 
 
 

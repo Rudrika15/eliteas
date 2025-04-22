@@ -248,64 +248,64 @@ class VisitorController extends Controller
                 );
             }
 
-            $usersId = Auth::user()->member->id;
+            $authMemberId = Auth::user()->member->id;
 
-            // Fetch active users excluding the authenticated user's member ID
+            // ✅ Check if authenticated user is registered
+            $event->isRegistered = EventRegister::where('eventId', $id)
+                ->where('memberId', $authMemberId)
+                ->where('status', 'Active')
+                ->exists();
+
+            // ✅ Get other registered members (excluding auth user)
             $users = EventRegister::where('eventId', $id)
                 ->where('status', 'Active')
-                ->where('memberId', '!=', $usersId)
-                // ->where('memberId', '!=', Auth::user()->id)
-                // ->orWhere('userId', '!=', Auth::user()->id)
+                ->where('memberId', '!=', $authMemberId)
                 ->get()
                 ->map(function ($user) {
-                    $user->type = 'member'; // Add a type key
-                    $member = Member::where('id', $user->memberId)->first();
+                    $user->type = 'member';
+                    $member = Member::find($user->memberId);
                     $user->details = [
-                        'id' => $member ? $member->id : null,
-                        'userId' => $member ? $member->userId : null,
-                        'firstName' => $member ? $member->firstName : null,
-                        'lastName' => $member ? $member->lastName : null,
-                        'companyName' => $member ? $member->companyName : null,
-                        'profilePhoto' => $member ? $member->profilePhoto : null,
+                        'id' => $member?->id,
+                        'userId' => $member?->userId,
+                        'firstName' => $member?->firstName,
+                        'lastName' => $member?->lastName,
+                        'companyName' => $member?->companyName,
+                        'profilePhoto' => $member?->profilePhoto,
                     ];
                     return $user;
                 });
 
-            // Fetch active visitors for the event
+            // ✅ Get visitors
             $visitors = VisitorEventRegister::where('eventId', $id)
                 ->where('status', 'Active')
                 ->get()
                 ->map(function ($visitor) {
-                    $visitor->type = 'visitor'; // Add a type key
-                    $visitorDetails = Visitor::where('id', $visitor->visitorId)->first();
+                    $visitor->type = 'visitor';
+                    $visitorDetails = Visitor::find($visitor->visitorId);
                     $visitor->details = [
-                        'id' => $visitorDetails ? $visitorDetails->id : null,
-                        'firstName' => $visitorDetails ? $visitorDetails->firstName : null,
-                        'lastName' => $visitorDetails ? $visitorDetails->lastName : null,
-                        'profilePhoto' => $visitorDetails ? $visitorDetails->profilePhoto : null,
+                        'id' => $visitorDetails?->id,
+                        'firstName' => $visitorDetails?->firstName,
+                        'lastName' => $visitorDetails?->lastName,
+                        'profilePhoto' => $visitorDetails?->profilePhoto,
                     ];
                     return $visitor;
                 });
 
-            // Merge users and visitors
             $mergeredUsers = $users->merge($visitors);
 
-            // Fetch active slots and slot bookings for the event
             $slots = Slot::where('status', 'Active')->get();
             $slotBooking = SlotBooking::where('eventId', $id)
                 ->where('status', 'Active')
                 ->get();
 
-            // Return the data as a JSON response
+            // ✅ Final response with isRegistered
             return Utils::sendResponse([
                 'event' => $event,
-                // 'users' => $users,
                 'allUsers' => $mergeredUsers,
                 'slots' => $slots,
                 'slotBooking' => $slotBooking
             ], 'Success');
         } catch (\Throwable $th) {
-            throw $th;
             ErrorLogger::logError($th, $request->fullUrl());
 
             return Utils::errorResponse(

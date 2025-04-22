@@ -249,39 +249,33 @@ class CircleMemberController extends Controller
     public function circleWiseMember(Request $request)
     {
         try {
-            // Check if the user is authenticated
             if (!auth()->check()) {
                 return Utils::errorResponse([], 'Unauthorized', 401);
             }
 
-            // Get the authenticated user's member ID
             $authMemberId = auth()->user()->member->id;
 
             $circlesData = [];
             $circles = Circle::where('status', 'Active')->get();
 
             foreach ($circles as $circle) {
-                // Customize the fields you want to display for the circle
                 $circleData = [
                     'id' => $circle->id,
                     'name' => $circle->circleName,
-                    // Add more fields as needed
                 ];
 
-                // Fetch active members for the current circle, excluding the authenticated user's member data
                 $circleMembers = $circle->members()
-                    ->where('status', 'Active') // Only active members
-                    ->where('id', '!=', $authMemberId) // Exclude the authenticated user's member data
+                    ->where('status', 'Active')
+                    ->where('id', '!=', $authMemberId)
                     ->whereHas('user', function ($query) {
-                        $query->where('status', 'Active'); // Ensure the related user is active
+                        $query->where('status', 'Active');
                     })
-                    ->select('id','circleId', 'firstName', 'lastName', 'userId')
+                    ->select('id', 'circleId', 'firstName', 'lastName', 'userId')
                     ->get();
 
                 $membersData = [];
 
                 foreach ($circleMembers as $member) {
-                    // Fetch contact details for each member
                     $memberContactDetails = $member->contactDetails()
                         ->select('id', 'memberId', 'mobileNo', 'email')
                         ->get()
@@ -293,6 +287,7 @@ class CircleMemberController extends Controller
                         'firstName' => $member->firstName,
                         'lastName' => $member->lastName,
                         'contactDetails' => $memberContactDetails,
+                        'induction_count' => Member::where('sponsoredBy', $member->id)->count(),
                     ];
                 }
 
@@ -302,72 +297,61 @@ class CircleMemberController extends Controller
                 ];
             }
 
-            // You can return data using Utils::sendResponse for API response
             return Utils::sendResponse($circlesData, 'Data retrieved successfully', 200);
         } catch (\Throwable $th) {
-            // Handle exceptions and return error response
             return Utils::errorResponse([
                 'error' => $th->getMessage()
             ], 'Internal Server Error', 500);
         }
     }
+
 
 
     public function categoryWiseMember(Request $request)
     {
         try {
-            $categoryData = []; // Initialize the array to hold business category data
-            $data = []; // Initialize the array to hold member data
+            $categoryData = [];
 
-            // Check if the user is authenticated
             if (!auth()->check()) {
                 return Utils::errorResponse([], 'Unauthorized', 401);
             }
 
-            // Get authenticated user
             $user = auth()->user();
+            $authMemberId = $user->member->id;
+            $authBusinessCategoryId = $user->member->businessCategoryId;
 
-            // Get user's memberId and businessCategoryId
-            $authMemberId = $user->member->id; // Assuming the user has a related member
-            $authBusinessCategoryId = $user->member->businessCategoryId; // Assuming 'businessCategoryId' exists on 'members' table
-
-            // Fetch members who belong to the same business category as the authenticated user
             $members = Member::where('businessCategoryId', $authBusinessCategoryId)->get();
 
             foreach ($members as $member) {
-                // Fetch the category for the current member
-                $businessCategory = BusinessCategory::find($member->businessCategoryId); // Fetching the related category object
+                $businessCategory = BusinessCategory::find($member->businessCategoryId);
 
                 if ($businessCategory && $businessCategory->status === 'Active') {
-                    // Populate the category data only once
                     if (empty($categoryData)) {
                         $categoryData = [
                             'businessCategoryId' => $businessCategory->id,
                             'businessCategoryName' => $businessCategory->categoryName,
-                            'members' => [], // Initialize the members array inside categoryData
+                            'members' => [],
                         ];
                     }
 
-                    // Add member data to the members array within categoryData
                     $categoryData['members'][] = [
                         'authMemberId' => $authMemberId,
                         'memberId' => $member->id,
                         'firstName' => $member->firstName,
                         'lastName' => $member->lastName,
-                        // Add any other fields you need here
+                        'induction_count' => Member::where('sponsoredBy', $member->id)->count(),
                     ];
                 }
             }
 
-            // Return the consolidated category data array, which includes member data
             return Utils::sendResponse($categoryData, 'Data retrieved successfully', 200);
         } catch (\Throwable $th) {
-            // Handle exceptions and return error response
             return Utils::errorResponse([
                 'error' => $th->getMessage()
             ], 'Internal Server Error', 500);
         }
     }
+
 
 
 

@@ -79,6 +79,8 @@ class ApiController extends Controller
                 $roles = Auth::user()->getRoleNames();
                 $token = $user->createToken('authToken')->plainTextToken;
 
+                
+
                 return Utils::sendResponse(['token' => $token, 'user' => $user, 'roles' => $roles], 'Success', 200);
             }
 
