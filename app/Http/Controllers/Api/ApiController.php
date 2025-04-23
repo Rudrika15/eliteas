@@ -1139,9 +1139,10 @@ class ApiController extends Controller
                 ->with(['circle:id,circleName,cityId', 'circle.city:id,cityName'])
                 ->get();
 
-            // 🔹 Initialize businessAmount = 0 for all members
+            // 🔹 Initialize businessAmount = 0 and append induction_count for all members
             foreach ($allmembers as $member) {
                 $member->businessAmount = 0;
+                $member->induction_count = Member::where('sponsoredBy', $member->id)->count();
             }
 
             // Get business meeting records
@@ -1176,6 +1177,7 @@ class ApiController extends Controller
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
+
 
 
     // public function allMembers(Request $request)
