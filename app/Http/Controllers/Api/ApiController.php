@@ -79,7 +79,7 @@ class ApiController extends Controller
                 $roles = Auth::user()->getRoleNames();
                 $token = $user->createToken('authToken')->plainTextToken;
 
-                
+
 
                 return Utils::sendResponse(['token' => $token, 'user' => $user, 'roles' => $roles], 'Success', 200);
             }
@@ -164,9 +164,13 @@ class ApiController extends Controller
             $previousMonth = Carbon::now()->subMonth()->month;
             $previousYear = Carbon::now()->subMonth()->year;
 
-            $circlecalls = CircleCall::with(['member' => function ($query) {
-                $query->select('id', 'userId', 'firstname', 'lastname', 'businessCategoryId', 'circleId', 'profilephoto');
-            }, 'meetingPerson'])
+            $circlecalls = CircleCall::with([
+                'member' => function ($query) {
+                    $query->select('id', 'userId', 'firstname', 'lastname', 'businessCategoryId', 'circleId', 'profilephoto')
+                        ->with(['bCategory:id,categoryName', 'circle:id,circleName']);
+                },
+                'meetingPerson'
+            ])
                 ->where('status', 'Active')
                 ->whereYear('date', $previousYear)
                 ->whereMonth('date', $previousMonth)
@@ -174,6 +178,8 @@ class ApiController extends Controller
 
             $circlecalls = $circlecalls->groupBy('memberId')->map(function ($group) {
                 $member = $group->first()->member;
+                $inductionCount = Member::where('sponsoredBy', $member->id)->count();
+
                 return [
                     'member' => [
                         'id' => $member->id,
@@ -182,9 +188,10 @@ class ApiController extends Controller
                         'lastName' => $member->lastname,
                         'profilePhoto' => $member->profilephoto,
                         'businessCategoryId' => $member->businessCategoryId,
-                        'businessCategory' => $member->bCategory->categoryName,
+                        'businessCategory' => $member->bCategory->categoryName ?? null,
                         'circleId' => $member->circleId,
-                        'circle' => $member->circle->circleName,
+                        'circle' => $member->circle->circleName ?? null,
+                        'induction_count' => $inductionCount,
                     ],
                     'count' => $group->count()
                 ];
@@ -199,6 +206,7 @@ class ApiController extends Controller
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
+
 
 
     public function maxBusiness(Request $request)
@@ -219,18 +227,28 @@ class ApiController extends Controller
                     return null; // Skip if user not found
                 }
 
-                $member = $user->member()->select('circleId', 'businessCategoryId', 'profilePhoto')->first();
+                $member = $user->member()->select('id', 'circleId', 'businessCategoryId', 'profilePhoto')->first();
 
                 if (!$member) {
-                    return null; // Skip if member details not found
+                    return null; // Skip if member not found
                 }
 
                 $circle = Circle::find($member->circleId);
                 $businessCategory = BusinessCategory::find($member->businessCategoryId);
+                $inductionCount = Member::where('sponsoredBy', $member->id)->count();
 
                 return [
-                    'user' => $user,
-                    'member' => $member,
+                    'user' => [
+                        'id' => $user->id,
+                        'firstName' => $user->firstName,
+                        'lastName' => $user->lastName,
+                        'email' => $user->email,
+                    ],
+                    'member' => [
+                        'id' => $member->id,
+                        'profilePhoto' => $member->profilePhoto,
+                        'induction_count' => $inductionCount,
+                    ],
                     'amount' => $group->sum('amount'),
                     'count' => $group->count(),
                     'circle' => $circle ? [
@@ -247,7 +265,6 @@ class ApiController extends Controller
                 ->sortByDesc('amount')
                 ->values();
 
-
             return Utils::sendResponse(
                 ['busGiver' => $busGiver],
                 'Business data retrieved successfully',
@@ -257,6 +274,9 @@ class ApiController extends Controller
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
+
+
+
     // public function maxBusiness(Request $request)
     // {
     //     try {
@@ -303,7 +323,6 @@ class ApiController extends Controller
     public function maxReference(Request $request)
     {
         try {
-            // Retrieve all CircleMeetingMembersReference data with 'Active' status
             $previousMonth = Carbon::now()->subMonth()->month;
             $previousYear = Carbon::now()->subMonth()->year;
 
@@ -313,10 +332,9 @@ class ApiController extends Controller
                 ->get()
                 ->groupBy('referenceGiverId')
                 ->map(function ($group) {
-
                     $referenceGiverId = $group->first()->referenceGiverId ?? null;
 
-                    if ($referenceGiverId === null) {
+                    if (!$referenceGiverId) {
                         return null;
                     }
 
@@ -325,14 +343,26 @@ class ApiController extends Controller
                     if ($user && $user->status === 'Active') {
                         $member = Member::where('userId', $referenceGiverId)->where('status', 'Active')->first();
 
+                        if (!$member) {
+                            return null;
+                        }
+
+                        $inductionCount = Member::where('sponsoredBy', $member->id)->count();
+
                         return [
-                            'user' => $user,
+                            'user' => [
+                                'id' => $user->id,
+                                'firstName' => $user->firstName,
+                                'lastName' => $user->lastName,
+                                'email' => $user->email,
+                            ],
                             'count' => $group->count(),
-                            'businessCategoryId' => $member ? $member->businessCategoryId : null,
-                            'businessCategory' => $member ? $member->bcategory->categoryName : null,
-                            'circleId' => $member ? $member->circleId : null,
-                            'circle' => $member ? $member->circle->circleName : null,
-                            'profilePhoto' => $member ? $member->profilePhoto : null,
+                            'induction_count' => $inductionCount,
+                            'businessCategoryId' => $member->businessCategoryId,
+                            'businessCategory' => $member->bcategory->categoryName ?? null,
+                            'circleId' => $member->circleId,
+                            'circle' => $member->circle->circleName ?? null,
+                            'profilePhoto' => $member->profilePhoto,
                         ];
                     }
 
@@ -359,6 +389,7 @@ class ApiController extends Controller
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
+
 
 
 
