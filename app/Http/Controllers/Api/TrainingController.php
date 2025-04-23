@@ -18,10 +18,23 @@ class TrainingController extends Controller
     public function index(Request $request)
     {
         try {
-            $trainings = Training::with('trainer')
-                ->with('registerTraining')
+            $id = $request->input('id');
+
+            if ($id) {
+                $training = Training::with(['trainer', 'registerTraining'])
+                    ->where('status', 'Active')
+                    ->where('id', $id)
+                    ->first();
+
+                if (!$training) {
+                    return Utils::errorResponse('Training not found', 'Not Found', 404);
+                }
+
+                return Utils::sendResponse(['training' => $training], 'Training retrieved successfully', 200);
+            }
+
+            $trainings = Training::with(['trainer', 'registerTraining'])
                 ->where('status', 'Active')
-                // ->where('start_date', '>=', Carbon::now()->subDays(1))
                 ->where('date', '>', now()->toDateString())
                 ->get();
 
@@ -30,6 +43,47 @@ class TrainingController extends Controller
             return Utils::errorResponse($th->getMessage(), 'Internal Server Error', 500);
         }
     }
+
+
+
+
+    // public function index(Request $request)
+    // {
+    //     try {
+    //         $trainings = Training::with('trainer')
+    //             ->with('registerTraining')
+    //             ->where('status', 'Active')
+    //             // ->where('start_date', '>=', Carbon::now()->subDays(1))
+    //             ->where('date', '>', now()->toDateString())
+    //             ->get();
+
+    //         return Utils::sendResponse(['trainings' => $trainings], 'Trainings retrieved successfully', 200);
+    //     } catch (\Throwable $th) {
+    //         return Utils::errorResponse($th->getMessage(), 'Internal Server Error', 500);
+    //     }
+    // }
+
+
+
+
+    // public function index(Request $request)
+    // {
+    //     try {
+    //         $trainings = Training::with('trainer')
+    //             ->with(['registerTraining' => function ($query) {
+    //                 $query->select('userId')->with('registredUsersList:id,firstName,lastName');
+    //             }])
+    //             ->where('status', 'Active')
+    //             ->where('start_date', '>=', Carbon::now()->subDays(1))
+    //             ->where('date', '>', now()->toDateString())
+    //             ->get();
+
+    //         return Utils::sendResponse(['trainings' => $trainings], 'Trainings retrieved successfully', 200);
+    //     } catch (\Throwable $th) {
+    //         return Utils::errorResponse($th->getMessage(), 'Internal Server Error', 500);
+    //     }
+    // }
+
 
     public function show(Request $request, $id)
     {

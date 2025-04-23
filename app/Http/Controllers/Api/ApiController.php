@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use App\Models\CircleMeetingMembersBusiness;
 use App\Models\CircleMeetingMembersReference;
+use App\Models\Connection;
 
 class ApiController extends Controller
 {
@@ -91,22 +92,75 @@ class ApiController extends Controller
 
 
     //lead board
+    // public function maxMeetings(Request $request)
+    // {
+    //     try {
+    //         $previousMonth = Carbon::now()->subMonth()->month;
+    //         $previousYear = Carbon::now()->subMonth()->year;
+
+    //         $circlecalls = CircleCall::with(['member' => function ($query) {
+    //             $query->select('id', 'userId', 'firstname', 'lastname', 'businessCategoryId', 'circleId', 'profilephoto');
+    //         }, 'meetingPerson'])
+    //             ->where('status', 'Active')
+    //             ->whereYear('date', $previousYear)
+    //             ->whereMonth('date', $previousMonth)
+    //             ->get();
+
+    //         $circlecalls = $circlecalls->groupBy('memberId')->map(function ($group) {
+    //             $member = $group->first()->member;
+    //             return [
+    //                 'member' => [
+    //                     'id' => $member->id,
+    //                     'userId' => $member->userId,
+    //                     'firstName' => $member->firstname,
+    //                     'lastName' => $member->lastname,
+    //                     'profilePhoto' => $member->profilephoto,
+    //                     'businessCategoryId' => $member->businessCategoryId,
+    //                     'businessCategory' => $member->bCategory->categoryName,
+    //                     'circleId' => $member->circleId,
+    //                     'circle' => $member->circle->circleName,
+    //                 ],
+    //                 'count' => $group->count()
+    //             ];
+    //         })->sortByDesc('count')->values();
+
+    //         return Utils::sendResponse(
+    //             ['circlecalls' => $circlecalls],
+    //             'Meeting data retrieved successfully',
+    //             200
+    //         );
+    //     } catch (\Throwable $th) {
+    //         return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
+    //     }
+    // }
+
+
     public function maxMeetings(Request $request)
     {
         try {
+            $authUserId = auth()->id();
             $previousMonth = Carbon::now()->subMonth()->month;
             $previousYear = Carbon::now()->subMonth()->year;
 
-            $circlecalls = CircleCall::with(['member' => function ($query) {
-                $query->select('id', 'userId', 'firstname', 'lastname', 'businessCategoryId', 'circleId', 'profilephoto');
-            }, 'meetingPerson'])
+            $circlecalls = CircleCall::with([
+                'member' => function ($query) {
+                    $query->select('id', 'userId', 'firstname', 'lastname', 'businessCategoryId', 'circleId', 'profilephoto')
+                        ->with(['bCategory:id,categoryName', 'circle:id,circleName']);
+                },
+                'meetingPerson'
+            ])
                 ->where('status', 'Active')
                 ->whereYear('date', $previousYear)
                 ->whereMonth('date', $previousMonth)
                 ->get();
 
-            $circlecalls = $circlecalls->groupBy('memberId')->map(function ($group) {
+            $circlecalls = $circlecalls->groupBy('memberId')->map(function ($group) use ($authUserId) {
                 $member = $group->first()->member;
+
+                $isConnected = Connection::where('memberId', $member->userId)
+                    ->where('userId', $authUserId)
+                    ->exists();
+
                 return [
                     'member' => [
                         'id' => $member->id,
@@ -115,9 +169,10 @@ class ApiController extends Controller
                         'lastName' => $member->lastname,
                         'profilePhoto' => $member->profilephoto,
                         'businessCategoryId' => $member->businessCategoryId,
-                        'businessCategory' => $member->bCategory->categoryName,
+                        'businessCategory' => $member->bCategory->categoryName ?? null,
                         'circleId' => $member->circleId,
-                        'circle' => $member->circle->circleName,
+                        'circle' => $member->circle->circleName ?? null,
+                        'isConnected' => $isConnected
                     ],
                     'count' => $group->count()
                 ];
@@ -132,6 +187,7 @@ class ApiController extends Controller
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
+
 
 
     public function maxBusiness(Request $request)
