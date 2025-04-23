@@ -599,6 +599,101 @@ class ConnectionController extends Controller
     //     }
     // }
 
+    // public function getCircleMembers(Request $request, $id = null)
+    // {
+    //     try {
+    //         $businessMeetings = CircleMeetingMembersBusiness::with('member')->where('status', 'Active')->get();
+
+    //         if ($id) {
+    //             $circle = Circle::with([
+    //                 'members' => function ($query) {
+    //                     $query->where('status', 'Active')
+    //                         ->with([
+    //                             'bCategory:id,categoryName',
+    //                             'user:id,email,contactNo'
+    //                         ]);
+    //                 },
+    //                 'city:id,cityName'
+    //             ])->findOrFail($id);
+
+    //             $circle->totalBusinessAmount = 0;
+
+    //             // Initialize businessAmount = 0 for all members
+    //             foreach ($circle->members as $member) {
+    //                 $member->businessAmount = 0;
+    //             }
+
+    //             foreach ($businessMeetings as $meeting) {
+    //                 $businessGiverCircleId = Member::where('userId', $meeting->businessGiverId)->value('circleId');
+    //                 if ($businessGiverCircleId == $circle->id) {
+    //                     $circle->totalBusinessAmount += $meeting->amount;
+
+    //                     foreach ($circle->members as $member) {
+    //                         if ($member->id == $meeting->member->id) {
+    //                             $member->businessAmount += $meeting->amount;
+    //                         }
+    //                     }
+    //                 }
+    //             }
+
+    //             return response()->json([
+    //                 'success' => true,
+    //                 'circle' => $circle,
+    //             ]);
+    //         }
+
+    //         $circles = Circle::where('status', 'Active')
+    //             ->with([
+    //                 'members' => function ($query) {
+    //                     $query->where('status', 'Active')
+    //                         ->with([
+    //                             'bCategory:id,categoryName',
+    //                             'user:id,email,contactNo'
+    //                         ]);
+    //                 },
+    //                 'city:id,cityName'
+    //             ])
+    //             ->withCount(['members' => function ($query) {
+    //                 $query->where('status', 'Active');
+    //             }])
+    //             ->get();
+
+    //         foreach ($circles as $circle) {
+    //             $circle->totalBusinessAmount = 0;
+
+    //             // Initialize businessAmount = 0 for all members
+    //             foreach ($circle->members as $member) {
+    //                 $member->businessAmount = 0;
+    //             }
+
+    //             foreach ($businessMeetings as $meeting) {
+    //                 $businessGiverCircleId = Member::where('userId', $meeting->businessGiverId)->value('circleId');
+    //                 if ($businessGiverCircleId == $circle->id) {
+    //                     $circle->totalBusinessAmount += $meeting->amount;
+
+    //                     foreach ($circle->members as $member) {
+    //                         if ($member->id == $meeting->member->id) {
+    //                             $member->businessAmount += $meeting->amount;
+    //                         }
+    //                     }
+    //                 }
+    //             }
+    //         }
+
+    //         return response()->json([
+    //             'success' => true,
+    //             'circles' => $circles,
+    //         ]);
+    //     } catch (\Throwable $th) {
+    //         ErrorLogger::logError($th, request()->fullUrl());
+    //         return response()->json([
+    //             'success' => false,
+    //             'error' => 'An error occurred. Please try again later.',
+    //         ], 500);
+    //     }
+    // }
+
+
     public function getCircleMembers(Request $request, $id = null)
     {
         try {
@@ -618,9 +713,9 @@ class ConnectionController extends Controller
 
                 $circle->totalBusinessAmount = 0;
 
-                // Initialize businessAmount = 0 for all members
                 foreach ($circle->members as $member) {
                     $member->businessAmount = 0;
+                    $member->induction_count = Member::where('sponsoredBy', $member->id)->count();
                 }
 
                 foreach ($businessMeetings as $meeting) {
@@ -661,9 +756,9 @@ class ConnectionController extends Controller
             foreach ($circles as $circle) {
                 $circle->totalBusinessAmount = 0;
 
-                // Initialize businessAmount = 0 for all members
                 foreach ($circle->members as $member) {
                     $member->businessAmount = 0;
+                    $member->induction_count = Member::where('sponsoredBy', $member->id)->count();
                 }
 
                 foreach ($businessMeetings as $meeting) {
