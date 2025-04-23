@@ -269,6 +269,8 @@ class VisitorController extends Controller
                         'userId' => $member?->userId,
                         'firstName' => $member?->firstName,
                         'lastName' => $member?->lastName,
+                        'email' => $member?->user->email,
+                        'contact' => $member?->user->contactNo,
                         'companyName' => $member?->companyName,
                         'profilePhoto' => $member?->profilePhoto,
                     ];
