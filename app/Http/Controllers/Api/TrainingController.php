@@ -145,10 +145,10 @@ class TrainingController extends Controller
             $payment->amount = $request->amount;
             $payment->save();
 
-            return response()->json(['message' => 'Training Registered Successfully'], 200);
+            return Utils::sendResponse([], 'Training Registered Successfully', 200);
         } catch (\Throwable $th) {
             throw $th;
-            return response()->json(['error' => 'Error Registering Training'], 500);
+            return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
 }
