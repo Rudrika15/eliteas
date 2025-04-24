@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use App\Models\CircleMeetingMembersBusiness;
 use App\Models\CircleMeetingMembersReference;
+use App\Models\Connection;
 
 class ApiController extends Controller
 {
@@ -161,8 +162,11 @@ class ApiController extends Controller
     public function maxMeetings(Request $request)
     {
         try {
+            $authUserId = auth()->id();
             $previousMonth = Carbon::now()->subMonth()->month;
             $previousYear = Carbon::now()->subMonth()->year;
+
+            $authMember = Member::where('userId', $authUserId)->first();
 
             $circlecalls = CircleCall::with([
                 'member' => function ($query) {
@@ -176,9 +180,26 @@ class ApiController extends Controller
                 ->whereMonth('date', $previousMonth)
                 ->get();
 
-            $circlecalls = $circlecalls->groupBy('memberId')->map(function ($group) {
+            $circlecalls = $circlecalls->groupBy('memberId')->map(function ($group) use ($authUserId, $authMember) {
                 $member = $group->first()->member;
                 $inductionCount = Member::where('sponsoredBy', $member->id)->count();
+
+                // Default status
+                $connectionStatus = 'Not Connected';
+
+                // Check if same circle
+                if ($authMember && $member && $authMember->circleId === $member->circleId) {
+                    $connectionStatus = 'Connected';
+                } else {
+                    // Check connection table
+                    $connection = Connection::where('memberId', $member->userId)
+                        ->where('userId', $authUserId)
+                        ->first();
+
+                    if ($connection) {
+                        $connectionStatus = $connection->status; // 'Pending' or 'Connected'
+                    }
+                }
 
                 return [
                     'member' => [
@@ -192,6 +213,7 @@ class ApiController extends Controller
                         'circleId' => $member->circleId,
                         'circle' => $member->circle->circleName ?? null,
                         'induction_count' => $inductionCount,
+                        'connectionStatus' => $connectionStatus,
                     ],
                     'count' => $group->count()
                 ];
@@ -209,25 +231,30 @@ class ApiController extends Controller
 
 
 
+
+
     public function maxBusiness(Request $request)
     {
         try {
+            $authUserId = auth()->id(); // Get authenticated user ID
             $previousMonth = Carbon::now()->subMonth()->month;
             $previousYear = Carbon::now()->subMonth()->year;
+
+            $authMember = Member::where('userId', $authUserId)->first();
 
             $busGiver = CircleMeetingMembersBusiness::where('status', 'Active')
                 ->whereYear('date', $previousYear)
                 ->whereMonth('date', $previousMonth)
                 ->get();
 
-            $busGiver = $busGiver->groupBy('businessGiverId')->map(function ($group) {
+            $busGiver = $busGiver->groupBy('businessGiverId')->map(function ($group) use ($authUserId, $authMember) {
                 $user = $group->first()->users;
 
                 if (!$user) {
                     return null; // Skip if user not found
                 }
 
-                $member = $user->member()->select('id', 'circleId', 'businessCategoryId', 'profilePhoto')->first();
+                $member = $user->member()->select('id', 'circleId', 'businessCategoryId', 'profilePhoto', 'userId')->first();
 
                 if (!$member) {
                     return null; // Skip if member not found
@@ -236,6 +263,23 @@ class ApiController extends Controller
                 $circle = Circle::find($member->circleId);
                 $businessCategory = BusinessCategory::find($member->businessCategoryId);
                 $inductionCount = Member::where('sponsoredBy', $member->id)->count();
+
+                // Default connection status
+                $connectionStatus = 'Not Connected';
+
+                // If same circle, mark as connected
+                if ($authMember && $member && $authMember->circleId === $member->circleId) {
+                    $connectionStatus = 'Connected';
+                } else {
+                    // Check connection table
+                    $connection = Connection::where('memberId', $member->userId)
+                        ->where('userId', $authUserId)
+                        ->first();
+
+                    if ($connection) {
+                        $connectionStatus = $connection->status; // 'Pending' or 'Connected'
+                    }
+                }
 
                 return [
                     'user' => [
@@ -248,6 +292,7 @@ class ApiController extends Controller
                         'id' => $member->id,
                         'profilePhoto' => $member->profilePhoto,
                         'induction_count' => $inductionCount,
+                        'connectionStatus' => $connectionStatus,
                     ],
                     'amount' => $group->sum('amount'),
                     'count' => $group->count(),
@@ -261,7 +306,7 @@ class ApiController extends Controller
                     ] : null
                 ];
             })
-                ->filter() // Remove null entries
+                ->filter()
                 ->sortByDesc('amount')
                 ->values();
 
@@ -274,6 +319,8 @@ class ApiController extends Controller
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
+
+
 
 
 
@@ -323,15 +370,18 @@ class ApiController extends Controller
     public function maxReference(Request $request)
     {
         try {
+            $authUserId = auth()->id(); // Get the authenticated user ID
             $previousMonth = Carbon::now()->subMonth()->month;
             $previousYear = Carbon::now()->subMonth()->year;
+
+            $authMember = Member::where('userId', $authUserId)->first();
 
             $refGiver = CircleMeetingMembersReference::where('status', 'Active')
                 ->whereYear('created_at', $previousYear)
                 ->whereMonth('created_at', $previousMonth)
                 ->get()
                 ->groupBy('referenceGiverId')
-                ->map(function ($group) {
+                ->map(function ($group) use ($authUserId, $authMember) {
                     $referenceGiverId = $group->first()->referenceGiverId ?? null;
 
                     if (!$referenceGiverId) {
@@ -341,13 +391,30 @@ class ApiController extends Controller
                     $user = User::find($referenceGiverId);
 
                     if ($user && $user->status === 'Active') {
-                        $member = Member::where('userId', $referenceGiverId)->where('status', 'Active')->first();
+                        $member = Member::where('userId', $referenceGiverId)
+                            ->where('status', 'Active')
+                            ->first();
 
                         if (!$member) {
                             return null;
                         }
 
                         $inductionCount = Member::where('sponsoredBy', $member->id)->count();
+
+                        // Determine connection status
+                        $connectionStatus = 'Not Connected';
+
+                        if ($authMember && $member->circleId === $authMember->circleId) {
+                            $connectionStatus = 'Connected';
+                        } else {
+                            $connection = Connection::where('memberId', $member->userId)
+                                ->where('userId', $authUserId)
+                                ->first();
+
+                            if ($connection) {
+                                $connectionStatus = $connection->status; // 'Pending' or 'Connected'
+                            }
+                        }
 
                         return [
                             'user' => [
@@ -358,6 +425,7 @@ class ApiController extends Controller
                             ],
                             'count' => $group->count(),
                             'induction_count' => $inductionCount,
+                            'connectionStatus' => $connectionStatus,
                             'businessCategoryId' => $member->businessCategoryId,
                             'businessCategory' => $member->bcategory->categoryName ?? null,
                             'circleId' => $member->circleId,
@@ -389,6 +457,7 @@ class ApiController extends Controller
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
+
 
 
 

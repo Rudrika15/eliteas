@@ -29,16 +29,20 @@ class ConnectionController extends Controller
                 ->where('status', 'Pending')
                 ->with([
                     'user' => function ($query) {
-                        $query->select('id', 'email', 'firstName', 'lastName');
+                        $query->select('id', 'email', 'firstName', 'lastName', 'contactNo');
                     },
                     'members' => function ($query) {
-                        $query->select('id', 'userId', 'profilePhoto');
+                        $query->select('userId', 'id', 'profilePhoto', 'companyName', 'circleId', 'businessCategoryId')
+                            ->with([
+                                'circle:id,circleName',
+                                'bCategory:id,categoryName'
+                            ]);
                     }
                 ])
                 ->get();
 
             if ($connections->isEmpty()) {
-                return Utils::sendResponse([], 'No pending connections requests', 200);
+                return Utils::sendResponse(['connections' => null], 'No pending connections requests', 200);
             }
 
             // Loop through connections and calculate induction count based on members->id == sponsoredBy
@@ -63,16 +67,20 @@ class ConnectionController extends Controller
                 ->where('status', 'Pending')
                 ->with([
                     'receiver' => function ($query) {
-                        $query->select('id', 'email', 'firstName', 'lastName');
+                        $query->select('id', 'email', 'firstName', 'lastName', 'contactNo');
                     },
                     'receiverMember' => function ($query) {
-                        $query->select('userId', 'id', 'profilePhoto');
+                        $query->select('userId', 'id', 'profilePhoto', 'companyName', 'circleId', 'businessCategoryId')
+                            ->with([
+                                'circle:id,circleName',
+                                'bCategory:id,categoryName'
+                            ]);
                     }
                 ])
                 ->get();
 
             if ($connections->isEmpty()) {
-                return Utils::sendResponse([], 'No pending connection requests sent', 200);
+                return Utils::sendResponse(['connections' => null], 'No pending connection requests sent', 200);
             }
 
             // Calculate induction count based on receiverMember->id == sponsoredBy
@@ -87,6 +95,7 @@ class ConnectionController extends Controller
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
+
 
 
 
@@ -137,8 +146,12 @@ class ConnectionController extends Controller
             })
                 ->where('status', 'Accepted')
                 ->with(['member' => function ($query) {
-                    $query->select('id', 'userId', 'profilePhoto')
-                        ->with('user:id,email,firstName,lastName');
+                    $query->select('id', 'userId', 'profilePhoto', 'circleId', 'businessCategoryId')
+                        ->with([
+                            'user:id,email,firstName,lastName,contactNo',
+                            'circle:id,circleName',
+                            'bCategory:id,categoryName'
+                        ]);
                 }])
                 ->get();
 
@@ -154,6 +167,7 @@ class ConnectionController extends Controller
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
+
 
 
     public function sendRequest(Request $request)
@@ -723,55 +737,146 @@ class ConnectionController extends Controller
     }
 
 
+    // public function getCategoryMembers($id = null)
+    // {
+    //     try {
+    //         // If ID is provided, show details for the specific category and its active members
+    //         if ($id) {
+    //             // Fetch category details
+    //             $category = BusinessCategory::where('id', $id)
+    //                 ->where('status', 'Active')
+    //                 ->firstOrFail();
+
+    //             // Fetch active members related to this category
+    //             $members = Member::where('businessCategoryId', $id)
+    //                 ->where('status', 'Active')
+    //                 ->with(['circle' => function ($query) {
+    //                     $query->select('id', 'circleName', 'cityId')
+    //                         ->with(['city' => function ($query) {
+    //                             $query->select('id', 'cityName');
+    //                         }]);
+    //                 }])
+    //                 ->get();
+
+    //             // Return the category and its members as JSON
+    //             return response()->json([
+    //                 'category' => $category,
+    //                 'members' => $members,
+    //             ]);
+    //         }
+
+    //         // If no ID is provided, return the list of categories with active members
+    //         $categories = BusinessCategory::where('status', 'Active')
+    //             ->whereHas('members', function ($query) {
+    //                 $query->where('status', 'Active'); // Only consider active members
+    //             })
+    //             ->withCount(['members' => function ($query) {
+    //                 $query->where('status', 'Active'); // Count only active members
+    //             }])
+    //             ->with(['members' => function ($query) {
+    //                 $query->where('status', 'Active'); // Load only active members
+    //             }])
+    //             ->get();
+
+    //         // Return the list of categories with member count and members as JSON
+    //         return response()->json([
+    //             'categories' => $categories,
+    //         ]);
+    //     } catch (\Throwable $th) {
+    //         // Log the error
+    //         ErrorLogger::logError($th, request()->fullUrl());
+    //         return response()->json([
+    //             'error' => 'An error occurred. Please try again later.',
+    //         ], 500);
+    //     }
+    // }
+
+
     public function getCategoryMembers($id = null)
     {
         try {
-            // If ID is provided, show details for the specific category and its active members
+            $businessMeetings = CircleMeetingMembersBusiness::with('member')->where('status', 'Active')->get();
+
             if ($id) {
                 // Fetch category details
                 $category = BusinessCategory::where('id', $id)
                     ->where('status', 'Active')
                     ->firstOrFail();
 
-                // Fetch active members related to this category
+                // Fetch active members of this category
                 $members = Member::where('businessCategoryId', $id)
                     ->where('status', 'Active')
-                    ->with(['circle' => function ($query) {
-                        $query->select('id', 'circleName', 'cityId')
-                            ->with(['city' => function ($query) {
-                                $query->select('id', 'cityName');
-                            }]);
-                    }])
+                    ->with([
+                        'circle:id,circleName',
+                        'user:id,email,contactNo,firstName,lastName',
+                        'bCategory:id,categoryName',
+                    ])
                     ->get();
 
-                // Return the category and its members as JSON
+                // Initialize total business amount
+                $totalBusinessAmount = 0;
+
+                foreach ($members as $member) {
+                    // Set default values
+                    $member->businessAmount = 0;
+                    $member->induction_count = Member::where('sponsoredBy', $member->id)->count();
+
+                    // Calculate business amount
+                    foreach ($businessMeetings as $meeting) {
+                        if ($meeting->member->id === $member->id) {
+                            $member->businessAmount += $meeting->amount;
+                            $totalBusinessAmount += $meeting->amount;
+                        }
+                    }
+                }
+
                 return response()->json([
-                    'category' => $category,
+                    'success' => true,
                     'members' => $members,
                 ]);
             }
 
-            // If no ID is provided, return the list of categories with active members
+            // Fetch all categories with their active members
             $categories = BusinessCategory::where('status', 'Active')
                 ->whereHas('members', function ($query) {
-                    $query->where('status', 'Active'); // Only consider active members
+                    $query->where('status', 'Active');
                 })
                 ->withCount(['members' => function ($query) {
-                    $query->where('status', 'Active'); // Count only active members
+                    $query->where('status', 'Active');
                 }])
                 ->with(['members' => function ($query) {
-                    $query->where('status', 'Active'); // Load only active members
+                    $query->where('status', 'Active')
+                        ->with([
+                            'circle:id,circleName',
+                            'user:id,email,contactNo,firstName,lastName'
+                        ]);
                 }])
                 ->get();
 
-            // Return the list of categories with member count and members as JSON
+            foreach ($categories as $category) {
+                $category->totalBusinessAmount = 0;
+
+                foreach ($category->members as $member) {
+                    $member->businessAmount = 0;
+                    $member->induction_count = Member::where('sponsoredBy', $member->id)->count();
+
+                    foreach ($businessMeetings as $meeting) {
+                        if ($meeting->member->id === $member->id) {
+                            $member->businessAmount += $meeting->amount;
+                            $category->totalBusinessAmount += $meeting->amount;
+                        }
+                    }
+                }
+            }
+
             return response()->json([
+                'success' => true,
                 'categories' => $categories,
             ]);
         } catch (\Throwable $th) {
-            // Log the error
             ErrorLogger::logError($th, request()->fullUrl());
             return response()->json([
+                'success' => false,
                 'error' => 'An error occurred. Please try again later.',
             ], 500);
         }
