@@ -42,7 +42,7 @@ class ConnectionController extends Controller
                 ->get();
 
             if ($connections->isEmpty()) {
-                return Utils::sendResponse(['connections' => null], 'No pending connections requests', 200);
+                return Utils::sendResponse(null, 'No pending connections requests', 200);
             }
 
             // Loop through connections and calculate induction count based on members->id == sponsoredBy
@@ -80,7 +80,7 @@ class ConnectionController extends Controller
                 ->get();
 
             if ($connections->isEmpty()) {
-                return Utils::sendResponse(['connections' => null], 'No pending connection requests sent', 200);
+                return Utils::sendResponse(null, 'No pending connection requests sent', 200);
             }
 
             // Calculate induction count based on receiverMember->id == sponsoredBy
@@ -109,16 +109,20 @@ class ConnectionController extends Controller
                 ->where('status', 'Pending')
                 ->with([
                     'user' => function ($query) {
-                        $query->select('id', 'email', 'firstName', 'lastName');
+                        $query->select('id', 'email', 'firstName', 'lastName', 'contactNo');
                     },
                     'members' => function ($query) {
-                        $query->select('id', 'userId', 'profilePhoto');
+                        $query->select('userId', 'id', 'profilePhoto', 'companyName', 'circleId', 'businessCategoryId')
+                            ->with([
+                                'circle:id,circleName',
+                                'bCategory:id,categoryName'
+                            ]);
                     }
                 ])
                 ->get();
 
             if ($connections->isEmpty()) {
-                return Utils::sendResponse([], 'No pending connections requests', 200);
+                return Utils::sendResponse(null, 'No pending connections requests', 200);
             }
 
             // Add induction_count for each connection
@@ -155,7 +159,10 @@ class ConnectionController extends Controller
                 }])
                 ->get();
 
-            // Add induction count
+            if ($connections->isEmpty()) {
+                return Utils::sendResponse(null, 'No Connections Found', 200);
+            }
+
             $connections->transform(function ($connection) {
                 $memberId = optional($connection->member)->id;
                 $connection->induction_count = Member::where('sponsoredBy', $memberId)->count();
