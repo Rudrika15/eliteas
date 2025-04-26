@@ -437,49 +437,7 @@
                 <div class="hero">
                     <img src="{{ asset('Event/' . $event->event_banner) }}" alt="event banner">
                 </div>
-                {{-- 768px tablet & 425px and below mobile device --}}
-                {{-- <div class="mobile-425 tablet-768">
-                    <div class="right-content container position:absolute mobile-426">
-                        <p class="organised mb-3"><strong>Organised By</strong></p>
-                        <img src="{{ asset('img/logo4.png') }}" alt="UBN logo" class="img-fluid UBN">
-                        <h4 class="py-3 fw-bold mb-0">{{ $event->title }}</h4>
-                        <button class="upcoming text-white px-3 border-0 fw-bold mb-3" style="background-color: #1d2368;"><img src="{{ asset('img/upcoming.png') }}" alt="upcoming"> Upcoming</button>
-                        <p class="time mb-1">Date</p>
-                        <p class="fw-bold date mb-3">{{ \Carbon\Carbon::parse($event->event_date)->format('d-m-Y') }}</p>
-                        <p class="time mb-1">Slot Booking Date</p>
-                        <p class="fw-bold date mb-3">{{ \Carbon\Carbon::parse($event->slot_date)->format('d-m-Y') }}</p>
-                        <p class="time mb-1">Start Time</p>
-                        <p class="fw-bold date mb-3">{{ \Carbon\Carbon::parse($event->start_time)->format('g:i A') }}</p>
-                        <p class="time mb-1">End Time</p>
-                        <p class="fw-bold date mb-3">{{ \Carbon\Carbon::parse($event->end_time)->format('g:i A') }}</p>
-                        <p class="time mb-1">Venue</p>
-                        <p class="fw-bold date mb-3">{{ $event->venue }}</p>
-                        <p class="time mb-1">Event Details</p>
-                        <p class="fw-bold date mb-3"> {{ $event->event_details }}
-                        </p>
-
-                        <a href="" class="btn btn-ticket w-100 text-white fw-bold">Book My Tickets</a>
-
-                        <div class="d-flex justify-content-between">
-                            <a href="{{ route('main.event.login', $event->id) }}" class="btn btn-ticket text-white fw-bold" style="background-color: #1d2368;">UBN Member</a>
-                            &nbsp;&nbsp;&nbsp;
-                            <a href="{{ route('main.event.visitorLogin', $event->id) }}" class="btn btn-ticket text-white fw-bold w-50">Visitor</a>
-                        </div>
-                        <div class="countdown w-100 p-4 text-white mt-3">
-                            <p class="mb-2 heading"><img src="{{ asset('img_techExpo/watch-icon.png') }}" alt="watch"> &nbsp;Live event will start in</p>
-                            <p class="mb-0 run fw-bold">06D : 08H : 10M : 18S</p>
-                        </div>
-                    </div>
-                </div> --}}
-
-                {{-- <div data-bs-spy="scroll" data-bs-target="#navList" data-bs-offset="70" tabindex="0" id="details">
-                    <div class="event" id="list-item-1">
-                        <h4>Event Details</h4>
-                        <p>
-                            {{ $event->event_details }}
-                        </p>
-                    </div>
-                </div> --}}
+                
             </div>
 
             <div class="container laptop-device">
