@@ -132,16 +132,16 @@ class ApiController extends Controller
             }
 
             // Get the count of each activity
-            $totalMeetingCount = CircleCall::where('memberId', $id)->count();
-            $refReceivedCount = CircleMeetingMembersReference::where('memberId', $id)->count();
-            $busTakenCount = CircleMeetingMembersBusiness::where('loginMemberId', $id)->count();
-            $busTaken = CircleMeetingMembersBusiness::where('loginMemberId', $id)->get();
+            $totalMeetingCount = CircleCall::where('memberId', $id)->where('status', 'Active')->count();
+            $refReceivedCount = CircleMeetingMembersReference::where('memberId', $id)->where('status', 'Active')->count();
+            $busTakenCount = CircleMeetingMembersBusiness::where('loginMemberId', $id)->where('status', 'Active')->count();
+            $busTaken = CircleMeetingMembersBusiness::where('loginMemberId', $id)->where('status', 'Active')->get();
             // $busTakenCount = $busTaken->count();
             $busTakenAmount = $busTaken->sum('amount');
 
             //get the another count (viceVersa)
-            $busGiverCount = CircleMeetingMembersBusiness::where('businessGiverId', $id)->count();
-            $refGiverCount = CircleMeetingMembersReference::where('referenceGiverId', $id)->count();
+            $busGiverCount = CircleMeetingMembersBusiness::where('businessGiverId', $id)->where('status', 'Active')->count();
+            $refGiverCount = CircleMeetingMembersReference::where('referenceGiverId', $id)->where('status', 'Active')->count();
 
 
             return Utils::sendResponse([
@@ -1185,6 +1185,7 @@ class ApiController extends Controller
             $authMemberId = $authMember->id;
             $authCircleId = $authMember->circleId;
 
+            // Get all active members from the same circle
             $allmembers = Member::where('status', 'Active')
                 ->where('id', '!=', $authMemberId)
                 ->where('circleId', $authCircleId)
@@ -1192,12 +1193,41 @@ class ApiController extends Controller
                     $query->where('status', 'Active');
                 })
                 ->with('user')
-                ->with('circle:id,circleName')
+                ->with(['circle:id,circleName,cityId', 'circle.city:id,cityName'])
                 ->get();
 
+            // 🔹 Initialize businessAmount = 0 and append induction_count for all members
+            foreach ($allmembers as $member) {
+                $member->businessAmount = 0;
+                $member->induction_count = Member::where('sponsoredBy', $member->id)->count();
+            }
+
+            // Get business meeting records
+            $businessMeetings = CircleMeetingMembersBusiness::with(['member'])
+                ->where('status', 'Active')
+                ->get();
+
+            // Calculate total business amount for the circle and member's business amounts
+            $totalBusinessAmount = 0;
+            foreach ($businessMeetings as $meeting) {
+                $businessGiverCircleId = Member::where('userId', $meeting->businessGiverId)->value('circleId');
+                if ($businessGiverCircleId == $authCircleId) {
+                    $totalBusinessAmount += $meeting->amount;
+
+                    foreach ($allmembers as $member) {
+                        if ($member->id == $meeting->member->id) {
+                            $member->businessAmount += $meeting->amount;
+                        }
+                    }
+                }
+            }
+
             return Utils::sendResponse(
-                ['allmembers' => $allmembers],
-                'All members retrieved successfully',
+                [
+                    'allmembers' => $allmembers,
+                    'totalBusinessAmount' => $totalBusinessAmount,
+                ],
+                'All members and total business amount retrieved successfully',
                 200
             );
         } catch (\Throwable $th) {
