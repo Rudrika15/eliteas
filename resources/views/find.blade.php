@@ -1262,6 +1262,14 @@
                         col.appendChild(cardElement);
                         rowContainer.appendChild(col);
 
+                        var inductionInfo = document.createElement('div');
+                        inductionInfo.classList.add('induction-info', 'mt-2', 'text-center');
+                        inductionInfo.innerHTML = `<i class="bi bi-people-fill me-1 color-blue"></i> <strong class="color-blue">Inductions:</strong> <span class="fw-bold color-blue">${member.induction_count || 0}</span>`;
+                        cardElement.appendChild(inductionInfo);
+
+                        col.appendChild(cardElement);
+                        rowContainer.appendChild(col);
+
 
 
                         // Function to send connection request

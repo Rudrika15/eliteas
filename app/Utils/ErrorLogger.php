@@ -5,6 +5,8 @@ namespace App\Utils;
 use App\Models\ErrorLog;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
+
 
 class ErrorLogger
 {
@@ -25,22 +27,29 @@ class ErrorLogger
         // $userId = Auth::user()->id;
 
         $errorLog = new ErrorLog();
-        // $errorLog->authUserId = $userId ?? null;
         $errorLog->url = $url ?? request()->fullUrl();
         $errorLog->error_message = $exception->getMessage();
         $errorLog->date = now()->toDateString();
         $errorLog->time = now()->toTimeString();
+        $errorLog->ip_address = request()->ip();
         $errorLog->status = 'Pending';
-
         $errorLog->file = $exception->getFile();
         $errorLog->line = $exception->getLine();
+        $errorLog->user_agent = request()->header('User-Agent');
+        $errorLog->method = request()->method();
+        $errorLog->request_data = json_encode(request()->except(['password', 'token']));
+        $errorLog->is_suspicious = Str::contains($exception->getMessage(), ['phpinfo', '_controller', '.env']);
 
         $errorLog->save();
 
         Log::error($exception->getMessage(), [
-            'url' => $url ?? request()->fullUrl(),
-            'file' => $exception->getFile(),
-            'line' => $exception->getLine(),
+            'url' => $errorLog->url,
+            'file' => $errorLog->file,
+            'line' => $errorLog->line,
+            'ip' => $errorLog->ip_address,
+            'user_agent' => $errorLog->user_agent,
+            'method' => $errorLog->method,
+            'request_data' => json_decode($errorLog->request_data, true),
             'trace' => $exception->getTraceAsString(),
         ]);
     }

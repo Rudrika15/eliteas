@@ -88,25 +88,71 @@ class EventController extends Controller
     }
 
 
+    // public function memberEventIndex(Request $request)
+    // {
+    //     try {
+    //         $event = Event::with('circle')
+    //             ->where('status', 'Active')
+    //             ->whereDate('event_date', '>=', Carbon::today()->startOfDay())
+    //             // ->whereDate('event_date', '>=', Carbon::today())
+    //             ->orderBy('id', 'DESC')
+    //             ->paginate(10);
+
+    //         // $id = $event->first()->id;
+
+    //         $totalRegisterCount = VisitorEventRegister::where('eventId', $event->id)->count()
+    //             + EventRegister::where('eventId', $event->id)->count();
+
+    //         $findEventRegister = EventRegister::where('memberId', Auth::user()->member->id)
+    //             ->where('eventId', $event->id)
+    //             ->get();
+
+    //         return view('admin.event.memberEventIndex', compact('event'));
+    //     } catch (\Throwable $th) {
+    //         // throw $th;
+    //         ErrorLogger::logError(
+    //             $th,
+    //             $request->fullUrl()
+    //         );
+    //         return view('servererror');
+    //     }
+    // }
+
+
     public function memberEventIndex(Request $request)
     {
         try {
-            $event = Event::with('circle')
+            $memberId = Auth::user()->member->id;
+
+            // Fetch all upcoming active events (no pagination)
+            $events = Event::with('circle')
                 ->where('status', 'Active')
                 ->whereDate('event_date', '>=', Carbon::today()->startOfDay())
-                // ->whereDate('event_date', '>=', Carbon::today())
                 ->orderBy('id', 'DESC')
-                ->paginate(10);
-            return view('admin.event.memberEventIndex', compact('event'));
+                ->get(); // replaced paginate(10) with get()
+
+            // Attach counts and registration status to each event
+            $events = $events->map(function ($event) use ($memberId) {
+                $visitorCount = VisitorEventRegister::where('eventId', $event->id)->count();
+                $memberCount = EventRegister::where('eventId', $event->id)->count();
+
+                $event->totalRegisterCount = $visitorCount + $memberCount;
+
+                $event->isMemberRegistered = EventRegister::where('memberId', $memberId)
+                    ->where('eventId', $event->id)
+                    ->exists();
+
+                return $event;
+            });
+
+            return view('admin.event.memberEventIndex', compact('events'));
         } catch (\Throwable $th) {
-            // throw $th;
-            ErrorLogger::logError(
-                $th,
-                $request->fullUrl()
-            );
+            ErrorLogger::logError($th, $request->fullUrl());
             return view('servererror');
         }
     }
+
+
 
     public function create(Request $request)
     {

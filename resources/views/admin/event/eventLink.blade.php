@@ -504,7 +504,7 @@
                                         </form>
                                     @else
                                         <div class="d-flex flex-wrap justify-content-start align-items-center gap-2">
-                                            <button type="button" style="color: #fff; background-color: #d6460d;" class="btn btn-bg-orange btn-md" id="razorpayBtnEvent" data-amount-event="{{ $event->fees }}">Pay Now</button>
+                                            <button type="button" style="color: #fff; background-color: #d6460d;" class="btn btn-bg-orange btn-md" id="razorpayBtnEvent" data-amount-event="{{ $event->fees }}">Register Now</button>
                                             {{-- <button type="button" class="btn btn-bg-blue btn-md" id="registerWithoutPaymentBtn" data-event-id="{{ $event->id }}">Register & Pay Later</button> --}}
                                         </div>
                                     @endif

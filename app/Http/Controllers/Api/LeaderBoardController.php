@@ -162,7 +162,7 @@ class LeaderBoardController extends Controller
                 return $call->member->circleId == $selectedCircleId;
             })->groupBy('memberId')->map(function ($group) {
                 return [
-                    'member' => $group->first()->member->only(['id', 'userId', 'firstName', 'lastName']),
+                    'member' => $group->first()->member->only(['id', 'userId', 'firstName', 'lastName', 'profilePhoto', 'companyName', 'companyLogo', 'businessCategoryId']),
                     'count' => $group->count(), // Count the total circle calls
                 ];
             })->sortByDesc('count')->take(1); // Get the highest circle call record per user

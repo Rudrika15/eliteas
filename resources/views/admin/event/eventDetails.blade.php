@@ -437,7 +437,7 @@
                 <div class="hero">
                     <img src="{{ asset('Event/' . $event->event_banner) }}" alt="event banner">
                 </div>
-                
+
             </div>
 
             <div class="container laptop-device">

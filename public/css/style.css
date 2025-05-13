@@ -476,7 +476,7 @@ h6 {
     list-style: none;
 }
 
-.header-nav > ul {
+.header-nav>ul {
     margin: 0;
     padding: 0;
 }
@@ -645,6 +645,7 @@ h6 {
 }
 
 @media (min-width: 1200px) {
+
     #main,
     #footer {
         margin-left: 300px;
@@ -658,6 +659,7 @@ h6 {
 }
 
 @media (min-width: 1200px) {
+
     .toggle-sidebar #main,
     .toggle-sidebar #footer {
         margin-left: 0;
@@ -896,7 +898,7 @@ h6 {
 }
 
 /* News & Updates */
-.dashboard .news .post-item + .post-item {
+.dashboard .news .post-item+.post-item {
     margin-top: 15px;
 }
 
@@ -1270,7 +1272,7 @@ h6 {
 
 /* btn colors  */
 .btn-bg-orange {
-    background-color: #e76a35 !important ;
+    background-color: #e76a35 !important;
     color: white !important;
 }
 
@@ -1296,17 +1298,20 @@ th {
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus {
-    background-color: transparent !important; /* Your preferred background color for autofilled input */
-    -webkit-text-fill-color: #000 !important; /* Text color */
+    background-color: transparent !important;
+    /* Your preferred background color for autofilled input */
+    -webkit-text-fill-color: #000 !important;
+    /* Text color */
     transition: background-color 5000s ease-in-out 0s;
 }
 
 /* Custom styles for the floating label when autofill is active */
-.custom-floating .form-control:focus ~ label,
-.custom-floating .form-control:not(:placeholder-shown) ~ label,
-.custom-floating .form-control:-webkit-autofill ~ label {
+.custom-floating .form-control:focus~label,
+.custom-floating .form-control:not(:placeholder-shown)~label,
+.custom-floating .form-control:-webkit-autofill~label {
     background-color: transparent;
-    color: #000; /* Text color for the floating label */
+    color: #000;
+    /* Text color for the floating label */
     /* padding: 0 5px; Optional: add some padding to the label */
     transform: translateY(-48%) scale(0.85);
 }
@@ -1317,8 +1322,9 @@ input:-webkit-autofill:focus {
     /* padding: 0 5px; Optional: add some padding to the label */
 }
 
-.form-floating .form-control:placeholder-shown ~ label {
-    color: #6c757d; /* Color of the placeholder text */
+.form-floating .form-control:placeholder-shown~label {
+    color: #6c757d;
+    /* Color of the placeholder text */
 }
 
 /* custom-button-hover.css */
@@ -1365,12 +1371,14 @@ input:-webkit-autofill:focus {
 
 /* Add this to your custom CSS file */
 @media (max-width: 768px) {
+
     /* .d-flex {
         display: block !important;
     } */
     .btn-tooltip {
         margin-top: 10px;
     }
+
     .table-responsive {
         overflow-x: auto;
     }
@@ -1414,25 +1422,37 @@ input:-webkit-autofill:focus {
 /* circle reposrt css
  */
 
- .gradient-orange-blue {
+.gradient-orange-blue {
     background: linear-gradient(135deg, #e76a35, #1d3268);
     border: none;
 }
+
 .btn-bg-orange {
     background-color: #e76a35;
     color: white;
     border: none;
 }
+
 .btn-bg-orange:hover {
     background-color: #d8592b;
     color: white;
 }
+
 .btn-bg-blue {
     background-color: #1d3268;
     color: white;
     border: none;
 }
+
 .btn-bg-blue:hover {
     background-color: #16254f;
     color: white;
+}
+
+.color-blue {
+    color: #1d3268;
+}
+
+.color-orange {
+    color: #e76a35;
 }

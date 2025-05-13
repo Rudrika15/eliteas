@@ -76,6 +76,46 @@ class CircleCallController extends Controller
         }
     }
 
+    // public function index(Request $request)
+    // {
+    //     try {
+    //         $userId = Auth::id();
+
+    //         $member = Member::where('userId', $userId)->first();
+
+    //         if (!$member) {
+    //             return Utils::errorResponse(['error' => 'Member not found for the authenticated user'], 'Not Found', 404);
+    //         }
+
+    //         // $circleCalls = CircleCall::with('members')
+    //         //     ->with('meetingPerson')
+    //         //     ->where('memberId', $member->id)
+    //         //     ->where('status', 'Active')
+    //         //     ->orderBy('id', 'DESC')
+    //         //     ->get();
+
+    //         $circleCalls = CircleCall::with('meetingPerson')
+    //             // ->where('memberId', $userId)
+    //             ->with('circle')
+    //             ->where('memberId', $userId)
+    //             ->where('status', 'Active')
+    //             ->orderBy('id', 'DESC')
+    //             ->get();
+
+    //         // foreach ($circleCalls as $circleCall) {
+    //         //     $circleCall->meetingPersonId = $circleCall->member->firstName;
+    //         // }
+
+    //         $member->induction_count = Member::where('sponsoredBy', $member->id)->count();
+
+    //         return Utils::sendResponse(['circleCalls' => $circleCalls], 'Circle Calls retrieved successfully', 200);
+    //     } catch (\Throwable $th) {
+    //         // throw $th;
+    //         return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
+    //     }
+    // }
+
+
     public function index(Request $request)
     {
         try {
@@ -87,35 +127,75 @@ class CircleCallController extends Controller
                 return Utils::errorResponse(['error' => 'Member not found for the authenticated user'], 'Not Found', 404);
             }
 
-            // $circleCalls = CircleCall::with('members')
-            //     ->with('meetingPerson')
-            //     ->where('memberId', $member->id)
-            //     ->where('status', 'Active')
-            //     ->orderBy('id', 'DESC')
-            //     ->get();
-
-            $circleCalls = CircleCall::with('meetingPerson')
-                // ->where('memberId', $userId)
-                ->where('memberId', $userId)
+            $circleCalls = CircleCall::with([
+                'meetingPerson.circle' => function ($query) {
+                    $query->select('id', 'circleName');
+                }
+            ])
+                ->where('memberId', $userId) // fixed here
                 ->where('status', 'Active')
                 ->orderBy('id', 'DESC')
                 ->get();
 
-            // foreach ($circleCalls as $circleCall) {
-            //     $circleCall->meetingPersonId = $circleCall->member->firstName;
-            // }
+            // Add induction count to each meetingPerson
+            $circleCalls->transform(function ($call) {
+                if ($call->meetingPerson) {
+                    $call->meetingPerson->induction_count = Member::where('sponsoredBy', $call->meetingPerson->id)->count() ?? 0;
+                }
+                return $call;
+            });
 
-
-            return Utils::sendResponse(['circleCalls' => $circleCalls], 'Circle Calls retrieved successfully', 200);
+            return Utils::sendResponse([
+                'circleCalls' => $circleCalls,
+            ], 'Circle Calls retrieved successfully', 200);
         } catch (\Throwable $th) {
-            // throw $th;
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
 
 
-    public function recievedBusinessMeet(Request $request)
 
+    // public function recievedBusinessMeet(Request $request)
+
+    // {
+    //     try {
+    //         $userId = Auth::id();
+
+    //         $member = Member::where('userId', $userId)->first();
+
+    //         if (!$member) {
+    //             return Utils::errorResponse(['error' => 'Member not found for the authenticated user'], 'Not Found', 404);
+    //         }
+
+    //         // $circleCalls = CircleCall::with('members')
+    //         //     ->with('meetingPerson')
+    //         //     ->where('memberId', $member->id)
+    //         //     ->where('status', 'Active')
+    //         //     ->orderBy('id', 'DESC')
+    //         //     ->get();
+
+    //         $callWith = CircleCall::with('member')
+    //             //->with('meetingPerson')
+    //             // ->where('memberId', $userId)
+    //             ->where('meetingPersonId', $userId)
+    //             ->where('status', 'Active')
+    //             ->orderBy('id', 'DESC')
+    //             ->get();
+
+    //         // foreach ($circleCalls as $circleCall) {
+    //         //     $circleCall->meetingPersonId = $circleCall->member->firstName;
+    //         // }
+
+
+    //         return Utils::sendResponse(['circleCalls' => $callWith], 'Received Circle Calls retrieved successfully', 200);
+    //     } catch (\Throwable $th) {
+    //         return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
+    //     }
+    // }
+
+
+
+    public function recievedBusinessMeet(Request $request)
     {
         try {
             $userId = Auth::id();
@@ -126,25 +206,23 @@ class CircleCallController extends Controller
                 return Utils::errorResponse(['error' => 'Member not found for the authenticated user'], 'Not Found', 404);
             }
 
-            // $circleCalls = CircleCall::with('members')
-            //     ->with('meetingPerson')
-            //     ->where('memberId', $member->id)
-            //     ->where('status', 'Active')
-            //     ->orderBy('id', 'DESC')
-            //     ->get();
-
-            $callWith = CircleCall::with('member')
-                //->with('meetingPerson')
-                // ->where('memberId', $userId)
+            $callWith = CircleCall::with([
+                'member.circle' => function ($query) {
+                    $query->select('id', 'circleName');
+                }
+            ])
                 ->where('meetingPersonId', $userId)
                 ->where('status', 'Active')
                 ->orderBy('id', 'DESC')
                 ->get();
 
-            // foreach ($circleCalls as $circleCall) {
-            //     $circleCall->meetingPersonId = $circleCall->member->firstName;
-            // }
-
+            // Add induction count to each member
+            $callWith->transform(function ($call) {
+                if ($call->member) {
+                    $call->member->induction_count = Member::where('sponsoredBy', $call->member->id)->count() ?? 0;
+                }
+                return $call;
+            });
 
             return Utils::sendResponse(['circleCalls' => $callWith], 'Received Circle Calls retrieved successfully', 200);
         } catch (\Throwable $th) {
