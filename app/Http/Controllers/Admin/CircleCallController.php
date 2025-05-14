@@ -56,7 +56,28 @@ class CircleCallController extends Controller
                 ->where('status', 'Active')
                 ->orderBy('id', 'DESC')
                 ->paginate(10);
-            return view('admin.circlecall.index', compact('circlecall', 'callWith'));
+
+
+            $circles = Circle::where('status', 'Active')->get();
+
+            $circleMember = Member::with('circle')
+                ->where('status', 'Active')
+                ->get(); // Ensure 'circleId' is included
+
+
+            // return $scheduleDate = Schedule::where('circleId', Auth::user()->member->circle->id)->where('status', 'Active')->get(['date']);
+            $scheduleDate = Schedule::where('circleId', Auth::user()->member->circle->id)
+                ->where('status', 'Active')
+                ->where('date')
+                ->pluck('date'); // Pluck all 'date' values from the query result
+
+            $lastDate = Schedule::where('circleId', Auth::user()->member->circle->id)
+                ->where('date', '<', now())
+                ->orderBy('date', 'desc')
+                ->pluck('date')
+                ->first();
+
+            return view('admin.circlecall.index', compact('circlecall', 'callWith', 'circles', 'scheduleDate', 'lastDate', 'circleMember'));
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError($th, $request->fullUrl());
@@ -289,7 +310,7 @@ class CircleCallController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'meetingPlace' => 'required|regex:/^([a-zA-Z]+)(\s[a-zA-Z]+)*$/',
+            'meetingPlace' => 'required',
             'date' => 'required',
             'remarks' => 'required',
             // 'meetingImage' => 'mimes:jpeg,jpg,png,gif|max:5120', // Allow 5MB for upload
