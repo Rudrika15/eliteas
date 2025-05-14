@@ -73,6 +73,12 @@
                                     {{-- <span class="keyword-pill"></span> --}}
                                 @endif
                             </div>
+
+                            <div class="induction-count-section">
+                                <div class="label" style="color: #1d3268; font-weight: bold;">Induction Count : {{ $member->inductionCount ?? '0' }}</div>
+                            </div>
+
+
                         </div>
 
                         <!-- Bottom Actions -->
@@ -252,15 +258,15 @@
             }
 
             /* .company-category-section {
-                    flex-direction: column;
-                    align-items: center;
-                }
+                        flex-direction: column;
+                        align-items: center;
+                    }
 
-                .divider {
-                    width: 80%;
-                    height: 1px;
-                    margin: 10px 0;
-                } */
+                    .divider {
+                        width: 80%;
+                        height: 1px;
+                        margin: 10px 0;
+                    } */
 
             .icon-text {
                 margin-bottom: 8px;

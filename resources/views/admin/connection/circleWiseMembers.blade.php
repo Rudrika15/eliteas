@@ -181,7 +181,7 @@
                 width: 80%;
             }
         }
-       
+
         @media (max-width: 1440px) {
             .profile-card {
                 width: 100%;
@@ -291,6 +291,11 @@
                                     <span class="keyword-pill">No Keywords</span>
                                 @endif
                             </div>
+
+                            <div class="induction-count-section">
+                                <div class="label" style="color: #1d3268; font-weight: bold;">Induction Count : {{ $member->inductionCount ?? '0' }}</div>
+                            </div>
+
                         </div>
                         <div class="bottom-actions">
                             <div>

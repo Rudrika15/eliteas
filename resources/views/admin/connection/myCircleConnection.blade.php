@@ -60,6 +60,9 @@
                                 @endif
                             </div>
 
+                            <div class="induction-count-section">
+                                <div class="label" style="color: #1d3268; font-weight: bold;">Induction Count : {{ $myConnectionsData->inductionCount ?? '0' }}</div>
+                            </div>
 
                         </div>
                         <div class="bottom-actions">
