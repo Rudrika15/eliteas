@@ -60,7 +60,7 @@ class CircleMeetingMemberBusinessController extends Controller
             $busGiven = CircleMeetingMembersBusiness::with([
                 'users:id,firstName,lastName,email',
                 'member' => function ($q) {
-                    $q->select('id', 'userId', 'circleId', 'sponsoredBy', 'profilePhoto');
+                    $q->select('id', 'userId', 'circleId', 'sponsoredBy', 'profilePhoto', 'companyName');
                 },
                 'member.circle:id,circleName',
                 'businessAmounts'

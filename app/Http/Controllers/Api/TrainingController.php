@@ -15,20 +15,91 @@ use Illuminate\Support\Facades\Validator;
 
 class TrainingController extends Controller
 {
+    // public function index(Request $request)
+    // {
+    //     try {
+    //         $trainings = Training::with('trainer')
+    //             ->where('status', 'Active')
+    //             // ->where('start_date', '>=', Carbon::now()->subDays(1))
+    //             ->where('date', '>', now()->toDateString())
+    //             ->get();
+
+    //         return Utils::sendResponse(['trainings' => $trainings], 'Trainings retrieved successfully', 200);
+    //     } catch (\Throwable $th) {
+    //         return Utils::errorResponse($th->getMessage(), 'Internal Server Error', 500);
+    //     }
+    // }
+
+
+    // public function index(Request $request)
+    // {
+    //     try {
+    //         $userId = Auth::id(); // Get authenticated user ID
+
+    //         $trainings = Training::with('trainer')
+    //             ->where('status', 'Active')
+    //             ->whereDate('date', '>=', now()->toDateString())
+    //             ->get()
+    //             ->map(function ($training) use ($userId) {
+    //                 $isRegistered = TrainingRegister::where('trainingId', $training->id)
+    //                     ->where('userId', $userId) // Adjust column if needed
+    //                     ->exists();
+
+    //                 $training->setAttribute('is_registered', $isRegistered); // Proper way to attach custom property
+    //                 return $training;
+    //             });
+
+    //         return Utils::sendResponse(['trainings' => $trainings], 'Trainings retrieved successfully', 200);
+    //     } catch (\Throwable $th) {
+    //         return Utils::errorResponse($th->getMessage(), 'Internal Server Error', 500);
+    //     }
+    // }
+
+
     public function index(Request $request)
     {
         try {
-            $trainings = Training::with('trainer')
+            $id = $request->input('id');
+            $userId = Auth::id(); // Get the authenticated user ID
+
+            if ($id) {
+                $training = Training::with(['trainer', 'registerTraining'])
+                    ->where('status', 'Active')
+                    ->where('id', $id)
+                    ->first();
+
+                if (!$training) {
+                    return Utils::errorResponse('Training not found', 'Not Found', 404);
+                }
+
+                // Add is_registered flag for this single training
+                $isRegistered = TrainingRegister::where('trainingId', $training->id)
+                    ->where('userId', $userId) // Adjust if your column name differs
+                    ->exists();
+                $training->setAttribute('is_registered', $isRegistered);
+
+                return Utils::sendResponse(['training' => $training], 'Training retrieved successfully', 200);
+            }
+
+            $trainings = Training::with(['trainer', 'registerTraining'])
                 ->where('status', 'Active')
-                // ->where('start_date', '>=', Carbon::now()->subDays(1))
                 ->where('date', '>', now()->toDateString())
-                ->get();
+                ->get()
+                ->map(function ($training) use ($userId) {
+                    $isRegistered = TrainingRegister::where('trainingId', $training->id)
+                        ->where('userId', $userId) // Adjust if needed
+                        ->exists();
+                    $training->setAttribute('is_registered', $isRegistered);
+                    return $training;
+                });
 
             return Utils::sendResponse(['trainings' => $trainings], 'Trainings retrieved successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse($th->getMessage(), 'Internal Server Error', 500);
         }
     }
+
+
 
     public function show(Request $request, $id)
     {

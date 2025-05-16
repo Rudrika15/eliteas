@@ -3,232 +3,240 @@
 @section('title', 'UBN - Referance')
 @section('content')
 
-    {{-- Message --}}
-    {{-- @if (Session::has('success'))
-<div id="successMessage" class="alert alert-success alert-dismissible" role="alert">
-    <strong>Success !</strong> {{ session('success') }}
-</div>
-@endif
+    <style>
+        .tab-navigation {
+            border-bottom: 2px solid #eaeaea;
+            margin-bottom: 1rem;
+        }
 
-@if (Session::has('error'))
-<div class="alert alert-danger alert-dismissible" id="error-alert" role="alert">
-    <button type="button" class="close" data-dismiss="alert"></button>
-    <strong>Error !</strong> {{ session('error') }}
-</div>
-@endif --}}
+        .tab-navigation a {
+            padding: 10px 20px;
+            display: inline-block;
+            text-decoration: none;
+            font-weight: 600;
+            color: #333;
+        }
 
-    {{-- <div class="container">
-    <div class="row">
-        <div class="col-12">
-            <div class="card mt-3">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center mb-5">
-                        <h4 class="card-title">Reference Received</h4> --}}
-    {{-- <a href="{{ route('refGiver.create') }}" class="btn btn-bg-orange btn-sm mt-3 btn-tooltip">
-                            <i class="bi bi-plus-circle"></i>
-                            <span class="btn-text">Add Reference Details</span>
-                        </a> --}}
-    {{-- </div> --}}
-    {{-- <hr> --}}
-    <!-- Table with stripped rows -->
-    {{-- <div class="table-responsive mt-5">
-                        <table class="table table-striped table-hover mb-5">
-                            <thead>
-                                <tr>
-                                    <th>Member Name</th>
-                                    <th>Ex.Contact Name</th>
-                                    <th>Ex.Contact No</th>
-                                    <th>Ex.Email</th>
-                                    <th>Scale</th> --}}
-    {{-- <th>Description</th> --}}
-    {{-- <th>Status</th> --}}
-    {{-- <th>Action</th> --}}
-    {{--
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($referenceByOther as $referenceByOtherData)
-                                <tr>
-                                    <td>{{ $referenceByOtherData->refGiverName->firstName ?? '-' }}
-                                        {{ $referenceByOtherData->refGiverName->lastName ?? '-' }}</td>
-                                    <td>{{ $referenceByOtherData->contactName ?? '-' }}</td>
-                                    <td>{{ $referenceByOtherData->contactNo ?? '-' }}</td>
-                                    <td>{{ $referenceByOtherData->email ?? '-' }}</td>
-                                    <td>{{ $referenceByOtherData->scale ?? '-' }}</td> --}}
-    {{-- <td>{{ $referenceByOther->description ?? '-' }}</td> --}}
-    {{-- <td>{{ $referenceByOther->status }}</td> --}}
-    {{-- </tr> --}}
-    {{-- @endforeach
-                            </tbody>
-                        </table>
-                        <div class="d-flex justify-content-end" style="color: #1d3268">
-                            {!! $referenceByOther->links() !!}
+        .tab-navigation a.active {
+            color: #ff6600;
+            border-bottom: 3px solid #ff6600;
+        }
+
+        .profile-badge {
+            position: absolute;
+            top: 65%;
+            left: 58%;
+            transform: translate(-50%, -50%);
+            background: #ffcc00;
+            color: white;
+            border-radius: 50%;
+            padding: 4px 8px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        .card-remark {
+            background-color: #f9f9f9;
+            border-radius: 6px;
+            padding: 10px;
+            font-size: 0.85rem;
+            color: #555;
+            margin-bottom: 10px;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+
+    <div class="tab-navigation mb-3">
+        <a href="#" class="tab-btn active" data-target="#tabByMe">Received ({{ $busGiver->count() }})</a>
+        <a href="#" class="tab-btn" data-target="#tabByOther">Given ({{ $refGiver->count() }})</a>
+        {{-- <a href="{{ route('circlecall.create') }}" class="float-end btn btn-sm btn-bg-orange">
+        <i class="bi bi-plus-circle"></i> Create IBM
+    </a> --}}
+
+        <button type="button" class="float-end btn btn-bg-orange" data-bs-toggle="modal" data-bs-target="#createIBMModal">
+            Create Reference
+        </button>
+    </div>
+
+
+
+    <div id="tabByMe" class="tab-content active" style="display: block;">
+        <div class="row">
+            @foreach ($busGiver as $busGiverData)
+                <div class="col-md-6 col-lg-4 col-xl-3 mb-4">
+                    <div class="card shadow rounded-4 overflow-hidden">
+                        <div class="position-relative">
+                            <img src="https://picsum.photos/700/200?random={{ rand(1, 1000) }}" class="card-img-top" alt="cover">
+                            <div class="position-absolute top-100 start-50 translate-middle">
+                                <img src="{{ optional($busGiverData->businessGiverMember)->profilePhoto ? asset('ProfilePhoto/' . $busGiverData->businessGiverMember->profilePhoto) : asset('ProfilePhoto/profile.png') }}" class="rounded-circle border border-3 border-white" width="110" height="110" alt="Profile">
+                            </div>
+                            <div class="dropdown position-absolute top-0 end-0 m-2">
+                                <a href="#" class="text-black" data-bs-toggle="dropdown"><i class="bi bi-three-dots-vertical"></i></a>
+                                {{-- <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item color-blue" href="{{ route('circlecall.edit', $busGiverData->id) }}"><i class="bi bi-pencil-square me-2"></i>Edit</a></li>
+                                    <li><a class="dropdown-item text-danger" onclick="deleteRow('{{ route('circlecall.delete', $busGiverData->id) }}')"><i class="bi bi-trash me-2"></i>Delete</a></li>
+                                </ul> --}}
+                            </div>
                         </div>
-                    </div> --}}
-    <!-- End Table with stripped rows -->
-    {{--
+                        <div class="card-body text-center pt-5 mt-3">
+                            {{-- Meeting Person Name --}}
+                            <h5 class="card-title mb-0">
+                                {{ $busGiverData->businessGiver->firstName ?? '-' }} {{ $busGiverData->businessGiver->lastName ?? '-' }}
+                            </h5>
+
+                            {{-- Circle Name and Date --}}
+                            <div class="text-muted small mb-2">
+                                <i class="bi bi-person-circle me-1 color-blue"></i> <span class="color-blue"> {{ $busGiverData->businessGiverMember->circle->circleName ?? '-' }} </span>
+                                <span class="me-4"></span>
+                                <i class="bi bi-calendar3 me-1 color-blue"></i> <span class="color-blue">{{ $busGiverData->date ? date('d-m-Y', strtotime($busGiverData->date)) : '-' }} </span>
+                            </div>
+
+                            {{-- Amount --}}
+                            <div class="text-muted small mb-2">
+                                <strong class="color-blue"> ₹ {{ $busGiverData->amount ?? '-' }} </strong>
+                            </div>
+
+                            {{-- Remarks --}}
+                            <div class="card-remark text-muted small mb-2">
+                                <span class="color-blue">{{ Str::limit($busGiverData->remarks ?? '', 25) }}{{ strlen($busGiverData->remarks ?? '') > 25 ? '...' : '' }} </span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
+            @endforeach
         </div>
     </div>
-</div> --}}
 
 
-    <div class="container">
-        <div class="row">
-            <div class="col-12">
-                <div class="card mt-3">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center mb-5">
-                            <h4 class="card-title">References Received </h4>
-                            {{-- <a href="{{ route('busGiver.create') }}" class="btn btn-primary btn-sm mt-3">ADD</a> --}}
-                        </div>
-                        <hr class="mb-5">
-                        <!-- Table with stripped rows -->
-                        <div class="table-responsive mt-5">
-                            <table class="table table-bordered table-striped table-hover mb-5">
-                                <thead>
-                                    <tr>
-                                        <th>S.No</th>
-                                        <th>Business Giver</th>
-                                        {{-- <th>Login Member</th> --}}
-                                        <th>Date</th>
-                                        <th>Amount</th>
-                                        {{-- <th>Status</th> --}}
-                                        {{-- <th>Action</th> --}}
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($busGiver as $busGiverData)
-                                        <tr>
-                                            <th>{{ ($busGiver->currentPage() - 1) * $busGiver->perPage() + $loop->index + 1 }}
-                                            </th>
-                                            <td>{{ $busGiverData->businessGiver ? $busGiverData->businessGiver->firstName . ' ' . $busGiverData->businessGiver->lastName : '-' }}
-                                            </td>
-                                            {{-- <td>{{ $busGiverData->loginMember->firstName . ' ' .
-                                        $busGiverData->loginMember->lastName ?? '-' }}</td> --}}
-                                            <td>{{ \Carbon\Carbon::parse($busGiverData->date)->format('d-m-Y') ?? '-' }}
-                                            </td>
-                                            <td>{{ $busGiverData->amount ?? '-' }}</td>
-                                            {{-- <td>{{ $busGiverData->status }}</td> --}}
-                                            {{-- <td>
-                                                <a href="{{ route('busGiver.edit', $busGiverData->id) }}" class="btn btn-bg-orange btn-sm btn-tooltip">
-                                                    <i class="bi bi-plus"></i>
-                                                    <span class="btn-text">Add Business Amount</span>
-                                                </a>
-                                            </td> --}}
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                            <div class="d-flex justify-content-end custom-pagination">
-                                {!! $busGiver->links() !!}
+
+
+
+
+
+
+    <div id="tabByOther" class="tab-content active" style="display: none;">
+        <div class="d-flex justify-content-end align-items-center mb-2">
+            <a href="{{ route('refGiver.create') }}" class="btn btn-bg-orange btn-sm mt-3 btn-tooltip">
+                <i class="bi bi-plus-circle"></i>
+                <span class="btn-text">Add Reference Details</span>
+            </a>
+        </div>
+        <div class="row mt-4">
+            @foreach ($refGiver as $refGiverData)
+                <div class="col-md-6 col-lg-4 col-xl-3 mb-4">
+                    <div class="card shadow rounded-4 overflow-hidden">
+                        <div class="position-relative">
+                            <img src="https://picsum.photos/700/200?random={{ rand(1, 1000) }}" class="card-img-top" alt="cover">
+                            <div class="position-absolute top-100 start-50 translate-middle">
+                                <img src="{{ optional($refGiverData->members)->profilePhoto ? asset('ProfilePhoto/' . $refGiverData->members->profilePhoto) : asset('ProfilePhoto/profile.png') }}" class="rounded-circle border border-3 border-white" width="110" height="110" alt="Profile">
                             </div>
-                            <!-- End Table with stripped rows -->
+                            <div class="dropdown position-absolute top-0 end-0 m-2">
+                                <a href="#" class="text-black" data-bs-toggle="dropdown"><i class="bi bi-three-dots-vertical"></i></a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item color-blue" href="{{ route('refGiver.edit', $refGiverData->id) }}"><i class="bi bi-pencil-square me-2"></i>Edit</a></li>
+                                    <li>
+                                        <a class="dropdown-item text-danger" href="#" onclick="confirmDelete('{{ route('refGiver.delete', $refGiverData->id) }}')">
+                                            <i class="bi bi-trash me-2"></i>Delete
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
-                    </div>
-                </div>
-            </div>
+                        <div class="card-body text-center pt-5 mt-3">
+                            {{-- Referred Person Name --}}
+                            <h5 class="card-title mb-0">{{ $refGiverData->members->firstName ?? '-' }} {{ $refGiverData->members->lastName ?? '-' }} </h5>
 
+                            {{-- Member Name & Date --}}
+                            <div class="text-muted small mb-2">
+                                <i class="bi bi-person-circle me-1 color-blue"></i>
+                                <span class="color-blue">
+                                    {{ $refGiverData->members->circle->circleName ?? '-' }}
+                                </span>
+                                <span class="me-4"></span>
+                                <i class="bi bi-calendar3 me-1 color-blue"></i>
+                                <span class="color-blue">
+                                    {{ \Carbon\Carbon::parse($refGiverData->created_at)->format('d-m-Y') ?? '-' }}
+                                </span>
+                            </div>
 
-            <div class="container">
-                <div class="row">
-                    <div class="col-12">
-                        <div class="card mt-3">
-                            <div class="card-body">
-                                <h4 class="card-title">Reference Given</h4>
-                                <div class="d-flex justify-content-end align-items-center mb-2">
-                                    {{-- <a href="{{ route('refGiver.refByOther') }}"
-                                        class="btn btn-bg-blue btn-sm mt-3 mr-2">Add
-                                        Reference By Other</a> --}}
-                                    {{-- &nbsp;&nbsp;&nbsp; --}}
-                                    <a href="{{ route('refGiver.create') }}" class="btn btn-bg-orange btn-sm mt-3 btn-tooltip">
-                                        <i class="bi bi-plus-circle"></i>
-                                        <span class="btn-text">Add Reference Details</span>
-                                    </a>
-                                </div>
-                                <hr>
-                                <!-- Table with stripped rows -->
-                                <div class="table-responsive mt-5">
-                                    <table class="table table-bordered table-striped table-hover mb-5">
-                                        <thead>
-                                            <tr>
-                                                <th>S.No</th>
-                                                <th>Date</th>
-                                                <th>Member Name</th>
-                                                <th>Reffered Person Name</th>
-                                                <th>Contact No</th>
-                                                <th>Email</th>
-                                                <th>Scale</th>
-                                                {{-- <th>Description</th> --}}
-                                                <th>Status</th>
-                                                <th>Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach ($refGiver as $refGiverData)
-                                                <tr>
-                                                    <th>{{ ($refGiver->currentPage() - 1) * $refGiver->perPage() + $loop->index + 1 }}
-                                                    </th>
-                                                    <td>{{ \Carbon\Carbon::parse($refGiverData->created_at)->format('d-m-Y') ?? '-' }}</td>
-                                                    <td>{{ $refGiverData->members->firstName ?? '-' }}
-                                                        {{ $refGiverData->members->lastName ?? '-' }}</td>
-                                                    <td>{{ $refGiverData->contactName ?? '-' }}</td>
-                                                    <td>{{ $refGiverData->contactNo ?? ($refGiverData->members->user->contactNo ?? '-') }}
-                                                    </td>
-                                                    <td>{{ $refGiverData->email ?? ($refGiverData->members->user->email ?? '-') }}
-                                                    </td>
-                                                    <td>{{ $refGiverData->scale ?? '-' }}</td>
-                                                    {{-- <td>{{ $refGiverData->description ?? '-' }}</td> --}}
-                                                    <td>{{ $refGiverData->status }}</td>
-                                                    <td class="d-flex gap-1">
-                                                        <a href="{{ route('refGiver.edit', $refGiverData->id) }}" class="btn btn-bg-blue btn-sm btn-tooltip">
-                                                            <i class="bi bi-pen"></i>
-                                                            <span class="btn-text">Edit Reference Details</span>
-                                                        </a>
-                                                        <a id="deleteRefGiver{{ $refGiverData->id }}" href="{{ route('refGiver.delete', $refGiverData->id) }}" class="btn btn-danger btn-sm btn-tooltip" data-toggle="tooltip" data-placement="top" title="Delete Reference Giver">
-                                                            <i class="bi bi-trash"></i>
-                                                            <span class="btn-text">Delete</span>
-                                                        </a>
+                            {{-- Contact & Email
+                                    <div class="text-muted small mb-2">
+                                        <div><strong class="color-blue">📞 {{ $refGiverData->contactNo ?? ($refGiverData->members->user->contactNo ?? '-') }}</strong></div>
+                                        <div><strong class="color-blue">✉️ {{ $refGiverData->email ?? ($refGiverData->members->user->email ?? '-') }}</strong></div>
+                                    </div> --}}
 
-                                                        <script>
-                                                            $(document).ready(function() {
-                                                                $('#deleteRefGiver{{ $refGiverData->id }}').click(function(e) {
-                                                                    e.preventDefault();
-                                                                    Swal.fire({
-                                                                        title: 'Are you sure?',
-                                                                        text: "You won't be able to revert this!",
-                                                                        icon: 'warning',
-                                                                        showCancelButton: true,
-                                                                        confirmButtonColor: '#1d2856',
-                                                                        cancelButtonColor: '#d33',
-                                                                        confirmButtonText: 'Yes, delete it!'
-                                                                    }).then((result) => {
-                                                                        if (result.isConfirmed) {
-                                                                            window.location.href = $(this).attr('href');
-                                                                        }
-                                                                    });
-                                                                });
-                                                            });
-                                                        </script>
-                                                    </td>
-                                                </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-                                    <div class="d-flex justify-content-end custom-pagination">
-                                        {!! $refGiver->links() !!}
-                                    </div>
-                                </div>
-                                <!-- End Table with stripped rows -->
+                            {{-- Scale & Status --}}
+                            <div class="text-muted small mb-2">
+                                @for ($i = 1; $i <= 5; $i++)
+                                    <i class="bi bi-star{{ $refGiverData->scale >= $i ? '-fill' : '' }} text-warning"></i>
+                                @endfor
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            @endforeach
+        </div>
+
+        {{-- Pagination --}}
+        {{-- <div class="d-flex justify-content-end custom-pagination">
+            {!! $refGiver->links() !!}
+        </div> --}}
+    </div>
 
 
-            {{-- //ref by other --}}
+
+    <script>
+        $(document).ready(function() {
+            $('#deleteRefGiver{{ $refGiverData->id }}').click(function(e) {
+                e.preventDefault();
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#1d2856',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = $(this).attr('href');
+                    }
+                });
+            });
+        });
+    </script>
 
 
-        @endsection
+    <script>
+        $(document).ready(function() {
+            $('.tab-btn').click(function(e) {
+                e.preventDefault();
+
+                // Remove active class from all buttons and hide all content
+                $('.tab-btn').removeClass('active');
+                $('.tab-content').hide();
+
+                // Add active class to clicked tab
+                $(this).addClass('active');
+
+                // Show target tab content
+                let target = $(this).data('target');
+                $(target).show();
+            });
+        });
+    </script>
+
+
+
+
+    {{-- //ref by other --}}
+
+
+@endsection

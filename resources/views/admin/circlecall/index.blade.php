@@ -253,7 +253,7 @@
                         <div class="position-relative">
                             <img src="https://picsum.photos/700/200?random={{ rand(1, 1000) }}" class="card-img-top" alt="cover">
                             <div class="position-absolute top-100 start-50 translate-middle">
-                                <img src="{{ $circlecallData->meetingPerson->profilePhoto ? asset('ProfilePhoto/' . $circlecallData->meetingPerson->profilePhoto) : asset('ProfilePhoto/profile.png') }}" class="rounded-circle border border-3 border-white" width="110" height="110" alt="Profile">
+                                <img src="{{ $callWithData->meetingPerson->profilePhoto ? asset('ProfilePhoto/' . $callWithData->meetingPerson->profilePhoto) : asset('ProfilePhoto/profile.png') }}" class="rounded-circle border border-3 border-white" width="110" height="110" alt="Profile">
                                 {{-- <div class="position-absolute bottom-0 end-0 bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 24px; height: 24px; font-size: 12px; transform: translate(25%, 25%);">G</div> --}}
                             </div>
                         </div>
