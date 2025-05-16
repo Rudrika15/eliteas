@@ -157,6 +157,11 @@ class ConnectionController extends Controller
             }
         });
 
+        // 🔄 Add induction count
+        $members->map(function ($member) {
+            $member->induction_count = Member::where('sponsoredBy', $member->id)->count();
+            return $member;
+        });
 
         return view('partials.member-cards', [
             'members' => $circle->members,

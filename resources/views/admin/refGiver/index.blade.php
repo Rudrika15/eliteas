@@ -103,7 +103,7 @@
                                         <tr>
                                             <th>{{ ($busGiver->currentPage() - 1) * $busGiver->perPage() + $loop->index + 1 }}
                                             </th>
-                                            <td>{{ $busGiverData->businessGiver->firstName . ' ' . $busGiverData->businessGiver->lastName ?? '-' }}
+                                            <td>{{ $busGiverData->businessGiver ? $busGiverData->businessGiver->firstName . ' ' . $busGiverData->businessGiver->lastName : '-' }}
                                             </td>
                                             {{-- <td>{{ $busGiverData->loginMember->firstName . ' ' .
                                         $busGiverData->loginMember->lastName ?? '-' }}</td> --}}
