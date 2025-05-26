@@ -215,7 +215,12 @@
                             <div class="dropdown position-absolute top-0 end-0 m-2">
                                 <a href="#" class="text-black" data-bs-toggle="dropdown"><i class="bi bi-three-dots-vertical"></i></a>
                                 <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item color-blue" href="{{ route('circlecall.edit', $circlecallData->id) }}"><i class="bi bi-pencil-square me-2"></i>Edit</a></li>
+                                    <li>
+                                        <a class="dropdown-item color-blue open-edit-modal" href="#" data-id="{{ $circlecallData->id }}">
+                                            <i class="bi bi-pencil-square me-2"></i>Edit
+                                        </a>
+                                    </li>
+
                                     <li><a class="dropdown-item text-danger" onclick="deleteRow('{{ route('circlecall.delete', $circlecallData->id) }}')"><i class="bi bi-trash me-2"></i>Delete</a></li>
                                 </ul>
                             </div>
@@ -395,6 +400,73 @@
         </div>
     </div>
 
+    {{-- edit model start  --}}
+
+    <div class="modal fade right" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg-custom">
+            <div class="modal-content border-0 rounded-3 shadow">
+                <div class="modal-header bg-light border-bottom-0 rounded-top">
+                    <h5 class="modal-title color-blue fw-bold" id="editModalLabel">Edit IBM</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+    
+                <div class="modal-body" id="editModalBody">
+                    <!-- AJAX-loaded form goes here -->
+                    <div class="text-center">
+                        <div class="spinner-border text-primary" role="status"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+
+    <script>
+        $(document).ready(function() {
+            $('.open-edit-modal').click(function(e) {
+                e.preventDefault();
+                const id = $(this).data('id');
+                const modalBody = $('#editModalBody');
+
+                modalBody.html('<div class="text-center"><div class="spinner-border text-primary" role="status"></div></div>');
+
+                $('#editModal').modal('show');
+
+                $.ajax({
+                    url: '/circlecall/edit/' + id,
+                    type: 'GET',
+                    success: function(response) {
+                        modalBody.html(response);
+                    },
+                    error: function(xhr, status, error) {
+                        // Log to console
+                        console.error("AJAX Error:", {
+                            status: xhr.status,
+                            statusText: xhr.statusText,
+                            responseText: xhr.responseText,
+                            errorThrown: error
+                        });
+
+                        // Display detailed error in the modal
+                        modalBody.html(`
+                            <div class="text-danger">
+                                <strong>Failed to load form.</strong><br>
+                                Status: ${xhr.status} ${xhr.statusText}<br>
+                                Error: ${error}<br>
+                                Message: ${xhr.responseText}
+                            </div>
+                        `);
+                    }
+                });
+            });
+        });
+    </script>
+
+
+
+    {{-- edit model end  --}}
+
 
     <!-- JS for Image Preview -->
     <script>
@@ -550,6 +622,7 @@
             })
         }
     </script>
+
 
 
 

@@ -446,7 +446,8 @@ class CircleCallController extends Controller
                 ->pluck('date')
                 ->first();
 
-            return view('admin.circlecall.edit', compact('circlecall', 'circles', 'scheduleDate', 'lastDate', 'circleMember', 'member'));
+            // return view('admin.circlecall.edit', compact('circlecall', 'circles', 'scheduleDate', 'lastDate', 'circleMember', 'member'));
+            return view('admin.circlecall._edit_form', compact('circlecall', 'circles', 'scheduleDate', 'lastDate', 'circleMember', 'member'));
         } catch (\Throwable $th) {
             // Log the error using the ErrorLogger utility
             ErrorLogger::logError($th, $request->fullUrl());
