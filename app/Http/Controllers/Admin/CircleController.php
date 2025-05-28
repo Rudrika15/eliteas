@@ -420,6 +420,15 @@ class CircleController extends Controller
                 return $businessGiverCircleId == $circle->id;
             });
 
+
+            // $filteredBusinessMeetings = $businessMeetings->filter(function ($meeting) use ($circle) {
+            //     $businessGiverCircleId = Member::where('userId', $meeting->businessGiverId)
+            //         ->where('status', 'Active')
+            //         ->value('circleId');
+            //     return $businessGiverCircleId == $circle->id;
+            // });
+
+
             // Total Business Amount
             $totalBusinessAmount = $filteredBusinessMeetings->sum('amount');
 
