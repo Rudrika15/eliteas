@@ -572,6 +572,9 @@
             <li class="nav-item" role="presentation">
                 <a class="nav-link" id="gains-profile-tab" data-bs-toggle="tab" href="#gainsProfile" role="tab" aria-controls="gainsProfile" aria-selected="false">Gains Profile</a>
             </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="testimonial-tab" data-bs-toggle="tab" href="#testimonial" role="tab" aria-controls="testimonial" aria-selected="false">Testimonial</a>
+            </li>
         </ul>
 
         <!-- Tabs Content -->
@@ -655,6 +658,32 @@
                                 class="value">{{ $member->experience ?? 'Not provided' }}</span></li>
                     </ul> --}}
                     Coming Soon
+
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="testimonial" role="tabpanel" aria-labelledby="testimonial-tab">
+                {{-- <h5>Testimonial</h5> --}}
+                <div class="content-section">
+                    @if ($testimonials->isNotEmpty())
+                    <ul>
+                        @foreach ($testimonials as $testimonial)
+                            <li><span class="value"><b>{{ $testimonial->user->firstName ?? 'Anonymous'}} {{ $testimonial->user->lastName ?? '' }}</b>: {{ $testimonial->message }}</span></li>
+                        @endforeach
+                    </ul>
+                @else
+                    <p>No testimonials found</p>
+                @endif
+
+                {{$testimonials}}
+                
+                    {{-- <ul>
+                        <li><span class="title">Achievements:</span> <span
+                                class="value">{{ $member->achievements ?? 'Not specified' }}</span></li>
+                        <li><span class="title">Experience:</span> <span
+                                class="value">{{ $member->experience ?? 'Not provided' }}</span></li>
+                    </ul> --}}
+                    {{-- Coming Soon --}}
 
                 </div>
             </div>

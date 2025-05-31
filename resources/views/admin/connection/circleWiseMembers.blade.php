@@ -229,8 +229,6 @@
         }
     </style>
 
-
-
     <div class="container mt-5">
         <h1 class="text-center card-title mb-4">Members of {{ $circle->circleName }} Circle</h1>
         <div class="row">
