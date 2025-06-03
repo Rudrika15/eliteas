@@ -457,7 +457,7 @@ class PaymentController extends Controller
         $circles = Circle::where('status', 'Active')->get();
 
         // Filter payments by the selected status
-        $monthlyPayments = MonthlyPayment::where('status', $status)->paginate(10);
+        $monthlyPayments = MonthlyPayment::where('status', $status)->get();
 
         return view('admin.paymentHistory.monthlyPayments', compact('monthlyPayments', 'status', 'circles'));
     }

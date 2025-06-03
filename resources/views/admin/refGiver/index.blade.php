@@ -160,7 +160,7 @@
                                                 <th>Contact No</th>
                                                 <th>Email</th>
                                                 <th>Scale</th>
-                                                {{-- <th>Description</th> --}}
+                                                <th>Description</th>
                                                 <th>Status</th>
                                                 <th>Action</th>
                                             </tr>
@@ -179,7 +179,7 @@
                                                     <td>{{ $refGiverData->email ?? ($refGiverData->members->user->email ?? '-') }}
                                                     </td>
                                                     <td>{{ $refGiverData->scale ?? '-' }}</td>
-                                                    {{-- <td>{{ $refGiverData->description ?? '-' }}</td> --}}
+                                                    <td>{{ $refGiverData->description ?? '-' }}</td>
                                                     <td>{{ $refGiverData->status }}</td>
                                                     <td class="d-flex gap-1">
                                                         <a href="{{ route('refGiver.edit', $refGiverData->id) }}" class="btn btn-bg-blue btn-sm btn-tooltip">
