@@ -111,7 +111,16 @@ class CircleMeetingMemberReferenceController extends Controller
                 return $item;
             });
 
-            return view('admin.refGiver.index', compact('refGiver', 'busGiver'));
+            $circles = Circle::where('status', 'Active')->get();
+
+            $circleMember = Member::with('circle')
+                ->where('status', 'Active')
+                ->get(); // Ensure 'circleId' is included
+
+
+            $circlemeeting = CircleMeeting::where('status', 'Active')->get();
+
+            return view('admin.refGiver.index', compact('refGiver', 'busGiver', 'circles', 'circleMember', 'circlemeeting'));
         } catch (\Throwable $th) {
             ErrorLogger::logError(
                 $th,

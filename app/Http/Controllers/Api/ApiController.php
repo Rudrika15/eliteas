@@ -159,15 +159,103 @@ class ApiController extends Controller
 
 
     //lead board
+    // public function maxMeetings(Request $request)
+    // {
+    //     try {
+    //         $authUserId = auth()->id();
+    //         $previousMonth = Carbon::now()->subMonth()->month;
+    //         $previousYear = Carbon::now()->subMonth()->year;
+
+    //         $authMember = Member::where('userId', $authUserId)->first();
+
+    //         $circlecalls = CircleCall::with([
+    //             'member' => function ($query) {
+    //                 $query->select('id', 'userId', 'firstname', 'lastname', 'businessCategoryId', 'circleId', 'profilephoto')
+    //                     ->with(['bCategory:id,categoryName', 'circle:id,circleName']);
+    //             },
+    //             'meetingPerson'
+    //         ])
+    //             ->where('status', 'Active')
+    //             ->whereYear('date', $previousYear)
+    //             ->whereMonth('date', $previousMonth)
+    //             ->get();
+
+    //         $circlecalls = $circlecalls->groupBy('memberId')->map(function ($group) use ($authUserId, $authMember) {
+    //             $member = $group->first()->member;
+    //             $inductionCount = Member::where('sponsoredBy', $member->id)->count();
+
+    //             // Default status
+    //             $connectionStatus = 'Not Connected';
+
+    //             // Check if same circle
+    //             if ($authMember && $member && $authMember->circleId === $member->circleId) {
+    //                 $connectionStatus = 'Connected';
+    //             } else {
+    //                 // Check connection table
+    //                 $connection = Connection::where('memberId', $member->userId)
+    //                     ->where('userId', $authUserId)
+    //                     ->first();
+
+    //                 if ($connection) {
+    //                     $connectionStatus = $connection->status; // 'Pending' or 'Connected'
+    //                 }
+    //             }
+
+    //             return [
+    //                 'member' => [
+    //                     'id' => $member->id,
+    //                     'userId' => $member->userId,
+    //                     'firstName' => $member->firstname,
+    //                     'lastName' => $member->lastname,
+    //                     'profilePhoto' => $member->profilephoto,
+    //                     'businessCategoryId' => $member->businessCategoryId,
+    //                     'businessCategory' => $member->bCategory->categoryName ?? null,
+    //                     'circleId' => $member->circleId,
+    //                     'circle' => $member->circle->circleName ?? null,
+    //                     'induction_count' => $inductionCount,
+    //                     'connectionStatus' => $connectionStatus,
+    //                 ],
+    //                 'count' => $group->count()
+    //             ];
+    //         })->sortByDesc('count')->values();
+
+    //         return Utils::sendResponse(
+    //             ['circlecalls' => $circlecalls],
+    //             'Meeting data retrieved successfully',
+    //             200
+    //         );
+    //     } catch (\Throwable $th) {
+    //         return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
+    //     }
+    // }
+
+
     public function maxMeetings(Request $request)
     {
         try {
-            $authUserId = auth()->id();
+            $authUser = auth()->user();
+            $authUserId = $authUser->id;
+
+            // Get authenticated member
+            $authMember = Member::where('userId', $authUserId)->first();
+            if (!$authMember) {
+                return response()->json(['message' => 'Member not found'], 404);
+            }
+
+            // Get cityId from circle
+            $cityId = Circle::where('id', $authMember->circleId)->value('cityId');
+            if (!$cityId) {
+                return response()->json(['message' => 'City not found'], 404);
+            }
+
+            // Get previous month/year
             $previousMonth = Carbon::now()->subMonth()->month;
             $previousYear = Carbon::now()->subMonth()->year;
 
-            $authMember = Member::where('userId', $authUserId)->first();
+            // Get all members whose circle belongs to same city
+            $circleIdsInCity = Circle::where('cityId', $cityId)->pluck('id')->toArray();
 
+            // Get CircleCalls only for those members
             $circlecalls = CircleCall::with([
                 'member' => function ($query) {
                     $query->select('id', 'userId', 'firstname', 'lastname', 'businessCategoryId', 'circleId', 'profilephoto')
@@ -175,29 +263,28 @@ class ApiController extends Controller
                 },
                 'meetingPerson'
             ])
+                ->whereHas('member', function ($query) use ($circleIdsInCity) {
+                    $query->whereIn('circleId', $circleIdsInCity);
+                })
                 ->where('status', 'Active')
                 ->whereYear('date', $previousYear)
                 ->whereMonth('date', $previousMonth)
                 ->get();
 
+            // Group and transform the data
             $circlecalls = $circlecalls->groupBy('memberId')->map(function ($group) use ($authUserId, $authMember) {
                 $member = $group->first()->member;
                 $inductionCount = Member::where('sponsoredBy', $member->id)->count();
 
-                // Default status
                 $connectionStatus = 'Not Connected';
-
-                // Check if same circle
                 if ($authMember && $member && $authMember->circleId === $member->circleId) {
                     $connectionStatus = 'Connected';
                 } else {
-                    // Check connection table
                     $connection = Connection::where('memberId', $member->userId)
                         ->where('userId', $authUserId)
                         ->first();
-
                     if ($connection) {
-                        $connectionStatus = $connection->status; // 'Pending' or 'Connected'
+                        $connectionStatus = $connection->status;
                     }
                 }
 
@@ -233,51 +320,151 @@ class ApiController extends Controller
 
 
 
+
+    // public function maxBusiness(Request $request)
+    // {
+    //     try {
+    //         $authUserId = auth()->id(); // Get authenticated user ID
+    //         $previousMonth = Carbon::now()->subMonth()->month;
+    //         $previousYear = Carbon::now()->subMonth()->year;
+
+    //         $authMember = Member::where('userId', $authUserId)->first();
+
+    //         $busGiver = CircleMeetingMembersBusiness::where('status', 'Active')
+    //             ->whereYear('date', $previousYear)
+    //             ->whereMonth('date', $previousMonth)
+    //             ->get();
+
+    //         $busGiver = $busGiver->groupBy('businessGiverId')->map(function ($group) use ($authUserId, $authMember) {
+    //             $user = $group->first()->users;
+
+    //             if (!$user) {
+    //                 return null; // Skip if user not found
+    //             }
+
+    //             $member = $user->member()->select('id', 'circleId', 'businessCategoryId', 'profilePhoto', 'userId')->first();
+
+    //             if (!$member) {
+    //                 return null; // Skip if member not found
+    //             }
+
+    //             $circle = Circle::find($member->circleId);
+    //             $businessCategory = BusinessCategory::find($member->businessCategoryId);
+    //             $inductionCount = Member::where('sponsoredBy', $member->id)->count();
+
+    //             // Default connection status
+    //             $connectionStatus = 'Not Connected';
+
+    //             // If same circle, mark as connected
+    //             if ($authMember && $member && $authMember->circleId === $member->circleId) {
+    //                 $connectionStatus = 'Connected';
+    //             } else {
+    //                 // Check connection table
+    //                 $connection = Connection::where('memberId', $member->userId)
+    //                     ->where('userId', $authUserId)
+    //                     ->first();
+
+    //                 if ($connection) {
+    //                     $connectionStatus = $connection->status; // 'Pending' or 'Connected'
+    //                 }
+    //             }
+
+    //             return [
+    //                 'user' => [
+    //                     'id' => $user->id,
+    //                     'firstName' => $user->firstName,
+    //                     'lastName' => $user->lastName,
+    //                     'email' => $user->email,
+    //                 ],
+    //                 'member' => [
+    //                     'id' => $member->id,
+    //                     'profilePhoto' => $member->profilePhoto,
+    //                     'induction_count' => $inductionCount,
+    //                     'connectionStatus' => $connectionStatus,
+    //                 ],
+    //                 'amount' => $group->sum('amount'),
+    //                 'count' => $group->count(),
+    //                 'circle' => $circle ? [
+    //                     'id' => $circle->id,
+    //                     'circleName' => $circle->circleName
+    //                 ] : null,
+    //                 'businessCategory' => $businessCategory ? [
+    //                     'id' => $businessCategory->id,
+    //                     'categoryName' => $businessCategory->categoryName
+    //                 ] : null
+    //             ];
+    //         })
+    //             ->filter()
+    //             ->sortByDesc('amount')
+    //             ->values();
+
+    //         return Utils::sendResponse(
+    //             ['busGiver' => $busGiver],
+    //             'Business data retrieved successfully',
+    //             200
+    //         );
+    //     } catch (\Throwable $th) {
+    //         return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
+    //     }
+    // }
+
+
     public function maxBusiness(Request $request)
     {
         try {
-            $authUserId = auth()->id(); // Get authenticated user ID
+            $authUserId = auth()->id();
             $previousMonth = Carbon::now()->subMonth()->month;
             $previousYear = Carbon::now()->subMonth()->year;
 
             $authMember = Member::where('userId', $authUserId)->first();
 
+            if (!$authMember) {
+                return response()->json(['message' => 'Authenticated member not found'], 404);
+            }
+
+            // Get cityId from circle
+            $cityId = Circle::where('id', $authMember->circleId)->value('cityId');
+            if (!$cityId) {
+                return response()->json(['message' => 'City not found'], 404);
+            }
+
+            // Get all circle IDs in the same city
+            $circleIdsInCity = Circle::where('cityId', $cityId)->pluck('id')->toArray();
+
+            // Fetch business givers data
             $busGiver = CircleMeetingMembersBusiness::where('status', 'Active')
                 ->whereYear('date', $previousYear)
                 ->whereMonth('date', $previousMonth)
                 ->get();
 
-            $busGiver = $busGiver->groupBy('businessGiverId')->map(function ($group) use ($authUserId, $authMember) {
+            $busGiver = $busGiver->groupBy('businessGiverId')->map(function ($group) use ($authUserId, $authMember, $circleIdsInCity) {
                 $user = $group->first()->users;
 
                 if (!$user) {
-                    return null; // Skip if user not found
+                    return null;
                 }
 
                 $member = $user->member()->select('id', 'circleId', 'businessCategoryId', 'profilePhoto', 'userId')->first();
 
-                if (!$member) {
-                    return null; // Skip if member not found
+                if (!$member || !in_array($member->circleId, $circleIdsInCity)) {
+                    return null; // Skip if member not in same city
                 }
 
                 $circle = Circle::find($member->circleId);
                 $businessCategory = BusinessCategory::find($member->businessCategoryId);
                 $inductionCount = Member::where('sponsoredBy', $member->id)->count();
 
-                // Default connection status
                 $connectionStatus = 'Not Connected';
 
-                // If same circle, mark as connected
-                if ($authMember && $member && $authMember->circleId === $member->circleId) {
+                if ($authMember && $authMember->circleId === $member->circleId) {
                     $connectionStatus = 'Connected';
                 } else {
-                    // Check connection table
                     $connection = Connection::where('memberId', $member->userId)
                         ->where('userId', $authUserId)
                         ->first();
 
                     if ($connection) {
-                        $connectionStatus = $connection->status; // 'Pending' or 'Connected'
+                        $connectionStatus = $connection->status;
                     }
                 }
 
@@ -319,6 +506,7 @@ class ApiController extends Controller
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
+
 
 
 
@@ -367,6 +555,98 @@ class ApiController extends Controller
     //     }
     // }
 
+    // public function maxReference(Request $request)
+    // {
+    //     try {
+    //         $authUserId = auth()->id(); // Get the authenticated user ID
+    //         $previousMonth = Carbon::now()->subMonth()->month;
+    //         $previousYear = Carbon::now()->subMonth()->year;
+
+    //         $authMember = Member::where('userId', $authUserId)->first();
+
+    //         $refGiver = CircleMeetingMembersReference::where('status', 'Active')
+    //             ->whereYear('created_at', $previousYear)
+    //             ->whereMonth('created_at', $previousMonth)
+    //             ->get()
+    //             ->groupBy('referenceGiverId')
+    //             ->map(function ($group) use ($authUserId, $authMember) {
+    //                 $referenceGiverId = $group->first()->referenceGiverId ?? null;
+
+    //                 if (!$referenceGiverId) {
+    //                     return null;
+    //                 }
+
+    //                 $user = User::find($referenceGiverId);
+
+    //                 if ($user && $user->status === 'Active') {
+    //                     $member = Member::where('userId', $referenceGiverId)
+    //                         ->where('status', 'Active')
+    //                         ->first();
+
+    //                     if (!$member) {
+    //                         return null;
+    //                     }
+
+    //                     $inductionCount = Member::where('sponsoredBy', $member->id)->count();
+
+    //                     // Determine connection status
+    //                     $connectionStatus = 'Not Connected';
+
+    //                     if ($authMember && $member->circleId === $authMember->circleId) {
+    //                         $connectionStatus = 'Connected';
+    //                     } else {
+    //                         $connection = Connection::where('memberId', $member->userId)
+    //                             ->where('userId', $authUserId)
+    //                             ->first();
+
+    //                         if ($connection) {
+    //                             $connectionStatus = $connection->status; // 'Pending' or 'Connected'
+    //                         }
+    //                     }
+
+    //                     return [
+    //                         'user' => [
+    //                             'id' => $user->id,
+    //                             'firstName' => $user->firstName,
+    //                             'lastName' => $user->lastName,
+    //                             'email' => $user->email,
+    //                         ],
+    //                         'count' => $group->count(),
+    //                         'induction_count' => $inductionCount,
+    //                         'connectionStatus' => $connectionStatus,
+    //                         'businessCategoryId' => $member->businessCategoryId,
+    //                         'businessCategory' => $member->bcategory->categoryName ?? null,
+    //                         'circleId' => $member->circleId,
+    //                         'circle' => $member->circle->circleName ?? null,
+    //                         'profilePhoto' => $member->profilePhoto,
+    //                     ];
+    //                 }
+
+    //                 return null;
+    //             })
+    //             ->filter()
+    //             ->sortByDesc('count')
+    //             ->first();
+
+    //         if (!$refGiver) {
+    //             return Utils::sendResponse(
+    //                 null,
+    //                 'No Reference Lead Board to show for now.',
+    //                 404
+    //             );
+    //         }
+
+    //         return Utils::sendResponse(
+    //             ['refGiver' => $refGiver],
+    //             'Reference data retrieved successfully',
+    //             200
+    //         );
+    //     } catch (\Throwable $th) {
+    //         return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
+    //     }
+    // }
+
+
     public function maxReference(Request $request)
     {
         try {
@@ -376,17 +656,28 @@ class ApiController extends Controller
 
             $authMember = Member::where('userId', $authUserId)->first();
 
+            if (!$authMember) {
+                return response()->json(['message' => 'Authenticated member not found'], 404);
+            }
+
+            // Get cityId from the user's circle
+            $cityId = Circle::where('id', $authMember->circleId)->value('cityId');
+            if (!$cityId) {
+                return response()->json(['message' => 'City not found'], 404);
+            }
+
+            // All circle IDs in the same city
+            $circleIdsInCity = Circle::where('cityId', $cityId)->pluck('id')->toArray();
+
             $refGiver = CircleMeetingMembersReference::where('status', 'Active')
                 ->whereYear('created_at', $previousYear)
                 ->whereMonth('created_at', $previousMonth)
                 ->get()
                 ->groupBy('referenceGiverId')
-                ->map(function ($group) use ($authUserId, $authMember) {
+                ->map(function ($group) use ($authUserId, $authMember, $circleIdsInCity) {
                     $referenceGiverId = $group->first()->referenceGiverId ?? null;
 
-                    if (!$referenceGiverId) {
-                        return null;
-                    }
+                    if (!$referenceGiverId) return null;
 
                     $user = User::find($referenceGiverId);
 
@@ -395,8 +686,8 @@ class ApiController extends Controller
                             ->where('status', 'Active')
                             ->first();
 
-                        if (!$member) {
-                            return null;
+                        if (!$member || !in_array($member->circleId, $circleIdsInCity)) {
+                            return null; // Skip if member not in same city
                         }
 
                         $inductionCount = Member::where('sponsoredBy', $member->id)->count();
@@ -412,7 +703,7 @@ class ApiController extends Controller
                                 ->first();
 
                             if ($connection) {
-                                $connectionStatus = $connection->status; // 'Pending' or 'Connected'
+                                $connectionStatus = $connection->status;
                             }
                         }
 
@@ -438,7 +729,7 @@ class ApiController extends Controller
                 })
                 ->filter()
                 ->sortByDesc('count')
-                ->first();
+                ->first(); // only the top one as per your current logic
 
             if (!$refGiver) {
                 return Utils::sendResponse(
@@ -457,6 +748,7 @@ class ApiController extends Controller
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
+
 
 
 

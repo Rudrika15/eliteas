@@ -241,10 +241,10 @@ class ReportController extends Controller
                 ->where('status', 'Active');
 
             if ($startDate) {
-                $query->where('created_at', '>=', $startDate);
+                $query->whereRaw('DATE(created_at) >= ?', [$startDate]);
             }
             if ($endDate) {
-                $query->where('created_at', '<=', $endDate);
+                $query->whereRaw('DATE(created_at) <= ?', [$endDate]);
             }
             if ($circleId) {
                 $query->whereHas('member', function ($q) use ($circleId) {
@@ -252,6 +252,7 @@ class ReportController extends Controller
                 });
             }
 
+            
             $business = $query->get()
                 ->groupBy('businessGiverId')
                 ->map(function ($group) {

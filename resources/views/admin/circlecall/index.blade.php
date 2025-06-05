@@ -409,9 +409,9 @@
                     <h5 class="modal-title color-blue fw-bold" id="editModalLabel">Edit IBM</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-    
+                
                 <div class="modal-body" id="editModalBody">
-                    <!-- AJAX-loaded form goes here -->
+                    <!-- AJAX-loaded form will go here -->
                     <div class="text-center">
                         <div class="spinner-border text-primary" role="status"></div>
                     </div>
@@ -419,7 +419,7 @@
             </div>
         </div>
     </div>
-    
+
 
 
     <script>

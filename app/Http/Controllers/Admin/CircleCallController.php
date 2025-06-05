@@ -84,6 +84,7 @@ class CircleCallController extends Controller
             return view('servererror');
         }
     }
+    
     //For show single data
     public function view(Request $request, $id)
     {

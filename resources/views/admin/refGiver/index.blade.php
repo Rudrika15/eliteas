@@ -190,6 +190,141 @@
         </div> --}}
     </div>
 
+    <!-- Modal -->
+    <div class="modal fade" id="createIBMModal" tabindex="-1" aria-labelledby="createIBMModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+            <div class="modal-content border-0 rounded-3 shadow">
+                <div class="modal-header bg-light border-bottom-0">
+                    <h5 class="modal-title" id="createIBMModalLabel">Circle Meeting Member Reference</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <form class="needs-validation" id="meetingMemberRefForm" enctype="multipart/form-data" method="post" action="{{ route('refGiver.store') }}" novalidate>
+                        @csrf
+
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="group" id="internal" value="internal" checked>
+                                    <label class="form-check-label" for="internal">Internal</label>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="group" id="external" value="external">
+                                    <label class="form-check-label" for="external">External</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3 mt-3">
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <select class="form-select @error('circleId') is-invalid @enderror" id="circleId" name="circleId" required>
+                                        <option value="" selected disabled>Select Circle</option>
+                                        <option value="{{ old('circleId', auth()->user()->member->circleId) }}" selected>
+                                            {{ $circles->where('id', old('circleId', auth()->user()->member->circleId))->first()->circleName ?? '' }}
+                                        </option>
+                                        @foreach ($circles as $circle)
+                                            <option value="{{ $circle->id }}">{{ $circle->circleName }}</option>
+                                        @endforeach
+                                    </select>
+                                    <label for="circleId">Circle</label>
+                                    @error('circleId')
+                                        <div class="invalid-tooltip">This field is required.</div>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <select class="form-select @error('memberId') is-invalid @enderror" id="memberId" name="memberId" required>
+                                        <option value="" disabled>Select Member</option>
+                                    </select>
+                                    <label for="memberId">Member</label>
+                                    @error('memberId')
+                                        <div class="invalid-tooltip">This field is required.</div>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+
+                        <input type="hidden" id="meetingPersonId" name="memberId">
+                        <div class="form-floating">
+                            <input type="text" class="form-control" id="meetingPersonName" name="memberName" placeholder="Select Member" readonly disabled>
+                            <label for="memberName">Member Name</label>
+                            @error('memberId')
+                                <div class="invalid-tooltip">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="" id="memberListInput" style="display:none;">
+                            <h4 class="mt-3 text-blue">Contact Person Details</h4>
+
+                            <div class="form-floating mt-3">
+                                <input type="text" class="form-control @error('contactName') is-invalid @enderror" name="contactNameExternal" placeholder="Contact Name">
+                                <label for="contactName">Contact Person Name</label>
+                                @error('contactName')
+                                    <div class="invalid-tooltip">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="form-floating mt-3">
+                                <input type="text" class="form-control @error('contactNo') is-invalid @enderror selectedMemberContact" id="contactPersonContact" name="contactNo" placeholder="Contact No" maxlength="10" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
+                                <label for="contactNo">Contact No</label>
+                                @error('contactNo')
+                                    <div class="invalid-tooltip">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="form-floating mt-3">
+                                <input type="text" class="form-control @error('email') is-invalid @enderror" id="contactPersonEmail" name="email" placeholder="email">
+                                <label for="email">Email</label>
+                                @error('email')
+                                    <div class="invalid-tooltip">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="mt-3">
+                            <div class="form-floating">
+                                <input type="text" class="form-control @error('description') is-invalid @enderror" id="description" name="description" placeholder="description">
+                                <label for="description">Description</label>
+                                @error('description')
+                                    <div class="invalid-tooltip">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="mt-3">
+                            <label for="scale">Scale [1-5]</label>
+                            <div class="form-floating mt-3">
+                                <input type="range" class="form-range @error('scale') is-invalid @enderror" id="scale" name="scale" placeholder="scale" required min="1" max="5" step="1">
+                                <div class="d-flex justify-content-between align-items-center mt-2">
+                                    <span class="badge btn-bg-blue rounded-pill">1</span>
+                                    <span class="badge btn-bg-blue rounded-pill">2</span>
+                                    <span class="badge btn-bg-blue rounded-pill">3</span>
+                                    <span class="badge btn-bg-blue rounded-pill">4</span>
+                                    <span class="badge btn-bg-blue rounded-pill">5</span>
+                                </div>
+                                @error('scale')
+                                    <div class="invalid-tooltip">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="text-center mt-5">
+                            <button type="submit" class="btn btn-bg-blue">Submit</button>
+                            <button type="reset" class="btn btn-bg-orange">Reset</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 
 
     <script>

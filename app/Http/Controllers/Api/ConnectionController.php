@@ -11,6 +11,7 @@ use App\Http\Controllers\Controller;
 use App\Models\BusinessCategory;
 use App\Models\Circle;
 use App\Models\CircleMeetingMembersBusiness;
+use App\Models\Testimonial;
 use App\Utils\ErrorLogger;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -633,6 +634,12 @@ class ConnectionController extends Controller
 
             // ✅ Add induction count
             $member->induction_count = Member::where('sponsoredBy', $member->id)->count();
+
+            // Add Testimonial
+            $member->testimonials = Testimonial::where('memberId', $member->id)
+                ->with('user:id,firstName,lastName')
+                ->get() ?? [];
+
 
             return Utils::sendResponse([
                 'message' => 'Member Profile',
