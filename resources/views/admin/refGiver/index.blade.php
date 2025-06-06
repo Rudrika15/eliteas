@@ -202,10 +202,10 @@
 
     <div id="tabByOther" class="tab-content active" style="display: none;">
         <div class="d-flex justify-content-end align-items-center mb-2">
-            <a href="{{ route('refGiver.create') }}" class="btn btn-bg-orange btn-sm mt-3 btn-tooltip">
+            {{-- <a href="{{ route('refGiver.create') }}" class="btn btn-bg-orange btn-sm mt-3 btn-tooltip">
                 <i class="bi bi-plus-circle"></i>
                 <span class="btn-text">Add Reference Details</span>
-            </a>
+            </a> --}}
         </div>
         <div class="row mt-4">
             @foreach ($refGiver as $refGiverData)
@@ -219,7 +219,12 @@
                             <div class="dropdown position-absolute top-0 end-0 m-2">
                                 <a href="#" class="text-black" data-bs-toggle="dropdown"><i class="bi bi-three-dots-vertical"></i></a>
                                 <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item color-blue" href="{{ route('refGiver.edit', $refGiverData->id) }}"><i class="bi bi-pencil-square me-2"></i>Edit</a></li>
+                                    <li>
+                                        <a class="dropdown-item color-blue" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#editRefGiverModal_{{ $refGiverData->id }}">
+                                            <i class="bi bi-pencil-square me-2"></i>Edit
+                                        </a>
+                                    </li>
+
                                     <li>
                                         <a class="dropdown-item text-danger" href="#" onclick="confirmDelete('{{ route('refGiver.delete', $refGiverData->id) }}')">
                                             <i class="bi bi-trash me-2"></i>Delete
@@ -260,6 +265,9 @@
                         </div>
                     </div>
                 </div>
+
+
+                @include('admin.refGiver.edit_form', ['refGiver' => $refGiver]) {{-- if you're using partials --}}
             @endforeach
         </div>
 
@@ -407,8 +415,6 @@
             </div>
         </div>
     </div>
-    </div>
-
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {

@@ -321,11 +321,13 @@ class CircleMeetingMemberReferenceController extends Controller
     public function edit(Request $request, $id)
     {
         try {
-            $refGiver = CircleMeetingMembersReference::find($id);
+            // $refGiver = CircleMeetingMembersReference::find($id);
+            $refGiver = CircleMeetingMembersReference::where('id', $id)->first();
             $member = Member::where('status', 'Active')->get();
             $circles = Circle::where('status', 'Active')->get();
 
-            return view('admin.refGiver.edit', compact('refGiver', 'member', 'circles'));
+            // return view('admin.refGiver.edit', compact('refGiver', 'member', 'circles'));
+            return view('admin.refGiver.edit_form', compact('refGiver', 'member', 'circles'));
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError(
