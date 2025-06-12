@@ -252,7 +252,7 @@ class ReportController extends Controller
                 });
             }
 
-            
+
             $business = $query->get()
                 ->groupBy('businessGiverId')
                 ->map(function ($group) {
@@ -354,5 +354,44 @@ class ReportController extends Controller
             ->values(); // Reset keys
 
         return view('admin.report.joining', compact('members', 'circles'));
+    }
+
+    public function memberWiseReport(Request $request)
+    {
+        $circle = Circle::where('status', 'Active')->get();
+        $member = Member::where('status', 'Active')->get();
+
+        $selectedMemberId = $request->input('memberId');
+        // $selectedMemberId = 8;
+
+        $business = collect();
+        $reference = collect();
+        $circleCall = collect();
+
+        $totalBusinessAmount = 0;
+        $totalIbmCount = 0;
+        $totalReferenceCount = 0;
+
+        if ($selectedMemberId) {
+            $circleCall = CircleCall::where('status', 'Active')
+                ->where('memberId', $selectedMemberId)
+                ->get();
+
+            $business = CircleMeetingMembersBusiness::where('status', 'Active')
+                ->where('businessGiverId', $selectedMemberId)
+                ->get();
+
+            $reference = CircleMeetingMembersReference::where('status', 'Active')
+                ->where('referenceGiverId', $selectedMemberId)
+                ->get();
+
+            // ✅ Calculate Totals
+            $totalBusinessAmount = $business->sum('amount');
+            $totalIbmCount = $circleCall->count();
+            $totalReferenceCount = $reference->count();
+        }
+
+
+        return view('admin.report.memberReport', compact('circle', 'member', 'business', 'reference', 'circleCall', 'selectedMemberId', 'totalBusinessAmount', 'totalIbmCount', 'totalReferenceCount'));
     }
 }

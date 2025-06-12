@@ -556,6 +556,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/admin/reports/reference', [ReportController::class, 'reference'])->name('admin.report.reference');
     Route::get('/admin/reports/business', [ReportController::class, 'business'])->name('admin.report.business');
     Route::get('/admin/report/joining-members', [ReportController::class, 'getJoiningMembers'])->name('admin.report.joining');
+    Route::get('admin/report/member-report', [ReportController::class, 'memberWiseReport'])->name('admin.memberWiseReport');
+
 
 
 

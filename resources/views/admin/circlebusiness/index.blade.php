@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title', 'UBN - Business Meet')
+@section('title', 'UBN - Business Slip')
 @section('content')
 
 
@@ -247,325 +247,320 @@
                         @csrf
 
                         <!-- Circle and Member Selection -->
-                        <div class="row mb-3 mt-3">
-                            <div class="col-md-12">
-                                <div class="form-floating">
-                                    <select class="form-select @error('circleId') is-invalid @enderror" id="circleId" name="circleId" required>
-                                        <option value="" selected disabled>Select Circle</option>
-                                        <option value="{{ old('circleId', auth()->user()->member->circleId) }}" selected>
-                                            {{ $circles->where('id', old('circleId', auth()->user()->member->circleId))->first()->circleName ?? '' }}
-                                        </option>
-                                        @foreach ($circles as $circle)
-                                            <option value="{{ $circle->id }}">{{ $circle->circleName }}</option>
-                                        @endforeach
-                                    </select>
-                                    <label for="circleId">Circle</label>
-                                    @error('circleId')
-                                        <div class="invalid-tooltip">This field is required.</div>
+                        <div class="card p-3 shadow-sm border-0 rounded">
+                            <div class="mb-3">
+                                <label for="circleId" class="form-label fw-bold color-blue required">Circle <span class="text-danger">*</span></label>
+                                <select class="form-select @error('circleId') is-invalid @enderror" id="circleId" name="circleId" required>
+                                    <option value="" selected disabled>Select Circle</option>
+                                    <option value="{{ old('circleId', auth()->user()->member->circleId) }}" selected>
+                                        {{ $circles->where('id', old('circleId', auth()->user()->member->circleId))->first()->circleName ?? '' }}
+                                    </option>
+                                    @foreach ($circles as $circle)
+                                        <option value="{{ $circle->id }}">{{ $circle->circleName }}</option>
+                                    @endforeach
+                                </select>
+                                {{-- <label for="circleId">Circle</label> --}}
+                                @error('circleId')
+                                    <div class="invalid-tooltip">This field is required.</div>
+                                @enderror
+                            </div>
+
+
+                            <div class="mb-3">
+                                <label for="memberId" class="form-label fw-bold color-blue required">Member <span class="text-danger">*</span></label>
+                                <select class="form-select @error('memberId') is-invalid @enderror" id="memberId" name="memberId" required>
+                                    <option value="" selected disabled>Select Member</option>
+                                </select>
+                                {{-- <label for="memberId">Member</label> --}}
+                                @error('memberId')
+                                    <div class="invalid-tooltip">This field is required.</div>
+                                @enderror
+                            </div>
+
+
+                            <!-- Member Name Display -->
+                            <div class="mb-3">
+                                <label for="memberName" class="form-label fw-bold color-blue">Member Name<span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="meetingPersonName" name="memberName" placeholder="Select Member" readonly disabled>
+                                <input type="hidden" id="meetingPersonId" name="memberId">
+                            </div>
+
+                            <!-- Remarks and Amount -->
+                            <div class="mb-3">
+                                <label for="remarks" class="form-label fw-bold color-blue">Remarks</label>
+                                <input type="text" class="form-control @error('remarks') is-invalid @enderror" id="remarks" name="remarks" placeholder="Remarks">
+                                @error('remarks')
+                                    <div class="invalid-tooltip">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="amount" class="form-label fw-bold color-blue">Amount</label>
+                                <input type="number" class="form-control @error('amount') is-invalid @enderror" id="amount" name="amount" placeholder="Amount" required>
+                                @error('amount')
+                                    <div class="invalid-tooltip">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <!-- Contact Person Section (Hidden initially) -->
+                            <div id="memberListInput" style="display:none;">
+                                <h5 class="text-blue">Contact Person Details</h5>
+
+                                <div class="form-floating mb-3 mt-3">
+                                    <input type="text" class="form-control @error('contactName') is-invalid @enderror" name="contactNameExternal" placeholder="Contact Name">
+                                    <label for="contactName">Contact Person Name</label>
+                                    @error('contactName')
+                                        <div class="invalid-tooltip">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control @error('contactNo') is-invalid @enderror" id="contactPersonContact" name="contactNo" placeholder="Contact No" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                                    <label for="contactNo">Contact No</label>
+                                    @error('contactNo')
+                                        <div class="invalid-tooltip">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control @error('email') is-invalid @enderror" id="contactPersonEmail" name="email" placeholder="Email">
+                                    <label for="email">Email</label>
+                                    @error('email')
+                                        <div class="invalid-tooltip">{{ $message }}</div>
                                     @enderror
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="row mb-3 mt-3">
-                            <div class="col-md-12">
-                                <div class="form-floating">
-                                    <select class="form-select @error('memberId') is-invalid @enderror" id="memberId" name="memberId" required>
-                                        <option value="" disabled>Select Member</option>
-                                    </select>
-                                    <label for="memberId">Member</label>
-                                    @error('memberId')
-                                        <div class="invalid-tooltip">This field is required.</div>
-                                    @enderror
-                                </div>
+                            <div class="d-flex justify-content-end gap-2 mt-3">
+                                <button type="button" class="cancel-btn" data-bs-dismiss="modal">Cancel</button>
+                                <button type="submit" class="create-btn">Create Business Slip</button>
                             </div>
-                        </div>
-
-                        <!-- Member Name Display -->
-                        <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="meetingPersonName" name="memberName" placeholder="Select Member" readonly disabled>
-                            <label for="memberName">Member Name</label>
-                            <input type="hidden" id="meetingPersonId" name="memberId">
-                        </div>
-
-                        <!-- Remarks and Amount -->
-                        <div class="form-floating mb-3">
-                            <input type="text" class="form-control @error('remarks') is-invalid @enderror" id="remarks" name="remarks" placeholder="Remarks">
-                            <label for="remarks">Remarks</label>
-                            @error('remarks')
-                                <div class="invalid-tooltip">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="form-floating mb-3">
-                            <input type="number" class="form-control @error('amount') is-invalid @enderror" id="amount" name="amount" placeholder="Amount" required>
-                            <label for="amount">Amount</label>
-                            @error('amount')
-                                <div class="invalid-tooltip">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <!-- Contact Person Section (Hidden initially) -->
-                        <div id="memberListInput" style="display:none;">
-                            <h5 class="text-blue">Contact Person Details</h5>
-
-                            <div class="form-floating mb-3 mt-3">
-                                <input type="text" class="form-control @error('contactName') is-invalid @enderror" name="contactNameExternal" placeholder="Contact Name">
-                                <label for="contactName">Contact Person Name</label>
-                                @error('contactName')
-                                    <div class="invalid-tooltip">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="form-floating mb-3">
-                                <input type="text" class="form-control @error('contactNo') is-invalid @enderror" id="contactPersonContact" name="contactNo" placeholder="Contact No" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-                                <label for="contactNo">Contact No</label>
-                                @error('contactNo')
-                                    <div class="invalid-tooltip">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="form-floating mb-3">
-                                <input type="text" class="form-control @error('email') is-invalid @enderror" id="contactPersonEmail" name="email" placeholder="Email">
-                                <label for="email">Email</label>
-                                @error('email')
-                                    <div class="invalid-tooltip">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div class="d-flex justify-content-end gap-2 mt-3">
-                            <button type="button" class="cancel-btn" data-bs-dismiss="modal">Cancel</button>
-                            <button type="submit" class="create-btn">Create Business Slip</button>
-                        </div>
 
                     </form>
                 </div>
             </div>
-        </div>
-    </div>
 
 
-    <!-- Tab Content: Business Slip Given -->
-    <div id="tabGiven" class="tab-content mt-3" style="display: none;">
-        <div class="row">
-            @foreach ($busGiveByOther as $busGiveByOtherData)
-                <div class="col-md-6 col-lg-4 col-xl-3 mb-4">
-                    <div class="card shadow rounded-4 overflow-hidden">
-                        <div class="position-relative">
-                            <img src="https://picsum.photos/700/200?random={{ rand(1, 1000) }}" class="card-img-top" alt="cover">
-                            <div class="position-absolute top-100 start-50 translate-middle">
-                                <img src="{{ optional($busGiveByOtherData->loginMember)->profilePhoto ? asset('ProfilePhoto/' . $busGiveByOtherData->loginMember->profilePhoto) : asset('ProfilePhoto/profile.png') }}" class="rounded-circle border border-3 border-white" width="110" height="110" alt="Profile">
+            <!-- Tab Content: Business Slip Given -->
+            <div id="tabGiven" class="tab-content mt-3" style="display: none;">
+                <div class="row">
+                    @foreach ($busGiveByOther as $busGiveByOtherData)
+                        <div class="col-md-6 col-lg-4 col-xl-3 mb-4">
+                            <div class="card shadow rounded-4 overflow-hidden">
+                                <div class="position-relative">
+                                    <img src="https://picsum.photos/700/200?random={{ rand(1, 1000) }}" class="card-img-top" alt="cover">
+                                    <div class="position-absolute top-100 start-50 translate-middle">
+                                        <img src="{{ optional($busGiveByOtherData->loginMember)->profilePhoto ? asset('ProfilePhoto/' . $busGiveByOtherData->loginMember->profilePhoto) : asset('ProfilePhoto/profile.png') }}" class="rounded-circle border border-3 border-white" width="110" height="110" alt="Profile">
+                                    </div>
+                                </div>
+                                <div class="card-body text-center pt-5 mt-3">
+                                    <h5 class="card-title mb-0">
+                                        {{ optional($busGiveByOtherData->loginMember)->firstName ?? '-' }} {{ optional($busGiveByOtherData->loginMember)->lastName ?? '-' }}
+                                    </h5>
+                                    <div class="text-muted small mb-2">
+                                        <i class="bi bi-calendar3 me-1"></i> {{ \Carbon\Carbon::parse($busGiveByOtherData->date)->format('d-m-Y') ?? '-' }}
+                                    </div>
+                                    <div class="text-muted small mb-2">
+                                        <i class="bi bi-cash-coin me-1"></i> ₹ {{ $busGiveByOtherData->amount ?? '-' }}
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div class="card-body text-center pt-5 mt-3">
-                            <h5 class="card-title mb-0">
-                                {{ optional($busGiveByOtherData->loginMember)->firstName ?? '-' }} {{ optional($busGiveByOtherData->loginMember)->lastName ?? '-' }}
-                            </h5>
-                            <div class="text-muted small mb-2">
-                                <i class="bi bi-calendar3 me-1"></i> {{ \Carbon\Carbon::parse($busGiveByOtherData->date)->format('d-m-Y') ?? '-' }}
-                            </div>
-                            <div class="text-muted small mb-2">
-                                <i class="bi bi-cash-coin me-1"></i> ₹ {{ $busGiveByOtherData->amount ?? '-' }}
-                            </div>
-                        </div>
-                    </div>
+                    @endforeach
                 </div>
-            @endforeach
-        </div>
 
-        <div class="d-flex justify-content-end mt-3 custom-pagination">
-            {!! $busGiveByOther->links() !!}
-        </div>
-    </div>
+                <div class="d-flex justify-content-end mt-3 custom-pagination">
+                    {!! $busGiveByOther->links() !!}
+                </div>
+            </div>
 
 
-    <!-- Tab Toggle Script -->
-    <script>
-        document.querySelectorAll('.tab-btn').forEach(function(tabBtn) {
-            tabBtn.addEventListener('click', function(e) {
-                e.preventDefault();
+            <!-- Tab Toggle Script -->
+            <script>
+                document.querySelectorAll('.tab-btn').forEach(function(tabBtn) {
+                    tabBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
 
-                // Remove active class from all tabs
-                document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+                        // Remove active class from all tabs
+                        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
 
-                // Hide all tab contents
-                document.querySelectorAll('.tab-content').forEach(tab => tab.style.display = 'none');
+                        // Hide all tab contents
+                        document.querySelectorAll('.tab-content').forEach(tab => tab.style.display = 'none');
 
-                // Add active class to clicked tab
-                tabBtn.classList.add('active');
+                        // Add active class to clicked tab
+                        tabBtn.classList.add('active');
 
-                // Show the selected tab content
-                const tabId = tabBtn.getAttribute('data-tab');
-                document.getElementById(tabId).style.display = 'block';
-            });
-        });
-    </script>
+                        // Show the selected tab content
+                        const tabId = tabBtn.getAttribute('data-tab');
+                        document.getElementById(tabId).style.display = 'block';
+                    });
+                });
+            </script>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            var scaleInput = document.getElementById("scale");
-            var scaleOutput = document.getElementById("scaleOutput");
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    var scaleInput = document.getElementById("scale");
+                    var scaleOutput = document.getElementById("scaleOutput");
 
-            scaleInput.addEventListener("input", function() {
-                scaleOutput.textContent = scaleInput.value;
-            });
-        });
-    </script>
+                    scaleInput.addEventListener("input", function() {
+                        scaleOutput.textContent = scaleInput.value;
+                    });
+                });
+            </script>
 
 
 
-    <script type="text/javascript">
-        var path = "{{ route('getMemberForRef') }}";
+            <script type="text/javascript">
+                var path = "{{ route('getMemberForRef') }}";
 
-        $('#search').select2({
-            placeholder: 'Select Member',
-            ajax: {
-                url: path,
-                dataType: 'json',
-                delay: 250,
-                processResults: function(data) {
-                    return {
-                        results: $.map(data, function(item) {
+                $('#search').select2({
+                    placeholder: 'Select Member',
+                    ajax: {
+                        url: path,
+                        dataType: 'json',
+                        delay: 250,
+                        processResults: function(data) {
                             return {
-                                text: item.firstName,
-                                id: item.id,
-                                firstName: item
-                                    .firstName // Adding firstName attribute to the option data
-                            }
-                        })
-                    };
-                },
-                cache: true
-            }
-        });
+                                results: $.map(data, function(item) {
+                                    return {
+                                        text: item.firstName,
+                                        id: item.id,
+                                        firstName: item
+                                            .firstName // Adding firstName attribute to the option data
+                                    }
+                                })
+                            };
+                        },
+                        cache: true
+                    }
+                });
 
-        // Update the hidden input field with the selected member's ID
-        $('#search').on('select2:select', function(e) {
-            var data = e.params.data;
-            $('#selectedMemberId').val(data.id);
-            $('#memberName').val(data.firstName);
-        });
-    </script>
+                // Update the hidden input field with the selected member's ID
+                $('#search').on('select2:select', function(e) {
+                    var data = e.params.data;
+                    $('#selectedMemberId').val(data.id);
+                    $('#memberName').val(data.firstName);
+                });
+            </script>
 
 
-    {{-- toggle between internal and external --}}
+            {{-- toggle between internal and external --}}
 
-    <script>
-        $(document).ready(function() {
-            // Show the internal portion by default
-            $("#memberListDropdown").show();
-
-            $('input[type="radio"]').click(function() {
-                var inputValue = $(this).attr("id");
-                if (inputValue === "internal") {
+            <script>
+                $(document).ready(function() {
+                    // Show the internal portion by default
                     $("#memberListDropdown").show();
-                    $("#memberListInput").hide();
-                    // $('.contactName').val('');
-                    // $('.contactEmail').val('');
-                } else if (inputValue === "external") {
-                    $("#memberListDropdown").hide();
-                    $("#memberListInput").show();
-                }
-            });
-        });
-    </script>
 
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
-
-    <script>
-        $(document).ready(function() {
-            // Set up CSRF token for AJAX requests
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-
-            // Function to load members for a selected circle
-            function loadMembers(circleId) {
-                // Clear the member dropdown
-                $('#memberId').empty().append('<option value="" disabled>Select Member</option>');
-
-                if (circleId) {
-                    $.ajax({
-                        url: '{{ route('members.byCircle') }}',
-                        method: 'GET',
-                        data: {
-                            circleId: circleId
-                        },
-                        success: function(response) {
-                            if (response.members && response.members.length > 0) {
-                                response.members.forEach(function(member) {
-                                    $('#memberId').append('<option value="' + member.id +
-                                        '" data-user-id="' + member.userId +
-                                        '" data-first-name="' + member.firstName +
-                                        '" data-last-name="' + member.lastName + '">' +
-                                        member.firstName + ' ' + member.lastName +
-                                        '</option>');
-                                });
-
-                                // Pre-select the authenticated member if exists in the list
-                                var defaultMemberId =
-                                    '{{ auth()->user()->member->id }}'; // Assuming memberId is available
-                                if (defaultMemberId) {
-                                    $('#memberId').val(defaultMemberId).trigger(
-                                        'change'
-                                    ); // Set the default selected member and trigger the change event
-                                }
-                            } else {
-                                $('#memberId').append('<option value="">No Members Found</option>');
-                            }
-                        },
-                        error: function(xhr) {
-                            $('#memberId').append('<option value="">Error loading members</option>');
+                    $('input[type="radio"]').click(function() {
+                        var inputValue = $(this).attr("id");
+                        if (inputValue === "internal") {
+                            $("#memberListDropdown").show();
+                            $("#memberListInput").hide();
+                            // $('.contactName').val('');
+                            // $('.contactEmail').val('');
+                        } else if (inputValue === "external") {
+                            $("#memberListDropdown").hide();
+                            $("#memberListInput").show();
                         }
                     });
-                }
-            }
-
-            // Load members on page load if a circle is selected by default
-            var defaultCircleId =
-                '{{ auth()->user()->member->circleId }}'; // Get the default circle ID from the authenticated user
-            if (defaultCircleId) {
-                loadMembers(defaultCircleId); // Load members for the default circle
-            }
-
-            // Handle circle dropdown change event
-            $('#circleId').on('change', function() {
-                var circleId = $(this).val();
-                loadMembers(circleId); // Load members based on the selected circle
-            });
-
-            // Handle member dropdown change event
-            $('#memberId').on('change', function() {
-                var selectedOption = $(this).find('option:selected');
-                var memberId = selectedOption.val();
-                var userId = selectedOption.data('user-id'); // Retrieve the userId here
-                var firstName = selectedOption.data('first-name');
-                var lastName = selectedOption.data('last-name');
-
-                // Check if a valid member is selected
-                if (memberId) {
-                    // Update the meetingPersonId field with userId and name fields
-                    $('#meetingPersonId').val(userId); // Set the correct userId here
-                    $('#meetingPersonName').val(firstName + ' ' + lastName); // Set the name
-                } else {
-                    // Reset the meeting person fields when no member is selected
-                    $('#meetingPersonId').val('');
-                    $('#meetingPersonName').val('');
-                }
-
-                console.log('Selected Member ID:', memberId);
-                console.log('Selected Member User ID:', userId); // Log the correct userId
-                console.log('Selected Member Name:', firstName + ' ' + lastName);
-            });
-        });
-    </script>
+                });
+            </script>
 
 
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+
+            <script>
+                $(document).ready(function() {
+                    // Set up CSRF token for AJAX requests
+                    $.ajaxSetup({
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        }
+                    });
+
+                    // Function to load members for a selected circle
+                    function loadMembers(circleId) {
+                        // Clear the member dropdown
+                        $('#memberId').empty().append('<option value="" disabled>Select Member</option>');
+
+                        if (circleId) {
+                            $.ajax({
+                                url: '{{ route('members.byCircle') }}',
+                                method: 'GET',
+                                data: {
+                                    circleId: circleId
+                                },
+                                success: function(response) {
+                                    if (response.members && response.members.length > 0) {
+                                        response.members.forEach(function(member) {
+                                            $('#memberId').append('<option value="' + member.id +
+                                                '" data-user-id="' + member.userId +
+                                                '" data-first-name="' + member.firstName +
+                                                '" data-last-name="' + member.lastName + '">' +
+                                                member.firstName + ' ' + member.lastName +
+                                                '</option>');
+                                        });
+
+                                        // Pre-select the authenticated member if exists in the list
+                                        var defaultMemberId =
+                                            '{{ auth()->user()->member->id }}'; // Assuming memberId is available
+                                        if (defaultMemberId) {
+                                            $('#memberId').val(defaultMemberId).trigger(
+                                                'change'
+                                            ); // Set the default selected member and trigger the change event
+                                        }
+                                    } else {
+                                        $('#memberId').append('<option value="">No Members Found</option>');
+                                    }
+                                },
+                                error: function(xhr) {
+                                    $('#memberId').append('<option value="">Error loading members</option>');
+                                }
+                            });
+                        }
+                    }
+
+                    // Load members on page load if a circle is selected by default
+                    var defaultCircleId =
+                        '{{ auth()->user()->member->circleId }}'; // Get the default circle ID from the authenticated user
+                    if (defaultCircleId) {
+                        loadMembers(defaultCircleId); // Load members for the default circle
+                    }
+
+                    // Handle circle dropdown change event
+                    $('#circleId').on('change', function() {
+                        var circleId = $(this).val();
+                        loadMembers(circleId); // Load members based on the selected circle
+                    });
+
+                    // Handle member dropdown change event
+                    $('#memberId').on('change', function() {
+                        var selectedOption = $(this).find('option:selected');
+                        var memberId = selectedOption.val();
+                        var userId = selectedOption.data('user-id'); // Retrieve the userId here
+                        var firstName = selectedOption.data('first-name');
+                        var lastName = selectedOption.data('last-name');
+
+                        // Check if a valid member is selected
+                        if (memberId) {
+                            // Update the meetingPersonId field with userId and name fields
+                            $('#meetingPersonId').val(userId); // Set the correct userId here
+                            $('#meetingPersonName').val(firstName + ' ' + lastName); // Set the name
+                        } else {
+                            // Reset the meeting person fields when no member is selected
+                            $('#meetingPersonId').val('');
+                            $('#meetingPersonName').val('');
+                        }
+
+                        console.log('Selected Member ID:', memberId);
+                        console.log('Selected Member User ID:', userId); // Log the correct userId
+                        console.log('Selected Member Name:', firstName + ' ' + lastName);
+                    });
+                });
+            </script>
 
 
-@endsection
+
+
+        @endsection

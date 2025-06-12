@@ -293,26 +293,28 @@
                     <form class="m-3 needs-validation" id="meetingMemberRefForm" enctype="multipart/form-data" method="POST" action="{{ route('refGiver.store') }}" novalidate>
                         @csrf
 
-                        <div class="row mb-3">
-                            <!-- Internal / External Radio -->
-                            <div class="col-sm-6">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="group" id="internal" value="internal" checked>
-                                    <label class="form-check-label" for="internal">Internal</label>
+                        <div class="card p-3 shadow-sm border-0 rounded">
+                            <div class="row mb-3">
+                                <!-- Internal / External Radio -->
+                                <div class="col-sm-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="group" id="internal" value="internal" checked>
+                                        <label class="form-check-label" for="internal">Internal</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="group" id="external" value="external">
+                                        <label class="form-check-label" for="external">External</label>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-sm-6">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="group" id="external" value="external">
-                                    <label class="form-check-label" for="external">External</label>
-                                </div>
-                            </div>
-                        </div>
 
-                        <div class="row mb-3">
                             <!-- Circle Dropdown -->
-                            <div class="col-md-6">
-                                <div class="form-floating">
+                            <div class="mb-3">
+                                <div class="col-md-12">
+                                    <label for="circleId" class="form-label fw-bold color-blue required">Circle <span class="text-danger">*</span></label>
+                                    {{-- <div class="form-floating"> --}}
                                     <select class="form-select @error('circleId') is-invalid @enderror" id="circleId" name="circleId" required>
                                         <option value="" selected disabled>Select Circle</option>
                                         <option value="{{ old('circleId', auth()->user()->member->circleId) }}" selected>
@@ -322,7 +324,6 @@
                                             <option value="{{ $circle->id }}">{{ $circle->circleName }}</option>
                                         @endforeach
                                     </select>
-                                    <label for="circleId">Circle</label>
                                     @error('circleId')
                                         <div class="invalid-tooltip">This field is required.</div>
                                     @enderror
@@ -330,86 +331,85 @@
                             </div>
 
                             <!-- Member Dropdown -->
-                            <div class="col-md-6">
-                                <div class="form-floating">
-                                    <select class="form-select @error('memberId') is-invalid @enderror" id="memberId" name="memberId" required>
-                                        <option value="" disabled>Select Member</option>
-                                    </select>
-                                    <label for="memberId">Member</label>
-                                    @error('memberId')
-                                        <div class="invalid-tooltip">This field is required.</div>
+                            <div class="col-md-12">
+                                <label for="memberId" class="form-label fw-bold color-blue required">Member <span class="text-danger">*</span></label>
+                                {{-- <div class="form-floating"> --}}
+                                <select class="form-select @error('memberId') is-invalid @enderror" id="memberId" name="memberId" required>
+                                    <option value="" disabled>Select Member</option>
+                                </select>
+                                @error('memberId')
+                                    <div class="invalid-tooltip">This field is required.</div>
+                                @enderror
+                            </div>
+
+
+                            <!-- Member Name (readonly) -->
+                            <input type="hidden" id="meetingPersonId" name="memberId">
+                            <div class="mt-3">
+                                <label for="meetingPersonName" class="form-label fw-bold color-blue required">Member Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="meetingPersonName" name="memberName" placeholder="Select Member" readonly disabled>
+                                @error('memberId')
+                                    <div class="invalid-tooltip">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <!-- External Contact Person Fields -->
+                            <div id="memberListInput" style="display:none;">
+                                <h4 class="mt-3 text-blue">Contact Person Details</h4>
+
+                                <div class="mt-3">
+                                    <label for="contactName" class="form-label fw-bold color-blue">Contact Person Name</label>
+                                    <input type="text" class="form-control @error('contactName') is-invalid @enderror" name="contactNameExternal" placeholder="Contact Name">
+                                    @error('contactName')
+                                        <div class="invalid-tooltip">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <div class="mt-3">
+                                    <label for="contactNo" class="form-label fw-bold color-blue">Contact No</label>
+                                    <input type="text" class="form-control @error('contactNo') is-invalid @enderror" id="contactPersonContact" name="contactNo" placeholder="Contact No" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                                    @error('contactNo')
+                                        <div class="invalid-tooltip">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <div class="mt-3">
+                                    <label for="email" class="form-label fw-bold color-blue">Email</label>
+                                    <input type="text" class="form-control @error('email') is-invalid @enderror" id="contactPersonEmail" name="email" placeholder="Email">
+                                    @error('email')
+                                        <div class="invalid-tooltip">{{ $message }}</div>
                                     @enderror
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Member Name (readonly) -->
-                        <input type="hidden" id="meetingPersonId" name="memberId">
-                        <div class="form-floating">
-                            <input type="text" class="form-control" id="meetingPersonName" name="memberName" placeholder="Select Member" readonly disabled>
-                            <label for="meetingPersonName">Member Name</label>
-                            @error('memberId')
-                                <div class="invalid-tooltip">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <!-- External Contact Person Fields -->
-                        <div id="memberListInput" style="display:none;">
-                            <h4 class="mt-3 text-blue">Contact Person Details</h4>
-
-                            <div class="form-floating mt-3">
-                                <input type="text" class="form-control @error('contactName') is-invalid @enderror" name="contactNameExternal" placeholder="Contact Name">
-                                <label for="contactName">Contact Person Name</label>
-                                @error('contactName')
+                            <!-- Description -->
+                            <div class="mt-3">
+                                <label for="description" class="form-label fw-bold color-blue">Description</label>
+                                <input type="text" class="form-control @error('description') is-invalid @enderror" id="description" name="description" placeholder="Description">
+                                @error('description')
                                     <div class="invalid-tooltip">{{ $message }}</div>
                                 @enderror
                             </div>
 
-                            <div class="form-floating mt-3">
-                                <input type="text" class="form-control @error('contactNo') is-invalid @enderror" id="contactPersonContact" name="contactNo" placeholder="Contact No" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-                                <label for="contactNo">Contact No</label>
-                                @error('contactNo')
+                            <!-- Scale -->
+                            <div class="mt-4">
+                                <label for="scale" class="form-label fw-bold color-blue">Scale [1-5] </label>
+                                <input type="range" class="form-range @error('scale') is-invalid @enderror" id="scale" name="scale" min="1" max="5" step="1" required>
+                                <div class="d-flex justify-content-between align-items-center mt-2">
+                                    @foreach (range(1, 5) as $num)
+                                        <span class="badge btn-bg-blue rounded-pill">{{ $num }}</span>
+                                    @endforeach
+                                </div>
+                                @error('scale')
                                     <div class="invalid-tooltip">{{ $message }}</div>
                                 @enderror
                             </div>
 
-                            <div class="form-floating mt-3">
-                                <input type="text" class="form-control @error('email') is-invalid @enderror" id="contactPersonEmail" name="email" placeholder="Email">
-                                <label for="email">Email</label>
-                                @error('email')
-                                    <div class="invalid-tooltip">{{ $message }}</div>
-                                @enderror
+                            <!-- Buttons -->
+                            <div class="d-flex justify-content-end gap-2 mt-4">
+                                <button type="reset" class="cancel-btn">Reset</button>
+                                <button type="submit" class="create-btn">Submit</button>
                             </div>
-                        </div>
-
-                        <!-- Description -->
-                        <div class="form-floating mt-3">
-                            <input type="text" class="form-control @error('description') is-invalid @enderror" id="description" name="description" placeholder="Description">
-                            <label for="description">Description</label>
-                            @error('description')
-                                <div class="invalid-tooltip">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <!-- Scale -->
-                        <div class="mt-4">
-                            <label for="scale">Scale [1-5]</label>
-                            <input type="range" class="form-range @error('scale') is-invalid @enderror" id="scale" name="scale" min="1" max="5" step="1" required>
-                            <div class="d-flex justify-content-between align-items-center mt-2">
-                                @foreach (range(1, 5) as $num)
-                                    <span class="badge btn-bg-blue rounded-pill">{{ $num }}</span>
-                                @endforeach
-                            </div>
-                            @error('scale')
-                                <div class="invalid-tooltip">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <!-- Buttons -->
-                        <div class="d-flex justify-content-end gap-2 mt-4">
-                            <button type="reset" class="cancel-btn">Reset</button>
-                            <button type="submit" class="create-btn">Submit</button>
-                        </div>
                     </form>
                 </div>
             </div>
