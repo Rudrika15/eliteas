@@ -372,6 +372,12 @@ class ReportController extends Controller
         $totalIbmCount = 0;
         $totalReferenceCount = 0;
 
+        $selectedMember = null;
+        if ($selectedMemberId) {
+            $selectedMember = Member::where('userId', $selectedMemberId)->first();
+        }
+
+
         if ($selectedMemberId) {
             $circleCall = CircleCall::where('status', 'Active')
                 ->where('memberId', $selectedMemberId)
@@ -391,7 +397,6 @@ class ReportController extends Controller
             $totalReferenceCount = $reference->count();
         }
 
-
-        return view('admin.report.memberReport', compact('circle', 'member', 'business', 'reference', 'circleCall', 'selectedMemberId', 'totalBusinessAmount', 'totalIbmCount', 'totalReferenceCount'));
+        return view('admin.report.memberReport', compact('circle', 'member', 'business', 'reference', 'circleCall', 'selectedMemberId', 'totalBusinessAmount', 'totalIbmCount', 'totalReferenceCount', 'selectedMember'));
     }
 }

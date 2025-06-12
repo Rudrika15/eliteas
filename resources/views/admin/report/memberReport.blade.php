@@ -44,6 +44,14 @@
                     </div>
                 </form>
 
+
+                @if (request('memberId') && $selectedMember)
+                    <div class="mt-4">
+                        <h5 class="fw-bold color-orange">Report for: <span class="color-blue">{{ $selectedMember->firstName }} {{ $selectedMember->lastName }} </span></h5>
+                    </div>
+                @endif
+
+
                 @if (request('memberId'))
                     <div class="row mt-4">
                         <div class="col-md-4">
