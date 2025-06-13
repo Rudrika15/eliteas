@@ -67,6 +67,7 @@ use App\Http\Controllers\Admin\TrainingMasterController;
 use App\Http\Controllers\Admin\TrainingFeedbackController;
 use App\Http\Controllers\MessageController;
 use App\Models\User;
+use App\Exports\MemberReportExport;
 
 /*
 |--------------------------------------------------------------------------
@@ -556,8 +557,21 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/admin/reports/reference', [ReportController::class, 'reference'])->name('admin.report.reference');
     Route::get('/admin/reports/business', [ReportController::class, 'business'])->name('admin.report.business');
     Route::get('/admin/report/joining-members', [ReportController::class, 'getJoiningMembers'])->name('admin.report.joining');
-    Route::get('admin/report/member-report', [ReportController::class, 'memberWiseReport'])->name('admin.memberWiseReport');
 
+    // excel report
+    Route::get('admin/report/member-report', [ReportController::class, 'memberWiseReport'])->name('admin.memberWiseReport');
+    // Route::get('/admin/member-report/export', function (\Illuminate\Http\Request $request) {
+    //     $memberId = $request->memberId;
+    //     $startDate = $request->start_date;
+    //     $endDate = $request->end_date;
+
+    //     $member = User::where('id', $memberId)->first();
+    //     $memberName = $member ? str_replace(' ', '_', $member->firstName . '_' . $member->lastName) : 'Unknown';
+
+    //     $fileName = 'member_report_' . $memberName . '.xlsx';
+
+    //     return Excel::download(new MemberReportExport($memberId, $startDate, $endDate), $fileName);
+    // })->name('member.report.export');
 
 
 

@@ -42,6 +42,11 @@ class CircleMeetingMembersBusiness extends Model
         return $this->belongsTo(User::class, 'loginMemberId');
     }
 
+    public function loginMemberReport()
+    {
+        return $this->belongsTo(User::class, 'loginMemberId', 'id');
+    }
+
     public function users()
     {
         return $this->belongsTo(User::class, 'businessGiverId');

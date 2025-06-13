@@ -11,7 +11,7 @@
 
                 <form method="GET" action="{{ route('admin.memberWiseReport') }}" id="memberFilterForm">
                     <div class="row mb-3">
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <label for="circleId"><strong>Circle:</strong></label>
                             <select name="circleId" id="circleId" class="form-control form-control-sm">
                                 <option value="">-- Select Circle --</option>
@@ -23,7 +23,7 @@
                             </select>
                         </div>
 
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <label for="memberId"><strong>Member:</strong></label>
                             <select name="memberId" id="memberId" class="form-control form-control-sm">
                                 <option value="">-- Select Member --</option>
@@ -37,51 +37,132 @@
                             </select>
                         </div>
 
-                        <div class="col-md-4 d-flex align-items-end gap-2">
+                        <div class="col-md-2">
+                            <label for="start_date"><strong>Start Date:</strong></label>
+                            <input type="date" name="start_date" value="{{ request()->input('start_date') }}" class="form-control form-control-sm">
+                        </div>
+
+                        <div class="col-md-2">
+                            <label for="end_date"><strong>End Date:</strong></label>
+                            <input type="date" name="end_date" value="{{ request()->input('end_date') }}" class="form-control form-control-sm">
+                        </div>
+
+                        <div class="col-md-2 d-flex align-items-end gap-2">
                             <button type="submit" class="btn btn-bg-blue btn-sm w-100">Get Report</button>
                             <a href="{{ route('admin.memberWiseReport') }}" class="btn btn-bg-orange btn-sm w-100">Reset</a>
                         </div>
                     </div>
                 </form>
 
+                {{-- @if (request('memberId'))
+                    <div class="text-end mb-2">
+                        <a href="{{ route('admin.memberWiseReport', request()->all()) }}" class="btn btn-success btn-sm">Export Excel</a>
+                    </div>
+                @endif --}}
+
+
+                @if (request('memberId'))
+                    <form method="GET" action="{{ route('admin.memberWiseReport') }}">
+                        <input type="hidden" name="memberId" value="{{ request('memberId') }}">
+                        <input type="hidden" name="start_date" value="{{ request('start_date') }}">
+                        <input type="hidden" name="end_date" value="{{ request('end_date') }}">
+                        <input type="hidden" name="export" value="1">
+                        <button type="submit" class="btn btn-success btn-sm mt-3">Download Excel</button>
+                    </form>
+                @endif
+
 
                 @if (request('memberId') && $selectedMember)
                     <div class="mt-4">
                         <h5 class="fw-bold color-orange">Report for: <span class="color-blue">{{ $selectedMember->firstName }} {{ $selectedMember->lastName }} </span></h5>
+                        <h5 class="fw-bold">Date : {{ \Carbon\Carbon::parse($startDate)->format('d-m-Y') }} To {{ \Carbon\Carbon::parse($endDate)->format('d-m-Y') }}</h5>
+
                     </div>
                 @endif
 
 
                 @if (request('memberId'))
-                    <div class="row mt-4">
-                        <div class="col-md-4">
-                            <div class="card border-success shadow-sm border">
-                                <div class="card-body text-center">
-                                    <h6 class="mt-4 fw-bold">Total Business Amount</h6>
-                                    <h4 class="text-success">₹{{ number_format($totalBusinessAmount, 2) }}</h4>
-                                </div>
-                            </div>
-                        </div>
 
-                        <div class="col-md-4">
-                            <div class="card border-info shadow-sm border">
-                                <div class="card-body text-center">
-                                    <h6 class="mt-4 fw-bold">Total IBM Count</h6>
-                                    <h4 class="text-info">{{ $totalIbmCount }}</h4>
-                                </div>
-                            </div>
-                        </div>
+                    {{-- IBM Details --}}
+                    <div class="mt-5">
+                        <h5 class="fw-bold">IBM (Meetings) Details</h5>
+                        <table class="table table-bordered table-sm">
+                            <thead>
+                                <tr>
+                                    <th>With Member</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($circleCall as $ibm)
+                                    <tr>
+                                        <td>{{ $ibm->meetingPersonReport->firstName ?? '' }} {{ $ibm->meetingPersonReport->lastName ?? '' }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($ibm->created_at)->format('d M Y') }}</td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="2" class="text-center">No IBM records</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
 
-                        <div class="col-md-4">
-                            <div class="card border-warning shadow-sm border">
-                                <div class="card-body text-center">
-                                    <h6 class="mt-4 fw-bold">Total Reference Count</h6>
-                                    <h4 class="text-warning">{{ $totalReferenceCount }}</h4>
-                                </div>
-                            </div>
-                        </div>
+                    {{-- Business Details --}}
+                    <div class="mt-4">
+                        <h5 class="fw-bold">Business Given</h5>
+                        <table class="table table-bordered table-sm">
+                            <thead>
+                                <tr>
+                                    <th>To Member</th>
+                                    <th>Amount</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($business as $b)
+                                    <tr>
+                                        <td>{{ $b->loginMember->firstName ?? '' }} {{ $b->loginMember->lastName ?? '' }}</td>
+                                        <td>₹{{ number_format($b->amount, 2) }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($b->created_at)->format('d M Y') }}</td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="3" class="text-center">No business records</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {{-- Reference Details --}}
+                    <div class="mt-4">
+                        <h5 class="fw-bold">References Given</h5>
+                        <table class="table table-bordered table-sm">
+                            <thead>
+                                <tr>
+                                    <th>To Member</th>
+                                    <th>Other Person Name</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($reference as $r)
+                                    <tr>
+                                        <td>{{ $r->refReceiver->firstName ?? '' }} {{ $r->refReceiver->lastName ?? '' }}</td>
+                                        <td>{{ $r->contactName ?? '' }} </td>
+                                        <td>{{ \Carbon\Carbon::parse($r->created_at)->format('d M Y') }}</td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="2" class="text-center">No reference records</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
                     </div>
                 @endif
+
             </div>
         </div>
     </div>
