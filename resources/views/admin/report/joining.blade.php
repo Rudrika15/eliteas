@@ -62,17 +62,27 @@
                         <thead>
                             <tr>
                                 <th>S.No</th>
-                                <th>Circle Name</th> <!-- Updated Header -->
+                                <th>Circle Name / Member Name</th>
                                 <th>Member Count</th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse ($members as $index => $item)
-                                <tr>
+                                {{-- Main Row for Circle --}}
+                                <tr class="table-primary">
                                     <td>{{ $index + 1 }}</td>
-                                    <td>{{ $item['circleName'] }}</td> <!-- Display Circle Name -->
-                                    <td>{{ $item['member_count'] }}</td>
+                                    <td><strong>{{ $item['circleName'] }}</strong></td>
+                                    <td><strong>{{ $item['member_count'] }}</strong></td>
                                 </tr>
+
+                                {{-- Member Names under the Circle --}}
+                                @foreach ($item['member_names'] as $memberName)
+                                    <tr>
+                                        <td></td>
+                                        <td class="ps-4">→ {{ $memberName }}</td>
+                                        <td></td>
+                                    </tr>
+                                @endforeach
                             @empty
                                 <tr>
                                     <td colspan="3" class="text-center">No data found</td>
@@ -81,6 +91,7 @@
                         </tbody>
                     </table>
                 </div>
+
             </div>
         </div>
     </div>
