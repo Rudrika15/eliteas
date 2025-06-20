@@ -392,16 +392,22 @@ class ReportController extends Controller
             ->groupBy('circleId')
             ->map(function ($group) {
                 $circle = $group->first()->circle;
+
                 return [
                     'circleName' => $circle ? $circle->circleName : 'Unknown Circle',
                     'member_count' => $group->count(),
-                    'member_names' => $group->pluck('firstName', 'lastName')->map(function ($lastName, $firstName) {
-                        return "$firstName $lastName";
-                    })->toArray(), // Add member names
+                    'member_list' => $group->map(function ($member) {
+                        return [
+                            'full_name' => $member->firstName . ' ' . $member->lastName,
+                            'joined_date' => $member->created_at->format('d-m-Y'),
+                        ];
+                    })->toArray(),
                 ];
             })
             ->sortByDesc('member_count')
             ->values();
+
+
 
         return view('admin.report.joining', compact('members', 'circles'));
     }

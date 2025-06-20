@@ -63,24 +63,24 @@
                             <tr>
                                 <th>S.No</th>
                                 <th>Circle Name / Member Name</th>
-                                <th>Member Count</th>
+                                <th>Member Count / Joining Date</th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse ($members as $index => $item)
-                                {{-- Main Row for Circle --}}
+                                {{-- Main Circle Row --}}
                                 <tr class="table-primary">
                                     <td>{{ $index + 1 }}</td>
                                     <td><strong>{{ $item['circleName'] }}</strong></td>
                                     <td><strong>{{ $item['member_count'] }}</strong></td>
                                 </tr>
 
-                                {{-- Member Names under the Circle --}}
-                                @foreach ($item['member_names'] as $memberName)
+                                {{-- Member Rows --}}
+                                @foreach ($item['member_list'] as $member)
                                     <tr>
                                         <td></td>
-                                        <td class="ps-4">→ {{ $memberName }}</td>
-                                        <td></td>
+                                        <td class="ps-4">→ {{ $member['full_name'] }}</td>
+                                        <td>{{ $member['joined_date'] }}</td>
                                     </tr>
                                 @endforeach
                             @empty
@@ -91,6 +91,7 @@
                         </tbody>
                     </table>
                 </div>
+
 
             </div>
         </div>
