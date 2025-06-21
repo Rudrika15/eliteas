@@ -120,6 +120,30 @@ class CircleMemberController extends Controller
         }
     }
 
+    public function deletedMemberList(Request $request)
+    {
+        try {
+            $user = Auth::user();
+            $member = Member::where('status', 'Deleted')
+                ->whereHas('circle')
+                ->whereHas('contactDetails')
+                ->with(['circle', 'contactDetails', 'user', 'topsProfile', 'billingAddress'])
+                ->paginate(10);
+
+            $circle = Circle::where('status', 'Active')->get();
+            $bCategory = BusinessCategory::where('status', 'Active')->orderBy('categoryName', 'asc')->get();
+            $membershipType = MembershipType::where('status', 'Active')->get();
+
+            return view('admin.circlemember.restoreIndex', compact('member', 'circle', 'bCategory', 'membershipType'));
+        } catch (\Throwable $th) {
+            ErrorLogger::logError(
+                $th,
+                $request->fullUrl()
+            );
+            return view('servererror');
+        }
+    }
+
 
     public function induction($id)
     {
@@ -768,6 +792,62 @@ class CircleMemberController extends Controller
             }
 
             return redirect()->route('circlemember.index')->with('success', 'Circle Member Deleted Successfully!');
+        } catch (\Throwable $th) {
+            // throw $th;
+            ErrorLogger::logError(
+                $th,
+                $request->fullUrl()
+            );
+            return view('servererror');
+        }
+    }
+
+    public function restoreMember(Request $request, $id)
+    {
+
+        try {
+            $circlemember = Member::find($id);
+            $user = User::find($circlemember->userId);
+            $circlemember->status = "Active";
+            $user->status = "Active";
+            $circlemember->save();
+            $user->save();
+
+            // Update other tables also
+            $contact = ContactDetails::where('memberId', $id)->first();
+            $contact->status = "Active";
+            $contact->save();
+
+            $billing = BillingAddress::where('memberId', $id)->first();
+            $billing->status = "Active";
+            $billing->save();
+
+            $tops = TopsProfile::where('memberId', $id)->first();
+            $tops->status = "Active";
+            $tops->save();
+
+            // Fetch and update CircleCall records
+            $circleCalls = CircleCall::where('memberId', $circlemember->userId)->get();
+            foreach ($circleCalls as $circleCall) {
+                $circleCall->status = "Active";
+                $circleCall->save();
+            }
+
+            // Fetch and update CircleMeetingMembersBusiness records
+            $businessSlips = CircleMeetingMembersBusiness::where('businessGiverId', $circlemember->userId)->get();
+            foreach ($businessSlips as $businessSlip) {
+                $businessSlip->status = "Active";
+                $businessSlip->save();
+            }
+
+            // Fetch and update CircleMeetingMembersReference records
+            $businessReferences = CircleMeetingMembersReference::where('memberId', $circlemember->userId)->get();
+            foreach ($businessReferences as $businessReference) {
+                $businessReference->status = "Active";
+                $businessReference->save();
+            }
+
+            return redirect()->route('circlemember.deletedMemberList')->with('success', 'Circle Member Restored Successfully!');
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError(

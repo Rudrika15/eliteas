@@ -300,6 +300,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('circlemember/edit/{id?}', [CircleMemberController::class, 'edit'])->name('circlemember.edit');
     Route::post('circlemember/update/{id?}', [CircleMemberController::class, 'update'])->name('circlemember.update');
     Route::get('circlemember/delete/{id?}', [CircleMemberController::class, 'delete'])->name('circlemember.delete');
+    Route::get('circlemember/restoreMember/{id?}', [CircleMemberController::class, 'restoreMember'])->name('circlemember.restore');
+    Route::get('circlemember/deletedMemberList', [CircleMemberController::class, 'deletedMemberList'])->name('circlemember.deletedMemberList');
     Route::post('/get-membership-amount', [CircleMemberController::class, 'getMembershipAmount'])->name('get.membership.amount');
 
     //filter
