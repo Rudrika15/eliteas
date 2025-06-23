@@ -321,8 +321,8 @@ class CircleMeetingMemberReferenceController extends Controller
     public function edit(Request $request, $id)
     {
         try {
-            // $refGiver = CircleMeetingMembersReference::find($id);
-            $refGiver = CircleMeetingMembersReference::where('id', $id)->first();
+            $refGiver = CircleMeetingMembersReference::find($id);
+            // $refGiver = CircleMeetingMembersReference::where('id', $id)->first();
             $member = Member::where('status', 'Active')->get();
             $circles = Circle::where('status', 'Active')->get();
 

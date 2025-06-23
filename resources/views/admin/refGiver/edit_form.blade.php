@@ -28,7 +28,7 @@
                     <div class="row mt-3">
                         <div class="col-md-12">
                             <div class="form-floating">
-                                <select class="form-select" id="circleId_{{ $refGiverData->id }}" name="circleId" required>
+                                <select class="form-select circle-select" id="circleId_{{ $refGiverData->id }}" data-id="{{ $refGiverData->id }}" name="circleId" required>
                                     <option value="" disabled>Select Circle</option>
                                     <option value="{{ $refGiverData->circleId }}" selected>
                                         {{ $refGiverData->members->circle->circleName ?? '-' }}
@@ -45,7 +45,7 @@
                     <div class="row mt-3">
                         <div class="col-md-12">
                             <div class="form-floating">
-                                <select class="form-select" id="memberId_{{ $refGiverData->id }}" name="memberId">
+                                <select class="form-select member-select" id="memberId_{{ $refGiverData->id }}" data-id="{{ $refGiverData->id }}" name="memberId">
                                     <option value="{{ $refGiverData->meetingPersonId }}" selected>
                                         {{ $refGiverData->members->firstName ?? '-' }} {{ $refGiverData->members->lastName ?? '-' }}
                                     </option>
@@ -56,9 +56,9 @@
                         </div>
                     </div>
 
-                    <input type="hidden" name="memberId" value="{{ $refGiverData->memberId }}">
+                    <input type="hidden" class="meeting-person-id" id="meetingPersonId_{{ $refGiverData->id }}" name="memberId" value="{{ $refGiverData->memberId }}">
                     <div class="form-floating mt-3">
-                        <input type="text" class="form-control" placeholder="Member Name" value="{{ $refGiverData->members->firstName . ' ' . $refGiverData->members->lastName ?? '-' }}" readonly>
+                        <input type="text" class="form-control meeting-person-name" id="meetingPersonName_{{ $refGiverData->id }}" value="{{ $refGiverData->members->firstName . ' ' . $refGiverData->members->lastName ?? '-' }}" readonly>
                         <label>Member Name</label>
                     </div>
 
@@ -130,6 +130,68 @@
 
             // Initialize on page load
             toggleContactDetails();
+        });
+    });
+</script>
+
+
+<script>
+    $(document).ready(function() {
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        // Load members based on circle
+        function loadMembers(circleId, containerId, selectedMemberId = null) {
+            let memberSelect = $('#memberId_' + containerId);
+            memberSelect.empty().append('<option value="">Select Member</option>');
+
+            if (circleId) {
+                $.ajax({
+                    url: '{{ route('members.byCircle') }}',
+                    method: 'GET',
+                    data: {
+                        circleId: circleId
+                    },
+                    success: function(response) {
+                        if (response.members && response.members.length > 0) {
+                            response.members.forEach(function(member) {
+                                memberSelect.append(`<option value="${member.id}" data-user-id="${member.userId}" data-first-name="${member.firstName}" data-last-name="${member.lastName}">${member.firstName} ${member.lastName}</option>`);
+                            });
+
+                            if (selectedMemberId) {
+                                memberSelect.val(selectedMemberId).trigger('change');
+                            }
+                        } else {
+                            memberSelect.append('<option value="">No Members Found</option>');
+                        }
+                    },
+                    error: function() {
+                        memberSelect.append('<option value="">Error loading members</option>');
+                    }
+                });
+            }
+        }
+
+        // Change event for circle dropdown
+        $('.circle-select').on('change', function() {
+            const containerId = $(this).data('id');
+            const circleId = $(this).val();
+            loadMembers(circleId, containerId);
+        });
+
+        // Change event for member dropdown
+        $('.member-select').on('change', function() {
+            const containerId = $(this).data('id');
+            const selectedOption = $(this).find('option:selected');
+            const userId = selectedOption.data('user-id') || '';
+            const firstName = selectedOption.data('first-name') || '';
+            const lastName = selectedOption.data('last-name') || '';
+
+            $('#meetingPersonId_' + containerId).val(userId);
+            $('#meetingPersonName_' + containerId).val(firstName + ' ' + lastName);
         });
     });
 </script>
