@@ -1228,7 +1228,7 @@
                         <div class="col-sm-6 col-lg-4">
                             <div class="profile-card shadow-sm rounded border-0">
                                 <span class="heading">Top IBM Member</span>
-                                <img src="{{ asset('img/coverImage.png') }}" class="header-image" alt="Header Image">
+                                <img src="{{ asset('img/header_img.png') }}" class="header-image" alt="Header Image">
                                 <div class="text-center p-3">
                                     <img src="{{ asset('ProfilePhoto/' . ($circlecalls['member']->profilePhoto ?? 'profile.png')) }}" class="profile-img img-fluid rounded-circle mx-auto d-block" alt="Profile Image">
                                     <h5 class="member-name" style="color: #e76a35; font-weight: bold;">

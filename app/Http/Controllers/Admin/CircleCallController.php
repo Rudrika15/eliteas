@@ -58,7 +58,7 @@ class CircleCallController extends Controller
                 ->paginate(10);
 
 
-            $circles = Circle::where('status', 'Active')->get();
+            $circles = Circle::where('status', 'Active')->orderBy('circleName', 'asc')->get();
 
             $circleMember = Member::with('circle')
                 ->where('status', 'Active')
@@ -103,10 +103,11 @@ class CircleCallController extends Controller
     public function create(Request $request)
     {
         try {
-            $circles = Circle::where('status', 'Active')->get();
+            $circles = Circle::where('status', 'Active')->orderBy('circleName', 'asc')->get();
 
             $circleMember = Member::with('circle')
                 ->where('status', 'Active')
+                ->orderBy('circleName', 'asc')
                 ->get(); // Ensure 'circleId' is included
 
 
@@ -142,6 +143,7 @@ class CircleCallController extends Controller
             $members = Member::where('circleId', $circleId)
                 ->with('user')
                 ->where('status', 'Active')
+                ->orderBy('firstName', 'asc')
                 ->where('userId', '!=', Auth::id())
                 ->get(['id', 'userId', 'firstName', 'lastName']); // Adjust fields as needed
 
@@ -430,9 +432,9 @@ class CircleCallController extends Controller
     {
         try {
             $circlecall = CircleCall::find($id);
-            $member = Member::where('status', '!=', 'Deleted')->get();
+            $member = Member::where('status', '!=', 'Deleted')->orderBy('firstName', 'asc')->get();
             $circleMember = CircleMember::where('status', '!=', 'Deleted')->get();
-            $circles = Circle::where('status', 'Active')->get();
+            $circles = Circle::where('status', 'Active')->orderBy('circleName', 'asc')->get();
 
 
             // Fetch all 'date' values from the query result
@@ -447,8 +449,8 @@ class CircleCallController extends Controller
                 ->pluck('date')
                 ->first();
 
-            // return view('admin.circlecall.edit', compact('circlecall', 'circles', 'scheduleDate', 'lastDate', 'circleMember', 'member'));
-            return view('admin.circlecall._edit_form', compact('circlecall', 'circles', 'scheduleDate', 'lastDate', 'circleMember', 'member'));
+            return view('admin.circlecall.edit', compact('circlecall', 'circles', 'scheduleDate', 'lastDate', 'circleMember', 'member'));
+            // return view('admin.circlecall._edit_form', compact('circlecall', 'circles', 'scheduleDate', 'lastDate', 'circleMember', 'member'));
         } catch (\Throwable $th) {
             // Log the error using the ErrorLogger utility
             ErrorLogger::logError($th, $request->fullUrl());

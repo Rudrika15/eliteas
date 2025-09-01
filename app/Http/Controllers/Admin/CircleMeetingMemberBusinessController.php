@@ -44,21 +44,23 @@ class CircleMeetingMemberBusinessController extends Controller
                 return $item;
             });
 
-            $busGiveByOther = CircleMeetingMembersBusiness::where('businessGiverId', Auth::user()->id)
+            $busGiveByOther = CircleMeetingMembersBusiness::with('loginMember')
+                ->where('businessGiverId', Auth::user()->id)
                 ->where('status', 'Active')
                 ->orderBy('id', 'DESC')
                 ->paginate(10);
-
-            // Format the amount with commas
-            $busGiveByOther->transform(function ($item) {
-                $item->amount = isset($item->amount) ? number_format($item->amount, 2) : '-';
-                return $item;
-            });
-
-            $circles = Circle::where('status', 'Active')->get();
+                
+                // Format the amount with commas
+                $busGiveByOther->transform(function ($item) {
+                    $item->amount = isset($item->amount) ? number_format($item->amount, 2) : '-';
+                    return $item;
+                });
+                
+            $circles = Circle::where('status', 'Active')->orderBy('circleName', 'ASC')->get();
 
             $circleMember = Member::with('circle')
                 ->where('status', 'Active')
+                ->orderBy('firstName', 'ASC')
                 ->get();
 
 

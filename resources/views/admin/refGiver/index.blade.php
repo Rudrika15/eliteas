@@ -152,17 +152,18 @@
                 <div class="col-md-6 col-lg-4 col-xl-3 mb-4">
                     <div class="card shadow rounded-4 overflow-hidden">
                         <div class="position-relative">
-                            <img src="https://picsum.photos/700/200?random={{ rand(1, 1000) }}" class="card-img-top" alt="cover">
+                            {{-- <img src="https://picsum.photos/700/200?random={{ rand(1, 1000) }}" class="card-img-top" alt="cover"> --}}
+                            <img src="{{ asset('img/header_img.jpeg') }}" class="card-img-top" alt="cover">
                             <div class="position-absolute top-100 start-50 translate-middle">
                                 <img src="{{ optional($busGiverData->businessGiverMember)->profilePhoto ? asset('ProfilePhoto/' . $busGiverData->businessGiverMember->profilePhoto) : asset('ProfilePhoto/profile.png') }}" class="rounded-circle border border-3 border-white" width="110" height="110" alt="Profile">
                             </div>
-                            <div class="dropdown position-absolute top-0 end-0 m-2">
+                            {{-- <div class="dropdown position-absolute top-0 end-0 m-2">
                                 <a href="#" class="text-black" data-bs-toggle="dropdown"><i class="bi bi-three-dots-vertical"></i></a>
-                                {{-- <ul class="dropdown-menu">
+                                <ul class="dropdown-menu">
                                     <li><a class="dropdown-item color-blue" href="{{ route('circlecall.edit', $busGiverData->id) }}"><i class="bi bi-pencil-square me-2"></i>Edit</a></li>
                                     <li><a class="dropdown-item text-danger" onclick="deleteRow('{{ route('circlecall.delete', $busGiverData->id) }}')"><i class="bi bi-trash me-2"></i>Delete</a></li>
-                                </ul> --}}
-                            </div>
+                                </ul>
+                            </div> --}}
                         </div>
                         <div class="card-body text-center pt-5 mt-3">
                             {{-- Meeting Person Name --}}
@@ -212,7 +213,7 @@
                 <div class="col-md-6 col-lg-4 col-xl-3 mb-4">
                     <div class="card shadow rounded-4 overflow-hidden">
                         <div class="position-relative">
-                            <img src="https://picsum.photos/700/200?random={{ rand(1, 1000) }}" class="card-img-top" alt="cover">
+                            <img src="{{ asset('img/header_img.jpeg') }}" class="card-img-top" alt="cover">
                             <div class="position-absolute top-100 start-50 translate-middle">
                                 <img src="{{ optional($refGiverData->members)->profilePhoto ? asset('ProfilePhoto/' . $refGiverData->members->profilePhoto) : asset('ProfilePhoto/profile.png') }}" class="rounded-circle border border-3 border-white" width="110" height="110" alt="Profile">
                             </div>
@@ -220,7 +221,7 @@
                                 <a href="#" class="text-black" data-bs-toggle="dropdown"><i class="bi bi-three-dots-vertical"></i></a>
                                 <ul class="dropdown-menu">
                                     <li>
-                                        <a class="dropdown-item color-blue" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#editRefGiverModal_{{ $refGiverData->id }}">
+                                        <a class="dropdown-item color-blue" href="{{ route('refGiver.edit', $refGiverData->id) }}" >
                                             <i class="bi bi-pencil-square me-2"></i>Edit
                                         </a>
                                     </li>

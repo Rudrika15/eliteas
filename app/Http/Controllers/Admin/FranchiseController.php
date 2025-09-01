@@ -37,8 +37,8 @@ class FranchiseController extends Controller
     public function index(Request $request)
     {
         try {
-            $user = User::all();
-            $franchises = Franchise::where('status', 'Active')->paginate(10);
+            $user = User::where('status', 'Active')->get();
+            $franchises = Franchise::where('status', 'Active')->orderBy('franchiseName', 'asc')->paginate(10);
             return view('admin.franchise.index', compact('franchises', 'user'));
         } catch (\Throwable $th) {
             // throw $th;
@@ -63,9 +63,9 @@ class FranchiseController extends Controller
     {
         try {
             $franchises = Franchise::all();
-            $countries = Country::where('status', 'Active')->get();
-            $states = State::where('status', 'Active')->get();
-            $cities = City::where('status', 'Active')->get();
+            $countries = Country::where('status', 'Active')->orderBy('countryName', 'ASC')->get();
+            $states = State::where('status', 'Active')->orderBy('stateName', 'ASC')->get();
+            $cities = City::where('status', 'Active')->orderBy('cityName', 'ASC')->get();
             return view('admin.franchise.create', compact('franchises', 'countries', 'states', 'cities'));
         } catch (\Throwable $th) {
             //throe $th;
@@ -186,9 +186,9 @@ class FranchiseController extends Controller
     {
         try {
             $franchises = Franchise::find($id);
-            $cities = City::where('status', 'Active')->get();
-            $states = State::where('status', 'Active')->get();
-            $countries = Country::where('status', 'Active')->get();
+            $cities = City::where('status', 'Active')->orderBy('cityName', 'ASC')->get();
+            $states = State::where('status', 'Active')->orderBy('stateName', 'ASC')->get();
+            $countries = Country::where('status', 'Active')->orderBy('countryName', 'ASC')->get();
 
             $city = City::where('id', $franchises->cityId)->first();
             $state = State::where('id', $city->stateId)->first();
@@ -300,7 +300,7 @@ class FranchiseController extends Controller
     public function getStates(Request $request)
     {
         $countryId = $request->countryId;
-        $states = State::where('countryId', $countryId)->where('status', 'Active')->get();
+        $states = State::where('countryId', $countryId)->where('status', 'Active')->orderBy('stateName', 'ASC')->get();
 
         $options = '<option value="">Select State</option>';
         foreach ($states as $state) {
@@ -313,7 +313,7 @@ class FranchiseController extends Controller
     {
         $stateId = $request->stateId;
 
-        $cities = City::where('stateId', $stateId)->where('status', 'Active')->get();
+        $cities = City::where('stateId', $stateId)->where('status', 'Active')->orderBy('cityName', 'ASC')->get();
 
         $options = '<option value="">Select City</option>';
 

@@ -331,6 +331,13 @@
     </li>
 @endif
 
+{{-- <li class="nav-item">
+    <a class="nav-link collapsed" href="{{ route('showForm') }}">
+        <i class="bi bi-person" style="color: #e76a35"></i>
+        <span style="color: #1d2856">Member Form </span>
+    </a>
+</li> --}}
+
 
 @if (Auth::user()->hasRole('VC'))
     || (Auth::user()->hasRole('Admin'))

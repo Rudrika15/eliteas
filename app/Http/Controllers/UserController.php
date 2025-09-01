@@ -14,6 +14,7 @@ use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Controller;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Hash as FacadesHash;
 
 class UserController extends Controller
 {
@@ -34,7 +35,7 @@ class UserController extends Controller
 
     public function userList(Request $request): View
     {
-        $data = User::where('status', 'Active')->paginate(10);
+        $data = User::where('status', 'Active')->orderBy('firstName', 'ASC')->paginate(10);
         return view('users.userList', compact('data'))
             ->with('i', ($request->input('page', 1) - 1) * 5);
     }
@@ -68,7 +69,7 @@ class UserController extends Controller
         ]);
 
         $input = $request->except('_token');
-        $input['password'] = Hash::make($input['password']);
+        $input['password'] = FacadesHash::make($input['password']);
 
         // $user = User::create($input);
         $user = new User();
@@ -93,7 +94,7 @@ class UserController extends Controller
             ->with('success', 'User created successfully');
     }
 
-
+// bas tu aatlu yaad rakhje.... je tara thi chhe bija koi thi nai... 
 
     /**
      * Display the specified resource.

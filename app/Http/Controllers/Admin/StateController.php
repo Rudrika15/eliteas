@@ -29,6 +29,7 @@ class StateController extends Controller
 
             $state = State::with('country')
                 ->where('status', 'Active')
+                ->orderBy('stateName', 'ASC')
                 ->paginate(10);
 
             return view('admin.state.index', compact('state'));
@@ -59,8 +60,9 @@ class StateController extends Controller
     public function create()
     {
         try {
-            $country = Country::where('status', '!=', 'Deleted')->get();
+            $country = Country::where('status', '!=', 'Deleted')->orderBy('countryName', 'ASC')->get();
             $state = State::with('country')
+            ->orderBy('stateName', 'ASC')
                 ->get();
             return view('admin.state.create', compact('country', 'state'));
         } catch (\Throwable $th) {
@@ -101,7 +103,7 @@ class StateController extends Controller
     {
         try {
             $state = State::find($id);
-            $country = Country::where('status', '!=', 'Deleted')->get();
+            $country = Country::where('status', '!=', 'Deleted')->orderBy('countryName', 'ASC')->get();
             return view('admin.state.edit', compact('country', 'state'));
         } catch (\Throwable $th) {
             // throw $th;

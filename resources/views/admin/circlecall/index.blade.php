@@ -207,7 +207,9 @@
                 <div class="col-md-6 col-lg-4 col-xl-3 mb-4">
                     <div class="card shadow rounded-4 overflow-hidden">
                         <div class="position-relative">
-                            <img src="https://picsum.photos/700/200?random={{ rand(1, 1000) }}" class="card-img-top" alt="cover">
+                            {{-- <img src="https://picsum.photos/700/200?random={{ rand(1, 1000) }}" class="card-img-top" alt="cover"> --}}
+                            <img src="{{ asset('img/header_img.jpeg') }}" class="card-img-top" alt="cover">
+
                             <div class="position-absolute top-100 start-50 translate-middle">
                                 <img src="{{ $circlecallData->meetingPerson->profilePhoto ? asset('ProfilePhoto/' . $circlecallData->meetingPerson->profilePhoto) : asset('ProfilePhoto/profile.png') }}" class="rounded-circle border border-3 border-white" width="110" height="110" alt="Profile">
                                 {{-- <div class="position-absolute bottom-0 end-0 bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 24px; height: 24px; font-size: 12px; transform: translate(25%, 25%);">G</div> --}}
@@ -216,7 +218,7 @@
                                 <a href="#" class="text-black" data-bs-toggle="dropdown"><i class="bi bi-three-dots-vertical"></i></a>
                                 <ul class="dropdown-menu">
                                     <li>
-                                        <a class="dropdown-item color-blue open-edit-modal" href="#" data-id="{{ $circlecallData->id }}">
+                                        <a class="dropdown-item color-blue" href="{{ route('circlecall.edit', $circlecallData->id) }}" data-id="{{ $circlecallData->id }}">
                                             <i class="bi bi-pencil-square me-2"></i>Edit
                                         </a>
                                     </li>
@@ -256,9 +258,9 @@
                 <div class="col-md-6 col-lg-4 col-xl-3 mb-4">
                     <div class="card shadow rounded-4 overflow-hidden">
                         <div class="position-relative">
-                            <img src="https://picsum.photos/700/200?random={{ rand(1, 1000) }}" class="card-img-top" alt="cover">
+                            <img src="{{ asset('img/header_img.jpeg') }}" class="card-img-top" alt="cover">
                             <div class="position-absolute top-100 start-50 translate-middle">
-                                <img src="{{ $callWithData->meetingPerson->profilePhoto ? asset('ProfilePhoto/' . $callWithData->meetingPerson->profilePhoto) : asset('ProfilePhoto/profile.png') }}" class="rounded-circle border border-3 border-white" width="110" height="110" alt="Profile">
+                                <img src="{{ $callWithData->member->profilePhoto ? asset('ProfilePhoto/' . $callWithData->member->profilePhoto) : asset('ProfilePhoto/profile.png') }}" class="rounded-circle border border-3 border-white" width="110" height="110" alt="Profile">
                                 {{-- <div class="position-absolute bottom-0 end-0 bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 24px; height: 24px; font-size: 12px; transform: translate(25%, 25%);">G</div> --}}
                             </div>
                         </div>
@@ -409,7 +411,7 @@
                     <h5 class="modal-title color-blue fw-bold" id="editModalLabel">Edit IBM</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                
+
                 <div class="modal-body" id="editModalBody">
                     <!-- AJAX-loaded form will go here -->
                     <div class="text-center">

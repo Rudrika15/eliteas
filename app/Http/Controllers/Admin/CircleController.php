@@ -495,7 +495,7 @@ class CircleController extends Controller
             }
 
             // Order by ID and paginate the results
-            $circle = $circleQuery->orderBy('id', 'DESC')->paginate(10);
+            $circle = $circleQuery->orderBy('circleName', 'ASC')->paginate(10);
 
             // Return the view with the circles
             return view('admin.circle.index', compact('circle'));
@@ -527,14 +527,14 @@ class CircleController extends Controller
     public function create(Request $request)
     {
         try {
-            $countries = Country::where('status', 'Active')->get();
-            $states = State::where('status', 'Active')->get();
-            $cities = City::where('status', 'Active')->get();
-            $city = City::where('status', 'Active')->get();
-            $circle = Circle::where('status', 'Active')->get();
-            $franchise = Franchise::where('status', 'Active')->get();
-            $circletype = CircleType::where('status', 'Active')->get();
-            $bCategory = BusinessCategory::where('status', 'Active')->get();
+            $countries = Country::where('status', 'Active')->orderBy('countryName', 'ASC')->get();
+            $states = State::where('status', 'Active')->orderBy('stateName', 'ASC')->get();
+            $cities = City::where('status', 'Active')->orderBy('cityName', 'ASC')->get();
+            $city = City::where('status', 'Active')->orderBy('cityName', 'ASC')->get();
+            $circle = Circle::where('status', 'Active')->orderBy('circleName', 'ASC')->get();
+            $franchise = Franchise::where('status', 'Active')->orderBy('franchiseName', 'ASC')->get();
+            $circletype = CircleType::where('status', 'Active')->orderBy('circleTypeName', 'ASC')->get();
+            $bCategory = BusinessCategory::where('status', 'Active')->orderBy('categoryName', 'ASC')->get();
             return view('admin.circle.create', compact('circle', 'bCategory', 'franchise', 'city', 'circletype', 'countries', 'states', 'cities'));
         } catch (\Throwable $th) {
             // throw $th;
@@ -668,14 +668,14 @@ class CircleController extends Controller
     public function edit(Request $request, $id)
     {
         try {
-            $countries = Country::where('status', 'Active')->get();
-            $states = State::where('status', 'Active')->get();
-            $cities = City::where('status', 'Active')->get();
+            $countries = Country::where('status', 'Active')->orderBy('countryName', 'ASC')->get();
+            $states = State::where('status', 'Active')->orderBy('stateName', 'ASC')->get();
+            $cities = City::where('status', 'Active')->orderBy('cityName', 'ASC')->get();
             $circle = Circle::find($id);
-            $franchise = Franchise::where('status', '!=', 'Deleted')->get();
-            $city = City::where('status', '!=', 'Deleted')->get();
-            $circletype = CircleType::where('status', '!=', 'Deleted')->get();
-            $bCategory = BusinessCategory::where('status', 'Active')->get();
+            $franchise = Franchise::where('status', '!=', 'Deleted')->orderBy('franchiseName', 'ASC')->get();
+            $city = City::where('status', '!=', 'Deleted')->orderBy('cityName', 'ASC')->get();
+            $circletype = CircleType::where('status', '!=', 'Deleted')->orderBy('circleTypeName', 'ASC')->get();
+            $bCategory = BusinessCategory::where('status', 'Active')->orderBy('categoryName', 'ASC')->get();
 
             // Decode the saved businessCategoryId so it becomes an array
             $circle->businessCategoryId = json_decode($circle->businessCategoryId ?? '[]', true);
@@ -780,7 +780,7 @@ class CircleController extends Controller
     {
         try {
             $circle = Circle::findOrFail($id);
-            $members = Member::where('circleId', $circle->id)->paginate(10);
+            $members = Member::where('circleId', $circle->id)->orderByDesc('memberName', 'ASC')->paginate(10);
             return view('admin.circle.memberList', compact('circle', 'members'));
         } catch (\Throwable $th) {
             // throw $th;

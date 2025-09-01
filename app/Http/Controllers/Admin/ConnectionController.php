@@ -68,6 +68,7 @@ class ConnectionController extends Controller
 
 
             $circles = Circle::where('status', 'Active')
+                ->orderBy('circleName', 'asc')
                 ->with('city:id,cityName')
                 ->withCount(['members' => fn($q) => $q->where('status', 'Active')])
                 ->get();
@@ -283,6 +284,7 @@ class ConnectionController extends Controller
         try {
             // Fetch categories that have members in the members table
             $categories = BusinessCategory::where('status', 'Active')
+                ->orderBy('categoryName', 'asc')
                 ->whereHas('members', function ($query) {
                     $query->where('status', 'Active'); // Only consider active members
                 })

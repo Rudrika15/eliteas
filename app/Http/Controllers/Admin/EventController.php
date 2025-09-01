@@ -157,7 +157,7 @@ class EventController extends Controller
     public function create(Request $request)
     {
         try {
-            $circle = Circle::where('status', 'Active')->get();
+            $circle = Circle::where('status', 'Active')->orderBy('circleName', 'asc')->get();
             $eventType = EventType::where('status', 'Active')->get();
             return view('admin.event.create', compact('circle', 'eventType'));
         } catch (\Throwable $th) {
@@ -253,7 +253,7 @@ class EventController extends Controller
     {
         try {
             $event = Event::find($id);
-            $circle = Circle::where('status', 'Active')->get();
+            $circle = Circle::where('status', 'Active')->orderBy('circleName', 'asc')->get();
             $eventType = EventType::where('status', 'Active')->get();
             return view('admin.event.edit', compact('event', 'circle', 'eventType'));
         } catch (\Throwable $th) {
@@ -737,7 +737,7 @@ class EventController extends Controller
     public function createAddEventMember(Request $request)
     {
         try {
-            $circles = Circle::where('status', 'Active')->get();
+            $circles = Circle::where('status', 'Active')->orderBy('circleName', 'asc')->get();
 
             $circleMember = Member::with('circle')
                 ->where('status', 'Active')
@@ -758,7 +758,7 @@ class EventController extends Controller
 
     public function getMembers($circleId)
     {
-        $members = Member::where('circleId', $circleId)->get(); // Adjust column names as per your database
+        $members = Member::where('circleId', $circleId)->where('status', 'Active')->get(); // Adjust column names as per your database
         return response()->json($members);
     }
 

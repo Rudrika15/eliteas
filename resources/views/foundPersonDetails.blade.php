@@ -41,7 +41,8 @@
     <div class="container my-4">
         <div class="profile-wrapper shadow">
             <!-- Header -->
-            <div class="cover-bg" style="background-image: url('{{ asset('img/coverImage.png') }}');"></div>
+            <div class="cover-bg" style="background-image: url('{{ asset('img/header_img.png') }}');"></div>
+            {{-- <div class="cover-bg" style="background-image: url('{{ asset('img/coverImage.png') }}');"></div> --}}
 
             <div class="text-center relative inline-block">
                 @php $profilePhoto = $member->profilePhoto; @endphp

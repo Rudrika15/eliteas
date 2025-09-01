@@ -34,7 +34,7 @@ class MemberController extends Controller
     public function index(Request $request)
     {
         try {
-            $member = Member::all(); // show only 10 record per page
+            $member = Member::where('status', 'Active')->get(); // show only 10 record per page
             return view('userrs.member.index', compact('member'));
         } catch (\Throwable $th) {
             // throw $th;
@@ -62,9 +62,9 @@ class MemberController extends Controller
     public function create()
     {
         try {
-            $countries = Country::where('status', 'Active')->get();
-            $states = State::where('status', 'Active')->get();
-            $cities = City::where('status', 'Active')->get();
+            $countries = Country::where('status', 'Active')->orderBy('countryName', 'ASC')->get();
+            $states = State::where('status', 'Active')->orderBy('stateName', 'ASC')->get();
+            $cities = City::where('status', 'Active')->orderBy('cityName', 'ASC')->get();
             return view('userrs.member.create', compact('countries', 'states', 'cities'));
         } catch (\Throwable $th) {
             // throw $th;
@@ -246,9 +246,9 @@ class MemberController extends Controller
     {
         try {
             $member = Member::find($id);
-            $countries = Country::where('status', 'Active')->get();
-            $states = State::where('status', 'Active')->get();
-            $cities = City::where('status', 'Active')->get();
+            $countries = Country::where('status', 'Active')->orderBy('countryName', 'ASC')->get();
+            $states = State::where('status', 'Active')->orderBy('stateName', 'ASC')->get();
+            $cities = City::where('status', 'Active')->orderBy('cityName', 'ASC')->get();
             $contactDetails = ContactDetails::where('memberId', $id)->first();
             $billing = BillingAddress::where('memberId', $id)->first();
             $tops = TopsProfile::where('memberId', $id)->first();
@@ -270,9 +270,9 @@ class MemberController extends Controller
     {
         try {
             $member = Member::find($id);
-            $country = Country::where('status', 'Active')->get();
-            $state = State::where('status', 'Active')->get();
-            $city = City::where('status', 'Active')->get();
+            $country = Country::where('status', 'Active')->orderBy('countryName', 'ASC')->get();
+            $state = State::where('status', 'Active')->orderBy('stateName', 'ASC')->get();
+            $city = City::where('status', 'Active')->orderBy('cityName', 'ASC')->get();
             $contactDetails = ContactDetails::where('memberId', $id)->first();
             $billing = BillingAddress::where('memberId', $id)->first();
             $tops = TopsProfile::where('memberId', $id)->first();

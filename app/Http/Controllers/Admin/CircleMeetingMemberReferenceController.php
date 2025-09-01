@@ -111,10 +111,11 @@ class CircleMeetingMemberReferenceController extends Controller
                 return $item;
             });
 
-            $circles = Circle::where('status', 'Active')->get();
+            $circles = Circle::where('status', 'Active')->orderBy('circleName', 'ASC')->get();
 
             $circleMember = Member::with('circle')
                 ->where('status', 'Active')
+                ->orderBy('firstName', 'ASC')
                 ->get(); // Ensure 'circleId' is included
 
 
@@ -151,10 +152,11 @@ class CircleMeetingMemberReferenceController extends Controller
     {
         try {
 
-            $circles = Circle::where('status', 'Active')->get();
+            $circles = Circle::where('status', 'Active')->orderBy('circleName', 'asc')->get();
 
             $circleMember = Member::with('circle')
                 ->where('status', 'Active')
+                ->orderBy('firstName', 'asc')
                 ->get(); // Ensure 'circleId' is included
 
 
@@ -175,10 +177,11 @@ class CircleMeetingMemberReferenceController extends Controller
     {
         try {
 
-            $circles = Circle::where('status', 'Active')->get();
+            $circles = Circle::where('status', 'Active')->orderBy('circleName', 'asc')->get();
 
             $circleMember = Member::with('circle')
                 ->where('status', 'Active')
+                ->orderBy('firstName', 'asc')
                 ->get();
 
 
@@ -323,11 +326,11 @@ class CircleMeetingMemberReferenceController extends Controller
         try {
             $refGiver = CircleMeetingMembersReference::find($id);
             // $refGiver = CircleMeetingMembersReference::where('id', $id)->first();
-            $member = Member::where('status', 'Active')->get();
-            $circles = Circle::where('status', 'Active')->get();
+            $member = Member::where('status', 'Active')->orderBy('firstName', 'asc')->get();
+            $circles = Circle::where('status', 'Active')->orderBy('circleName', 'asc')->get();
 
-            // return view('admin.refGiver.edit', compact('refGiver', 'member', 'circles'));
-            return view('admin.refGiver.edit_form', compact('refGiver', 'member', 'circles'));
+            return view('admin.refGiver.edit', compact('refGiver', 'member', 'circles'));
+            // return view('admin.refGiver.edit_form', compact('refGiver', 'member', 'circles'));
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError(

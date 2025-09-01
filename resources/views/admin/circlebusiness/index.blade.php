@@ -206,7 +206,8 @@
                 <div class="col-md-6 col-lg-4 col-xl-3 mb-4">
                     <div class="card shadow rounded-4 overflow-hidden">
                         <div class="position-relative">
-                            <img src="https://picsum.photos/700/200?random={{ rand(1, 1000) }}" class="card-img-top" alt="cover">
+                            {{-- <img src="https://picsum.photos/700/200?random={{ rand(1, 1000) }}" class="card-img-top" alt="cover"> --}}
+                            <img src="{{ asset('img/header_img.jpeg') }}" class="card-img-top" alt="cover">
                             <div class="position-absolute top-100 start-50 translate-middle">
                                 <img src="{{ optional($busGiverData->businessGiver)->profilePhoto ? asset('ProfilePhoto/' . $busGiverData->businessGiver->profilePhoto) : asset('ProfilePhoto/profile.png') }}" class="rounded-circle border border-3 border-white" width="110" height="110" alt="Profile">
                             </div>
@@ -231,6 +232,43 @@
             {!! $busGiver->links() !!}
         </div>
     </div>
+
+    <!-- Tab Content: Business Slip Given -->
+    <div id="tabGiven" class="tab-content mt-3" style="display: none;">
+        <div class="row">
+            @foreach ($busGiveByOther as $busGiveByOtherData)
+                <div class="col-md-6 col-lg-4 col-xl-3 mb-4">
+                    <div class="card shadow rounded-4 overflow-hidden">
+                        <div class="position-relative">
+                            {{-- <img src="https://picsum.photos/700/200?random={{ rand(1, 1000) }}" class="card-img-top" alt="cover"> --}}
+                            <img src="{{ asset('img/header_img.jpeg') }}" class="card-img-top" alt="cover">
+                            <div class="position-absolute top-100 start-50 translate-middle">
+                                <img src="{{ optional($busGiveByOtherData->loginMember)->profilePhoto ? asset('ProfilePhoto/' . $busGiveByOtherData->loginMember->profilePhoto) : asset('ProfilePhoto/profile.png') }}" class="rounded-circle border border-3 border-white" width="110" height="110" alt="Profile">
+                            </div>
+                        </div>
+                        
+                        <div class="card-body text-center pt-5 mt-3">
+                            <h5 class="card-title mb-0">
+                                {{ optional($busGiveByOtherData->loginMember)->firstName ?? '-' }} {{ optional($busGiveByOtherData->loginMember)->lastName ?? '-' }}
+                            </h5>
+                            <div class="text-muted small mb-2">
+                                <i class="bi bi-calendar3 me-1"></i> {{ \Carbon\Carbon::parse($busGiveByOtherData->date)->format('d-m-Y') ?? '-' }}
+                            </div>
+                            <div class="text-muted small mb-2">
+                                <i class="bi bi-cash-coin me-1"></i> ₹ {{ $busGiveByOtherData->amount ?? '-' }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+
+        <div class="d-flex justify-content-end mt-3 custom-pagination">
+            {!! $busGiveByOther->links() !!}
+        </div>
+    </div>
+
+
 
     {{-- business create moudule start --}}
     <!-- Modal -->
@@ -335,232 +373,200 @@
                                 <button type="button" class="cancel-btn" data-bs-dismiss="modal">Cancel</button>
                                 <button type="submit" class="create-btn">Create Business Slip</button>
                             </div>
-
+                        </div>
                     </form>
                 </div>
             </div>
+        </div>
+    </div>
 
 
-            <!-- Tab Content: Business Slip Given -->
-            <div id="tabGiven" class="tab-content mt-3" style="display: none;">
-                <div class="row">
-                    @foreach ($busGiveByOther as $busGiveByOtherData)
-                        <div class="col-md-6 col-lg-4 col-xl-3 mb-4">
-                            <div class="card shadow rounded-4 overflow-hidden">
-                                <div class="position-relative">
-                                    <img src="https://picsum.photos/700/200?random={{ rand(1, 1000) }}" class="card-img-top" alt="cover">
-                                    <div class="position-absolute top-100 start-50 translate-middle">
-                                        <img src="{{ optional($busGiveByOtherData->loginMember)->profilePhoto ? asset('ProfilePhoto/' . $busGiveByOtherData->loginMember->profilePhoto) : asset('ProfilePhoto/profile.png') }}" class="rounded-circle border border-3 border-white" width="110" height="110" alt="Profile">
-                                    </div>
-                                </div>
-                                <div class="card-body text-center pt-5 mt-3">
-                                    <h5 class="card-title mb-0">
-                                        {{ optional($busGiveByOtherData->loginMember)->firstName ?? '-' }} {{ optional($busGiveByOtherData->loginMember)->lastName ?? '-' }}
-                                    </h5>
-                                    <div class="text-muted small mb-2">
-                                        <i class="bi bi-calendar3 me-1"></i> {{ \Carbon\Carbon::parse($busGiveByOtherData->date)->format('d-m-Y') ?? '-' }}
-                                    </div>
-                                    <div class="text-muted small mb-2">
-                                        <i class="bi bi-cash-coin me-1"></i> ₹ {{ $busGiveByOtherData->amount ?? '-' }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
+    <!-- Tab Toggle Script -->
+    <script>
+        document.querySelectorAll('.tab-btn').forEach(function(tabBtn) {
+            tabBtn.addEventListener('click', function(e) {
+                e.preventDefault();
 
-                <div class="d-flex justify-content-end mt-3 custom-pagination">
-                    {!! $busGiveByOther->links() !!}
-                </div>
-            </div>
+                // Remove active class from all tabs
+                document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
 
+                // Hide all tab contents
+                document.querySelectorAll('.tab-content').forEach(tab => tab.style.display = 'none');
 
-            <!-- Tab Toggle Script -->
-            <script>
-                document.querySelectorAll('.tab-btn').forEach(function(tabBtn) {
-                    tabBtn.addEventListener('click', function(e) {
-                        e.preventDefault();
+                // Add active class to clicked tab
+                tabBtn.classList.add('active');
 
-                        // Remove active class from all tabs
-                        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+                // Show the selected tab content
+                const tabId = tabBtn.getAttribute('data-tab');
+                document.getElementById(tabId).style.display = 'block';
+            });
+        });
+    </script>
 
-                        // Hide all tab contents
-                        document.querySelectorAll('.tab-content').forEach(tab => tab.style.display = 'none');
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var scaleInput = document.getElementById("scale");
+            var scaleOutput = document.getElementById("scaleOutput");
 
-                        // Add active class to clicked tab
-                        tabBtn.classList.add('active');
-
-                        // Show the selected tab content
-                        const tabId = tabBtn.getAttribute('data-tab');
-                        document.getElementById(tabId).style.display = 'block';
-                    });
-                });
-            </script>
-
-            <script>
-                document.addEventListener("DOMContentLoaded", function() {
-                    var scaleInput = document.getElementById("scale");
-                    var scaleOutput = document.getElementById("scaleOutput");
-
-                    scaleInput.addEventListener("input", function() {
-                        scaleOutput.textContent = scaleInput.value;
-                    });
-                });
-            </script>
+            scaleInput.addEventListener("input", function() {
+                scaleOutput.textContent = scaleInput.value;
+            });
+        });
+    </script>
 
 
 
-            <script type="text/javascript">
-                var path = "{{ route('getMemberForRef') }}";
+    <script type="text/javascript">
+        var path = "{{ route('getMemberForRef') }}";
 
-                $('#search').select2({
-                    placeholder: 'Select Member',
-                    ajax: {
-                        url: path,
-                        dataType: 'json',
-                        delay: 250,
-                        processResults: function(data) {
+        $('#search').select2({
+            placeholder: 'Select Member',
+            ajax: {
+                url: path,
+                dataType: 'json',
+                delay: 250,
+                processResults: function(data) {
+                    return {
+                        results: $.map(data, function(item) {
                             return {
-                                results: $.map(data, function(item) {
-                                    return {
-                                        text: item.firstName,
-                                        id: item.id,
-                                        firstName: item
-                                            .firstName // Adding firstName attribute to the option data
-                                    }
-                                })
-                            };
-                        },
-                        cache: true
-                    }
-                });
+                                text: item.firstName,
+                                id: item.id,
+                                firstName: item
+                                    .firstName // Adding firstName attribute to the option data
+                            }
+                        })
+                    };
+                },
+                cache: true
+            }
+        });
 
-                // Update the hidden input field with the selected member's ID
-                $('#search').on('select2:select', function(e) {
-                    var data = e.params.data;
-                    $('#selectedMemberId').val(data.id);
-                    $('#memberName').val(data.firstName);
-                });
-            </script>
+        // Update the hidden input field with the selected member's ID
+        $('#search').on('select2:select', function(e) {
+            var data = e.params.data;
+            $('#selectedMemberId').val(data.id);
+            $('#memberName').val(data.firstName);
+        });
+    </script>
 
 
-            {{-- toggle between internal and external --}}
+    {{-- toggle between internal and external --}}
 
-            <script>
-                $(document).ready(function() {
-                    // Show the internal portion by default
+    <script>
+        $(document).ready(function() {
+            // Show the internal portion by default
+            $("#memberListDropdown").show();
+
+            $('input[type="radio"]').click(function() {
+                var inputValue = $(this).attr("id");
+                if (inputValue === "internal") {
                     $("#memberListDropdown").show();
-
-                    $('input[type="radio"]').click(function() {
-                        var inputValue = $(this).attr("id");
-                        if (inputValue === "internal") {
-                            $("#memberListDropdown").show();
-                            $("#memberListInput").hide();
-                            // $('.contactName').val('');
-                            // $('.contactEmail').val('');
-                        } else if (inputValue === "external") {
-                            $("#memberListDropdown").hide();
-                            $("#memberListInput").show();
-                        }
-                    });
-                });
-            </script>
+                    $("#memberListInput").hide();
+                    // $('.contactName').val('');
+                    // $('.contactEmail').val('');
+                } else if (inputValue === "external") {
+                    $("#memberListDropdown").hide();
+                    $("#memberListInput").show();
+                }
+            });
+        });
+    </script>
 
 
-            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
 
-            <script>
-                $(document).ready(function() {
-                    // Set up CSRF token for AJAX requests
-                    $.ajaxSetup({
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        }
-                    });
+    <script>
+        $(document).ready(function() {
+            // Set up CSRF token for AJAX requests
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
 
-                    // Function to load members for a selected circle
-                    function loadMembers(circleId) {
-                        // Clear the member dropdown
-                        $('#memberId').empty().append('<option value="" disabled>Select Member</option>');
+            // Function to load members for a selected circle
+            function loadMembers(circleId) {
+                // Clear the member dropdown
+                $('#memberId').empty().append('<option value="" disabled>Select Member</option>');
 
-                        if (circleId) {
-                            $.ajax({
-                                url: '{{ route('members.byCircle') }}',
-                                method: 'GET',
-                                data: {
-                                    circleId: circleId
-                                },
-                                success: function(response) {
-                                    if (response.members && response.members.length > 0) {
-                                        response.members.forEach(function(member) {
-                                            $('#memberId').append('<option value="' + member.id +
-                                                '" data-user-id="' + member.userId +
-                                                '" data-first-name="' + member.firstName +
-                                                '" data-last-name="' + member.lastName + '">' +
-                                                member.firstName + ' ' + member.lastName +
-                                                '</option>');
-                                        });
+                if (circleId) {
+                    $.ajax({
+                        url: '{{ route('members.byCircle') }}',
+                        method: 'GET',
+                        data: {
+                            circleId: circleId
+                        },
+                        success: function(response) {
+                            if (response.members && response.members.length > 0) {
+                                response.members.forEach(function(member) {
+                                    $('#memberId').append('<option value="' + member.id +
+                                        '" data-user-id="' + member.userId +
+                                        '" data-first-name="' + member.firstName +
+                                        '" data-last-name="' + member.lastName + '">' +
+                                        member.firstName + ' ' + member.lastName +
+                                        '</option>');
+                                });
 
-                                        // Pre-select the authenticated member if exists in the list
-                                        var defaultMemberId =
-                                            '{{ auth()->user()->member->id }}'; // Assuming memberId is available
-                                        if (defaultMemberId) {
-                                            $('#memberId').val(defaultMemberId).trigger(
-                                                'change'
-                                            ); // Set the default selected member and trigger the change event
-                                        }
-                                    } else {
-                                        $('#memberId').append('<option value="">No Members Found</option>');
-                                    }
-                                },
-                                error: function(xhr) {
-                                    $('#memberId').append('<option value="">Error loading members</option>');
+                                // Pre-select the authenticated member if exists in the list
+                                var defaultMemberId =
+                                    '{{ auth()->user()->member->id }}'; // Assuming memberId is available
+                                if (defaultMemberId) {
+                                    $('#memberId').val(defaultMemberId).trigger(
+                                        'change'
+                                    ); // Set the default selected member and trigger the change event
                                 }
-                            });
+                            } else {
+                                $('#memberId').append('<option value="">No Members Found</option>');
+                            }
+                        },
+                        error: function(xhr) {
+                            $('#memberId').append('<option value="">Error loading members</option>');
                         }
-                    }
-
-                    // Load members on page load if a circle is selected by default
-                    var defaultCircleId =
-                        '{{ auth()->user()->member->circleId }}'; // Get the default circle ID from the authenticated user
-                    if (defaultCircleId) {
-                        loadMembers(defaultCircleId); // Load members for the default circle
-                    }
-
-                    // Handle circle dropdown change event
-                    $('#circleId').on('change', function() {
-                        var circleId = $(this).val();
-                        loadMembers(circleId); // Load members based on the selected circle
                     });
+                }
+            }
 
-                    // Handle member dropdown change event
-                    $('#memberId').on('change', function() {
-                        var selectedOption = $(this).find('option:selected');
-                        var memberId = selectedOption.val();
-                        var userId = selectedOption.data('user-id'); // Retrieve the userId here
-                        var firstName = selectedOption.data('first-name');
-                        var lastName = selectedOption.data('last-name');
+            // Load members on page load if a circle is selected by default
+            var defaultCircleId =
+                '{{ auth()->user()->member->circleId }}'; // Get the default circle ID from the authenticated user
+            if (defaultCircleId) {
+                loadMembers(defaultCircleId); // Load members for the default circle
+            }
 
-                        // Check if a valid member is selected
-                        if (memberId) {
-                            // Update the meetingPersonId field with userId and name fields
-                            $('#meetingPersonId').val(userId); // Set the correct userId here
-                            $('#meetingPersonName').val(firstName + ' ' + lastName); // Set the name
-                        } else {
-                            // Reset the meeting person fields when no member is selected
-                            $('#meetingPersonId').val('');
-                            $('#meetingPersonName').val('');
-                        }
+            // Handle circle dropdown change event
+            $('#circleId').on('change', function() {
+                var circleId = $(this).val();
+                loadMembers(circleId); // Load members based on the selected circle
+            });
 
-                        console.log('Selected Member ID:', memberId);
-                        console.log('Selected Member User ID:', userId); // Log the correct userId
-                        console.log('Selected Member Name:', firstName + ' ' + lastName);
-                    });
-                });
-            </script>
+            // Handle member dropdown change event
+            $('#memberId').on('change', function() {
+                var selectedOption = $(this).find('option:selected');
+                var memberId = selectedOption.val();
+                var userId = selectedOption.data('user-id'); // Retrieve the userId here
+                var firstName = selectedOption.data('first-name');
+                var lastName = selectedOption.data('last-name');
+
+                // Check if a valid member is selected
+                if (memberId) {
+                    // Update the meetingPersonId field with userId and name fields
+                    $('#meetingPersonId').val(userId); // Set the correct userId here
+                    $('#meetingPersonName').val(firstName + ' ' + lastName); // Set the name
+                } else {
+                    // Reset the meeting person fields when no member is selected
+                    $('#meetingPersonId').val('');
+                    $('#meetingPersonName').val('');
+                }
+
+                console.log('Selected Member ID:', memberId);
+                console.log('Selected Member User ID:', userId); // Log the correct userId
+                console.log('Selected Member Name:', firstName + ' ' + lastName);
+            });
+        });
+    </script>
 
 
 
 
-        @endsection
+@endsection

@@ -1022,7 +1022,7 @@
 
                         // Header image
                         var headerImg = document.createElement('img');
-                        headerImg.src = '{{ asset('img/coverImage.png') }}';
+                        headerImg.src = '{{ asset('img/header_img.jpeg') }}';
                         headerImg.classList.add('header-image');
                         cardElement.appendChild(headerImg);
 

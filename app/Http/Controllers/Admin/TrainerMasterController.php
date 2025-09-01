@@ -89,10 +89,11 @@ class TrainerMasterController extends Controller
     public function create()
     {
         try {
-            $circles = Circle::where('status', 'Active')->get();
+            $circles = Circle::where('status', 'Active')->orderBy('circleName', 'asc')->get();
 
             $circleMember = Member::with('circle')
                 ->where('status', 'Active')
+                ->orderBy('memberName', 'asc')
                 ->get(); // Ensure 'circleId' is included
 
             $trainer = TrainerMaster::all();
