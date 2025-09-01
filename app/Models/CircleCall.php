@@ -36,6 +36,11 @@ class CircleCall extends Model
         return $this->belongsTo(Member::class, 'meetingPersonId', 'userId');
     }
 
+    public function meetingPersonReport()
+    {
+        return $this->belongsTo(User::class, 'meetingPersonId', 'id');
+    }
+
     public function meetPerson()
     {
         return $this->belongsTo(Member::class, 'meetingPersonId', 'memberId');
@@ -45,7 +50,4 @@ class CircleCall extends Model
     {
         return $this->belongsTo(Circle::class, 'circleId', 'id');
     }
-
-
-
 }

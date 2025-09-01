@@ -244,15 +244,26 @@ class EventController extends Controller
             }
 
             // Create signed URLs for the events' links
+            // $eventLinks = $events->map(function ($event) use ($memberId) {
+            //     return [
+            //         'eventSlug' => $event->event_slug,
+            //         'eventLink' => URL::signedRoute('event.link', [
+            //             'slug' => $event->event_slug, // Correct the parameter name to match the route
+            //             'ref' => $memberId // Using the correct member ID here
+            //         ], now()->addMinutes(4320))
+            //     ];
+            // });
+
             $eventLinks = $events->map(function ($event) use ($memberId) {
                 return [
                     'eventSlug' => $event->event_slug,
                     'eventLink' => URL::signedRoute('event.link', [
-                        'slug' => $event->event_slug, // Correct the parameter name to match the route
-                        'ref' => $memberId // Using the correct member ID here
-                    ], now()->addMinutes(60))
+                        'slug' => $event->event_slug,
+                        'ref' => $memberId
+                    ]) // No expiry parameter now
                 ];
             });
+
 
             // Return the response with the future events and their registration details
             return Utils::sendResponse([
@@ -261,12 +272,20 @@ class EventController extends Controller
                     $eventArray = $event->toArray();
 
                     // Generate the event link
+                    // $eventLink = [
+                    //     'eventLink' => URL::signedRoute('event.link', [
+                    //         'slug' => $event->event_slug, // Ensure parameter name matches the route
+                    //         'ref' => $memberId // Using the correct member ID
+                    //     ], now()->addMinutes(4320))
+                    // ];
+
                     $eventLink = [
                         'eventLink' => URL::signedRoute('event.link', [
                             'slug' => $event->event_slug, // Ensure parameter name matches the route
                             'ref' => $memberId // Using the correct member ID
-                        ], now()->addMinutes(60))
+                        ])
                     ];
+
 
                     // Reorder the array to place eventLink before registrations
                     $reorderedEvent = array_merge(

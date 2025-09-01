@@ -6,6 +6,23 @@
 
     <div class="container">
         <div class="card">
+
+            @if (request()->anyFilled(['circleId', 'categoryId', 'membershipType']))
+                <div class="alert alert-info">
+                    <strong>Filters Applied:</strong><br>
+                    @if (request('circleId'))
+                        Circle: {{ $circle->where('id', request('circleId'))->first()?->circleName }}<br>
+                    @endif
+                    @if (request('categoryId'))
+                        Category: {{ $bCategory->where('id', request('categoryId'))->first()?->categoryName }}<br>
+                    @endif
+                    @if (request('membershipType'))
+                        Membership Type: {{ request('membershipType') }}
+                    @endif
+                </div>
+            @endif
+
+
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h4 class="card-title">Circle Member</h4>
@@ -36,7 +53,7 @@
 
                 <!-- Dropdown for filtering by Circle and Category side by side -->
 
-                <div class="d-flex align-items-center mb-3">
+                {{-- <div class="d-flex align-items-center mb-3">
                     <small class="text-muted me-3"><strong>Filter By:</strong></small>
 
                     <select name="circleId" id="filtercircleId" class="form-select mt-3 me-3">
@@ -58,15 +75,50 @@
                         @foreach ($membershipType as $membershipTypeData)
                             <option>{{ $membershipTypeData->membershipType }}</option>
                         @endforeach
-                    </select>
+                    </select> --}}
 
-                    {{-- <select name="membershipType" id="membershipType" class="form-select mt-3">
+                {{-- <select name="membershipType" id="membershipType" class="form-select mt-3">
                     <option value="" selected>Select Membership</option>
                     <option value="Monthly">Monthly</option>
                     <option value="Yearly">Yearly</option>
                     <option value="LifeTime">LifeTime</option>
                 </select> --}}
-                </div>
+                {{-- </div> --}}
+
+
+                <form method="GET" action="{{ route('circlemember.index') }}" id="filterForm">
+                    <div class="d-flex align-items-center mb-3">
+                        <small class="text-muted me-3"><strong>Filter By:</strong></small>
+
+                        <select name="circleId" id="filtercircleId" class="form-select mt-3 me-3">
+                            <option value="">Select Circle</option>
+                            @foreach ($circle as $circleData)
+                                <option value="{{ $circleData->id }}" {{ request('circleId') == $circleData->id ? 'selected' : '' }}>
+                                    {{ $circleData->circleName }}
+                                </option>
+                            @endforeach
+                        </select>
+
+                        <select name="categoryId" id="categoryId" class="form-select mt-3 me-3">
+                            <option value="">Select Category</option>
+                            @foreach ($bCategory as $categoryData)
+                                <option value="{{ $categoryData->id }}" {{ request('categoryId') == $categoryData->id ? 'selected' : '' }}>
+                                    {{ $categoryData->categoryName }}
+                                </option>
+                            @endforeach
+                        </select>
+
+                        <select name="membershipType" id="membershipType" class="form-select mt-3">
+                            <option value="">Select MembershipType</option>
+                            @foreach ($membershipType as $membershipTypeData)
+                                <option value="{{ $membershipTypeData->membershipType }}" {{ request('membershipType') == $membershipTypeData->membershipType ? 'selected' : '' }}>
+                                    {{ $membershipTypeData->membershipType }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                </form>
+
 
 
             <!-- Table with stripped rows -->
@@ -342,347 +394,14 @@
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
     <script>
         $(document).ready(function() {
-
-
-            function filterTable() {
-                var circleId = $('#filtercircleId').val().trim();
-
-                // console.log("circleId", circleId);
-
-                $('tbody tr').show();
-
-                if (circleId !== '') {
-                    $('tbody tr').each(function() {
-                        var circleName = $(this).find('td:first').text().trim();
-
-                        if (circleName !== $('#filtercircleId option:selected').text().trim()) {
-                            $(this).hide();
-                        } else {
-                            $(this).show();
-                        }
-                    });
-                }
-            }
-
-
-            $('#filtercircleId').change(function() {
-                filterTable();
+            $('#filtercircleId, #categoryId, #membershipType').on('change', function() {
+                $('#filterForm').submit();
             });
         });
     </script>
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        $(document).ready(function() {
-                    function filterTable() {
-                        var categoryId = $('#categoryId').val().trim();
-                        var circleId = $('#filtercircleId').val().trim();
-                        var membershipType = $('#membershipType').val().trim();
-
-                        console.log('Selected category ID:', categoryId);
-                        console.log('Selected circle ID:', circleId);
-                        console.log('Selected membership type:', membershipType);
-
-                        // Send AJAX request to the server to filter data
-                        $.ajax({
-                                    url: '{{ route('filterTableData') }}', // Replace with the correct route
-                                    method: 'GET',
-                                    data: {
-                                        categoryId: categoryId,
-                                        circleId: circleId,
-                                        membershipType: membershipType
-                                    },
-                                    success: function(response) {
-                                            console.log('Filtered data received from server', response);
-
-                                            // Clear existing table rows
-                                            $('tbody').empty();
-
-                                            // Append the filtered data to the table
-                                            $.each(response.data, function(index, row) {
-                                                        var rolesHTML = row.user.roles.map(function(role) {
-                                                            return `<span class="badge rounded-pill bg-success">${role.name}</span>`;
-                                                        }).join(', ');
-
-
-                                                        // Append the table row with modals and updated action buttons
-                                                        $('tbody').append(`
-                                    <tr>
-                                        <th>${index + 1}</th>
-                                        <td>${row.circle.circleName}</td>
-                                        <td>${row.firstName} ${row.lastName}</td>
-                                        <td>${row.sponsors.firstName} ${row.sponsors.lastName}</td>
-                                        <td>${row.b_category.categoryName}</td>
-                                        <td>${row.membershipType}</td>
-                                        <td>${rolesHTML}</td>
-                                        <td>
-                                            <a href="/circlemember/activity/${row.id}"
-    class="btn btn-bg-orange btn-sm btn-tooltip">
-    <i class="bi bi-info-circle"></i>
-    <span class="btn-text">Activity</span>
-    </a>
-    <a href="/circlemember/edit/${row.id}"
-    class="btn btn-bg-blue btn-sm btn-tooltip">
-    <i class="bi bi-pen"></i>
-    <span class="btn-text">Edit Member</span>
-    </a>
-    <a href="/circlemember/delete/${row.id}"
-    class="btn btn-danger btn-sm btn-tooltip">
-    <i class="bi bi-trash"></i>
-    <span class="btn-text">Delete Member</span>
-    </a>
-
-                                        </td>
-                                        <td>
-                                            <button type="button" class="btn btn-bg-blue btn-sm btn-tooltip"
-                                                    data-bs-toggle="modal" data-bs-target="#assignRoleModal${row.id}">
-                                                <i class="bi bi-person-plus"></i>
-                                                <span class="btn-text">Assign Role</span>
-                                            </button>
-                                            <button type="button" class="btn btn-danger btn-sm btn-tooltip"
-                                                    data-bs-toggle="modal" data-bs-target="#removeRoleModal${row.id}">
-                                                <i class="bi bi-trash"></i>
-                                                <span class="btn-text">Remove Role</span>
-                                            </button>
-
-                                            <!-- Assign Role Modal -->
-                                            <div class="modal fade" id="assignRoleModal${row.id}"
-                                                data-bs-backdrop="static" data-bs-keyboard="false"
-                                                tabindex="-1" aria-labelledby="assignRoleModalLabel${row.id}"
-                                                aria-hidden="true">
-                                                <div class="modal-dialog modal-dialog-centered">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h5 class="modal-title" id="assignRoleModalLabel${row.id}">
-                                                                Assign Role
-                                                            </h5>
-                                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                                    aria-label="Close"></button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            <form action="{{ route('assign.role') }}" method="POST">
-                                                                @csrf
-                                                                <input type="hidden" name="memberId" value="${row.id}">
-                                                                <select name="roleId" class="form-select">
-                                                                    <option value="">Select Role</option>
-                                                                    ${response.roles.map(function(role) {
-                                                                        return `<option value="${role.id}">${role.name}</option>`;
-                                                                    }).join('')}
-                                                                </select>
-                                                                <div class="d-flex justify-content-end mt-3">
-                                                                    <button type="submit" class="btn btn-bg-blue btn-sm">Assign</button>
-                                                                </div>
-                                                            </form>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <!-- Remove Role Modal -->
-                                            <div class="modal fade" id="removeRoleModal${row.id}"
-                                                data-bs-backdrop="static" data-bs-keyboard="false"
-                                                tabindex="-1" aria-labelledby="removeRoleModalLabel${row.id}"
-                                                aria-hidden="true">
-                                                <div class="modal-dialog modal-dialog-centered">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h5 class="modal-title" id="removeRoleModalLabel${row.id}">
-                                                                Remove Role
-                                                            </h5>
-                                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                                    aria-label="Close"></button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            <form action="{{ route('remove.role') }}" method="POST">
-                                                                @csrf
-                                                                <input type="hidden" name="memberId" value="${row.id}">
-                                                                <select name="roleId" class="form-select">
-                                                                    <option value="">Select Role</option>
-                                                                    ${row.user.roles.filter(function(role) {
-                                                                        return role.name !== 'Member' && role.name !== 'Admin' && role.name !== 'Trainer';
-                                                                    }).map(function(role) {
-                                                                        return ` < option value = "${role.id}" > $ {
-                                                                role.name
-                                                            } < /option>`;
-                                                    }).join('')
-                                            } <
-                                            /select> <
-                                        div class = "d-flex justify-content-end mt-3" >
-                                        <
-                                        button type = "submit"
-                                        class = "btn btn-danger btn-sm" > Remove < /button> < /
-                                        div > <
-                                            /form> < /
-                                        div > <
-                                            /div> < /
-                                        div > <
-                                            /div> < /
-                                        td >
-
-                                            <
-                                            button type = "submit"
-                                            class = "btn btn-danger btn-sm" > Remove < /button> < /
-                                            div > <
-                                                /form> < /
-                                            div > <
-                                                /div> < /
-                                            div > <
-                                                /div> < /
-                                            td > 
-                                            
-    <td>
-                                    <button type="button" class="btn btn-bg-blue btn-sm btn-tooltip" data-bs-toggle="modal"
-                                        data-bs-target="#assignCircleModal${row.id}"><i
-                                            class="bi bi-person-plus"></i>
-                                        <span class="btn-text">Assign Circle</span>
-                                    </button>
-
-                                    {{-- Modal --}}
-
-                                    <div class="modal fade" id="assignCircleModal${row.id}"
-                                        data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-                                        aria-labelledby="assignCircleModalLabel${row.id}" aria-hidden="true">
-                                        <div class="modal-dialog modal-dialog-centered">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="assignCircleModalLabel${row.id}">Assign Circle
-                                                    </h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                        aria-label="Close"></button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <form action="{{ route('assign.circle') }}" method="POST">
-                                                        @csrf
-                                                        <input type="hidden" name="memberId"
-                                                            value="${row.id}">
-                                                        
-
-<select name="circleId" class="form-select">
-    <option value="">Select Circle</option>
-    ${Array.isArray(response.circles) ? 
-        response.circles.map(function(circle) {
-            return `<option value="${circle.id}">${circle.circleName}</option>`;
-        }).join('') 
-        : '<option value="">No circles available</option>'}
-</select>
-
-                                                        <div class="d-flex justify-content-end mt-3">
-                                                            <button type="submit" class="btn btn-bg-blue btn-sm">Assign
-                                                                Circle</button>
-                                                        </div>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </td>
-                                        <td>Admin</td>
-
-                                            
-                                            <
-                                            button type = "button"
-                                        class = "btn btn-bg-blue btn-sm btn-tooltip"
-                                        data - bs - toggle = "modal"
-                                        data - bs - target = "#assignCircleModal${row.id}" > < i
-                                        class = "bi bi-person-plus" > < /i> <
-                                        span class = "btn-text" > Assign Circle < /span> <
-                                            /button>
-
-                                        {{-- Modal --}}
-
-                                            <
-                                            div class = "modal fade"
-                                        id = "assignCircleModal${row.id}"
-                                        data - bs - backdrop = "static"
-                                        data - bs - keyboard = "false"
-                                        tabindex = "-1"
-                                        aria - labelledby = "assignCircleModalLabel${row.id}"
-                                        aria - hidden = "true" >
-                                            <
-                                            div class = "modal-dialog modal-dialog-centered" >
-                                            <
-                                            div class = "modal-content" >
-                                            <
-                                            div class = "modal-header" >
-                                            <
-                                            h5 class = "modal-title"
-                                        id = "assignCircleModalLabel${row.id}" > Assign Circle <
-                                            /h5> <
-                                            button type = "button"
-                                        class = "btn-close"
-                                        data - bs - dismiss = "modal"
-                                        aria - label = "Close" > < /button> <
-                                            /div> <
-                                            div class = "modal-body" >
-                                            <
-                                            form action = "{{ route('assign.circle') }}"
-                                        method = "POST" >
-                                            @csrf <
-                                            input type = "hidden"
-                                        name = "memberId"
-                                        value = "${row.id}" >
-
-
-                                            <
-                                            select name = "circleId"
-                                        class = "form-select" >
-                                        <
-                                        option value = "" > Select Circle < /option>
-                                        $ {
-                                            Array.isArray(response.circles) ?
-                                                response.circles.map(function(circle) {
-                                                    return `<option value="${circle.id}">${circle.circleName}</option>`;
-                                                }).join('') :
-                                                '<option value="">No circles available</option>'
-                                        } <
-                                        /select>
-
-                                        <
-                                        div class = "d-flex justify-content-end mt-3" >
-                                        <
-                                        button type = "submit"
-                                        class = "btn btn-bg-blue btn-sm" > Assign
-                                        Circle < /button> <
-                                            /div> <
-                                            /form> <
-                                            /div> <
-                                            /div> <
-                                            /div> <
-                                            /div> <
-                                            /td>
-
-                                            <
-                                            /tr>
-
-
-
-
-                                        `);
-                                                                                                                    });
-                                                                                                                },
-                                                                                                                error: function(xhr, status, error) {
-                                                                                                                    console.error('Error fetching filtered data:', error);
-                                                                                                                }
-                                                                                                            });
-                                                                                                        }
-
-                                                                                                        // Trigger the filter function when any dropdown changes
-                                                                                                        $('#categoryId, #filtercircleId, #membershipType').change(function() {
-                                                                                                            filterTable();
-                                                                                                        });
-
-                                                                                                        // Delegate event for dynamically created modals
-                                                                                                        $(document).on('click', '[data-bs-toggle="modal"]', function() {
-                                                                                                            var targetModal = $(this).data('bs-target');
-                                                                                                            $(targetModal).modal('show');
-                                                                                                        });
-                                                                                                    });
-    </script>
-
-
-
 
 
 

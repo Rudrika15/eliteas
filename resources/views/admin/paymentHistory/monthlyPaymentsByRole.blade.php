@@ -103,7 +103,7 @@
 
                 // Send an AJAX request to update the status
                 $.ajax({
-                    url: '{{ route('update.payment.status') }}',
+                    url: '{{ route('update.payment.statuss') }}',
                     type: 'POST',
                     data: {
                         _token: '{{ csrf_token() }}',

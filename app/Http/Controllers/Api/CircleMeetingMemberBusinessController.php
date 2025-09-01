@@ -35,24 +35,55 @@ class CircleMeetingMemberBusinessController extends Controller
     //     }
     // }
 
+    // public function index(Request $request)
+    // {
+    //     try {
+    //         $busGiven = CircleMeetingMembersBusiness::with([
+    //             'users:id,firstName,lastName,email',
+    //             'member:userId,profilePhoto,circleId',
+    //             'businessAmounts' // Include business amounts relationship
+    //         ])
+    //             ->where('loginMemberId', Auth::user()->id)
+    //             ->where('status', 'Active')
+    //             ->orderByDesc('id')
+    //             ->get();
+
+    //         return Utils::sendResponse(['busGiven' => $busGiven], 'Circle Meeting Members Business retrieved successfully', 200);
+    //     } catch (\Throwable $th) {
+    //         return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
+    //     }
+    // }
+
     public function index(Request $request)
     {
         try {
             $busGiven = CircleMeetingMembersBusiness::with([
                 'users:id,firstName,lastName,email',
-                'member:userId,profilePhoto',
-                'businessAmounts' // Include business amounts relationship
+                'member' => function ($q) {
+                    $q->select('id', 'userId', 'circleId', 'sponsoredBy', 'profilePhoto', 'companyName');
+                },
+                'member.circle:id,circleName',
+                'businessAmounts'
             ])
                 ->where('loginMemberId', Auth::user()->id)
                 ->where('status', 'Active')
                 ->orderByDesc('id')
                 ->get();
 
+            // Add induction count to member
+            $busGiven->transform(function ($item) {
+                if ($item->member) {
+                    $item->member->induction_count = Member::where('sponsoredBy', $item->member->id)->count() ?? 0;
+                }
+                return $item;
+            });
+
             return Utils::sendResponse(['busGiven' => $busGiven], 'Circle Meeting Members Business retrieved successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
+
 
     // public function recievedBus(Request $request)
     // {
@@ -67,14 +98,37 @@ class CircleMeetingMemberBusinessController extends Controller
     //     }
     // }
 
+    // public function recievedBus(Request $request)
+    // {
+    //     try {
+    //         return $busRecieved = CircleMeetingMembersBusiness::with([
+    //             // 'users:id,firstName,lastName', // for businessGiverId
+    //             // 'member:userId,profilePhoto', // for businessGiverId
+    //             'loginMember.user:id,firstName,lastName', // for loginMemberId
+    //             'loginMember.member:userId,profilePhoto', // for loginMemberId
+    //             'businessAmounts'
+    //         ])
+    //             ->where('businessGiverId', Auth::user()->id)
+    //             ->where('status', 'Active')
+    //             ->orderByDesc('id')
+    //             ->get();
+
+    //         return Utils::sendResponse(['busRecieved' => $busRecieved], 'Circle Meeting Members Business retrieved successfully', 200);
+    //     } catch (\Throwable $th) {
+    //         return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
+    //     }
+    // }
+
+
     public function recievedBus(Request $request)
     {
         try {
             $busRecieved = CircleMeetingMembersBusiness::with([
-                // 'users:id,firstName,lastName', // for businessGiverId
-                // 'member:userId,profilePhoto', // for businessGiverId
-                'loginMember.user:id,firstName,lastName', // for loginMemberId
-                'loginMember.member:userId,profilePhoto', // for loginMemberId
+                'loginMember.user:id,firstName,lastName',
+                'loginMember.member' => function ($q) {
+                    $q->select('id', 'userId', 'circleId', 'sponsoredBy', 'profilePhoto');
+                },
+                'loginMember.member.circle:id,circleName',
                 'businessAmounts'
             ])
                 ->where('businessGiverId', Auth::user()->id)
@@ -82,11 +136,21 @@ class CircleMeetingMemberBusinessController extends Controller
                 ->orderByDesc('id')
                 ->get();
 
+            // Add induction count to loginMember's member
+            $busRecieved->transform(function ($item) {
+                if ($item->loginMember && $item->loginMember->member) {
+                    $member = $item->loginMember->member;
+                    $member->induction_count = Member::where('sponsoredBy', $member->id)->count() ?? 0;
+                }
+                return $item;
+            });
+
             return Utils::sendResponse(['busRecieved' => $busRecieved], 'Circle Meeting Members Business retrieved successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
+
 
 
 

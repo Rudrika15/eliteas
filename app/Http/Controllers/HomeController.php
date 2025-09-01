@@ -277,7 +277,7 @@ class HomeController extends Controller
                 ->whereHas('trainers.user')
                 ->with('trainers.user')
                 ->whereHas('trainersTrainings.user')
-                ->first();
+                ->get();
 
             $businessCategory = BusinessCategory::where('status', 'Active')->get();
 
@@ -292,14 +292,15 @@ class HomeController extends Controller
             $myInvites = MeetingInvitation::where('invitedMemberId', Auth::user()->id)->get();
 
 
-            if ($nearestTraining) {
-                $findRegister = TrainingRegister::where('userId', Auth::user()->id)
-                    ->where('trainingId', $nearestTraining->id)
-                    // ->where('trainerId', $nearestTraining->trainersTrainings->user->id)
-                    ->get();
-            } else {
-                $findRegister = [];
-            }
+            // if ($nearestTraining) {
+            //     $findRegister = TrainingRegister::where('userId', Auth::user()->id)
+            //         ->where('trainingId', $nearestTraining->id)
+            //         // ->where('trainerId', $nearestTraining->trainersTrainings->user->id)
+            //         ->get();
+            // } else {
+            //     $findRegister = [];
+            // }
+
             if (!Auth::user()->hasRole('Admin')) {
                 $testimonials = Testimonial::where('memberId', Auth::user()->member->id)
                     ->where('status', 'Active')
@@ -770,10 +771,10 @@ class HomeController extends Controller
 
 
 
-                return view('home', compact('circleCount', 'authCircleId', 'categoryNames', 'membersCount', 'signedUrl', 'birthdaysToday', 'templates', 'count', 'monthlyPayments', 'totalAmountDue', 'nearestEvents', 'circlecalls', 'busGiver', 'refGiver', 'nearestTraining', 'findRegister', 'testimonials', 'meeting', 'businessCategory', 'myInvites', 'todaysBirthdays'));
+                return view('home', compact('circleCount', 'authCircleId', 'categoryNames', 'membersCount', 'signedUrl', 'birthdaysToday', 'templates', 'count', 'monthlyPayments', 'totalAmountDue', 'nearestEvents', 'circlecalls', 'busGiver', 'refGiver', 'nearestTraining', 'testimonials', 'meeting', 'businessCategory', 'myInvites', 'todaysBirthdays'));
             }
 
-            return view('home', compact('circleCount', 'membersCount', 'count', 'nearestTraining', 'businessCategory', 'myInvites', 'findRegister', 'birthdaysToday', 'templates'));
+            return view('home', compact('circleCount', 'membersCount', 'count', 'nearestTraining', 'businessCategory', 'myInvites', 'birthdaysToday', 'templates'));
         } catch (\Throwable $th) {
             // Log the error
             throw $th;
@@ -836,13 +837,13 @@ class HomeController extends Controller
     }
 
 
-    public function trainingRegister($trainingId, $trainerId)
+    public function trainingRegister($trainingId)
     {
         try {
             $register = new TrainingRegister();
             $register->userId = Auth::user()->id;
             $register->trainingId = $trainingId;
-            $register->trainerId = $trainerId;
+            // $register->trainerId = $trainerId;
             $register->save();
 
             return redirect()->back()->with('success', 'Training Registered Successfully');
@@ -1007,6 +1008,9 @@ class HomeController extends Controller
                 if ($member->connection_status !== 'Connected' && isset($connection) && $connection->status === 'Accepted') {
                     $member->connection_status = 'Connected';
                 }
+
+
+                $member->induction_count = Member::where('sponsoredBy', $member->id)->count() ?? 0;
             });
 
             return response()->json([

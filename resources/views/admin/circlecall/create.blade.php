@@ -17,7 +17,6 @@
             <div class="row mb-3 mt-3">
                 <!-- Circle Dropdown -->
                 <div class="col-md-6">
-
                     <div class="form-floating">
                         <select class="form-select @error('circleId') is-invalid @enderror" id="circleId" name="circleId" required>
                             <option value="" selected disabled>Select Circle</option>

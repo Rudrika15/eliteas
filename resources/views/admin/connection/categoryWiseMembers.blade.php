@@ -303,6 +303,7 @@
                     <div class="profile-card shadow-sm rounded border-0">
                         <!-- Header Image -->
                         <img src="https://picsum.photos/600/120" class="header-image" alt="Header Image">
+                        <img src="{{ asset('img/header_img.jpeg') }}" class="header-image" alt="Header Image">
 
                         <div class="text-center p-3">
                             <!-- Profile Image -->

@@ -194,7 +194,7 @@ class VisitorController extends Controller
         $visitors = $query->paginate(10);
 
         // Step 5: Get categories and distinct cities for dropdowns
-        $categories = BusinessCategory::pluck('categoryName', 'id');
+        $categories = BusinessCategory::orderBy('categoryName', 'asc')->pluck('categoryName', 'id');
         $cities = VisitorsDetails::select('city')->distinct()->pluck('city');
 
         // Step 6: Return the view

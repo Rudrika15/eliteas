@@ -93,6 +93,7 @@ class TrainerMasterController extends Controller
 
             $circleMember = Member::with('circle')
                 ->where('status', 'Active')
+                ->orderBy('memberName', 'asc')
                 ->get(); // Ensure 'circleId' is included
 
             $trainer = TrainerMaster::all();

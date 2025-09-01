@@ -1228,7 +1228,7 @@
                         <div class="col-sm-6 col-lg-4">
                             <div class="profile-card shadow-sm rounded border-0">
                                 <span class="heading">Top IBM Member</span>
-                                <img src="{{ asset('img/coverImage.png') }}" class="header-image" alt="Header Image">
+                                <img src="{{ asset('img/header_img.png') }}" class="header-image" alt="Header Image">
                                 <div class="text-center p-3">
                                     <img src="{{ asset('ProfilePhoto/' . ($circlecalls['member']->profilePhoto ?? 'profile.png')) }}" class="profile-img img-fluid rounded-circle mx-auto d-block" alt="Profile Image">
                                     <h5 class="member-name" style="color: #e76a35; font-weight: bold;">
@@ -1407,7 +1407,7 @@
                                     </div>
                                 </div>
 
-                                
+
                                 <div class="bottom-actions">
                                     <div id="viewProfile" class="action-button left-action">
                                         <a href="#"><span style="color: #1d3268;"> View Profile</span></a>
@@ -1592,7 +1592,7 @@
             @endif
 
 
-            @if (count($nearestEvents) != 0)
+            @if (count($nearestTraining) != 0)
                 <div class="bg-light py-5">
                     <div class="upcoming-events trainings">
                         <!-- Header -->
@@ -1603,23 +1603,23 @@
 
                         <!-- Horizontal Scrollable Cards -->
                         <div class="events-container d-flex">
-                            @foreach ($nearestEvents as $event)
+                            @foreach ($nearestTraining as $trainings)
                                 <div class="event-card">
-                                    <a href="{{ route('events.details', $event->id) }}" class="text-decoration-none">
-                                        <img src="{{ $event->event_banner ? url('Event/' . $event->event_banner) : asset('images/event_default.png') }}" alt="{{ $event->title }}">
+                                    {{-- <a href="{{ route('events.details', $trainings->id) }}" class="text-decoration-none"> --}}
+                                        <img src="{{ $trainings->training_banner ? url('Training/' . $trainings->training_banner) : asset('images/profile.png') }}" alt="{{ $trainings->title }}">
 
                                         <!-- Event Info Overlay -->
                                         <div class="event-info">
-                                            <h6 class="fw-bold">{{ $event->title }}</h6>
-                                            <small class="fw-bold">📍 {{ $event->venue }}</small>
-                                            {{-- <small>📍 {{ $event->venue }}, {{ $event->location }}</small> --}}
+                                            <h6 class="fw-bold">{{ $trainings->title }}</h6>
+                                            <small class="fw-bold">📍 {{ $trainings->venue }}</small>
+                                            {{-- <small>📍 {{ $trainings->venue }}, {{ $trainings->location }}</small> --}}
                                         </div>
 
                                         <!-- Event Details -->
                                         <div class="event-details d-flex justify-content-between align-items-center text-muted small">
-                                            <span class="fw-bold" style="color: #1d3268;">{{ \Carbon\Carbon::parse($event->date)->format('d M Y') }} | {{ \Carbon\Carbon::parse($event->start_time)->format('H:i') }} To {{ \Carbon\Carbon::parse($event->end_time)->format('H:i') }}</span>
-                                            {{-- <span>⏳ Time {{ $event->duration }}</span> --}}
-                                            <span class="price-tag fw-bold">₹ {{ $event->fees }}</span>
+                                            <span class="fw-bold" style="color: #1d3268;">{{ \Carbon\Carbon::parse($trainings->date)->format('d M Y') }} | {{ \Carbon\Carbon::parse($trainings->start_time)->format('H:i') }} To {{ \Carbon\Carbon::parse($trainings->end_time)->format('H:i') }}</span>
+                                            {{-- <span>⏳ Time {{ $trainings->duration }}</span> --}}
+                                            <span class="price-tag fw-bold">₹ {{ $trainings->fees }}</span>
                                         </div>
                                     </a>
                                 </div>

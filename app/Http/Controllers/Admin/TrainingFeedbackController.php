@@ -8,6 +8,7 @@ use App\Models\TrainingFeedback;
 use App\Models\TrainingMaster;
 use App\Models\TrainingRegister;
 use App\Utils\ErrorLogger;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -156,24 +157,61 @@ class TrainingFeedbackController extends Controller
         }
     }
 
+    // public function memberIndex()
+    // {
+    //     try {
+    //         // $trainingRegisters = TrainingRegister::where('userId', Auth::user()->id)
+    //         //     ->where('status', 'Active')
+    //         //     ->get();
+
+
+    //         $trainings = Training::where('trainingStatus', 'Publish')
+    //             ->get();
+
+    //         $findRegister = TrainingRegister::where('userId', Auth::user()->id)
+    //             ->where('trainingId', $trainings->id)
+    //             ->get();
+
+
+
+    //         // $trainingIds = $trainingRegisters->pluck('trainingId');
+
+    //         // return $trainings = Training::whereIn('id', $trainingIds)->get();
+
+    //         return view('admin.trainingFeedback.index', compact('trainings', 'findRegister'));
+    //     } catch (\Throwable $th) {
+    //         throw $th;
+    //         ErrorLogger::logError(
+    //             $th,
+    //             request()->fullUrl()
+    //         );
+    //         return view('servererror');
+    //     }
+    // }
+
+
+
     public function memberIndex()
     {
         try {
-            $trainingRegisters = TrainingRegister::where('userId', Auth::user()->id)
-                ->where('status', 'Active')
+            // Fetch all published trainings
+            $trainings = Training::where('trainingStatus', 'Publish')->get();
+
+            // Extract training IDs from the collection
+            $trainingIds = $trainings->pluck('id');
+
+            // Fetch all registrations for the current user and these training IDs
+            $findRegister = TrainingRegister::where('userId', Auth::user()->id)
+                ->whereIn('trainingId', $trainingIds)
                 ->get();
 
-            $trainingIds = $trainingRegisters->pluck('trainingId');
+            $registeredTrainingIds = $findRegister->pluck('trainingId')->toArray();
 
-            $trainings = Training::whereIn('id', $trainingIds)->paginate(10);
 
-            return view('admin.trainingFeedback.index', compact('trainings'));
+            return view('admin.trainingFeedback.index', compact('trainings', 'findRegister', 'registeredTrainingIds'));
         } catch (\Throwable $th) {
-            ErrorLogger::logError(
-                $th,
-                request()->fullUrl()
-            );
-            return view('servererror');
+            // Optional: log or rethrow the error
+            return back()->with('error', 'Something went wrong: ' . $th->getMessage());
         }
     }
 }

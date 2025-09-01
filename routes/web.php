@@ -66,7 +66,10 @@ use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\Admin\TrainingMasterController;
 use App\Http\Controllers\Admin\TrainingFeedbackController;
 use App\Http\Controllers\MessageController;
+use App\Http\Controllers\Admin\MemberFormController;
 use App\Models\User;
+use App\Exports\MemberReportExport;
+use Illuminate\Support\Facades\Crypt;
 
 /*
 |--------------------------------------------------------------------------
@@ -299,6 +302,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('circlemember/edit/{id?}', [CircleMemberController::class, 'edit'])->name('circlemember.edit');
     Route::post('circlemember/update/{id?}', [CircleMemberController::class, 'update'])->name('circlemember.update');
     Route::get('circlemember/delete/{id?}', [CircleMemberController::class, 'delete'])->name('circlemember.delete');
+    Route::get('circlemember/restoreMember/{id?}', [CircleMemberController::class, 'restoreMember'])->name('circlemember.restore');
+    Route::get('circlemember/deletedMemberList', [CircleMemberController::class, 'deletedMemberList'])->name('circlemember.deletedMemberList');
     Route::post('/get-membership-amount', [CircleMemberController::class, 'getMembershipAmount'])->name('get.membership.amount');
 
     //filter
@@ -337,6 +342,9 @@ Route::group(['middleware' => ['auth']], function () {
     // In your web.php or api.php
     Route::get('/members/byCircle', [CircleCallController::class, 'getMembersByCircle'])->name('members.byCircle');
     Route::get('/member/byCircle', [CircleMemberController::class, 'getMemberByCircle'])->name('member.byCircle');
+
+
+
 
 
     // old get member
@@ -556,6 +564,21 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/admin/reports/reference', [ReportController::class, 'reference'])->name('admin.report.reference');
     Route::get('/admin/reports/business', [ReportController::class, 'business'])->name('admin.report.business');
     Route::get('/admin/report/joining-members', [ReportController::class, 'getJoiningMembers'])->name('admin.report.joining');
+
+    // excel report
+    Route::get('admin/report/member-report', [ReportController::class, 'memberWiseReport'])->name('admin.memberWiseReport');
+    // Route::get('/admin/member-report/export', function (\Illuminate\Http\Request $request) {
+    //     $memberId = $request->memberId;
+    //     $startDate = $request->start_date;
+    //     $endDate = $request->end_date;
+
+    //     $member = User::where('id', $memberId)->first();
+    //     $memberName = $member ? str_replace(' ', '_', $member->firstName . '_' . $member->lastName) : 'Unknown';
+
+    //     $fileName = 'member_report_' . $memberName . '.xlsx';
+
+    //     return Excel::download(new MemberReportExport($memberId, $startDate, $endDate), $fileName);
+    // })->name('member.report.export');
 
 
 
@@ -849,6 +872,16 @@ Route::group(['middleware' => ['auth']], function () {
         })->name('admin.circle.members');
     });
 });
+
+
+//member form 
+// Route::get('/members/form', [MemberFormController::class, 'create'])->name('members.form');
+// For public users
+Route::get('/members/form', [MemberFormController::class, 'showForm'])->name('showForm');
+Route::post('/store/members/details', [MemberFormController::class, 'store'])->name('storeForm');
+
+Route::get('/encrypt-circle-id', [MemberFormController::class, 'encryptCircle']);
+
 
 Route::get('/main-event-thankYouVisitor', [ConEventController::class, 'thankYouUser'])->name('main.event.thankYouUser');
 // Route::get('/main-event-thankYouUser', [ConEventController::class, 'thankYouUser'])->name('main.event.thankYouUser');

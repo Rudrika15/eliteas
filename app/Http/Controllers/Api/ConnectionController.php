@@ -11,6 +11,7 @@ use App\Http\Controllers\Controller;
 use App\Models\BusinessCategory;
 use App\Models\Circle;
 use App\Models\CircleMeetingMembersBusiness;
+use App\Models\Testimonial;
 use App\Utils\ErrorLogger;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -23,21 +24,35 @@ class ConnectionController extends Controller
     public function receivedConnectionsRequests(Request $request)
     {
         try {
-            $userId = Auth::user()->id;
+            $userId = Auth::id();
+
             $connections = Connection::where('memberId', $userId)
                 ->where('status', 'Pending')
                 ->with([
                     'user' => function ($query) {
-                        $query->select('id', 'email', 'firstName', 'lastName');
+                        $query->select('id', 'email', 'firstName', 'lastName', 'contactNo');
                     },
                     'members' => function ($query) {
-                        $query->select('id', 'userId', 'profilePhoto');
+                        $query->select('userId', 'id', 'profilePhoto', 'companyName', 'circleId', 'businessCategoryId')
+                            ->with([
+                                'circle:id,circleName',
+                                'bCategory:id,categoryName'
+                            ]);
                     }
                 ])
                 ->get();
+
             if ($connections->isEmpty()) {
-                return Utils::sendResponse([], 'No pending connections requests', 200);
+                return Utils::sendResponse(null, 'No pending connections requests', 200);
             }
+
+            // Loop through connections and calculate induction count based on members->id == sponsoredBy
+            $connections->transform(function ($connection) {
+                $sponsorMemberId = optional($connection->members)->id;
+                $connection->induction_count = Member::where('sponsoredBy', $sponsorMemberId)->count();
+                return $connection;
+            });
+
             return Utils::sendResponse(['connections' => $connections], 'My Connections Requests retrieved successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
@@ -53,17 +68,28 @@ class ConnectionController extends Controller
                 ->where('status', 'Pending')
                 ->with([
                     'receiver' => function ($query) {
-                        $query->select('id', 'email', 'firstName', 'lastName');
+                        $query->select('id', 'email', 'firstName', 'lastName', 'contactNo');
                     },
                     'receiverMember' => function ($query) {
-                        $query->select('userId', 'id', 'profilePhoto');
+                        $query->select('userId', 'id', 'profilePhoto', 'companyName', 'circleId', 'businessCategoryId')
+                            ->with([
+                                'circle:id,circleName',
+                                'bCategory:id,categoryName'
+                            ]);
                     }
                 ])
                 ->get();
 
             if ($connections->isEmpty()) {
-                return Utils::sendResponse([], 'No pending connection requests sent', 200);
+                return Utils::sendResponse(null, 'No pending connection requests sent', 200);
             }
+
+            // Calculate induction count based on receiverMember->id == sponsoredBy
+            $connections->transform(function ($connection) {
+                $receiverMemberId = optional($connection->receiverMember)->id;
+                $connection->induction_count = Member::where('sponsoredBy', $receiverMemberId)->count();
+                return $connection;
+            });
 
             return Utils::sendResponse(['connections' => $connections], 'Sent connection requests retrieved successfully', 200);
         } catch (\Throwable $th) {
@@ -74,57 +100,83 @@ class ConnectionController extends Controller
 
 
 
+
     public function ConnectionsRequests(Request $request)
     {
         try {
-
             $userId = Auth::user()->id;
+
             $connections = Connection::where('memberId', $userId)
                 ->where('status', 'Pending')
                 ->with([
                     'user' => function ($query) {
-                        $query->select('id', 'email', 'firstName', 'lastName');
+                        $query->select('id', 'email', 'firstName', 'lastName', 'contactNo');
                     },
                     'members' => function ($query) {
-                        $query->select('id', 'userId', 'profilePhoto');
+                        $query->select('userId', 'id', 'profilePhoto', 'companyName', 'circleId', 'businessCategoryId')
+                            ->with([
+                                'circle:id,circleName',
+                                'bCategory:id,categoryName'
+                            ]);
                     }
                 ])
                 ->get();
-            // check if there are any connections
+
             if ($connections->isEmpty()) {
-                return Utils::sendResponse([], 'No pending connections requests', 200);
+                return Utils::sendResponse(null, 'No pending connections requests', 200);
             }
+
+            // Add induction_count for each connection
+            $connections->transform(function ($connection) {
+                $memberId = optional($connection->members)->id;
+                $connection->induction_count = Member::where('sponsoredBy', $memberId)->count();
+                return $connection;
+            });
+
             return Utils::sendResponse(['connections' => $connections], 'My Connections Requests retrieved successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
 
+
     public function myConnections(Request $request)
     {
         try {
             $userId = Auth::user()->id;
-            // Fetch connections where the authenticated user is either the userId or memberId
+
             $connections = Connection::where(function ($query) use ($userId) {
                 $query->where('userId', $userId)
                     ->orWhere('memberId', $userId);
             })
                 ->where('status', 'Accepted')
-                // ->with(['user:id,firstName,lastName,email', 'members:id,userId,profilePhoto'])
                 ->with(['member' => function ($query) {
-                    $query->select('id', 'userId', 'profilePhoto')
-                        ->with('user:id,email,firstName,lastName');
+                    $query->select('id', 'userId', 'profilePhoto', 'circleId', 'businessCategoryId')
+                        ->with([
+                            'user:id,email,firstName,lastName,contactNo',
+                            'circle:id,circleName',
+                            'bCategory:id,categoryName'
+                        ]);
                 }])
                 ->get();
-            // Include connected user's details for convenience
-            // $connections->each(function ($connection) {
-            //     $connection->connectedUser = $connection->connected_user;
-            // });
+
+            if ($connections->isEmpty()) {
+                return Utils::sendResponse(null, 'No Connections Found', 200);
+            }
+
+            $connections->transform(function ($connection) {
+                $memberId = optional($connection->member)->id;
+                $connection->induction_count = Member::where('sponsoredBy', $memberId)->count();
+                return $connection;
+            });
+
             return Utils::sendResponse(['connections' => $connections], 'My Connections retrieved successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
+
+
 
     public function sendRequest(Request $request)
     {
@@ -304,14 +356,18 @@ class ConnectionController extends Controller
                 ])
                 ->get();
 
-            // Loop through members to determine connection_status
+            // Loop through members to determine connection_status and induction_count
             foreach ($members as $user) {
                 $member = $user->member;
 
                 if (!$member) {
                     $user->connection_status = 'Not Connected';
+                    $user->induction_count = 0;
                     continue;
                 }
+
+                // Count of members sponsored by this member
+                $user->induction_count = Member::where('sponsoredBy', $member->id)->count();
 
                 if ($authCircleId !== null && $member->circleId == $authCircleId) {
                     $user->connection_status = 'Connected';
@@ -343,6 +399,7 @@ class ConnectionController extends Controller
             ], 'Internal Server Error', 500);
         }
     }
+
 
 
 
@@ -538,9 +595,8 @@ class ConnectionController extends Controller
     public function viewMemberProfile(Request $request)
     {
         try {
-            $authUserId = Auth::id(); // Get authenticated user ID
+            $authUserId = Auth::id();
 
-            // Fetch the member with relationships
             $member = Member::where('userId', $request->input('userId'))
                 ->with('user', 'circle', 'billingAddress', 'contactDetails', 'topsProfile', 'connections', 'bCategory')
                 ->first();
@@ -552,13 +608,9 @@ class ConnectionController extends Controller
                 ], 404);
             }
 
-            // Get authenticated user's circleId
             $authUserCircleId = Member::where('userId', $authUserId)->value('circleId');
-
-            // Check if both users belong to the same circle
             $isSameCircle = ($authUserCircleId == $member->circleId);
 
-            // Retrieve the connection status correctly
             $connection = Connection::where(function ($query) use ($authUserId, $member) {
                 $query->where('userId', $authUserId)
                     ->where('memberId', $member->userId);
@@ -569,7 +621,6 @@ class ConnectionController extends Controller
 
             $connectionStatus = $connection?->status;
 
-            // Set the connection status
             if ($isSameCircle || $connectionStatus === 'Accepted') {
                 $member->status = 'Connected';
             } elseif ($connectionStatus === 'Pending') {
@@ -578,8 +629,17 @@ class ConnectionController extends Controller
                 $member->status = null;
             }
 
-            // Get business category name
+            // Add business category name
             $member->businessCategoryName = $member->bCategory?->categoryName;
+
+            // ✅ Add induction count
+            $member->induction_count = Member::where('sponsoredBy', $member->id)->count();
+
+            // Add Testimonial
+            $member->testimonials = Testimonial::where('memberId', $member->id)
+                ->with('user:id,firstName,lastName')
+                ->get() ?? [];
+
 
             return Utils::sendResponse([
                 'message' => 'Member Profile',
@@ -595,153 +655,87 @@ class ConnectionController extends Controller
 
 
 
-    // public function getCircleMembers(Request $request, $id = null)
-    // {
-    //     try {
-    //         // If ID is provided, show details for the specific circle
-    //         if ($id) {
-    //             // Fetch circle details and related active members
-    //             $circle = Circle::with(['members' => function ($query) {
-    //                 $query->where('status', 'Active') // Fetch only active members
-    //                     ->with('bCategory:id,categoryName'); // Fetch category name
-    //             }, 'city' => function ($query) {
-    //                 $query->select('id', 'cityName'); // Fetch city name
-    //             }])->findOrFail($id);
-
-    //             // Return the circle and its active members as JSON
-    //             return response()->json([
-    //                 'circle' => $circle,
-    //                 'members' => $circle->members,
-    //             ]);
-    //         }
-
-    //         // If no ID is provided, return the list of circles
-    //         $circles = Circle::where('status', 'Active')
-    //             ->with(['city' => function ($query) {
-    //                 $query->select('id', 'cityName');
-    //             }])
-    //             ->withCount(['members' => function ($query) {
-    //                 $query->where('status', 'Active'); // Count only active members if needed
-    //             }])
-    //             ->get();
-
-    //         // Return the list of circles with member count as JSON
-    //         return response()->json([
-    //             'circles' => $circles,
-    //         ]);
-    //     } catch (\Throwable $th) {
-    //         // Log the error
-    //         ErrorLogger::logError($th, request()->fullUrl());
-    //         return response()->json([
-    //             'error' => 'An error occurred. Please try again later.',
-    //         ], 500);
-    //     }
-    // }
-
 
     // public function getCircleMembers(Request $request, $id = null)
     // {
     //     try {
-    //         // Fetch all active business meetings
-    //         $businessMeetings = CircleMeetingMembersBusiness::where('status', 'Active')->get();
+    //         $businessMeetings = CircleMeetingMembersBusiness::with('member')->where('status', 'Active')->get();
 
-    //         // If ID is provided, show details for the specific circle
     //         if ($id) {
-    //             $circle = Circle::with(['members' => function ($query) {
-    //                 $query->where('status', 'Active')
-    //                     ->with('bCategory:id,categoryName');
-    //             }, 'city' => function ($query) {
-    //                 $query->select('id', 'cityName');
-    //             }])->findOrFail($id);
+    //             $circle = Circle::with([
+    //                 'members' => function ($query) {
+    //                     $query->where('status', 'Active')
+    //                         ->with([
+    //                             'bCategory:id,categoryName',
+    //                             'user:id,email,contactNo'
+    //                         ]);
+    //                 },
+    //                 'city:id,cityName'
+    //             ])->findOrFail($id);
 
-    //             // Calculate business amount for this circle
-    //             $circle->totalBusinessAmount = $businessMeetings->filter(function ($meeting) use ($id) {
+    //             $circle->totalBusinessAmount = 0;
+
+    //             foreach ($circle->members as $member) {
+    //                 $member->businessAmount = 0;
+    //                 $member->induction_count = Member::where('sponsoredBy', $member->id)->count();
+    //             }
+
+    //             foreach ($businessMeetings as $meeting) {
     //                 $businessGiverCircleId = Member::where('userId', $meeting->businessGiverId)->value('circleId');
-    //                 return $businessGiverCircleId == $id;
-    //             })->sum('amount');
+    //                 if ($businessGiverCircleId == $circle->id) {
+    //                     $circle->totalBusinessAmount += $meeting->amount;
 
-    //             return response()->json([
-    //                 'circle' => $circle,
-    //                 'members' => $circle->members,
-    //                 'totalBusinessAmount' => $circle->totalBusinessAmount,
-    //             ]);
-    //         }
-
-    //         // For all active circles
-    //         $circles = Circle::where('status', 'Active')
-    //             ->with(['city' => function ($query) {
-    //                 $query->select('id', 'cityName');
-    //             }])
-    //             ->withCount(['members' => function ($query) {
-    //                 $query->where('status', 'Active');
-    //             }])
-    //             ->get();
-
-    //         // Calculate business amount for each circle
-    //         $circles->each(function ($circle) use ($businessMeetings) {
-    //             $circle->totalBusinessAmount = $businessMeetings->filter(function ($meeting) use ($circle) {
-    //                 $businessGiverCircleId = Member::where('userId', $meeting->businessGiverId)->value('circleId');
-    //                 return $businessGiverCircleId == $circle->id;
-    //             })->sum('amount');
-    //         });
-
-    //         return response()->json([
-    //             'circles' => $circles,
-    //         ]);
-    //     } catch (\Throwable $th) {
-    //         ErrorLogger::logError($th, request()->fullUrl());
-    //         return response()->json([
-    //             'error' => 'An error occurred. Please try again later.',
-    //         ], 500);
-    //     }
-    // }
-
-
-    // public function getCircleMembers(Request $request, $id = null)
-    // {
-    //     try {
-    //         // Fetch all active business meetings
-    //         $businessMeetings = CircleMeetingMembersBusiness::where('status', 'Active')->get();
-
-    //         // If ID is provided, show details for the specific circle
-    //         if ($id) {
-    //             $circle = Circle::with(['members' => function ($query) {
-    //                 $query->where('status', 'Active')
-    //                     ->with('bCategory:id,categoryName');
-    //             }, 'city' => function ($query) {
-    //                 $query->select('id', 'cityName');
-    //             }])->findOrFail($id);
-
-    //             // Calculate business amount for this circle
-    //             $circle->totalBusinessAmount = $businessMeetings->filter(function ($meeting) use ($id) {
-    //                 $businessGiverCircleId = Member::where('userId', $meeting->businessGiverId)->value('circleId');
-    //                 return $businessGiverCircleId == $id;
-    //             })->sum('amount');
+    //                     foreach ($circle->members as $member) {
+    //                         if ($member->userId == $meeting->member->userId) {
+    //                             $member->businessAmount += $meeting->amount;
+    //                         }
+    //                     }
+    //                 }
+    //             }
 
     //             return response()->json([
     //                 'success' => true,
     //                 'circle' => $circle,
-    //                 // 'totalBusinessAmount' => $circle->totalBusinessAmount,
     //             ]);
     //         }
 
-    //         // For all active circles
     //         $circles = Circle::where('status', 'Active')
-    //             ->with(['city' => function ($query) {
-    //                 $query->select('id', 'cityName');
-    //             }])
+    //             ->with([
+    //                 'members' => function ($query) {
+    //                     $query->where('status', 'Active')
+    //                         ->with([
+    //                             'bCategory:id,categoryName',
+    //                             'user:id,email,contactNo'
+    //                         ]);
+    //                 },
+    //                 'city:id,cityName'
+    //             ])
     //             ->withCount(['members' => function ($query) {
     //                 $query->where('status', 'Active');
     //             }])
     //             ->get();
 
-    //         // Calculate business amount for each circle
-    //         $circles->each(function ($circle) use ($businessMeetings) {
-    //             $circle->totalBusinessAmount = $businessMeetings->filter(function ($meeting) use ($circle) {
+    //         foreach ($circles as $circle) {
+    //             $circle->totalBusinessAmount = 0;
+
+    //             foreach ($circle->members as $member) {
+    //                 $member->businessAmount = 0;
+    //                 $member->induction_count = Member::where('sponsoredBy', $member->id)->count();
+    //             }
+
+    //             foreach ($businessMeetings as $meeting) {
     //                 $businessGiverCircleId = Member::where('userId', $meeting->businessGiverId)->value('circleId');
-    //                 return $businessGiverCircleId == $circle->id;
-    //             })->sum('amount');
-    //         });
+    //                 if ($businessGiverCircleId == $circle->id) {
+    //                     $circle->totalBusinessAmount += $meeting->amount;
+
+    //                     foreach ($circle->members as $member) {
+    //                         if ($member->id == $meeting->member->id) {
+    //                             $member->businessAmount += $meeting->amount;
+    //                         }
+    //                     }
+    //                 }
+    //             }
+    //         }
 
     //         return response()->json([
     //             'success' => true,
@@ -756,12 +750,16 @@ class ConnectionController extends Controller
     //     }
     // }
 
+
+
     public function getCircleMembers(Request $request, $id = null)
     {
         try {
+
             $businessMeetings = CircleMeetingMembersBusiness::with('member')->where('status', 'Active')->get();
 
             if ($id) {
+
                 $circle = Circle::with([
                     'members' => function ($query) {
                         $query->where('status', 'Active')
@@ -773,11 +771,12 @@ class ConnectionController extends Controller
                     'city:id,cityName'
                 ])->findOrFail($id);
 
+
                 $circle->totalBusinessAmount = 0;
 
-                // Initialize businessAmount = 0 for all members
                 foreach ($circle->members as $member) {
                     $member->businessAmount = 0;
+                    $member->induction_count = Member::where('sponsoredBy', $member->id)->count();
                 }
 
                 foreach ($businessMeetings as $meeting) {
@@ -786,7 +785,7 @@ class ConnectionController extends Controller
                         $circle->totalBusinessAmount += $meeting->amount;
 
                         foreach ($circle->members as $member) {
-                            if ($member->id == $meeting->member->id) {
+                            if ($member->userId == $meeting->loginMemberId) {
                                 $member->businessAmount += $meeting->amount;
                             }
                         }
@@ -815,12 +814,13 @@ class ConnectionController extends Controller
                 }])
                 ->get();
 
+
             foreach ($circles as $circle) {
                 $circle->totalBusinessAmount = 0;
 
-                // Initialize businessAmount = 0 for all members
                 foreach ($circle->members as $member) {
                     $member->businessAmount = 0;
+                    $member->induction_count = Member::where('sponsoredBy', $member->id)->count();
                 }
 
                 foreach ($businessMeetings as $meeting) {
@@ -829,7 +829,7 @@ class ConnectionController extends Controller
                         $circle->totalBusinessAmount += $meeting->amount;
 
                         foreach ($circle->members as $member) {
-                            if ($member->id == $meeting->member->id) {
+                            if ($member->id == $meeting->loginMemberId) {
                                 $member->businessAmount += $meeting->amount;
                             }
                         }
@@ -843,6 +843,7 @@ class ConnectionController extends Controller
             ]);
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, request()->fullUrl());
+            Log::error('Error in getCircleMembers', ['message' => $th->getMessage(), 'trace' => $th->getTraceAsString()]);
             return response()->json([
                 'success' => false,
                 'error' => 'An error occurred. Please try again later.',
@@ -851,56 +852,255 @@ class ConnectionController extends Controller
     }
 
 
+    // public function getCircleMembers(Request $request, $id = null)
+    // {
+    //     try {
+    //         // Step 1: Get all active business meetings & filter loginMember with Active status
+    //         $businessMeetings = CircleMeetingMembersBusiness::with('member')
+    //             ->where('status', 'Active')
+    //             ->get()
+    //             ->filter(function ($meeting) {
+    //                 $loginMember = Member::where('userId', $meeting->loginMemberId)
+    //                     ->where('status', 'Active')
+    //                     ->first();
+    //                 return $loginMember !== null;
+    //             });
+
+    //         // Step 2: If specific circle ID provided
+    //         if ($id) {
+    //             $circle = Circle::with([
+    //                 'members' => function ($query) {
+    //                     $query->where('status', 'Active')
+    //                         ->with([
+    //                             'bCategory:id,categoryName',
+    //                             'user:id,email,contactNo'
+    //                         ]);
+    //                 },
+    //                 'city:id,cityName'
+    //             ])->findOrFail($id);
+
+    //             $circle->totalBusinessAmount = 0;
+
+    //             foreach ($circle->members as $member) {
+    //                 $member->businessAmount = 0;
+    //                 $member->induction_count = Member::where('sponsoredBy', $member->id)->count();
+    //             }
+
+    //             foreach ($businessMeetings as $meeting) {
+    //                 $businessGiverCircleId = Member::where('userId', $meeting->businessGiverId)->value('circleId');
+    //                 if ($businessGiverCircleId == $circle->id) {
+    //                     $circle->totalBusinessAmount += $meeting->amount;
+
+    //                     foreach ($circle->members as $member) {
+    //                         if ($member->userId == $meeting->loginMemberId) {
+    //                             $member->businessAmount += $meeting->amount;
+    //                         }
+    //                     }
+    //                 }
+    //             }
+
+    //             return response()->json([
+    //                 'success' => true,
+    //                 'circle' => $circle,
+    //             ]);
+    //         }
+
+    //         // Step 3: If no specific circle, get all active circles
+    //         $circles = Circle::where('status', 'Active')
+    //             ->with([
+    //                 'members' => function ($query) {
+    //                     $query->where('status', 'Active')
+    //                         ->with([
+    //                             'bCategory:id,categoryName',
+    //                             'user:id,email,contactNo'
+    //                         ]);
+    //                 },
+    //                 'city:id,cityName'
+    //             ])
+    //             ->withCount(['members' => function ($query) {
+    //                 $query->where('status', 'Active');
+    //             }])
+    //             ->get();
+
+    //         foreach ($circles as $circle) {
+    //             $circle->totalBusinessAmount = 0;
+
+    //             foreach ($circle->members as $member) {
+    //                 $member->businessAmount = 0;
+    //                 $member->induction_count = Member::where('sponsoredBy', $member->id)->count();
+    //             }
+
+    //             foreach ($businessMeetings as $meeting) {
+    //                 $businessGiverCircleId = Member::where('userId', $meeting->businessGiverId)->value('circleId');
+    //                 if ($businessGiverCircleId == $circle->id) {
+    //                     $circle->totalBusinessAmount += $meeting->amount;
+
+    //                     foreach ($circle->members as $member) {
+    //                         if ($member->userId == $meeting->loginMemberId) {
+    //                             $member->businessAmount += $meeting->amount;
+    //                         }
+    //                     }
+    //                 }
+    //             }
+    //         }
+
+    //         return response()->json([
+    //             'success' => true,
+    //             'circles' => $circles,
+    //         ]);
+    //     } catch (\Throwable $th) {
+    //         ErrorLogger::logError($th, request()->fullUrl());
+    //         Log::error('Error in getCircleMembers', ['message' => $th->getMessage(), 'trace' => $th->getTraceAsString()]);
+    //         return response()->json([
+    //             'success' => false,
+    //             'error' => 'An error occurred. Please try again later.',
+    //         ], 500);
+    //     }
+    // }
+
+
+
+
+    // public function getCategoryMembers($id = null)
+    // {
+    //     try {
+    //         // If ID is provided, show details for the specific category and its active members
+    //         if ($id) {
+    //             // Fetch category details
+    //             $category = BusinessCategory::where('id', $id)
+    //                 ->where('status', 'Active')
+    //                 ->firstOrFail();
+
+    //             // Fetch active members related to this category
+    //             $members = Member::where('businessCategoryId', $id)
+    //                 ->where('status', 'Active')
+    //                 ->with(['circle' => function ($query) {
+    //                     $query->select('id', 'circleName', 'cityId')
+    //                         ->with(['city' => function ($query) {
+    //                             $query->select('id', 'cityName');
+    //                         }]);
+    //                 }])
+    //                 ->get();
+
+    //             // Return the category and its members as JSON
+    //             return response()->json([
+    //                 'category' => $category,
+    //                 'members' => $members,
+    //             ]);
+    //         }
+
+    //         // If no ID is provided, return the list of categories with active members
+    //         $categories = BusinessCategory::where('status', 'Active')
+    //             ->whereHas('members', function ($query) {
+    //                 $query->where('status', 'Active'); // Only consider active members
+    //             })
+    //             ->withCount(['members' => function ($query) {
+    //                 $query->where('status', 'Active'); // Count only active members
+    //             }])
+    //             ->with(['members' => function ($query) {
+    //                 $query->where('status', 'Active'); // Load only active members
+    //             }])
+    //             ->get();
+
+    //         // Return the list of categories with member count and members as JSON
+    //         return response()->json([
+    //             'categories' => $categories,
+    //         ]);
+    //     } catch (\Throwable $th) {
+    //         // Log the error
+    //         ErrorLogger::logError($th, request()->fullUrl());
+    //         return response()->json([
+    //             'error' => 'An error occurred. Please try again later.',
+    //         ], 500);
+    //     }
+    // }
+
 
     public function getCategoryMembers($id = null)
     {
         try {
-            // If ID is provided, show details for the specific category and its active members
+            $businessMeetings = CircleMeetingMembersBusiness::with('member')->where('status', 'Active')->get();
+
             if ($id) {
                 // Fetch category details
                 $category = BusinessCategory::where('id', $id)
                     ->where('status', 'Active')
                     ->firstOrFail();
 
-                // Fetch active members related to this category
+                // Fetch active members of this category
                 $members = Member::where('businessCategoryId', $id)
                     ->where('status', 'Active')
-                    ->with(['circle' => function ($query) {
-                        $query->select('id', 'circleName', 'cityId')
-                            ->with(['city' => function ($query) {
-                                $query->select('id', 'cityName');
-                            }]);
-                    }])
+                    ->with([
+                        'circle:id,circleName',
+                        'user:id,email,contactNo,firstName,lastName',
+                        'bCategory:id,categoryName',
+                    ])
                     ->get();
 
-                // Return the category and its members as JSON
+                // Initialize total business amount
+                $totalBusinessAmount = 0;
+
+                foreach ($members as $member) {
+                    // Set default values
+                    $member->businessAmount = 0;
+                    $member->induction_count = Member::where('sponsoredBy', $member->id)->count();
+
+                    // Calculate business amount
+                    foreach ($businessMeetings as $meeting) {
+                        if ($meeting->member->id === $member->id) {
+                            $member->businessAmount += $meeting->amount;
+                            $totalBusinessAmount += $meeting->amount;
+                        }
+                    }
+                }
+
                 return response()->json([
-                    'category' => $category,
+                    'success' => true,
                     'members' => $members,
                 ]);
             }
 
-            // If no ID is provided, return the list of categories with active members
+            // Fetch all categories with their active members
             $categories = BusinessCategory::where('status', 'Active')
                 ->whereHas('members', function ($query) {
-                    $query->where('status', 'Active'); // Only consider active members
+                    $query->where('status', 'Active');
                 })
                 ->withCount(['members' => function ($query) {
-                    $query->where('status', 'Active'); // Count only active members
+                    $query->where('status', 'Active');
                 }])
                 ->with(['members' => function ($query) {
-                    $query->where('status', 'Active'); // Load only active members
+                    $query->where('status', 'Active')
+                        ->with([
+                            'circle:id,circleName',
+                            'user:id,email,contactNo,firstName,lastName'
+                        ]);
                 }])
                 ->get();
 
-            // Return the list of categories with member count and members as JSON
+            foreach ($categories as $category) {
+                $category->totalBusinessAmount = 0;
+
+                foreach ($category->members as $member) {
+                    $member->businessAmount = 0;
+                    $member->induction_count = Member::where('sponsoredBy', $member->id)->count();
+
+                    foreach ($businessMeetings as $meeting) {
+                        if ($meeting->member->id === $member->id) {
+                            $member->businessAmount += $meeting->amount;
+                            $category->totalBusinessAmount += $meeting->amount;
+                        }
+                    }
+                }
+            }
+
             return response()->json([
+                'success' => true,
                 'categories' => $categories,
             ]);
         } catch (\Throwable $th) {
-            // Log the error
             ErrorLogger::logError($th, request()->fullUrl());
             return response()->json([
+                'success' => false,
                 'error' => 'An error occurred. Please try again later.',
             ], 500);
         }

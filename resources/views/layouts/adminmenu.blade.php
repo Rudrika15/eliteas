@@ -77,7 +77,12 @@
     </a>
 </li>
 
-
+{{-- <li class="nav-item">
+    <a class="nav-link collapsed" href="{{ route('members.form') }}">
+        <i class="bi bi-person" style="color: #e76a35"></i>
+        <span style="color: #1d2856">Member Form </span>
+    </a>
+</li> --}}
 
 {{-- <li class="nav-item">
     <a class="nav-link collapsed" href="{{ route('testimonials.indexAdmin') }}">
@@ -223,6 +228,13 @@
             <a class="nav-link " href="{{ route('circlemember.index') }}">
                 <i class="bi bi-plus-circle-dotted" style="color: #e76a35"></i>
                 <span>Circle Member</span>
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link " href="{{ route('circlemember.deletedMemberList') }}">
+                <i class="bi bi-plus-circle-dotted" style="color: #e76a35"></i>
+                <span>Deleted Members List</span>
             </a>
         </li>
 
@@ -477,6 +489,15 @@
             <a class="nav-link collapsed" href="{{ route('admin.report.joining') }}">
                 <i class="bi bi-file-earmark-text" style="color: #e76a35"></i>
                 <span class="text-blue">Joining Report</span>
+            </a>
+        </li>
+    </ul>
+
+    <ul id="report-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="{{ route('admin.memberWiseReport') }}">
+                <i class="bi bi-file-earmark-text" style="color: #e76a35"></i>
+                <span class="text-blue">Member Report</span>
             </a>
         </li>
     </ul>

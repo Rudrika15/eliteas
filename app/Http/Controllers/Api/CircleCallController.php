@@ -76,6 +76,46 @@ class CircleCallController extends Controller
         }
     }
 
+    // public function index(Request $request)
+    // {
+    //     try {
+    //         $userId = Auth::id();
+
+    //         $member = Member::where('userId', $userId)->first();
+
+    //         if (!$member) {
+    //             return Utils::errorResponse(['error' => 'Member not found for the authenticated user'], 'Not Found', 404);
+    //         }
+
+    //         // $circleCalls = CircleCall::with('members')
+    //         //     ->with('meetingPerson')
+    //         //     ->where('memberId', $member->id)
+    //         //     ->where('status', 'Active')
+    //         //     ->orderBy('id', 'DESC')
+    //         //     ->get();
+
+    //         $circleCalls = CircleCall::with('meetingPerson')
+    //             // ->where('memberId', $userId)
+    //             ->with('circle')
+    //             ->where('memberId', $userId)
+    //             ->where('status', 'Active')
+    //             ->orderBy('id', 'DESC')
+    //             ->get();
+
+    //         // foreach ($circleCalls as $circleCall) {
+    //         //     $circleCall->meetingPersonId = $circleCall->member->firstName;
+    //         // }
+
+    //         $member->induction_count = Member::where('sponsoredBy', $member->id)->count();
+
+    //         return Utils::sendResponse(['circleCalls' => $circleCalls], 'Circle Calls retrieved successfully', 200);
+    //     } catch (\Throwable $th) {
+    //         // throw $th;
+    //         return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
+    //     }
+    // }
+
+
     public function index(Request $request)
     {
         try {
@@ -87,35 +127,75 @@ class CircleCallController extends Controller
                 return Utils::errorResponse(['error' => 'Member not found for the authenticated user'], 'Not Found', 404);
             }
 
-            // $circleCalls = CircleCall::with('members')
-            //     ->with('meetingPerson')
-            //     ->where('memberId', $member->id)
-            //     ->where('status', 'Active')
-            //     ->orderBy('id', 'DESC')
-            //     ->get();
-
-            $circleCalls = CircleCall::with('meetingPerson')
-                // ->where('memberId', $userId)
-                ->where('memberId', $userId)
+            $circleCalls = CircleCall::with([
+                'meetingPerson.circle' => function ($query) {
+                    $query->select('id', 'circleName');
+                }
+            ])
+                ->where('memberId', $userId) // fixed here
                 ->where('status', 'Active')
                 ->orderBy('id', 'DESC')
                 ->get();
 
-            // foreach ($circleCalls as $circleCall) {
-            //     $circleCall->meetingPersonId = $circleCall->member->firstName;
-            // }
+            // Add induction count to each meetingPerson
+            $circleCalls->transform(function ($call) {
+                if ($call->meetingPerson) {
+                    $call->meetingPerson->induction_count = Member::where('sponsoredBy', $call->meetingPerson->id)->count() ?? 0;
+                }
+                return $call;
+            });
 
-
-            return Utils::sendResponse(['circleCalls' => $circleCalls], 'Circle Calls retrieved successfully', 200);
+            return Utils::sendResponse([
+                'circleCalls' => $circleCalls,
+            ], 'Circle Calls retrieved successfully', 200);
         } catch (\Throwable $th) {
-            // throw $th;
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
 
 
-    public function recievedBusinessMeet(Request $request)
 
+    // public function recievedBusinessMeet(Request $request)
+
+    // {
+    //     try {
+    //         $userId = Auth::id();
+
+    //         $member = Member::where('userId', $userId)->first();
+
+    //         if (!$member) {
+    //             return Utils::errorResponse(['error' => 'Member not found for the authenticated user'], 'Not Found', 404);
+    //         }
+
+    //         // $circleCalls = CircleCall::with('members')
+    //         //     ->with('meetingPerson')
+    //         //     ->where('memberId', $member->id)
+    //         //     ->where('status', 'Active')
+    //         //     ->orderBy('id', 'DESC')
+    //         //     ->get();
+
+    //         $callWith = CircleCall::with('member')
+    //             //->with('meetingPerson')
+    //             // ->where('memberId', $userId)
+    //             ->where('meetingPersonId', $userId)
+    //             ->where('status', 'Active')
+    //             ->orderBy('id', 'DESC')
+    //             ->get();
+
+    //         // foreach ($circleCalls as $circleCall) {
+    //         //     $circleCall->meetingPersonId = $circleCall->member->firstName;
+    //         // }
+
+
+    //         return Utils::sendResponse(['circleCalls' => $callWith], 'Received Circle Calls retrieved successfully', 200);
+    //     } catch (\Throwable $th) {
+    //         return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
+    //     }
+    // }
+
+
+
+    public function recievedBusinessMeet(Request $request)
     {
         try {
             $userId = Auth::id();
@@ -126,25 +206,23 @@ class CircleCallController extends Controller
                 return Utils::errorResponse(['error' => 'Member not found for the authenticated user'], 'Not Found', 404);
             }
 
-            // $circleCalls = CircleCall::with('members')
-            //     ->with('meetingPerson')
-            //     ->where('memberId', $member->id)
-            //     ->where('status', 'Active')
-            //     ->orderBy('id', 'DESC')
-            //     ->get();
-
-            $callWith = CircleCall::with('member')
-                //->with('meetingPerson')
-                // ->where('memberId', $userId)
+            $callWith = CircleCall::with([
+                'member.circle' => function ($query) {
+                    $query->select('id', 'circleName');
+                }
+            ])
                 ->where('meetingPersonId', $userId)
                 ->where('status', 'Active')
                 ->orderBy('id', 'DESC')
                 ->get();
 
-            // foreach ($circleCalls as $circleCall) {
-            //     $circleCall->meetingPersonId = $circleCall->member->firstName;
-            // }
-
+            // Add induction count to each member
+            $callWith->transform(function ($call) {
+                if ($call->member) {
+                    $call->member->induction_count = Member::where('sponsoredBy', $call->member->id)->count() ?? 0;
+                }
+                return $call;
+            });
 
             return Utils::sendResponse(['circleCalls' => $callWith], 'Received Circle Calls retrieved successfully', 200);
         } catch (\Throwable $th) {
@@ -233,6 +311,81 @@ class CircleCallController extends Controller
     // }
 
 
+    // public function create(Request $request)
+    // {
+    //     $validator = Validator::make($request->all(), [
+    //         'meetingPersonId' => 'required',
+    //         'meetingPlace' => 'required',
+    //         'meetingImage' => 'mimes:jpeg,jpg,png,gif',
+    //         'date' => 'required',
+    //         'remarks' => 'required',
+    //     ]);
+
+    //     if ($validator->fails()) {
+    //         return Utils::errorResponse(['error' => $validator->errors()->first()], 'Invalid Input', 400);
+    //     }
+
+    //     try {
+    //         $memberId = Auth::user()->id;
+    //         $member = Member::where('userId', $memberId)->first();
+
+    //         if (!$member) {
+    //             return Utils::errorResponse(['error' => 'Member not found for the authenticated user'], 'Not Found', 404);
+    //         }
+
+    //         $circleCall = new CircleCall();
+    //         $circleCall->memberId = $memberId;
+    //         $circleCall->meetingPersonId = $request->input('meetingPersonId');
+    //         $circleCall->meetingPlace = $request->input('meetingPlace');
+
+    //         if ($request->meetingImage) {
+    //             $circleCall->meetingImage = time() . '.' . $request->meetingImage->extension();
+    //             $request->meetingImage->move(public_path('meetingImage'), $circleCall->meetingImage);
+    //         }
+
+    //         $circleCall->date = $request->input('date');
+    //         $circleCall->remarks = $request->input('remarks');
+    //         $circleCall->status = 'Active';
+    //         $circleCall->save();
+
+
+    //         // Send notification to the specified user
+    //         $meetingPersonId = $request->input('meetingPersonId');
+    //         $user = User::find($meetingPersonId);
+
+    //         if ($user && $user->fcm_token) {
+    //             $title = 'IBM';
+    //             $body = $user->firstName . ' ' . $user->lastName . ' has Created IBM with you.';
+
+    //             $serviceAccountPath = storage_path('app/public/ubn_notification.json');
+    //             $factory = (new Factory)->withServiceAccount($serviceAccountPath);
+    //             $messaging = $factory->createMessaging();
+
+    //             $message = CloudMessage::withTarget('token', $user->fcm_token)
+    //                 ->withNotification(Notification::create($title, $body));
+
+    //             try {
+    //                 $messaging->send($message);
+    //                 Log::info('Notification sent to token: ' . $user->fcm_token);
+    //                 // $notificationSent = true;
+    //             } catch (\Kreait\Firebase\Exception\Messaging\NotFound $e) {
+    //                 Log::error('Token not found: ' . $user->fcm_token);
+    //             } catch (\Kreait\Firebase\Exception\Messaging\InvalidArgument $e) {
+    //                 Log::error('Invalid argument error with token: ' . $user->fcm_token);
+    //             } catch (\Exception $e) {
+    //                 Log::error('General error sending to token: ' . $user->fcm_token . '. Error: ' . $e->getMessage());
+    //             }
+    //         } else {
+    //             Log::error('No FCM token found for user ID: ' . $meetingPersonId);
+    //         }
+
+    //         return Utils::sendResponse(['circleCall' => $circleCall], 'Circle Call Created Successfully!', 201);
+    //     } catch (\Throwable $th) {
+    //         return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
+    //     }
+    // }
+
+
     public function create(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -270,14 +423,14 @@ class CircleCallController extends Controller
             $circleCall->status = 'Active';
             $circleCall->save();
 
-
             // Send notification to the specified user
             $meetingPersonId = $request->input('meetingPersonId');
             $user = User::find($meetingPersonId);
 
             if ($user && $user->fcm_token) {
                 $title = 'IBM';
-                $body = $user->firstName . ' ' . $user->lastName . ' has Created IBM with you.';
+                $sender = Auth::user();
+                $body = $sender->firstName . ' ' . $sender->lastName . ' has Created IBM with you.';
 
                 $serviceAccountPath = storage_path('app/public/ubn_notification.json');
                 $factory = (new Factory)->withServiceAccount($serviceAccountPath);
@@ -289,7 +442,6 @@ class CircleCallController extends Controller
                 try {
                     $messaging->send($message);
                     Log::info('Notification sent to token: ' . $user->fcm_token);
-                    // $notificationSent = true;
                 } catch (\Kreait\Firebase\Exception\Messaging\NotFound $e) {
                     Log::error('Token not found: ' . $user->fcm_token);
                 } catch (\Kreait\Firebase\Exception\Messaging\InvalidArgument $e) {
@@ -306,6 +458,7 @@ class CircleCallController extends Controller
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
+
 
 
 

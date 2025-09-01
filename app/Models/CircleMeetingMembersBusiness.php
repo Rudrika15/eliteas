@@ -32,9 +32,19 @@ class CircleMeetingMembersBusiness extends Model
     {
         return $this->belongsTo(User::class, 'businessGiverId');
     }
+
+    public function businessGiverMember()
+    {
+        return $this->belongsTo(Member::class, 'businessGiverId', 'id');
+    }
     public function loginMember()
     {
         return $this->belongsTo(User::class, 'loginMemberId');
+    }
+
+    public function loginMemberReport()
+    {
+        return $this->belongsTo(User::class, 'loginMemberId', 'id');
     }
 
     public function users()
@@ -51,7 +61,4 @@ class CircleMeetingMembersBusiness extends Model
     {
         return $this->hasMany(BusinessAmount::class, 'circleMeetingMemberBusinessId');
     }
-
-
-    
 }

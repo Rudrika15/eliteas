@@ -56,13 +56,35 @@ class CircleCallController extends Controller
                 ->where('status', 'Active')
                 ->orderBy('id', 'DESC')
                 ->paginate(10);
-            return view('admin.circlecall.index', compact('circlecall', 'callWith'));
+
+
+            $circles = Circle::where('status', 'Active')->orderBy('circleName', 'asc')->get();
+
+            $circleMember = Member::with('circle')
+                ->where('status', 'Active')
+                ->get(); // Ensure 'circleId' is included
+
+
+            // return $scheduleDate = Schedule::where('circleId', Auth::user()->member->circle->id)->where('status', 'Active')->get(['date']);
+            $scheduleDate = Schedule::where('circleId', Auth::user()->member->circle->id)
+                ->where('status', 'Active')
+                ->where('date')
+                ->pluck('date'); // Pluck all 'date' values from the query result
+
+            $lastDate = Schedule::where('circleId', Auth::user()->member->circle->id)
+                ->where('date', '<', now())
+                ->orderBy('date', 'desc')
+                ->pluck('date')
+                ->first();
+
+            return view('admin.circlecall.index', compact('circlecall', 'callWith', 'circles', 'scheduleDate', 'lastDate', 'circleMember'));
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError($th, $request->fullUrl());
             return view('servererror');
         }
     }
+    
     //For show single data
     public function view(Request $request, $id)
     {
@@ -81,10 +103,11 @@ class CircleCallController extends Controller
     public function create(Request $request)
     {
         try {
-            $circles = Circle::where('status', 'Active')->get();
+            $circles = Circle::where('status', 'Active')->orderBy('circleName', 'asc')->get();
 
             $circleMember = Member::with('circle')
                 ->where('status', 'Active')
+                ->orderBy('circleName', 'asc')
                 ->get(); // Ensure 'circleId' is included
 
 
@@ -120,6 +143,7 @@ class CircleCallController extends Controller
             $members = Member::where('circleId', $circleId)
                 ->with('user')
                 ->where('status', 'Active')
+                ->orderBy('firstName', 'asc')
                 ->where('userId', '!=', Auth::id())
                 ->get(['id', 'userId', 'firstName', 'lastName']); // Adjust fields as needed
 
@@ -289,7 +313,7 @@ class CircleCallController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'meetingPlace' => 'required|regex:/^([a-zA-Z]+)(\s[a-zA-Z]+)*$/',
+            'meetingPlace' => 'required',
             'date' => 'required',
             'remarks' => 'required',
             // 'meetingImage' => 'mimes:jpeg,jpg,png,gif|max:5120', // Allow 5MB for upload
@@ -408,9 +432,9 @@ class CircleCallController extends Controller
     {
         try {
             $circlecall = CircleCall::find($id);
-            $member = Member::where('status', '!=', 'Deleted')->get();
+            $member = Member::where('status', '!=', 'Deleted')->orderBy('firstName', 'asc')->get();
             $circleMember = CircleMember::where('status', '!=', 'Deleted')->get();
-            $circles = Circle::where('status', 'Active')->get();
+            $circles = Circle::where('status', 'Active')->orderBy('circleName', 'asc')->get();
 
 
             // Fetch all 'date' values from the query result
@@ -426,6 +450,7 @@ class CircleCallController extends Controller
                 ->first();
 
             return view('admin.circlecall.edit', compact('circlecall', 'circles', 'scheduleDate', 'lastDate', 'circleMember', 'member'));
+            // return view('admin.circlecall._edit_form', compact('circlecall', 'circles', 'scheduleDate', 'lastDate', 'circleMember', 'member'));
         } catch (\Throwable $th) {
             // Log the error using the ErrorLogger utility
             ErrorLogger::logError($th, $request->fullUrl());

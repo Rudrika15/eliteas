@@ -393,7 +393,7 @@ class LoginController extends Controller
             array_push($keyWords, $request->input('keyword3', '') ?? '');
         }
 
-        $member->keyWords = json_encode($keyWords);
+        $member->keyWords = empty($keyWords) ? null : json_encode($keyWords);
 
 
         $member->language = $request->input('language', $member->language);

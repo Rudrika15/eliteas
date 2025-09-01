@@ -25,7 +25,7 @@ class CircleTypeController extends Controller
     public function index(Request $request)
     {
         try {
-            $circletype = CircleType::where('status', 'Active')->paginate(10);
+            $circletype = CircleType::where('status', 'Active')->orderBy('circleTypeName', 'ASC')->paginate(10);
             return view('admin.circletype.index', compact('circletype'));
         } catch (\Throwable $th) {
             // throw $th;

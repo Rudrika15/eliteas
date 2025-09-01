@@ -12,6 +12,7 @@ use App\Models\CircleMeeting;
 use App\Models\BusinessAmount;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
+use App\Models\Circle;
 use Illuminate\Support\Facades\Auth;
 use App\Models\CircleMeetingMembersBusiness;
 
@@ -43,17 +44,29 @@ class CircleMeetingMemberBusinessController extends Controller
                 return $item;
             });
 
-            $busGiveByOther = CircleMeetingMembersBusiness::where('businessGiverId', Auth::user()->id)
+            $busGiveByOther = CircleMeetingMembersBusiness::with('loginMember')
+                ->where('businessGiverId', Auth::user()->id)
                 ->where('status', 'Active')
                 ->orderBy('id', 'DESC')
                 ->paginate(10);
+                
+                // Format the amount with commas
+                $busGiveByOther->transform(function ($item) {
+                    $item->amount = isset($item->amount) ? number_format($item->amount, 2) : '-';
+                    return $item;
+                });
+                
+            $circles = Circle::where('status', 'Active')->orderBy('circleName', 'ASC')->get();
 
-            // Format the amount with commas
-            $busGiveByOther->transform(function ($item) {
-                $item->amount = isset($item->amount) ? number_format($item->amount, 2) : '-';
-                return $item;
-            });
-            return view('admin.circlebusiness.index', compact('busGiver', 'busGiveByOther'));
+            $circleMember = Member::with('circle')
+                ->where('status', 'Active')
+                ->orderBy('firstName', 'ASC')
+                ->get();
+
+
+            $circlemeeting = CircleMeeting::where('status', 'Active')->get();
+
+            return view('admin.circlebusiness.index', compact('busGiver', 'busGiveByOther', 'circlemeeting', 'circles', 'circleMember'));
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError($th, $request->fullUrl());
@@ -82,9 +95,8 @@ class CircleMeetingMemberBusinessController extends Controller
     public function create(Request $request, $id)
     {
         try {
-
             $busGiver = CircleMeetingMembersBusiness::find($id);
-            return view('admin.circlebusiness.create', \compact('busGiver'));
+            return view('admin.circlebusiness.create', compact('busGiver'));
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError(

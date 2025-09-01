@@ -40,7 +40,7 @@ class ScheduleController extends Controller
                 $query->where('status', 'Active');
             })->paginate(10);
 
-            $circles = Circle::where('status', 'Active')->get();
+            $circles = Circle::where('status', 'Active')->orderBy('circleName', 'asc')->get();
             return view('admin.schedule.index', compact('schedules', 'circles'));
         } catch (\Throwable $th) {
             // throw $th;

@@ -507,7 +507,6 @@
             /* mix-blend-mode: color-burn; */
 
         }
-        
     </style>
 
 
@@ -517,7 +516,9 @@
             @forelse ($circle->members as $member)
                 <div class="col-12 col-sm-6 col-lg-4">
                     <div class="profile-card shadow-sm rounded border-0">
-                        <img src="https://picsum.photos/600/120" class="header-image" alt="Header Image">
+                        {{-- <img src="https://picsum.photos/600/120" class="header-image" alt="Header Image"> --}}
+                        <img src="{{ asset('img/header_img.jpeg') }}" class="header-image" alt="Header Image">
+
                         <div class="text-center p-3">
                             <img src="{{ asset('ProfilePhoto/' . ($member->profilePhoto ?? 'logo2.jpg')) }}" class="profile-img img-fluid rounded-circle mx-auto d-block" alt="Profile Image">
                             <h5 class="member-name" style="color: #e76a35; font-weight: bold;">
@@ -610,7 +611,6 @@
                                         </button>
                                     </form>
                                 @else
-                                    
                                 @endif
 
                             </div>
@@ -624,7 +624,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
+
 
     <script>
         $(document).ready(function() {

@@ -195,8 +195,46 @@
                     Monthly Payment Due: ₹ {{ $totalAmountDue }}
                 </div>
             @endrole
-
         </div>
+
+        <div style="display: flex; gap: 0;">
+            @role('Vice President|President')
+                <button type="button" class="btn btn-bg-blue btn-md" onclick="copyPublicFormLink()">📋 Copy Public Form Link</button>
+
+                <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+                <script>
+                    function copyPublicFormLink() {
+                        const circleId = "{{ auth()->user()->member->circle->id }}";
+                        const circleName = "{{ auth()->user()->member->circle->circleName }}";
+
+                        fetch(`{{ url('/encrypt-circle-id') }}?id=${circleId}&name=${encodeURIComponent(circleName)}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                const publicLink = `${window.location.origin}/members/form?cid=${encodeURIComponent(data.id)}&cname=${encodeURIComponent(data.name)}`;
+                                navigator.clipboard.writeText(publicLink)
+                                    .then(() => {
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: 'Copied!',
+                                            text: '🔗 Public form link copied successfully!',
+                                            timer: 2000,
+                                            showConfirmButton: false
+                                        });
+                                    })
+                                    .catch(() => {
+                                        Swal.fire({
+                                            icon: 'error',
+                                            title: 'Oops!',
+                                            text: '❌ Failed to copy link.',
+                                        });
+                                    });
+                            });
+                    }
+                </script>
+            @endrole
+        </div>
+
+
 
 
         <div class="ms-auto d-flex justify-content-end search-container">
@@ -621,6 +659,14 @@
     </footer><!-- End Footer -->
 
     <a href="#" class="back-to-top d-flex align-items-center justify-content-center " style="background-color: #1d2865; "><i class="bi bi-arrow-up-short"></i></a>
+
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    {{-- public form copy link script  --}}
+
+
+    {{-- public form copy link script end  --}}
 
     <!-- Vendor JS Files -->
     <script>

@@ -28,8 +28,19 @@ class CircleMeetingMemberReferenceController extends Controller
                 ->orderBy('id', 'DESC')
                 ->with('members')
                 ->with('refGiverName')
+                ->with('members.circle:id,circleName')
                 ->where('referenceGiverId', Auth::user()->id)
                 ->get();
+
+
+            $refGiver->transform(function ($item) {
+                if ($item->members) {
+                    $item->members->induction_count = Member::where('sponsoredBy', $item->members->id)->count();
+                } else {
+                    $item->induction_count = 0;
+                }
+                return $item;
+            });
 
             return Utils::sendResponse(['refGiver' => $refGiver], 'Circle Meeting Member References retrieved successfully', 200);
         } catch (\Throwable $th) {

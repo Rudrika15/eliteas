@@ -26,7 +26,7 @@ class MembershipTypeController extends Controller
     public function index(Request $request)
     {
         try {
-            $membershipType = MembershipType::where('status', 'Active')->paginate(10);
+            $membershipType = MembershipType::where('status', 'Active')->orderBy('membershipName', 'asc')->paginate(10);
             return view('admin.membershiptype.index', compact('membershipType'));
         } catch (\Throwable $th) {
             // throw $th;
