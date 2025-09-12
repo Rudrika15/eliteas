@@ -672,6 +672,7 @@ class ReportController extends Controller
                 ];
             })
             ->sortByDesc('member_count')
+            ->take(5) // ✅ only top 5 IBM
             ->values();
 
         /* ------------------ 3. References ------------------ */
@@ -695,6 +696,7 @@ class ReportController extends Controller
                 ];
             })
             ->sortByDesc('reference_count')
+            ->take(5) // ✅ only top 5
             ->values();
 
         /* ------------------ 4. Business ------------------ */
@@ -719,6 +721,7 @@ class ReportController extends Controller
                 ];
             })
             ->sortByDesc('total_amount')
+            ->take(5) // ✅ only top 5
             ->values();
 
         return view('admin.report.VPReport', compact(
@@ -733,6 +736,7 @@ class ReportController extends Controller
             'totalBusinessAmount'
         ));
     }
+
 
     // ✅ Export Excel
     public function exportVpReport(Request $request)
