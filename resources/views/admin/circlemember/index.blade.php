@@ -218,12 +218,12 @@
                                                             <input type="hidden" name="memberId" value="{{ $circlememberData->id }}">
                                                             <select name="roleId" class="form-select">
                                                                 <option value="">Select Role</option>
-                                                                {{-- @foreach ($roles as $role)
+                                                                @foreach ($roles as $role)
                                                                     @if (!in_array($role->name, ['Franchise Admin', 'Member', 'Admin', 'Trainer']) && !$circlememberData->user->roles->contains($role->id))
                                                                         <option value="{{ $role->id }}">
                                                                             {{ $role->name }}</option>
                                                                     @endif
-                                                                @endforeach --}}
+                                                                @endforeach
                                                             </select>
                                                             <div class="d-flex justify-content-end mt-3">
                                                                 <button type="submit" class="btn btn-bg-blue btn-sm">Assign</button>
@@ -254,12 +254,12 @@
                                                             <input type="hidden" name="memberId" value="{{ $circlememberData->id }}">
                                                             <select name="roleId" class="form-select">
                                                                 <option value="">Select Role</option>
-                                                                {{-- @foreach ($circlememberData->user->roles as $role)
+                                                                @foreach ($circlememberData->user->roles as $role)
                                                                     @if (!in_array($role->name, ['Member', 'Trainer', 'Admin']))
                                                                         <option value="{{ $role->id }}">
                                                                             {{ $role->name }}</option>
                                                                     @endif
-                                                                @endforeach --}}
+                                                                @endforeach
                                                             </select>
 
                                                             <div class="d-flex justify-content-end mt-3">

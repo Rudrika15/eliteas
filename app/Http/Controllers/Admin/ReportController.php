@@ -10,8 +10,10 @@ use App\Models\CircleMeetingMembersBusiness;
 use App\Models\CircleMeetingMembersReference;
 use App\Models\Member;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Str;
+use App\Exports\CircleVPReportExport;
 
 class ReportController extends Controller
 {
@@ -617,5 +619,124 @@ class ReportController extends Controller
             'startDate',
             'endDate'
         ));
+    }
+
+    //report for VP role - 
+    public function vpReport(Request $request)
+    {
+        // ✅ Get logged in user
+        $userId = auth()->id();
+        $member = Member::where('userId', $userId)->first();
+
+        if (!$member) {
+            return back()->with('error', 'You are not assigned to any circle.');
+        }
+
+        $circleId = $member->circleId;
+        $circle = Circle::findOrFail($circleId);
+
+        // ✅ Date filters
+        $startDate = $request->input('startDate');
+        $endDate   = $request->input('endDate');
+
+        $start = $startDate ? Carbon::parse($startDate)->startOfDay() : null;
+        $end   = $endDate ? Carbon::parse($endDate)->endOfDay() : Carbon::now()->endOfDay();
+
+        /* ------------------ 1. Circle Calls ------------------ */
+        $circleCalls = CircleCall::with('member')
+            ->where('status', 'Active')
+            ->when($start, fn($q) => $q->whereBetween('date', [$start, $end]))
+            ->whereHas('member', function ($q) use ($circleId) {
+                $q->where('circleId', $circleId);
+            })
+            ->get();
+
+        $totalCircleCalls = $circleCalls->count();
+
+        /* ------------------ 2. IBM ------------------ */
+        $ibms = CircleCall::with('member')
+            ->where('status', 'Active')
+            ->when($start, fn($q) => $q->whereBetween('created_at', [$start, $end]))
+            ->whereHas('member', function ($q) use ($circleId) {
+                $q->where('circleId', $circleId);
+            })
+            ->get()
+            ->groupBy('memberId')
+            ->map(function ($group) {
+                $member = $group->first()->member;
+                return [
+                    'memberId' => $member->id,
+                    'memberName' => $member->firstName . ' ' . $member->lastName,
+                    'circleName' => $member->circle->circleName,
+                    'member_count' => $group->count(),
+                ];
+            })
+            ->sortByDesc('member_count')
+            ->values();
+
+        /* ------------------ 3. References ------------------ */
+        $references = CircleMeetingMembersReference::with('refGiver')
+            ->where('status', 'Active')
+            ->when($start, fn($q) => $q->whereBetween('created_at', [$start, $end]))
+            ->whereHas('refGiver', function ($q) use ($circleId) {
+                $q->where('circleId', $circleId);
+            })
+            ->get();
+
+        $totalReferences = $references->count();
+
+        $refReport = $references->groupBy('referenceGiverId')
+            ->map(function ($group) {
+                $giver = $group->first()->refGiver;
+                return [
+                    'referenceGiverId' => $giver->userId,
+                    'referenceGiverName' => $giver->firstName . ' ' . $giver->lastName,
+                    'reference_count' => $group->count(),
+                ];
+            })
+            ->sortByDesc('reference_count')
+            ->values();
+
+        /* ------------------ 4. Business ------------------ */
+        $businessMeetings = CircleMeetingMembersBusiness::with('member')
+            ->where('status', 'Active')
+            ->when($start, fn($q) => $q->whereBetween('created_at', [$start, $end]))
+            ->whereHas('member', function ($q) use ($circleId) {
+                $q->where('circleId', $circleId);
+            })
+            ->get();
+
+        $totalBusinessAmount = $businessMeetings->sum('amount');
+
+        $businessReport = $businessMeetings->groupBy('businessGiverId')
+            ->map(function ($group) {
+                $giver = $group->first()->member;
+                return [
+                    'businessGiverId' => $giver->userId,
+                    'member' => $giver->firstName . ' ' . $giver->lastName,
+                    'business_count' => $group->count(),
+                    'total_amount' => $group->sum('amount'),
+                ];
+            })
+            ->sortByDesc('total_amount')
+            ->values();
+
+        return view('admin.report.VPReport', compact(
+            'circle',
+            'startDate',
+            'endDate',
+            'totalCircleCalls',
+            'ibms',
+            'refReport',
+            'totalReferences',
+            'businessReport',
+            'totalBusinessAmount'
+        ));
+    }
+
+    // ✅ Export Excel
+    public function exportVpReport(Request $request)
+    {
+        return Excel::download(new \App\Exports\CircleVPReportExport($request), 'circle_report_vp.xlsx');
     }
 }

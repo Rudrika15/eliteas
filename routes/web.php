@@ -565,6 +565,10 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/admin/reports/business', [ReportController::class, 'business'])->name('admin.report.business');
     Route::get('/admin/report/joining-members', [ReportController::class, 'getJoiningMembers'])->name('admin.report.joining');
 
+    // vp report
+    Route::get('/vp/report', [ReportController::class, 'vpReport'])->name('vp.report');
+    Route::get('/vp/report/export', [ReportController::class, 'exportVpReport'])->name('vp.report.export');
+
     // excel report
     Route::get('admin/report/member-report', [ReportController::class, 'memberWiseReport'])->name('admin.memberWiseReport');
     // Route::get('/admin/member-report/export', function (\Illuminate\Http\Request $request) {

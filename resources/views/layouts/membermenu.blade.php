@@ -67,6 +67,13 @@
 
         </ul>
     </li>
+
+    <li class="nav-item">
+        <a class="nav-link collapsed" href="{{ route('vp.report') }}">
+            <i class="bi bi-person" style="color: #e76a35"></i>
+            <span style="color: #1d2856">Report</span>
+        </a>
+    </li>
 @endrole
 
 @role('Circle Admin')
