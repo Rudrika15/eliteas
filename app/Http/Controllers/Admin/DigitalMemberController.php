@@ -1,5 +1,11 @@
 <?php
 
+namespace App\Http\Controllers\admin;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use App\Models\DigitalMember;
+
 namespace App\Http\Controllers\Admin;
 
 use Carbon\Carbon;
@@ -40,7 +46,7 @@ use App\Models\CircleMeetingMembersBusiness;
 use App\Models\CircleMeetingMembersReference;
 use Illuminate\Support\Facades\Auth;
 
-class CircleMemberController extends Controller
+class DigitalMemberController extends Controller
 {
 
     public function __construct()
@@ -65,7 +71,7 @@ class CircleMemberController extends Controller
         $circleId = $request->input('circleId');
         $membershipType = $request->input('membershipType');
 
-        $query = Member::with(['circle', 'bCategory', 'mType', 'user.roles']); // Replace with your actual table name
+        $query = Member::with(['bCategory', 'mType', 'user.roles']); // Replace with your actual table name
 
         if ($categoryId) {
             $query->where('businessCategoryId', $categoryId); // Adjust column name if necessary
@@ -88,56 +94,17 @@ class CircleMemberController extends Controller
         return response()->json(['data' => $data, 'roles' => $roles]);
     }
 
-
-
-
-    // public function index(Request $request)
-    // {
-    //     try {
-    //         $user = Auth::user();
-    //         $memberQuery = Member::where('status', 'Active')
-    //             ->whereHas('circle')
-    //             ->whereHas('contactDetails')
-    //             ->with(['circle', 'contactDetails', 'user', 'topsProfile', 'billingAddress']);
-
-    //         if ($user->hasRole('Circle Admin')) {
-    //             $memberQuery->where('createdBy', $user->id);
-    //         }
-
-    //         $member = $memberQuery->paginate(10);
-    //         $circle = Circle::where('status', 'Active')->orderBy('circleName', 'asc')->get();
-    //         $bCategory = BusinessCategory::where('status', 'Active')->orderBy('categoryName', 'asc')->get();
-    //         $roles = Role::all();
-    //         $membershipType = MembershipType::where('status', 'Active')->get();
-
-    //         return view('admin.circlemember.index', compact('member', 'roles', 'circle', 'bCategory', 'membershipType'));
-    //     } catch (\Throwable $th) {
-    //         ErrorLogger::logError(
-    //             $th,
-    //             $request->fullUrl()
-    //         );
-    //         return view('servererror');
-    //     }
-    // }
-
     public function index(Request $request)
     {
         try {
             $user = Auth::user();
 
             $memberQuery = Member::where('status', 'Active')
-                ->whereHas('circle')
+                ->where('circleId', null)
                 ->whereHas('contactDetails')
-                ->with(['circle', 'contactDetails', 'user', 'topsProfile', 'billingAddress']);
-
-            if ($user->hasRole('Circle Admin')) {
-                $memberQuery->where('createdBy', $user->id);
-            }
+                ->with(['contactDetails', 'user', 'topsProfile', 'billingAddress']);
 
             // ✅ Apply filters if present
-            if ($request->filled('circleId')) {
-                $memberQuery->where('circleId', $request->circleId);
-            }
 
             if ($request->filled('categoryId')) {
                 $memberQuery->whereHas('bCategory', function ($q) use ($request) {
@@ -152,12 +119,11 @@ class CircleMemberController extends Controller
             $member = $memberQuery->paginate(10);
 
             // Pass data to view
-            $circle = Circle::where('status', 'Active')->orderBy('circleName', 'asc')->get();
             $bCategory = BusinessCategory::where('status', 'Active')->orderBy('categoryName', 'asc')->get();
             $roles = Role::all();
             $membershipType = MembershipType::where('status', 'Active')->get();
 
-            return view('admin.circlemember.index', compact('member', 'roles', 'circle', 'bCategory', 'membershipType'));
+            return view('admin.digitalmember.index', compact('member', 'roles', 'bCategory', 'membershipType'));
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, $request->fullUrl());
             return view('servererror');
@@ -170,16 +136,14 @@ class CircleMemberController extends Controller
         try {
             $user = Auth::user();
             $member = Member::where('status', 'Deleted')
-                ->whereHas('circle')
                 ->whereHas('contactDetails')
-                ->with(['circle', 'contactDetails', 'user', 'topsProfile', 'billingAddress'])
+                ->with(['contactDetails', 'user', 'topsProfile', 'billingAddress'])
                 ->paginate(10);
 
-            $circle = Circle::where('status', 'Active')->orderBy('circleName', 'asc')->get();
             $bCategory = BusinessCategory::where('status', 'Active')->orderBy('categoryName', 'asc')->get();
             $membershipType = MembershipType::where('status', 'Active')->get();
 
-            return view('admin.circlemember.restoreIndex', compact('member', 'circle', 'bCategory', 'membershipType'));
+            return view('admin.digitalmember.restoreIndex', compact('member', 'circle', 'bCategory', 'membershipType'));
         } catch (\Throwable $th) {
             ErrorLogger::logError(
                 $th,
@@ -190,71 +154,12 @@ class CircleMemberController extends Controller
     }
 
 
-    public function induction($id)
-    {
-        try {
-
-
-            return view('admin.circlemember.index', compact('memberInduction'));
-        } catch (\Throwable $th) {
-            ErrorLogger::logError($th, request()->fullUrl());
-            return view('servererror');
-        }
-    }
-
-
-    public function assignCircle(Request $request)
-    {
-
-        try {
-            $member = Member::where('id', $request->memberId)->first();
-
-            $circleAdmin = new circleAdmin();
-            $circleAdmin->memberId = $member->id;
-            $circleAdmin->circleId = $request->circleId;
-            $circleAdmin->save();
-
-            return redirect()->back()->with('success', 'Circle assigned successfully.');
-        } catch (\Throwable $th) {
-            // throw $th;
-            ErrorLogger::logError(
-                $th,
-                $request->fullUrl()
-            );
-
-            return view('servererror');
-        }
-    }
-
-    // public function index(Request $request)
+    // public function induction($id)
     // {
     //     try {
-    //         $user = Auth::user();
-    //         $memberQuery = Member::where('status', 'Active')
-    //             ->whereHas('circle')
-    //             ->whereHas('contactDetails')
-    //             ->with(['circle', 'contactDetails', 'user', 'topsProfile', 'billingAddress']);
-
-    //         if ($user->hasRole('Circle Admin')) {
-    //             $memberQuery->where('createdBy', $user->id);
-    //         }
-
-    //         $member = $memberQuery->paginate(10);
-    //         // $member = Member::findOrFail($user->id);
-    //         $member = Member::whereHas('circle')->where('status', 'Active')->with('circle')->whereHas('contactDetails')->where('status', 'Active')->with('contactDetails')->with('user')->where('status', 'Active')->with('topsProfile')->with('billingAddress')->paginate(10);
-    //         $circle = Circle::where('status', 'Active')->get();
-    //         $bCategory = BusinessCategory::where('status', 'Active')->get();
-    //         // $roles = Role::whereNotIn('name', ['Admin', 'Member', 'Trainer', 'Franchise '])->paginate(10);
-    //         $roles = Role::all();
-    //         $membershipType = MembershipType::where('status', 'Active')->get();
-
-    //         return view('admin.circlemember.index', compact('member', 'roles', 'circle', 'bCategory', 'membershipType'));
+    //         return view('admin.circlemember.index', compact('memberInduction'));
     //     } catch (\Throwable $th) {
-    //         // throw $th;
-    //         ErrorLogger::logError(
-    //             $th,
-    //             $request->fullUrl()
-    //         );
+    //         ErrorLogger::logError($th, request()->fullUrl());
     //         return view('servererror');
     //     }
     // }
@@ -263,15 +168,10 @@ class CircleMemberController extends Controller
     //filter data
     public function filter(Request $request)
     {
-        $circleId = $request->get('circleId');
         $categoryId = $request->get('categoryId');
         $membershipType = $request->get('membershipType');
 
         $query = Member::query();
-
-        if ($circleId) {
-            $query->where('circleId', $circleId);
-        }
 
         if ($categoryId) {
             $query->where('categoryId', $categoryId);
@@ -304,49 +204,16 @@ class CircleMemberController extends Controller
         }
     }
 
-    public function getCircleByMember(Request $request)
-    {
-        $memberId = $request->input('memberId');
-
-        if (!$memberId) {
-            return response()->json(['error' => 'Member ID is required'], 400);
-        }
-
-        // Fetch the member and associated circle
-        $member = Member::with('circle')->find($memberId);
-
-        if (!$member || !$member->circle) {
-            return response()->json(['error' => 'Circle not found'], 404);
-        }
-
-        return response()->json(['circleName' => $member->circle->circleName]);
-    }
-
 
     public function create(Request $request)
     {
         try {
             $businessCategory = BusinessCategory::where('status', 'Active')->orderBy('categoryName', 'asc')->get();
-            $user = Auth::user();
-            if ($user->hasRole('Circle Admin')) {
-                $circle = Circle::where('status', 'Active')->where('createdBy', $user->id)->orderBy('circleName', 'asc')->get();
-            } else {
-                $circle = Circle::where('status', 'Active')->orderBy('circleName', 'asc')->get();
-            }
-            $member = Member::where('status', 'Active')->orderBy('firstName', 'asc')->get();
             $countries = Country::where('status', 'Active')->orderBy('countryName', 'asc')->get();
             $states = State::where('status', 'Active')->orderBy('stateName', 'asc')->get();
             $cities = City::where('status', 'Active')->orderBy('cityName', 'asc')->get();
             $membershipType = MembershipType::where('status', 'Active')->orderBy('membershipType', 'asc')->get();
-
-            $circles = Circle::where('status', 'Active')->orderBy('circleName', 'asc')->get();
-
-            $circleMember = Member::with('circle')
-                ->where('status', 'Active')
-                ->orderBy('firstName', 'asc')
-                ->get(); // Ensure 'circleId' is included
-
-            return view('admin.circlemember.create', compact('circle', 'membershipType', 'circles', 'circleMember', 'member', 'countries', 'states', 'cities', 'businessCategory'));
+            return view('admin.digitalmember.create', compact('membershipType', 'countries', 'states', 'cities', 'businessCategory'));
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError($th, $request->fullUrl());
@@ -359,7 +226,6 @@ class CircleMemberController extends Controller
         // return $request;
         $this->validate($request, [
             'title' => 'required',
-            'circleIds' => 'required',
             'firstName' => 'required',
             'lastName' => 'required',
             'email' => 'required|unique:users,email',
@@ -432,8 +298,8 @@ class CircleMemberController extends Controller
             // Create and save the member
             $member = new Member();
             $member->createdBy = Auth::user()->id;
-            $member->circleId = $request->circleIds;
-            $member->sponsoredBy = $request->memberId;
+            $member->circleId = null;
+            $member->sponsoredBy = null;
             $member->userId = $user->id;
             $member->title = $request->title;
             $member->username = $request->username;
@@ -454,27 +320,6 @@ class CircleMemberController extends Controller
             $member->status = 'Active';
             $member->save();
 
-            // Compare circleId and add connections
-            // $matchedMembers = Member::where('circleId', $member->circleId)
-            //     ->where('userId', '!=', $member->userId) // Exclude the current member
-            //     ->get();
-
-
-            // foreach ($matchedMembers as $matchedMember) {
-            //     // Create new connection entries
-            //     $connection = new Connection;
-            //     $connection->memberId = $member->userId;
-            //     $connection->userId = $matchedMember->userId;
-            //     $connection->status = 'Accepted';
-            //     $connection->save();
-
-            //     // // Create the reverse connection
-            //     // $reverseConnection = new Connection;
-            //     // $reverseConnection->memberId = $matchedMember->userId;
-            //     // $reverseConnection->userId = $member->userId;
-            //     // $reverseConnection->status = 'Accepted';
-            //     // $reverseConnection->save();
-            // }
 
             // Create and save TopsProfile
             $tops = new TopsProfile();
@@ -509,12 +354,6 @@ class CircleMemberController extends Controller
             if ($member->membershipType == 1) {
                 $payment->validity = now()->addYear()->format('d-m-Y');
             }
-
-            // if ($member->membershipType == 2) {
-            //     $payment->validity = now()->addYears(5)->format('d-m-Y');
-            // } elseif ($member->membershipType == 1) {
-            //     $payment->validity = now()->addYear()->format('d-m-Y');
-            // }
 
             $payment->paymentDate = $request->date;
             $payment->status = 'Active';
@@ -551,7 +390,7 @@ class CircleMemberController extends Controller
                 Mail::to($user->email)->send(new MemberSubscription($data));
             }
 
-            return redirect()->route('circlemember.index')->with('success', 'Circle Member Created Successfully!');
+            return redirect()->route('digitalMember.index')->with('success', 'Digital Member Created Successfully!');
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError(
@@ -598,7 +437,7 @@ class CircleMemberController extends Controller
     {
         try {
             $user = User::find($id);
-            $members = Member::where('status', 'Active')->orderBy('memberName', 'asc')->get();
+            $members = Member::where('status', 'Active')->orderBy('firstName', 'asc')->get();
             $member = Member::find($id);
             $countries = Country::where('status', 'Active')->orderBy('countryName', 'ASC')->get();
             $states = State::where('status', 'Active')->orderBy('stateName', 'ASC')->get();
@@ -607,16 +446,10 @@ class CircleMemberController extends Controller
             $billing = BillingAddress::where('memberId', $id)->first();
             $tops = TopsProfile::where('memberId', $id)->first();
             $user = Auth::user();
-            if ($user->hasRole('Circle Admin')) {
-                $circle = Circle::where('status', 'Active')->where('createdBy', $user->id)->orderBy('circleName', 'asc')->get();
-            } else {
-                $circle = Circle::where('status', 'Active')->orderBy('circleName', 'asc')->get();
-            }
             $businessCategory = BusinessCategory::where('status', 'Active')->orderBy('categoryName', 'asc')->get();
-            $membershipType = MembershipType::where('status', 'Active')->orderBy('membershipName', 'asc')->get();
-            $circles = Circle::where('status', 'Active')->orderBy('circleName', 'asc')->get();
+            $membershipType = MembershipType::where('status', 'Active')->orderBy('membershipType', 'asc')->get();
 
-            return view('admin.circlemember.edit', compact('countries', 'circles', 'members', 'membershipType', 'user', 'states', 'cities', 'member', 'contactDetails', 'billing', 'tops', 'circles', 'businessCategory'));
+            return view('admin.digitalmember.edit', compact('countries', 'members', 'membershipType', 'user', 'states', 'cities', 'member', 'contactDetails', 'billing', 'tops', 'businessCategory'));
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError(
@@ -634,27 +467,13 @@ class CircleMemberController extends Controller
         // return $request;
 
         try {
-            // return $request;
-            // Find the member
-            // return $member = $request->memberId;
-            // $memberId = $request->memberId;
             $member = $request->id;
-            // Update only the fields that have new values
-            //   return   $user = User::findOrFail($id);
-            //     $user->firstName = $request->firstName;
-            //     $user->lastName = $request->lastName;
-            //     // $user->email = $request->email;
-            //     $user->password = Hash::make($request->password);
-            //     $user->assignRole('Member');
-            //     $user->save();
 
             // Update the member
             $member = Member::findOrFail($member);
-            if ($request->has('circleIds')) {
-                $member->circleId = $request->circleIds;
-            }
+            $member->circleId = null;
             $member->title = $request->has('title') ? $request->title : $member->title;
-            $member->sponsoredBy = $request->has('memberId') ? ($request->memberId == 0 ? null : $request->memberId) : $member->sponsoredBy;
+            $member->sponsoredBy = null;
             $member->firstName = $request->has('firstName') ? $request->firstName : $member->firstName;
             $member->lastName = $request->has('lastName') ? $request->lastName : $member->lastName;
             $member->username = $request->has('username') ? $request->username : $member->username;
@@ -780,7 +599,7 @@ class CircleMemberController extends Controller
             $user->save();
 
 
-            return redirect()->route('circlemember.index')->with('success', 'Member Updated Successfully!');
+            return redirect()->route('digitalMember.index')->with('success', 'Digital Member Updated Successfully!');
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError(
@@ -837,7 +656,7 @@ class CircleMemberController extends Controller
                 $businessReference->save();
             }
 
-            return redirect()->route('circlemember.index')->with('success', 'Circle Member Deleted Successfully!');
+            return redirect()->route('digitalMember.index')->with('success', 'Circle Member Deleted Successfully!');
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError(
@@ -901,102 +720,6 @@ class CircleMemberController extends Controller
                 $request->fullUrl()
             );
             return view('servererror');
-        }
-    }
-
-    public function activity(Request $request)
-    {
-        try {
-            $circlecall = CircleCall::where('status', 'Active')
-                ->where('memberId', 'userId')
-                ->paginate(10);
-            return view('admin.circlemember.activity', compact('circlecall'));
-        } catch (\Throwable $th) {
-            // throw $th;
-            ErrorLogger::logError(
-                $th,
-                $request->fullUrl()
-            );
-            return view('servererror');
-        }
-    }
-
-    public function assignRole(Request $request)
-    {
-
-        // return $request();
-
-        try {
-            // Validate the incoming request
-            $request->validate([
-                'memberId' => 'required|exists:members,id',
-                'roleId' => 'required|exists:roles,id',
-            ]);
-
-            // Find the circle member
-            //   return  $member = CircleMember::findOrFail($request->memberId);
-
-            $member = Member::where('id', $request->memberId)->first();
-
-            // Find the role
-            $role = Role::findOrFail($request->roleId);
-
-            // Attach the role to the user (assuming the relationship is defined)
-            $member->user->roles()->attach($role);
-
-            return redirect()->back()->with('success', 'Role assigned successfully.');
-        } catch (\Throwable $th) {
-            // throw $th;
-            ErrorLogger::logError(
-                $th,
-                $request->fullUrl()
-            );
-
-            return view('servererror');
-        }
-    }
-
-    public function removeRole(Request $request)
-    {
-        try {
-            // Validate the incoming request
-            $request->validate([
-                'memberId' => 'required|exists:members,id',
-                'roleId' => 'required|exists:roles,id',
-            ]);
-
-            // Find the circle member
-            $member = Member::where('id', $request->memberId)->firstOrFail();
-
-            // Find the role
-            $role = Role::findOrFail($request->roleId);
-
-            // Detach the role from the user (assuming the relationship is defined)
-            $member->user->roles()->detach($role);
-
-            return redirect()->back()->with('success', 'Role removed successfully.');
-        } catch (\Throwable $th) {
-            // Log the error using the ErrorLogger utility
-            ErrorLogger::logError($th, $request->fullUrl());
-
-            // Redirect with an error message
-            return redirect()->back()->with('error', 'Failed to remove role.');
-        }
-    }
-
-
-    public function export(Request $request)
-    {
-        try {
-
-            $circleId = $request->input('circleId');
-
-            return Excel::download(new CircleMembersExport($circleId), 'circle_members.xlsx');
-        } catch (\Throwable $th) {
-            throw $th;
-            ErrorLogger::logError($th, $request->fullUrl());
-
-            return redirect()->back()->with('error', 'Failed to export data.');
         }
     }
 }

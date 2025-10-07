@@ -701,6 +701,7 @@ class HomeController extends Controller
         try {
             $query = $request->input('query');
             $members = Member::where('userId', '!=', Auth::user()->id)
+                ->where('cirlceId', '!=', null)
                 ->where('status', 'Active')
                 ->where(function ($q) use ($query) {
                     $q

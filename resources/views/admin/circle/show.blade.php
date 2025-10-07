@@ -53,6 +53,7 @@
                             <th>Venue</th>
                             <th>Time</th>
                             <th>Remarks</th>
+                            <th>Lock/Unlock</th>
                             <th>Status</th>
                             <th>Action</th>
                         </tr>
@@ -87,16 +88,20 @@
                                 <td>{{ $schedulesData->venue }}</td>
                                 <td>{{ $schedulesData->meetingTime }}</td>
                                 <td>{{ $schedulesData->remarks }}</td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="lock-{{ $schedulesData->id }}" {{ $schedulesData->lockUnlock === 'yes' ? 'checked' : '' }} onchange="updateLock({{ $schedulesData->id }}, this.checked)">
+                                    </div>
+                                </td>
+
                                 <td>{{ $schedulesData->status }}</td>
                                 <td>
-                                    <a href="{{ route('schedule.invitedList', $schedulesData->id) }}"
-                                        class="btn btn-info btn-sm btn-tooltip">
+                                    <a href="{{ route('schedule.invitedList', $schedulesData->id) }}" class="btn btn-info btn-sm btn-tooltip">
                                         <i class="bi bi-person-lines-fill"></i>
                                         <span class="btn-text">View Invited Peoples</span>
                                     </a>
 
-                                    <a href="{{ route('schedule.edit', $schedulesData->id) }}"
-                                        class="btn btn-bg-blue btn-sm btn-tooltip">
+                                    <a href="{{ route('schedule.edit', $schedulesData->id) }}" class="btn btn-bg-blue btn-sm btn-tooltip">
                                         <i class="bi bi-pen"></i>
                                         <span class="btn-text">Edit</span>
                                     </a>
@@ -118,5 +123,50 @@
             </div>
         </div>
     </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- JavaScript to handle Lock/Unlock toggle -->
+
+    <script>
+        function updateLock(id, isChecked) {
+            fetch(`/schedule/${id}/lockMeeting`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        lockUnlock: isChecked ? 'yes' : 'no'
+                    })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Updated!',
+                            text: data.lockUnlock === 'yes' ?
+                                'Meeting locked successfully.' :
+                                'Meeting unlocked successfully.',
+                            timer: 1500,
+                            showConfirmButton: false
+                        });
+                    }
+                })
+                .catch(err => {
+                    console.error('Error:', err);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Something went wrong!',
+                    });
+                });
+        }
+    </script>
+
+
 
 @endsection

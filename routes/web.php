@@ -69,6 +69,7 @@ use App\Http\Controllers\MessageController;
 use App\Http\Controllers\Admin\MemberFormController;
 use App\Models\User;
 use App\Exports\MemberReportExport;
+use App\Http\Controllers\Admin\DigitalMemberController;
 use Illuminate\Support\Facades\Crypt;
 
 /*
@@ -381,6 +382,9 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/get-user-roles/{userId}', [UserController::class, 'getUserRoles']);
 
     Route::get('/meetings/{circle}', [CircleController::class, 'showByCircle'])->name('meetings.by.circle');
+
+    Route::patch('/schedule/{id}/lockMeeting', [CircleController::class, 'lockUnlock'])->name('schedule.lockUnlock');
+
 
     // Route::post('/schedule/generate/{circle}', 'CircleController@generateMeetings')->name('schedule.generate');
 
@@ -857,6 +861,24 @@ Route::group(['middleware' => ['auth']], function () {
 
     // new card design
     Route::get('memberCard', [MemberCardController::class, 'card'])->name('memberCard.card');
+
+
+    //6-10-25 new development - digital member route
+    Route::get('/digitalMember/index', [DigitalMemberController::class, 'index'])->name('digitalMember.index');
+    Route::get('/filter-table-data', [DigitalMemberController::class, 'filterTableData'])->name('filterTableData');
+    Route::get('digitalMember/show/{id?}', [DigitalMemberController::class, 'show'])->name('digitalMember.show');
+    Route::get('digitalMember/create', [DigitalMemberController::class, 'create'])->name('digitalMember.create');
+    Route::post('digitalMember/store', [DigitalMemberController::class, 'store'])->name('digitalMember.store');
+    Route::get('digitalMember/edit/{id?}', [DigitalMemberController::class, 'edit'])->name('digitalMember.edit');
+    Route::post('digitalMember/update/{id?}', [DigitalMemberController::class, 'update'])->name('digitalMember.update');
+    Route::get('digitalMember/delete/{id?}', [DigitalMemberController::class, 'delete'])->name('digitalMember.delete');
+    Route::get('digitalMember/restoreMember/{id?}', [DigitalMemberController::class, 'restoreMember'])->name('digitalMember.restore');
+    Route::get('digitalMember/deletedMemberList', [DigitalMemberController::class, 'deletedMemberList'])->name('digitalMember.deletedMemberList');
+    Route::post('/get-membership-amount', [DigitalMemberController::class, 'getMembershipAmount'])->name('get.membership.amount');
+
+    //filter
+    Route::get('/circlemember/filter', [DigitalMemberController::class, 'filter'])->name('circlemember.filter');
+
 
 
 

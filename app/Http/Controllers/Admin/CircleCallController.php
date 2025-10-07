@@ -84,7 +84,7 @@ class CircleCallController extends Controller
             return view('servererror');
         }
     }
-    
+
     //For show single data
     public function view(Request $request, $id)
     {
@@ -310,13 +310,70 @@ class CircleCallController extends Controller
     // }
 
 
+    // public function store(Request $request)
+    // {
+    //     $validator = Validator::make($request->all(), [
+    //         'meetingPlace' => 'required',
+    //         'date' => 'required',
+    //         'remarks' => 'required',
+
+    //         // 'meetingImage' => 'mimes:jpeg,jpg,png,gif|max:5120', // Allow 5MB for upload
+    //     ]);
+
+    //     if ($validator->fails()) {
+    //         return redirect()->back()->withErrors($validator)->withInput();
+    //     }
+
+    //     try {
+    //         $circlecall = new CircleCall();
+    //         $circlecall->memberId = Auth::user()->id;
+    //         $circlecall->meetingPersonId = $request->meetingPersonId;
+    //         $circlecall->meetingPlace = $request->meetingPlace;
+
+    //         if ($request->hasFile('meetingImage')) {
+    //             $image = $request->file('meetingImage');
+    //             $imageName = time() . '.' . $image->getClientOriginalExtension();
+
+    //             // Create an image resource from the uploaded file
+    //             $img = imagecreatefromjpeg($image->getPathname());
+
+    //             // Resize image to a width of 800px, maintain aspect ratio
+    //             $width = 800;
+    //             $height = (imagesy($img) / imagesx($img)) * $width;
+    //             $resizedImg = imagescale($img, $width, $height);
+
+    //             // Save the resized image as a compressed JPEG
+    //             imagejpeg($resizedImg, public_path('meetingImage/' . $imageName), 75); // 75 for quality
+
+    //             // Check file size after compression
+    //             if (filesize(public_path('meetingImage/' . $imageName)) > 2 * 1024 * 1024) {
+    //                 return redirect()->back()->withErrors(['meetingImage' => 'Image could not be compressed below 2MB'])->withInput();
+    //             }
+
+    //             // Store image name in DB
+    //             $circlecall->meetingImage = $imageName;
+    //         }
+
+    //         $circlecall->date = $request->date;
+    //         $circlecall->remarks = $request->remarks;
+    //         $circlecall->status = 'Active';
+
+    //         $circlecall->save();
+
+    //         return redirect()->route('circlecall.index')->with('success', 'Data Added Successfully!');
+    //     } catch (\Throwable $th) {
+    //         ErrorLogger::logError($th, $request->fullUrl());
+    //         return view('servererror');
+    //     }
+    // }
+
+
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'meetingPlace' => 'required',
-            'date' => 'required',
+            'date' => 'required|date',
             'remarks' => 'required',
-            // 'meetingImage' => 'mimes:jpeg,jpg,png,gif|max:5120', // Allow 5MB for upload
         ]);
 
         if ($validator->fails()) {
@@ -324,6 +381,49 @@ class CircleCallController extends Controller
         }
 
         try {
+            // ✅ Member से circleId लो
+            $member = Member::where('userId', Auth::id())->first();
+
+            if (!$member) {
+                return redirect()->back()->withErrors(['error' => 'Member not found'])->withInput();
+            }
+
+            $circleId = $member->circleId;
+
+            // // ✅ Schedule से latest meeting निकालो
+            // $latestSchedule = Schedule::where('circleId', $circleId)
+            //     ->whereDate('date', '<=', Carbon::today()) // ✅ केवल आज या उससे पहले की date
+            //     ->orderBy('date', 'desc')
+            //     ->first();
+
+            // if ($latestSchedule) {
+            //     if ($latestSchedule->lockUnlock === 'yes') {
+            //         return redirect()->back()
+            //             ->with('error', 'You cannot create a IBM because the last meeting (' . $latestSchedule->date . ') is locked.')
+            //             ->withInput();
+            //     }
+            // }
+
+
+            // ✅ Latest locked meeting निकालो
+            $latestLockedMeeting = Schedule::where('circleId', $circleId)
+                ->where('lockUnlock', 'yes')
+                ->orderBy('date', 'desc')
+                ->first();
+
+            if ($latestLockedMeeting) {
+                $lockedDate = Carbon::parse($latestLockedMeeting->date);
+
+                // अगर user जो date भेज रहा है वो lockedDate से पहले या उसी दिन है → रोक दो
+                if (Carbon::parse($request->date)->lte($lockedDate)) {
+                    return redirect()->back()
+                        ->with('error', 'You cannot create an IBM on or before ' . $lockedDate->format('d-m-Y') . ' because that meeting is locked.')
+                        ->withInput();
+                }
+            }
+
+
+            // ✅ अब आपका पुराना code
             $circlecall = new CircleCall();
             $circlecall->memberId = Auth::user()->id;
             $circlecall->meetingPersonId = $request->meetingPersonId;
@@ -333,23 +433,18 @@ class CircleCallController extends Controller
                 $image = $request->file('meetingImage');
                 $imageName = time() . '.' . $image->getClientOriginalExtension();
 
-                // Create an image resource from the uploaded file
                 $img = imagecreatefromjpeg($image->getPathname());
 
-                // Resize image to a width of 800px, maintain aspect ratio
                 $width = 800;
                 $height = (imagesy($img) / imagesx($img)) * $width;
                 $resizedImg = imagescale($img, $width, $height);
 
-                // Save the resized image as a compressed JPEG
-                imagejpeg($resizedImg, public_path('meetingImage/' . $imageName), 75); // 75 for quality
+                imagejpeg($resizedImg, public_path('meetingImage/' . $imageName), 75);
 
-                // Check file size after compression
                 if (filesize(public_path('meetingImage/' . $imageName)) > 2 * 1024 * 1024) {
                     return redirect()->back()->withErrors(['meetingImage' => 'Image could not be compressed below 2MB'])->withInput();
                 }
 
-                // Store image name in DB
                 $circlecall->meetingImage = $imageName;
             }
 
@@ -365,6 +460,7 @@ class CircleCallController extends Controller
             return view('servererror');
         }
     }
+
 
 
     // public function store(Request $request)

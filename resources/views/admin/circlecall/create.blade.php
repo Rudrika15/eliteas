@@ -124,6 +124,13 @@
                         ?>
                         <input type="date" class="form-control" id="date" name="date" placeholder="Meeting Date" required min="{{ $lastDate }}" max="{{ $nearestDate }}" value="{{ old('date', $selectedDate) }}">
                         <label for="date">Date</label>
+
+
+                        @error('date')
+                            <div class="invalid-tooltip d-block">
+                                {{ $message }}
+                            </div>
+                        @enderror
                     </div>
                 </div>
 
@@ -143,6 +150,30 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    @if (session('error'))
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: '{{ session('error') }}',
+            });
+        </script>
+    @endif
+
+    @if (session('success'))
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: '{{ session('success') }}',
+            });
+        </script>
+    @endif
+
 
     <script>
         $(document).ready(function() {

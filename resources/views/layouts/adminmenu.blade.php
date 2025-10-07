@@ -274,6 +274,13 @@
 
 
 <li class="nav-item">
+    <a class="nav-link collapsed " href="{{ route('digitalMember.index') }}">
+        <i class="bi bi-plus-circle-dotted" style="color: #e76a35"></i>
+        <span>Digital Member List</span>
+    </a>
+</li>
+
+<li class="nav-item">
     <a class="nav-link collapsed " href="{{ route('circle.index') }}">
         <i class="bi bi-plus-circle-dotted" style="color: #e76a35"></i>
         <span>Circle List</span>
