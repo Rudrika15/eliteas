@@ -195,12 +195,6 @@
     </div>
 
 
-
-
-
-
-
-
     <div id="tabByOther" class="tab-content active" style="display: none;">
         <div class="d-flex justify-content-end align-items-center mb-2">
             {{-- <a href="{{ route('refGiver.create') }}" class="btn btn-bg-orange btn-sm mt-3 btn-tooltip">
@@ -221,7 +215,7 @@
                                 <a href="#" class="text-black" data-bs-toggle="dropdown"><i class="bi bi-three-dots-vertical"></i></a>
                                 <ul class="dropdown-menu">
                                     <li>
-                                        <a class="dropdown-item color-blue" href="{{ route('refGiver.edit', $refGiverData->id) }}" >
+                                        <a class="dropdown-item color-blue" href="{{ route('refGiver.edit', $refGiverData->id) }}">
                                             <i class="bi bi-pencil-square me-2"></i>Edit
                                         </a>
                                     </li>
@@ -311,37 +305,66 @@
                                 </div>
                             </div>
 
-                            <!-- Circle Dropdown -->
-                            <div class="mb-3">
+                            @if (auth()->user()->hasRole('Member'))
+                                <!-- Circle Dropdown -->
+                                <div class="mb-3">
+                                    <div class="col-md-12">
+                                        <label for="circleId" class="form-label fw-bold color-blue required">Circle <span class="text-danger">*</span></label>
+                                        {{-- <div class="form-floating"> --}}
+                                        <select class="form-select @error('circleId') is-invalid @enderror" id="circleId" name="circleId" required>
+                                            <option value="" selected disabled>Select Circle</option>
+                                            <option value="{{ old('circleId', auth()->user()->member->circleId) }}" selected>
+                                                {{ $circles->where('id', old('circleId', auth()->user()->member->circleId))->first()->circleName ?? '' }}
+                                            </option>
+                                            @foreach ($circles as $circle)
+                                                <option value="{{ $circle->id }}">{{ $circle->circleName }}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('circleId')
+                                            <div class="invalid-tooltip">This field is required.</div>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <!-- Member Dropdown -->
                                 <div class="col-md-12">
-                                    <label for="circleId" class="form-label fw-bold color-blue required">Circle <span class="text-danger">*</span></label>
+                                    <label for="memberId" class="form-label fw-bold color-blue required">Member <span class="text-danger">*</span></label>
                                     {{-- <div class="form-floating"> --}}
-                                    <select class="form-select @error('circleId') is-invalid @enderror" id="circleId" name="circleId" required>
-                                        <option value="" selected disabled>Select Circle</option>
-                                        <option value="{{ old('circleId', auth()->user()->member->circleId) }}" selected>
-                                            {{ $circles->where('id', old('circleId', auth()->user()->member->circleId))->first()->circleName ?? '' }}
-                                        </option>
-                                        @foreach ($circles as $circle)
-                                            <option value="{{ $circle->id }}">{{ $circle->circleName }}</option>
-                                        @endforeach
+                                    <select class="form-select @error('memberId') is-invalid @enderror" id="memberId" name="memberId" required>
+                                        <option value="" disabled>Select Member</option>
                                     </select>
-                                    @error('circleId')
+                                    @error('memberId')
                                         <div class="invalid-tooltip">This field is required.</div>
                                     @enderror
                                 </div>
-                            </div>
 
-                            <!-- Member Dropdown -->
-                            <div class="col-md-12">
-                                <label for="memberId" class="form-label fw-bold color-blue required">Member <span class="text-danger">*</span></label>
-                                {{-- <div class="form-floating"> --}}
-                                <select class="form-select @error('memberId') is-invalid @enderror" id="memberId" name="memberId" required>
-                                    <option value="" disabled>Select Member</option>
-                                </select>
-                                @error('memberId')
-                                    <div class="invalid-tooltip">This field is required.</div>
-                                @enderror
-                            </div>
+                            @endif
+
+                            {{-- For Digital Member Role --}}
+                            @if (auth()->user()->hasRole('Digital Member'))
+                                <!-- City Dropdown -->
+                                <div class="mb-3">
+                                    <label for="city" class="form-label fw-bold color-blue required">
+                                        City <span class="text-danger">*</span>
+                                    </label>
+                                    <select class="form-select" id="city" name="city" required>
+                                        <option value="">Select City</option>
+                                        @foreach ($cities as $city)
+                                            <option value="{{ $city->id }}">{{ $city->cityName }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <!-- Member Dropdown -->
+                                <div class="mb-3">
+                                    <label for="memberId" class="form-label fw-bold color-blue required">
+                                        Member <span class="text-danger">*</span>
+                                    </label>
+                                    <select class="form-select" id="memberId" name="memberId" required>
+                                        <option value="">Select Member</option>
+                                    </select>
+                                </div>
+                            @endif
 
 
                             <!-- Member Name (readonly) -->
@@ -439,7 +462,7 @@
 
 
 
-    <script>
+    {{-- <script>
         $(document).ready(function() {
             $('#deleteRefGiver{{ $refGiverData->id }}').click(function(e) {
                 e.preventDefault();
@@ -458,7 +481,7 @@
                 });
             });
         });
-    </script>
+    </script> --}}
 
 
     <script>
@@ -642,6 +665,96 @@
             });
         });
     </script>
+
+
+    <script>
+        $(document).ready(function() {
+            // Set up CSRF token for AJAX requests
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+
+            // Function to load members for a selected city
+            function loadMembersByCity(cityId) {
+                // Clear the member dropdown
+                $('#memberId').empty().append('<option value="" disabled>Select Member</option>');
+
+                if (cityId) {
+                    $.ajax({
+                        url: '/get-members-by-city/' + cityId,
+                        method: 'GET',
+                        data: {
+                            cityId: cityId
+                        },
+                        success: function(response) {
+                            // Controller returns a plain array of members. Support both formats.
+                            var members = Array.isArray(response) ? response : (response.members || []);
+
+                            if (members.length > 0) {
+                                members.forEach(function(member) {
+                                    $('#memberId').append(
+                                        '<option value="' + member.id +
+                                        '" data-user-id="' + (member.userId || member.id) +
+                                        '" data-first-name="' + (member.firstName || '') +
+                                        '" data-last-name="' + (member.lastName || '') + '">' +
+                                        ((member.firstName || '') + ' ' + (member.lastName || '')).trim() +
+                                        '</option>'
+                                    );
+                                });
+
+                                // Pre-select the authenticated member if exists in the list
+                                var defaultMemberId = '{{ auth()->user()->member->id ?? '' }}';
+                                if (defaultMemberId) {
+                                    $('#memberId').val(defaultMemberId).trigger('change');
+                                }
+                            } else {
+                                $('#memberId').append('<option value="">No Members Found</option>');
+                            }
+                        },
+                        error: function() {
+                            $('#memberId').append('<option value="">Error loading members</option>');
+                        }
+                    });
+                }
+            }
+
+            // Load members on page load if a city is selected by default
+            var defaultCityId = '{{ auth()->user()->member->cityId ?? '' }}';
+            if (defaultCityId) {
+                loadMembersByCity(defaultCityId);
+            }
+
+            // Handle city dropdown change event
+            $('#city').on('change', function() {
+                var cityId = $(this).val();
+                loadMembersByCity(cityId);
+            });
+
+            // Handle member dropdown change event
+            $('#memberId').on('change', function() {
+                var selectedOption = $(this).find('option:selected');
+                var memberId = selectedOption.val();
+                var userId = selectedOption.data('user-id');
+                var firstName = selectedOption.data('first-name');
+                var lastName = selectedOption.data('last-name');
+
+                if (memberId) {
+                    $('#meetingPersonId').val(userId);
+                    $('#meetingPersonName').val((firstName || '') + ' ' + (lastName || ''));
+                } else {
+                    $('#meetingPersonId').val('');
+                    $('#meetingPersonName').val('');
+                }
+
+                console.log('Selected Member ID:', memberId);
+                console.log('Selected Member User ID:', userId);
+                console.log('Selected Member Name:', (firstName || '') + ' ' + (lastName || ''));
+            });
+        });
+    </script>
+
 
 
 

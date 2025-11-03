@@ -307,33 +307,70 @@
 
                         <div class="card p-3 shadow-sm border-0 rounded">
                             <!-- Circle Dropdown -->
-                            <div class="mb-3">
-                                <label for="circleId" class="form-label fw-bold color-blue required">Circle <span class="text-danger">*</span></label>
-                                <select class="form-select @error('circleId') is-invalid @enderror" id="circleId" name="circleId" required>
-                                    <option value="" selected disabled>Select Circle</option>
-                                    <option value="{{ old('circleId', auth()->user()->member->circleId) }}" selected>
-                                        {{ $circles->where('id', old('circleId', auth()->user()->member->circleId))->first()->circleName ?? '' }}
-                                    </option>
-                                    @foreach ($circles as $circle)
-                                        <option value="{{ $circle->id }}">{{ $circle->circleName }}</option>
-                                    @endforeach
-                                </select>
-                                @error('circleId')
-                                    <div class="invalid-feedback">This field is required.</div>
-                                @enderror
-                            </div>
+                            {{-- For Member Role --}}
+                            @if (auth()->user()->hasRole('Member'))
+                                <!-- Circle Dropdown -->
+                                <div class="mb-3">
+                                    <label for="circleId" class="form-label fw-bold color-blue required">
+                                        Circle <span class="text-danger">*</span>
+                                    </label>
+                                    <select class="form-select @error('circleId') is-invalid @enderror" id="circleId" name="circleId" required>
+                                        <option value="" selected disabled>Select Circle</option>
+                                        <option value="{{ old('circleId', auth()->user()->member->circleId) }}" selected>
+                                            {{ $circles->where('id', old('circleId', auth()->user()->member->circleId))->first()->circleName ?? '' }}
+                                        </option>
+                                        @foreach ($circles as $circle)
+                                            <option value="{{ $circle->id }}">{{ $circle->circleName }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('circleId')
+                                        <div class="invalid-feedback">This field is required.</div>
+                                    @enderror
+                                </div>
 
-                            <!-- Member Dropdown -->
-                            <div class="mb-3">
-                                <label for="memberId" class="form-label fw-bold color-blue required">Member <span class="text-danger">*</span></label>
-                                <select class="form-select @error('memberId') is-invalid @enderror" id="memberId" name="memberId" required>
-                                    <option value="">Select Member</option>
-                                    <!-- Options will be populated dynamically -->
-                                </select>
-                                @error('memberId')
-                                    <div class="invalid-feedback">This field is required.</div>
-                                @enderror
-                            </div>
+                                <!-- Member Dropdown -->
+                                <div class="mb-3">
+                                    <label for="memberId" class="form-label fw-bold color-blue required">
+                                        Member <span class="text-danger">*</span>
+                                    </label>
+                                    <select class="form-select @error('memberId') is-invalid @enderror" id="memberId" name="memberId" required>
+                                        <option value="">Select Member</option>
+                                        @foreach ($circleMember as $member)
+                                            <option value="{{ $member->id }}">{{ $member->name }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('memberId')
+                                        <div class="invalid-feedback">This field is required.</div>
+                                    @enderror
+                                </div>
+                            @endif
+
+
+                            {{-- For Digital Member Role --}}
+                            @if (auth()->user()->hasRole('Digital Member'))
+                                <!-- City Dropdown -->
+                                <div class="mb-3">
+                                    <label for="city" class="form-label fw-bold color-blue required">
+                                        City <span class="text-danger">*</span>
+                                    </label>
+                                    <select class="form-select" id="city" name="city" required>
+                                        <option value="">Select City</option>
+                                        @foreach ($cities as $city)
+                                            <option value="{{ $city->id }}">{{ $city->cityName }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <!-- Member Dropdown -->
+                                <div class="mb-3">
+                                    <label for="memberId" class="form-label fw-bold color-blue required">
+                                        Member <span class="text-danger">*</span>
+                                    </label>
+                                    <select class="form-select" id="memberId" name="memberId" required>
+                                        <option value="">Select Member</option>
+                                    </select>
+                                </div>
+                            @endif
 
                             <!-- Meeting Person -->
                             <div class="mb-3">
@@ -421,6 +458,8 @@
             </div>
         </div>
     </div>
+
+
 
 
 
@@ -584,6 +623,102 @@
         });
     </script>
 
+    @if (auth()->user()->hasRole('Digital Member'))
+        {{-- script for digital member --}}
+        <script>
+            $(document).ready(function() {
+                console.log("✅ Document Ready");
+
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+
+                function loadMembers(cityId) {
+                    console.log("🏙️ loadMembers() called with cityId:", cityId);
+
+                    $('#memberId').empty().append('<option value="">Select Member</option>');
+
+                    if (cityId) {
+                        let url = '/get-members-by-city/' + cityId;
+                        console.log("🚀 Sending AJAX to:", url);
+
+                        $.ajax({
+                            url: url,
+                            method: 'GET',
+                            success: function(response) {
+                                console.log("✅ Response received:", response);
+                                console.log("🔢 Member count:", response?.length ?? 0);
+
+                                if (response && response.length > 0) {
+                                    response.forEach(function(member, index) {
+                                        console.log(`👤 Member [${index}]:`, member);
+                                        $('#memberId').append(
+                                            `<option value="${member.id}" 
+                                        data-user-id="${member.userId}" 
+                                        data-first-name="${member.firstName ?? ''}" 
+                                        data-last-name="${member.lastName ?? ''}">
+                                        ${(member.firstName ?? '')} ${(member.lastName ?? '')}
+                                    </option>`
+                                        );
+                                    });
+                                } else {
+                                    console.warn("⚠️ No members found for cityId:", cityId);
+                                    $('#memberId').append('<option value="">No Members Found</option>');
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                console.error("❌ AJAX Error:", {
+                                    status,
+                                    error,
+                                    responseText: xhr.responseText
+                                });
+                                $('#memberId').append('<option value="">Error loading members</option>');
+                            }
+                        });
+                    } else {
+                        console.warn("⚠️ No cityId provided");
+                    }
+                }
+
+                var defaultCityId = '{{ auth()->user()->member->city_id ?? '' }}';
+
+                if (defaultCityId) {
+                    loadMembers(defaultCityId);
+                }
+
+                $('#city').on('change', function() {
+                    var cityId = $(this).val();
+                    console.log("🏙️ City changed:", cityId);
+                    loadMembers(cityId);
+                });
+
+                $('#memberId').on('change', function() {
+                    var selected = $(this).find('option:selected');
+                    var memberId = selected.val();
+                    var userId = selected.data('user-id');
+                    var firstName = selected.data('first-name');
+                    var lastName = selected.data('last-name');
+
+                    console.log("👤 Member ID changed:", memberId);
+                    console.log("👤 Member User ID:", userId);
+                    console.log("👤 Member Name:", firstName + ' ' + lastName);
+
+
+                    if (memberId) {
+                        $('#meetingPersonId').val(userId);
+                        $('#meetingPersonName').val(firstName + ' ' + lastName);
+                    } else {
+                        $('#meetingPersonId').val('');
+                        $('#meetingPersonName').val('');
+                    }
+                });
+            });
+        </script>
+    @endif
+
+
 
     <script>
         document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -624,12 +759,5 @@
             })
         }
     </script>
-
-
-
-
-
-
-
 
 @endsection

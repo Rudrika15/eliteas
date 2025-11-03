@@ -14,7 +14,7 @@
 
             {{-- @include('circleMemberMaster') --}}
 
-            <div class="row mb-3 mt-3">
+            {{-- <div class="row mb-3 mt-3">
                 <!-- Circle Dropdown -->
                 <div class="col-md-6">
                     <div class="form-floating">
@@ -50,6 +50,82 @@
                         @enderror
                     </div>
                 </div>
+            </div> --}}
+
+
+            <div class="row mb-3 mt-3">
+
+                {{-- If user has "member" role --}}
+                @if (auth()->user()->hasRole('member'))
+                    <!-- Circle Dropdown -->
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <select class="form-select @error('circleId') is-invalid @enderror" id="circleId" name="circleId" required>
+                                <option value="" selected disabled>Select Circle</option>
+                                <option value="{{ old('circleId', auth()->user()->member->circleId) }}" selected>
+                                    {{ $circles->where('id', old('circleId', auth()->user()->member->circleId))->first()->circleName ?? '' }}
+                                </option>
+                                @foreach ($circles as $circle)
+                                    <option value="{{ $circle->id }}">{{ $circle->circleName }}</option>
+                                @endforeach
+                            </select>
+                            <label for="circleId">Circle</label>
+                            @error('circleId')
+                                <div class="invalid-tooltip">This field is required.</div>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <!-- Member Dropdown -->
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <select class="form-select @error('memberId') is-invalid @enderror" id="memberId" name="memberId" required>
+                                <option value="">Select Member</option>
+                                @foreach ($members as $member)
+                                    <option value="{{ $member->id }}">{{ $member->name }}</option>
+                                @endforeach
+                            </select>
+                            <label for="memberId">Member</label>
+                            @error('memberId')
+                                <div class="invalid-tooltip">This field is required.</div>
+                            @enderror
+                        </div>
+                    </div>
+                @endif
+
+
+                {{-- If user has "digital member" role --}}
+                @if (auth()->user()->hasRole('digital member'))
+                    <!-- City Dropdown -->
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <select class="form-select @error('city') is-invalid @enderror" id="city" name="city" required>
+                                <option value="">Select City</option>
+                                @foreach ($cities as $city)
+                                    <option value="{{ $city->id }}">{{ $city->cityName }}</option>
+                                @endforeach
+                            </select>
+                            <label for="city">City</label>
+                            @error('city')
+                                <div class="invalid-tooltip">This field is required.</div>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <!-- Member Dropdown -->
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <select class="form-select @error('memberId') is-invalid @enderror" id="memberId" name="memberId" required>
+                                <option value="">Select Member</option>
+                            </select>
+                            <label for="memberId">Member</label>
+                            @error('memberId')
+                                <div class="invalid-tooltip">This field is required.</div>
+                            @enderror
+                        </div>
+                    </div>
+                @endif
+
             </div>
 
             <div class="row mb-3 mt-3">
@@ -173,6 +249,33 @@
             });
         </script>
     @endif
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const cityDropdown = document.getElementById('city');
+            const memberDropdown = document.getElementById('memberId');
+
+            if (cityDropdown) {
+                cityDropdown.addEventListener('change', function() {
+                    const cityId = this.value;
+                    memberDropdown.innerHTML = '<option value="">Select Member</option>';
+
+                    if (cityId) {
+                        fetch(`/get-members-by-city/${cityId}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                data.forEach(member => {
+                                    const option = document.createElement('option');
+                                    option.value = member.id;
+                                    option.textContent = member.name;
+                                    memberDropdown.appendChild(option);
+                                });
+                            });
+                    }
+                });
+            }
+        });
+    </script>
 
 
     <script>

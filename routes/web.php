@@ -545,6 +545,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/connections/myConnections', [ConnectionController::class, 'myConnections'])->name('connection.myConnections');
     Route::get('/connections/circleList', [ConnectionController::class, 'circleList'])->name('connection.circleList');
     Route::get('/connections/categoryList', [ConnectionController::class, 'categoryList'])->name('connection.categoryList');
+    Route::get('/connections/digital-member-categoryList', [ConnectionController::class, 'categoryListForDigitalMember'])->name('connection.categoryListForDigitalMember');
     Route::get('/connections/myCircleConnections', [ConnectionController::class, 'myCircleConnections'])->name('connection.myCircleConnections');
     Route::get('/connections/accept/{id?}', [ConnectionController::class, 'accept'])->name('connection.accept');
     Route::get('/connections/reject/{id?}', [ConnectionController::class, 'reject'])->name('connection.reject');
@@ -876,10 +877,13 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('digitalMember/deletedMemberList', [DigitalMemberController::class, 'deletedMemberList'])->name('digitalMember.deletedMemberList');
     Route::post('/get-membership-amount', [DigitalMemberController::class, 'getMembershipAmount'])->name('get.membership.amount');
 
+    Route::get('/get-members-by-city/{cityId}', [CircleCallController::class, 'getMembersByCity'])->name('members.byCity');
+
     //filter
     Route::get('/circlemember/filter', [DigitalMemberController::class, 'filter'])->name('circlemember.filter');
 
-
+    Route::get('/admin/city-list', [ConnectionController::class, 'cityList'])->name('admin.city.list');
+    Route::get('/get-city-members/{cityId}', [ConnectionController::class, 'getCityMembers'])->name('get.city.members');
 
 
     // new design netwwork
@@ -897,7 +901,17 @@ Route::group(['middleware' => ['auth']], function () {
             ]);
         })->name('admin.circle.members');
     });
+
+
+    // network digital member
+
+    Route::get('/digital-member/cities', [App\Http\Controllers\Admin\ConnectionController::class, 'cityList'])
+        ->name('digital.member.cities.list');
 });
+
+
+//network digitalmember 
+
 
 
 //member form 

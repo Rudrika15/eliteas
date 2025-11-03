@@ -37,7 +37,7 @@
                                 <thead>
                                     <tr>
                                         {{-- <th>S.No</th> --}}
-                                        <th>Circle Member</th>
+                                        <th>Member</th>
                                         <th>Message</th>
                                         <th>Uploaded Date</th>
                                     </tr>
@@ -84,7 +84,7 @@
                             <table class="table table-bordered table-striped table-hover mb-5">
                                 <thead>
                                     <tr>
-                                        <th>Circle Member</th>
+                                        <th>Member</th>
                                         <th>Message</th>
                                         <th>Date</th>
                                         <th>Action</th>

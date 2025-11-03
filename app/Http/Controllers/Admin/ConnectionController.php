@@ -10,6 +10,7 @@ use App\Http\Controllers\Controller;
 use App\Models\BusinessCategory;
 use App\Models\Circle;
 use App\Models\CircleMeetingMembersBusiness;
+use App\Models\City;
 use Illuminate\Support\Facades\Auth;
 
 class ConnectionController extends Controller
@@ -109,6 +110,40 @@ class ConnectionController extends Controller
         }
     }
 
+    public function cityList(Request $request)
+    {
+        try {
+
+            $cities = City::where('status', 'Active')
+                ->orderBy('cityName', 'asc')
+                ->get();
+
+            $members = Member::where('status', 'Active')
+                ->where('circleId', null)
+                ->get();
+
+
+            return view('admin.connection.cityList', compact('cities', 'members'));
+        } catch (\Throwable $th) {
+            ErrorLogger::logError($th, request()->fullUrl());
+            return view('servererror');
+        }
+    }
+
+
+    public function getCityMembers($cityId)
+    {
+        try {
+            $members = Member::where('cityId', $cityId)
+                ->where('circleId', null)
+                ->where('status', 'Active')
+                ->get();
+
+            return view('admin.connection.digitalmember.member-cards', compact('members'))->render();
+        } catch (\Throwable $th) {
+            return response()->json(['error' => 'Something went wrong'], 500);
+        }
+    }
 
     // public function getMembers($circleId)
     // {
@@ -306,6 +341,33 @@ class ConnectionController extends Controller
             return view('servererror');
         }
     }
+
+    public function categoryListForDigitalMember()
+    {
+        try {
+            $categories = BusinessCategory::where('status', 'Active')
+                ->orderBy('categoryName', 'asc')
+                ->whereHas('members', function ($query) {
+                    $query->where('status', 'Active')
+                        ->whereNull('circleId');
+                })
+                ->withCount(['members' => function ($query) {
+                    $query->where('status', 'Active')
+                        ->whereNull('circleId');
+                }])
+                ->with(['members' => function ($query) {
+                    $query->where('status', 'Active')
+                        ->whereNull('circleId');
+                }])
+                ->get();
+
+            return view('admin.connection.categoryList', compact('categories'));
+        } catch (\Throwable $th) {
+            ErrorLogger::logError($th, request()->fullUrl());
+            return view('servererror');
+        }
+    }
+
 
     // public function showCategoryWiseMembers($id)
     // {

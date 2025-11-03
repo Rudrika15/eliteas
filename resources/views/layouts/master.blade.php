@@ -234,15 +234,14 @@
             @endrole
         </div>
 
-
-
-
-        <div class="ms-auto d-flex justify-content-end search-container">
-            <a class="search-form d-flex align-items-center" href="{{ route('search') }}">
-                <i class="fas fa-search search-icon"></i>
-                <input type="text" class="search-input" placeholder="Search Member or Circle Name">
-            </a>
-        </div>
+        @if (Auth::user()->hasRole('Member', 'Admin'))
+            <div class="ms-auto d-flex justify-content-end search-container">
+                <a class="search-form d-flex align-items-center" href="{{ route('search') }}">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" class="search-input" placeholder="Search Member or Circle Name">
+                </a>
+            </div>
+        @endif
 
 
         <style>
@@ -586,6 +585,12 @@
             @role('Member')
                 @include('layouts.membermenu')
             @endrole
+
+            @role('Digital Member')
+                @include('layouts.membermenu')
+            @endrole
+
+
 
             <!-- End Tables Nav -->
 

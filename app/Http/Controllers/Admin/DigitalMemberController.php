@@ -250,7 +250,7 @@ class DigitalMemberController extends Controller
             $user->email = $request->email;
             $user->contactNo = $request->mobileNo;
             $user->password = Hash::make($rowPassword);
-            $user->assignRole('Member');
+            $user->assignRole('Digital Member');
             $user->save();
 
             // Initialize cURL

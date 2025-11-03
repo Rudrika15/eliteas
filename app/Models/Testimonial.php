@@ -22,7 +22,7 @@ class Testimonial extends Model
     }
     public function receiver()
     {
-        return $this->hasOne(Member::class, 'id', 'memberId');
+        return $this->hasOne(Member::class, 'userId', 'memberId');
     }
 
     public function member()

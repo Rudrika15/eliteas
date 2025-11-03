@@ -257,6 +257,11 @@ class HomeController extends Controller
     {
         try {
 
+            if (Auth::user()->hasRole('Digital Member')) {
+                // Digital Member Dashboard View
+                return view('home')->with('message', 'Digital Member Dashboard Coming Soon...');
+            }
+
             $membersCount = Member::where('status', 'Active')->count();
             $circleCount = Circle::where('status', 'Active')->count();
             // $cityCount = Circle::where('status', 'Active')

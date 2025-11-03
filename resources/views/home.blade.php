@@ -10,7 +10,11 @@
     {{-- <div class="container"> --}}
 
 
-
+        @role('Digital Member')
+        
+        <p>Digital Member Dashboard Coming Soon...</p>
+        
+        @endrole
 
     @role('Member')
         {{-- Upcoming Circle Meeting start --}}
@@ -197,7 +201,7 @@
 
     {{-- Testimonial --}}
 
-    @include('components.testimonialSection')
+    {{-- @include('components.testimonialSection') --}}
 
     {{-- Testimonial End --}}
 
