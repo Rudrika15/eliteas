@@ -25,22 +25,24 @@
                         </div>
                     </div>
 
-                    <div class="row mt-3">
-                        <div class="col-md-12">
-                            <div class="form-floating">
-                                <select class="form-select circle-select" id="circleId_{{ $refGiverData->id }}" data-id="{{ $refGiverData->id }}" name="circleId" required>
-                                    <option value="" disabled>Select Circle</option>
-                                    <option value="{{ $refGiverData->circleId }}" selected>
-                                        {{ $refGiverData->members->circle->circleName ?? '-' }}
-                                    </option>
-                                    @foreach ($circles as $circle)
-                                        <option value="{{ $circle->id }}">{{ $circle->circleName }}</option>
-                                    @endforeach
-                                </select>
-                                <label for="circleId_{{ $refGiverData->id }}">Circle</label>
+                    @if (auth()->user()->hasRole('Member'))
+                        <div class="row mt-3">
+                            <div class="col-md-12">
+                                <div class="form-floating">
+                                    <select class="form-select circle-select" id="circleId_{{ $refGiverData->id }}" data-id="{{ $refGiverData->id }}" name="circleId" required>
+                                        <option value="" disabled>Select Circle</option>
+                                        <option value="{{ $refGiverData->circleId }}" selected>
+                                            {{ $refGiverData->members->circle->circleName ?? '-' }}
+                                        </option>
+                                        @foreach ($circles as $circle)
+                                            <option value="{{ $circle->id }}">{{ $circle->circleName }}</option>
+                                        @endforeach
+                                    </select>
+                                    <label for="circleId_{{ $refGiverData->id }}">Circle</label>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    @endif
 
                     <div class="row mt-3">
                         <div class="col-md-12">

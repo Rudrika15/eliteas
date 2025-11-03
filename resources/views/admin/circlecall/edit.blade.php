@@ -17,61 +17,89 @@
             {{-- @include('circleMemberMaster') --}}
 
             <div class="row mb-3 mt-3">
-                <!-- Circle Dropdown -->
-                <div class="col-md-6">
 
-                    <div class="form-floating">
-                        <select class="form-select @error('circleId') is-invalid @enderror" id="circleId" name="circleId" required>
-                            <option value="" selected disabled>Select Circle</option>
-                            @if (old('circleId'))
-                                <option value="{{ old('circleId') }}" selected>{{ old('circleName') }}</option>
-                            @else
-                                <option value="{{ $circlecall->circleId }}" selected>
-                                    {{ $circlecall->meetingPerson->circle->circleName }}
-                                </option>
-                            @endif
-                            @foreach ($circles as $circle)
-                                <option value="{{ $circle->id }}">{{ $circle->circleName }}</option>
-                            @endforeach
-                        </select>
-                        <label for="circleId">Circle</label>
-                        @error('circleId')
-                            <div class="invalid-tooltip">
-                                This field is required.
-                            </div>
-                        @enderror
+                @if (auth()->user()->hasRole('Member'))
+                    <!-- Circle Dropdown -->
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <select class="form-select @error('circleId') is-invalid @enderror" id="circleId" name="circleId" required>
+                                <option value="" disabled>Select Circle</option>
+                                @foreach ($circles as $circle)
+                                    <option value="{{ $circle->id }}" {{ $circle->id == old('circleId', $circlecall->meetingPerson->circleId) ? 'selected' : '' }}>
+                                        {{ $circle->circleName }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <label for="circleId">Circle</label>
+                            @error('circleId')
+                                <div class="invalid-tooltip">This field is required.</div>
+                            @enderror
+                        </div>
                     </div>
-                </div>
 
-                <!-- Member Dropdown -->
-                <div class="col-md-6">
-                    <div class="form-floating">
-                        <select class="form-select @error('memberId') is-invalid @enderror" id="memberId" name="memberId" required>
-                            <option value="" selected disabled>Select Member</option>
-                            @if (old('memberId'))
-                                <option value="{{ old('memberId') }}" selected> {{ old('memberName') }}</option>
-                            @else
-                                <option value="{{ $circlecall->meetingPersonId }}" selected>
-                                    {{ $circlecall->meetingPerson->firstName }} {{ $circlecall->meetingPerson->lastName }}
-                                </option>
-                            @endif
-                            <!-- Options will be populated dynamically -->
-                        </select>
-                        <label for="memberId">Member</label>
-                        @error('memberId')
-                            <div class="invalid-tooltip">
-                                This field is required.
-                            </div>
-                        @enderror
+                    <!-- Member Dropdown -->
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <select class="form-select @error('memberId') is-invalid @enderror" id="memberId" name="memberId" required>
+                                <option value="" disabled>Select Member</option>
+                                @foreach ($circleMember as $member)
+                                    <option value="{{ $member->id }}" {{ $member->id == old('memberId', $circlecall->meetingPersonId) ? 'selected' : '' }} data-user-id="{{ $member->userId ?? ($member->user_id ?? $member->id) }}" data-first-name="{{ $member->firstName ?? ($member->first_name ?? '') }}" data-last-name="{{ $member->lastName ?? ($member->last_name ?? '') }}">
+                                        {{ $member->firstName }} {{ $member->lastName }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <label for="memberId">Member</label>
+                            @error('memberId')
+                                <div class="invalid-tooltip">This field is required.</div>
+                            @enderror
+                        </div>
                     </div>
-                </div>
+                @endif
+
+                @if (auth()->user()->hasRole('Digital Member'))
+                    <!-- City Dropdown -->
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <select class="form-select @error('city') is-invalid @enderror" id="city" name="city" required>
+                                <option value="" disabled>Select City</option>
+                                @foreach ($cities as $city)
+                                    <option value="{{ $city->id }}" {{ $city->id == old('city', $circlecall->cityId) ? 'selected' : '' }}>
+                                        {{ $city->cityName }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <label for="city">City</label>
+                            @error('city')
+                                <div class="invalid-tooltip">This field is required.</div>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <!-- Member Dropdown -->
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <select class="form-select @error('memberId') is-invalid @enderror" id="memberId" name="memberId" required>
+                                <option value="" disabled>Select Member</option>
+                                @foreach ($circleMember as $member)
+                                    <option value="{{ $member->id }}" {{ (old('memberId') ? $member->id == old('memberId') : ($member->userId ?? ($member->user_id ?? '')) == $circlecall->meetingPersonId) ? 'selected' : '' }} data-user-id="{{ $member->userId ?? ($member->user_id ?? $member->id) }}" data-first-name="{{ $member->firstName ?? ($member->first_name ?? '') }}" data-last-name="{{ $member->lastName ?? ($member->last_name ?? '') }}">
+                                        {{ $member->firstName }} {{ $member->lastName }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <label for="memberId">Member</label>
+                            @error('memberId')
+                                <div class="invalid-tooltip">This field is required.</div>
+                            @enderror
+                        </div>
+                    </div>
+                @endif
             </div>
+
 
             <div class="row mb-3 mt-3">
                 <div class="col-md-6">
                     <div class="form-floating mt-3">
                         <input type="hidden" id="meetingPersonId" name="meetingPersonId" value="{{ $circlecall->meetingPersonId }}" required>
-
                         <input type="text" class="form-control " readonly id="meetingPersonName" placeholder="Select Member" value="{{ $circlecall->meetingPerson->firstName }} {{ $circlecall->meetingPerson->lastName }}" disabled required>
                         <label for="memberName">Meeting Person Name</label>
                         @error('meetingPersonId')
@@ -128,24 +156,35 @@
                     }
                 </script>
 
+                @if (auth()->user()->hasRole('Member'))
+                    @php
+                        // $scheduleDate is a Collection (from pluck). Safe check:
+                        $nearestDate = $scheduleDate->isNotEmpty() ? \Illuminate\Support\Carbon::parse($scheduleDate->min())->subDay()->format('Y-m-d') : \Illuminate\Support\Carbon::now()->format('Y-m-d');
 
-                <div class="col-md-6">
-                    <div class="form-floating mt-3">
-                        <?php
-                        use Illuminate\Support\Carbon;
-                        
-                        $nearestDate = $scheduleDate->min();
-                        $nearestDate = $nearestDate ? Carbon::parse($nearestDate)->subDay()->format('Y-m-d') : Carbon::now()->format('Y-m-d');
-                        $selectedDate = request()->input('date') ?? (Carbon::now()->format('Y-m-d') == $nearestDate ? Carbon::now()->format('Y-m-d') : $nearestDate);
-                        ?>
-                        <input type="date" class="form-control" id="date" name="date" placeholder="Meeting Date" required min="{{ $lastDate }}" max="{{ $nearestDate }}" value="{{ old('date', $circlecall->date) }}" disabled>
-                        <label for="date">Date</label>
+                        $selectedDate = old('date', $circlecall->date);
+                        $minDate = $lastDate ?? '';
+                    @endphp
+
+                    <div class="col-md-6">
+                        <div class="form-floating mt-3">
+                            <input type="date" class="form-control" id="date" name="date" placeholder="Meeting Date" required min="{{ $minDate }}" max="{{ $nearestDate }}" value="{{ $selectedDate }}">
+                            <label for="date">Date</label>
+                        </div>
                     </div>
-                </div>
+                @endif
+
+                @if (auth()->user()->hasRole('Digital Member'))
+                    <div class="col-md-6">
+                        <div class="form-floating mt-3">
+                            <input type="date" class="form-control" id="date" name="date" placeholder="Meeting Date" required value="{{ old('date', $circlecall->date) }}">
+                            <label for="date">Date</label>
+                        </div>
+                    </div>
+                @endif
 
                 <div class="col-md-6">
                     <div class="form-floating mt-3">
-                        <input type="text" class="form-control" id="remarks" name="remarks" placeholder="Remarks" required value="{{ old('remarks', $circlecall->remarks) }}">
+                        <input type="text" class="form-control" id="remarks" name="remarks" required placeholder="Remarks" value="{{ old('remarks', $circlecall->remarks) }}">
                         <label for="remarks">Remarks</label>
                     </div>
                 </div>
@@ -184,11 +223,11 @@
                         success: function(response) {
                             if (response.members && response.members.length > 0) {
                                 response.members.forEach(function(member) {
-                                    $('#memberId').append('<option value="' + member.id +
-                                        '" data-user-id="' + member.userId +
-                                        '" data-first-name="' + member.firstName +
-                                        '" data-last-name="' + member.lastName + '">' +
-                                        member.firstName + ' ' + member.lastName +
+                                    $('#memberId').append('<option value="' + (member.id ?? '') +
+                                        '" data-user-id="' + (member.userId ?? member.user_id ?? member.id ?? '') +
+                                        '" data-first-name="' + (member.firstName ?? member.first_name ?? '') +
+                                        '" data-last-name="' + (member.lastName ?? member.last_name ?? '') + '">' +
+                                        (((member.firstName ?? member.first_name ?? '') + ' ' + (member.lastName ?? member.last_name ?? '')).trim()) +
                                         '</option>');
                                 });
 
@@ -211,14 +250,19 @@
             $('#memberId').on('change', function() {
                 var selectedOption = $(this).find('option:selected');
                 var memberId = selectedOption.val();
-                var userId = selectedOption.data('user-id');
+                var userId = selectedOption.data('user-id') || memberId;
                 var firstName = selectedOption.data('first-name');
                 var lastName = selectedOption.data('last-name');
 
+                var displayName = ((firstName ? firstName : '') + ' ' + (lastName ? lastName : '')).trim();
+                if (!displayName) {
+                    displayName = selectedOption.text().trim();
+                }
+
                 // Check if a valid member is selected
                 if (memberId) {
-                    $('#meetingPersonId').val(userId); // Set the correct userId
-                    $('#meetingPersonName').val(firstName + ' ' + lastName); // Set the name
+                    $('#meetingPersonId').val(userId); // Use userId if available, fallback to memberId
+                    $('#meetingPersonName').val(displayName); // Use data attributes or fallback to option text
                 } else {
                     $('#meetingPersonId').val(''); // Clear the fields if no member is selected
                     $('#meetingPersonName').val('');
@@ -245,10 +289,103 @@
     </script>
 
 
+    <script>
+        $(document).ready(function() {
+            console.log("✅ Document Ready");
+
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+
+            function loadMembers(cityId) {
+                console.log("🏙️ loadMembers() called with cityId:", cityId);
+
+                $('#memberId').empty().append('<option value="">Select Member</option>');
+
+                if (cityId) {
+                    let url = '/get-members-by-city/' + cityId;
+                    console.log("🚀 Sending AJAX to:", url);
+
+                    $.ajax({
+                        url: url,
+                        method: 'GET',
+                        success: function(response) {
+                            console.log("✅ Response received:", response);
+                            console.log("🔢 Member count:", response?.length ?? 0);
+
+                            if (response && response.length > 0) {
+                                response.forEach(function(member, index) {
+                                    console.log(`👤 Member [${index}]:`, member);
+                                    $('#memberId').append(
+                                        `<option value="${member.id ?? ''}"
+                                    data-user-id="${member.userId ?? member.user_id ?? member.id ?? ''}"
+                                    data-first-name="${member.firstName ?? member.first_name ?? ''}"
+                                    data-last-name="${member.lastName ?? member.last_name ?? ''}">
+                                    ${(member.firstName ?? member.first_name ?? '')} ${(member.lastName ?? member.last_name ?? '')}
+                                </option>`
+                                    );
+                                });
+                            } else {
+                                console.warn("⚠️ No members found for cityId:", cityId);
+                                $('#memberId').append('<option value="">No Members Found</option>');
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error("❌ AJAX Error:", {
+                                status,
+                                error,
+                                responseText: xhr.responseText
+                            });
+                            $('#memberId').append('<option value="">Error loading members</option>');
+                        }
+                    });
+                } else {
+                    console.warn("⚠️ No cityId provided");
+                }
+            }
+
+            var defaultCityId = '{{ auth()->user()->member->city_id ?? '' }}';
+
+            if (defaultCityId) {
+                loadMembers(defaultCityId);
+            }
+
+            $('#city').on('change', function() {
+                var cityId = $(this).val();
+                console.log("🏙️ City changed:", cityId);
+                loadMembers(cityId);
+            });
+
+            $('#memberId').on('change', function() {
+                var selected = $(this).find('option:selected');
+                var memberId = selected.val();
+                var userId = selected.data('user-id') || memberId;
+                var firstName = selected.data('first-name');
+                var lastName = selected.data('last-name');
+
+                var displayName = ((firstName ? firstName : '') + ' ' + (lastName ? lastName : '')).trim();
+                if (!displayName) {
+                    displayName = selected.text().trim();
+                }
+
+                if (memberId) {
+                    $('#meetingPersonId').val(userId);
+                    $('#meetingPersonName').val(displayName);
+                } else {
+                    $('#meetingPersonId').val('');
+                    $('#meetingPersonName').val('');
+                }
+            });
+        });
+    </script>
+
+
 
     <script>
         $(document).ready(function() {
-            $('#circlecallForm').validate({
+            $('#callForm').validate({
                 rules: {
                     meetingPersonId: {
                         required: true

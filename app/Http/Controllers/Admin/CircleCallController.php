@@ -13,6 +13,7 @@ use App\Models\CircleMember;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
+use App\Models\City;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Intervention\Image\Facades\Image;
@@ -40,6 +41,52 @@ class CircleCallController extends Controller
     }
 
 
+    // public function index(Request $request)
+    // {
+    //     try {
+    //         $circlecall = CircleCall::with('member')
+    //             ->where('memberId', Auth::user()->id)
+    //             ->with('meetingPerson')
+    //             ->where('status', 'Active')
+    //             ->orderBy('id', 'DESC')
+    //             ->paginate(10);
+
+    //         $callWith = CircleCall::with('member')
+    //             ->where('meetingPersonId', Auth::user()->id)
+    //             ->with('member')
+    //             ->where('status', 'Active')
+    //             ->orderBy('id', 'DESC')
+    //             ->paginate(10);
+
+
+    //         $circles = Circle::where('status', 'Active')->orderBy('circleName', 'asc')->get();
+
+    //         $circleMember = Member::with('circle')
+    //             ->where('status', 'Active')
+    //             ->get(); // Ensure 'circleId' is included
+
+
+    //         // return $scheduleDate = Schedule::where('circleId', Auth::user()->member->circle->id)->where('status', 'Active')->get(['date']);
+    //         $scheduleDate = Schedule::where('circleId', Auth::user()->member->circle->id)
+    //             ->where('status', 'Active')
+    //             ->where('date')
+    //             ->pluck('date'); // Pluck all 'date' values from the query result
+
+    //         $lastDate = Schedule::where('circleId', Auth::user()->member->circle->id)
+    //             ->where('date', '<', now())
+    //             ->orderBy('date', 'desc')
+    //             ->pluck('date')
+    //             ->first();
+
+    //         return view('admin.circlecall.index', compact('circlecall', 'callWith', 'circles', 'scheduleDate', 'lastDate', 'circleMember'));
+    //     } catch (\Throwable $th) {
+    //         // throw $th;
+    //         ErrorLogger::logError($th, $request->fullUrl());
+    //         return view('servererror');
+    //     }
+    // }
+
+
     public function index(Request $request)
     {
         try {
@@ -57,33 +104,74 @@ class CircleCallController extends Controller
                 ->orderBy('id', 'DESC')
                 ->paginate(10);
 
+            // ✅ If user has "Member" role
+            if (Auth::user()->hasRole('Member')) {
 
-            $circles = Circle::where('status', 'Active')->orderBy('circleName', 'asc')->get();
+                $circles = Circle::where('status', 'Active')
+                    ->orderBy('circleName', 'asc')
+                    ->get();
 
-            $circleMember = Member::with('circle')
-                ->where('status', 'Active')
-                ->get(); // Ensure 'circleId' is included
+                $circleMember = Member::with('circle')
+                    ->where(function ($query) {
+                        $query->where('status', 'Active')
+                            ->orWhere('firstName', 'UBN');
+                    })
+                    ->orderBy('firstName', 'asc')
+                    ->get();
 
 
-            // return $scheduleDate = Schedule::where('circleId', Auth::user()->member->circle->id)->where('status', 'Active')->get(['date']);
-            $scheduleDate = Schedule::where('circleId', Auth::user()->member->circle->id)
-                ->where('status', 'Active')
-                ->where('date')
-                ->pluck('date'); // Pluck all 'date' values from the query result
 
-            $lastDate = Schedule::where('circleId', Auth::user()->member->circle->id)
-                ->where('date', '<', now())
-                ->orderBy('date', 'desc')
-                ->pluck('date')
-                ->first();
+                $scheduleDate = Schedule::where('circleId', Auth::user()->member->circle->id)
+                    ->where('status', 'Active')
+                    ->pluck('date');
 
-            return view('admin.circlecall.index', compact('circlecall', 'callWith', 'circles', 'scheduleDate', 'lastDate', 'circleMember'));
+                $lastDate = Schedule::where('circleId', Auth::user()->member->circle->id)
+                    ->where('date', '<', now())
+                    ->orderBy('date', 'desc')
+                    ->pluck('date')
+                    ->first();
+
+                return view('admin.circlecall.index', compact(
+                    'circlecall',
+                    'callWith',
+                    'circles',
+                    'scheduleDate',
+                    'lastDate',
+                    'circleMember'
+                ));
+            }
+
+            // ✅ If user has "Digital Member" role
+            elseif (Auth::user()->hasRole('Digital Member')) {
+
+                $userCityId = Auth::user()->member->cityId;
+
+                $circleMember = Member::whereNull('circleId')
+                    ->where('cityId', $userCityId)
+                    ->where('status', 'Active')
+                    ->get();
+
+                $cities = City::where('status', 'Active')
+                    ->orderBy('cityName', 'asc')
+                    ->get();
+
+                return view('admin.circlecall.index', compact(
+                    'cities',
+                    'circlecall',
+                    'callWith',
+                    'circleMember'
+                ));
+            }
+
+            // Default unauthorized
+            return redirect()->back()->with('error', 'Unauthorized access.');
         } catch (\Throwable $th) {
-            // throw $th;
             ErrorLogger::logError($th, $request->fullUrl());
             return view('servererror');
         }
     }
+
+
 
     //For show single data
     public function view(Request $request, $id)
@@ -106,9 +194,12 @@ class CircleCallController extends Controller
             $circles = Circle::where('status', 'Active')->orderBy('circleName', 'asc')->get();
 
             $circleMember = Member::with('circle')
-                ->where('status', 'Active')
-                ->orderBy('circleName', 'asc')
-                ->get(); // Ensure 'circleId' is included
+                ->where(function ($query) {
+                    $query->where('status', 'Active')
+                        ->orWhere('firstName', 'UBN');
+                })
+                ->orderBy('firstName', 'asc')
+                ->get();
 
 
             // return $scheduleDate = Schedule::where('circleId', Auth::user()->member->circle->id)->where('status', 'Active')->get(['date']);
@@ -135,23 +226,43 @@ class CircleCallController extends Controller
     }
 
 
+    // public function getMembersByCircle(Request $request)
+    // {
+    //     $circleId = $request->input('circleId');
+
+    //     if ($circleId) {
+    //         $members = Member::where('circleId', $circleId)
+    //             ->with('user')
+    //             ->where('status', 'Active')
+    //             ->orderBy('firstName', 'asc')
+    //             ->where('userId', '!=', Auth::id())
+    //             ->get(['id', 'userId', 'firstName', 'lastName']); // Adjust fields as needed
+
+    //         return response()->json(['members' => $members]);
+    //     }
+
+    //     return response()->json(['members' => []]);
+    // }
+
+
     public function getMembersByCircle(Request $request)
     {
-        $circleId = $request->input('circleId');
+        $circleId = $request->circleId;
 
-        if ($circleId) {
-            $members = Member::where('circleId', $circleId)
-                ->with('user')
-                ->where('status', 'Active')
-                ->orderBy('firstName', 'asc')
-                ->where('userId', '!=', Auth::id())
-                ->get(['id', 'userId', 'firstName', 'lastName']); // Adjust fields as needed
+        $members = Member::with('circle')
+            ->where(function ($query) use ($circleId) {
+                $query->where('circleId', $circleId)
+                    ->where('status', 'Active')
+                    ->orWhere('firstName', 'UBN'); // always include UBN
+            })
+            ->orderBy('firstName', 'asc')
+            ->get();
 
-            return response()->json(['members' => $members]);
-        }
-
-        return response()->json(['members' => []]);
+        return response()->json([
+            'members' => $members
+        ]);
     }
+
 
 
 
@@ -422,7 +533,6 @@ class CircleCallController extends Controller
                 }
             }
 
-
             // ✅ अब आपका पुराना code
             $circlecall = new CircleCall();
             $circlecall->memberId = Auth::user()->id;
@@ -524,37 +634,115 @@ class CircleCallController extends Controller
 
 
 
+    // public function edit(Request $request, $id)
+    // {
+    //     try {
+
+
+    //         if (Auth::user()->role == 'Member') {
+
+    //             $circlecall = CircleCall::find($id);
+    //             $member = Member::where('status', '!=', 'Deleted')->orderBy('firstName', 'asc')->get();
+    //             $circleMember = CircleMember::where('status', '!=', 'Deleted')->get();
+    //             $circles = Circle::where('status', 'Active')->orderBy('circleName', 'asc')->get();
+
+    //             // Fetch all 'date' values from the query result
+    //             $scheduleDate = Schedule::where('circleId', Auth::user()->member->circle->id)
+    //                 ->where('status', 'Active')
+    //                 ->pluck('date');
+
+    //             // Fetch the most recent date before the current date
+    //             $lastDate = Schedule::where('circleId', Auth::user()->member->circle->id)
+    //                 ->where('date', '<', now())
+    //                 ->orderBy('date', 'desc')
+    //                 ->pluck('date')
+    //                 ->first();
+    //         }
+
+
+    //         if (Auth::user()->role == 'Digital Member') {
+    //             $circlecall = CircleCall::find($id);
+    //             $member = Member::where('status', '!=', 'Deleted')->where('circleId', null)->orderBy('firstName', 'asc')->get();
+    //         }
+
+    //         return view('admin.circlecall.edit', compact('circlecall', 'circlecall', 'circles', 'scheduleDate', 'lastDate', 'circleMember', 'member'));
+    //         // return view('admin.circlecall._edit_form', compact('circlecall', 'circles', 'scheduleDate', 'lastDate', 'circleMember', 'member'));
+    //     } catch (\Throwable $th) {
+    //         // Log the error using the ErrorLogger utility
+    //         ErrorLogger::logError($th, $request->fullUrl());
+
+    //         // Return a custom error view
+    //         return view('servererror');
+    //     }
+    // }
+
+
     public function edit(Request $request, $id)
     {
         try {
+
+            Auth::user()->id;
+
             $circlecall = CircleCall::find($id);
-            $member = Member::where('status', '!=', 'Deleted')->orderBy('firstName', 'asc')->get();
-            $circleMember = CircleMember::where('status', '!=', 'Deleted')->get();
-            $circles = Circle::where('status', 'Active')->orderBy('circleName', 'asc')->get();
 
+            if (!$circlecall) {
+                return redirect()->back()->with('error', 'Circle Call not found.');
+            }
 
-            // Fetch all 'date' values from the query result
-            $scheduleDate = Schedule::where('circleId', Auth::user()->member->circle->id)
-                ->where('status', 'Active')
-                ->pluck('date');
+            if (Auth::user()->hasRole('Member')) {
+                $member = Member::where('status', '!=', 'Deleted')
+                    ->orderBy('firstName', 'asc')
+                    ->get();
 
-            // Fetch the most recent date before the current date
-            $lastDate = Schedule::where('circleId', Auth::user()->member->circle->id)
-                ->where('date', '<', now())
-                ->orderBy('date', 'desc')
-                ->pluck('date')
-                ->first();
+                $circleMember = CircleMember::where('status', '!=', 'Deleted')->get();
 
-            return view('admin.circlecall.edit', compact('circlecall', 'circles', 'scheduleDate', 'lastDate', 'circleMember', 'member'));
-            // return view('admin.circlecall._edit_form', compact('circlecall', 'circles', 'scheduleDate', 'lastDate', 'circleMember', 'member'));
+                $circles = Circle::where('status', 'Active')
+                    ->orderBy('circleName', 'asc')
+                    ->get();
+
+                $scheduleDate = Schedule::where('circleId', Auth::user()->member->circle->id)
+                    ->where('status', 'Active')
+                    ->pluck('date');
+
+                $lastDate = Schedule::where('circleId', Auth::user()->member->circle->id)
+                    ->where('date', '<', now())
+                    ->orderBy('date', 'desc')
+                    ->pluck('date')
+                    ->first();
+
+                return view('admin.circlecall.edit', compact(
+                    'circlecall',
+                    'circles',
+                    'scheduleDate',
+                    'lastDate',
+                    'circleMember',
+                    'member'
+                ));
+            }
+
+            if (Auth::user()->hasRole('Digital Member')) {
+                $circleMember = Member::where('status', 'Active')
+                    ->where('userId', '!=', Auth::user()->id)
+                    ->whereNull('circleId')
+                    ->orderBy('firstName', 'asc')
+                    ->get();
+
+                $cities = City::where('status', 'Active')
+                    ->orderBy('cityName', 'asc')
+                    ->get();
+
+                return view('admin.circlecall.edit', compact('circlecall', 'circleMember', 'cities'));
+            }
+
+            // Optional: fallback for other roles
+            return redirect()->back()->with('error', 'Unauthorized access.');
         } catch (\Throwable $th) {
-            // Log the error using the ErrorLogger utility
             ErrorLogger::logError($th, $request->fullUrl());
-
-            // Return a custom error view
             return view('servererror');
         }
     }
+
+
 
 
     public function update(Request $request)
@@ -565,7 +753,7 @@ class CircleCallController extends Controller
                 'meetingPlace' => 'required|regex:/^([a-zA-Z]+)(\s[a-zA-Z]+)*$/',
                 'date' => 'required',
                 'remarks' => 'required',
-                'meetingImage' => 'mimes:jpeg,jpg,png,gif|max:2048',
+                // 'meetingImage' => 'mimes:jpeg,jpg,png,gif|max:2048',
             ]);
 
             $id = $request->id;
@@ -640,6 +828,23 @@ class CircleCallController extends Controller
                     Log::error('General error sending to token: ' . $user->fcm_token . '. Error: ' . $e->getMessage());
                 }
             }
+        }
+    }
+
+    //digital member functions 
+
+    public function getMembersByCity($cityId)
+    {
+        try {
+            $members = Member::where('status', 'Active')
+                ->where('userId', '!=', Auth::id())
+                ->where('circleId', null)
+                ->where('cityId', $cityId)
+                ->get(['id', 'userId', 'firstName', 'lastName']);
+
+            return response()->json($members);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Something went wrong'], 500);
         }
     }
 }

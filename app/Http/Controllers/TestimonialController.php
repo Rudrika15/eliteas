@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Circle;
+use App\Models\City;
 use Carbon\Carbon;
 use App\Models\Member;
 use App\Utils\ErrorLogger;
@@ -36,7 +38,7 @@ class TestimonialController extends Controller
                 ->where('status', 'Active')
                 ->paginate(10);
 
-            $myTestimonials = Testimonial::where('userId', Auth::user()->id)
+           $myTestimonials = Testimonial::where('userId', Auth::user()->id)
                 ->with('receiver')
                 ->where('status', 'Active')
                 ->paginate(10);
@@ -72,9 +74,54 @@ class TestimonialController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    // public function create()
+    // {
+
+
+    //     $members = Member::where('status', 'Active')
+    //         ->where('id', '!=', Auth::user()->member->id)
+    //         ->get();
+
+
+    //     return view('testimonial.create');
+    // }
+
+
+    public function create(Request $request)
     {
-        return view('testimonial.create');
+        try {
+
+            // For normal Member
+            if (auth()->user()->hasRole('Member')) {
+
+
+                $circles = Circle::where('status', 'Active')->orderBy('circleName', 'ASC')->get();
+
+                $circleMember = Member::with('circle')
+                    ->where('status', 'Active')
+                    ->orderBy('firstName', 'ASC')
+                    ->get();
+
+                return view('testimonial.create', compact('circles', 'circleMember'));
+            }
+
+            // For Digital Member
+            if (auth()->user()->hasRole('Digital Member')) {
+
+                $cities = City::where('status', 'Active')->orderBy('cityName', 'ASC')->get();
+
+                $members = Member::where('status', 'Active')
+                    ->where('id', '!=', Auth::user()->member->id)
+                    ->where('circleId', null)
+                    ->orderBy('firstName', 'ASC')
+                    ->get();
+
+                return view('testimonial.create', compact('cities', 'members'));
+            }
+        } catch (\Throwable $th) {
+            ErrorLogger::logError($th, $request->fullUrl());
+            return view('servererror');
+        }
     }
 
     /**
@@ -114,7 +161,33 @@ class TestimonialController extends Controller
         try {
             $myTestimonial = Testimonial::findOrFail($id);
 
-            return view('testimonial.edit', compact('myTestimonial'));
+            if (auth()->user()->hasRole('Member')) {
+
+
+                $circles = Circle::where('status', 'Active')->orderBy('circleName', 'ASC')->get();
+
+                $circleMember = Member::with('circle')
+                    ->where('status', 'Active')
+                    ->orderBy('firstName', 'ASC')
+                    ->get();
+
+                return view('testimonial.edit', compact('circles', 'circleMember', 'myTestimonial') );
+            }
+
+            // For Digital Member
+            if (auth()->user()->hasRole('Digital Member')) {
+
+                $cities = City::where('status', 'Active')->orderBy('cityName', 'ASC')->get();
+
+                $members = Member::where('status', 'Active')
+                    ->where('id', '!=', Auth::user()->member->id)
+                    ->where('circleId', null)
+                    ->orderBy('firstName', 'ASC')
+                    ->get();
+
+                return view('testimonial.edit', compact('cities', 'members', 'myTestimonial'));
+            }
+
         } catch (\Throwable $th) {
             // Log the error
             ErrorLogger::logError($th, request()->fullUrl());

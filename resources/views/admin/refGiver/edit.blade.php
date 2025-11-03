@@ -47,14 +47,12 @@
             <hr class="mb-5">
 
             <!-- Floating Labels Form -->
-            <form class="m-3 needs-validation" id="meetingMemberRefForm" enctype="multipart/form-data" method="post"
-                action="{{ route('refGiver.update', $refGiver->id) }}" novalidate>
+            <form class="m-3 needs-validation" id="meetingMemberRefForm" enctype="multipart/form-data" method="post" action="{{ route('refGiver.update', $refGiver->id) }}" novalidate>
                 @csrf
                 <div class="row">
                     <div class="col-sm-6">
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="group" id="internal" value="internal"
-                                checked="">
+                            <input class="form-check-input" type="radio" name="group" id="internal" value="internal" checked="">
                             <label class="form-check-label" for="internal">
                                 Internal
                             </label>
@@ -62,8 +60,7 @@
                     </div>
                     <div class="col-sm-6">
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="group" id="external" value="external"
-                                {{ $refGiver->contactName ? 'checked' : '' }}>
+                            <input class="form-check-input" type="radio" name="group" id="external" value="external" {{ $refGiver->contactName ? 'checked' : '' }}>
                             <label class="form-check-label" for="external">
                                 External
                             </label>
@@ -80,42 +77,66 @@
 
                 <div class="row mb-3 mt-3">
                     <!-- Circle Dropdown -->
-                    <div class="col-md-6">
+                    @if (auth()->user()->hasRole('Member'))
+                        <div class="col-md-6">
 
-                        <div class="form-floating">
-                            <select class="form-select @error('circleId') is-invalid @enderror" id="circleId"
-                                name="circleId" required>
-                                <option value="" selected disabled>Select Circle</option>
-                                @if (old('circleId'))
-                                    <option value="{{ old('circleId') }}" selected>{{ old('circleName') }}</option>
-                                @else
-                                    <option value="{{ $refGiver->circleId }}" selected>
-                                        {{ $refGiver->members->circle->circleName ?? '-' }}
-                                    </option>
-                                @endif
-                                @foreach ($circles as $circle)
-                                    <option value="{{ $circle->id }}">{{ $circle->circleName }}</option>
-                                @endforeach
-                            </select>
-                            <label for="circleId">Circle</label>
-                            @error('circleId')
-                                <div class="invalid-tooltip">
-                                    This field is required.
-                                </div>
-                            @enderror
+                            <div class="form-floating">
+                                <select class="form-select @error('circleId') is-invalid @enderror" id="circleId" name="circleId" required>
+                                    <option value="" selected disabled>Select Circle</option>
+                                    @if (old('circleId'))
+                                        <option value="{{ old('circleId') }}" selected>{{ old('circleName') }}</option>
+                                    @else
+                                        <option value="{{ $refGiver->circleId }}" selected>
+                                            {{ $refGiver->members->circle->circleName ?? '-' }}
+                                        </option>
+                                    @endif
+                                    @foreach ($circles as $circle)
+                                        <option value="{{ $circle->id }}">{{ $circle->circleName }}</option>
+                                    @endforeach
+                                </select>
+                                <label for="circleId">Circle</label>
+                                @error('circleId')
+                                    <div class="invalid-tooltip">
+                                        This field is required.
+                                    </div>
+                                @enderror
+                            </div>
                         </div>
-                    </div>
+                    @endif
+
+                    @if (auth()->user()->hasRole('Digital Member'))
+                        <!-- City Dropdown -->
+                        <div class="col-md-6">
+
+                            <div class="form-floating">
+                                {{-- <label for="city" class="form-label fw-bold color-blue required">
+                                    City <span class="text-danger">*</span>
+                                </label> --}}
+                                <select class="form-select" id="city" name="city" required>
+                                    <option value="">Select City</option>
+                                    @foreach ($cities as $city)
+                                        <option value="{{ $city->id }}">{{ $city->cityName }}</option>
+                                    @endforeach
+                                </select>
+                                @error('circleId')
+                                    <div class="invalid-tooltip">
+                                        This field is required.
+                                    </div>
+                                @enderror
+                            </div>
+                        </div>
+
+                    @endif
 
                     <!-- Member Dropdown -->
                     <div class="col-md-6">
                         <div class="form-floating">
-                            <select class="form-select @error('memberId') is-invalid @enderror" id="memberId"
-                                name="memberId" required>
+                            <select class="form-select @error('memberId') is-invalid @enderror" id="memberId" name="memberIdSelect" required>
                                 <option value="" selected disabled>Select Member</option>
                                 @if (old('memberId'))
                                     <option value="{{ old('memberId') }}" selected> {{ old('memberName') }}</option>
                                 @else
-                                    <option value="{{ $refGiver->meetingPersonId }}" selected>
+                                    <option value="{{ $refGiver->members->id ?? '' }}" selected>
                                         {{ $refGiver->members->firstName ?? '-' }}
                                         {{ $refGiver->members->lastName ?? '-' }}
                                     </option>
@@ -138,10 +159,7 @@
                 <div class="form-floating">
 
                     <!-- Searchable input field -->
-                    <input type="text" class="form-control" id="meetingPersonName" name="memberName"
-                        placeholder="Select Member"
-                        value="{{ $refGiver->members->firstName . ' ' . $refGiver->members->lastName ?? '-' }}" readonly
-                        disabled>
+                    <input type="text" class="form-control" id="meetingPersonName" name="memberName" placeholder="Select Member" value="{{ $refGiver->members->firstName . ' ' . $refGiver->members->lastName ?? '-' }}" readonly disabled>
                     <label for="memberName">Member Name</label>
                     @error('memberId')
                         <div class="invalid-tooltip">
@@ -180,9 +198,7 @@
                 </div> --}}
                 <div class="mt-3">
                     <div class="form-floating ">
-                        <input type="text" class="form-control @error('description') is-invalid @enderror"
-                            id="description" name="description" placeholder="description"
-                            value="{{ $refGiver->description }}">
+                        <input type="text" class="form-control @error('description') is-invalid @enderror" id="description" name="description" placeholder="description" value="{{ $refGiver->description }}">
                         <label for="description">Description</label>
                         @error('description')
                             <div class="invalid-tooltip">
@@ -227,8 +243,7 @@
 
 
                     <div class="form-floating mt-3">
-                        <input type="text" class="form-control @error('contactName') is-invalid @enderror" id=""
-                            name="contactNameExternal" placeholder="Contact Name" value="{{ $refGiver->contactName }}">
+                        <input type="text" class="form-control @error('contactName') is-invalid @enderror" id="" name="contactNameExternal" placeholder="Contact Name" value="{{ $refGiver->contactName }}">
                         <label for="contactName">Contact Person Name</label>
                         @error('contactName')
                             <div class="invalid-tooltip">
@@ -239,11 +254,7 @@
 
                     <div class="">
                         <div class="form-floating mt-3">
-                            <input type="text"
-                                class="form-control @error('contactNo') is-invalid @enderror selectedMemberContact"
-                                id="contactPersonContact" name="contactNo" value="{{ $refGiver->contactNo }}"
-                                placeholder="Contact No" maxlength="10"
-                                oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
+                            <input type="text" class="form-control @error('contactNo') is-invalid @enderror selectedMemberContact" id="contactPersonContact" name="contactNo" value="{{ $refGiver->contactNo }}" placeholder="Contact No" maxlength="10" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
                             <label for="contactNo">Contact No</label>
                             @error('contactNo')
                                 <div class="invalid-tooltip">
@@ -254,9 +265,7 @@
                     </div>
                     <div class="">
                         <div class="form-floating mt-3">
-                            <input type="text" class="form-control @error('email') is-invalid @enderror"
-                                id="contactPersonEmail" name="email" value="{{ $refGiver->email }}"
-                                placeholder="email">
+                            <input type="text" class="form-control @error('email') is-invalid @enderror" id="contactPersonEmail" name="email" value="{{ $refGiver->email }}" placeholder="email">
                             <label for="email">Email</label>
                             @error('email')
                                 <div class="invalid-tooltip">
@@ -277,9 +286,7 @@
                 <div class="mt-3  ">
                     <label for="scale">Scale [1-5]</label>
                     <div class="form-floating mt-3">
-                        <input type="range" class="form-range  @error('scale') is-invalid @enderror" id="scale"
-                            name="scale" placeholder="scale" value="{{ $refGiver->scale }}" required min="1"
-                            max="5" step="1">
+                        <input type="range" class="form-range  @error('scale') is-invalid @enderror" id="scale" name="scale" placeholder="scale" value="{{ $refGiver->scale }}" required min="1" max="5" step="1">
                         <div class="d-flex justify-content-between align-items-center mt-2">
                             <span class="badge btn-bg-blue rounded-pill">1</span>
                             <span class="badge btn-bg-blue rounded-pill">2</span>
@@ -405,7 +412,7 @@
             // Function to load members for a selected circle
             function loadMembers(circleId, selectedMemberId = null) {
                 // Clear the member dropdown
-                $('#memberId').empty().append('<option value="">Select Member</option>');
+                $('#memberId').empty().append('<option value="" selected disabled>Select Member</option>');
 
                 if (circleId) {
                     $.ajax({
@@ -415,14 +422,18 @@
                             circleId: circleId
                         },
                         success: function(response) {
-                            if (response.members && response.members.length > 0) {
-                                response.members.forEach(function(member) {
-                                    $('#memberId').append('<option value="' + member.id +
-                                        '" data-user-id="' + member.userId +
-                                        '" data-first-name="' + member.firstName +
-                                        '" data-last-name="' + member.lastName + '">' +
-                                        member.firstName + ' ' + member.lastName +
-                                        '</option>');
+                            var members = Array.isArray(response) ? response : (response.members || []);
+
+                            if (members.length > 0) {
+                                members.forEach(function(member) {
+                                    $('#memberId').append(
+                                        '<option value="' + member.id +
+                                        '" data-user-id="' + (member.userId || member.id) +
+                                        '" data-first-name="' + (member.firstName || '') +
+                                        '" data-last-name="' + (member.lastName || '') + '">' +
+                                        ((member.firstName || '') + ' ' + (member.lastName || '')).trim() +
+                                        '</option>'
+                                    );
                                 });
 
                                 // Pre-select the member if one is passed to the function
@@ -460,19 +471,107 @@
 
             // On page load, set the circle and member dropdown values if they exist
             var defaultCircleId = '{{ old('circleId', $refGiver->circleId) }}'; // Get the default circle ID
-            var defaultMemberId =
-                '{{ old('memberId', $refGiver->members->memberId) }}'; // Get the default member ID
-
+            var defaultMemberId = '{{ old('memberId', $refGiver->members->id ?? '') }}'; // Get the default member ID (Member.id)
+            
             // If there's a default circle, load members for that circle and set the default member
             if (defaultCircleId) {
-                loadMembers(defaultCircleId,
-                    defaultMemberId); // Load members for the default circle and pre-select the default member
+                loadMembers(defaultCircleId, defaultMemberId); // Load members for the default circle and pre-select the default member
             }
 
             // Handle circle dropdown change event
             $('#circleId').on('change', function() {
                 var circleId = $(this).val();
                 loadMembers(circleId); // Load members based on the selected circle
+            });
+        });
+    </script>
+
+
+    <script>
+        $(document).ready(function() {
+            // Set up CSRF token for AJAX requests
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+
+            // Function to load members for a selected city
+            function loadMembersByCity(cityId) {
+                // Clear the member dropdown
+                $('#memberId').empty().append('<option value="" disabled>Select Member</option>');
+
+                if (cityId) {
+                    $.ajax({
+                        url: '/get-members-by-city/' + cityId,
+                        method: 'GET',
+                        data: {
+                            cityId: cityId },
+                        success: function(response) {
+                            // Controller returns a plain array of members. Support both formats.
+                            var members = Array.isArray(response) ? response : (response.members || []);
+
+                            if (members.length > 0) {
+                                members.forEach(function(member) {
+                                    $('#memberId').append(
+                                        '<option value="' + member.id +
+                                        '" data-user-id="' + (member.userId || member.id) +
+                                        '" data-first-name="' + (member.firstName || '') +
+                                        '" data-last-name="' + (member.lastName || '') + '">' +
+                                        ((member.firstName || '') + ' ' + (member.lastName || '')).trim() +
+                                        '</option>'
+                                    );
+                                });
+
+                                // Prefer to pre-select the saved member if present; otherwise fallback to authenticated member
+                                var savedMemberId = '{{ old('memberId', $refGiver->members->id ?? '') }}';
+                                var authMemberId = '{{ auth()->user()->member->id ?? '' }}';
+                                var toSelect = savedMemberId || authMemberId;
+                                if (toSelect) {
+                                    $('#memberId').val(toSelect).trigger('change');
+                                }
+                            } else {
+                                $('#memberId').append('<option value="">No Members Found</option>');
+                            }
+                        },
+                        error: function() {
+                            $('#memberId').append('<option value="">Error loading members</option>');
+                        }
+                    });
+                }
+            }
+
+            // Load members on page load: use currently selected city in dropdown, fallback to authenticated member city
+            var defaultCityId = $('#city').val() || '{{ auth()->user()->member->cityId ?? '' }}';
+            if (defaultCityId) {
+                loadMembersByCity(defaultCityId);
+            }
+
+            // Handle city dropdown change event
+            $('#city').on('change', function() {
+                var cityId = $(this).val();
+                loadMembersByCity(cityId);
+            });
+
+            // Handle member dropdown change event
+            $('#memberId').on('change', function() {
+                var selectedOption = $(this).find('option:selected');
+                var memberId = selectedOption.val();
+                var userId = selectedOption.data('user-id');
+                var firstName = selectedOption.data('first-name');
+                var lastName = selectedOption.data('last-name');
+
+                if (memberId) {
+                    $('#meetingPersonId').val(userId);
+                    $('#meetingPersonName').val((firstName || '') + ' ' + (lastName || ''));
+                } else {
+                    $('#meetingPersonId').val('');
+                    $('#meetingPersonName').val('');
+                }
+
+                console.log('Selected Member ID:', memberId);
+                console.log('Selected Member User ID:', userId);
+                console.log('Selected Member Name:', (firstName || '') + ' ' + (lastName || ''));
             });
         });
     </script>
