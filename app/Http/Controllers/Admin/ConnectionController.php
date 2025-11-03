@@ -644,6 +644,12 @@ class ConnectionController extends Controller
             // Fetch all members with the same circleId
             $myConnections = Member::where('circleId', $circleId)->where('userId', '!=', $userId)->paginate(10);
 
+            // Add induction_count to each member
+            $myConnections->getCollection()->transform(function ($member) {
+                $member->induction_count = Member::where('sponsoredBy', $member->id)->count();
+                return $member;
+            });
+
             return view('admin.connection.myCircleConnection', compact('myConnections'));
         } catch (\Throwable $th) {
             // throw $th;

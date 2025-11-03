@@ -12,24 +12,24 @@
 
 
 
-        @role('Member')
-            {{-- Upcoming Circle Meeting start --}}
-            @include('components.birthdayWishes')
-            {{-- Upcoming Circle Meeting end --}}
+    @role('Member')
+        {{-- Upcoming Circle Meeting start --}}
+        {{-- @include('components.birthdayWishes') --}}
+        {{-- Upcoming Circle Meeting end --}}
 
 
-            {{-- Home Card Count start --}}
-            @include('components.homeCards')
-            {{-- Home Card Count end --}}
+        {{-- Home Card Count start --}}
+        @include('components.homeCards')
+        {{-- Home Card Count end --}}
 
             {{-- Upcoming Circle Meeting start --}}
             {{-- @include('components.circleMeetings') --}}
             {{-- Upcoming Circle Meeting end --}}
 
 
-            {{-- leaderboard start --}}
-            {{-- @include('components.leaderboard') --}}
-            {{-- leaderboard end --}}
+        {{-- leaderboard start --}}
+        {{-- @include('components.leaderboard') --}}
+        {{-- leaderboard end --}}
 
 
             {{-- Upcoming Training start --}}

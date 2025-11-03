@@ -102,8 +102,10 @@ class Member extends Model
         return $this->belongsTo(User::class, 'createdBy', 'id');
     }
 
-    public function members()
+
+    public function sponsors()
     {
         return $this->belongsTo(Member::class, 'sponsoredBy');
     }
+
 }

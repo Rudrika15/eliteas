@@ -68,7 +68,10 @@ class ForgotPasswordController extends Controller
             return back()->with('message', 'Email has been sent to your email address!');
         } catch (\Throwable $th) {
             throw $th;
-            ErrorLogger::logError($th, request()->fullurl());
+            ErrorLogger::logError(
+                $th,
+                request()->fullurl()
+            );
             return view('servererror');
         }
     }

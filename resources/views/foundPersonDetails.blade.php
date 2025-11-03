@@ -232,191 +232,276 @@
 
             </div>
         </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container mt-5">
+
+        <!-- Tabs Navigation -->
+        <ul class="nav nav-tabs" id="profileTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <a class="nav-link active" id="profile-tab" data-bs-toggle="tab" href="#myProfile" role="tab" aria-controls="myProfile" aria-selected="true">My Profile</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="bio-tab" data-bs-toggle="tab" href="#myBio" role="tab" aria-controls="myBio" aria-selected="false">My Bios</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="top-profile-tab" data-bs-toggle="tab" href="#topProfile" role="tab" aria-controls="topProfile" aria-selected="false">Tops Profile</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="gains-profile-tab" data-bs-toggle="tab" href="#gainsProfile" role="tab" aria-controls="gainsProfile" aria-selected="false">Gains Profile</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="testimonial-tab" data-bs-toggle="tab" href="#testimonial" role="tab" aria-controls="testimonial" aria-selected="false">Testimonial</a>
+            </li>
+        </ul>
+
+        <!-- Tabs Content -->
+        <div class="tab-content mt-3" id="profileTabContent">
+
+            <!-- My Profile Tab -->
+            <div class="tab-pane fade show active" id="myProfile" role="tabpanel" aria-labelledby="profile-tab">
+                <div class="content-section">
+                    <h5>My Profile</h5>
+                    <ul>
+                        {{-- <li><span class="title">Full Name:</span> <span class="value">{{ $member->firstName ?? '-' }}
+                                {{ $member->lastName ?? '-' }}</span></li> --}}
+                        {{-- @if ($memberCircleId == $userCircleId) --}}
+                        <li><span class="title">Email:</span> <span class="value">{{ $member->user->email }}</span>
+                        </li>
+                        <li><span class="title">Mobile:</span> <span class="value">{{ $member->user->contactNo }}</span>
+                        </li>
+                        {{-- @elseif (isset($memberStatus) && $memberStatus->status == 'Accepted')
+                            <li><span class="title">Email:</span> <span class="value">{{ $member->user->email }}</span>
+                            </li>
+                            <li><span class="title">Mobile:</span> <span class="value">{{ $member->user->contactNo }}</span>
+                            </li>
+                        @else --}}
+                        {{-- @elseif ($connections->isNotEmpty() && $connections->first()->status == 'Accepted')
+                            <li><span class="title">Email:</span> <span class="value">{{ $member->user->email }}</span></li>
+                            <li><span class="title">Mobile:</span> <span class="value">{{ $member->user->contactNo }}</span></li>
+                        @else --}}
+                        {{-- <li><span class="title">Email:</span> <span class="value">****{{ substr($member->user->email, -8) }}</span>
+                            </li>
+                            <li><span class="title">Mobile:</span> <span class="value">****{{ substr($member->user->contactNo, -3) }}</span>
+                            </li> --}}
+                        {{-- @endif --}}
+                        <div class="tab-pane fade" id="testimonial" role="tabpanel" aria-labelledby="testimonial-tab">
+                            {{-- <h5>Testimonial</h5> --}}
+                            <div class="content-section">
+                                @if ($testimonials->isNotEmpty())
+                                    <ul>
+                                        @foreach ($testimonials as $testimonial)
+                                            <li><span class="value"><b>{{ $testimonial->user->firstName ?? 'Anonymous' }} {{ $testimonial->user->lastName ?? '' }}</b>: {{ $testimonial->message }}</span></li>
+                                        @endforeach
+                                    </ul>
+                                @else
+                                    <p>No testimonials found</p>
+                                @endif
+
+                                {{ $testimonials }}
+
+                                {{-- <ul>
+                        <li><span class="title">Achievements:</span> <span
+                                class="value">{{ $member->achievements ?? 'Not specified' }}</span></li>
+                        <li><span class="title">Experience:</span> <span
+                                class="value">{{ $member->experience ?? 'Not provided' }}</span></li>
+                    </ul> --}}
+                                {{-- Coming Soon --}}
+
+                            </div>
+                        </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
 
 
 
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
 
-        {{-- chat module script start --}}
+    {{-- chat module script start --}}
 
 
 
-        <script>
-            // Get elements
-            console.log('Getting elements');
-            var modal = document.getElementById("chatModal");
-            var btn = document.getElementById("messageButton");
-            var span = document.getElementsByClassName("close")[0];
-            var chatBox = document.getElementById("chatBox");
-            var chatInput = document.getElementById("chatInput");
-            var sendButton = document.getElementById("sendButton");
-            var pollingInterval;
-            console.log('Got elements');
+    <script>
+        // Get elements
+        console.log('Getting elements');
+        var modal = document.getElementById("chatModal");
+        var btn = document.getElementById("messageButton");
+        var span = document.getElementsByClassName("close")[0];
+        var chatBox = document.getElementById("chatBox");
+        var chatInput = document.getElementById("chatInput");
+        var sendButton = document.getElementById("sendButton");
+        var pollingInterval;
+        console.log('Got elements');
 
-            // Open the modal
-            btn.onclick = function() {
-                console.log('Button clicked');
-                modal.style.display = "block";
-                console.log('Modal displayed');
-                fetchMessages(); // Fetch messages when the modal is opened
-                startPolling(); // Start polling for new messages
-            }
+        // Open the modal
+        btn.onclick = function() {
+            console.log('Button clicked');
+            modal.style.display = "block";
+            console.log('Modal displayed');
+            fetchMessages(); // Fetch messages when the modal is opened
+            startPolling(); // Start polling for new messages
+        }
 
-            // Close the modal
-            span.onclick = function() {
-                console.log('Close button clicked');
+
+        // Close the modal
+        span.onclick = function() {
+            console.log('Close button clicked');
+            modal.style.display = "none";
+            console.log('Modal hidden');
+            stopPolling(); // Stop polling when the modal is closed
+        }
+
+        // Close the modal when clicking outside of it
+        window.onclick = function(event) {
+            console.log('Window clicked');
+            if (event.target == modal) {
+                console.log('Modal clicked');
                 modal.style.display = "none";
                 console.log('Modal hidden');
-                stopPolling(); // Stop polling when the modal is closed
+                stopPolling(); // Stop polling when clicking outside the modal
             }
+        }
 
-            // Close the modal when clicking outside of it
-            window.onclick = function(event) {
-                console.log('Window clicked');
-                if (event.target == modal) {
-                    console.log('Modal clicked');
-                    modal.style.display = "none";
-                    console.log('Modal hidden');
-                    stopPolling(); // Stop polling when clicking outside the modal
-                }
-            }
+        // Handle sending a message
+        sendButton.onclick = function() {
+            console.log('Send button clicked');
+            sendMessage();
+        }
 
-            // Handle sending a message
-            sendButton.onclick = function() {
-                console.log('Send button clicked');
+        chatInput.addEventListener("keypress", function(event) {
+            console.log('Key pressed');
+            if (event.key === "Enter") {
+                console.log('Enter key pressed');
                 sendMessage();
             }
-
-            chatInput.addEventListener("keypress", function(event) {
-                console.log('Key pressed');
-                if (event.key === "Enter") {
-                    console.log('Enter key pressed');
-                    sendMessage();
-                }
-            });
+        });
 
 
 
-            function startPolling() {
-                pollingInterval = setInterval(fetchMessages, 1000); // Poll every 1 second
-            }
+        function startPolling() {
+            pollingInterval = setInterval(fetchMessages, 1000); // Poll every 1 second
+        }
 
-            function stopPolling() {
-                clearInterval(pollingInterval);
-            }
-        </script>
+        function stopPolling() {
+            clearInterval(pollingInterval);
+        }
+    </script>
 
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                // Check if there is a success message in the session
-                @if (session('success'))
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Success!',
-                        text: '{{ session('success') }}',
-                        confirmButtonText: 'OK'
-                    }).then(function() {
-                        window.location.href = "{{ route('chat.index') }}";
-                    });
-                @endif
-            });
-        </script>
-
-
-
-        <script>
-            // Wait for the DOM to load before running the script
-            document.addEventListener('DOMContentLoaded', function() {
-                // Get the "Message" button element
-                const messageButton = document.getElementById('messageButton');
-
-                // Initialize the modal using Bootstrap's Modal API
-                const chatPopupModal = new bootstrap.Modal(document.getElementById('chatPopup'));
-
-                // Add a click event listener to the "Message" button
-                messageButton.addEventListener('click', function() {
-                    // Show the modal popup when the button is clicked
-                    chatPopupModal.show();
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if there is a success message in the session
+            @if (session('success'))
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: '{{ session('success') }}',
+                    confirmButtonText: 'OK'
+                }).then(function() {
+                    window.location.href = "{{ route('chat.index') }}";
                 });
+            @endif
+        });
+    </script>
+
+
+
+    <script>
+        // Wait for the DOM to load before running the script
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get the "Message" button element
+            const messageButton = document.getElementById('messageButton');
+
+            // Initialize the modal using Bootstrap's Modal API
+            const chatPopupModal = new bootstrap.Modal(document.getElementById('chatPopup'));
+
+            // Add a click event listener to the "Message" button
+            messageButton.addEventListener('click', function() {
+                // Show the modal popup when the button is clicked
+                chatPopupModal.show();
             });
-        </script>
+        });
+    </script>
 
 
-        {{-- chat module script end --}}
+    {{-- chat module script end --}}
 
-        <script>
-            $(document).ready(function() {
-                // Handle form submission with AJAX
-                $('#connectForm').on('submit', function(e) {
-                    e.preventDefault(); // Prevent the default form submission
+    <script>
+        $(document).ready(function() {
+            // Handle form submission with AJAX
+            $('#connectForm').on('submit', function(e) {
+                e.preventDefault(); // Prevent the default form submission
 
-                    let formData = $(this).serialize(); // Get the form data
-                    console.log('Form Data:', formData); // Log form data to console
+                let formData = $(this).serialize(); // Get the form data
+                console.log('Form Data:', formData); // Log form data to console
 
-                    // Disable the button to prevent multiple submissions
-                    $('#connectBtn').prop('disabled', true);
-                    console.log('Button Disabled'); // Log button disabled state
+                // Disable the button to prevent multiple submissions
+                $('#connectBtn').prop('disabled', true);
+                console.log('Button Disabled'); // Log button disabled state
 
-                    // Send AJAX request
-                    $.ajax({
-                        url: $(this).attr('action'), // Form action
-                        type: 'POST',
-                        data: formData,
-                        success: function(response) {
-                            console.log('Response:', response); // Log the response
+                // Send AJAX request
+                $.ajax({
+                    url: $(this).attr('action'), // Form action
+                    type: 'POST',
+                    data: formData,
+                    success: function(response) {
+                        console.log('Response:', response); // Log the response
 
-                            // Check the response and show the corresponding SweetAlert
-                            if (response.status ===
-                                'success') { // Adjusted to check response.status
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Connection Request Sent!',
-                                    text: 'Your connection request has been sent .',
-                                }).then(function() {
-                                    // After success, update the button to show "Requested"
-                                    $('#connectBtn').html(
-                                        'Requested &nbsp;<i class="bi bi-clock"></i>');
-                                    $('#connectBtn').prop('disabled', true);
-                                    console.log(
-                                        'Button updated to "Requested"'
-                                    ); // Log button state
-                                });
-                            } else {
-                                console.log('Response indicates failure:',
-                                    response); // Log failure case
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Error!',
-                                    text: 'There was a problem with your request.',
-                                }).then(function() {
-                                    // Re-enable the button in case of error
-                                    $('#connectBtn').prop('disabled', false);
-                                    console.log(
-                                        'Button re-enabled'); // Log button re-enable
-                                });
-                            }
-                        },
-                        error: function(xhr, status, error) {
-                            console.log('AJAX Error:', error); // Log the error message
-                            // If AJAX fails
+                        // Check the response and show the corresponding SweetAlert
+                        if (response.status ===
+                            'success') { // Adjusted to check response.status
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Connection Request Sent!',
+                                text: 'Your connection request has been sent .',
+                            }).then(function() {
+                                // After success, update the button to show "Requested"
+                                $('#connectBtn').html(
+                                    'Requested &nbsp;<i class="bi bi-clock"></i>');
+                                $('#connectBtn').prop('disabled', true);
+                                console.log(
+                                    'Button updated to "Requested"'
+                                ); // Log button state
+                            });
+                        } else {
+                            console.log('Response indicates failure:',
+                                response); // Log failure case
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Error!',
-                                text: 'Something went wrong. Please try again.',
+                                text: 'There was a problem with your request.',
                             }).then(function() {
                                 // Re-enable the button in case of error
                                 $('#connectBtn').prop('disabled', false);
                                 console.log(
-                                    'Button re-enabled after AJAX error'
-                                ); // Log button re-enable
+                                    'Button re-enabled'); // Log button re-enable
                             });
                         }
-                    });
+                    },
+                    error: function(xhr, status, error) {
+                        console.log('AJAX Error:', error); // Log the error message
+                        // If AJAX fails
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: 'Something went wrong. Please try again.',
+                        }).then(function() {
+                            // Re-enable the button in case of error
+                            $('#connectBtn').prop('disabled', false);
+                            console.log(
+                                'Button re-enabled after AJAX error'
+                            ); // Log button re-enable
+                        });
+                    }
                 });
             });
-        </script>
-    @endsection
+        });
+    </script>
+@endsection

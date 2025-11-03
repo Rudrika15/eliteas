@@ -755,10 +755,12 @@ class HomeController extends Controller
                 ->orWhere('userId', $member->userId)
                 ->first();
 
+            $testimonials = Testimonial::where('memberId', $member->id)->get();    
+
             // Alternatively, if you want to get all connections related to the authenticated user:
             // $connections = Connection::where('userId', $aid)->get();
 
-            return view('foundPersonDetails', compact('member', 'connection', 'memberStatus'));
+            return view('foundPersonDetails', compact('member', 'connection', 'memberStatus', 'testimonials'));
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError($th, request()->fullUrl());

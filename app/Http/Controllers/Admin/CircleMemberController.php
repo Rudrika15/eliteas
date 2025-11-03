@@ -128,7 +128,7 @@ class CircleMemberController extends Controller
             $memberQuery = Member::where('status', 'Active')
                 ->whereHas('circle')
                 ->whereHas('contactDetails')
-                ->with(['circle', 'contactDetails', 'user', 'topsProfile', 'billingAddress']);
+                ->with(['circle', 'contactDetails', 'user', 'topsProfile', 'billingAddress', 'sponsors']);
 
             if ($user->hasRole('Circle Admin')) {
                 $memberQuery->where('createdBy', $user->id);
@@ -150,8 +150,6 @@ class CircleMemberController extends Controller
             }
 
             $member = $memberQuery->paginate(10);
-
-            // Pass data to view
             $circle = Circle::where('status', 'Active')->orderBy('circleName', 'asc')->get();
             $bCategory = BusinessCategory::where('status', 'Active')->orderBy('categoryName', 'asc')->get();
             $roles = Role::all();

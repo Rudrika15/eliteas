@@ -464,6 +464,9 @@ class CircleCallController extends Controller
 
     public function update(Request $request, $id)
     {
+
+        // return $request;
+
         $validator = Validator::make($request->all(), [
             'meetingPersonId' => 'required',
             'meetingPlace' => 'required',
@@ -477,8 +480,10 @@ class CircleCallController extends Controller
         }
 
         try {
+
+
             $memberId = Auth::user()->id;
-            $member = Member::where('userId', $memberId)->first();
+            $member = Member::where('userId', $memberId)->with('circle')->first();
 
             if (!$member) {
                 return Utils::errorResponse(['error' => 'Member not found for the authenticated user'], 'Not Found', 404);
@@ -490,7 +495,7 @@ class CircleCallController extends Controller
                 return Utils::errorResponse(['error' => 'Circle Call not found'], 'Not Found', 404);
             }
 
-            if ($circleCall->memberId != $member->id) {
+            if ($circleCall->memberId != $member->userId) {
                 return Utils::errorResponse(['error' => 'Unauthorized'], 'Unauthorized', 403);
             }
 

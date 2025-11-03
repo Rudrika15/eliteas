@@ -83,8 +83,9 @@
                         <tbody>
                             @foreach ($monthlyPayments as $payment)
                                 <tr>
-                                    <th>{{ ($monthlyPayments->currentPage() - 1) * $monthlyPayments->perPage() + $loop->index + 1 }}
-                                    </th>
+                                    {{-- <th>{{ ($monthlyPayments->currentPage() - 1) * $monthlyPayments->perPage() + $loop->index + 1 }}
+                                    </th> --}}
+                                    <th>{{ $loop->iteration }}</th>
                                     <td>{{ $payment->circles->circleName ?? '-' }}</td>
                                     <td>{{ $payment->members->firstName ?? '-' }} {{ $payment->members->lastName ?? '-' }}
                                     </td>
@@ -103,9 +104,9 @@
                             @endforeach
                         </tbody>
                     </table>
-                    <div class="d-flex justify-content-end custom-pagination">
+                    {{-- <div class="d-flex justify-content-end custom-pagination">
                         {!! $monthlyPayments->links() !!}
-                    </div>
+                    </div> --}}
                 </div>
 
             </div>
