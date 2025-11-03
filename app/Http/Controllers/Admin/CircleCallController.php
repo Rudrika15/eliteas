@@ -406,21 +406,21 @@ class CircleCallController extends Controller
 
 
             // ✅ Latest locked meeting निकालो
-            $latestLockedMeeting = Schedule::where('circleId', $circleId)
-                ->where('lockUnlock', 'yes')
-                ->orderBy('date', 'desc')
-                ->first();
+            // $latestLockedMeeting = Schedule::where('circleId', $circleId)
+            //     ->where('lockUnlock', 'yes')
+            //     ->orderBy('date', 'desc')
+            //     ->first();
 
-            if ($latestLockedMeeting) {
-                $lockedDate = Carbon::parse($latestLockedMeeting->date);
+            // if ($latestLockedMeeting) {
+            //     $lockedDate = Carbon::parse($latestLockedMeeting->date);
 
-                // अगर user जो date भेज रहा है वो lockedDate से पहले या उसी दिन है → रोक दो
-                if (Carbon::parse($request->date)->lte($lockedDate)) {
-                    return redirect()->back()
-                        ->with('error', 'You cannot create an IBM on or before ' . $lockedDate->format('d-m-Y') . ' because that meeting is locked.')
-                        ->withInput();
-                }
-            }
+            //     // अगर user जो date भेज रहा है वो lockedDate से पहले या उसी दिन है → रोक दो
+            //     if (Carbon::parse($request->date)->lte($lockedDate)) {
+            //         return redirect()->back()
+            //             ->with('error', 'You cannot create an IBM on or before ' . $lockedDate->format('d-m-Y') . ' because that meeting is locked.')
+            //             ->withInput();
+            //     }
+            // }
 
 
             // ✅ अब आपका पुराना code
