@@ -307,7 +307,9 @@ class DigitalMemberController extends Controller
             $member->firstName = $request->firstName;
             $member->lastName = $request->lastName;
             $member->gender = $request->gender;
-            $member->membershipType = $request->membershipType;
+
+            $membershipType = MembershipType::findOrFail($request->membershipType);
+            $member->membershipType = $membershipType->membershipType;
 
             // Set membership amount
             $membershipType = MembershipType::findOrFail($request->membershipType);

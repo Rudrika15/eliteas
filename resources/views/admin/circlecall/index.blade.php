@@ -409,17 +409,31 @@
                                 </div>
                             </div>
 
+
+                            @if (auth()->user()->hasRole('Member'))
+                                <!-- Date -->
+                                <div class="mb-3">
+                                    <label for="date" class="form-label fw-bold color-blue required">
+                                        Date <span class="text-danger">*</span>
+                                    </label>
+                                    <?php
+                                    $nearestDate = $scheduleDate->min();
+                                    $nearestDate = $nearestDate ? \Illuminate\Support\Carbon::parse($nearestDate)->subDay()->format('Y-m-d') : \Illuminate\Support\Carbon::now()->format('Y-m-d');
+                                    $selectedDate = request()->input('date') ?? (\Illuminate\Support\Carbon::now()->format('Y-m-d') == $nearestDate ? \Illuminate\Support\Carbon::now()->format('Y-m-d') : $nearestDate);
+                                    ?>
+                                    <input type="date" class="form-control" id="date" name="date" min="{{ $lastDate }}" max="{{ $nearestDate }}" value="{{ old('date', $selectedDate) }}" required>
+                                </div>
+                            @endif
+
                             <!-- Date -->
                             <div class="mb-3">
-                                <label for="date" class="form-label fw-bold color-blue required">Date <span class="text-danger">*</span></label>
-                                <?php
-                                use Illuminate\Support\Carbon;
-                                $nearestDate = $scheduleDate->min();
-                                $nearestDate = $nearestDate ? Carbon::parse($nearestDate)->subDay()->format('Y-m-d') : Carbon::now()->format('Y-m-d');
-                                $selectedDate = request()->input('date') ?? (Carbon::now()->format('Y-m-d') == $nearestDate ? Carbon::now()->format('Y-m-d') : $nearestDate);
-                                ?>
-                                <input type="date" class="form-control" id="date" name="date" min="{{ $lastDate }}" max="{{ $nearestDate }}" value="{{ old('date', $selectedDate) }}" required>
+                                <label for="date" class="form-label fw-bold color-blue required">
+                                    Date <span class="text-danger">*</span>
+                                </label>
+
+                                <input type="date" class="form-control" id="date" name="date" value="" required>
                             </div>
+
 
                             <!-- Remarks -->
                             <div class="mb-3">

@@ -483,7 +483,7 @@ class CircleCallController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'meetingPlace' => 'required',
-            'date' => 'required|date',
+            // 'date' => 'required|date',
             'remarks' => 'required',
         ]);
 
@@ -561,6 +561,7 @@ class CircleCallController extends Controller
             $circlecall->date = $request->date;
             $circlecall->remarks = $request->remarks;
             $circlecall->status = 'Active';
+            // return $circlecall;
 
             $circlecall->save();
 

@@ -437,6 +437,7 @@ class CircleMemberController extends Controller
             $member->firstName = $request->firstName;
             $member->lastName = $request->lastName;
             $member->gender = $request->gender;
+           
             $member->membershipType = $request->membershipType;
 
             // Set membership amount
