@@ -907,6 +907,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::get('/digital-member/cities', [App\Http\Controllers\Admin\ConnectionController::class, 'cityList'])
         ->name('digital.member.cities.list');
+    Route::get('/digital-searchQuery', [HomeController::class, 'degitalMemberSearch'])->name('degitalMemberSearch');
 });
 
 

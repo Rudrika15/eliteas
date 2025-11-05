@@ -101,34 +101,70 @@ class LoginController extends Controller
     }
 
 
+    // public function profile(Request $request)
+    // {
+    //     $user = Auth::user();
+
+    //     // Retrieve the member record associated with the authenticated user
+    //     $member = Member::where('userId', $user->id)->first();
+
+    //     if ($member) {
+    //         // Retrieve related records
+    //         $billingAddress = BillingAddress::where('memberId', $member->id)->first();
+    //         $contactDetails = ContactDetails::where('memberId', $member->id)->first();
+    //         $topsProfile = TopsProfile::where('memberId', $member->id)->first();
+
+    //         // Return the data in your API response
+    //         return response()->json([
+    //             'user' => $user,
+    //             'member' => $member,
+    //             'billingAddress' => $billingAddress,
+    //             'contactDetails' => $contactDetails,
+    //             'topsProfile' => $topsProfile,
+    //         ]);
+    //     } else {
+    //         // Handle the case where member record is not found
+    //         return response()->json(['error' => 'Member not found'], 404);
+    //     }
+    //     // return Utils::sendResponse($responseData, "Profile Data");
+
+    // }
+
+
     public function profile(Request $request)
     {
         $user = Auth::user();
 
-        // Retrieve the member record associated with the authenticated user
         $member = Member::where('userId', $user->id)->first();
 
-        if ($member) {
-            // Retrieve related records
-            $billingAddress = BillingAddress::where('memberId', $member->id)->first();
-            $contactDetails = ContactDetails::where('memberId', $member->id)->first();
-            $topsProfile = TopsProfile::where('memberId', $member->id)->first();
-
-            // Return the data in your API response
-            return response()->json([
-                'user' => $user,
-                'member' => $member,
-                'billingAddress' => $billingAddress,
-                'contactDetails' => $contactDetails,
-                'topsProfile' => $topsProfile,
-            ]);
-        } else {
-            // Handle the case where member record is not found
+        if (!$member) {
             return response()->json(['error' => 'Member not found'], 404);
         }
-        // return Utils::sendResponse($responseData, "Profile Data");
 
+        $billingAddress = BillingAddress::where('memberId', $member->id)->first();
+        $contactDetails = ContactDetails::where('memberId', $member->id)->first();
+        $topsProfile = TopsProfile::where('memberId', $member->id)->first();
+
+        // If user has "Member" role, include circle data
+        if ($user->hasRole('Member')) {
+            $circle = [
+                'circleId' => $member->circleId,
+                'circle' => $member->circle->circleName ?? null,
+            ];
+        } else {
+            $circle = null; // For Digital Member, no circle data
+        }
+
+        return response()->json([
+            'user' => $user,
+            'member' => $member,
+            'billingAddress' => $billingAddress,
+            'contactDetails' => $contactDetails,
+            'topsProfile' => $topsProfile,
+            'circle' => $circle,
+        ]);
     }
+
 
 
     // public function memberUpdate(Request $request)

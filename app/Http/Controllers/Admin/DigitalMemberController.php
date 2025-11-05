@@ -299,6 +299,7 @@ class DigitalMemberController extends Controller
             $member = new Member();
             $member->createdBy = Auth::user()->id;
             $member->circleId = null;
+            $member->cityId = $request->cityId;
             $member->sponsoredBy = null;
             $member->userId = $user->id;
             $member->title = $request->title;
@@ -724,4 +725,6 @@ class DigitalMemberController extends Controller
             return view('servererror');
         }
     }
+
+    
 }

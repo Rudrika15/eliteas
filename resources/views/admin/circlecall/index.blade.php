@@ -425,14 +425,16 @@
                                 </div>
                             @endif
 
-                            <!-- Date -->
-                            <div class="mb-3">
-                                <label for="date" class="form-label fw-bold color-blue required">
-                                    Date <span class="text-danger">*</span>
-                                </label>
+                            @if (auth()->user()->hasRole('Digital Member'))
+                                <!-- Date -->
+                                <div class="mb-3">
+                                    <label for="date" class="form-label fw-bold color-blue required">
+                                        Date <span class="text-danger">*</span>
+                                    </label>
 
-                                <input type="date" class="form-control" id="date" name="date" value="" required>
-                            </div>
+                                    <input type="date" class="form-control" id="date" name="date" value="" required>
+                                </div>
+                            @endif
 
 
                             <!-- Remarks -->

@@ -233,7 +233,6 @@
                                             @error('profilePhoto')
                                                 <span class="text-danger">{{ $message }}</span>
                                             @enderror
-
                                         </div>
                                     </div>
                                     <div class="col-md-6 mt-3">

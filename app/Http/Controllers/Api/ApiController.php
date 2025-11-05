@@ -1016,42 +1016,81 @@ class ApiController extends Controller
 
     //Personal Details
 
+    // public function profile(Request $request)
+    // {
+    //     $user = Auth::user();
+
+    //     $member = Member::where('userId', $user->id)->first();
+
+    //     if ($member) {
+    //         $billingAddress = BillingAddress::where('memberId', $member->id)->first();
+    //         $contactDetails = ContactDetails::where('memberId', $member->id)->first();
+    //         $topsProfile = TopsProfile::where('memberId', $member->id)->first();
+
+    //         $businessCategory = [
+    //             'businessCategoryId' => $member->businessCategoryId,
+    //             'businessCategory' => $member->bCategory->categoryName,
+    //         ];
+
+    //         $circle = [
+    //             'circleId' => $member->circleId,
+    //             'circle' => $member->circle->circleName,
+    //         ];
+
+    //         return response()->json([
+    //             'user' => $user,
+    //             'member' => $member,
+    //             'billingAddress' => $billingAddress,
+    //             'contactDetails' => $contactDetails,
+    //             'topsProfile' => $topsProfile,
+    //             'businessCategory' => $businessCategory,
+    //             'circle' => $circle,
+    //         ]);
+    //     } else {
+    //         return response()->json(['error' => 'Member not found'], 404);
+    //     }
+    // }
+
+
     public function profile(Request $request)
     {
         $user = Auth::user();
 
         $member = Member::where('userId', $user->id)->first();
 
-        if ($member) {
-            $billingAddress = BillingAddress::where('memberId', $member->id)->first();
-            $contactDetails = ContactDetails::where('memberId', $member->id)->first();
-            $topsProfile = TopsProfile::where('memberId', $member->id)->first();
-
-            $businessCategory = [
-                'businessCategoryId' => $member->businessCategoryId,
-                'businessCategory' => $member->bCategory->categoryName,
-            ];
-
-            $circle = [
-                'circleId' => $member->circleId,
-                'circle' => $member->circle->circleName,
-            ];
-
-
-
-            return response()->json([
-                'user' => $user,
-                'member' => $member,
-                'billingAddress' => $billingAddress,
-                'contactDetails' => $contactDetails,
-                'topsProfile' => $topsProfile,
-                'businessCategory' => $businessCategory,
-                'circle' => $circle,
-            ]);
-        } else {
+        if (!$member) {
             return response()->json(['error' => 'Member not found'], 404);
         }
+
+        $billingAddress = BillingAddress::where('memberId', $member->id)->first();
+        $contactDetails = ContactDetails::where('memberId', $member->id)->first();
+        $topsProfile = TopsProfile::where('memberId', $member->id)->first();
+
+        $businessCategory = [
+            'businessCategoryId' => $member->businessCategoryId,
+            'businessCategory' => $member->bCategory->categoryName ?? null,
+        ];
+
+        if ($user->hasRole('Member')) {
+            $circle = [
+                'circleId' => $member->circleId,
+                'circle' => $member->circle->circleName ?? null,
+            ];
+        } else {
+            $circle = null; // for Digital Member
+        }
+
+        return response()->json([
+            'user' => $user,
+            'member' => $member,
+            'billingAddress' => $billingAddress,
+            'contactDetails' => $contactDetails,
+            'topsProfile' => $topsProfile,
+            'businessCategory' => $businessCategory,
+            'circle' => $circle,
+        ]);
     }
+
 
 
     public function billingAddressUpdate(Request $request)
@@ -1747,9 +1786,4 @@ class ApiController extends Controller
             );
         }
     }
-
-
-    
-
-
 }

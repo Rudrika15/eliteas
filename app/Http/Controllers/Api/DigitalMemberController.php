@@ -4,6 +4,7 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use App\Models\CircleCall;
+use App\Models\CircleMeetingMembersBusiness;
 use App\Models\City;
 use App\Models\Connection;
 use App\Models\Member;
@@ -296,6 +297,81 @@ class DigitalMemberController extends Controller
             return Utils::sendResponse([], 'Circle Call Deleted Successfully!', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
+        }
+    }
+
+    public function recievedBus(Request $request)
+    {
+        try {
+            $busRecieved = CircleMeetingMembersBusiness::with([
+                'loginMember.user:id,firstName,lastName',
+                'loginMember.member' => function ($q) {
+                    $q->select('id', 'userId', 'sponsoredBy', 'profilePhoto', 'cityId');
+                },
+                'loginMember.member.city:id,cityName', // city instead of circle
+                'businessAmounts'
+            ])
+                ->where('businessGiverId', Auth::user()->id)
+                ->where('status', 'Active')
+                ->orderByDesc('id')
+                ->get();
+
+            // Add induction count to loginMember's member
+            $busRecieved->transform(function ($item) {
+                if ($item->loginMember && $item->loginMember->member) {
+                    $member = $item->loginMember->member;
+                    $member->induction_count = Member::where('sponsoredBy', $member->id)->count() ?? 0;
+                }
+                return $item;
+            });
+
+            return Utils::sendResponse(['busRecieved' => $busRecieved], 'Circle Meeting Members Business retrieved successfully', 200);
+        } catch (\Throwable $th) {
+            return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
+        }
+    }
+
+    public function cityWiseMember(Request $request)
+    {
+        try {
+            $cityData = [];
+
+            if (!auth()->check()) {
+                return Utils::errorResponse([], 'Unauthorized', 401);
+            }
+
+            $user = auth()->user();
+            $authMemberId = $user->member->id;
+            $authCityId = $user->member->cityId;
+
+            $members = Member::where('cityId', $authCityId)->get();
+
+            foreach ($members as $member) {
+                $city = City::find($member->cityId);
+
+                if ($city && $city->status === 'Active') {
+                    if (empty($cityData)) {
+                        $cityData = [
+                            'cityId' => $city->id,
+                            'cityName' => $city->cityName,
+                            'members' => [],
+                        ];
+                    }
+
+                    $cityData['members'][] = [
+                        'authMemberId' => $authMemberId,
+                        'memberId' => $member->id,
+                        'firstName' => $member->firstName,
+                        'lastName' => $member->lastName,
+                        'induction_count' => Member::where('sponsoredBy', $member->id)->count(),
+                    ];
+                }
+            }
+            return Utils::sendResponse($cityData, 'Data retrieved successfully', 200);
+        } catch (\Throwable $th) {
+            return Utils::errorResponse([
+                'error' => $th->getMessage()
+            ], 'Internal Server Error', 500);
         }
     }
 }

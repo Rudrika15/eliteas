@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Admin\DigitalMemberController;
+use App\Http\Controllers\Api\DigitalMemberController;
 use App\Models\CircleMember;
 use Illuminate\Http\Request;
 use App\Mail\MeetingInvitation;
@@ -481,14 +481,14 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     // Digital Member Api
     Route::get('get-cities', [DigitalMemberController::class, 'getCities']);
     // search digital member
-    Route::get('/digital-member-search', [DigitalMemberController::class, 'digitalMemberSearch']);
+    Route::get('digital-member-search', [DigitalMemberController::class, 'digitalMemberSearch']);
     // ibm module apis
     Route::get('ibm-index', [DigitalMemberController::class, 'ibmIndex']);
     Route::post('ibm-create', [DigitalMemberController::class, 'ibmCreate']);
     Route::post('ibm-update/{id}', [DigitalMemberController::class, 'ibmUpdate']);
     Route::get('ibm-delete/{id}', [DigitalMemberController::class, 'ibmDelete']);
 
-
+    Route::get('city-wise-member-index', [DigitalMemberController::class, 'cityWiseMember']);
 });
 
 //get app version

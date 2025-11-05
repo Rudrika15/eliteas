@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('header', 'City')
+@section('header', 'Admin | Digital Member Create')
 @section('content')
 
 
@@ -28,6 +28,40 @@
                                 {{ $message }}
                             </div>
                         @enderror
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mt-3">
+                    <div class="form-floating">
+                        <select class="form-select" id="country" name="country" required>
+                            <option value="" selected disabled>Select Country</option>
+                            @foreach ($countries as $country)
+                                <option value="{{ $country->id }}">{{ $country->countryName }}</option>
+                            @endforeach
+                        </select>
+                        <label for="country">Country</label>
+                    </div>
+                </div>
+
+                <div class="col-md-6 mt-3">
+                    <div class="form-floating">
+                        <select class="form-select" id="state" name="state" required>
+                            <option value="" selected disabled>Select State</option>
+                        </select>
+                        <label for="state">State</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mt-3">
+                    <div class="form-floating">
+                        <select class="form-select" id="city" name="cityId" required>
+                            <option value="" selected disabled>Select City</option>
+                        </select>
+                        <label for="city">City</label>
                     </div>
                 </div>
             </div>
@@ -83,7 +117,7 @@
                             $errors->has('mobileNo') &&
                                 $errors->first('mobileNo') ==
                                     'Please enter a valid 10-digit mobile
-                                            number')
+                                                                    number')
                             <div class="invalid-tooltip" style="color: red;">
                                 {{ $errors->first('mobileNo') }}
                             </div>

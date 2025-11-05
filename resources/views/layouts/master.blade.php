@@ -243,6 +243,13 @@
             </div>
         @endif
 
+        <div class="ms-auto d-flex justify-content-end search-container">
+            <a class="search-form d-flex align-items-center" href="{{ route('search') }}">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" class="search-input" placeholder="Search Member or Circle Name">
+            </a>
+        </div>
+
 
         <style>
             .header-info {

@@ -735,6 +735,36 @@ class HomeController extends Controller
         }
     }
 
+    public function digitalMemberSearch(Request $request)
+    {
+        try {
+            $query = $request->input('query');
+
+            $members = Member::where('userId', '!=', Auth::user()->id)
+                ->whereNull('circleId')
+                ->whereNotNull('cityId')
+                ->where('status', 'Active')
+                ->where(function ($q) use ($query) {
+                    $q->where('firstName', 'like', '%' . $query . '%')
+                        ->orWhere('lastName', 'like', '%' . $query . '%')
+                        ->orWhere('keyWords', 'like', '%' . $query . '%');
+                })
+                ->with('user', 'city', 'bCategory')
+                ->get();
+
+            $message = "Search results for '$query'";
+
+            return response()->json([
+                'message' => $message,
+                'members' => $members,
+            ]);
+        } catch (\Throwable $th) {
+            ErrorLogger::logError($th, request()->fullUrl());
+            return response()->json(['error' => 'Failed to perform search. Please try again.'], 500);
+        }
+    }
+
+
 
 
 
@@ -755,7 +785,7 @@ class HomeController extends Controller
                 ->orWhere('userId', $member->userId)
                 ->first();
 
-            $testimonials = Testimonial::where('memberId', $member->id)->get();    
+            $testimonials = Testimonial::where('memberId', $member->id)->get();
 
             // Alternatively, if you want to get all connections related to the authenticated user:
             // $connections = Connection::where('userId', $aid)->get();
