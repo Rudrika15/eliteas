@@ -108,4 +108,9 @@ class Member extends Model
         return $this->belongsTo(Member::class, 'sponsoredBy');
     }
 
+    public function city()
+{
+    return $this->belongsTo(City::class, 'cityId');
+}
+
 }

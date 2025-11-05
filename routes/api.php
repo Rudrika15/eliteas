@@ -286,7 +286,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/event/index', [EventController::class, 'index']);
     Route::get('event/visitorIndex', [VisitorController::class, 'eventIndex']);
 
-    //get event by id 
+    //get event by id
     // For listing all events and getting event by ID
     Route::get('/eventDetails/{id?}', [EventController::class, 'eventDetails']);
 
@@ -481,7 +481,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     // Digital Member Api
     Route::get('get-cities', [DigitalMemberController::class, 'getCities']);
     // search digital member
-    Route::get('digital-member-search', [DigitalMemberController::class, 'digitalMemberSearch']);
+    Route::post('digital-member-search', [DigitalMemberController::class, 'digitalMemberSearch']);
     // ibm module apis
     Route::get('ibm-index', [DigitalMemberController::class, 'ibmIndex']);
     Route::post('ibm-create', [DigitalMemberController::class, 'ibmCreate']);

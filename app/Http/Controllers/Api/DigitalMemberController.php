@@ -56,7 +56,7 @@ class DigitalMemberController extends Controller
                 ->with([
                     'member' => function ($q) {
                         // ✅ Include basic member info only
-                        $q->select('id', 'userId', 'cityId', 'bCategoryId', 'status', 'sponsoredBy');
+                        $q->select('id', 'userId', 'cityId', 'businessCategoryId', 'status', 'sponsoredBy');
                     },
                     'member.city:id,cityName', // ✅ Keep city info since circle removed
                     'member.bCategory:id,categoryName',
