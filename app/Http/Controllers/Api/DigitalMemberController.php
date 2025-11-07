@@ -5,11 +5,14 @@ namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 use App\Models\CircleCall;
 use App\Models\CircleMeetingMembersBusiness;
+use App\Models\CircleMeetingMembersReference;
 use App\Models\City;
 use App\Models\Connection;
 use App\Models\Member;
 use App\Models\User;
+use App\Utils\ErrorLogger;
 use App\Utils\Utils;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -50,7 +53,10 @@ class DigitalMemberController extends Controller
                         ->whereNotNull('cityId')
                         ->where(function ($q) use ($find) {
                             $q->where('firstName', 'like', '%' . $find . '%')
-                                ->orWhere('lastName', 'like', '%' . $find . '%');
+                                ->orWhere('lastName', 'like', '%' . $find . '%')
+                                ->orWhereHas('city', function ($cityQuery) use ($find) {
+                                    $cityQuery->where('cityName', 'like', '%' . $find . '%');
+                                });
                         });
                 })
                 ->with([
@@ -94,7 +100,7 @@ class DigitalMemberController extends Controller
                 }
             }
 
-            $message = "Search results for '$find' (Members with city but no circle)";
+            $message = "Search results for '$find'";
 
             return Utils::sendResponse([
                 'message' => $message,
@@ -212,7 +218,7 @@ class DigitalMemberController extends Controller
                 Log::error('No FCM token found for user ID: ' . $meetingPersonId);
             }
 
-            return Utils::sendResponse(['circleCall' => $circleCall], 'Circle Call Created Successfully!', 201);
+            return Utils::sendResponse(['circleCall' => $circleCall], 'City Call Created Successfully!', 201);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
@@ -265,7 +271,7 @@ class DigitalMemberController extends Controller
             $circleCall->remarks = $request->input('remarks');
             $circleCall->save();
 
-            return Utils::sendResponse(['circleCall' => $circleCall], 'Circle Call Updated Successfully!', 200);
+            return Utils::sendResponse(['circleCall' => $circleCall], 'City Call Updated Successfully!', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
@@ -284,7 +290,7 @@ class DigitalMemberController extends Controller
             $circleCall = CircleCall::find($id);
 
             if (!$circleCall) {
-                return Utils::errorResponse(['error' => 'Circle Call not found'], 'Not Found', 404);
+                return Utils::errorResponse(['error' => 'IBM not found'], 'Not Found', 404);
             }
 
             if ($circleCall->memberId != $memberId) {
@@ -294,13 +300,50 @@ class DigitalMemberController extends Controller
             $circleCall->status = "Deleted";
             $circleCall->save();
 
-            return Utils::sendResponse([], 'Circle Call Deleted Successfully!', 200);
+            return Utils::sendResponse([], 'IBM Deleted Successfully!', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
 
-    public function recievedBus(Request $request)
+
+    public function recievedDigitalBusinessMeet(Request $request)
+    {
+        try {
+            $userId = Auth::id();
+
+            $member = Member::where('userId', $userId)->first();
+
+            if (!$member) {
+                return Utils::errorResponse(['error' => 'Member not found for the authenticated user'], 'Not Found', 404);
+            }
+
+            $callWith = CircleCall::with([
+                'member.city' => function ($query) {
+                    $query->select('id', 'cityName');
+                }
+            ])
+                ->where('meetingPersonId', $userId)
+                ->where('status', 'Active')
+                ->orderBy('id', 'DESC')
+                ->get();
+
+            // Add induction count to each member
+            $callWith->transform(function ($call) {
+                if ($call->member) {
+                    $call->member->induction_count = Member::where('sponsoredBy', $call->member->id)->count() ?? 0;
+                }
+                return $call;
+            });
+
+            return Utils::sendResponse(['cityCalls' => $callWith], 'Received City Calls retrieved successfully', 200);
+        } catch (\Throwable $th) {
+            return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
+        }
+    }
+
+
+    public function recievedBusDigital(Request $request)
     {
         try {
             $busRecieved = CircleMeetingMembersBusiness::with([
@@ -325,52 +368,307 @@ class DigitalMemberController extends Controller
                 return $item;
             });
 
-            return Utils::sendResponse(['busRecieved' => $busRecieved], 'Circle Meeting Members Business retrieved successfully', 200);
+            return Utils::sendResponse(['busRecieved' => $busRecieved], 'City Meeting Members Business retrieved successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
 
-    public function cityWiseMember(Request $request)
+
+    public function refBusCreateDigital(Request $request)
+    {
+        $this->validate($request, []);
+
+        try {
+            // Save reference giver
+            $refGiver = new CircleMeetingMembersReference();
+            $refGiver->referenceGiverId = Auth::user()->id;
+            $refGiver->memberId = $request->memberId;
+            $refGiver->contactName = $request->contactNameExternal;
+            $refGiver->contactNo = $request->contactNo;
+            $refGiver->email = $request->email;
+            $refGiver->scale = $request->scale;
+            $refGiver->description = $request->description;
+            $refGiver->status = 'Active';
+            $refGiver->save();
+
+            // Save business giver
+            $busGiver = new CircleMeetingMembersBusiness();
+            $busGiver->businessGiverId = Auth::user()->id;
+            $busGiver->loginMemberId = $refGiver->memberId;
+            $busGiver->amount = $request->amount;
+            $busGiver->remarks = $request->remarks;
+            $busGiver->date = Carbon::now()->toDateString();
+            $busGiver->status = 'Active';
+            $busGiver->save();
+
+            // Send notification to the specified member (city-based, no circle)
+            $memberId = $request->memberId;
+            $user = User::find($memberId);
+
+            if ($user && $user->fcm_token) {
+                $title = 'Reference';
+                $body = 'A new reference has been created for you by ' . Auth::user()->firstName . ' ' . Auth::user()->lastName . '.';
+
+                $serviceAccountPath = storage_path('app/public/ubn_notification.json');
+                $factory = (new Factory)->withServiceAccount($serviceAccountPath);
+                $messaging = $factory->createMessaging();
+
+                $message = CloudMessage::withTarget('token', $user->fcm_token)
+                    ->withNotification(Notification::create($title, $body));
+
+                try {
+                    $messaging->send($message);
+                    Log::info('Notification sent to token: ' . $user->fcm_token);
+                } catch (\Kreait\Firebase\Exception\Messaging\NotFound $e) {
+                    Log::error('Token not found: ' . $user->fcm_token);
+                } catch (\Kreait\Firebase\Exception\Messaging\InvalidArgument $e) {
+                    Log::error('Invalid argument error with token: ' . $user->fcm_token);
+                } catch (\Exception $e) {
+                    Log::error('General error sending to token: ' . $user->fcm_token . '. Error: ' . $e->getMessage());
+                }
+            } else {
+                Log::error('No FCM token found for user ID: ' . $memberId);
+            }
+
+            return Utils::sendResponse([], 'Member Reference created successfully', 200);
+        } catch (\Throwable $th) {
+            return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
+        }
+    }
+
+
+    public function digitalBusinessindex(Request $request)
     {
         try {
-            $cityData = [];
+            $busGiven = CircleMeetingMembersBusiness::with([
+                'users:id,firstName,lastName,email',
+                'member' => function ($q) {
+                    $q->select('id', 'userId', 'cityId', 'sponsoredBy', 'profilePhoto', 'companyName');
+                },
+                'member.city:id,cityName',
+                'businessAmounts'
+            ])
+                ->where('loginMemberId', Auth::user()->id)
+                ->where('status', 'Active')
+                ->orderByDesc('id')
+                ->get();
 
-            if (!auth()->check()) {
-                return Utils::errorResponse([], 'Unauthorized', 401);
+            // Add induction count to member
+            $busGiven->transform(function ($item) {
+                if ($item->member) {
+                    $item->member->induction_count = Member::where('sponsoredBy', $item->member->id)->count() ?? 0;
+                }
+                return $item;
+            });
+
+            return Utils::sendResponse(['busGiven' => $busGiven], 'Members Business retrieved successfully', 200);
+        } catch (\Throwable $th) {
+            return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
+        }
+    }
+
+    //reference
+    public function digitalMemberReferenceUpdate(Request $request)
+    {
+        $this->validate($request, []);
+
+        try {
+            $id = $request->id;
+            $refGiver = CircleMeetingMembersReference::find($id);
+
+            $refGiver->memberId = $request->memberId;
+            $refGiver->contactName = $request->contactNameExternal;
+            $refGiver->contactNo = $request->contactNo;
+            $refGiver->email = $request->email;
+            $refGiver->scale = $request->scale;
+            $refGiver->description = $request->description;
+            $refGiver->status = 'Active';
+
+            $refGiver->save();
+            return Utils::sendResponse([], ' Reference updated successfully', 200);
+        } catch (\Throwable $th) {
+            return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
+        }
+    }
+
+
+    public function digitalMemberReferenceIndex(Request $request)
+    {
+        try {
+            $refGiver = CircleMeetingMembersReference::where('status', 'Active')
+                ->orderBy('id', 'DESC')
+                ->with('members')
+                ->with('refGiverName')
+                ->with('members.city:id,cityName') // city instead of circle
+                ->where('referenceGiverId', Auth::user()->id)
+                ->get();
+
+            $refGiver->transform(function ($item) {
+                if ($item->members) {
+                    $item->members->induction_count = Member::where('sponsoredBy', $item->members->id)->count();
+                } else {
+                    $item->induction_count = 0;
+                }
+                return $item;
+            });
+
+            return Utils::sendResponse(['refGiver' => $refGiver], 'References retrieved successfully', 200);
+        } catch (\Throwable $th) {
+            return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
+        }
+    }
+
+    // business create
+
+    public function digitalMemberRefByOtherStore(Request $request)
+    {
+
+        try {
+            // Validate the request
+            $this->validate($request, [
+                // Add necessary validation rules if required
+                // 'dateTime' => 'required',
+                // 'totalMeeting' => 'required',
+                // 'refGiven' => 'required',
+                // 'refTaken' => 'required',
+                // 'busGiven' => 'required',
+                // 'busTaken' => 'required',
+                // 'hotelName' => 'required',
+            ]);
+
+            $refGiver = new CircleMeetingMembersReference();
+            $refGiver->referenceGiverId = $request->referenceGiverId;
+            $refGiver->memberId = Auth::user()->id;
+
+            if ($request->group == 'internal') {
+                $refGiver->contactName = $request->contactNameInternal;
+            } else {
+                $refGiver->contactName = $request->contactNameExternal;
             }
 
-            $user = auth()->user();
-            $authMemberId = $user->member->id;
-            $authCityId = $user->member->cityId;
+            $refGiver->contactNo = $request->contactNo;
+            $refGiver->email = $request->email;
+            $refGiver->scale = $request->scale;
+            $refGiver->description = $request->description;
+            $refGiver->status = 'Active';
+            $refGiver->save();
 
-            $members = Member::where('cityId', $authCityId)->get();
+            $busGiver = new CircleMeetingMembersBusiness();
+            $busGiver->businessGiverId = $refGiver->referenceGiverId;
+            $busGiver->loginMemberId = Auth::user()->id;
+            $busGiver->amount = $request->amount;
+            $busGiver->date = Carbon::now()->toDateString();
+            $busGiver->status = 'Active';
+            $busGiver->save();
 
-            foreach ($members as $member) {
-                $city = City::find($member->cityId);
+            return Utils::sendResponse(
+                [
+                    'refGiver' => $refGiver,
+                    'busGiver' => $busGiver,
+                ],
+                'Reference and Business created successfully',
+                201
+            );
+        } catch (\Throwable $th) {
+            ErrorLogger::logError($th, $request->fullUrl());
+            return Utils::errorResponse(
+                ['error' => $th->getMessage()],
+                'Internal Server Error',
+                500
+            );
+        }
+    }
 
-                if ($city && $city->status === 'Active') {
-                    if (empty($cityData)) {
-                        $cityData = [
-                            'cityId' => $city->id,
-                            'cityName' => $city->cityName,
-                            'members' => [],
-                        ];
-                    }
 
-                    $cityData['members'][] = [
-                        'authMemberId' => $authMemberId,
-                        'memberId' => $member->id,
+    public function deleteDigitalMemberReference($id)
+    {
+        try {
+            $refGiver = CircleMeetingMembersReference::find($id);
+            $refGiver->status = "Deleted";
+            $refGiver->save();
+
+            return Utils::sendResponse([], 'Reference deleted successfully', 200);
+        } catch (\Throwable $th) {
+            return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
+        }
+    }
+
+
+    // public function cityWiseDigitalMember(Request $request)
+    // {
+    //     try {
+    //         $cities = City::where('status', 'Active')->get();
+
+    //         $response = $cities->map(function ($city) {
+    //             $members = Member::where('cityId', $city->id)->get();
+
+    //             $memberData = $members->map(function ($member) {
+    //                 return [
+    //                     'id' => $member->id,
+    //                     'userId' => $member->userId,
+    //                     'firstName' => $member->firstName,
+    //                     'lastName' => $member->lastName,
+    //                     'contactDetails' => [], // can be filled later
+    //                     'induction_count' => Member::where('sponsoredBy', $member->id)->count(),
+    //                 ];
+    //             });
+
+    //             return [
+    //                 'cityData' => [
+    //                     'id' => $city->id,
+    //                     'name' => $city->cityName,
+    //                 ],
+    //                 'memberData' => $memberData,
+    //             ];
+    //         });
+
+    //         return Utils::sendResponse($response, 'Data retrieved successfully', 200);
+    //     } catch (\Throwable $th) {
+    //         return Utils::errorResponse([
+    //             'error' => $th->getMessage(),
+    //         ], 'Internal Server Error', 500);
+    //     }
+    // }
+
+
+    public function cityWiseDigitalMember(Request $request)
+    {
+        try {
+            $cities = City::where('status', 'Active')->get();
+
+            $response = $cities->map(function ($city) {
+                $members = Member::where('cityId', $city->id)->get();
+
+                $memberData = $members->map(function ($member) {
+                    $memberContactDetails = $member->contactDetails()
+                        ->select('id', 'memberId', 'mobileNo', 'email')
+                        ->get()
+                        ->toArray();
+
+                    return [
+                        'id' => $member->id,
+                        'userId' => $member->userId,
                         'firstName' => $member->firstName,
                         'lastName' => $member->lastName,
+                        'contactDetails' => $memberContactDetails,
                         'induction_count' => Member::where('sponsoredBy', $member->id)->count(),
                     ];
-                }
-            }
-            return Utils::sendResponse($cityData, 'Data retrieved successfully', 200);
+                });
+
+                return [
+                    'cityData' => [
+                        'id' => $city->id,
+                        'name' => $city->cityName,
+                    ],
+                    'memberData' => $memberData,
+                ];
+            });
+
+            return Utils::sendResponse($response, 'Data retrieved successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse([
-                'error' => $th->getMessage()
+                'error' => $th->getMessage(),
             ], 'Internal Server Error', 500);
         }
     }

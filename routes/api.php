@@ -139,7 +139,6 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     Route::get('member-induction-count/{id?}', [ApiController::class, 'induction']);
 
-
     // Circle Meeting Business Giver
     Route::get('circle-meeting-member-businesses', [CircleMeetingMemberBusinessController::class, 'index']);
     Route::get('circle-meeting-member-business-received-index', [CircleMeetingMemberBusinessController::class, 'recievedBus']);
@@ -158,8 +157,8 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('circle-meeting-member-references-refByOtherStore', [CircleMeetingMemberReferenceController::class, 'refByOtherStore']);
     Route::post('circle-meeting-member-references-update/{id}', [CircleMeetingMemberReferenceController::class, 'update']);
     Route::get('circle-meeting-member-references-delete/{id}', [CircleMeetingMemberReferenceController::class, 'delete']);
-
-
+    
+    
     // Trainer master
     Route::get('trainers-index', [TrainerMasterController::class, 'index']);
     Route::get('trainers-show/{id}', [TrainerMasterController::class, 'show']);
@@ -487,8 +486,22 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('ibm-create', [DigitalMemberController::class, 'ibmCreate']);
     Route::post('ibm-update/{id}', [DigitalMemberController::class, 'ibmUpdate']);
     Route::get('ibm-delete/{id}', [DigitalMemberController::class, 'ibmDelete']);
+    Route::get('recieved-ibm-index', [DigitalMemberController::class, 'recievedDigitalBusinessMeet']);
 
-    Route::get('city-wise-member-index', [DigitalMemberController::class, 'cityWiseMember']);
+    //reference-business apis
+    Route::get('digital-member-businesses-index', [DigitalMemberController::class, 'digitalBusinessindex']);
+    Route::get('digital-member-business-received-index', [DigitalMemberController::class, 'recievedBusDigital']);
+    Route::post('digital-member-references-create', [DigitalMemberController::class, 'refBusCreateDigital']);
+
+    Route::post('digital-member-references-update/{id}', [DigitalMemberController::class, 'digitalMemberReferenceUpdate']);
+    Route::get('digital-member-references-index', [DigitalMemberController::class, 'digitalMemberReferenceIndex']);
+    Route::post('digital-member-references-refByOtherStore', [DigitalMemberController::class, 'digitalMemberRefByOtherStore']);
+    Route::get('digital-member-references-delete/{id}', [DigitalMemberController::class, 'deleteDigitalMemberReference']);
+
+
+
+
+    Route::get('city-wise-digital-member-index', [DigitalMemberController::class, 'cityWiseDigitalMember']);
 });
 
 //get app version

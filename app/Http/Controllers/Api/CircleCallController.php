@@ -480,8 +480,6 @@ class CircleCallController extends Controller
         }
 
         try {
-
-
             $memberId = Auth::user()->id;
             $member = Member::where('userId', $memberId)->with('circle')->first();
 
