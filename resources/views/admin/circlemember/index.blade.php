@@ -4,9 +4,15 @@
 @section('content')
 
 
+    <style>
+        #loader {
+            display: none;
+            transition: opacity 0.3s ease;
+        }
+    </style>
+
     <div class="container">
         <div class="card">
-
             @if (request()->anyFilled(['circleId', 'categoryId', 'membershipType']))
                 <div class="alert alert-info">
                     <strong>Filters Applied:</strong><br>
@@ -86,7 +92,7 @@
                 {{-- </div> --}}
 
 
-                <form method="GET" action="{{ route('circlemember.index') }}" id="filterForm">
+                {{-- <form method="GET" action="{{ route('circlemember.index') }}" id="filterForm">
                     <div class="d-flex align-items-center mb-3">
                         <small class="text-muted me-3"><strong>Filter By:</strong></small>
 
@@ -117,7 +123,58 @@
                             @endforeach
                         </select>
                     </div>
+                </form> --}}
+
+
+                <form method="GET" action="{{ route('circlemember.index') }}" id="filterForm">
+                    <div class="d-flex align-items-center mb-3 gap-3">
+                        <small class="text-muted me-3"><strong>Filter By:</strong></small>
+
+                        <select name="circleId" id="filtercircleId" class="form-select mt-3 me-3">
+                            <option value="">Select Circle</option>
+                            @foreach ($circle as $circleData)
+                                <option value="{{ $circleData->id }}" {{ request('circleId') == $circleData->id ? 'selected' : '' }}>
+                                    {{ $circleData->circleName }}
+                                </option>
+                            @endforeach
+                        </select>
+
+                        <select name="categoryId" id="categoryId" class="form-select mt-3 me-3">
+                            <option value="">Select Category</option>
+                            @foreach ($bCategory as $categoryData)
+                                <option value="{{ $categoryData->id }}" {{ request('categoryId') == $categoryData->id ? 'selected' : '' }}>
+                                    {{ $categoryData->categoryName }}
+                                </option>
+                            @endforeach
+                        </select>
+
+                        <select name="membershipType" id="membershipType" class="form-select mt-3 me-3">
+                            <option value="">Select Membership Type</option>
+                            @foreach ($membershipType as $membershipTypeData)
+                                <option value="{{ $membershipTypeData->membershipType }}" {{ request('membershipType') == $membershipTypeData->membershipType ? 'selected' : '' }}>
+                                    {{ $membershipTypeData->membershipType }}
+                                </option>
+                            @endforeach
+                        </select>
+
+                        <!-- ✅ Global Search -->
+                        <input type="text" name="search" id="search" class="form-control mt-3" placeholder="Search by name, circle, etc.." value="{{ request('search') }}">
+
+                        <!-- ✅ Reset Button -->
+                        <a href="{{ route('circlemember.index') }}" class="btn btn-secondary mt-3">
+                            Reset
+                        </a>
+                    </div>
                 </form>
+
+
+                <!-- Loader -->
+                <div id="loader" class="text-center my-3" style="display:none;">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2 text-muted">Loading members...</p>
+                </div>
 
 
 
@@ -322,15 +379,41 @@
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
+    {{-- 
     <script>
         $(document).ready(function() {
             $('#filtercircleId, #categoryId, #membershipType').on('change', function() {
                 $('#filterForm').submit();
             });
         });
-    </script>
+    </script> --}}
 
+
+
+    <script>
+        $(document).ready(function() {
+            // Show loader before submitting
+            function showLoader() {
+                $('#loader').show();
+            }
+
+            // Auto submit on dropdown change
+            $('#categoryId, #membershipType').on('change', function() {
+                showLoader();
+                $('#filterForm').submit();
+            });
+
+            // Auto submit on typing (global search)
+            let timer;
+            $('#search').on('keyup', function() {
+                clearTimeout(timer);
+                timer = setTimeout(function() {
+                    showLoader();
+                    $('#filterForm').submit();
+                }, 500);
+            });
+        });
+    </script>
 
 
 

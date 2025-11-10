@@ -94,26 +94,82 @@ class DigitalMemberController extends Controller
         return response()->json(['data' => $data, 'roles' => $roles]);
     }
 
+    // public function index(Request $request)
+    // {
+    //     try {
+    //         $user = Auth::user();
+
+    //         $memberQuery = Member::where('status', 'Active')
+    //             ->where('circleId', null)
+    //             ->whereHas('contactDetails')
+    //             ->with(['contactDetails', 'user', 'topsProfile', 'billingAddress']);
+
+    //         // ✅ Apply filters if present
+
+    //         if ($request->filled('categoryId')) {
+    //             $memberQuery->whereHas('bCategory', function ($q) use ($request) {
+    //                 $q->where('id', $request->categoryId);
+    //             });
+    //         }
+
+    //         if ($request->filled('membershipType')) {
+    //             $memberQuery->where('membershipType', $request->membershipType);
+    //         }
+
+    //         $member = $memberQuery->paginate(10);
+
+    //         // Pass data to view
+    //         $bCategory = BusinessCategory::where('status', 'Active')->orderBy('categoryName', 'asc')->get();
+    //         $roles = Role::all();
+    //         $membershipType = MembershipType::where('status', 'Active')->get();
+
+    //         return view('admin.digitalmember.index', compact('member', 'roles', 'bCategory', 'membershipType'));
+    //     } catch (\Throwable $th) {
+    //         ErrorLogger::logError($th, $request->fullUrl());
+    //         return view('servererror');
+    //     }
+    // }
+
+
     public function index(Request $request)
     {
         try {
             $user = Auth::user();
 
             $memberQuery = Member::where('status', 'Active')
-                ->where('circleId', null)
+                ->whereNull('circleId')
                 ->whereHas('contactDetails')
                 ->with(['contactDetails', 'user', 'topsProfile', 'billingAddress']);
 
-            // ✅ Apply filters if present
-
+            // ✅ Category Filter
             if ($request->filled('categoryId')) {
                 $memberQuery->whereHas('bCategory', function ($q) use ($request) {
                     $q->where('id', $request->categoryId);
                 });
             }
 
+            // ✅ Membership Type Filter
             if ($request->filled('membershipType')) {
                 $memberQuery->where('membershipType', $request->membershipType);
+            }
+
+            // ✅ Global Search Filter
+            if ($request->filled('search')) {
+                $search = $request->search;
+                $memberQuery->where(function ($q) use ($search) {
+                    $q->where(function ($q2) use ($search) {
+                        $q2->where('firstName', 'like', "%{$search}%")
+                            ->orWhere('lastName', 'like', "%{$search}%");
+                    })
+                        ->orWhereHas('contactDetails', function ($q2) use ($search) {
+                            $q2->where('email', 'like', "%{$search}%");
+                        })
+                        ->orWhereHas('user', function ($q3) use ($search) {
+                            $q3->where('firstName', 'like', "%{$search}%")
+                                ->orWhere('lastName', 'like', "%{$search}%")
+                                ->orWhere('email', 'like', "%{$search}%");
+                        });
+                });
             }
 
             $member = $memberQuery->paginate(10);
@@ -129,6 +185,7 @@ class DigitalMemberController extends Controller
             return view('servererror');
         }
     }
+
 
 
     public function deletedMemberList(Request $request)
@@ -725,6 +782,4 @@ class DigitalMemberController extends Controller
             return view('servererror');
         }
     }
-
-    
 }

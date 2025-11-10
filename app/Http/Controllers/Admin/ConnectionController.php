@@ -113,8 +113,16 @@ class ConnectionController extends Controller
     public function cityList(Request $request)
     {
         try {
+            // ✅ Get all city IDs from members and circles
+            $memberCityIds = Member::whereNotNull('cityId')->pluck('cityId')->toArray();
+            $circleCityIds = Circle::whereNotNull('cityId')->pluck('cityId')->toArray();
 
+            // ✅ Merge and get unique city IDs
+            $allCityIds = array_unique(array_merge($memberCityIds, $circleCityIds));
+
+            // ✅ Get only those active cities
             $cities = City::where('status', 'Active')
+                ->whereIn('id', $allCityIds)
                 ->orderBy('cityName', 'asc')
                 ->get();
 
@@ -129,6 +137,26 @@ class ConnectionController extends Controller
             return view('servererror');
         }
     }
+
+    // public function cityList(Request $request)
+    // {
+    //     try {
+
+    //         $cities = City::where('status', 'Active')
+    //             ->orderBy('cityName', 'asc')
+    //             ->get();
+
+    //         $members = Member::where('status', 'Active')
+    //             ->where('circleId', null)
+    //             ->get();
+
+
+    //         return view('admin.connection.cityList', compact('cities', 'members'));
+    //     } catch (\Throwable $th) {
+    //         ErrorLogger::logError($th, request()->fullUrl());
+    //         return view('servererror');
+    //     }
+    // }
 
 
     public function getCityMembers($cityId)
