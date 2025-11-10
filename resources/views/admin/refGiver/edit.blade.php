@@ -70,10 +70,10 @@
                 {{-- <div class="row "> --}}
                 {{-- <div class="col-md-6"> --}}
                 {{-- <div class="row pt-5"> --}}
-                <div class="col-md-4 mb-3 mt-3">
+                {{-- <div class="col-md-4 mb-3 mt-3">
                     @include('circleMemberMaster')
 
-                </div>
+                </div> --}}
 
                 <div class="row mb-3 mt-3">
                     <!-- Circle Dropdown -->

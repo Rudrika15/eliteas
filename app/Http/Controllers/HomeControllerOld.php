@@ -696,44 +696,71 @@ class HomeController extends Controller
         }
     }
 
+    // public function search(Request $request)
+    // {
+    //     try {
+    //        $query = $request->input('query');
+    //        $members = Member::where('userId', '!=', Auth::user()->id)
+    //             // ->where('cirlceId', '!=', null)
+    //             ->where('status', 'Active')
+    //             ->where(function ($q) use ($query) {
+    //                 $q
+    //                     ->where('firstName', 'like', '%' . $query . '%')
+    //                     ->orWhere('lastName', 'like', '%' . $query . '%')
+    //                     ->orWhere('keyWords', 'like', '%' . $query . '%');
+    //             })
+    //             ->whereHas('circle', function ($q) use ($query) {
+    //                 $q->where('circleName', 'like', '%' . $query . '%');
+    //             })
+    //             ->with('user', 'circle', 'city', 'bCategory')
+    //             ->get();
+
+
+    //         // $members = Member::where('keyWords', 'like', '%' . $query . '%')->get();
+
+    //         $message = "Search results for '$query'";
+
+
+    //         return response()->json([
+    //             'message' => $message,
+    //             'members' => $members,
+    //         ]);
+    //     } catch (\Throwable $th) {
+    //         // Log the error
+    //         // throw $th;
+    //         ErrorLogger::logError($th, request()->fullUrl());
+
+    //         // Return with an error message
+    //         return response()->json(['error' => 'Failed to perform search. Please try again.'], 500);
+    //     }
+    // }
+
+
     public function search(Request $request)
     {
         try {
             $query = $request->input('query');
+
             $members = Member::where('userId', '!=', Auth::user()->id)
-                ->where('cirlceId', '!=', null)
-                ->where('status', 'Active')
+                ->where('status', 'Active') // only skip inactive members
                 ->where(function ($q) use ($query) {
-                    $q
-                        ->where('firstName', 'like', '%' . $query . '%')
-                        ->orWhere('lastName', 'like', '%' . $query . '%')
-                        ->orWhere('keyWords', 'like', '%' . $query . '%');
+                    $q->where('firstName', 'like', "%$query%")
+                        ->orWhere('lastName', 'like', "%$query%")
+                        ->orWhere('keyWords', 'like', "%$query%");
                 })
-                // ->whereHas('circle', function ($q) use ($query) {
-                //     $q->where('circleName', 'like', '%' . $query . '%');
-                // })
-                ->with('user', 'circle', 'bCategory')
+                ->with(['user', 'circle', 'city', 'bCategory'])
                 ->get();
 
-
-            // $members = Member::where('keyWords', 'like', '%' . $query . '%')->get();
-
-            $message = "Search results for '$query'";
-
-
             return response()->json([
-                'message' => $message,
+                'message' => "Search results for '$query'",
                 'members' => $members,
             ]);
         } catch (\Throwable $th) {
-            // Log the error
-            // throw $th;
             ErrorLogger::logError($th, request()->fullUrl());
-
-            // Return with an error message
             return response()->json(['error' => 'Failed to perform search. Please try again.'], 500);
         }
     }
+
 
     public function digitalMemberSearch(Request $request)
     {
@@ -741,7 +768,7 @@ class HomeController extends Controller
             $query = $request->input('query');
 
             $members = Member::where('userId', '!=', Auth::user()->id)
-                ->whereNull('circleId')
+                ->whereNotNull('circleId')
                 ->whereNotNull('cityId')
                 ->where('status', 'Active')
                 ->where(function ($q) use ($query) {

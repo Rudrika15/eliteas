@@ -38,7 +38,7 @@
                                 <th>Membership Type</th>
                                 <th>Amount</th>
                                 <th>Validity</th>
-                                <th>Status</th>
+                                {{-- <th>Status</th> --}}
                             </tr>
                         </thead>
                         <tbody>
@@ -48,18 +48,15 @@
                                     <td>{{ $subscription->allPayments->amount ?? '-' }}</td>
                                     <td>
                                         @php
-                                            $validityDate = $subscription->validity
-                                                ? \Carbon\Carbon::parse($subscription->validity)
-                                                : null;
+                                            $validityDate = $subscription->validity ? \Carbon\Carbon::parse($subscription->validity) : null;
                                         @endphp
-                                        <span
-                                            class="badge
+                                        <span class="badge
                                 {{ $validityDate && $validityDate->isPast() ? 'bg-danger' : ($validityDate ? 'bg-success' : 'bg-secondary') }}
                                 ">
                                             {{ $validityDate ? $validityDate->format('d-M-Y') : '-' }}
                                         </span>
                                     </td>
-                                    <td>{{ $subscription->status }}</td>
+                                    {{-- <td>{{ $subscription->status }}</td> --}}
                                 </tr>
                             @endforeach
                         </tbody>
@@ -72,7 +69,7 @@
             </div>
         </div>
     @endrole
-    
+
     @role('Digital Member')
         <div class="card">
             <div class="card-body">
@@ -90,7 +87,7 @@
                                 <th>Membership Type</th>
                                 <th>Amount</th>
                                 <th>Validity</th>
-                                <th>Status</th>
+                                {{-- <th>Status</th> --}}
                             </tr>
                         </thead>
                         <tbody>
@@ -100,18 +97,15 @@
                                     <td>{{ $subscription->allPayments->amount ?? '-' }}</td>
                                     <td>
                                         @php
-                                            $validityDate = $subscription->validity
-                                                ? \Carbon\Carbon::parse($subscription->validity)
-                                                : null;
+                                            $validityDate = $subscription->validity ? \Carbon\Carbon::parse($subscription->validity) : null;
                                         @endphp
-                                        <span
-                                            class="badge
+                                        <span class="badge
                                 {{ $validityDate && $validityDate->isPast() ? 'bg-danger' : ($validityDate ? 'bg-success' : 'bg-secondary') }}
                                 ">
                                             {{ $validityDate ? $validityDate->format('d-M-Y') : '-' }}
                                         </span>
                                     </td>
-                                    <td>{{ $subscription->status }}</td>
+                                    {{-- <td>{{ $subscription->status }}</td> --}}
                                 </tr>
                             @endforeach
                         </tbody>

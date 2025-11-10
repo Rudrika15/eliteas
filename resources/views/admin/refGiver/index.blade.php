@@ -221,7 +221,7 @@
                                     </li>
 
                                     <li>
-                                        <a class="dropdown-item text-danger" href="#" onclick="confirmDelete('{{ route('refGiver.delete', $refGiverData->id) }}')">
+                                        <a href="{{ route('refGiver.delete', $refGiverData->id) }}" class="dropdown-item text-danger deleteRefGiver" data-id="{{ $refGiverData->id }}">
                                             <i class="bi bi-trash me-2"></i>Delete
                                         </a>
                                     </li>
@@ -262,7 +262,7 @@
                 </div>
 
 
-                @include('admin.refGiver.edit_form', ['refGiver' => $refGiver]) {{-- if you're using partials --}}
+                {{-- @include('admin.refGiver.edit_form', ['refGiver' => $refGiver]) if you're using partials --}}
             @endforeach
         </div>
 
@@ -305,12 +305,12 @@
                                 </div>
                             </div>
 
-                            @if (auth()->user()->hasRole('Member'))
-                                <!-- Circle Dropdown -->
-                                <div class="mb-3">
+                            {{-- @if (auth()->user()->hasRole('Member')) --}}
+                            <!-- Circle Dropdown -->
+                            {{-- <div class="mb-3">
                                     <div class="col-md-12">
                                         <label for="circleId" class="form-label fw-bold color-blue required">Circle <span class="text-danger">*</span></label>
-                                        {{-- <div class="form-floating"> --}}
+                                        <div class="form-floating">
                                         <select class="form-select @error('circleId') is-invalid @enderror" id="circleId" name="circleId" required>
                                             <option value="" selected disabled>Select Circle</option>
                                             <option value="{{ old('circleId', auth()->user()->member->circleId) }}" selected>
@@ -324,13 +324,13 @@
                                             <div class="invalid-tooltip">This field is required.</div>
                                         @enderror
                                     </div>
-                                </div>
+                                </div> --}}
 
-                                <!-- Member Dropdown -->
-                                <div class="col-md-12">
-                                    <label for="memberId" class="form-label fw-bold color-blue required">Member <span class="text-danger">*</span></label>
-                                    {{-- <div class="form-floating"> --}}
-                                    <select class="form-select @error('memberId') is-invalid @enderror" id="memberId" name="memberId" required>
+                            <!-- Member Dropdown -->
+                            {{-- <div class="col-md-12"> --}}
+                            {{-- <label for="memberId" class="form-label fw-bold color-blue required">Member <span class="text-danger">*</span></label> --}}
+                            {{-- <div class="form-floating"> --}}
+                            {{-- <select class="form-select @error('memberId') is-invalid @enderror" id="memberId" name="memberId" required>
                                         <option value="" disabled>Select Member</option>
                                     </select>
                                     @error('memberId')
@@ -338,7 +338,42 @@
                                     @enderror
                                 </div>
 
+                            @endif --}}
+
+
+                            @if (auth()->user()->hasRole('Member'))
+                                <!-- Circle Dropdown -->
+                                <div class="mb-3">
+                                    <div class="col-md-12">
+                                        <label for="circleId" class="form-label fw-bold color-blue required">
+                                            Circle <span class="text-danger">*</span>
+                                        </label>
+                                        <select class="form-select @error('circleId') is-invalid @enderror" id="circleId" name="circleId" required>
+                                            <option value="" selected disabled>Select Circle</option>
+                                            @foreach ($circles as $circle)
+                                                <option value="{{ $circle->id }}">{{ $circle->circleName }}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('circleId')
+                                            <div class="invalid-tooltip">This field is required.</div>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <!-- Member Dropdown -->
+                                <div class="col-md-12">
+                                    <label for="memberId" class="form-label fw-bold color-blue required">
+                                        Member <span class="text-danger">*</span>
+                                    </label>
+                                    <select class="form-select @error('memberId') is-invalid @enderror" id="memberId" name="memberId" required>
+                                        <option value="" selected disabled>Select Member</option>
+                                    </select>
+                                    @error('memberId')
+                                        <div class="invalid-tooltip">This field is required.</div>
+                                    @enderror
+                                </div>
                             @endif
+
 
                             {{-- For Digital Member Role --}}
                             @if (auth()->user()->hasRole('Digital Member'))
@@ -462,26 +497,26 @@
 
 
 
-    {{-- <script>
-        $(document).ready(function() {
-            $('#deleteRefGiver{{ $refGiverData->id }}').click(function(e) {
-                e.preventDefault();
-                Swal.fire({
-                    title: 'Are you sure?',
-                    text: "You won't be able to revert this!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#1d2856',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes, delete it!'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        window.location.href = $(this).attr('href');
-                    }
-                });
+    <script>
+        $(document).on('click', '.deleteRefGiver', function(e) {
+            e.preventDefault();
+            const url = $(this).attr('href');
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#1d2856',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = url;
+                }
             });
         });
-    </script> --}}
+    </script>
 
 
     <script>

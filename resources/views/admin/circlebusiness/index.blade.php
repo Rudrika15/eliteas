@@ -287,7 +287,7 @@
                         <!-- Circle and Member Selection -->
                         <div class="card p-3 shadow-sm border-0 rounded">
 
-                            @if (auth()->user()->hasRole('Member'))
+                            {{-- @if (auth()->user()->hasRole('Member'))
 
                                 <div class="mb-3">
                                     <label for="circleId" class="form-label fw-bold color-blue required">Circle <span class="text-danger">*</span></label>
@@ -301,12 +301,33 @@
                                         @endforeach
                                     </select>
                                     {{-- <label for="circleId">Circle</label> --}}
-                                    @error('circleId')
+                            {{-- @error('circleId')
                                         <div class="invalid-tooltip">This field is required.</div>
                                     @enderror
                                 </div>
 
+                            @endif --}}
+
+
+                            @if (auth()->user()->hasRole('Member'))
+                                <div class="mb-3">
+                                    <label for="circleId" class="form-label fw-bold color-blue required">
+                                        Circle <span class="text-danger">*</span>
+                                    </label>
+                                    <select class="form-select @error('circleId') is-invalid @enderror" id="circleId" name="circleId" required>
+                                        <option value="" selected disabled>Select Circle</option>
+                                        @foreach ($circles as $circle)
+                                            <option value="{{ $circle->id }}" {{ old('circleId') == $circle->id ? 'selected' : '' }}>
+                                                {{ $circle->circleName }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    @error('circleId')
+                                        <div class="invalid-tooltip">This field is required.</div>
+                                    @enderror
+                                </div>
                             @endif
+
 
                             @if (auth()->user()->hasRole('Digital Member'))
                                 <!-- City Dropdown -->

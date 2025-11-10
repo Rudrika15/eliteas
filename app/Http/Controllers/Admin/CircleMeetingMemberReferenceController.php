@@ -423,36 +423,73 @@ class CircleMeetingMemberReferenceController extends Controller
         }
     }
 
+    // public function edit(Request $request, $id)
+    // {
+    //     try {
+
+    //         if (auth()->user()->hasRole('Member')) {
+
+    //             $refGiver = CircleMeetingMembersReference::find($id);
+    //             // $refGiver = CircleMeetingMembersReference::where('id', $id)->first();
+    //             $member = Member::where('status', 'Active')->orderBy('firstName', 'asc')->get();
+    //             $circles = Circle::where('status', 'Active')->orderBy('circleName', 'asc')->get();
+    //         }
+
+    //         if (auth()->user()->hasRole('Digital Member')) {
+    //             $refGiver = CircleMeetingMembersReference::find($id);
+    //             // $refGiver = CircleMeetingMembersReference::where('id', $id)->first();
+    //             $member = Member::where('status', 'Active')->orderBy('firstName', 'asc')->get();
+    //             $cities = City::where('status', 'Active')->orderBy('cityName', 'asc')->get();
+    //         }
+
+    //         return view('admin.refGiver.edit', compact('refGiver', 'member', 'cities'));
+    //         // return view('admin.refGiver.edit_form', compact('refGiver', 'member', 'circles'));
+    //     } catch (\Throwable $th) {
+    //         // throw $th;
+    //         ErrorLogger::logError(
+    //             $th,
+    //             $request->fullUrl()
+    //         );
+    //         return view('servererror');
+    //     }
+    // }
+
+
     public function edit(Request $request, $id)
     {
         try {
+            $refGiver = CircleMeetingMembersReference::findOrFail($id);
+            $member = collect(); // initialize to avoid undefined variable
+            $circles = collect();
+            $cities = collect();
 
             if (auth()->user()->hasRole('Member')) {
+                $member = Member::where('status', 'Active')
+                    ->orderBy('firstName', 'asc')
+                    ->get();
 
-                $refGiver = CircleMeetingMembersReference::find($id);
-                // $refGiver = CircleMeetingMembersReference::where('id', $id)->first();
-                $member = Member::where('status', 'Active')->orderBy('firstName', 'asc')->get();
-                $circles = Circle::where('status', 'Active')->orderBy('circleName', 'asc')->get();
+                $circles = Circle::where('status', 'Active')
+                    ->orderBy('circleName', 'asc')
+                    ->get();
             }
 
             if (auth()->user()->hasRole('Digital Member')) {
-                $refGiver = CircleMeetingMembersReference::find($id);
-                // $refGiver = CircleMeetingMembersReference::where('id', $id)->first();
-                $member = Member::where('status', 'Active')->orderBy('firstName', 'asc')->get();
-                $cities = City::where('status', 'Active')->orderBy('cityName', 'asc')->get();
+                $member = Member::where('status', 'Active')
+                    ->orderBy('firstName', 'asc')
+                    ->get();
+
+                $cities = City::where('status', 'Active')
+                    ->orderBy('cityName', 'asc')
+                    ->get();
             }
 
-            return view('admin.refGiver.edit', compact('refGiver', 'member', 'cities'));
-            // return view('admin.refGiver.edit_form', compact('refGiver', 'member', 'circles'));
+            return view('admin.refGiver.edit', compact('refGiver', 'member', 'circles', 'cities'));
         } catch (\Throwable $th) {
-            // throw $th;
-            ErrorLogger::logError(
-                $th,
-                $request->fullUrl()
-            );
+            ErrorLogger::logError($th, $request->fullUrl());
             return view('servererror');
         }
     }
+
 
     public function update(Request $request)
     {
