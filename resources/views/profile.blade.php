@@ -73,8 +73,27 @@
                                             </div>
                                         @enderror
                                     </div>
-
                                 </div>
+
+                                <div class="col-md-6 mt-3">
+                                    <div class="form-floating">
+                                        <select class="form-select @error('city') is-invalid @enderror" id="city" name="city">
+                                            <option value="" disabled selected>Select City</option>
+                                            @foreach ($city as $cities)
+                                                <option value="{{ $cities->id }}" {{ old('city', $member->cityId ?? '') == $cities->id ? 'selected' : '' }}>
+                                                    {{ $cities->cityName }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        <label for="city">City</label>
+                                        @error('city')
+                                            <div class="invalid-tooltip">
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
+                                    </div>
+                                </div>
+
                                 <div class="col-md-6 mt-3">
                                     <div class="form-floating">
                                         <input type="text" class="form-control @error('firstName') is-invalid @enderror" id="firstName" name="firstName" value="{{ $user->firstName ?? '-' }}" placeholder="First Name">
@@ -124,9 +143,6 @@
 
                                 <div class="col-md-6 mt-3">
                                     <?php
-
-
-
                                 if($member->gender === "male")
                                 {
                                 ?>

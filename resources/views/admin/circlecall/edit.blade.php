@@ -121,7 +121,7 @@
 
                 <div class="col-md-6">
                     <div class="form-floating mt-3">
-                        <input type="file" class="form-control @error('meetingImage') is-invalid @enderror" id="meetingImage" name="meetingImage" accept="image/*" required onchange="previewPhoto(event)" {{ ($oldMeetingImage = old('meetingImage')) ? 'data-old-value="' . $oldMeetingImage . '"' : '' }}>
+                        <input type="file" class="form-control @error('meetingImage') is-invalid @enderror" id="meetingImage" name="meetingImage" accept="image/*" onchange="previewPhoto(event)" {{ ($oldMeetingImage = old('meetingImage')) ? 'data-old-value="' . $oldMeetingImage . '"' : '' }}>
                         <label for="meetingImage">Upload Meeting Image</label>
                         <span class="text-danger mt-1 d-block">*
                             File size:Max 2MB</span>
@@ -156,7 +156,7 @@
                     }
                 </script>
 
-                @if (auth()->user()->hasRole('Member'))
+                {{-- @if (auth()->user()->hasRole('Member'))
                     @php
                         // $scheduleDate is a Collection (from pluck). Safe check:
                         $nearestDate = $scheduleDate->isNotEmpty() ? \Illuminate\Support\Carbon::parse($scheduleDate->min())->subDay()->format('Y-m-d') : \Illuminate\Support\Carbon::now()->format('Y-m-d');
@@ -170,6 +170,27 @@
                             <input type="date" class="form-control" id="date" name="date" placeholder="Meeting Date" required min="{{ $minDate }}" max="{{ $nearestDate }}" value="{{ $selectedDate }}">
                             <label for="date">Date</label>
                         </div>
+                    </div>
+                @endif --}}
+
+
+                @if (auth()->user()->hasRole('Member'))
+                    <!-- Date -->
+                    <div class="col-md-6 mt-3">
+                        {{-- <div class="form-floating">
+                            <label for="date" class="form-label fw-bold color-blue required">
+                                Date <span class="text-danger">*</span>
+                            </label>
+                        </div> --}}
+                        <?php
+                        // Calculate allowed range
+                        $today = \Illuminate\Support\Carbon::today()->format('Y-m-d');
+                        $pastLimit = \Illuminate\Support\Carbon::today()->subDays(15)->format('Y-m-d');
+                        
+                        // Default selected date
+                        $selectedDate = old('date', request()->input('date') ?? $today);
+                        ?>
+                        <input type="date" class="form-control" id="date" name="date" min="{{ $pastLimit }}" max="{{ $today }}" value="{{ $selectedDate }}" required>
                     </div>
                 @endif
 

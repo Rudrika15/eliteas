@@ -500,7 +500,7 @@
                         <li>
                             <hr class="dropdown-divider">
                         </li>
-                        @role('Member')
+                        @role(['Member', 'Digital Member'])
                             <li>
                                 <a class="dropdown-item d-flex align-items-center" href="{{ route('member') }}">
                                     <i class="bi bi-person" style="color: #e76a35"></i>
@@ -512,12 +512,12 @@
                                 <hr class="dropdown-divider">
                             </li>
 
-                            <li>
+                            {{-- <li>
                                 <a class="dropdown-item d-flex align-items-center" href="https://ubnmart.ubncommunity.com/myaccount" target="_blank">
                                     <i class="bi bi-cart" style="color: #e76a35"></i>
                                     <span style="font-weight: bold; color: #1d2856">Go To UBN Mart</span>
                                 </a>
-                            </li>
+                            </li> --}}
                         @endrole
 
                         @role('Admin')

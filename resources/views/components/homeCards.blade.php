@@ -1316,17 +1316,16 @@ $cityCount = count($allCities);
 
                 <div class="row g-4">
                     @if ($circlecalls)
-                    <div class="col-sm-6 col-lg-4">
-                        <div class="profile-card shadow-sm rounded border-0">
-                            <span class="heading">Top IBM Member</span>
-                            <img src="{{ asset('img/header_img.png') }}" class="header-image" alt="Header Image">
-                            <div class="text-center p-3">
-                                <img src="{{ asset('ProfilePhoto/' . ($circlecalls['member']->profilePhoto ?? 'profile.png')) }}"
-                                    class="profile-img img-fluid rounded-circle mx-auto d-block" alt="Profile Image">
-                                <h5 class="member-name" style="color: #e76a35; font-weight: bold;">
-                                    {{ $circlecalls['member']->firstName }} {{ $circlecalls['member']->lastName }}
-                                </h5>
-                                {{-- <p class="position">Max Business Meets</p> --}}
+                        <div class="col-sm-6 col-lg-4">
+                            <div class="profile-card shadow-sm rounded border-0">
+                                <span class="heading">Top IBM Member</span>
+                                <img src="{{ asset('img/header_img.jpeg') }}" class="header-image" alt="Header Image">
+                                <div class="text-center p-3">
+                                    <img src="{{ asset('ProfilePhoto/' . ($circlecalls['member']->profilePhoto ?? 'profile.png')) }}" class="profile-img img-fluid rounded-circle mx-auto d-block" alt="Profile Image">
+                                    <h5 class="member-name" style="color: #e76a35; font-weight: bold;">
+                                        {{ $circlecalls['member']->firstName }} {{ $circlecalls['member']->lastName }}
+                                    </h5>
+                                    {{-- <p class="position">Max Business Meets</p> --}}
 
                                 <div class="info-section">
                                     <div class="icon-text">
@@ -1719,20 +1718,27 @@ $cityCount = count($allCities);
                         <a href="#" class="fw-bold text-decoration-none" style="color: #1d3268;">See All</a>
                     </div>
 
-                    <!-- Horizontal Scrollable Cards -->
-                    <div class="events-container d-flex">
-                        @foreach ($nearestTraining as $trainings)
-                        <div class="event-card">
-                            {{-- <a href="{{ route('events.details', $trainings->id) }}" class="text-decoration-none">
-                                --}}
-                                <img src="{{ $trainings->training_banner ? url('Training/' . $trainings->training_banner) : asset('images/profile.png') }}"
-                                    alt="{{ $trainings->title }}">
+                        <!-- Horizontal Scrollable Cards -->
+                        <div class="events-container d-flex">
+                            @foreach ($nearestTraining as $trainings)
+                                <div class="event-card">
+                                    {{-- <a href="{{ route('events.details', $trainings->id) }}" class="text-decoration-none"> --}}
+                                    <img src="{{ $trainings->training_banner ? url('Training/' . $trainings->training_banner) : asset('images/profile.png') }}" alt="{{ $trainings->title }}">
 
-                                <!-- Event Info Overlay -->
-                                <div class="event-info">
-                                    <h6 class="fw-bold">{{ $trainings->title }}</h6>
-                                    <small class="fw-bold">📍 {{ $trainings->venue }}</small>
-                                    {{-- <small>📍 {{ $trainings->venue }}, {{ $trainings->location }}</small> --}}
+                                    <!-- Event Info Overlay -->
+                                    <div class="event-info">
+                                        <h6 class="fw-bold">{{ $trainings->title }}</h6>
+                                        <small class="fw-bold">📍 {{ $trainings->venue }}</small>
+                                        {{-- <small>📍 {{ $trainings->venue }}, {{ $trainings->location }}</small> --}}
+                                    </div>
+
+                                    <!-- Event Details -->
+                                    <div class="event-details d-flex justify-content-between align-items-center text-muted small">
+                                        <span class="fw-bold" style="color: #1d3268;">{{ \Carbon\Carbon::parse($trainings->date)->format('d M Y') }} | {{ \Carbon\Carbon::parse($trainings->start_time)->format('H:i') }} To {{ \Carbon\Carbon::parse($trainings->end_time)->format('H:i') }}</span>
+                                        {{-- <span>⏳ Time {{ $trainings->duration }}</span> --}}
+                                        <span class="price-tag fw-bold">₹ {{ $trainings->fees }}</span>
+                                    </div>
+                                    </a>
                                 </div>
 
                                 <!-- Event Details -->

@@ -368,7 +368,7 @@ class DigitalMemberController extends Controller
                 return $item;
             });
 
-            return Utils::sendResponse(['busRecieved' => $busRecieved], 'City Meeting Members Business retrieved successfully', 200);
+            return Utils::sendResponse(['busRecieved' => $busRecieved], 'Business retrieved successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }

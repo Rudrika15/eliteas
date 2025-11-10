@@ -308,7 +308,7 @@
                         <div class="card p-3 shadow-sm border-0 rounded">
                             <!-- Circle Dropdown -->
                             {{-- For Member Role --}}
-                            @if (auth()->user()->hasRole('Member'))
+                            {{-- @if (auth()->user()->hasRole('Member'))
                                 <!-- Circle Dropdown -->
                                 <div class="mb-3">
                                     <label for="circleId" class="form-label fw-bold color-blue required">
@@ -343,7 +343,43 @@
                                         <div class="invalid-feedback">This field is required.</div>
                                     @enderror
                                 </div>
+                            @endif --}}
+
+
+                            @if (auth()->user()->hasRole('Member'))
+                                <!-- Circle Dropdown -->
+                                <div class="mb-3">
+                                    <label for="circleId" class="form-label fw-bold color-blue required">
+                                        Circle <span class="text-danger">*</span>
+                                    </label>
+                                    <select class="form-select @error('circleId') is-invalid @enderror" id="circleId" name="circleId" required>
+                                        <option value="" selected disabled>Select Circle</option>
+                                        @foreach ($circles as $circle)
+                                            <option value="{{ $circle->id }}">{{ $circle->circleName }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('circleId')
+                                        <div class="invalid-feedback">This field is required.</div>
+                                    @enderror
+                                </div>
+
+                                <!-- Member Dropdown -->
+                                <div class="mb-3">
+                                    <label for="memberId" class="form-label fw-bold color-blue required">
+                                        Member <span class="text-danger">*</span>
+                                    </label>
+                                    <select class="form-select @error('memberId') is-invalid @enderror" id="memberId" name="memberId" required>
+                                        <option value="" selected disabled>Select Member</option>
+                                        @foreach ($circleMember as $member)
+                                            <option value="{{ $member->id }}">{{ $member->name }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('memberId')
+                                        <div class="invalid-feedback">This field is required.</div>
+                                    @enderror
+                                </div>
                             @endif
+
 
 
                             {{-- For Digital Member Role --}}
@@ -410,7 +446,7 @@
                             </div>
 
 
-                            @if (auth()->user()->hasRole('Member'))
+                            {{-- @if (auth()->user()->hasRole('Member'))
                                 <!-- Date -->
                                 <div class="mb-3">
                                     <label for="date" class="form-label fw-bold color-blue required">
@@ -423,7 +459,42 @@
                                     ?>
                                     <input type="date" class="form-control" id="date" name="date" min="{{ $lastDate }}" max="{{ $nearestDate }}" value="{{ old('date', $selectedDate) }}" required>
                                 </div>
+                            @endif --}}
+
+
+                            @if (auth()->user()->hasRole('Member'))
+                                <!-- Date -->
+                                <div class="mb-3">
+                                    <label for="date" class="form-label fw-bold color-blue required">
+                                        Date <span class="text-danger">*</span>
+                                    </label>
+                                    <?php
+                                    // Calculate allowed range
+                                    $today = \Illuminate\Support\Carbon::today()->format('Y-m-d');
+                                    $pastLimit = \Illuminate\Support\Carbon::today()->subDays(15)->format('Y-m-d');
+                                    
+                                    // Default selected date
+                                    $selectedDate = old('date', request()->input('date') ?? $today);
+                                    ?>
+                                    <input type="date" class="form-control" id="date" name="date" min="{{ $pastLimit }}" max="{{ $today }}" value="{{ $selectedDate }}" required>
+                                </div>
                             @endif
+
+
+
+
+
+                            {{-- @if (auth()->user()->hasRole('Member'))
+                                <!-- Date -->
+                                <div class="mb-3">
+                                    <label for="date" class="form-label fw-bold color-blue required">
+                                        Date <span class="text-danger">*</span>
+                                    </label>
+
+                                    <input type="date" class="form-control" id="date" name="date" value="" required>
+                                </div>
+                            @endif --}}
+
 
                             @if (auth()->user()->hasRole('Digital Member'))
                                 <!-- Date -->

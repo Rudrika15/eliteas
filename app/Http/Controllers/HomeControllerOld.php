@@ -769,13 +769,14 @@ class HomeController extends Controller
 }
 
 
+
     public function digitalMemberSearch(Request $request)
     {
         try {
             $query = $request->input('query');
 
             $members = Member::where('userId', '!=', Auth::user()->id)
-                ->whereNull('circleId')
+                ->whereNotNull('circleId')
                 ->whereNotNull('cityId')
                 ->where('status', 'Active')
                 ->where(function ($q) use ($query) {

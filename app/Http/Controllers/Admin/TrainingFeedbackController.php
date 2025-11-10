@@ -195,7 +195,9 @@ class TrainingFeedbackController extends Controller
     {
         try {
             // Fetch all published trainings
-            $trainings = Training::where('trainingStatus', 'Publish')->get();
+            $trainings = Training::where('trainingStatus', 'Publish')
+                ->whereDate('date', '>=', now()->format('Y-m-d'))
+                ->get();
 
             // Extract training IDs from the collection
             $trainingIds = $trainings->pluck('id');

@@ -111,8 +111,8 @@
                     <span class="close">&times;</span>
                     <div class="member-image">
                         {{-- <img src="{{ asset('ProfilePhoto/' . $profilePhoto) }}"
-                                                    alt="profilePhoto" style="height:50px; width:50px;"
-                                                    class="rounded-circle"> --}}
+                        alt="profilePhoto" style="height:50px; width:50px;"
+                        class="rounded-circle"> --}}
                     </div>
                     <span class="memberName text-color">{{ $member->user->firstName }} {{ $member->user->lastName }}</span>
 
@@ -227,6 +227,7 @@
                                 Connect to view stats
                             </div>
                         @endif --}}
+
                     </div>
                 </div>
 
@@ -383,9 +384,6 @@
                 sendMessage();
             }
         });
-
-
-
         function startPolling() {
             pollingInterval = setInterval(fetchMessages, 1000); // Poll every 1 second
         }

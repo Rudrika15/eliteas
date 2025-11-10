@@ -116,9 +116,9 @@ class CircleCallController extends Controller
                         $query->where('status', 'Active')
                             ->orWhere('firstName', 'UBN');
                     })
+                    ->where('userId', '!=', auth()->id())
                     ->orderBy('firstName', 'asc')
                     ->get();
-
 
 
                 $scheduleDate = Schedule::where('circleId', Auth::user()->member->circle->id)
