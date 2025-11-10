@@ -306,8 +306,54 @@ class CircleMemberController extends Controller
     }
 
 
-    
 
+
+
+
+    // public function categoryWiseMember(Request $request)
+    // {
+    //     try {
+    //         $categoryData = [];
+
+    //         if (!auth()->check()) {
+    //             return Utils::errorResponse([], 'Unauthorized', 401);
+    //         }
+
+    //         $user = auth()->user();
+    //         $authMemberId = $user->member->id;
+    //         $authBusinessCategoryId = $user->member->businessCategoryId;
+
+    //         $members = Member::where('businessCategoryId', $authBusinessCategoryId)->get();
+
+    //         foreach ($members as $member) {
+    //             $businessCategory = BusinessCategory::find($member->businessCategoryId);
+
+    //             if ($businessCategory && $businessCategory->status === 'Active') {
+    //                 if (empty($categoryData)) {
+    //                     $categoryData = [
+    //                         'businessCategoryId' => $businessCategory->id,
+    //                         'businessCategoryName' => $businessCategory->categoryName,
+    //                         'members' => [],
+    //                     ];
+    //                 }
+
+    //                 $categoryData['members'][] = [
+    //                     'authMemberId' => $authMemberId,
+    //                     'memberId' => $member->id,
+    //                     'firstName' => $member->firstName,
+    //                     'lastName' => $member->lastName,
+    //                     'induction_count' => Member::where('sponsoredBy', $member->id)->count(),
+    //                 ];
+    //             }
+    //         }
+
+    //         return Utils::sendResponse($categoryData, 'Data retrieved successfully', 200);
+    //     } catch (\Throwable $th) {
+    //         return Utils::errorResponse([
+    //             'error' => $th->getMessage()
+    //         ], 'Internal Server Error', 500);
+    //     }
+    // }
 
 
     public function categoryWiseMember(Request $request)
@@ -323,6 +369,7 @@ class CircleMemberController extends Controller
             $authMemberId = $user->member->id;
             $authBusinessCategoryId = $user->member->businessCategoryId;
 
+            // Get all members in same business category
             $members = Member::where('businessCategoryId', $authBusinessCategoryId)->get();
 
             foreach ($members as $member) {
@@ -337,11 +384,23 @@ class CircleMemberController extends Controller
                         ];
                     }
 
+                    // ✅ Circle or City name handling
+                    $circleName = '';
+                    if ($member->circleId) {
+                        $circleName = optional($member->circle)->circleName;
+                    } elseif ($member->cityId) {
+                        $circleName = optional($member->city)->cityName;
+                    } else {
+                        $circleName = ''; // if both missing
+                    }
+
+                    // ✅ Push member data
                     $categoryData['members'][] = [
                         'authMemberId' => $authMemberId,
                         'memberId' => $member->id,
                         'firstName' => $member->firstName,
                         'lastName' => $member->lastName,
+                        'circleOrCityName' => $circleName,
                         'induction_count' => Member::where('sponsoredBy', $member->id)->count(),
                     ];
                 }

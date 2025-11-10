@@ -157,8 +157,8 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('circle-meeting-member-references-refByOtherStore', [CircleMeetingMemberReferenceController::class, 'refByOtherStore']);
     Route::post('circle-meeting-member-references-update/{id}', [CircleMeetingMemberReferenceController::class, 'update']);
     Route::get('circle-meeting-member-references-delete/{id}', [CircleMeetingMemberReferenceController::class, 'delete']);
-    
-    
+
+
     // Trainer master
     Route::get('trainers-index', [TrainerMasterController::class, 'index']);
     Route::get('trainers-show/{id}', [TrainerMasterController::class, 'show']);
@@ -497,6 +497,13 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('digital-member-references-index', [DigitalMemberController::class, 'digitalMemberReferenceIndex']);
     Route::post('digital-member-references-refByOtherStore', [DigitalMemberController::class, 'digitalMemberRefByOtherStore']);
     Route::get('digital-member-references-delete/{id}', [DigitalMemberController::class, 'deleteDigitalMemberReference']);
+
+
+    //city wise digital member
+
+    Route::get('/city-members', [DigitalMemberController::class, 'getCityMembers']);
+    Route::get('/city-members/{id}', [DigitalMemberController::class, 'getCityMembers']);
+
 
 
 

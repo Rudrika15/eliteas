@@ -113,6 +113,109 @@ class DigitalMemberController extends Controller
         }
     }
 
+
+    public function getCityMembers(Request $request, $id = null)
+    {
+        try {
+            $businessMeetings = CircleMeetingMembersBusiness::with('member')
+                ->where('status', 'Active')
+                ->get();
+
+            if ($id) {
+                // ✅ Get members based on cityId
+                $city = City::with([
+                    'members' => function ($query) {
+                        $query->where('status', 'Active')
+                            ->with([
+                                'bCategory:id,categoryName',
+                                'user:id,email,contactNo'
+                            ]);
+                    }
+                ])->findOrFail($id);
+
+                $city->totalBusinessAmount = 0;
+
+                foreach ($city->members as $member) {
+                    $member->businessAmount = 0;
+                    $member->induction_count = Member::where('sponsoredBy', $member->id)->count();
+                }
+
+                foreach ($businessMeetings as $meeting) {
+                    $businessGiverCityId = Member::where('userId', $meeting->businessGiverId)->value('cityId');
+                    if ($businessGiverCityId == $city->id) {
+                        $city->totalBusinessAmount += $meeting->amount;
+
+                        foreach ($city->members as $member) {
+                            if ($member->userId == $meeting->loginMemberId) {
+                                $member->businessAmount += $meeting->amount;
+                            }
+                        }
+                    }
+                }
+
+                return response()->json([
+                    'success' => true,
+                    'city' => $city,
+                ]);
+            }
+
+            // ✅ Get all active cities with members
+            $cities = City::where('status', 'Active')
+                ->with([
+                    'members' => function ($query) {
+                        $query->where('status', 'Active')
+                            ->with([
+                                'bCategory:id,categoryName',
+                                'user:id,email,contactNo'
+                            ]);
+                    }
+                ])
+                ->withCount(['members' => function ($query) {
+                    $query->where('status', 'Active');
+                }])
+                ->get();
+
+            foreach ($cities as $city) {
+                $city->totalBusinessAmount = 0;
+
+                foreach ($city->members as $member) {
+                    $member->businessAmount = 0;
+                    $member->induction_count = Member::where('sponsoredBy', $member->id)->count();
+                }
+
+                foreach ($businessMeetings as $meeting) {
+                    $businessGiverCityId = Member::where('userId', $meeting->businessGiverId)->value('cityId');
+                    if ($businessGiverCityId == $city->id) {
+                        $city->totalBusinessAmount += $meeting->amount;
+
+                        foreach ($city->members as $member) {
+                            if ($member->userId == $meeting->loginMemberId) {
+                                $member->businessAmount += $meeting->amount;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return response()->json([
+                'success' => true,
+                'cities' => $cities,
+            ]);
+        } catch (\Throwable $th) {
+            ErrorLogger::logError($th, request()->fullUrl());
+            Log::error('Error in getCityMembers', [
+                'message' => $th->getMessage(),
+                'trace' => $th->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'error' => 'An error occurred. Please try again later.',
+            ], 500);
+        }
+    }
+
+
     // ibm module apis
 
     public function ibmIndex(Request $request)
