@@ -100,7 +100,7 @@
 @endrole
 
 @role('Digital Member')
-    <li class="nav-item">
+    {{-- <li class="nav-item">
         <a class="nav-link collapsed" data-bs-target="#activity-nav" data-bs-toggle="collapse" href="#">
             <i class="bi bi-plus-circle-dotted" style="color: #e76a35"></i><span>Activity</span><i class="bi bi-chevron-down ms-auto" style="color: #e76a35"></i>
         </a>
@@ -137,7 +137,7 @@
                 </a>
             </li>
         </ul>
-    </li>
+    </li> --}}
 
     <li class="nav-item">
         <a class="nav-link collapsed" href="{{ route('chat.index') }}">
@@ -165,12 +165,12 @@
         </a>
         <ul id="Newconnection-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
 
-            <li class="nav-item">
+            {{-- <li class="nav-item">
                 <a class="nav-link " href="{{ route('digital.member.cities.list') }}">
                     <i class="bi bi-gear-wide-connected" style="color: #e76a35"></i>
                     <span>City</span>
                 </a>
-            </li>
+            </li> --}}
 
             <li class="nav-item">
                 <a class="nav-link " href="{{ route('connection.categoryListForDigitalMember') }}">
@@ -188,7 +188,7 @@
         </ul>
     </li>
 
-    <li class="nav-item">
+    {{-- <li class="nav-item">
         <a class="nav-link collapsed" href="{{ route('subscription.memberSubscription') }}">
             <i class="bi bi-star" style="color: #e76a35"></i>
             <span class="text-blue">My Subscriptions</span>
@@ -199,7 +199,7 @@
             <i class="bi bi-currency-rupee" style="color: #e76a35"></i>
             <span class="text-blue">My Payment History</span>
         </a>
-    </li>
+    </li> --}}
 
     <li class="nav-item">
         <a class="nav-link collapsed" href="{{ route('help.userView') }}">

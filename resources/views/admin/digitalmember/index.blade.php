@@ -4,96 +4,103 @@
 @section('content')
 
 
-    <div class="container">
-        <div class="card">
+<div class="container">
+    <div class="card">
 
-            @if (request()->anyFilled(['categoryId', 'membershipType']))
-                <div class="alert alert-info">
-                    <strong>Filters Applied:</strong><br>
-                    @if (request('categoryId'))
-                        Category: {{ $bCategory->where('id', request('categoryId'))->first()?->categoryName }}<br>
-                    @endif
-                    @if (request('membershipType'))
-                        Membership Type: {{ request('membershipType') }}
-                    @endif
-                </div>
+        @if (request()->anyFilled(['categoryId', 'membershipType']))
+        <div class="alert alert-info">
+            <strong>Filters Applied:</strong><br>
+            @if (request('categoryId'))
+            Category: {{ $bCategory->where('id', request('categoryId'))->first()?->categoryName }}<br>
             @endif
+            @if (request('membershipType'))
+            Membership Type: {{ request('membershipType') }}
+            @endif
+        </div>
+        @endif
 
 
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h4 class="card-title">Digital Member</h4>
-                    <a href="{{ route('digitalMember.create') }}" class="btn btn-bg-orange btn-sm mt-3 btn-tooltip"><i class="bi bi-plus-circle"></i>
-                        <span class="btn-text">Add Member</span>
-                    </a>
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="card-title">Digital Member</h4>
+                <a href="{{ route('digitalMember.create') }}" class="btn btn-bg-orange btn-sm mt-3 btn-tooltip"><i
+                        class="bi bi-plus-circle"></i>
+                    <span class="btn-text">Add Member</span>
+                </a>
+            </div>
+
+
+            <form method="GET" action="{{ route('digitalMember.index') }}" id="filterForm">
+                <div class="d-flex align-items-center mb-3">
+                    <small class="text-muted me-3"><strong>Filter By:</strong></small>
+
+                    <select name="categoryId" id="categoryId" class="form-select mt-3 me-3">
+                        <option value="">Select Category</option>
+                        @foreach ($bCategory as $categoryData)
+                        <option value="{{ $categoryData->id }}" {{ request('categoryId')==$categoryData->id ? 'selected'
+                            : '' }}>
+                            {{ $categoryData->categoryName }}
+                        </option>
+                        @endforeach
+                    </select>
+
+                    <select name="membershipType" id="membershipType" class="form-select mt-3">
+                        <option value="">Select MembershipType</option>
+                        @foreach ($membershipType as $membershipTypeData)
+                        <option value="{{ $membershipTypeData->membershipType }}" {{
+                            request('membershipType')==$membershipTypeData->membershipType ? 'selected' : '' }}>
+                            {{ $membershipTypeData->membershipType }}
+                        </option>
+                        @endforeach
+                    </select>
                 </div>
-
-
-                <form method="GET" action="{{ route('digitalMember.index') }}" id="filterForm">
-                    <div class="d-flex align-items-center mb-3">
-                        <small class="text-muted me-3"><strong>Filter By:</strong></small>
-
-                        <select name="categoryId" id="categoryId" class="form-select mt-3 me-3">
-                            <option value="">Select Category</option>
-                            @foreach ($bCategory as $categoryData)
-                                <option value="{{ $categoryData->id }}" {{ request('categoryId') == $categoryData->id ? 'selected' : '' }}>
-                                    {{ $categoryData->categoryName }}
-                                </option>
-                            @endforeach
-                        </select>
-
-                        <select name="membershipType" id="membershipType" class="form-select mt-3">
-                            <option value="">Select MembershipType</option>
-                            @foreach ($membershipType as $membershipTypeData)
-                                <option value="{{ $membershipTypeData->membershipType }}" {{ request('membershipType') == $membershipTypeData->membershipType ? 'selected' : '' }}>
-                                    {{ $membershipTypeData->membershipType }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                </form>
+            </form>
 
 
 
-                <!-- Table with stripped rows -->
-                <div class="table-responsive">
-                    <table class="table table-bordered table-striped table-hover">
-                        <thead>
-                            <tr>
-                                <th>S.No</th>
-                                <th>Created By</th>
-                                <th>Sponsored By</th>
-                                <th>Member Name</th>
-                                <th>Business Category</th>
-                                <th>Membership Type</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
+            <!-- Table with stripped rows -->
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>S.No</th>
+                            <th>Created By</th>
+                            <th>Sponsored By</th>
+                            <th>City</th>
+                            <th>Member Name</th>
+                            <th>Business Category</th>
+                            <th>Membership Type</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
 
-                        <tbody>
-                            {{-- {{$member}} --}}
-                            @foreach ($member as $circlememberData)
-                                <tr>
-                                    <th>{{ ($member->currentPage() - 1) * $member->perPage() + $loop->index + 1 }}</th>
-                                    <td>{{ $circlememberData->users->firstName ?? '' }}
-                                        {{ $circlememberData->users->lastName ?? '' }}</td>
-                                    <td>{{ $circlememberData->members->firstName ?? '' }} {{ $circlememberData->members->lastName ?? '' }}</td>
-                                    <td>{{ $circlememberData->firstName ?? '-' }} {{ $circlememberData->lastName ?? '' }}
-                                    </td>
-                                    <td>{{ $circlememberData->bCategory->categoryName ?? '-' }}</td>
-                                    <td>{{ $circlememberData->membershipType ?? '-' }} </td>
-                                    <td>
-                                        <a href="{{ route('digitalMember.edit', $circlememberData->id) }}" class="btn btn-bg-blue btn-sm btn-tooltip">
-                                            <i class="bi bi-pen"></i>
-                                            <span class="btn-text">Edit Member</span>
-                                        </a>
-                                        <button type="button" class="btn btn-danger btn-sm btn-tooltip" onclick="confirmDelete({{ $circlememberData->id }})">
-                                            <i class="bi bi-trash"></i>
-                                            <span class="btn-text">Delete Member</span>
-                                        </button>
+                    <tbody>
+                        {{-- {{$member}} --}}
+                        @foreach ($member as $circlememberData)
+                        <tr>
+                            <th>{{ ($member->currentPage() - 1) * $member->perPage() + $loop->index + 1 }}</th>
+                            <td>{{ $circlememberData->users->firstName ?? '' }}
+                                {{ $circlememberData->users->lastName ?? '' }}</td>
+                            <td>{{ $circlememberData->members->firstName ?? '' }} {{
+                                $circlememberData->members->lastName ?? '' }}</td>
+                            <td>{{ $circlememberData->city->cityName ?? '-' }}</td>
+                            </td>
+                            <td>{{ $circlememberData->bCategory->categoryName ?? '-' }}</td>
+                            <td>{{ $circlememberData->membershipType ?? '-' }} </td>
+                            <td>
+                                <a href="{{ route('digitalMember.edit', $circlememberData->id) }}"
+                                    class="btn btn-bg-blue btn-sm btn-tooltip">
+                                    <i class="bi bi-pen"></i>
+                                    <span class="btn-text">Edit Member</span>
+                                </a>
+                                <button type="button" class="btn btn-danger btn-sm btn-tooltip"
+                                    onclick="confirmDelete({{ $circlememberData->id }})">
+                                    <i class="bi bi-trash"></i>
+                                    <span class="btn-text">Delete Member</span>
+                                </button>
 
-                                        <script>
-                                            function confirmDelete(memberId) {
+                                <script>
+                                    function confirmDelete(memberId) {
                                                 Swal.fire({
                                                     title: 'Are you sure?',
                                                     text: "You won't be able to revert this!",
@@ -108,30 +115,30 @@
                                                     }
                                                 })
                                             }
-                                        </script>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                    <div class="d-flex justify-content-end custom-pagination">
-                        {!! $member->links() !!}
-                    </div>
-                    <!-- End Table with stripped rows -->
+                                </script>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+                <div class="d-flex justify-content-end custom-pagination">
+                    {!! $member->links() !!}
                 </div>
+                <!-- End Table with stripped rows -->
             </div>
         </div>
     </div>
+</div>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <script>
-        $(document).ready(function() {
+<script>
+    $(document).ready(function() {
             $(' #categoryId, #membershipType').on('change', function() {
                 $('#filterForm').submit();
             });
         });
-    </script>
+</script>
 
 
 

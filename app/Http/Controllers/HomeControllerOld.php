@@ -259,7 +259,7 @@ class HomeController extends Controller
 
             $count = Schedule::where('status', 'Active')->count();
             $currentDate = Carbon::now()->format('Y-m-d');
-            // $currentDatee = Carbon::now()->format('d-m-Y');  
+            // $currentDatee = Carbon::now()->format('d-m-Y');
 
             $nearestTraining = Training::where('status', 'Active')
                 ->where('trainingStatus', 'Publish')
@@ -696,44 +696,78 @@ class HomeController extends Controller
         }
     }
 
-    public function search(Request $request)
-    {
-        try {
-            $query = $request->input('query');
-            $members = Member::where('userId', '!=', Auth::user()->id)
-                ->where('cirlceId', '!=', null)
-                ->where('status', 'Active')
-                ->where(function ($q) use ($query) {
-                    $q
-                        ->where('firstName', 'like', '%' . $query . '%')
-                        ->orWhere('lastName', 'like', '%' . $query . '%')
-                        ->orWhere('keyWords', 'like', '%' . $query . '%');
-                })
-                // ->whereHas('circle', function ($q) use ($query) {
-                //     $q->where('circleName', 'like', '%' . $query . '%');
-                // })
-                ->with('user', 'circle', 'bCategory')
-                ->get();
+    // public function search(Request $request)
+    // {
+    //     try {
+    //         $query = $request->input('query');
+    //         $members = Member::where('userId', '!=', Auth::user()->id)
+    //             // ->where('cirlceId', '!=', null)
+    //             ->where('status', 'Active')
+    //             ->where(function ($q) use ($query) {
+    //                 $q
+    //                     ->where('firstName', 'like', '%' . $query . '%')
+    //                     ->orWhere('lastName', 'like', '%' . $query . '%')
+    //                     ->orWhere('keyWords', 'like', '%' . $query . '%');
+    //             })
+    //             // ->whereHas('circle', function ($q) use ($query) {
+    //             //     $q->where('circleName', 'like', '%' . $query . '%');
+    //             // })
+    //             ->with('user', 'circle', 'bCategory')
+    //             ->get();
 
 
-            // $members = Member::where('keyWords', 'like', '%' . $query . '%')->get();
+    //         // $members = Member::where('keyWords', 'like', '%' . $query . '%')->get();
 
-            $message = "Search results for '$query'";
+    //         $message = "Search results for '$query'";
 
 
-            return response()->json([
-                'message' => $message,
-                'members' => $members,
-            ]);
-        } catch (\Throwable $th) {
-            // Log the error
-            // throw $th;
-            ErrorLogger::logError($th, request()->fullUrl());
+    //         return response()->json([
+    //             'message' => $message,
+    //             'members' => $members,
+    //         ]);
+    //     } catch (\Throwable $th) {
+    //         // Log the error
+    //         // throw $th;
+    //         ErrorLogger::logError($th, request()->fullUrl());
 
-            // Return with an error message
-            return response()->json(['error' => 'Failed to perform search. Please try again.'], 500);
-        }
+    //         // Return with an error message
+    //         return response()->json(['error' => 'Failed to perform search. Please try again.'], 500);
+    //     }
+    // }
+
+
+   public function search(Request $request)
+{
+    try {
+        $query = $request->input('query');
+
+        $members = Member::query()
+            ->where('userId', '!=', Auth::user()->id)
+            ->where('status', 'Active') // ✅ only active members
+            ->where(function ($q) use ($query) {
+                $q->where('firstName', 'like', '%' . $query . '%')
+                    ->orWhere('lastName', 'like', '%' . $query . '%')
+                    ->orWhere('keyWords', 'like', '%' . $query . '%');
+            })
+            ->with([
+                'user',
+                'circle' => function ($q) {
+                    $q->select('id', 'circleName'); // ✅ load circle if it exists
+                },
+                'bCategory'
+            ])
+            ->get();
+
+        return response()->json([
+            'message' => "Search results for '$query'",
+            'members' => $members,
+        ]);
+    } catch (\Throwable $th) {
+        ErrorLogger::logError($th, request()->fullUrl());
+        return response()->json(['error' => 'Failed to perform search. Please try again.'], 500);
     }
+}
+
 
     public function digitalMemberSearch(Request $request)
     {

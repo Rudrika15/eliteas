@@ -243,12 +243,17 @@ class HomeController extends Controller
     {
         $membersCount = Member::where('status', 'Active')->count();
         $circleCount = Circle::where('status', 'Active')->count();
+        $cityCount = Member::where('status', 'Active')
+        ->whereNotNull('cityId')
+        ->distinct('cityId')
+        ->count('cityId');
+
         // $cityCount = Circle::where('status', 'Active')
         //     ->select('cityId')
         //     ->distinct()
         //     ->count('cityId');
 
-        return view('layouts.master', compact('membersCount', 'circleCount'));
+        return view('layouts.master', compact('membersCount', 'circleCount', 'cityCount'));
     }
 
 
@@ -272,7 +277,7 @@ class HomeController extends Controller
 
             $count = Schedule::where('status', 'Active')->count();
             $currentDate = Carbon::now()->format('Y-m-d');
-            // $currentDatee = Carbon::now()->format('d-m-Y');  
+            // $currentDatee = Carbon::now()->format('d-m-Y');
 
             $nearestTraining = Training::where('status', 'Active')
                 ->where('trainingStatus', 'Publish')
@@ -1029,58 +1034,118 @@ class HomeController extends Controller
     // }
 
 
+    // public function search(Request $request)
+    // {
+    //     try {
+    //         $query = $request->input('query');
+    //         $authId = Auth::id(); // Get authenticated user ID
+
+    //         // Fetch the authenticated user's circle ID from the Members table
+    //         $authMember = Member::where('userId', $authId)->first();
+    //         $authCircleId = $authMember ? $authMember->circleId : null;
+
+    //         $members = Member::where('userId', '!=', $authId)
+    //             ->whereNotNull('circleId')     // ✅ circleId is NOT NULL
+    //             ->where('status', 'Active')
+    //             ->where(function ($q) use ($query) {
+    //                 $q->where('firstName', 'like', '%' . $query . '%')
+    //                     ->orWhere('lastName', 'like', '%' . $query . '%')
+    //                     ->orWhere('keyWords', 'like', '%' . $query . '%');
+    //             })
+    //             ->with(['user', 'circle', 'bCategory'])
+    //             ->get();
+
+    //         // Add connection status for each member
+    //         $members->map(function ($member) use ($authId, $authCircleId) {
+    //             if ($authCircleId !== null && $member->circleId == $authCircleId) {
+    //                 $member->connection_status = 'Connected';
+    //             } else {
+    //                 $connection = Connection::where(function ($query) use ($authId, $member) {
+    //                     $query->where('userId', $authId)->where('memberId', $member->userId)
+    //                         ->orWhere(function ($query) use ($authId, $member) {
+    //                             $query->where('userId', $member->userId)->where('memberId', $authId);
+    //                         });
+    //                 })->first();
+
+    //                 $member->connection_status = $connection ? $connection->status : 'Not Connected';
+    //             }
+
+    //             if ($member->connection_status !== 'Connected' && isset($connection) && $connection->status === 'Accepted') {
+    //                 $member->connection_status = 'Connected';
+    //             }
+
+    //             $member->induction_count = Member::where('sponsoredBy', $member->id)->count() ?? 0;
+    //         });
+
+    //         return response()->json([
+    //             'message' => "Search results for '$query'",
+    //             'members' => $members,
+    //         ]);
+    //     } catch (\Throwable $th) {
+    //         ErrorLogger::logError($th, request()->fullUrl());
+    //         return response()->json(['error' => 'Failed to perform search. Please try again.'], 500);
+    //     }
+    // }
+
+
     public function search(Request $request)
-    {
-        try {
-            $query = $request->input('query');
-            $authId = Auth::id(); // Get authenticated user ID
+{
+    try {
+        $query = $request->input('query');
+        $authId = Auth::id(); // Get authenticated user ID
 
-            // Fetch the authenticated user's circle ID from the Members table
-            $authMember = Member::where('userId', $authId)->first();
-            $authCircleId = $authMember ? $authMember->circleId : null;
+        // Fetch the authenticated user's circle ID from the Members table
+        $authMember = Member::where('userId', $authId)->first();
+        $authCircleId = $authMember ? $authMember->circleId : null;
 
-            $members = Member::where('userId', '!=', $authId)
-                ->whereNotNull('circleId')     // ✅ circleId is NOT NULL
-                ->where('status', 'Active')
-                ->where(function ($q) use ($query) {
-                    $q->where('firstName', 'like', '%' . $query . '%')
-                        ->orWhere('lastName', 'like', '%' . $query . '%')
-                        ->orWhere('keyWords', 'like', '%' . $query . '%');
-                })
-                ->with(['user', 'circle', 'bCategory'])
-                ->get();
+        // ✅ Get all active members (with or without circle)
+        $members = Member::where('userId', '!=', $authId)
+            ->where('status', 'Active')
+            ->where(function ($q) use ($query) {
+                $q->where('firstName', 'like', '%' . $query . '%')
+                    ->orWhere('lastName', 'like', '%' . $query . '%')
+                    ->orWhere('keyWords', 'like', '%' . $query . '%');
+            })
+            ->with(['user', 'circle', 'bCategory'])
+            ->get();
 
-            // Add connection status for each member
-            $members->map(function ($member) use ($authId, $authCircleId) {
-                if ($authCircleId !== null && $member->circleId == $authCircleId) {
-                    $member->connection_status = 'Connected';
-                } else {
-                    $connection = Connection::where(function ($query) use ($authId, $member) {
-                        $query->where('userId', $authId)->where('memberId', $member->userId)
-                            ->orWhere(function ($query) use ($authId, $member) {
-                                $query->where('userId', $member->userId)->where('memberId', $authId);
-                            });
-                    })->first();
+        // ✅ Add connection status and induction count
+        $members->map(function ($member) use ($authId, $authCircleId) {
+            // Connection by same circle
+            if ($authCircleId !== null && $member->circleId == $authCircleId) {
+                $member->connection_status = 'Connected';
+            } else {
+                $connection = Connection::where(function ($query) use ($authId, $member) {
+                    $query->where('userId', $authId)
+                        ->where('memberId', $member->userId)
+                        ->orWhere(function ($query) use ($authId, $member) {
+                            $query->where('userId', $member->userId)
+                                  ->where('memberId', $authId);
+                        });
+                })->first();
 
-                    $member->connection_status = $connection ? $connection->status : 'Not Connected';
-                }
+                $member->connection_status = $connection ? $connection->status : 'Not Connected';
+            }
 
-                if ($member->connection_status !== 'Connected' && isset($connection) && $connection->status === 'Accepted') {
-                    $member->connection_status = 'Connected';
-                }
+            // Force "Connected" if accepted connection found
+            if ($member->connection_status !== 'Connected' && isset($connection) && $connection->status === 'Accepted') {
+                $member->connection_status = 'Connected';
+            }
 
-                $member->induction_count = Member::where('sponsoredBy', $member->id)->count() ?? 0;
-            });
+            // Count inductions sponsored by this member
+            $member->induction_count = Member::where('sponsoredBy', $member->id)->count() ?? 0;
+        });
 
-            return response()->json([
-                'message' => "Search results for '$query'",
-                'members' => $members,
-            ]);
-        } catch (\Throwable $th) {
-            ErrorLogger::logError($th, request()->fullUrl());
-            return response()->json(['error' => 'Failed to perform search. Please try again.'], 500);
-        }
+        return response()->json([
+            'message' => "Search results for '$query'",
+            'members' => $members,
+        ]);
+    } catch (\Throwable $th) {
+        ErrorLogger::logError($th, request()->fullUrl());
+        return response()->json(['error' => 'Failed to perform search. Please try again.'], 500);
     }
+}
+
 
 
 
