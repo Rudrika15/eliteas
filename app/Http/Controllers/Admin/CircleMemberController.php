@@ -615,7 +615,7 @@ class CircleMemberController extends Controller
     {
         try {
             $user = User::find($id);
-            $members = Member::where('status', 'Active')->orderBy('memberName', 'asc')->get();
+            $members = Member::where('status', 'Active')->orderBy('firstName', 'asc')->get();
             $member = Member::find($id);
             $countries = Country::where('status', 'Active')->orderBy('countryName', 'ASC')->get();
             $states = State::where('status', 'Active')->orderBy('stateName', 'ASC')->get();
@@ -630,7 +630,7 @@ class CircleMemberController extends Controller
                 $circle = Circle::where('status', 'Active')->orderBy('circleName', 'asc')->get();
             }
             $businessCategory = BusinessCategory::where('status', 'Active')->orderBy('categoryName', 'asc')->get();
-            $membershipType = MembershipType::where('status', 'Active')->orderBy('membershipName', 'asc')->get();
+            $membershipType = MembershipType::where('status', 'Active')->orderBy('membershipType', 'asc')->get();
             $circles = Circle::where('status', 'Active')->orderBy('circleName', 'asc')->get();
 
             return view('admin.circlemember.edit', compact('countries', 'circles', 'members', 'membershipType', 'user', 'states', 'cities', 'member', 'contactDetails', 'billing', 'tops', 'circles', 'businessCategory'));
