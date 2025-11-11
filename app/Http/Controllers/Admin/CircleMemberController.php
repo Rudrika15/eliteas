@@ -149,6 +149,26 @@ class CircleMemberController extends Controller
                 $memberQuery->where('membershipType', $request->membershipType);
             }
 
+
+            // ✅ Global Search Filter
+            if ($request->filled('search')) {
+                $search = $request->search;
+                $memberQuery->where(function ($q) use ($search) {
+                    $q->where(function ($q2) use ($search) {
+                        $q2->where('firstName', 'like', "%{$search}%")
+                            ->orWhere('lastName', 'like', "%{$search}%");
+                    })
+                        ->orWhereHas('contactDetails', function ($q2) use ($search) {
+                            $q2->where('email', 'like', "%{$search}%");
+                        })
+                        ->orWhereHas('user', function ($q3) use ($search) {
+                            $q3->where('firstName', 'like', "%{$search}%")
+                                ->orWhere('lastName', 'like', "%{$search}%")
+                                ->orWhere('email', 'like', "%{$search}%");
+                        });
+                });
+            }
+
             $member = $memberQuery->paginate(10);
             $circle = Circle::where('status', 'Active')->orderBy('circleName', 'asc')->get();
             $bCategory = BusinessCategory::where('status', 'Active')->orderBy('categoryName', 'asc')->get();
@@ -437,7 +457,7 @@ class CircleMemberController extends Controller
             $member->firstName = $request->firstName;
             $member->lastName = $request->lastName;
             $member->gender = $request->gender;
-           
+
             $member->membershipType = $request->membershipType;
 
             // Set membership amount
