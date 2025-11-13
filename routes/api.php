@@ -43,6 +43,7 @@ use App\Http\Controllers\Api\SlotController;
 use App\Http\Controllers\Api\SpecificAskController;
 use App\Http\Controllers\Api\UpdateAppController;
 use App\Http\Controllers\Api\VisitorController;
+use App\Http\Controllers\Api\CityCountController;
 
 // use App\Http\Controllers\Api\CircleMeetingMemberBusinessController;
 
@@ -514,3 +515,6 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 //get app version
 Route::get('app-version', [UpdateAppController::class, 'getAppVersion']);
 Route::post('update-app-version', [UpdateAppController::class, 'updateAppVersion']);
+
+//city count
+Route::get('city-count',[CityCountController::class,'getCityCount']);
