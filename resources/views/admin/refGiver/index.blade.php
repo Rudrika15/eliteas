@@ -144,8 +144,6 @@
         </button>
     </div>
 
-
-
     <div id="tabByMe" class="tab-content active" style="display: block;">
         <div class="row">
             @foreach ($busGiver as $busGiverData)
