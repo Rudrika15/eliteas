@@ -16,7 +16,6 @@ use App\Http\Controllers\Controller;
 use App\Models\City;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
-use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Log;
 use Kreait\Firebase\Factory;
 use Kreait\Firebase\Messaging\CloudMessage;
@@ -253,6 +252,7 @@ class CircleCallController extends Controller
             ->where(function ($query) use ($circleId) {
                 $query->where('circleId', $circleId)
                     ->where('status', 'Active')
+                    ->where('userId', '<>', Auth::id()) // exclude the authenticated user
                     ->orWhere('firstName', 'UBN'); // always include UBN
             })
             ->orderBy('firstName', 'asc')
@@ -485,6 +485,7 @@ class CircleCallController extends Controller
             'meetingPlace' => 'required',
             // 'date' => 'required|date',
             'remarks' => 'required',
+            'meetingImage' => 'mimes:jpeg,jpg,png,gif|max:2048',
         ]);
 
         if ($validator->fails()) {
@@ -540,23 +541,40 @@ class CircleCallController extends Controller
             $circlecall->meetingPlace = $request->meetingPlace;
 
             if ($request->hasFile('meetingImage')) {
+
                 $image = $request->file('meetingImage');
                 $imageName = time() . '.' . $image->getClientOriginalExtension();
+                $path = $image->getPathname();
 
-                $img = imagecreatefromjpeg($image->getPathname());
+                // Detect MIME type
+                $mime = mime_content_type($path);
 
+                if ($mime === 'image/jpeg' || $mime === 'image/jpg') {
+                    $img = imagecreatefromjpeg($path);
+                } elseif ($mime === 'image/png') {
+                    $img = imagecreatefrompng($path);
+                } elseif ($mime === 'image/gif') {
+                    $img = imagecreatefromgif($path);
+                } else {
+                    return back()->withErrors(['meetingImage' => 'Unsupported image format'])->withInput();
+                }
+
+                // Resize
                 $width = 800;
                 $height = (imagesy($img) / imagesx($img)) * $width;
                 $resizedImg = imagescale($img, $width, $height);
 
+                // Always save as JPG
                 imagejpeg($resizedImg, public_path('meetingImage/' . $imageName), 75);
 
+                // Check size
                 if (filesize(public_path('meetingImage/' . $imageName)) > 2 * 1024 * 1024) {
                     return redirect()->back()->withErrors(['meetingImage' => 'Image could not be compressed below 2MB'])->withInput();
                 }
 
                 $circlecall->meetingImage = $imageName;
             }
+
 
             $circlecall->date = $request->date;
             $circlecall->remarks = $request->remarks;
@@ -754,7 +772,7 @@ class CircleCallController extends Controller
                 'meetingPlace' => 'required|regex:/^([a-zA-Z]+)(\s[a-zA-Z]+)*$/',
                 'date' => 'required',
                 'remarks' => 'required',
-                // 'meetingImage' => 'mimes:jpeg,jpg,png,gif|max:2048',
+                'meetingImage' => 'mimes:jpeg,jpg,png,gif|max:2048',
             ]);
 
             $id = $request->id;

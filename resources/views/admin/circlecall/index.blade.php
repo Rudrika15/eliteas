@@ -355,7 +355,9 @@
                                     <select class="form-select @error('circleId') is-invalid @enderror" id="circleId" name="circleId" required>
                                         <option value="" selected disabled>Select Circle</option>
                                         @foreach ($circles as $circle)
-                                            <option value="{{ $circle->id }}">{{ $circle->circleName }}</option>
+                                            <option value="{{ $circle->id }}" {{ old('circleId') == $circle->id ? 'selected' : '' }}>
+                                                {{ $circle->circleName }}
+                                            </option>
                                         @endforeach
                                     </select>
                                     @error('circleId')
@@ -371,7 +373,9 @@
                                     <select class="form-select @error('memberId') is-invalid @enderror" id="memberId" name="memberId" required>
                                         <option value="" selected disabled>Select Member</option>
                                         @foreach ($circleMember as $member)
-                                            <option value="{{ $member->id }}">{{ $member->name }}</option>
+                                            <option value="{{ $member->id }}" {{ old('memberId') == $member->id ? 'selected' : '' }}>
+                                                {{ $member->name }}
+                                            </option>
                                         @endforeach
                                     </select>
                                     @error('memberId')
@@ -591,6 +595,14 @@
         });
     </script>
 
+    @if ($errors->any())
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                const modal = new bootstrap.Modal('#createIBMModal');
+                modal.show();
+            });
+        </script>
+    @endif
 
 
     {{-- edit model end  --}}
