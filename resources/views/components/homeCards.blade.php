@@ -1316,16 +1316,17 @@ $cityCount = count($allCities);
 
                 <div class="row g-4">
                     @if ($circlecalls)
-                        <div class="col-sm-6 col-lg-4">
-                            <div class="profile-card shadow-sm rounded border-0">
-                                <span class="heading">Top IBM Member</span>
-                                <img src="{{ asset('img/header_img.jpeg') }}" class="header-image" alt="Header Image">
-                                <div class="text-center p-3">
-                                    <img src="{{ asset('ProfilePhoto/' . ($circlecalls['member']->profilePhoto ?? 'profile.png')) }}" class="profile-img img-fluid rounded-circle mx-auto d-block" alt="Profile Image">
-                                    <h5 class="member-name" style="color: #e76a35; font-weight: bold;">
-                                        {{ $circlecalls['member']->firstName }} {{ $circlecalls['member']->lastName }}
-                                    </h5>
-                                    {{-- <p class="position">Max Business Meets</p> --}}
+                    <div class="col-sm-6 col-lg-4">
+                        <div class="profile-card shadow-sm rounded border-0">
+                            <span class="heading">Top IBM Member</span>
+                            <img src="{{ asset('img/header_img.jpeg') }}" class="header-image" alt="Header Image">
+                            <div class="text-center p-3">
+                                <img src="{{ asset('ProfilePhoto/' . ($circlecalls['member']->profilePhoto ?? 'profile.png')) }}"
+                                    class="profile-img img-fluid rounded-circle mx-auto d-block" alt="Profile Image">
+                                <h5 class="member-name" style="color: #e76a35; font-weight: bold;">
+                                    {{ $circlecalls['member']->firstName }} {{ $circlecalls['member']->lastName }}
+                                </h5>
+                                {{-- <p class="position">Max Business Meets</p> --}}
 
                                 <div class="info-section">
                                     <div class="icon-text">
@@ -1441,8 +1442,7 @@ $cityCount = count($allCities);
                     <div class="col-sm-6 col-lg-4">
                         <div class="profile-card shadow-sm rounded border-0">
                             <span class="heading">Top Business Leader</span>
-                            <img src="{{ asset('img/coverImage.png') }}" class="header-image" alt="Header Image">
-
+                            <img src="{{ asset('img/header_img.jpeg') }}" class="header-image" alt="Header Image">
                             <div class="text-center p-3">
                                 <img src="{{ asset('ProfilePhoto/' . ($busGiver['member']->profilePhoto ?? 'profile.png')) }}"
                                     class="profile-img img-fluid rounded-circle mx-auto d-block" alt="Profile Image">
@@ -1551,7 +1551,7 @@ $cityCount = count($allCities);
                     <div class="col-sm-6 col-lg-4">
                         <div class="profile-card shadow-sm rounded border-0">
                             <span class="heading">Top Reference Giver</span>
-                            <img src="{{ asset('img/coverImage.png') }}" class="header-image" alt="Header Image">
+                            <img src="{{ asset('img/header_img.jpeg') }}" class="header-image" alt="Header Image">
                             <div class="text-center p-3">
                                 <img src="{{ asset('ProfilePhoto/' . ($refGiver['profilePhoto'] ?? 'profile.png')) }}"
                                     class="profile-img img-fluid rounded-circle mx-auto d-block" alt="Profile Image">
@@ -1718,27 +1718,20 @@ $cityCount = count($allCities);
                         <a href="#" class="fw-bold text-decoration-none" style="color: #1d3268;">See All</a>
                     </div>
 
-                        <!-- Horizontal Scrollable Cards -->
-                        <div class="events-container d-flex">
-                            @foreach ($nearestTraining as $trainings)
-                                <div class="event-card">
-                                    {{-- <a href="{{ route('events.details', $trainings->id) }}" class="text-decoration-none"> --}}
-                                    <img src="{{ $trainings->training_banner ? url('Training/' . $trainings->training_banner) : asset('images/profile.png') }}" alt="{{ $trainings->title }}">
+                    <!-- Horizontal Scrollable Cards -->
+                    <div class="events-container d-flex">
+                        @foreach ($nearestTraining as $trainings)
+                        <div class="event-card">
+                            {{-- <a href="{{ route('events.details', $trainings->id) }}" class="text-decoration-none">
+                                --}}
+                                <img src="{{ $trainings->training_banner ? url('Training/' . $trainings->training_banner) : asset('images/profile.png') }}"
+                                    alt="{{ $trainings->title }}">
 
-                                    <!-- Event Info Overlay -->
-                                    <div class="event-info">
-                                        <h6 class="fw-bold">{{ $trainings->title }}</h6>
-                                        <small class="fw-bold">📍 {{ $trainings->venue }}</small>
-                                        {{-- <small>📍 {{ $trainings->venue }}, {{ $trainings->location }}</small> --}}
-                                    </div>
-
-                                    <!-- Event Details -->
-                                    <div class="event-details d-flex justify-content-between align-items-center text-muted small">
-                                        <span class="fw-bold" style="color: #1d3268;">{{ \Carbon\Carbon::parse($trainings->date)->format('d M Y') }} | {{ \Carbon\Carbon::parse($trainings->start_time)->format('H:i') }} To {{ \Carbon\Carbon::parse($trainings->end_time)->format('H:i') }}</span>
-                                        {{-- <span>⏳ Time {{ $trainings->duration }}</span> --}}
-                                        <span class="price-tag fw-bold">₹ {{ $trainings->fees }}</span>
-                                    </div>
-                                    </a>
+                                <!-- Event Info Overlay -->
+                                <div class="event-info">
+                                    <h6 class="fw-bold">{{ $trainings->title }}</h6>
+                                    <small class="fw-bold">📍 {{ $trainings->venue }}</small>
+                                    {{-- <small>📍 {{ $trainings->venue }}, {{ $trainings->location }}</small> --}}
                                 </div>
 
                                 <!-- Event Details -->
@@ -1753,114 +1746,126 @@ $cityCount = count($allCities);
                                 </div>
                             </a>
                         </div>
-                        @endforeach
+
+                        <!-- Event Details -->
+                        <div class="event-details d-flex justify-content-between align-items-center text-muted small">
+                            <span class="fw-bold" style="color: #1d3268;">{{
+                                \Carbon\Carbon::parse($trainings->date)->format('d M Y') }} | {{
+                                \Carbon\Carbon::parse($trainings->start_time)->format('H:i') }} To {{
+                                \Carbon\Carbon::parse($trainings->end_time)->format('H:i') }}</span>
+                            {{-- <span>⏳ Time {{ $trainings->duration }}</span> --}}
+                            <span class="price-tag fw-bold">₹ {{ $trainings->fees }}</span>
+                        </div>
+                        </a>
+                    </div>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+        @else
+        <style>
+            .upcoming-events .trainings {
+                display: none;
+            }
+        </style>
+        {{-- <div class="bg-light py-5">
+            <div class="upcoming-events trainings">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4 class="fw-bold" style="color: #1d3268;">Upcoming Training Workshops</h4>
+                </div>
+                <p class="text-muted text-center"><b>No Training Workshops for now.</b></p>
+            </div>
+        </div> --}}
+        @endif
+
+
+
+    </div>
+
+    <!-- Right Section (5 Columns) -->
+    <div class="col-lg-4 col-md-12">
+        <div class="row">
+            @if ($categoryNames->isNotEmpty())
+            <div class="card shadow-sm p-4 text-center">
+                <h4 class="mb-4 fw-bold">Vacant Categories</h4>
+                <div class="row">
+                    @foreach ($categoryNames as $categoryName)
+                    <div class="col-md-6 mb-3">
+                        <div class="card bottom-card border rounded p-2 pt-2" width="100%">
+                            <h5 class="m-0 card-text fw-bold">{{ $categoryName }}</h5>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+            </div>
+            @endif
+            @if ($meeting == null)
+            <div class="col-lg-12 col-md-12">
+                <div class="card shadow-sm p-4 text-center">
+                    <h4 class="mb-4 fw-bold">Upcoming Circle Meetings</h4>
+                    <div class="alert alert-info" role="alert">
+                        No upcoming circle meeting found
                     </div>
                 </div>
             </div>
             @else
-            <style>
-                .upcoming-events .trainings {
-                    display: none;
-                }
-            </style>
-            {{-- <div class="bg-light py-5">
-                <div class="upcoming-events trainings">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h4 class="fw-bold" style="color: #1d3268;">Upcoming Training Workshops</h4>
+            <div class="col-lg-12 col-md-12">
+                <div class="card circleMeeting shadow-sm p-4 ">
+                    <h4 class="mb-4 fw-bold" style="font-size: 18px; color:#1d3268;">&nbsp;Upcoming {{
+                        $meeting->circle->circleName }} Circle Meetings
+                    </h4>
+                    <div class="card event-card-upcoming shadow-sm p-3 mb-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            {{-- <span class="fw-bold">1.</span> --}}
+                            {{-- <div class="fw-bold" style="color: #1d3268;"></div> --}}
+                            <span class="fw-bold">{{ $meeting->date->format('j M Y') }} | {{ $meeting->meetingTime
+                                }}</span>
+                            <i class="bi bi-clipboard" onclick="copyMeetingLink()"></i>
+                            <button class="btn btn-outline-primary btn-sm"
+                                onclick="openInvitePage('{{ $signedUrl }}')">Invite</button>
+                        </div>
+                        {{-- <div class="d-flex align-items-center mt-2">
+                            <i class="bi bi-clock me-2"></i> 2 Hours
+                        </div> --}}
+                        <div class="d-flex align-items-center mt-2">
+                            <i class="bi bi-people-fill me-2 text-muted"></i> <span class="fw-bold text-muted">{{
+                                $meeting->circle->members->count() }}</span>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-geo-alt-fill me-2 text-muted"></i> <span class="fw-bold text-muted">{{
+                                $meeting->circle->city->cityName }}</span>
+                        </div>
+                        <hr>
+                        <div class="text-primary fw-semibold" data-bs-toggle="collapse"
+                            data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                            Invited People - {{ $myInvites->count() }} <i class="bi bi-chevron-down"></i>
+                        </div>
+                        <div class="collapse" id="collapseExample">
+                            <table class="table mt-2">
+                                <tbody>
+                                    @foreach ($myInvites as $invite)
+                                    <tr>
+                                        <td><small class="text-muted">{{ $invite->personName }}</small>
+                                        </td>
+                                        <td><small class="text-muted">{{ $invite->personEmail }}</small>
+                                        </td>
+                                        <td><small class="text-muted">{{ $invite->personContact }}</small>
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                    <p class="text-muted text-center"><b>No Training Workshops for now.</b></p>
                 </div>
-            </div> --}}
+            </div>
+            <input type="hidden" id="shareableMeetingLink"
+                value="{{ URL::signedRoute('visitor.form', ['slug' => $meeting->cm_slug, 'meetingId' => $meeting->id, 'ref' => auth()->user()->member->id]) }}">
             @endif
 
 
-
-        </div>
-
-        <!-- Right Section (5 Columns) -->
-        <div class="col-lg-4 col-md-12">
-            <div class="row">
-                @if ($categoryNames->isNotEmpty())
-                <div class="card shadow-sm p-4 text-center">
-                    <h4 class="mb-4 fw-bold">Vacant Categories</h4>
-                    <div class="row">
-                        @foreach ($categoryNames as $categoryName)
-                        <div class="col-md-6 mb-3">
-                            <div class="card bottom-card border rounded p-2 pt-2" width="100%">
-                                <h5 class="m-0 card-text fw-bold">{{ $categoryName }}</h5>
-                            </div>
-                        </div>
-                        @endforeach
-                    </div>
-                </div>
-                @endif
-                @if ($meeting == null)
-                <div class="col-lg-12 col-md-12">
-                    <div class="card shadow-sm p-4 text-center">
-                        <h4 class="mb-4 fw-bold">Upcoming Circle Meetings</h4>
-                        <div class="alert alert-info" role="alert">
-                            No upcoming circle meeting found
-                        </div>
-                    </div>
-                </div>
-                @else
-                <div class="col-lg-12 col-md-12">
-                    <div class="card circleMeeting shadow-sm p-4 ">
-                        <h4 class="mb-4 fw-bold" style="font-size: 18px; color:#1d3268;">&nbsp;Upcoming {{
-                            $meeting->circle->circleName }} Circle Meetings
-                        </h4>
-                        <div class="card event-card-upcoming shadow-sm p-3 mb-3">
-                            <div class="d-flex justify-content-between align-items-center">
-                                {{-- <span class="fw-bold">1.</span> --}}
-                                {{-- <div class="fw-bold" style="color: #1d3268;"></div> --}}
-                                <span class="fw-bold">{{ $meeting->date->format('j M Y') }} | {{ $meeting->meetingTime
-                                    }}</span>
-                                <i class="bi bi-clipboard" onclick="copyMeetingLink()"></i>
-                                <button class="btn btn-outline-primary btn-sm"
-                                    onclick="openInvitePage('{{ $signedUrl }}')">Invite</button>
-                            </div>
-                            {{-- <div class="d-flex align-items-center mt-2">
-                                <i class="bi bi-clock me-2"></i> 2 Hours
-                            </div> --}}
-                            <div class="d-flex align-items-center mt-2">
-                                <i class="bi bi-people-fill me-2 text-muted"></i> <span class="fw-bold text-muted">{{
-                                    $meeting->circle->members->count() }}</span>
-                            </div>
-                            <div class="d-flex align-items-center">
-                                <i class="bi bi-geo-alt-fill me-2 text-muted"></i> <span class="fw-bold text-muted">{{
-                                    $meeting->circle->city->cityName }}</span>
-                            </div>
-                            <hr>
-                            <div class="text-primary fw-semibold" data-bs-toggle="collapse"
-                                data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
-                                Invited People - {{ $myInvites->count() }} <i class="bi bi-chevron-down"></i>
-                            </div>
-                            <div class="collapse" id="collapseExample">
-                                <table class="table mt-2">
-                                    <tbody>
-                                        @foreach ($myInvites as $invite)
-                                        <tr>
-                                            <td><small class="text-muted">{{ $invite->personName }}</small>
-                                            </td>
-                                            <td><small class="text-muted">{{ $invite->personEmail }}</small>
-                                            </td>
-                                            <td><small class="text-muted">{{ $invite->personContact }}</small>
-                                            </td>
-                                        </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <input type="hidden" id="shareableMeetingLink"
-                    value="{{ URL::signedRoute('visitor.form', ['slug' => $meeting->cm_slug, 'meetingId' => $meeting->id, 'ref' => auth()->user()->member->id]) }}">
-                @endif
-
-
-                <script>
-                    function copyMeetingLink() {
+            <script>
+                function copyMeetingLink() {
                         var copyText = document.getElementById("shareableMeetingLink").value;
                         navigator.clipboard.writeText(copyText).then(function() {
                             Swal.fire({
@@ -1882,11 +1887,11 @@ $cityCount = count($allCities);
                     function openInvitePage(url) {
                         window.open(url, '_blank');
                     }
-                </script>
+            </script>
 
-            </div>
         </div>
     </div>
+</div>
 </div>
 
 @endrole
