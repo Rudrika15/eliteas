@@ -237,11 +237,18 @@ class EventController extends Controller
                 ->get(); // Get all future events
 
             // Check if no future events are found
+            // if ($events->isEmpty()) {
+            //     return Utils::sendResponse([
+            //         'message' => 'No upcoming events for now.'
+            //     ], 'No upcoming events', 200);
+            // }
+
             if ($events->isEmpty()) {
                 return Utils::sendResponse([
-                    'message' => 'No upcoming events for now.'
-                ], 'No upcoming events', 200);
+                    'events' => []
+                ], 'No upcoming events for now.', 200);
             }
+
 
             // Create signed URLs for the events' links
             // $eventLinks = $events->map(function ($event) use ($memberId) {

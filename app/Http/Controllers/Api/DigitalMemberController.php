@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Circle;
 use App\Models\CircleCall;
 use App\Models\CircleMeetingMembersBusiness;
 use App\Models\CircleMeetingMembersReference;
@@ -770,6 +771,36 @@ class DigitalMemberController extends Controller
 
             return Utils::sendResponse($response, 'Data retrieved successfully', 200);
         } catch (\Throwable $th) {
+            return Utils::errorResponse([
+                'error' => $th->getMessage(),
+            ], 'Internal Server Error', 500);
+        }
+    }
+
+    public function getCityCount()
+    {
+        try {
+
+            // All DISTINCT city IDs from Member and Circle tables
+            $memberCities = Member::distinct()->pluck('cityId');
+            $circleCities = Circle::distinct()->pluck('cityId');
+
+            // Merge both, remove duplicates
+            $allCities = $memberCities->merge($circleCities)->unique();
+
+            // Count
+            $cityCount = $allCities->count();
+
+            // Prepare response in same structure as cityWiseDigitalMember()
+            $response = [
+                'cityData' => [
+                    'total_cities' => $cityCount,
+                ]
+            ];
+
+            return Utils::sendResponse($response, 'City count retrieved successfully', 200);
+        } catch (\Throwable $th) {
+
             return Utils::errorResponse([
                 'error' => $th->getMessage(),
             ], 'Internal Server Error', 500);

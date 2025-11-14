@@ -504,6 +504,8 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     Route::get('/city-members', [DigitalMemberController::class, 'getCityMembers']);
     Route::get('/city-members/{id}', [DigitalMemberController::class, 'getCityMembers']);
+    Route::get('/city-count', [DigitalMemberController::class, 'getCityCount']);
+
 
 
 
@@ -515,6 +517,3 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 //get app version
 Route::get('app-version', [UpdateAppController::class, 'getAppVersion']);
 Route::post('update-app-version', [UpdateAppController::class, 'updateAppVersion']);
-
-//city count
-Route::get('city-count',[CityCountController::class,'getCityCount']);

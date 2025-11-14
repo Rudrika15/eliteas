@@ -131,6 +131,12 @@
                 </div>
             </div>
 
+
+            @php
+                $hasAddress = !empty($member->billingAddress?->bAddressLine1) || !empty($member->billingAddress?->bAddressLine2) || !empty($member->billingAddress?->bCity) || !empty($member->billingAddress?->bState) || !empty($member->billingAddress?->bPinCode);
+            @endphp
+
+
             <!-- Details Section -->
             <div class="row px-4 pb-4 g-3">
                 <!-- Contact -->
@@ -142,13 +148,27 @@
                             <p><i class="bi bi-phone text-muted me-2"></i><strong class="text-muted">Phone:</strong> <span class="text-color fw-bold"> {{ $member->user->contactNo ?? 'N/A' }} </span></p>
                         </div>
 
-                        <p><i class="bi bi-circle-fill text-muted me-2"></i><strong class="text-muted">Circle:</strong> <span class="text-color fw-bold"> {{ $member->circle->circleName ?? 'N/A' }}</span></p>
-                        <div class="{{ $memberCircleId == $userCircleId || ($connection && $connection->status == 'Accepted') ? '' : 'blurred-info' }}">
-                            <p><i class="bi bi-building text-muted me-2"></i><strong class="text-muted">Address:</strong> <span class="text-color fw-bold"> {{ $member->billingAddress->bAddressLine1 ?? 'N/A' }}, {{ $member->billingAddress->bAddressLine2 ?? 'N/A' }}, {{ $member->billingAddress->bCity ?? '-' }},
-                                    {{ $member->billingAddress->bState ?? '' }},
-                                    {{ $member->billingAddress->bPinCode ?? '' }} </span>
-                            </p>
-                        </div>
+                        @if ($member->user->role == 'Member')
+                            <p><i class="bi bi-circle-fill text-muted me-2"></i><strong class="text-muted">Circle:</strong> <span class="text-color fw-bold"> {{ $member->circle->circleName ?? 'N/A' }}</span></p>
+                        @else
+                            <p><i class="bi bi-circle-fill text-muted me-2"></i><strong class="text-muted">City:</strong> <span class="text-color fw-bold"> {{ $member->city->cityName ?? '' }}</span></p>
+                        @endif
+                        @if ($hasAddress)
+                            <div class="{{ $memberCircleId == $userCircleId || ($connection && $connection->status == 'Accepted') ? '' : 'blurred-info' }}">
+                                <p>
+                                    <i class="bi bi-building text-muted me-2"></i>
+                                    <strong class="text-muted">Address:</strong>
+                                    <span class="text-color fw-bold">
+                                        {{ $member->billingAddress->bAddressLine1 ?? '' }}
+                                        {{ $member->billingAddress->bAddressLine2 ?? '' }}
+                                        {{ $member->billingAddress->bCity ?? '' }}
+                                        {{ $member->billingAddress->bState ?? '' }}
+                                        {{ $member->billingAddress->bPinCode ?? '' }}
+                                    </span>
+                                </p>
+                            </div>
+                        @endif
+
                     </div>
                 </div>
 
@@ -178,58 +198,61 @@
                     </div>
                 </div>
 
-                <!-- Stats -->
-                <div class="col-md-4">
-                    <div class="row g-3 position-relative">
-                        <div class="{{ $memberCircleId == $userCircleId || ($connection && $connection->status == 'Accepted') ? '' : 'blurred-info' }}">
-                            <div class="row g-3">
-                                <div class="col-6">
-                                    <div class="stats-card">
-                                        <h5 class="mb-0 text-color fw-bold">{{ $member->totalMeetings ?? 0 }}</h5>
-                                        <small class="text-muted">Total Meetings</small>
+                @if ($member->user->role == 'Member')
+                    <!-- Stats -->
+                    <div class="col-md-4">
+                        <div class="row g-3 position-relative">
+                            <div class="{{ $memberCircleId == $userCircleId || ($connection && $connection->status == 'Accepted') ? '' : 'blurred-info' }}">
+                                <div class="row g-3">
+                                    <div class="col-6">
+                                        <div class="stats-card">
+                                            <h5 class="mb-0 text-color fw-bold">{{ $member->totalMeetings ?? 0 }}</h5>
+                                            <small class="text-muted">Total Meetings</small>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="stats-card">
-                                        <h5 class="mb-0 text-color fw-bold">₹ {{ $member->businessEarn ?? 0 }}</h5>
-                                        <small class="text-muted">Business Amount Earn</small>
+                                    <div class="col-6">
+                                        <div class="stats-card">
+                                            <h5 class="mb-0 text-color fw-bold">₹ {{ $member->businessEarn ?? 0 }}</h5>
+                                            <small class="text-muted">Business Amount Earn</small>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="stats-card">
-                                        <h5 class="mb-0 text-color fw-bold">{{ $member->businessGiven ?? 0 }}</h5>
-                                        <small class="text-muted">Business Given</small>
+                                    <div class="col-6">
+                                        <div class="stats-card">
+                                            <h5 class="mb-0 text-color fw-bold">{{ $member->businessGiven ?? 0 }}</h5>
+                                            <small class="text-muted">Business Given</small>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="stats-card">
-                                        <h5 class="mb-0 text-color fw-bold">{{ $member->businessReceived ?? 0 }}</h5>
-                                        <small class="text-muted">Business Received</small>
+                                    <div class="col-6">
+                                        <div class="stats-card">
+                                            <h5 class="mb-0 text-color fw-bold">{{ $member->businessReceived ?? 0 }}</h5>
+                                            <small class="text-muted">Business Received</small>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="stats-card">
-                                        <h5 class="mb-0 text-color fw-bold">{{ $member->referenceGiven ?? 0 }}</h5>
-                                        <small class="text-muted">Reference Given</small>
+                                    <div class="col-6">
+                                        <div class="stats-card">
+                                            <h5 class="mb-0 text-color fw-bold">{{ $member->referenceGiven ?? 0 }}</h5>
+                                            <small class="text-muted">Reference Given</small>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="stats-card">
-                                        <h5 class="mb-0 text-color fw-bold">{{ $member->referenceReceived ?? 0 }}</h5>
-                                        <small class="text-muted">Reference Received</small>
+                                    <div class="col-6">
+                                        <div class="stats-card">
+                                            <h5 class="mb-0 text-color fw-bold">{{ $member->referenceReceived ?? 0 }}</h5>
+                                            <small class="text-muted">Reference Received</small>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        {{-- @if (!($memberCircleId == $userCircleId || ($connection && $connection->status == 'Accepted')))
+                            {{-- @if (!($memberCircleId == $userCircleId || ($connection && $connection->status == 'Accepted')))
                             <div style="position: absolute; top: 0; left: 0; background: rgba(255,255,255,0.7); width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; font-weight: bold; z-index: 1;">
                                 Connect to view stats
                             </div>
                         @endif --}}
 
+                        </div>
                     </div>
-                </div>
+                @endif
+
 
             </div>
         </div>
@@ -239,84 +262,82 @@
     <div class="container mt-5">
 
         <!-- Tabs Navigation -->
-        <ul class="nav nav-tabs" id="profileTab" role="tablist">
-            <li class="nav-item" role="presentation">
-                <a class="nav-link active" id="profile-tab" data-bs-toggle="tab" href="#myProfile" role="tab" aria-controls="myProfile" aria-selected="true">My Profile</a>
-            </li>
-            <li class="nav-item" role="presentation">
-                <a class="nav-link" id="bio-tab" data-bs-toggle="tab" href="#myBio" role="tab" aria-controls="myBio" aria-selected="false">My Bios</a>
-            </li>
-            <li class="nav-item" role="presentation">
-                <a class="nav-link" id="top-profile-tab" data-bs-toggle="tab" href="#topProfile" role="tab" aria-controls="topProfile" aria-selected="false">Tops Profile</a>
-            </li>
-            <li class="nav-item" role="presentation">
-                <a class="nav-link" id="gains-profile-tab" data-bs-toggle="tab" href="#gainsProfile" role="tab" aria-controls="gainsProfile" aria-selected="false">Gains Profile</a>
-            </li>
-            <li class="nav-item" role="presentation">
-                <a class="nav-link" id="testimonial-tab" data-bs-toggle="tab" href="#testimonial" role="tab" aria-controls="testimonial" aria-selected="false">Testimonial</a>
-            </li>
-        </ul>
+        @if ($member->user->role == 'Member')
+            <ul class="nav nav-tabs" id="profileTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link active" id="profile-tab" data-bs-toggle="tab" href="#myProfile" role="tab" aria-controls="myProfile" aria-selected="true">My Profile</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="bio-tab" data-bs-toggle="tab" href="#myBio" role="tab" aria-controls="myBio" aria-selected="false">My Bios</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="top-profile-tab" data-bs-toggle="tab" href="#topProfile" role="tab" aria-controls="topProfile" aria-selected="false">Tops Profile</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="gains-profile-tab" data-bs-toggle="tab" href="#gainsProfile" role="tab" aria-controls="gainsProfile" aria-selected="false">Gains Profile</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="testimonial-tab" data-bs-toggle="tab" href="#testimonial" role="tab" aria-controls="testimonial" aria-selected="false">Testimonial</a>
+                </li>
+            </ul>
 
-        <!-- Tabs Content -->
-        <div class="tab-content mt-3" id="profileTabContent">
 
-            <!-- My Profile Tab -->
-            <div class="tab-pane fade show active" id="myProfile" role="tabpanel" aria-labelledby="profile-tab">
-                <div class="content-section">
-                    <h5>My Profile</h5>
-                    <ul>
-                        {{-- <li><span class="title">Full Name:</span> <span class="value">{{ $member->firstName ?? '-' }}
-                                {{ $member->lastName ?? '-' }}</span></li> --}}
-                        {{-- @if ($memberCircleId == $userCircleId) --}}
-                        <li><span class="title">Email:</span> <span class="value">{{ $member->user->email }}</span>
-                        </li>
-                        <li><span class="title">Mobile:</span> <span class="value">{{ $member->user->contactNo }}</span>
-                        </li>
-                        {{-- @elseif (isset($memberStatus) && $memberStatus->status == 'Accepted')
-                            <li><span class="title">Email:</span> <span class="value">{{ $member->user->email }}</span>
-                            </li>
-                            <li><span class="title">Mobile:</span> <span class="value">{{ $member->user->contactNo }}</span>
-                            </li>
-                        @else --}}
-                        {{-- @elseif ($connections->isNotEmpty() && $connections->first()->status == 'Accepted')
-                            <li><span class="title">Email:</span> <span class="value">{{ $member->user->email }}</span></li>
-                            <li><span class="title">Mobile:</span> <span class="value">{{ $member->user->contactNo }}</span></li>
-                        @else --}}
-                        {{-- <li><span class="title">Email:</span> <span class="value">****{{ substr($member->user->email, -8) }}</span>
-                            </li>
-                            <li><span class="title">Mobile:</span> <span class="value">****{{ substr($member->user->contactNo, -3) }}</span>
-                            </li> --}}
-                        {{-- @endif --}}
-                        <div class="tab-pane fade" id="testimonial" role="tabpanel" aria-labelledby="testimonial-tab">
-                            {{-- <h5>Testimonial</h5> --}}
-                            <div class="content-section">
-                                @if ($testimonials->isNotEmpty())
-                                    <ul>
-                                        @foreach ($testimonials as $testimonial)
-                                            <li><span class="value"><b>{{ $testimonial->user->firstName ?? 'Anonymous' }} {{ $testimonial->user->lastName ?? '' }}</b>: {{ $testimonial->message }}</span></li>
-                                        @endforeach
-                                    </ul>
-                                @else
-                                    <p>No testimonials found</p>
-                                @endif
+            <!-- Tabs Content -->
+            <div class="tab-content mt-3" id="profileTabContent">
 
-                                {{ $testimonials }}
+                <!-- My Profile Tab -->
+                <div class="tab-pane fade show active" id="myProfile" role="tabpanel" aria-labelledby="profile-tab">
+                    <div class="content-section">
+                        <h5>My Profile</h5>
+                        <ul>
+                            {{-- <li><span class="title">Full Name:</span> <span class="value">{{ $member->firstName ?? '-' }}
+                                        {{ $member->lastName ?? '-' }}</span></li> --}}
+                            {{-- @if ($memberCircleId == $userCircleId) --}}
+                            {{-- <li><span class="title">Email:</span> <span class="value">{{ $member->user->email }}</span>
+                                </li>
+                                <li><span class="title">Mobile:</span> <span class="value">{{ $member->user->contactNo }}</span>
+                                </li> --}}
+                            {{-- @elseif (isset($memberStatus) && $memberStatus->status == 'Accepted')
+                                    <li><span class="title">Email:</span> <span class="value">{{ $member->user->email }}</span>
+                                    </li>
+                                    <li><span class="title">Mobile:</span> <span class="value">{{ $member->user->contactNo }}</span>
+                                    </li>
+                                @else --}}
+                            {{-- @elseif ($connections->isNotEmpty() && $connections->first()->status == 'Accepted')
+                                    <li><span class="title">Email:</span> <span class="value">{{ $member->user->email }}</span></li>
+                                    <li><span class="title">Mobile:</span> <span class="value">{{ $member->user->contactNo }}</span></li>
+                                @else --}}
+                            {{-- <li><span class="title">Email:</span> <span class="value">****{{ substr($member->user->email, -8) }}</span>
+                                    </li>
+                                    <li><span class="title">Mobile:</span> <span class="value">****{{ substr($member->user->contactNo, -3) }}</span>
+                                    </li> --}}
+                            {{-- @endif --}}
 
-                                {{-- <ul>
-                        <li><span class="title">Achievements:</span> <span
-                                class="value">{{ $member->achievements ?? 'Not specified' }}</span></li>
-                        <li><span class="title">Experience:</span> <span
-                                class="value">{{ $member->experience ?? 'Not provided' }}</span></li>
-                    </ul> --}}
-                                {{-- Coming Soon --}}
+                            <div class="tab-pane fade" id="testimonial" role="tabpanel" aria-labelledby="testimonial-tab">
+                                {{-- <h5>Testimonial</h5> --}}
+                                <div class="content-section">
+                                    @if ($testimonials->isNotEmpty())
+                                        <ul>
+                                            @foreach ($testimonials as $testimonial)
+                                                <li><span class="value"><b>{{ $testimonial->user->firstName ?? 'Anonymous' }} {{ $testimonial->user->lastName ?? '' }}</b>: {{ $testimonial->message }}</span></li>
+                                            @endforeach
+                                        </ul>
+                                    @else
+                                        <p>No testimonials found</p>
+                                    @endif
 
+                                    {{ $testimonials }}
+
+                                </div>
                             </div>
-                        </div>
-
+                        </ul>
+                    </div>
                 </div>
             </div>
-        </div>
+        @endif
+
     </div>
+
 
 
 
@@ -384,6 +405,7 @@
                 sendMessage();
             }
         });
+
         function startPolling() {
             pollingInterval = setInterval(fetchMessages, 1000); // Poll every 1 second
         }

@@ -1413,7 +1413,8 @@ class ApiController extends Controller
                         'firstName' => $member->firstName,
                         'lastName' => $member->lastName,
                         'profilePhoto' => $member->profilePhoto,
-                        'circle' => $member->circle->circleName,
+                        // 'circle' => $member->circle->circleName,
+                        'circle' => $member->circle->circleName ?? $member->cityId,
                         'companyName' => $member->companyName,
                     ];
                 }
