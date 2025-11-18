@@ -7,7 +7,7 @@
                 <img src="{{ asset('img/header_img.jpeg') }}" class="header-image" alt="Header Image">
 
                 <div class="text-center p-3">
-                    <img src="{{ asset('ProfilePhoto/' . ($member->profilePhoto ?? 'logo2.jpg')) }}" class="profile-img img-fluid rounded-circle mx-auto d-block" alt="Profile Image">
+                    <img src="{{ asset('ProfilePhoto/' . ($member->connectedMember->profilePhoto ?? 'profile.png')) }}" class="profile-img img-fluid rounded-circle mx-auto d-block" alt="Profile Image">
                     <h5 class="member-name" style="color: #1d3268; font-weight: bold;">
                         {{ $member->connectedUser->firstName ?? 'N/A' }} {{ $member->connectedUser->lastName ?? 'N/A' }}
                     </h5>
@@ -36,32 +36,32 @@
                             </svg>
                             {{-- <i class="bi bi-people-fill text-muted"></i> --}}
 
-                            <span>{{ $member->members->circle->circleName ?? ($member->city->cityName ?? 'N/A') }}</span>
+                            <span>{{ $member->connectedMember->circle->circleName ?? ($member->connectedMember->city->cityName ?? 'N/A') }}</span>
                         </div>
                     </div>
                     <div class="company-category-section">
                         <div class="company-section">
                             <div class="logo-section">
-                                @if (!empty($member->members->companyLogo))
-                                    <img src="{{ asset('CompanyLogo/' . $member->members->companyLogo) }}" class="company-logo" alt="Company Logo">
+                                @if (!empty($member->connectedMember->companyLogo))
+                                    <img src="{{ asset('CompanyLogo/' . $member->connectedMember->companyLogo) }}" class="company-logo" alt="Company Logo">
                                 @endif
-                                <div class="initials" style="{{ empty($member->members->companyLogo) ? 'display:flex;' : 'display:none;' }}">
-                                    {{ strtoupper(substr($member->members->companyName ?? 'C', 0, 1)) }}
+                                <div class="initials" style="{{ empty($member->connectedMember->companyLogo) ? 'display:flex;' : 'display:none;' }}">
+                                    {{ strtoupper(substr($member->connectedMember->companyName ?? 'C', 0, 1)) }}
                                 </div>
                             </div>
-                            <h2 title="{{ $member->members->companyName ?? 'Company Name' }}">
-                                {{ $member->members->companyName ?? 'Company Name' }}
+                            <h2 title="{{ $member->connectedMember->companyName ?? 'Company Name' }}">
+                                {{ $member->connectedMember->companyName ?? 'Company Name' }}
                             </h2>
                         </div>
                         <div class="divider"></div>
                         <div class="category-section">
                             <div class="label">Category</div>
-                            <h3>{{ $member->members->bCategory->categoryName ?? 'N/A' }}</h3>
+                            <h3>{{ $member->connectedMember->bCategory->categoryName ?? 'N/A' }}</h3>
                         </div>
                     </div>
                     <div class="keywords-container row">
                         @php
-                            $keyWords = json_decode($member->members->keyWords ?? '[]', true);
+                            $keyWords = json_decode($member->connectedMember->keyWords ?? '[]', true);
                         @endphp
                         @if (is_array($keyWords) && count($keyWords) > 0)
                             @foreach ($keyWords as $keyWord)
@@ -72,7 +72,7 @@
                 </div>
                 <div class="bottom-actions">
                     <div id="viewProfile" class="action-button left-action">
-                        <a href="{{ route('foundPersonDetails', $member->members->id) }}">
+                        <a href="{{ route('foundPersonDetails', $member->connectedMember->id) }}">
                             <i class="bi bi-person-lines-fill" style="color: #1d3268;"></i><span style="color: #1d3268;">View Profile</span>
                         </a>
                     </div>

@@ -17,7 +17,7 @@
                     @if ($authCircle)
                         <div class="d-flex justify-content-between align-items-center bg-white rounded shadow-sm p-2 mb-2" style="cursor: pointer;">
                             <div class="d-flex align-items-center gap-2">
-                                <img src="{{ asset($authCircle->profilePicture ?? 'img/logo2.jpg') }}" class="rounded-circle" width="40" height="40" alt="{{ $authCircle->circleName }}">
+                                <img src="{{ asset($authCircle->profilePicture ? (file_exists(public_path($authCircle->profilePicture)) ? $authCircle->profilePicture : 'ProfilePhoto/profile.png') : 'img/profile.png') }}" class="rounded-circle" width="40" height="40" alt="{{ $authCircle->circleName }}">
                                 <div>
                                     <div class="fw-semibold circle-name">{{ $authCircle->circleName }}</div>
                                     <small class=" circle-name">{{ $authCircle->city->cityName ?? 'N/A' }}</small>
@@ -50,7 +50,7 @@
                         <div class="circle-card d-flex justify-content-between align-items-center bg-white rounded shadow-sm p-2 mb-2" data-id="{{ $circle->id }}" style="cursor: pointer;">
                             <div class="d-flex align-items-center gap-2">
                                 <span class="fw-bold text-muted">{{ $index + 1 }}.</span>
-                                <img src="{{ asset($circle->profilePicture ?? 'img/logo2.jpg') }}" class="rounded-circle" width="40" height="40" alt="logo">
+                                <img src="{{ asset($circle->profilePicture ? (file_exists(public_path($circle->profilePicture)) ? $circle->profilePicture : 'ProfilePhoto/profile.png') : 'img/profile.png') }}" class="rounded-circle" width="40" height="40" alt="logo">
                                 <div>
                                     <div class="fw-semibold circle-name">{{ $circle->circleName }}</div>
                                     <small class=" circle-name">{{ $circle->city->cityName ?? 'N/A' }}</small>

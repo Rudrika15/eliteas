@@ -678,12 +678,15 @@ class ConnectionController extends Controller
                 ->where('status', 'Accepted')
                 ->with([
                     'user:id,firstName,lastName,email,contactNo',
-                    'members:id,userId,profilePhoto,circleId,companyName,companyLogo,keyWords,businessCategoryId' // Include data from members table
+                    'receiver:id,firstName,lastName,email,contactNo',
+                    'members:id,userId,profilePhoto,circleId,companyName,companyLogo,keyWords,businessCategoryId',
+                    'member:id,userId,profilePhoto,circleId,companyName,companyLogo,keyWords,businessCategoryId'
                 ])
                 ->get();
 
             $connections->each(function ($connection) {
                 $connection->connectedUser = $connection->connected_user;
+                $connection->connectedMember = $connection->connected_member;
             });
 
             // Sent Requests

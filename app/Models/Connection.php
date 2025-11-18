@@ -34,7 +34,7 @@ class Connection extends Model
     {
         $userId = Auth::id();
         if ($this->userId == $userId) {
-            return $this->member;
+            return $this->receiver;
         }
         return $this->user;
     }
@@ -47,5 +47,14 @@ class Connection extends Model
     public function receiverMember()
     {
         return $this->hasOne(Member::class, 'userId', 'memberId'); // userId in members == memberId in connections
+    }
+
+    public function getConnectedMemberAttribute()
+    {
+        $userId = Auth::id();
+        if ($this->userId == $userId) {
+            return $this->member;
+        }
+        return $this->members;
     }
 }

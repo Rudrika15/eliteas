@@ -520,7 +520,7 @@
                         <img src="{{ asset('img/header_img.jpeg') }}" class="header-image" alt="Header Image">
 
                         <div class="text-center p-3">
-                            <img src="{{ asset('ProfilePhoto/' . ($member->profilePhoto ?? 'logo2.jpg')) }}" class="profile-img img-fluid rounded-circle mx-auto d-block" alt="Profile Image">
+                            <img src="{{ asset('ProfilePhoto/' . ($member->profilePhoto ? (file_exists(public_path($member->profilePhoto)) ? $member->profilePhoto : 'ProfilePhoto/profile.png') : 'img/profile.png')) }}" class="profile-img img-fluid rounded-circle mx-auto d-block" alt="Profile Image">
                             <h5 class="member-name" style="color: #e76a35; font-weight: bold;">
                                 {{ $member->firstName ?? 'N/A' }} {{ $member->lastName ?? 'N/A' }}
                             </h5>
