@@ -103,7 +103,7 @@
 
                         <div class="d-flex align-items-center gap-2">
                             <span class="fw-bold text-muted">{{ $index + 1 }}.</span>
-                            <img src="{{ $categoryData->categoryIcon ? asset('BusinessCategory/' . $categoryData->categoryIcon) : asset('img/logo2.jpg') }}" class="rounded-circle" width="40" height="40" alt="Category Icon">
+                            <img src="{{ $categoryData->categoryIcon ? asset('BusinessCategory/' . $categoryData->categoryIcon) : asset('img/profile.png') }}" class="rounded-circle" width="40" height="40" alt="Category Icon">
                             <div>
                                 <div class="fw-semibold">{{ $categoryData->categoryName ?? 'N/A' }}</div>
                             </div>

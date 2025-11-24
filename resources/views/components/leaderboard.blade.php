@@ -290,7 +290,7 @@
                         {{-- <img src="https://picsum.photos/600/120" class="header-image" alt="Header Image"> --}}
                         <img src="{{ asset('img/header_img.jpeg') }}" class="header-image" alt="Header Image">
                         <div class="text-center p-3">
-                            <img src="{{ asset('ProfilePhoto/' . ($entry->member->profilePhoto ?? 'logo2.jpg')) }}" class="profile-img img-fluid rounded-circle mx-auto d-block" alt="Profile Image">
+                            <img src="{{ asset('ProfilePhoto/' . ($entry->member->profilePhoto ?? 'profile.png')) }}" class="profile-img img-fluid rounded-circle mx-auto d-block" alt="Profile Image">
                             <h5 class="member-name" style="color: #e76a35; font-weight: bold;">
                                 {{ $entry->member->firstName ?? 'N/A' }} {{ $entry->member->lastName ?? 'N/A' }}
                             </h5>
