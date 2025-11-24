@@ -142,7 +142,7 @@ class CircleMeetingMemberReferenceController extends Controller
             // For normal Member
             if (auth()->user()->hasRole('Member')) {
 
-                return$refGiver = CircleMeetingMembersReference::where('status', 'Active')
+                 $refGiver = CircleMeetingMembersReference::where('status', 'Active')
                     ->orderBy('id', 'DESC')
                     ->with('members')
                     ->with('members.circle:id,circleName')
