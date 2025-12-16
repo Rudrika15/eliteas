@@ -376,20 +376,17 @@ class ConnectionController extends Controller
             $categories = BusinessCategory::where('status', 'Active')
                 ->orderBy('categoryName', 'asc')
                 ->whereHas('members', function ($query) {
-                    $query->where('status', 'Active')
-                        ->whereNull('circleId');
+                    $query->where('status', 'Active');
                 })
                 ->withCount(['members' => function ($query) {
-                    $query->where('status', 'Active')
-                        ->whereNull('circleId');
+                    $query->where('status', 'Active');
                 }])
                 ->with(['members' => function ($query) {
-                    $query->where('status', 'Active')
-                        ->whereNull('circleId');
+                    $query->where('status', 'Active');
                 }])
                 ->get();
 
-            return view('admin.connection.categoryList', compact('categories'));
+            return view('admin.connection.digitalmember.categoryList', compact('categories'));
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, request()->fullUrl());
             return view('servererror');
@@ -445,6 +442,150 @@ class ConnectionController extends Controller
     // }
 
 
+    // public function categoryMembers($categoryId)
+    // {
+    //     try {
+    //         $authId = Auth::id();
+    //         $authMember = Member::where('userId', $authId)->first();
+    //         $authCircleId = $authMember ? $authMember->circleId : null;
+
+    //         $category = BusinessCategory::with(['members' => function ($query) {
+    //             $query->where('status', 'Active');
+    //         }])->find($categoryId);
+
+    //         if (!$category) {
+    //             return response()->json(['message' => 'Category not found.'], 404);
+    //         }
+
+    //         foreach ($category->members as $member) {
+    //             if ($authCircleId !== null && $member->circleId == $authCircleId) {
+    //                 $member->connection_status = 'Connected';
+    //             } else {
+    //                 $connection = Connection::where(function ($query) use ($authId, $member) {
+    //                     $query->where('userId', $authId)->where('memberId', $member->userId)
+    //                         ->orWhere(function ($query) use ($authId, $member) {
+    //                             $query->where('userId', $member->userId)->where('memberId', $authId);
+    //                         });
+    //                 })->first();
+
+    //                 $member->connection_status = $connection ? $connection->status : 'Not Connected';
+
+    //                 if ($connection && $connection->status === 'Accepted') {
+    //                     $member->connection_status = 'Connected';
+    //                 }
+    //             }
+    //         }
+
+    //         return view('partials.member-cards', ['members' => $category->members], compact('authCircleId'));
+    //     } catch (\Throwable $th) {
+    //         ErrorLogger::logError($th, request()->fullUrl());
+    //         return response()->json(['message' => 'Server error'], 500);
+    //     }
+    // }
+
+
+//     public function categoryMembers($categoryId)
+// {
+//     try {
+//         $authId = Auth::id();
+//         $authMember = Member::where('userId', $authId)
+//             ->where('status', 'Active')
+//             ->first();
+
+//         $authCircleId = $authMember ? $authMember->circleId : null;
+
+//         $category = BusinessCategory::with([
+//             'members' => function ($query) {
+//                 $query->where('status', 'Active')
+//                       ->whereHas('user', function ($q) {
+//                           $q->where('status', 'Active');
+//                       });
+//             }
+//         ])->find($categoryId);
+
+//         if (!$category) {
+//             return response()->json(['message' => 'Category not found.'], 404);
+//         }
+
+//         foreach ($category->members as $member) {
+//             if ($authCircleId !== null && $member->circleId == $authCircleId) {
+//                 $member->connection_status = 'Connected';
+//             } else {
+//                 $connection = Connection::where(function ($query) use ($authId, $member) {
+//                     $query->where('userId', $authId)
+//                           ->where('memberId', $member->userId)
+//                           ->orWhere(function ($query) use ($authId, $member) {
+//                               $query->where('userId', $member->userId)
+//                                     ->where('memberId', $authId);
+//                           });
+//                 })->first();
+
+//                 $member->connection_status = ($connection && $connection->status === 'Accepted')
+//                     ? 'Connected'
+//                     : ($connection->status ?? 'Not Connected');
+//             }
+//         }
+
+//         return view('partials.member-cards', ['members' => $category->members], compact('authCircleId'));
+//     } catch (\Throwable $th) {
+//         ErrorLogger::logError($th, request()->fullUrl());
+//         return response()->json(['message' => 'Server error'], 500);
+//     }
+// }
+
+
+// public function categoryMembers($categoryId)
+// {
+//     try {
+//         $authId = Auth::id();
+
+//         $authMember = Member::where('userId', $authId)
+//             ->where('status', 'Active')
+//             ->first();
+
+//         $authCircleId = $authMember ? $authMember->circleId : null;
+
+//         $category = BusinessCategory::with([
+//             'members' => function ($query) {
+//                 $query->where('status', 'Active')
+//                       ->whereHas('user', function ($q) {
+//                           $q->where('status', 'Active');
+//                       });
+//             }
+//         ])->find($categoryId);
+
+//         if (!$category) {
+//             return response()->json(['message' => 'Category not found.'], 404);
+//         }
+
+//         foreach ($category->members as $member) {
+
+//             $connection = Connection::where(function ($query) use ($authId, $member) {
+//                 $query->where('userId', $authId)
+//                       ->where('memberId', $member->userId)
+//                       ->orWhere(function ($query) use ($authId, $member) {
+//                           $query->where('userId', $member->userId)
+//                                 ->where('memberId', $authId);
+//                       });
+//             })->first();
+
+//             $member->connection_status =
+//                 ($connection && $connection->status === 'Accepted')
+//                 ? 'Connected'
+//                 : ($connection->status ?? 'Not Connected');
+//         }
+
+//         return view('partials.member-cards', [
+//             'members' => $category->members
+//         ], compact('authCircleId'));
+
+//     } catch (\Throwable $th) {
+//         ErrorLogger::logError($th, request()->fullUrl());
+//         return response()->json(['message' => 'Server error'], 500);
+//     }
+// }
+
+
     public function categoryMembers($categoryId)
     {
         try {
@@ -452,39 +593,53 @@ class ConnectionController extends Controller
             $authMember = Member::where('userId', $authId)->first();
             $authCircleId = $authMember ? $authMember->circleId : null;
 
-            $category = BusinessCategory::with(['members' => function ($query) {
-                $query->where('status', 'Active');
-            }])->find($categoryId);
-
-            if (!$category) {
-                return response()->json(['message' => 'Category not found.'], 404);
-            }
-
-            foreach ($category->members as $member) {
-                if ($authCircleId !== null && $member->circleId == $authCircleId) {
-                    $member->connection_status = 'Connected';
-                } else {
-                    $connection = Connection::where(function ($query) use ($authId, $member) {
-                        $query->where('userId', $authId)->where('memberId', $member->userId)
-                            ->orWhere(function ($query) use ($authId, $member) {
-                                $query->where('userId', $member->userId)->where('memberId', $authId);
-                            });
-                    })->first();
-
-                    $member->connection_status = $connection ? $connection->status : 'Not Connected';
-
-                    if ($connection && $connection->status === 'Accepted') {
-                        $member->connection_status = 'Connected';
-                    }
+            $category = BusinessCategory::with([
+                'members' => function ($query) use ($authId) {
+                    $query->where('status', 'Active')
+                          ->where('userId', '!=', $authId)
+                          ->whereHas('user', function ($q) {
+                              $q->where('status', 'Active');
+                          })
+                          ->with(['user', 'bCategory', 'circle']);
                 }
-            }
+            ])->find($categoryId);
 
-            return view('partials.member-cards', ['members' => $category->members], compact('authCircleId'));
+        if (!$category) {
+            return response()->json(['message' => 'Category not found.'], 404);
+        }
+
+        foreach ($category->members as $member) {
+
+            $connection = Connection::where(function ($query) use ($authId, $member) {
+                $query->where('userId', $authId)
+                      ->where('memberId', $member->userId)
+                      ->orWhere(function ($query) use ($authId, $member) {
+                          $query->where('userId', $member->userId)
+                                ->where('memberId', $authId);
+                      });
+            })->first();
+
+            if ($member->circleId !== null && $authCircleId !== null && $member->circleId == $authCircleId) {
+                $member->connection_status = 'Connected';
+            } elseif ($member->circleId !== null && $connection && $connection->status === 'Accepted') {
+                $member->connection_status = 'Connected';
+            } else {
+                $member->connection_status = $connection ? $connection->status : 'Not Connected';
+            }
+        }
+
+            return view('partials.member-cards', [
+                'members' => $category->members,
+                'authCircleId' => $authCircleId,
+            ]);
+
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, request()->fullUrl());
             return response()->json(['message' => 'Server error'], 500);
         }
     }
+
+
 
 
 

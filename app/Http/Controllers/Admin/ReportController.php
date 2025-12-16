@@ -621,7 +621,7 @@ class ReportController extends Controller
         ));
     }
 
-    //report for VP role - 
+    //report for VP role -
     public function vpReport(Request $request)
     {
         // ✅ Get logged in user
@@ -742,5 +742,114 @@ class ReportController extends Controller
     public function exportVpReport(Request $request)
     {
         return Excel::download(new \App\Exports\CircleVPReportExport($request), 'circle_report_vp.xlsx');
+    }
+
+    public function circleMemberReport(Request $request)
+    {
+        $startDate = $request->input('startDate');
+        $endDate = $request->input('endDate');
+        $circleId = $request->input('circleId');
+
+        $circles = Circle::where('status', 'Active')->select('id', 'circleName')->get();
+
+        $report = collect();
+        $details = [];
+
+        if ($circleId) {
+            $members = Member::where('status', 'Active')
+                ->where('circleId', $circleId)
+                ->select('id', 'userId', 'firstName', 'lastName', 'circleId')
+                ->with('circle:id,circleName')
+                ->get();
+
+            $report = $members->map(function ($m) use ($startDate, $endDate, &$details) {
+                $uid = $m->userId;
+
+                $ibmQuery = CircleCall::where('status', 'Active')
+                    ->where('memberId', $uid);
+                if ($startDate) {
+                    $ibmQuery->whereDate('created_at', '>=', $startDate);
+                }
+                if ($endDate) {
+                    $ibmQuery->whereDate('created_at', '<=', $endDate);
+                }
+                $ibmRows = $ibmQuery->with('meetingPersonReport')->get()->unique('id');
+                $ibmCount = $ibmRows->count();
+
+                $refQuery = CircleMeetingMembersReference::where('status', 'Active')
+                    ->where('referenceGiverId', $uid);
+                if ($startDate) {
+                    $refQuery->whereDate('created_at', '>=', $startDate);
+                }
+                if ($endDate) {
+                    $refQuery->whereDate('created_at', '<=', $endDate);
+                }
+                $refRows = $refQuery->with('refReceiver')->get()->unique('id');
+                $refCount = $refRows->count();
+
+                $busQuery = CircleMeetingMembersBusiness::where('status', 'Active')
+                    ->where('businessGiverId', $uid);
+                if ($startDate) {
+                    $busQuery->whereDate('created_at', '>=', $startDate);
+                }
+                if ($endDate) {
+                    $busQuery->whereDate('created_at', '<=', $endDate);
+                }
+                $busRows = $busQuery->with('loginMember')->get()->unique('id');
+
+                $details[$uid] = [
+                    'ibms' => $ibmRows->map(function ($r) {
+                        return [
+                            'id' => $r->id,
+                            'with_name' => ($r->meetingPersonReport->firstName ?? '') . ' ' . ($r->meetingPersonReport->lastName ?? ''),
+                            'date' => optional($r->created_at)->format('Y-m-d'),
+                        ];
+                    })->values(),
+                    'references' => $refRows->map(function ($r) {
+                        return [
+                            'id' => $r->id,
+                            'to_name' => ($r->refReceiver->firstName ?? '') . ' ' . ($r->refReceiver->lastName ?? ''),
+                            'contact_name' => $r->contactName ?? '',
+                            'date' => optional($r->created_at)->format('Y-m-d'),
+                        ];
+                    })->values(),
+                    'businesses' => $busRows->map(function ($r) {
+                        return [
+                            'id' => $r->id,
+                            'to_name' => ($r->loginMember->firstName ?? '') . ' ' . ($r->loginMember->lastName ?? ''),
+                            'amount' => $r->amount,
+                            'date' => optional($r->created_at)->format('Y-m-d'),
+                        ];
+                    })->values(),
+                ];
+
+                return [
+                    'circleName' => $m->circle->circleName ?? '-',
+                    'memberUserId' => $uid,
+                    'memberName' => $m->firstName . ' ' . $m->lastName,
+                    'ibm_count' => $ibmCount,
+                    'reference_count' => $refCount,
+                    'business_count' => $busRows->count(),
+                    'business_total_amount' => $busRows->sum('amount'),
+                ];
+            });
+        }
+
+        if ($request->has('export') && $circleId) {
+            if ($request->input('export') === 'detail') {
+                return Excel::download(new \App\Exports\CircleMemberDetailExport($circleId, $startDate, $endDate), 'circle_member_report_detail.xlsx');
+            }
+            return Excel::download(new \App\Exports\CircleMemberAggregateExport($circleId, $startDate, $endDate), 'circle_member_report.xlsx');
+        }
+
+        return view('admin.report.circleMemberReport', compact('circles', 'report', 'details', 'circleId', 'startDate', 'endDate'));
+    }
+
+    public function exportCircleMemberReport(Request $request)
+    {
+        $circleId = $request->input('circleId');
+        $startDate = $request->input('startDate');
+        $endDate = $request->input('endDate');
+        return Excel::download(new \App\Exports\CircleMemberAggregateExport($circleId, $startDate, $endDate), 'circle_member_report.xlsx');
     }
 }

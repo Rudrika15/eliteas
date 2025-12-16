@@ -1098,16 +1098,25 @@ class HomeController extends Controller
         $authMember = Member::where('userId', $authId)->first();
         $authCircleId = $authMember ? $authMember->circleId : null;
 
-        // ✅ Get all active members (with or without circle)
-        $members = Member::where('userId', '!=', $authId)
-            ->where('status', 'Active')
-            ->where(function ($q) use ($query) {
-                $q->where('firstName', 'like', '%' . $query . '%')
-                    ->orWhere('lastName', 'like', '%' . $query . '%')
-                    ->orWhere('keyWords', 'like', '%' . $query . '%');
-            })
-            ->with(['user', 'circle', 'bCategory'])
-            ->get();
+        $normalized = strtolower(trim($query));
+
+        if ($normalized === 'digital member') {
+            $members = Member::where('userId', '!=', $authId)
+                ->where('status', 'Active')
+                ->whereNull('circleId')
+                ->with(['user', 'circle', 'bCategory'])
+                ->get();
+        } else {
+            $members = Member::where('userId', '!=', $authId)
+                ->where('status', 'Active')
+                ->where(function ($q) use ($query) {
+                    $q->where('firstName', 'like', '%' . $query . '%')
+                        ->orWhere('lastName', 'like', '%' . $query . '%')
+                        ->orWhere('keyWords', 'like', '%' . $query . '%');
+                })
+                ->with(['user', 'circle', 'bCategory'])
+                ->get();
+        }
 
         // ✅ Add connection status and induction count
         $members->map(function ($member) use ($authId, $authCircleId) {

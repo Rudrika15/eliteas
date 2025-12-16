@@ -288,6 +288,13 @@
 </li>
 
 {{-- <li class="nav-item">
+    <a class="nav-link collapsed " href="{{ route('admin.report.circleMember') }}">
+        <i class="bi bi-file-earmark-text" style="color: #e76a35"></i>
+        <span>Circle Member Report</span>
+    </a>
+</li> --}}
+
+{{-- <li class="nav-item">
     <a class="nav-link collapsed " href="{{ route('circle.index') }}">
         <i class="bi bi-file-earmark-text" style="color: #e76a35"></i>
         <span>Report</span>
@@ -461,7 +468,7 @@
 
 <li class="nav-item">
     <a class="nav-link collapsed" data-bs-target="#report-nav" data-bs-toggle="collapse" href="#">
-        <i class="bi bi-currency-rupee" style="color: #e76a35"></i><span>Report</span><i class="bi bi-chevron-down ms-auto" style="color: #e76a35"></i>
+        <i class="bi bi-currency-rupee" style="color: #e76a35"></i><span>Reports</span><i class="bi bi-chevron-down ms-auto" style="color: #e76a35"></i>
     </a>
 
     <ul id="report-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
@@ -505,6 +512,15 @@
             <a class="nav-link collapsed" href="{{ route('admin.memberWiseReport') }}">
                 <i class="bi bi-file-earmark-text" style="color: #e76a35"></i>
                 <span class="text-blue">Member Report</span>
+            </a>
+        </li>
+    </ul>
+
+    <ul id="report-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="{{ route('admin.report.circleMember') }}">
+                <i class="bi bi-file-earmark-text" style="color: #e76a35"></i>
+                <span class="text-blue">Circle Member Detailed Report</span>
             </a>
         </li>
     </ul>

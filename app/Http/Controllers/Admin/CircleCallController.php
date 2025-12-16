@@ -290,16 +290,27 @@ class CircleCallController extends Controller
     {
 
         $circleId = $request->input('circleId');
+        // $members = Member::where('circleId', $circleId)
+        //     ->whereHas('user', function ($q) {
+        //         $q->whereHas('roles', function ($q) {
+        //             $q->whereIn('name', ['Member', 'Trainer']);
+        //         });
+        //     })
+        //     ->with('user')
+        //     ->with('contact')
+        //     ->where('userId', '!=', Auth::user()->id)
+        //     ->get();
         $members = Member::where('circleId', $circleId)
-            ->whereHas('user', function ($q) {
-                $q->whereHas('roles', function ($q) {
-                    $q->whereIn('name', ['Member', 'Trainer']);
-                });
-            })
-            ->with('user')
-            ->with('contact')
-            ->where('userId', '!=', Auth::user()->id)
-            ->get();
+        ->where('status', 'Active') // members table
+        ->whereHas('user', function ($q) {
+        $q->where('status', 'Active') // users table
+          ->whereHas('roles', function ($q) {
+              $q->whereIn('name', ['Member', 'Trainer']);
+          });
+        })
+        ->with(['user', 'contact'])
+        ->where('userId', '!=', Auth::id())
+        ->get();
         return response()->json($members);
     }
 
@@ -850,7 +861,7 @@ class CircleCallController extends Controller
         }
     }
 
-    //digital member functions 
+    //digital member functions
 
     public function getMembersByCity($cityId)
     {

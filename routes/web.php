@@ -568,6 +568,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/admin/reports/ibm', [ReportController::class, 'ibm'])->name('admin.report.ibm');
     Route::get('/admin/reports/reference', [ReportController::class, 'reference'])->name('admin.report.reference');
     Route::get('/admin/reports/business', [ReportController::class, 'business'])->name('admin.report.business');
+    Route::get('/admin/reports/circle-member', [ReportController::class, 'circleMemberReport'])->name('admin.report.circleMember');
+    Route::get('/admin/reports/circle-member/export', [ReportController::class, 'exportCircleMemberReport'])->name('admin.report.circleMember.export');
     Route::get('/admin/report/joining-members', [ReportController::class, 'getJoiningMembers'])->name('admin.report.joining');
 
     // vp report

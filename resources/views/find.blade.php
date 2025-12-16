@@ -3,44 +3,48 @@
 @section('content')
 
 
-    <!doctype html>
-    <html lang="en">
+<!doctype html>
+<html lang="en">
 
-    <head>
-        <title>UBN - Search User </title>
-        <!-- Required meta tags -->
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<head>
+    <title>UBN - Search User</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 
-        <!-- Bootstrap CSS v5.2.1 -->
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" />
-        {{-- add csrf --}}
-        <meta name="csrf-token" content="{{ csrf_token() }}">
-        {{-- <title>Dashboard - Admin</title> --}}
-        <meta content="" name="description">
-        <meta content="" name="keywords">
+    <!-- Bootstrap CSS v5.3.2 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" />
+    {{-- add csrf --}}
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    {{-- <title>Dashboard - Admin</title> --}}
+    <meta content="" name="description">
+    <meta content="" name="keywords">
 
-        <!-- Favicons -->
-        <link href="{{ asset('img/favicon.png') }}" rel="icon" />
-        <link href="{{ asset('img/apple-touch-icon.png') }}" rel="apple-touch-icon" />
+    <!-- Favicons -->
+    <link href="{{ asset('img/favicon.png') }}" rel="icon" />
+    <link href="{{ asset('img/apple-touch-icon.png') }}" rel="apple-touch-icon" />
 
-        <!-- Google Fonts -->
-        <link href="https://fonts.gstatic.com" rel="preconnect">
-        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
-        <!-- Vendor CSS Files -->
-        <link href="{{ asset('vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet" />
-        <link href="{{ asset('vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet" />
-        <link href="{{ asset('vendor/boxicons/css/boxicons.min.css') }}" rel="stylesheet" />
-        <link href="{{ asset('vendor/quill/quill.snow.css') }}" rel="stylesheet" />
-        <link href="{{ asset('vendor/remixicon/remixicon.css') }}" rel="stylesheet" />
-        <link href="{{ asset('vendor/simple-datatables/style.css') }}" rel="stylesheet" />
-        <!-- Template Main CSS File -->
-        <link href="{{ asset('css/style.css') }}" rel="stylesheet" />
-        <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
-    </head>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link
+        href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
+        rel="stylesheet">
+    <!-- Vendor CSS Files -->
+    <link href="{{ asset('vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet" />
+    <link href="{{ asset('vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet" />
+    <link href="{{ asset('vendor/boxicons/css/boxicons.min.css') }}" rel="stylesheet" />
+    <link href="{{ asset('vendor/quill/quill.snow.css') }}" rel="stylesheet" />
+    <link href="{{ asset('vendor/remixicon/remixicon.css') }}" rel="stylesheet" />
+    <link href="{{ asset('vendor/simple-datatables/style.css') }}" rel="stylesheet" />
+    <!-- Template     Main CSS File -->
+    <link href="{{ asset('css/style.css') }}" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.7.1.js"
+        integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+</head>
 
-    <body class="" style=" mix-blend-mode: multiply;">
-        {{--
+<body class="" style=" mix-blend-mode: multiply;">
+    {{--
 
     <body class="" style=" mix-blend-mode: multiply; background: linear-gradient(to right, #1d2856, #e76a35);"> --}}
         <header>
@@ -51,10 +55,12 @@
             <div class="pt-5 px-3">
                 <div class="row d-flex justify-content-center align-items-center">
                     <div class="col-md-1">
-                        <img src="{{ asset('img/logo4.png') }}" alt="UBN" class="pb-2" width="100" style="max-width: 100%; height: auto;">
+                        <img src="{{ asset('img/logo4.png') }}" alt="UBN" class="pb-2" width="100"
+                            style="max-width: 100%; height: auto;">
                     </div>
                     <div class="col-md-10">
-                        <input type="text" name="query" id="searchInput" placeholder="Enter circle name or member name..." class="form-control" title="Enter search keyword">
+                        <input type="text" name="query" id="searchInput" class="form-control"
+                            placeholder="Enter search keyword" title="Enter search keyword">
                     </div>
                     <div class="col-auto">
                         <a href="{{ route('home') }}" class="btn btn-bg-orange btn-sm">BACK</a>
@@ -152,7 +158,8 @@
             </div>
         </footer><!-- End Footer --> --}}
 
-        <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+        <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+                class="bi bi-arrow-up-short"></i></a>
 
         <!-- Vendor JS Files -->
 
@@ -172,13 +179,20 @@
         <script src="{{ asset('js/main.js') }}"></script>
 
         <!-- Bootstrap JavaScript Libraries -->
-        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
-
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
-
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+            integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous">
+        </script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+            integrity="sha384-BBlxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
         <div id="searchResults"></div>
+
+        @auth
+        <script>
+            window.authCircleId = @json(optional(\App\Models\Member::where('userId', Auth::id())->first())->circleId);
+        </script>
+        @endauth
 
         {{-- <style>
             /* LinkedIn-inspired styling */
@@ -979,23 +993,37 @@
 
             inputElement.addEventListener('input', function(event) {
                 clearTimeout(timeoutId);
+                var searchText = (event.target.value || '').trim();
+                var headerEl = document.querySelector('.searchText');
+                if (headerEl) {
+                    headerEl.textContent = searchText ? ('Search: ' + searchText) : '';
+                }
                 timeoutId = setTimeout(function() {
-                    var searchText = event.target.value;
                     performSearch(searchText);
-                }, 500);
+                }, 400);
             });
 
             function performSearch(query) {
+                if (!query) {
+                    var el = document.getElementById('searchResults');
+                    if (el) { el.innerHTML = ''; }
+                    return;
+                }
                 var xhr = new XMLHttpRequest();
                 xhr.open('GET', '/searchQuery?query=' + encodeURIComponent(query), true);
                 xhr.onload = function() {
                     if (xhr.status === 200) {
-                        var response = JSON.parse(xhr.responseText);
-                        displaySearchResults(response);
+                        try {
+                            var response = JSON.parse(xhr.responseText);
+                            displaySearchResults(response);
+                        } catch (e) {
+                            console.error('Failed to parse response JSON', e);
+                        }
                     } else {
                         console.error('Request failed. Status:', xhr.status);
                     }
                 };
+                xhr.onerror = function() { console.error('Network error during search'); };
                 xhr.send();
             }
 
@@ -1104,39 +1132,30 @@
                         var infoSection = document.createElement('div');
                         infoSection.classList.add('info-section');
 
-                        // Check if the user is connected (Accepted) or belongs to the same circle (Connected)
-                        var isConnected = member.connection_status === 'Accepted' || member.connection_status === 'Connected';
-
-                        function createIconText(iconClass, text, tooltipText = '') {
+                        function createIconText(iconClass, text, tooltip = '') {
                             var container = document.createElement('div');
                             container.classList.add('icon-text');
-
                             var icon = document.createElement('i');
-                            icon.classList.add(...iconClass.split(' '));
-                            icon.style.color = '#787c80'; // Set icon color
-
-                            var span = document.createElement('span');
+                            icon.className = iconClass;
+                            var span = document.createElement('div');
                             span.textContent = text;
-
-                            // Add tooltip only if tooltipText is provided
-                            if (tooltipText) {
-                                span.setAttribute('title', tooltipText);
-                                span.classList.add('tooltip-text'); // Optional, for styling
-                            }
-
+                            if (tooltip) { span.title = tooltip; }
                             container.appendChild(icon);
                             container.appendChild(span);
-
                             return container;
                         }
 
-                        // Email text with tooltip for full email
-                        var emailText = isConnected ?
+                        const isConnected = (member.connection_status === 'Connected') || (member.connection_status === 'Accepted');
+                        const authCircleId = window.authCircleId || null;
+                        const hasNoCircle = (!member.circle) || (member.circleId === null);
+                        const showContacts = isConnected || (authCircleId && hasNoCircle);
+
+                        var emailText = showContacts ?
                             (member.user?.email ? truncateText(member.user.email, 14) : 'No Email') :
                             '****';
-                        var emailTooltip = isConnected ? (member.user?.email || '') : ''; // Full email for tooltip
+                        var emailTooltip = showContacts ? (member.user?.email || '') : '';
 
-                        var phoneText = isConnected ? (member.user?.contactNo || 'N/A') : '****';
+                        var phoneText = showContacts ? (member.user?.contactNo || 'N/A') : '****';
                         var circleText = member.circle?.circleName || 'N/A';
 
                         var emailIconText = createIconText('bi bi-envelope-fill', emailText, emailTooltip);
@@ -1158,24 +1177,20 @@
                         var companySection = document.createElement('div');
                         companySection.classList.add('company-section');
                         companySection.innerHTML = `
-  <div class="logo-section">
-    <img class="company-logo" src="${member.companyLogo ? `/CompanyLogo/${member.companyLogo}` : '/default-company-logo.png'}" 
-      alt="Company Logo" 
-      onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
-    <div class="initials" style="display:none;">
-      ${member.companyName ? member.companyName.charAt(0).toUpperCase() : 'C'}
-    </div>
-  </div>
-  <h2 title="${member.companyName || 'Company Name'}">${member.companyName || 'Company Name'}</h2>
-`;
+                            <div class="logo">
+                                <img class="company-logo" src="${member.companyLogo ? `/CompanyLogo/${member.companyLogo}` : ''}" alt="Company Logo" onerror="this.style.display='none'" />
+                            </div>
+                            <h2 title="${member.companyName || 'Company Name'}">${member.companyName || 'Company Name'}</h2>
+                        `;
 
 
 
                         var categorySection = document.createElement('div');
                         categorySection.classList.add('category-section');
-                        categorySection.innerHTML = `<div class="label">Category</div><h3>${member.b_category?.categoryName || 'N/A'}</h3>`;
-
-                        console.log('Member business category:', member.b_category?.categoryName);
+                        categorySection.innerHTML = `
+                            <div class="label">Category</div>
+                            <h3>${(member.b_category && member.b_category.categoryName) ? member.b_category.categoryName : 'N/A'}</h3>
+                        `;
 
                         var divider = document.createElement('div');
                         divider.classList.add('divider');
@@ -1194,8 +1209,8 @@
                         var hasKeywords = false; // Flag to track if valid keywords exist
 
                         if (member.keyWords) {
-                            try {
-                                var keywordsArray = JSON.parse(member.keyWords);
+                             try {
+                                 var keywordsArray = JSON.parse(member.keyWords);
                                 console.log('Parsed keywords array:', keywordsArray); // Debugging log
 
                                 if (Array.isArray(keywordsArray) && keywordsArray.length > 0) {
@@ -1338,12 +1353,7 @@
 
 
             // Helper function to create icon-text elements
-            function createIconText(iconClass, text) {
-                var div = document.createElement('div');
-                div.classList.add('icon-text');
-                div.innerHTML = `<i class="${iconClass}"></i><div>${text}</div>`;
-                return div;
-            }
+            // Removed duplicate helper; defined earlier inside displaySearchResults
 
             // Helper function to create bottom action buttons
             function createActionButton(iconClass, text, link) {
@@ -1370,7 +1380,7 @@
         {{-- <button class="btn-message" onclick="window.location.href='/chatWith/${member.id}'">Message</button> --}}
 
         {{-- <script>
-        // Paste your JavaScript code here
+            // Paste your JavaScript code here
         // Declare a variable to hold the timeout ID
         var timeoutId;
 
@@ -1412,7 +1422,7 @@
                     // Request was successful
                     // Parse the response and display the search results
                     var response = JSON.parse(xhr.responseText);
-                    displaySearchResults(response);
+                    diySearchResults(response);
                 } else {
                     // Request failed
                     console.error('Request failed. Status:', xhr.status);
@@ -1562,7 +1572,7 @@
                 console.error('Invalid response format or missing data');
             }
         }
-    </script> --}}
+        </script> --}}
 
 
         <!-- sweetalert -->
@@ -1571,28 +1581,28 @@
         <!-- end -->
 
         @if (Session::get('success'))
-            <script>
-                Swal.fire({
+        <script>
+            Swal.fire({
                     icon: 'success',
                     title: "{{ Session::get('success') }}",
                     showConfirmButton: true,
 
                 });
-            </script>
+        </script>
         @endif
 
         @if (Session::get('error'))
-            <script>
-                Swal.fire({
+        <script>
+            Swal.fire({
                     icon: 'error',
                     title: "{{ Session::get('error') }}",
                     showConfirmButton: true,
                 });
-            </script>
+        </script>
         @endif
     </body>
 
-    </html>
+</html>
 
 
 @endsection

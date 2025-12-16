@@ -19,7 +19,9 @@
 
     <!-- Google Fonts -->
     <link href="https://fonts.gstatic.com" rel="preconnect">
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
+        rel="stylesheet">
 
     <!-- Vendor CSS Files -->
     <link href="{{ asset('vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet" />
@@ -39,7 +41,8 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
-    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"
+        integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
 
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 
@@ -119,9 +122,9 @@
         </div><!-- End Logo -->
         <!-- Start Search Bar -->
         {{-- <a class="search-form d-flex align-items-center" style="margin-left: 150px" href="{{ route('search') }}">
-                <button type="submit" title="Search"><i class="bi bi-search"></i>
-                </button>
-            </a> --}}
+            <button type="submit" title="Search"><i class="bi bi-search"></i>
+            </button>
+        </a> --}}
 
 
         {{-- <div class="header-info ms-2 me-3 d-flex align-items-center gap-2 ms-5 text-nowrap px-3 rounded-3">
@@ -150,60 +153,61 @@
             </div> --}}
 
             @role('Member')
-                {{-- <div class="payment-alert">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    @php
-                        $dueMonths = [];
-                        $totalAmountDue = 0;
-                    @endphp
-
-                    @foreach ($monthlyPayments as $month => $payments)
-                        @if ($payments->first()->status == 'unpaid')
-                            @php
-                                $dueMonths[] = $month;
-                                $totalAmountDue += $payments->sum('amount'); // Assuming 'amount' is the column for payment amount
-                            @endphp
-                        @endif
-                    @endforeach
-
-                    @if (!empty($dueMonths))
-                        Payment Due: ₹ {{ $totalAmountDue }} for {{ implode(', ', $dueMonths) }}
-                    @else
-                        <span class="text-success">No Pending Payments!</span>
-                    @endif
-                </div> --}}
-
-
+            {{-- <div class="payment-alert">
+                <i class="fas fa-exclamation-triangle"></i>
                 @php
-
-                    $monthlyPayments = \App\Models\MonthlyPayment::where('memberId', Auth::user()->member->id)
-                        ->where('status', 'unpaid')
-                        ->get()
-                        ->groupBy('month');
-
-                    // Sum the total unpaid amounts
-                    $totalAmountDue = $monthlyPayments
-                        ->map(function ($group) {
-                            return $group->sum('amount');
-                        })
-                        ->sum();
+                $dueMonths = [];
+                $totalAmountDue = 0;
                 @endphp
 
-                <div class="payment-alert">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    {{-- Payment Due: ₹ 800 --}}
-                    Monthly Payment Due: ₹ {{ $totalAmountDue }}
-                </div>
+                @foreach ($monthlyPayments as $month => $payments)
+                @if ($payments->first()->status == 'unpaid')
+                @php
+                $dueMonths[] = $month;
+                $totalAmountDue += $payments->sum('amount'); // Assuming 'amount' is the column for payment amount
+                @endphp
+                @endif
+                @endforeach
+
+                @if (!empty($dueMonths))
+                Payment Due: ₹ {{ $totalAmountDue }} for {{ implode(', ', $dueMonths) }}
+                @else
+                <span class="text-success">No Pending Payments!</span>
+                @endif
+            </div> --}}
+
+
+            @php
+
+            $monthlyPayments = \App\Models\MonthlyPayment::where('memberId', Auth::user()->member->id)
+            ->where('status', 'unpaid')
+            ->get()
+            ->groupBy('month');
+
+            // Sum the total unpaid amounts
+            $totalAmountDue = $monthlyPayments
+            ->map(function ($group) {
+            return $group->sum('amount');
+            })
+            ->sum();
+            @endphp
+
+            <div class="payment-alert">
+                <i class="fas fa-exclamation-triangle"></i>
+                {{-- Payment Due: ₹ 800 --}}
+                Monthly Payment Due: ₹ {{ $totalAmountDue }}
+            </div>
             @endrole
         </div>
 
         <div style="display: flex; gap: 0;">
             @role('Vice President|President')
-                <button type="button" class="btn btn-bg-blue btn-md" onclick="copyPublicFormLink()">📋 Copy Public Form Link</button>
+            <button type="button" class="btn btn-bg-blue btn-md" onclick="copyPublicFormLink()">📋 Copy Public Form
+                Link</button>
 
-                <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-                <script>
-                    function copyPublicFormLink() {
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+            <script>
+                function copyPublicFormLink() {
                         const circleId = "{{ auth()->user()->member->circle->id }}";
                         const circleName = "{{ auth()->user()->member->circle->circleName }}";
 
@@ -230,17 +234,17 @@
                                     });
                             });
                     }
-                </script>
+            </script>
             @endrole
         </div>
 
         @if (Auth::user()->hasRole('Member', 'Admin'))
-            <div class="ms-auto d-flex justify-content-end search-container">
-                <a class="search-form d-flex align-items-center" href="{{ route('search') }}">
-                    <i class="fas fa-search search-icon"></i>
-                    <input type="text" class="search-input" placeholder="Search Member or Circle Name">
-                </a>
-            </div>
+        <div class="ms-auto d-flex justify-content-end search-container">
+            <a class="search-form d-flex align-items-center" href="{{ route('search') }}">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" class="search-input" placeholder="Search Member or Circle Name">
+            </a>
+        </div>
         @endif
 
         <div class="ms-auto d-flex justify-content-end search-container">
@@ -454,44 +458,49 @@
 
                 {{-- @role('member') --}}
                 {{-- @if (Auth::user()->userStatus == 'Online')
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">
-                            <span class="badge rounded-pill bg-success" style="font-size: 12px;padding: 5px 10px;color: #fff;display: inline-block;margin-top: 5px;">Online</span>
-                        </a>
-                    </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <span class="badge rounded-pill bg-success"
+                            style="font-size: 12px;padding: 5px 10px;color: #fff;display: inline-block;margin-top: 5px;">Online</span>
+                    </a>
+                </li>
                 @else
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">
-                            <span class="badge rounded-pill bg-danger" style="font-size: 12px;padding: 5px 10px;color: #fff;display: inline-block;margin-top: 5px;">Offline</span>
-                        </a>
-                    </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <span class="badge rounded-pill bg-danger"
+                            style="font-size: 12px;padding: 5px 10px;color: #fff;display: inline-block;margin-top: 5px;">Offline</span>
+                    </a>
+                </li>
                 @endif --}}
                 {{-- @endrole --}}
 
                 <li class="nav-item dropdown pe-3">
 
-
-
-
-                    <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-                        @if (isset(Auth::user()->member->profilePhoto) && file_exists(public_path('ProfilePhoto/' . Auth::user()->member->profilePhoto)))
-                            <img class="img-profile rounded-circle" style="width: 38px !important; height: 38px !important;" src="{{ asset('ProfilePhoto/' . Auth::user()->member->profilePhoto) }}">
+                    <a id="profileDropdown" class="nav-link nav-profile d-flex align-items-center pe-2  dropdown-toggle" href="#"
+                        role="button" aria-expanded="false">
+                        @if (isset(Auth::user()->member->profilePhoto) && file_exists(public_path('ProfilePhoto/' .
+                        Auth::user()->member->profilePhoto)))
+                        <img class="img-profile rounded-circle" style="width: 38px !important; height: 38px !important;"
+                            src="{{ asset('ProfilePhoto/' . Auth::user()->member->profilePhoto) }}">
                         @else
-                            <span class="rounded-circle text-center p-2 fs-5 badge logobadge d-inline-block text-light h-50" style="width: 38px !important;">
-                            </span>
+                        <span class="rounded-circle text-center p-2 fs-5 badge logobadge d-inline-block text-light h-50"
+                            style="width: 38px !important;">
+                        </span>
                         @endif
                         {{-- <span class="d-none d-md-block dropdown-toggle ps-2">{{Auth::user()->name}}</span> --}}
                         <span class="d-md-none">Hello, {{ Auth::user()->firstName ?? '-' }}</span>
-                        <span class="d-none d-md-block dropdown-toggle ps-2">Hello,
+                        <span class="d-none d-md-block ps-2 pe-2">Hello,
                             {{ Auth::user()->firstName ?? '-' }}</span>
-                    </a><!-- End Profile Iamge Icon -->
+                    </a>
+                    <!-- End Profile Iamge Icon -->
 
 
 
 
 
 
-                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile"
+                        aria-labelledby="profileDropdown">
                         <li class="dropdown-header d-md-none">
                             {{-- <h6>{{Auth::user()->name}}</h6> --}}
                             <h6>{{ Auth::user()->firstName ?? '-' }}</h6>
@@ -501,32 +510,33 @@
                             <hr class="dropdown-divider">
                         </li>
                         @role(['Member', 'Digital Member'])
-                            <li>
-                                <a class="dropdown-item d-flex align-items-center" href="{{ route('member') }}">
-                                    <i class="bi bi-person" style="color: #e76a35"></i>
-                                    <span style="font-weight: bold; color: #1d2856">My Profile</span>
-                                </a>
-                            </li>
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center" href="{{ route('member') }}">
+                                <i class="bi bi-person" style="color: #e76a35"></i>
+                                <span style="font-weight: bold; color: #1d2856">My Profile</span>
+                            </a>
+                        </li>
 
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
 
-                            {{-- <li>
-                                <a class="dropdown-item d-flex align-items-center" href="https://ubnmart.ubncommunity.com/myaccount" target="_blank">
-                                    <i class="bi bi-cart" style="color: #e76a35"></i>
-                                    <span style="font-weight: bold; color: #1d2856">Go To UBN Mart</span>
-                                </a>
-                            </li> --}}
+                        {{-- <li>
+                            <a class="dropdown-item d-flex align-items-center"
+                                href="https://ubnmart.ubncommunity.com/myaccount" target="_blank">
+                                <i class="bi bi-cart" style="color: #e76a35"></i>
+                                <span style="font-weight: bold; color: #1d2856">Go To UBN Mart</span>
+                            </a>
+                        </li> --}}
                         @endrole
 
                         @role('Admin')
-                            <li>
-                                <a class="dropdown-item d-flex align-items-center" href="{{ route('member') }}">
-                                    <i class="bi bi-cart" style="color: #e76a35"></i>
-                                    <span style="font-weight: bold; color: #1d2856">Go To UBN Mart</span>
-                                </a>
-                            </li>
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center" href="{{ route('member') }}">
+                                <i class="bi bi-cart" style="color: #e76a35"></i>
+                                <span style="font-weight: bold; color: #1d2856">Go To UBN Mart</span>
+                            </a>
+                        </li>
                         @endrole
 
 
@@ -586,15 +596,15 @@
             <!-- End Charts Nav -->
 
             @role('Admin')
-                @include('layouts.adminmenu')
+            @include('layouts.adminmenu')
             @endrole
 
             @role('Member')
-                @include('layouts.membermenu')
+            @include('layouts.membermenu')
             @endrole
 
             @role('Digital Member')
-                @include('layouts.membermenu')
+            @include('layouts.membermenu')
             @endrole
 
 
@@ -615,7 +625,7 @@
 
         {{-- <div class="pagetitle">
             {{-- <h1>Dashboard</h1> --}}
-        {{-- <nav>
+            {{-- <nav>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="index.html">Home</a></li>
                     <li class="breadcrumb-item active">Dashboard</li>
@@ -670,15 +680,16 @@
         </div>
     </footer><!-- End Footer -->
 
-    <a href="#" class="back-to-top d-flex align-items-center justify-content-center " style="background-color: #1d2865; "><i class="bi bi-arrow-up-short"></i></a>
+    <a href="#" class="back-to-top d-flex align-items-center justify-content-center "
+        style="background-color: #1d2865; "><i class="bi bi-arrow-up-short"></i></a>
 
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    {{-- public form copy link script  --}}
+    {{-- public form copy link script --}}
 
 
-    {{-- public form copy link script end  --}}
+    {{-- public form copy link script end --}}
 
     <!-- Vendor JS Files -->
     <script>
@@ -692,24 +703,24 @@
     <!-- end -->
 
     @if (Session::get('success'))
-        <script>
-            Swal.fire({
+    <script>
+        Swal.fire({
                 icon: 'success',
                 title: "{{ Session::get('success') }}",
                 showConfirmButton: true,
 
             });
-        </script>
+    </script>
     @endif
 
     @if (Session::get('error'))
-        <script>
-            Swal.fire({
+    <script>
+        Swal.fire({
                 icon: 'error',
                 title: "{{ Session::get('error') }}",
                 showConfirmButton: true,
             });
-        </script>
+    </script>
     @endif
 
 
@@ -773,6 +784,66 @@
 
     <!-- Template Main JS File -->
     <script src="{{ asset('js/main.js') }}"></script>
+
+    <script>
+        (function(){
+            var trigger = document.getElementById('profileDropdown');
+            var menu = document.querySelector('ul[aria-labelledby="profileDropdown"]');
+            if (!trigger || !menu) return;
+
+            function openMenu(){
+                menu.classList.add('show');
+                trigger.setAttribute('aria-expanded','true');
+            }
+            function closeMenu(){
+                menu.classList.remove('show');
+                trigger.setAttribute('aria-expanded','false');
+            }
+            trigger.addEventListener('click', function(ev){
+                ev.preventDefault();
+                if (menu.classList.contains('show')) { closeMenu(); } else { openMenu(); }
+            });
+            document.addEventListener('click', function(ev){
+                if (!menu.classList.contains('show')) return;
+                var isInside = ev.target === trigger || trigger.contains(ev.target) || menu.contains(ev.target);
+                if (!isInside) { closeMenu(); }
+            });
+            document.addEventListener('keydown', function(ev){
+                if (ev.key === 'Escape') { closeMenu(); }
+            });
+        })();
+    </script>
+    <script>
+        (function(){
+            var trigger = document.getElementById('profileDropdown');
+            var menu = document.querySelector('ul[aria-labelledby="profileDropdown"]');
+            if (!trigger || !menu) return;
+
+            function openMenu(){
+                menu.classList.add('show');
+                trigger.setAttribute('aria-expanded','true');
+            }
+            function closeMenu(){
+                menu.classList.remove('show');
+                trigger.setAttribute('aria-expanded','false');
+            }
+            trigger.addEventListener('click', function(ev){
+                if (window.bootstrap) return; // Bootstrap handles if available
+                ev.preventDefault();
+                if (menu.classList.contains('show')) { closeMenu(); } else { openMenu(); }
+            });
+            document.addEventListener('click', function(ev){
+                if (window.bootstrap) return;
+                if (!menu.classList.contains('show')) return;
+                var isInside = ev.target === trigger || trigger.contains(ev.target) || menu.contains(ev.target);
+                if (!isInside) { closeMenu(); }
+            });
+            document.addEventListener('keydown', function(ev){
+                if (window.bootstrap) return;
+                if (ev.key === 'Escape') { closeMenu(); }
+            });
+        })();
+    </script>
 
 </body>
 

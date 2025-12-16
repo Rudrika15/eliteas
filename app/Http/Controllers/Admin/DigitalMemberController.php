@@ -534,6 +534,7 @@ class DigitalMemberController extends Controller
             $member->circleId = null;
             $member->title = $request->has('title') ? $request->title : $member->title;
             $member->sponsoredBy = null;
+            $member->cityId = $request->cityId;
             $member->firstName = $request->has('firstName') ? $request->firstName : $member->firstName;
             $member->lastName = $request->has('lastName') ? $request->lastName : $member->lastName;
             $member->username = $request->has('username') ? $request->username : $member->username;
