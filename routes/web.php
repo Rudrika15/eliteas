@@ -338,7 +338,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     // get member list
     Route::get('get-circle', [CircleCallController::class, 'getCircle'])->name('getCircle');
-    Route::get('get-circle-members', [CircleCallController::class, 'getCircleMembers'])->name('getCircleMembers');
+    Route::get('get-circle-members/{circleId?}', [CircleCallController::class, 'getCircleMembers'])->name('getCircleMembers');
 
     // In your web.php or api.php
     Route::get('/members/byCircle', [CircleCallController::class, 'getMembersByCircle'])->name('members.byCircle');
@@ -828,7 +828,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/db/download/{file}', [DatabaseBackupController::class, 'download'])->name('db.download');
     Route::delete('/db/delete/{file}', [DatabaseBackupController::class, 'delete'])->name('db.delete');
 
-    //help 
+    //help
 
     Route::get('/help/userView', [HelpController::class, 'userView'])->name('help.userView');
     Route::get('/help/index', [HelpController::class, 'index'])->name('help.index');
@@ -913,11 +913,11 @@ Route::group(['middleware' => ['auth']], function () {
 });
 
 
-//network digitalmember 
+//network digitalmember
 
 
 
-//member form 
+//member form
 // Route::get('/members/form', [MemberFormController::class, 'create'])->name('members.form');
 // For public users
 Route::get('/members/form', [MemberFormController::class, 'showForm'])->name('showForm');

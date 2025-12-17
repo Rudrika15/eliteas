@@ -60,7 +60,13 @@ class ConnectionController extends Controller
             $authMember = Member::where('userId', $authId)->first();
             $authCircleId = $authMember ? $authMember->circleId : null;
 
-            $authCircle = $authCircleId ? Circle::withCount('members')->with('city')->find($authCircleId) : null;
+           $authCircle = $authCircleId
+    ? Circle::where('status', 'Active')
+        ->withCount('members')
+        ->with('city')
+        ->find($authCircleId)
+    : null;
+
 
             // $businessMeetings = CircleMeetingMembersBusiness::with('member')
             //     ->where('status', 'Active')

@@ -91,7 +91,7 @@
                 {{ $member->bio ?? 'This member has not added a bio yet.' }}
             </p>
             <div class="d-flex justify-content-center gap-2 profile-buttons mb-4">
-                @if ($memberCircleId == $userCircleId || ($connection && $connection->status == 'Accepted'))
+                @if ($connection && $connection->status == 'Accepted')
                 <button id="messageButton" class="custom-btn message-btn btn"><i class="bi bi-chat-left-text"></i>
                     Message</button>
                 <button class="btn custom-btn remove-btn"><i class="bi bi-trash"></i> Remove</button>
@@ -157,7 +157,7 @@
                 <div class="card-section h-100">
                     <h6 class="mb-3 contact">Contact Details</h6>
                     <div
-                        class="{{ ($memberCircleId == $userCircleId) || ($connection && $connection->status == 'Accepted') || ($canViewDigitalContacts) ? '' : 'blurred-info' }}">
+                        class="{{ (!empty($memberCircleId) && $memberCircleId == $userCircleId) || ($connection && $connection->status == 'Accepted') || ($canViewDigitalContacts) || (empty($memberCircleId) && !empty($userCircleId)) ? '' : 'blurred-info' }}">
                         <p><i class="bi bi-envelope me-2 text-muted"></i><strong class="text-muted">Email:</strong>
                             <span class="text-color fw-bold"> {{ $member->user->email ?? 'N/A' }}</span>
                         </p>
@@ -175,7 +175,7 @@
                     @endif
                     @if ($hasAddress)
                     <div
-                        class="{{ ($memberCircleId == $userCircleId) || ($connection && $connection->status == 'Accepted') || ($canViewDigitalContacts) ? '' : 'blurred-info' }}">
+                        class="{{ (!empty($memberCircleId) && $memberCircleId == $userCircleId) || ($connection && $connection->status == 'Accepted') || ($canViewDigitalContacts) || (empty($memberCircleId) && !empty($userCircleId)) ? '' : 'blurred-info' }}">
                         <p>
                             <i class="bi bi-building text-muted me-2"></i>
                             <strong class="text-muted">Address:</strong>
@@ -234,7 +234,7 @@
             <div class="col-md-4">
                 <div class="row g-3 position-relative">
                     <div
-                        class="{{ $memberCircleId == $userCircleId || ($connection && $connection->status == 'Accepted') ? '' : 'blurred-info' }}">
+                        class="{{ (!empty($memberCircleId) && $memberCircleId == $userCircleId) || ($connection && $connection->status == 'Accepted') || (empty($memberCircleId) && !empty($userCircleId)) ? '' : 'blurred-info' }}">
                         <div class="row g-3">
                             <div class="col-6">
                                 <div class="stats-card">

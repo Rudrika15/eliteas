@@ -10,6 +10,7 @@ use App\Models\Schedule;
 use App\Models\CircleCall;
 use App\Utils\ErrorLogger;
 use App\Models\CircleMember;
+use App\Models\Connection;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
@@ -286,20 +287,15 @@ class CircleCallController extends Controller
 
 
 
-    public function getCircleMembers(Request $request)
+    public function getCircleMembers(Request $request, $circleId = null)
     {
 
-        $circleId = $request->input('circleId');
-        // $members = Member::where('circleId', $circleId)
-        //     ->whereHas('user', function ($q) {
-        //         $q->whereHas('roles', function ($q) {
-        //             $q->whereIn('name', ['Member', 'Trainer']);
-        //         });
-        //     })
-        //     ->with('user')
-        //     ->with('contact')
-        //     ->where('userId', '!=', Auth::user()->id)
-        //     ->get();
+        $circleId = $circleId ?: $request->input('circleId');
+
+        if (!$circleId) {
+             return '';
+        }
+
         $members = Member::where('circleId', $circleId)
         ->where('status', 'Active') // members table
         ->whereHas('user', function ($q) {
@@ -308,10 +304,28 @@ class CircleCallController extends Controller
               $q->whereIn('name', ['Member', 'Trainer']);
           });
         })
-        ->with(['user', 'contact'])
+        ->with(['user', 'contact', 'city', 'bCategory', 'circle'])
         ->where('userId', '!=', Auth::id())
         ->get();
-        return response()->json($members);
+
+        $authId = Auth::id();
+        $authCircleId = Member::where('userId', $authId)->value('circleId');
+
+        $connections = Connection::where('userId', $authId)
+            ->orWhere('memberId', $authId)
+            ->get();
+
+        $connMap = [];
+        foreach ($connections as $conn) {
+            $otherId = ($conn->userId == $authId) ? $conn->memberId : $conn->userId;
+            $connMap[$otherId] = $conn->status;
+        }
+
+        foreach ($members as $member) {
+            $member->connection_status = $connMap[$member->userId] ?? null;
+        }
+
+        return view('partials.member-cards', compact('members', 'authCircleId'))->render();
     }
 
     function getMember(Request $request): JsonResponse

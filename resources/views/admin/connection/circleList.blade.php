@@ -25,7 +25,7 @@
                             </div>
                             <div class="text-end">
                                 <div class="fw-semibold circle-name">₹ {{ number_format($authCircle->totalBusinessAmount ?? 0, 0) }}</div>
-                                <small class="text-muted circle-name">👥 <span class="circle-name"> {{ $authCircle->members_count }}</span></small>
+                                {{-- <small class="text-muted circle-name">👥 <span class="circle-name"> {{ $authCircle->members_count }}</span></small> --}}
                             </div>
                         </div>
                     @else
