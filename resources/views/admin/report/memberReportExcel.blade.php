@@ -11,10 +11,16 @@
     </thead>
     <tbody>
         @foreach ($circleCall as $ibm)
-            <tr>
-                <td>{{ $ibm->meetingPersonReport->firstName ?? '' }} {{ $ibm->meetingPersonReport->lastName ?? '' }}</td>
-                {{-- <td>{{ \Carbon\Carbon::parse($ibm->created_at)->format('d-m-Y') }}</td> --}}
-            </tr>
+        <tr>
+            <td>
+                @if($ibm->meetingPersonId == $member->id)
+                {{ $ibm->member->firstName ?? '' }} {{ $ibm->member->lastName ?? '' }}
+                @else
+                {{ $ibm->meetingPersonReport->firstName ?? '' }} {{ $ibm->meetingPersonReport->lastName ?? '' }}
+                @endif
+            </td>
+            {{-- <td>{{ \Carbon\Carbon::parse($ibm->created_at)->format('d-m-Y') }}</td> --}}
+        </tr>
         @endforeach
     </tbody>
 </table>
@@ -30,11 +36,13 @@
     </thead>
     <tbody>
         @foreach ($business as $b)
-            <tr>
-                <td>{{ $b->loginMember->firstName ?? '' }} {{ $b->loginMember->lastName ?? '' }}</td>
-                <td>{{ $b->amount }}</td>
-                {{-- <td>{{ \Carbon\Carbon::parse($b->created_at)->format('d-m-Y') }}</td> --}}
-            </tr>
+        <tr>
+            <td>
+                {{ $b->loginMember->firstName ?? '' }} {{ $b->loginMember->lastName ?? '' }}
+            </td>
+            <td>{{ $b->amount }}</td>
+            {{-- <td>{{ \Carbon\Carbon::parse($b->created_at)->format('d-m-Y') }}</td> --}}
+        </tr>
         @endforeach
     </tbody>
 </table>
@@ -50,11 +58,13 @@
     </thead>
     <tbody>
         @foreach ($reference as $r)
-            <tr>
-                <td>{{ $r->refReceiver->firstName ?? '' }} {{ $r->refReceiver->lastName ?? '' }}</td>
-                <td>{{ $r->contactName ?? '' }} </td>
-                {{-- <td>{{ \Carbon\Carbon::parse($r->created_at)->format('d-m-Y') }}</td> --}}
-            </tr>
+        <tr>
+            <td>
+                {{ $r->refReceiver->firstName ?? '' }} {{ $r->refReceiver->lastName ?? '' }}
+            </td>
+            <td>{{ $r->contactName ?? '' }} </td>
+            {{-- <td>{{ \Carbon\Carbon::parse($r->created_at)->format('d-m-Y') }}</td> --}}
+        </tr>
         @endforeach
     </tbody>
 </table>

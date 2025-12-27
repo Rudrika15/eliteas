@@ -155,7 +155,7 @@
                     <div class="form-floating mt-3">
                         <input type="file" class="form-control @error('meetingImage') is-invalid @enderror" id="meetingImage" name="meetingImage" accept="image/*" onchange="previewPhoto(event)" value="{{ old('meetingImage') }}">
                         <label for="meetingImage">Upload Meeting Image</label>
-                        <span class="text-danger mt-1 d-block">*
+                        <span class="text-danger mt-1 d-block"> 
                             File size:Max 2MB</span>
                         @error('meetingImage')
                             <div class="invalid-tooltip">
@@ -193,7 +193,7 @@
                     <div class="form-floating mt-3">
                         <?php
                         use Illuminate\Support\Carbon;
-                        
+
                         $nearestDate = $scheduleDate->min();
                         $nearestDate = $nearestDate ? Carbon::parse($nearestDate)->subDay()->format('Y-m-d') : Carbon::now()->format('Y-m-d');
                         $selectedDate = request()->input('date') ?? (Carbon::now()->format('Y-m-d') == $nearestDate ? Carbon::now()->format('Y-m-d') : $nearestDate);

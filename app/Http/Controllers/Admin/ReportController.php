@@ -54,51 +54,127 @@ class ReportController extends Controller
     // }
 
 
+    // public function ibm(Request $request)
+    // {
+    //     $startDate = $request->input('startDate');
+    //     $endDate = $request->input('endDate');
+    //     $circleId = $request->input('circleId');
+
+    //     // Fetch all circles for the dropdown
+    //     $circles = Circle::where('status', 'Active')->select('id', 'circleName')->get();
+
+    //     if (!$startDate && !$endDate && !$circleId) {
+    //         $ibms = collect();
+    //     } else {
+    //         $query = CircleCall::with('member')
+    //             ->where('status', 'active');
+
+    //         if ($startDate) {
+    //             $query->where('created_at', '>=', $startDate);
+    //         }
+    //         if ($endDate) {
+    //             $query->where('created_at', '<=', $endDate);
+    //         }
+
+    //         if ($circleId) {
+    //             $query->whereHas('member', function ($q) use ($circleId) {
+    //                 $q->where('circleId', $circleId);
+    //             });
+    //         }
+
+    //         $ibms = $query->get()
+    //             ->groupBy('memberId')
+    //             ->map(function ($group) {
+    //                 $member = $group->first()->member;
+    //                 return [
+    //                     'memberId' => $member->id,
+    //                     'memberName' => $member->firstName . ' ' . $member->lastName,
+    //                     'circleName' => $member->circle->circleName,
+    //                     'member_count' => $group->count(),
+    //                 ];
+    //             })
+    //             ->sortByDesc('member_count')
+    //             ->values();
+    //     }
+
+    //     return view('admin.report.ibm', compact('ibms', 'circles'));
+    // }
+
+
     public function ibm(Request $request)
-    {
-        $startDate = $request->input('startDate');
-        $endDate = $request->input('endDate');
-        $circleId = $request->input('circleId');
+{
+    $startDate = $request->input('startDate');
+    $endDate   = $request->input('endDate');
+    $circleId  = $request->input('circleId');
 
-        // Fetch all circles for the dropdown
-        $circles = Circle::where('status', 'Active')->select('id', 'circleName')->get();
+    // Dropdown circles
+    $circles = Circle::where('status', 'Active')
+        ->select('id', 'circleName')
+        ->get();
 
-        if (!$startDate && !$endDate && !$circleId) {
-            $ibms = collect();
-        } else {
-            $query = CircleCall::with('member')
-                ->where('status', 'active');
+    if (!$startDate && !$endDate && !$circleId) {
+        $ibms = collect();
+    } else {
 
-            if ($startDate) {
-                $query->where('created_at', '>=', $startDate);
-            }
-            if ($endDate) {
-                $query->where('created_at', '<=', $endDate);
-            }
+        $query = CircleCall::where('status', 'active');
 
-            if ($circleId) {
-                $query->whereHas('member', function ($q) use ($circleId) {
-                    $q->where('circleId', $circleId);
-                });
-            }
-
-            $ibms = $query->get()
-                ->groupBy('memberId')
-                ->map(function ($group) {
-                    $member = $group->first()->member;
-                    return [
-                        'memberId' => $member->id,
-                        'memberName' => $member->firstName . ' ' . $member->lastName,
-                        'circleName' => $member->circle->circleName,
-                        'member_count' => $group->count(),
-                    ];
-                })
-                ->sortByDesc('member_count')
-                ->values();
+        // Date filters
+        if ($startDate) {
+            $query->whereDate('created_at', '>=', $startDate);
+        }
+        if ($endDate) {
+            $query->whereDate('created_at', '<=', $endDate);
         }
 
-        return view('admin.report.ibm', compact('ibms', 'circles'));
+        // Circle filter
+        if ($circleId) {
+            $query->where(function ($q) use ($circleId) {
+                $q->whereHas('member', function ($sq) use ($circleId) {
+                    $sq->where('circleId', $circleId);
+                })->orWhereHas('meetingPerson', function ($sq) use ($circleId) {
+                    $sq->where('circleId', $circleId);
+                });
+            });
+        }
+
+        $ibms = $query->get()
+            ->flatMap(function ($item) {
+                return [
+                    ['member_id' => $item->memberId],
+                    ['member_id' => $item->meetingPersonId],
+                ];
+            })
+            ->groupBy('member_id')
+            ->map(function ($group, $memberId) use ($circleId) {
+                // memberId here is actually the User ID from CircleCall
+                $member = Member::with('circle')->where('userId', $memberId)->first();
+
+                if (!$member) {
+                    return null;
+                }
+
+                if ($circleId && $member->circleId != $circleId) {
+                    return null;
+                }
+
+                return [
+                    'memberId'      => $member->id,
+                    'memberName'    => $member->firstName . ' ' . $member->lastName,
+                    'circleName'    => $member->circle->circleName ?? '',
+                    'member_count'  => $group->count(),
+                ];
+            })
+
+            // 🔹 CHANGE 4: remove null rows
+            ->filter()
+
+            ->sortByDesc('member_count')
+            ->values();
     }
+
+    return view('admin.report.ibm', compact('ibms', 'circles'));
+}
+
 
 
 
@@ -460,79 +536,6 @@ class ReportController extends Controller
     // }
 
 
-    // public function memberWiseReport(Request $request)
-    // {
-    //     $circle = Circle::where('status', 'Active')->get();
-    //     $member = Member::where('status', 'Active')->get();
-
-    //     $selectedMemberId = $request->input('memberId');
-    //     $startDate = $request->input('start_date');
-    //     $endDate = $request->input('end_date');
-
-    //     $business = collect();
-    //     $reference = collect();
-    //     $circleCall = collect();
-
-    //     $totalBusinessAmount = 0;
-    //     $totalIbmCount = 0;
-    //     $totalReferenceCount = 0;
-
-    //     $selectedMember = null;
-    //     if ($selectedMemberId) {
-    //         $selectedMember = Member::where('userId', $selectedMemberId)->first();
-    //     }
-
-    //     if ($selectedMemberId) {
-    //         $circleCall = CircleCall::with(['meetingPersonReport:id,firstName,lastName'])
-    //             ->where('status', 'Active')
-    //             ->where('memberId', $selectedMemberId);
-
-    //         $business = CircleMeetingMembersBusiness::with(['loginMember:id,firstName,lastName'])
-    //             ->where('status', 'Active')
-    //             ->where('businessGiverId', $selectedMemberId);
-
-    //         $reference = CircleMeetingMembersReference::with(['refGiverName:id,firstName,lastName'])
-    //             ->where('status', 'Active')
-    //             ->where('referenceGiverId', $selectedMemberId);
-
-    //         if ($startDate) {
-    //             $circleCall->whereDate('created_at', '>=', $startDate);
-    //             $business->whereDate('created_at', '>=', $startDate);
-    //             $reference->whereDate('created_at', '>=', $startDate);
-    //         }
-
-    //         if ($endDate) {
-    //             $circleCall->whereDate('created_at', '<=', $endDate);
-    //             $business->whereDate('created_at', '<=', $endDate);
-    //             $reference->whereDate('created_at', '<=', $endDate);
-    //         }
-
-    //         $circleCall = $circleCall->get();
-    //         $business = $business->get();
-    //         $reference = $reference->get();
-
-    //         $totalBusinessAmount = $business->sum('amount');
-    //         $totalIbmCount = $circleCall->count();
-    //         $totalReferenceCount = $reference->count();
-    //     }
-
-    //     return view('admin.report.memberReport', compact(
-    //         'circle',
-    //         'member',
-    //         'business',
-    //         'reference',
-    //         'circleCall',
-    //         'selectedMemberId',
-    //         'selectedMember',
-    //         'totalBusinessAmount',
-    //         'totalIbmCount',
-    //         'totalReferenceCount',
-    //         'startDate',
-    //         'endDate'
-    //     ));
-    // }
-
-
     public function memberWiseReport(Request $request)
     {
         $circle = Circle::where('status', 'Active')->get();
@@ -556,53 +559,37 @@ class ReportController extends Controller
         }
 
         if ($selectedMemberId) {
-            // IBM (Circle Calls)
-            $circleCallQuery = CircleCall::with(['meetingPersonReport:id,firstName,lastName'])
+            $circleCall = CircleCall::with(['meetingPersonReport:id,firstName,lastName'])
                 ->where('status', 'Active')
                 ->where('memberId', $selectedMemberId);
 
-            // Business
-            $businessQuery = CircleMeetingMembersBusiness::with(['loginMember:id,firstName,lastName'])
+            $business = CircleMeetingMembersBusiness::with(['loginMember:id,firstName,lastName'])
                 ->where('status', 'Active')
                 ->where('businessGiverId', $selectedMemberId);
 
-            // Reference
-            $referenceQuery = CircleMeetingMembersReference::with(['refGiverName:id,firstName,lastName'])
+            $reference = CircleMeetingMembersReference::with(['refGiverName:id,firstName,lastName'])
                 ->where('status', 'Active')
                 ->where('referenceGiverId', $selectedMemberId);
 
-            // Apply date filters
-
             if ($startDate) {
-                $circleCallQuery->whereRaw('DATE(created_at) >= ?', [$startDate]);
-                $businessQuery->whereRaw('DATE(created_at) >= ?', [$startDate]);
-                $referenceQuery->whereRaw('DATE(created_at) >= ?', [$startDate]);
+                $circleCall->whereDate('created_at', '>=', $startDate);
+                $business->whereDate('created_at', '>=', $startDate);
+                $reference->whereDate('created_at', '>=', $startDate);
             }
 
             if ($endDate) {
-                $circleCallQuery->whereRaw('DATE(created_at) <= ?', [$endDate]);
-                $businessQuery->whereRaw('DATE(created_at) <= ?', [$endDate]);
-                $referenceQuery->whereRaw('DATE(created_at) <= ?', [$endDate]);
+                $circleCall->whereDate('created_at', '<=', $endDate);
+                $business->whereDate('created_at', '<=', $endDate);
+                $reference->whereDate('created_at', '<=', $endDate);
             }
 
+            $circleCall = $circleCall->get();
+            $business = $business->get();
+            $reference = $reference->get();
 
-            // Execute queries
-            $circleCall = $circleCallQuery->get();
-            $business = $businessQuery->get();
-            $reference = $referenceQuery->get();
-
-            // Totals
             $totalBusinessAmount = $business->sum('amount');
             $totalIbmCount = $circleCall->count();
             $totalReferenceCount = $reference->count();
-        }
-
-        // Export to Excel if requested
-        if ($request->has('export') && $selectedMember) {
-            $memberName = Str::slug($selectedMember->firstName . ' ' . $selectedMember->lastName);
-            $fileName = 'member_report_' . $memberName . '.xlsx';
-
-            return Excel::download(new MemberReportExport($selectedMemberId, $startDate, $endDate), $fileName);
         }
 
         return view('admin.report.memberReport', compact(
@@ -620,6 +607,103 @@ class ReportController extends Controller
             'endDate'
         ));
     }
+
+
+    // public function memberWiseReport(Request $request)
+    // {
+    //     $circle = Circle::where('status', 'Active')->get();
+    //     $member = Member::where('status', 'Active')->get();
+
+    //     $selectedMemberId = $request->input('memberId');
+    //     $startDate = $request->input('start_date');
+    //     $endDate = $request->input('end_date');
+
+    //     $business = collect();
+    //     $reference = collect();
+    //     $circleCall = collect();
+
+    //     $totalBusinessAmount = 0;
+    //     $totalIbmCount = 0;
+    //     $totalReferenceCount = 0;
+
+    //     $selectedMember = null;
+    //     if ($selectedMemberId) {
+    //         $selectedMember = Member::where('userId', $selectedMemberId)->first();
+    //     }
+
+    //     if ($selectedMemberId) {
+    //         // IBM (Circle Calls)
+    //         $circleCallQuery = CircleCall::with(['meetingPersonReport:id,firstName,lastName', 'member:id,firstName,lastName'])
+    //             ->where('status', 'Active')
+    //             ->where(function ($q) use ($selectedMemberId) {
+    //                 $q->where('memberId', $selectedMemberId)
+    //                     ->orWhere('meetingPersonId', $selectedMemberId);
+    //             });
+
+    //         // Business
+    //         $businessQuery = CircleMeetingMembersBusiness::with(['loginMember', 'businessGiver'])
+    //             ->where('status', 'Active')
+    //             ->where(function ($q) use ($selectedMemberId) {
+    //                 $q->where('businessGiverId', $selectedMemberId)
+    //                     ->orWhere('loginMemberId', $selectedMemberId);
+    //             });
+
+    //         // Reference
+    //         $referenceQuery = CircleMeetingMembersReference::with(['refGiverName:id,firstName,lastName', 'refReceiver'])
+    //             ->where('status', 'Active')
+    //             ->where(function ($q) use ($selectedMemberId) {
+    //                 $q->where('referenceGiverId', $selectedMemberId)
+    //                     ->orWhere('memberId', $selectedMemberId);
+    //             });
+
+    //         if ($startDate) {
+    //             $circleCallQuery->whereDate('created_at', '>=', $startDate);
+    //             $businessQuery->whereDate('created_at', '>=', $startDate);
+    //             $referenceQuery->whereDate('created_at', '>=', $startDate);
+    //         }
+
+    //         if ($endDate) {
+    //             $circleCallQuery->whereDate('created_at', '<=', $endDate);
+    //             $businessQuery->whereDate('created_at', '<=', $endDate);
+    //             $referenceQuery->whereDate('created_at', '<=', $endDate);
+    //         }
+
+    //         $circleCall = $circleCallQuery->get();
+    //         $business = $businessQuery->get();
+    //         $reference = $referenceQuery->get();
+
+    //         // Totals
+    //         $totalBusinessAmount = $business->sum('amount');
+    //         $totalIbmCount = $circleCall->count();
+    //         $totalReferenceCount = $reference->count();
+    //     }
+
+    //     // Export to Excel if requested
+    //     if ($request->has('export') && $selectedMember) {
+    //         $memberName = Str::slug($selectedMember->firstName . ' ' . $selectedMember->lastName);
+    //         $fileName = 'member_report_' . $memberName . '.xlsx';
+
+    //         return Excel::download(new MemberReportExport($selectedMemberId, $startDate, $endDate), $fileName);
+    //     }
+
+    //     return view('admin.report.memberReport', compact(
+    //         'circle',
+    //         'member',
+    //         'business',
+    //         'reference',
+    //         'circleCall',
+    //         'selectedMemberId',
+    //         'selectedMember',
+    //         'totalBusinessAmount',
+    //         'totalIbmCount',
+    //         'totalReferenceCount',
+    //         'startDate',
+    //         'endDate'
+    //     ));
+    // }
+
+
+
 
     //report for VP role -
     public function vpReport(Request $request)
@@ -643,37 +727,86 @@ class ReportController extends Controller
         $end   = $endDate ? Carbon::parse($endDate)->endOfDay() : Carbon::now()->endOfDay();
 
         /* ------------------ 1. Circle Calls ------------------ */
-        $circleCalls = CircleCall::with('member')
-            ->where('status', 'Active')
+        $circleCalls = CircleCall::where('status', 'Active')
             ->when($start, fn($q) => $q->whereBetween('date', [$start, $end]))
-            ->whereHas('member', function ($q) use ($circleId) {
-                $q->where('circleId', $circleId);
+            ->where(function ($q) use ($circleId) {
+                $q->whereHas('member', function ($sq) use ($circleId) {
+                    $sq->where('circleId', $circleId);
+                })->orWhereHas('meetingPerson', function ($sq) use ($circleId) {
+                    $sq->where('circleId', $circleId);
+                });
             })
             ->get();
 
         $totalCircleCalls = $circleCalls->count();
 
         /* ------------------ 2. IBM ------------------ */
-        $ibms = CircleCall::with('member')
-            ->where('status', 'Active')
+        $ibms = CircleCall::where('status', 'Active')
             ->when($start, fn($q) => $q->whereBetween('created_at', [$start, $end]))
-            ->whereHas('member', function ($q) use ($circleId) {
-                $q->where('circleId', $circleId);
+            ->where(function ($q) use ($circleId) {
+                $q->whereHas('member', function ($sq) use ($circleId) {
+                    $sq->where('circleId', $circleId);
+                })->orWhereHas('meetingPerson', function ($sq) use ($circleId) {
+                    $sq->where('circleId', $circleId);
+                });
             })
             ->get()
-            ->groupBy('memberId')
-            ->map(function ($group) {
-                $member = $group->first()->member;
+            ->flatMap(function ($item) {
+                return [
+                    ['member_id' => $item->memberId],
+                    ['member_id' => $item->meetingPersonId],
+                ];
+            })
+            ->groupBy('member_id')
+            ->map(function ($group, $memberId) use ($circleId) {
+                $member = Member::with('circle')->where('userId', $memberId)->first();
+
+                if (!$member) {
+                    return null;
+                }
+
+                if ($member->circleId != $circleId) {
+                    return null;
+                }
+
                 return [
                     'memberId' => $member->id,
                     'memberName' => $member->firstName . ' ' . $member->lastName,
-                    'circleName' => $member->circle->circleName,
+                    'circleName' => $member->circle->circleName ?? '',
                     'member_count' => $group->count(),
                 ];
             })
+            ->filter()
             ->sortByDesc('member_count')
-            ->take(5) // ✅ only top 5 IBM
+            ->take(10) // ✅ only top 5 IBM
             ->values();
+
+        $totalIbmParticipations = CircleCall::where('status', 'Active')
+            ->when($start, fn($q) => $q->whereBetween('created_at', [$start, $end]))
+            ->where(function ($q) use ($circleId) {
+                $q->whereHas('member', function ($sq) use ($circleId) {
+                    $sq->where('circleId', $circleId);
+                })->orWhereHas('meetingPerson', function ($sq) use ($circleId) {
+                    $sq->where('circleId', $circleId);
+                });
+            })
+            ->get()
+            ->flatMap(function ($item) {
+                return [
+                    ['member_id' => $item->memberId],
+                    ['member_id' => $item->meetingPersonId],
+                ];
+            })
+            ->groupBy('member_id')
+            ->map(function ($group, $memberId) use ($circleId) {
+                $member = Member::where('userId', $memberId)->first();
+                if (!$member || $member->circleId != $circleId) {
+                    return null;
+                }
+                return ['member_count' => $group->count()];
+            })
+            ->filter()
+            ->sum('member_count');
 
         /* ------------------ 3. References ------------------ */
         $references = CircleMeetingMembersReference::with('refGiver')
@@ -696,7 +829,7 @@ class ReportController extends Controller
                 ];
             })
             ->sortByDesc('reference_count')
-            ->take(5) // ✅ only top 5
+            ->take(10) // ✅ only top 5
             ->values();
 
         /* ------------------ 4. Business ------------------ */
@@ -721,7 +854,7 @@ class ReportController extends Controller
                 ];
             })
             ->sortByDesc('total_amount')
-            ->take(5) // ✅ only top 5
+            ->take(10) // ✅ only top 5
             ->values();
 
         return view('admin.report.VPReport', compact(
@@ -729,6 +862,7 @@ class ReportController extends Controller
             'startDate',
             'endDate',
             'totalCircleCalls',
+            'totalIbmParticipations',
             'ibms',
             'refReport',
             'totalReferences',

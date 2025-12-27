@@ -266,12 +266,12 @@
         <span style="color: #1d2865 ;">Training</span>
     </a>
 
-    <li class="nav-item">
+    {{-- <li class="nav-item">
         <a class="nav-link collapsed " href="{{ route('circleWiseLeaderboard.index') }}">
             <i class="bi bi-chat-quote text-orange"></i>
             <span class="text-blue">Circle Leaderboard</span>
         </a>
-    </li>
+    </li> --}}
 
     {{-- <li class="nav-item">
     <a class="nav-link collapsed" data-bs-target="#connection-nav" data-bs-toggle="collapse" href="#">
@@ -438,7 +438,7 @@
 @endif
 
 
-@if (Auth::user()->hasRole('Circle Director'))
+@if (Auth::user()->hasRole(['Circle Director', 'Vice President']))
     <li class="nav-item">
         <a class="nav-link collapsed " href="{{ route('visitors.RoleWiseIndex') }}">
             <i class="bi bi-people-fill" style="color: #e76a35"></i>

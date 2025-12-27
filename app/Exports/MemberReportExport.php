@@ -28,12 +28,21 @@ class MemberReportExport implements FromView
         $startDate = $this->startDate;
         $endDate = $this->endDate;
 
-        $circleCall = CircleCall::with('meetingPersonReport')
+        $circleCall = CircleCall::with(['meetingPersonReport', 'member'])
             ->where('status', 'Active')
-            ->where('memberId', $this->memberId)
+            ->where(function ($q) {
+                $q->where('memberId', $this->memberId)
+                    ->orWhere('meetingPersonId', $this->memberId);
+            })
             ->when($this->startDate, fn($q) => $q->whereDate('created_at', '>=', $this->startDate))
             ->when($this->endDate, fn($q) => $q->whereDate('created_at', '<=', $this->endDate))
-            ->get();
+            ->get()
+            ->map(function ($call) {
+                if ($call->meetingPersonId == $this->memberId) {
+                    $call->setRelation('meetingPersonReport', $call->member);
+                }
+                return $call;
+            });
 
         $business = CircleMeetingMembersBusiness::with('loginMember')
             ->where('status', 'Active')

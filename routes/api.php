@@ -507,6 +507,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/city-count', [DigitalMemberController::class, 'getCityCount']);
 
 
+    Route::get('/total-counts', [ApiController::class, 'totalCounts']);
 
 
 

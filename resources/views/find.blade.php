@@ -817,6 +817,23 @@
                 max-width: 100%;
             }
 
+            .company-section .logo {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                margin-bottom: 2px;
+                /* Small gap between logo and name */
+            }
+
+            .company-logo {
+                max-width: 100%;
+                max-height: 60px;
+                /* Reduced max-height to keep it tighter */
+                width: auto;
+                height: auto;
+                object-fit: contain;
+            }
+
             .B-divider {
                 width: 1px;
                 background-color: #dcdcdc;

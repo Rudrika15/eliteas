@@ -266,7 +266,7 @@
                         </div>
                         <div class="card-body text-center pt-5 mt-3">
                             <h5 class="card-title mb-0">{{ $callWithData->member->firstName ?? '-' }} {{ $callWithData->member->lastName ?? '-' }}</h5>
-                            <p class="text-muted small">Vice President at UBN</p>
+                            {{-- <p class="text-muted small">Vice President at UBN</p> --}}
                             <div class="text-muted small mb-2">
                                 <i class="bi bi-geo-alt me-1"></i>{{ $callWithData->meetingPlace ?? '-' }}
                             </div>
@@ -476,7 +476,7 @@
                                     // Calculate allowed range
                                     $today = \Illuminate\Support\Carbon::today()->format('Y-m-d');
                                     $pastLimit = \Illuminate\Support\Carbon::today()->subDays(15)->format('Y-m-d');
-                                    
+
                                     // Default selected date
                                     $selectedDate = old('date', request()->input('date') ?? $today);
                                     ?>
@@ -754,9 +754,9 @@
                                     response.forEach(function(member, index) {
                                         console.log(`👤 Member [${index}]:`, member);
                                         $('#memberId').append(
-                                            `<option value="${member.id}" 
-                                        data-user-id="${member.userId}" 
-                                        data-first-name="${member.firstName ?? ''}" 
+                                            `<option value="${member.id}"
+                                        data-user-id="${member.userId}"
+                                        data-first-name="${member.firstName ?? ''}"
                                         data-last-name="${member.lastName ?? ''}">
                                         ${(member.firstName ?? '')} ${(member.lastName ?? '')}
                                     </option>`

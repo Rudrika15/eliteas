@@ -1389,333 +1389,349 @@ $totalIbms = \App\Models\CircleCall::where('status', 'Active')->count();
 
 
             <h1 class="text-center card-title">Leaderboard</h1>
-            <div class="leaderboard">
+            <style>
+                .fb-card {
+                    background-color: #ffffff;
+                    border-radius: 10px;
+                    overflow: hidden;
+                    border: 1px solid #e0e0e0;
+                    height: 100%;
+                    display: flex;
+                    flex-direction: column;
+                    font-family: sans-serif;
+                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+                }
+
+                .fb-card-img-wrapper {
+                    width: 100%;
+                    padding-top: 100%;
+                    /* 1:1 Aspect Ratio */
+                    position: relative;
+                    background-color: #f8f9fa;
+                    border-bottom: 1px solid #e0e0e0;
+                }
+
+                .fb-card-img {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                }
+
+                .fb-card-body {
+                    padding: 16px;
+                    flex-grow: 1;
+                    display: flex;
+                    flex-direction: column;
+                    background-color: #ffffff;
+                }
+
+                .fb-card-title {
+                    color: #1d3268;
+                    font-size: 20px;
+                    font-weight: 700;
+                    margin-bottom: 4px;
+                    line-height: 1.2;
+                }
+
+                .fb-card-subtitle {
+                    color: #65676b;
+                    font-size: 15px;
+                    margin-bottom: 16px;
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                    flex-wrap: wrap;
+                }
+
+                .fb-card-info {
+                    color: #65676b;
+                    font-size: 14px;
+                    margin-bottom: 16px;
+                    line-height: 1.5;
+                }
+
+                .fb-card-info i {
+                    color: #e76a35;
+                }
+
+                .fb-badge {
+                    position: absolute;
+                    top: 10px;
+                    left: 10px;
+                    background: #e76a35;
+                    color: #fff;
+                    padding: 4px 10px;
+                    border-radius: 4px;
+                    font-size: 12px;
+                    font-weight: 600;
+                    z-index: 10;
+                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+                }
+
+                .fb-btn {
+                    width: 100%;
+                    border: none;
+                    border-radius: 6px;
+                    padding: 8px 0;
+                    font-weight: 600;
+                    font-size: 15px;
+                    cursor: pointer;
+                    transition: background 0.2s;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    text-decoration: none;
+                }
+
+                .fb-btn:hover {
+                    text-decoration: none;
+                }
+
+                .fb-btn-primary {
+                    background-color: #1d3268;
+                    color: #fff;
+                }
+
+                .fb-btn-primary:hover {
+                    background-color: #15244d;
+                    color: #fff;
+                }
+
+                .fb-btn-secondary {
+                    background-color: #e4e6eb;
+                    color: #1d3268;
+                    margin-top: 10px;
+                }
+
+                .fb-btn-secondary:hover {
+                    background-color: #d8dadf;
+                    color: #1d3268;
+                }
+
+                .fb-btn-disabled {
+                    background-color: #e4e6eb;
+                    color: #bcc0c4;
+                    cursor: default;
+                }
+            </style>
+
+            <div class="leaderboard mt-3">
                 <div class="row g-4">
+                    {{-- Card 1: Top IBM Member --}}
                     @if ($circlecalls)
                     <div class="col-sm-6 col-lg-4">
-                        <div class="profile-card shadow-sm rounded border-0">
-                            <span class="heading">Top IBM Member</span>
-                            <img src="{{ asset('img/header_img.jpeg') }}" class="header-image" alt="Header Image">
-                            <div class="text-center p-3">
+                        <div class="fb-card shadow-sm">
+                            <div class="fb-card-img-wrapper">
+                                <span class="fb-badge">Top IBM Member</span>
                                 <img src="{{ asset('ProfilePhoto/' . ($circlecalls['member']->profilePhoto ?? 'profile.png')) }}"
-                                    class="profile-img img-fluid rounded-circle mx-auto d-block" alt="Profile Image">
-                                <h5 class="member-name" style="color: #e76a35; font-weight: bold;">
-                                    {{ $circlecalls['member']->firstName }} {{ $circlecalls['member']->lastName }}
-                                </h5>
-                                {{-- <p class="position">Max Business Meets</p> --}}
+                                    class="fb-card-img" alt="Profile Image">
+                            </div>
+                            <div class="fb-card-body">
+                                <h5 class="fb-card-title">{{ $circlecalls['member']->firstName }} {{
+                                    $circlecalls['member']->lastName }}</h5>
 
-                                <div class="info-section">
-                                    <div class="icon-text">
-                                        <i class="bi bi-people-fill" style="color: #787c80;"></i>
-                                        {{ $circlecalls['member']->circle->circleName }}
-                                    </div>
-                                    <div class="icon-text">
-                                        <i class="bi bi-calendar-event-fill" style="color: #787c80;"></i>
-                                        <b>{{ $circlecalls['count'] }}</b>
-                                    </div>
-                                    {{-- <div class="icon-text">
-                                        <i class="bi bi-envelope-fill" style="color: #787c80;"></i>
-                                        <span>{{ $circlecalls['member']->user->email ?? '****' }}</span>
-                                    </div>
-                                    <div class="icon-text">
-                                        <i class="bi bi-telephone-fill" style="color: #787c80;"></i>
-                                        <span>{{ $circlecalls['member']->user->contactNo ?? '****' }}</span>
-                                    </div> --}}
+                                <div class="fb-card-subtitle">
+                                    <i class="bi bi-people-fill"></i>
+                                    {{ $circlecalls['member']->circle->circleName }}
+                                    <span>&bull;</span>
+                                    <span>{{ $circlecalls['count'] }} IBMs</span>
                                 </div>
 
-                                <div class="company-category-section">
-                                    <div class="company-section">
-                                        <div class="logo-section">
-                                            @if (!empty($circlecalls['member']->companyLogo))
-                                            <img src="{{ asset('CompanyLogo/' . $circlecalls['member']->companyLogo) }}"
-                                                class="company-logo" alt="Company Logo">
-                                            @endif
-                                            <div class="initials"
-                                                style="{{ empty($circlecalls['member']->companyLogo) ? 'display:flex;' : 'display:none;' }}">
-                                                {{ strtoupper(substr($circlecalls['member']->companyName ?? 'C', 0, 1))
-                                                }}
-                                            </div>
-                                        </div>
-                                        <h2 title="{{ $circlecalls['member']->companyName ?? '' }}">
-                                            {{ $circlecalls['member']->companyName ?? '' }}
-                                        </h2>
+                                <div class="fb-card-info">
+                                    @if(!empty($circlecalls['member']->companyName))
+                                    <div><i class="bi bi-building me-1"></i> {{ $circlecalls['member']->companyName }}
                                     </div>
-                                    <div class="divider"></div>
-                                    <div class="category-section">
-                                        <div class="label">Category</div>
-                                        <h3>{{ $circlecalls['member']->bCategory->categoryName ?? 'N/A' }}</h3>
-                                    </div>
-                                </div>
+                                    @endif
+                                    @if(!empty($circlecalls['member']->bCategory->categoryName))
+                                    <div><i class="bi bi-tag me-1"></i> {{
+                                        $circlecalls['member']->bCategory->categoryName }}</div>
+                                    @endif
 
-
-                                <div class="keywords-container row">
+                                    {{-- Keywords --}}
                                     @php
                                     $keyWords = json_decode($circlecalls['member']->keyWords ?? '[]', true);
                                     @endphp
                                     @if (is_array($keyWords) && count($keyWords) > 0)
-                                    @foreach ($keyWords as $keyWord)
-                                    <span class="keyword-pill col">{{ $keyWord }}</span>
-                                    @endforeach
+                                    <div class="mt-2">
+                                        @foreach ($keyWords as $keyWord)
+                                        <span class="badge bg-secondary fw-normal me-1 mb-1">{{ $keyWord }}</span>
+                                        @endforeach
+                                    </div>
                                     @endif
                                 </div>
-                            </div>
 
-                            <div class="bottom-actions">
-                                <div id="viewProfile" class="action-button left-action">
-                                    <a href="#">
-                                        {{-- <i class="bi bi-person-lines-fill" style="color: #1d3268;"></i> --}}
-                                        <span style="color: #1d3268;"> View Profile</span>
-                                    </a>
-                                </div>
-                                <div class="B-divider"></div>
-                                <div id="connectButton" class="action-button right-action btn w-100">
+                                <div class="mt-auto">
+                                    <!-- Connect Button -->
                                     @if ($circlecalls['member']->circleId == $authCircleId ||
                                     $circlecalls['member']->connection_status == 'Connected')
-                                    <button type="button" class="btn btn-connect fw-bold shadow-none">
-                                        Connected &nbsp;
-                                        {{-- <i class="bi bi-check-circle-fill"></i> --}}
-                                    </button>
+                                    <button type="button" class="fb-btn fb-btn-disabled">Connected</button>
                                     @elseif ($circlecalls['member']->connection_status == 'Not Connected')
-                                    <form action="{{ route('connect') }}" method="POST" class="d-inline-block">
+                                    <form action="{{ route('connect') }}" method="POST" class="d-block w-100">
                                         @csrf
                                         <input type="hidden" value="{{ $circlecalls['member']->id }}" name="memberId">
-                                        <button type="submit" class="btn  shadow-none fw-bold" style="color: #1d3268;">
-                                            Connect &nbsp;
-                                            {{-- <i class="bi bi-person-plus-fill fw-bold" style="color: #1d3268;"></i>
-                                            --}}
-                                        </button>
+                                        <button type="submit" class="fb-btn fb-btn-primary">Connect</button>
                                     </form>
                                     @elseif ($circlecalls['member']->connection_status == 'Accepted')
-                                    <button id="messageButton" class="btn btn-connect ms-2">
-                                        Message
-                                    </button>
+                                    <button class="fb-btn fb-btn-primary">Message</button>
                                     @elseif ($circlecalls['member']->connection_status == 'Pending')
-                                    <button type="button" class="btn btn-connect fw-bold shadow-none"
-                                        style="color: #e76a35;">
-                                        Requested &nbsp;
-                                        {{-- <i class="bi bi-clock" style="color: #e76a35;"></i> --}}
-                                    </button>
+                                    <button type="button" class="fb-btn fb-btn-disabled">Requested</button>
                                     @elseif ($circlecalls['member']->connection_status == 'Rejected')
-                                    <form action="{{ route('connect') }}" method="POST" class="d-inline-block">
+                                    <form action="{{ route('connect') }}" method="POST" class="d-block w-100">
                                         @csrf
                                         <input type="hidden" value="{{ $circlecalls['member']->id }}" name="memberId">
-                                        <button type="submit" class="btn btn-connect shadow-none fw-bold"
-                                            style="color: #1d3268;">
-                                            Connect &nbsp;
-                                            {{-- <i class="bi bi-person-plus-fill fw-bold" style="color: #1d3268;"></i>
-                                            --}}
-                                        </button>
+                                        <button type="submit" class="fb-btn fb-btn-primary">Connect</button>
                                     </form>
                                     @endif
+
+                                    <!-- View Profile -->
+                                    <a href="#" class="text-decoration-none d-block w-100">
+                                        <button class="fb-btn fb-btn-secondary">View Profile</button>
+                                    </a>
                                 </div>
                             </div>
                         </div>
                     </div>
-
                     @endif
 
+                    {{-- Card 2: Top Business Leader --}}
                     @if ($busGiver)
                     <div class="col-sm-6 col-lg-4">
-                        <div class="profile-card shadow-sm rounded border-0">
-                            <span class="heading">Top Business Leader</span>
-                            <img src="{{ asset('img/header_img.jpeg') }}" class="header-image" alt="Header Image">
-                            <div class="text-center p-3">
+                        <div class="fb-card shadow-sm">
+                            <div class="fb-card-img-wrapper">
+                                <span class="fb-badge">Top Business Leader</span>
                                 <img src="{{ asset('ProfilePhoto/' . ($busGiver['member']->profilePhoto ?? 'profile.png')) }}"
-                                    class="profile-img img-fluid rounded-circle mx-auto d-block" alt="Profile Image">
-                                <h5 class="member-name" style="color: #e76a35; font-weight: bold;">
-                                    {{ $busGiver['user']->firstName }} {{ $busGiver['user']->lastName }}
-                                </h5>
-                                {{-- <p class="position">Business Leader</p> --}}
+                                    class="fb-card-img" alt="Profile Image">
+                            </div>
+                            <div class="fb-card-body">
+                                <h5 class="fb-card-title">{{ $busGiver['user']->firstName }} {{
+                                    $busGiver['user']->lastName }}</h5>
 
-                                <div class="info-section">
-                                    <div class="icon-text">
-                                        <i class="bi bi-people-fill" style="color: #787c80;"></i>
-                                        {{ $busGiver['circle']['circleName'] }}
-                                    </div>
-                                    <div class="icon-text">
-                                        <i class="bi bi-calendar-event-fill" style="color: #787c80;"></i>
-                                        <b>{{ $busGiver['count'] }}</b>
-                                    </div>
-                                    <div class="icon-text">
-                                        <i class="bi bi-currency-rupee" style="color: #787c80;"></i>
-                                        <b>{{ $busGiver['amount'] }}</b>
-                                    </div>
-                                    {{-- <div class="icon-text">
-                                        <i class="bi bi-envelope-fill" style="color: #787c80;"></i>
-                                        <span>{{ $busGiver['user']->email ?? '****' }}</span>
-                                    </div>
-                                    <div class="icon-text">
-                                        <i class="bi bi-telephone-fill" style="color: #787c80;"></i>
-                                        <span>{{ $busGiver['user']->contactNo ?? '****' }}</span>
-                                    </div> --}}
+                                <div class="fb-card-subtitle">
+                                    <i class="bi bi-people-fill"></i>
+                                    {{ $busGiver['circle']['circleName'] }}
+                                    <span>&bull;</span>
+                                    <span>Business Given: {{ $busGiver['count'] }}</span>
                                 </div>
 
-                                <div class="company-category-section">
-                                    <div class="company-section">
-                                        <div class="logo-section">
-                                            @if (!empty($busGiver['member']->companyLogo))
-                                            <img src="{{ asset('CompanyLogo/' . $busGiver['member']->companyLogo) }}"
-                                                class="company-logo" alt="Company Logo">
-                                            @endif
-                                            <div class="initials"
-                                                style="{{ empty($busGiver['member']->companyLogo) ? 'display:flex;' : 'display:none;' }}">
-                                                {{ strtoupper(substr($busGiver['member']->companyName ?? 'C', 0, 1)) }}
-                                            </div>
-                                        </div>
-                                        <h2 title="{{ $busGiver['member']->companyName ?? '' }}">
-                                            {{ $busGiver['member']->companyName ?? '' }}
-                                        </h2>
+                                <div class="fb-card-info">
+                                    <div><i class="bi bi-currency-rupee me-1"></i> {{ $busGiver['amount'] }}</div>
+                                    @if(!empty($busGiver['member']->companyName))
+                                    <div><i class="bi bi-building me-1"></i> {{ $busGiver['member']->companyName }}
                                     </div>
-                                    <div class="divider"></div>
-                                    <div class="category-section">
-                                        <div class="label">Category</div>
-                                        <h3>{{ $busGiver['member']->bCategory->categoryName ?? '' }}</h3>
-                                    </div>
-                                </div>
+                                    @endif
+                                    @if(!empty($busGiver['member']->bCategory->categoryName))
+                                    <div><i class="bi bi-tag me-1"></i> {{ $busGiver['member']->bCategory->categoryName
+                                        }}</div>
+                                    @endif
 
-                                <div class="keywords-container row">
+                                    {{-- Keywords --}}
                                     @php
                                     $keyWords = json_decode($busGiver['member']->keyWords ?? '[]', true);
                                     @endphp
                                     @if (is_array($keyWords) && count($keyWords) > 0)
-                                    @foreach ($keyWords as $keyWord)
-                                    <span class="keyword-pill col">{{ $keyWord }}</span>
-                                    @endforeach
+                                    <div class="mt-2">
+                                        @foreach ($keyWords as $keyWord)
+                                        <span class="badge bg-secondary fw-normal me-1 mb-1">{{ $keyWord }}</span>
+                                        @endforeach
+                                    </div>
                                     @endif
                                 </div>
-                            </div>
 
-
-                            <div class="bottom-actions">
-                                <div id="viewProfile" class="action-button left-action">
-                                    <a href="#"><span style="color: #1d3268;"> View Profile</span></a>
-                                    {{-- <i class="bi bi-person-lines-fill" style="color: #1d3268;"></i> --}}
-                                </div>
-                                <div class="B-divider"></div>
-                                <div id="connectButton" class="action-button right-action btn w-100">
+                                <div class="mt-auto">
+                                    <!-- Connect Button -->
                                     @if ($busGiver['member']->circleId == $authCircleId ||
                                     $busGiver['member']->connection_status == 'Connected')
-                                    <button type="button" class="btn btn-connect fw-bold shadow-none">
-                                        Connected
-                                    </button>
+                                    <button type="button" class="fb-btn fb-btn-disabled">Connected</button>
                                     @elseif ($busGiver['member']->connection_status == 'Accepted')
-                                    <button id="messageButton" class="btn btn-connect ms-2">Message</button>
+                                    <button class="fb-btn fb-btn-primary">Message</button>
                                     @elseif ($busGiver['member']->connection_status == 'Pending')
-                                    <button type="button" class="btn btn-connect fw-bold shadow-none"
-                                        style="color: #e76a35;">
-                                        Requested
-                                    </button>
+                                    <button type="button" class="fb-btn fb-btn-disabled">Requested</button>
                                     @elseif ($busGiver['member']->connection_status == 'Rejected' ||
                                     $busGiver['member']->connection_status == 'Not Connected')
-                                    <form action="{{ route('connect') }}" method="POST" class="d-inline-block">
+                                    <form action="{{ route('connect') }}" method="POST" class="d-block w-100">
                                         @csrf
                                         <input type="hidden" value="{{ $busGiver['member']->id }}" name="memberId">
-                                        <button type="submit" class="btn shadow-none fw-bold" style="color: #1d3268;">
-                                            Connect
-                                        </button>
+                                        <button type="submit" class="fb-btn fb-btn-primary">Connect</button>
                                     </form>
                                     @endif
+
+                                    <!-- View Profile -->
+                                    <a href="#" class="text-decoration-none d-block w-100">
+                                        <button class="fb-btn fb-btn-secondary">View Profile</button>
+                                    </a>
                                 </div>
                             </div>
                         </div>
                     </div>
                     @endif
 
-
-
+                    {{-- Card 3: Top Reference Giver --}}
                     @if ($refGiver)
                     <div class="col-sm-6 col-lg-4">
-                        <div class="profile-card shadow-sm rounded border-0">
-                            <span class="heading">Top Reference Giver</span>
-                            <img src="{{ asset('img/header_img.jpeg') }}" class="header-image" alt="Header Image">
-                            <div class="text-center p-3">
+                        <div class="fb-card shadow-sm">
+                            <div class="fb-card-img-wrapper">
+                                <span class="fb-badge">Top Reference Giver</span>
                                 <img src="{{ asset('ProfilePhoto/' . ($refGiver['profilePhoto'] ?? 'profile.png')) }}"
-                                    class="profile-img img-fluid rounded-circle mx-auto d-block" alt="Profile Image">
-                                <h5 class="member-name" style="color: #e76a35; font-weight: bold;">
-                                    {{ $refGiver['user']->firstName ?? 'N/A' }} {{ $refGiver['user']->lastName ?? 'N/A'
-                                    }}
-                                </h5>
-                                {{-- <p class="position">Top Reference Giver</p> --}}
+                                    class="fb-card-img" alt="Profile Image">
+                            </div>
+                            <div class="fb-card-body">
+                                <h5 class="fb-card-title">{{ $refGiver['user']->firstName ?? 'N/A' }} {{
+                                    $refGiver['user']->lastName ?? 'N/A' }}</h5>
 
-                                <div class="info-section">
-                                    <div class="icon-text">
-                                        <i class="bi bi-people-fill" style="color: #787c80;"></i>
-                                        {{ $refGiver['circle'] ?? 'N/A' }}
-                                    </div>
-                                    <div class="icon-text">
-                                        <i class="bi bi-calendar-event-fill" style="color: #787c80;"></i>
-                                        {{ $refGiver['count'] ?? '0' }}
-                                    </div>
-                                    {{-- <div class="icon-text">
-                                        <i class="bi bi-envelope-fill" style="color: #787c80;"></i>
-                                        <span>{{ $refGiver['user']->email ?? '****' }}</span>
-                                    </div>
-                                    <div class="icon-text">
-                                        <i class="bi bi-telephone-fill" style="color: #787c80;"></i>
-                                        <span>{{ $refGiver['user']->contactNo ?? '****' }}</span>
-                                    </div> --}}
+                                <div class="fb-card-subtitle">
+                                    <i class="bi bi-people-fill"></i>
+                                    {{ $refGiver['circle'] ?? 'N/A' }}
+                                    <span>&bull;</span>
+                                    <span>References Given: {{ $refGiver['count'] ?? '0' }}</span>
                                 </div>
 
-                                <div class="company-category-section">
-                                    <div class="company-section">
-                                        <div class="logo-section">
-                                            @if (!empty($refGiver['companyLogo']))
-                                            <img src="{{ asset('CompanyLogo/' . $refGiver['companyLogo']) }}"
-                                                class="company-logo" alt="Company Logo">
-                                            @endif
-                                            <div class="initials"
-                                                style="{{ empty($refGiver['companyLogo']) ? 'display:flex;' : 'display:none;' }}">
-                                                {{ strtoupper(substr($refGiver['companyName'] ?? 'C', 0, 1)) }}
-                                            </div>
-                                        </div>
-                                        <h2 title="{{ $refGiver['companyName'] ?? '' }}">
-                                            {{ $refGiver['companyName'] ?? '' }}
-                                        </h2>
+                                <div class="fb-card-info">
+                                    @if(!empty($refGiver['companyName']))
+                                    <div><i class="bi bi-building me-1"></i> {{ $refGiver['companyName'] }}</div>
+                                    @endif
+                                    @if(!empty($refGiver['bCategory']['categoryName']))
+                                    <div><i class="bi bi-tag me-1"></i> {{ $refGiver['bCategory']['categoryName'] }}
                                     </div>
-                                    <div class="divider"></div>
-                                    <div class="category-section">
-                                        <div class="label">Category</div>
-                                        <h3>{{ $refGiver['bCategory']['categoryName'] ?? 'N/A' }}</h3>
-                                    </div>
-                                </div>
+                                    @endif
 
-                                <div class="keywords-container row">
+                                    {{-- Keywords --}}
                                     @php
                                     $keyWords = json_decode($refGiver['keyWords'] ?? '[]', true);
                                     @endphp
                                     @if (is_array($keyWords) && count($keyWords) > 0)
-                                    @foreach ($keyWords as $keyWord)
-                                    <span class="keyword-pill col">{{ $keyWord }}</span>
-                                    @endforeach
+                                    <div class="mt-2">
+                                        @foreach ($keyWords as $keyWord)
+                                        <span class="badge bg-secondary fw-normal me-1 mb-1">{{ $keyWord }}</span>
+                                        @endforeach
+                                    </div>
                                     @endif
                                 </div>
-                            </div>
 
-                            <div class="bottom-actions">
-                                <div id="viewProfile" class="action-button left-action">
-                                    <a href="#"><span style="color: #1d3268;"> View Profile</span></a>
-                                    {{-- <i class="bi bi-person-lines-fill" style="color: #1d3268;"></i> --}}
-                                </div>
-                                <div class="B-divider"></div>
-                                <div id="connectButton" class="action-button right-action btn w-100">
+                                <div class="mt-auto">
+                                    <!-- Connect Button -->
                                     @if ($refGiver['circleId'] == $authCircleId || $refGiver['connection_status'] ==
                                     'Connected')
-                                    <button type="button" class="btn btn-connect fw-bold shadow-none">Connected</button>
+                                    <button type="button" class="fb-btn fb-btn-disabled">Connected</button>
                                     @elseif ($refGiver['connection_status'] == 'Accepted')
-                                    <button id="messageButton" class="btn btn-connect ms-2">Message</button>
+                                    <button class="fb-btn fb-btn-primary">Message</button>
                                     @elseif ($refGiver['connection_status'] == 'Pending')
-                                    <button type="button" class="btn btn-connect fw-bold shadow-none"
-                                        style="color: #e76a35;">Requested</button>
+                                    <button type="button" class="fb-btn fb-btn-disabled">Requested</button>
                                     @elseif ($refGiver['connection_status'] == 'Rejected' ||
                                     $refGiver['connection_status'] == 'Not Connected')
-                                    <form action="{{ route('connect') }}" method="POST" class="d-inline-block">
+                                    <form action="{{ route('connect') }}" method="POST" class="d-block w-100">
                                         @csrf
                                         <input type="hidden" value="{{ $refGiver['id'] }}" name="memberId">
-                                        <button type="submit" class="btn shadow-none fw-bold" style="color: #1d3268;">
-                                            Connect
-                                        </button>
+                                        <button type="submit" class="fb-btn fb-btn-primary">Connect</button>
                                     </form>
                                     @endif
+
+                                    <!-- View Profile -->
+                                    <a href="#" class="text-decoration-none d-block w-100">
+                                        <button class="fb-btn fb-btn-secondary">View Profile</button>
+                                    </a>
                                 </div>
                             </div>
                         </div>

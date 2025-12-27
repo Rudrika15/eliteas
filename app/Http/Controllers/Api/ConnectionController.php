@@ -200,7 +200,7 @@ class ConnectionController extends Controller
             }
             $memberName = $member->firstName . ' ' . $member->lastName;
 
-            // Send notification to only one user 
+            // Send notification to only one user
             $users = User::where('id', $memberId)->whereNotNull('fcm_token')->get();
             $title = 'Network';
             $body = 'A new connection request has been received by ' . $memberName;
@@ -592,65 +592,130 @@ class ConnectionController extends Controller
     //     }
     // }
 
+    // public function viewMemberProfile(Request $request)
+    // {
+    //     try {
+    //         $authUserId = Auth::id();
+
+    //         $member = Member::where('userId', $request->input('userId'))
+    //             ->with('user', 'circle', 'billingAddress', 'contactDetails', 'topsProfile', 'connections', 'bCategory')
+    //             ->first();
+
+    //         if (!$member) {
+    //             return Utils::sendResponse([
+    //                 'message' => 'Member not found',
+    //                 'member' => null
+    //             ], 404);
+    //         }
+
+    //         $authUserCircleId = Member::where('userId', $authUserId)->value('circleId');
+    //         $isSameCircle = ($authUserCircleId == $member->circleId);
+
+    //         $connection = Connection::where(function ($query) use ($authUserId, $member) {
+    //             $query->where('userId', $authUserId)
+    //                 ->where('memberId', $member->userId);
+    //         })->orWhere(function ($query) use ($authUserId, $member) {
+    //             $query->where('userId', $member->userId)
+    //                 ->where('memberId', $authUserId);
+    //         })->first();
+
+    //         $connectionStatus = $connection?->status;
+
+    //         if ($isSameCircle || $connectionStatus === 'Accepted') {
+    //             $member->status = 'Connected';
+    //         } elseif ($connectionStatus === 'Pending') {
+    //             $member->status = 'Pending';
+    //         } else {
+    //             $member->status = null;
+    //         }
+
+    //         // Add business category name
+    //         $member->businessCategoryName = $member->bCategory?->categoryName;
+
+    //         // ✅ Add induction count
+    //         $member->induction_count = Member::where('sponsoredBy', $member->id)->count();
+
+    //         // Add Testimonial
+    //         $member->testimonials = Testimonial::where('memberId', $member->id)
+    //             ->with('user:id,firstName,lastName')
+    //             ->get() ?? [];
+
+
+    //         return Utils::sendResponse([
+    //             'message' => 'Member Profile',
+    //             'member' => $member
+    //         ], 200);
+    //     } catch (\Throwable $th) {
+    //         return Utils::errorResponse([
+    //             'error' => $th->getMessage()
+    //         ], 'Internal Server Error', 500);
+    //     }
+    // }
+
+
+
     public function viewMemberProfile(Request $request)
-    {
-        try {
-            $authUserId = Auth::id();
+{
+    try {
+        $authUserId = Auth::id();
 
-            $member = Member::where('userId', $request->input('userId'))
-                ->with('user', 'circle', 'billingAddress', 'contactDetails', 'topsProfile', 'connections', 'bCategory')
-                ->first();
+        $member = Member::where('userId', $request->input('userId'))
+            ->with(
+                'user',
+                'circle',
+                'billingAddress',
+                'contactDetails',
+                'topsProfile',
+                'connections',
+                'bCategory'
+            )
+            ->first();
 
-            if (!$member) {
-                return Utils::sendResponse([
-                    'message' => 'Member not found',
-                    'member' => null
-                ], 404);
-            }
-
-            $authUserCircleId = Member::where('userId', $authUserId)->value('circleId');
-            $isSameCircle = ($authUserCircleId == $member->circleId);
-
-            $connection = Connection::where(function ($query) use ($authUserId, $member) {
-                $query->where('userId', $authUserId)
-                    ->where('memberId', $member->userId);
-            })->orWhere(function ($query) use ($authUserId, $member) {
-                $query->where('userId', $member->userId)
-                    ->where('memberId', $authUserId);
-            })->first();
-
-            $connectionStatus = $connection?->status;
-
-            if ($isSameCircle || $connectionStatus === 'Accepted') {
-                $member->status = 'Connected';
-            } elseif ($connectionStatus === 'Pending') {
-                $member->status = 'Pending';
-            } else {
-                $member->status = null;
-            }
-
-            // Add business category name
-            $member->businessCategoryName = $member->bCategory?->categoryName;
-
-            // ✅ Add induction count
-            $member->induction_count = Member::where('sponsoredBy', $member->id)->count();
-
-            // Add Testimonial
-            $member->testimonials = Testimonial::where('memberId', $member->id)
-                ->with('user:id,firstName,lastName')
-                ->get() ?? [];
-
-
+        if (!$member) {
             return Utils::sendResponse([
-                'message' => 'Member Profile',
-                'member' => $member
-            ], 200);
-        } catch (\Throwable $th) {
-            return Utils::errorResponse([
-                'error' => $th->getMessage()
-            ], 'Internal Server Error', 500);
+                'message' => 'Member not found',
+                'member'  => null
+            ], 404);
         }
+
+        // 🔹 Connection status (ONLY from connection table)
+        $connection = Connection::where(function ($q) use ($authUserId, $member) {
+            $q->where('userId', $authUserId)
+              ->where('memberId', $member->userId);
+        })->orWhere(function ($q) use ($authUserId, $member) {
+            $q->where('userId', $member->userId)
+              ->where('memberId', $authUserId);
+        })->first();
+
+        if ($connection) {
+            $member->status = $connection->status; // Accepted / Pending / Rejected
+        } else {
+            $member->status = null;
+        }
+
+        // 🔹 Business category name
+        $member->businessCategoryName = $member->bCategory?->categoryName;
+
+        // 🔹 Induction count
+        $member->induction_count = Member::where('sponsoredBy', $member->id)->count();
+
+        // 🔹 Testimonials
+        $member->testimonials = Testimonial::where('memberId', $member->id)
+            ->with('user:id,firstName,lastName')
+            ->get() ?? [];
+
+        return Utils::sendResponse([
+            'message' => 'Member Profile',
+            'member'  => $member
+        ], 200);
+
+    } catch (\Throwable $th) {
+        return Utils::errorResponse([
+            'error' => $th->getMessage()
+        ], 'Internal Server Error', 500);
     }
+}
+
 
 
 

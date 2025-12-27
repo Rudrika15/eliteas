@@ -394,19 +394,19 @@
                             {{-- <input type="hiddden" name="meetingId" id="meetingId" value="{{ $meeting->id }}"> --}}
 
                             <div class="form-group col-auto">
-                                <input type="checkbox" id="myCheckbox"> Check to Pay Offline
+                                {{-- <input type="checkbox" id="myCheckbox"> Check to Pay Offline
                                 <div class="row justify-content-start align-items-center">
-                                </div>
+                                </div> --}}
                                 <div class="form-group col-auto">
                                     <!-- Buttons -->
-                                    <button type="submit" class="btn btn-bg-blue" id="register" style="display:none;">Register</button>
+                                    <button type="submit" class="btn btn-bg-blue" id="register"  >Register</button>
                                     {{-- <button type="submit" class="btn btn-success" id="payNowMeet" disabled
                                         onclick="document.getElementById('cityAmount').value = {{ $cityAmount }};">Pay
                                         Now ₹ {{ $cityAmount }}</button> --}}
 
-                                    <button type="submit" class="btn btn-success" id="payNowMeet" disabled>
+                                    {{-- <button type="submit" class="btn btn-success" id="payNowMeet" disabled>
                                         Pay Now ₹ {{ $cityAmount }}
-                                    </button>
+                                    </button> --}}
                                 </div>
                             </div>
                         </form>

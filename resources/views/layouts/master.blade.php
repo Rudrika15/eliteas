@@ -192,18 +192,18 @@
             ->sum();
             @endphp
 
-            <div class="payment-alert">
-                <i class="fas fa-exclamation-triangle"></i>
+            {{-- <div class="payment-alert">
+                <i class="fas fa-exclamation-triangle"></i> --}}
                 {{-- Payment Due: ₹ 800 --}}
-                Monthly Payment Due: ₹ {{ $totalAmountDue }}
-            </div>
+                {{-- Monthly Payment Due: ₹ {{ $totalAmountDue }} --}}
+            {{-- </div> --}}
             @endrole
         </div>
 
         <div style="display: flex; gap: 0;">
             @role('Vice President|President')
-            <button type="button" class="btn btn-bg-blue btn-md" onclick="copyPublicFormLink()">📋 Copy Public Form
-                Link</button>
+            {{-- <button type="button" class="btn btn-bg-blue btn-md" onclick="copyPublicFormLink()">📋 Copy Public Form
+                Link</button> --}}
 
             <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
             <script>

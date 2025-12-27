@@ -441,7 +441,7 @@
             }
 
             // Auto submit on dropdown change
-            $('#categoryId, #membershipType').on('change', function() {
+            $('#filtercircleId, #categoryId, #membershipType').on('change', function() {
                 showLoader();
                 $('#filterForm').submit();
             });

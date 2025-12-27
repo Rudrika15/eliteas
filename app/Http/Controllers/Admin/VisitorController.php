@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Exports\VisitorsExport;
 use App\Http\Controllers\Controller;
 use App\Models\BusinessCategory;
+use App\Models\Member;
+use App\Models\Schedule;
 use App\Models\VisitorRemarks;
 use App\Models\VisitorsDetails;
 use App\Utils\ErrorLogger;
@@ -108,42 +110,134 @@ class VisitorController extends Controller
     //     return view('admin.visitor.index', compact('visitors', 'categories', 'cities'));
     // }
 
+    // public function index(Request $request)
+    // {
+    //     $query = VisitorsDetails::where('isUser', 'No');
+
+    //     // Apply filters
+    //     if ($request->filled('name')) {
+    //         $query->where(function ($q) use ($request) {
+    //             $q->where('firstName', 'like', '%' . $request->name . '%')
+    //                 ->orWhere('lastName', 'like', '%' . $request->name . '%');
+    //         });
+    //     }
+
+    //     if ($request->filled('business_category')) {
+    //         $query->whereHas('bCategory', function ($q) use ($request) {
+    //             $q->where('categoryName', $request->business_category);
+    //         });
+    //     }
+
+    //     if ($request->filled('city')) {
+    //         $query->where('city', $request->city);
+    //     }
+
+    //     if ($request->filled('status')) {
+    //         $query->where('status', $request->status);
+    //     }
+
+    //     if ($request->has('export') && $request->export == 'excel') {
+    //         return Excel::download(new VisitorsExport($query->get()), 'visitors.xlsx');
+    //     }
+
+    //     $visitors = $query->paginate(10)->appends($request->query());
+    //     $categories = BusinessCategory::where('status', 'Active')->pluck('categoryName', 'id');
+    //     $cities = VisitorsDetails::distinct()->pluck('city');
+
+    //     return view('admin.visitor.index', compact('visitors', 'categories', 'cities'));
+    // }
+
+
     public function index(Request $request)
-    {
-        $query = VisitorsDetails::where('isUser', 'No');
+{
+    $query = VisitorsDetails::where('isUser', 'No');
 
-        // Apply filters
-        if ($request->filled('name')) {
-            $query->where(function ($q) use ($request) {
-                $q->where('firstName', 'like', '%' . $request->name . '%')
-                    ->orWhere('lastName', 'like', '%' . $request->name . '%');
-            });
-        }
+    // ✅ VP restriction
+    if (auth()->user()->hasRole('Vice President')) {
 
-        if ($request->filled('business_category')) {
-            $query->whereHas('bCategory', function ($q) use ($request) {
-                $q->where('categoryName', $request->business_category);
-            });
-        }
+        // get circleId from members table
+        $circleId = Member::where('userId', auth()->id())->value('circleId');
 
-        if ($request->filled('city')) {
-            $query->where('city', $request->city);
-        }
-
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
-
-        if ($request->has('export') && $request->export == 'excel') {
-            return Excel::download(new VisitorsExport($query->get()), 'visitors.xlsx');
-        }
-
-        $visitors = $query->paginate(10)->appends($request->query());
-        $categories = BusinessCategory::where('status', 'Active')->pluck('categoryName', 'id');
-        $cities = VisitorsDetails::distinct()->pluck('city');
-
-        return view('admin.visitor.index', compact('visitors', 'categories', 'cities'));
+        $query->where('createdBy', auth()->id())
+              ->where('circleId', $circleId);
     }
+
+    // Filters
+    if ($request->filled('name')) {
+        $query->where(function ($q) use ($request) {
+            $q->where('firstName', 'like', '%' . $request->name . '%')
+              ->orWhere('lastName', 'like', '%' . $request->name . '%');
+        });
+    }
+
+    if ($request->filled('business_category')) {
+        $query->whereHas('bCategory', function ($q) use ($request) {
+            $q->where('categoryName', $request->business_category);
+        });
+    }
+
+    if ($request->filled('city')) {
+        $query->where('city', $request->city);
+    }
+
+    if ($request->filled('status')) {
+        $query->where('status', $request->status);
+    }
+
+    if ($request->has('export') && $request->export == 'excel') {
+        return Excel::download(new VisitorsExport($query->get()), 'visitors.xlsx');
+    }
+
+    $visitors = $query->paginate(10)->appends($request->query());
+    $categories = BusinessCategory::where('status', 'Active')->pluck('categoryName', 'id');
+    $cities = VisitorsDetails::distinct()->pluck('city');
+
+    return view('admin.visitor.index', compact('visitors', 'categories', 'cities'));
+}
+
+
+//     public function index(Request $request)
+// {
+//     $query = VisitorsDetails::where('isUser', 'No');
+
+//     // ✅ Role based filter
+//     if (auth()->user()->hasRole('Vice President')) {
+//         $query->where('circleId', auth()->user()->circleId);
+//     }
+
+//     // Apply filters
+//     if ($request->filled('name')) {
+//         $query->where(function ($q) use ($request) {
+//             $q->where('firstName', 'like', '%' . $request->name . '%')
+//               ->orWhere('lastName', 'like', '%' . $request->name . '%');
+//         });
+//     }
+
+//     if ($request->filled('business_category')) {
+//         $query->whereHas('bCategory', function ($q) use ($request) {
+//             $q->where('categoryName', $request->business_category);
+//         });
+//     }
+
+//     if ($request->filled('city')) {
+//         $query->where('city', $request->city);
+//     }
+
+//     if ($request->filled('status')) {
+//         $query->where('status', $request->status);
+//     }
+
+//     if ($request->has('export') && $request->export == 'excel') {
+//         return Excel::download(new VisitorsExport($query->get()), 'visitors.xlsx');
+//     }
+
+//     $visitors = $query->paginate(10)->appends($request->query());
+//     $categories = BusinessCategory::where('status', 'Active')->pluck('categoryName', 'id');
+//     $cities = VisitorsDetails::distinct()->pluck('city');
+
+//     return view('admin.visitor.index', compact('visitors', 'categories', 'cities'));
+// }
+
 
 
 
@@ -206,18 +300,63 @@ class VisitorController extends Controller
 
 
 
-    public function create(Request $request)
-    {
-        try {
-            $businessCategories = BusinessCategory::where('status', 'Active')->orderBy('categoryName', 'asc')->get();
-            return view('admin.visitor.create', compact('businessCategories'));
-        } catch (\Throwable $th) {
-            //throe $th;
-            ErrorLogger::logError($th, $request->fullUrl());
+    // public function create(Request $request)
+    // {
+    //     try {
+    //         $businessCategories = BusinessCategory::where('status', 'Active')->orderBy('categoryName', 'asc')->get();
+    //         // $meetingList = Schedule::where('circleId', auth()->user()->circleId)->get();
+    //         return $meetingList = Schedule::where('circleId', auth()->user()->circleId)
+    //         ->where(function ($q) {
+    //         $q->whereDate('date', '>=', Carbon::now()) // upcoming
+    //         ->orWhereBetween('date', [
+    //           Carbon::now()->subMonth()->startOfMonth(), // last month start
+    //           Carbon::now()->endOfMonth()                 // current month end
+    //       ]);
+    //     })
+    // ->orderBy('date', 'asc')
+    // ->get();
+    //         return view('admin.visitor.create', compact('businessCategories', 'meetingList'));
+    //     } catch (\Throwable $th) {
+    //         //throe $th;
+    //         ErrorLogger::logError($th, $request->fullUrl());
 
-            return view('servererror');
-        }
+    //         return view('servererror');
+    //     }
+    // }
+
+
+    public function create(Request $request)
+{
+    try {
+        // Business categories
+        $businessCategories = BusinessCategory::where('status', 'Active')
+            ->orderBy('categoryName', 'asc')
+            ->get();
+
+        // Get circleId from members table
+        $circleId = Member::where('userId', auth()->id())->value('circleId');
+
+        // Meetings list
+        $meetingList = Schedule::where('circleId', $circleId)
+            ->where(function ($q) {
+                $q->whereDate('date', '>=', Carbon::today()) // upcoming
+                  ->orWhereBetween('date', [
+                      Carbon::now()->subMonth()->startOfMonth(), // last month
+                      Carbon::now()->endOfMonth()                 // current month
+                  ]);
+            })
+            ->orderBy('date', 'asc')
+            ->get();
+
+        return view('admin.visitor.create', compact('businessCategories', 'meetingList'));
+
+    } catch (\Throwable $th) {
+        ErrorLogger::logError($th, $request->fullUrl());
+        return view('servererror');
     }
+}
+
+
 
     public function store(Request $request)
     {
@@ -232,6 +371,9 @@ class VisitorController extends Controller
             $visitors->businessCategory = $request->businessCategory;
             $visitors->invitedBy = $request->invitedBy;
             $visitors->city = $request->city;
+            $visitors->createdBy = Auth::user()->id;
+            $visitors->circleId = Member::where('userId', auth()->id())->value('circleId');
+            $visitors->meetingId = $request->meetingId;
             $visitors->otherDetails = $request->otherDetails;
             $visitors->status = 'Active';
             $visitors->save();

@@ -169,7 +169,7 @@ class CircleMemberController extends Controller
                 });
             }
 
-            $member = $memberQuery->paginate(10);
+            $member = $memberQuery->paginate(10)->withQueryString();
             $circle = Circle::where('status', 'Active')->orderBy('circleName', 'asc')->get();
             $bCategory = BusinessCategory::where('status', 'Active')->orderBy('categoryName', 'asc')->get();
             $roles = Role::all();
