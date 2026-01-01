@@ -377,7 +377,9 @@
                             <div class="fb-card shadow-sm">
                                 <div class="fb-card-img-wrapper">
                                     <span class="fb-badge">Member</span>
-                                    <img src="{{ asset($member->profilePicture ?? 'img/profile.png') }}"
+                                    {{-- <img src="{{ asset($member->ProfilePhoto ?? 'img/profile.png') }}"
+                                        class="fb-card-img" alt="Profile Image"> --}}
+                                    <img src="{{ asset('ProfilePhoto/' . ($member->profilePhoto ?? 'profile.png')) }}"
                                         class="fb-card-img" alt="Profile Image">
                                 </div>
 
@@ -436,7 +438,7 @@
         $('#citySelect').on('change', function() {
             var cityId = $(this).val();
             var cityName = $(this).find("option:selected").text().split('(')[0].trim();
-            
+
             // Update Badge
             $('#selectedCityBadge').text(cityName);
 
@@ -449,7 +451,7 @@
 
             // Show members for selected city
             var visibleMembers = $('.member-card[data-city="' + cityId + '"]');
-            
+
             if(visibleMembers.length > 0) {
                 visibleMembers.fadeIn();
             } else {

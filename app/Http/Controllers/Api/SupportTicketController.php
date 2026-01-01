@@ -3,12 +3,14 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Mail\SupportTicketNotification;
 use App\Models\SupportTicket;
 use App\Utils\Utils;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use App\Utils\ErrorLogger;
+use Illuminate\Support\Facades\Mail;
 
 class SupportTicketController extends Controller
 {
@@ -59,6 +61,22 @@ class SupportTicketController extends Controller
 
             $ticket->save();
 
+            // // Send email to admins
+            // $adminEmails = \App\Models\User::whereHas('roles', function ($q) {
+            //     $q->where('name', 'Admin');
+            // })->pluck('email');
+
+            // if ($adminEmails->isNotEmpty()) {
+            //     Mail::to($adminEmails)->queue(new SupportTicketNotification($ticket));
+            // }
+
+
+            // Send email to specific email ID
+        $adminEmail = 'care.ubncommunity@gmail.com';
+
+        Mail::to($adminEmail)->queue(new SupportTicketNotification($ticket));
+
+
             return Utils::sendResponse($ticket, 'Ticket created successfully.');
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, request()->fullUrl());
@@ -87,8 +105,8 @@ class SupportTicketController extends Controller
         $validator = Validator::make($request->all(), [
             'subject' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'priority' => 'required|in:Low,Medium,High',
-            'status' => 'required|in:Open,In Progress,Closed',
+            // 'priority' => 'required|in:Low,Medium,High',
+            // 'status' => 'required|in:Open,In Progress,Closed',
             'attachment' => 'nullable|file|max:5120',
         ]);
 
@@ -105,8 +123,8 @@ class SupportTicketController extends Controller
 
             $ticket->subject = $request->subject;
             $ticket->description = $request->description;
-            $ticket->priority = $request->priority;
-            $ticket->status = $request->status;
+            $ticket->priority =  'Low';
+            $ticket->status = 'Open';
 
             if ($request->hasFile('attachment')) {
                 $dir = public_path('support_attachments');

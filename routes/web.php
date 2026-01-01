@@ -850,6 +850,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('support/update/{id?}', [SupportController::class, 'update'])->name('support.update');
     Route::get('support/delete/{id?}', [SupportController::class, 'delete'])->name('support.delete');
     Route::post('support/admin-update-status', [SupportController::class, 'adminUpdateStatus'])->name('support.adminUpdateStatus');
+    Route::post('support/admin-update-priority', [SupportController::class, 'adminUpdatePriority'])->name('support.adminUpdatePriority');
 
     //traininng master
 

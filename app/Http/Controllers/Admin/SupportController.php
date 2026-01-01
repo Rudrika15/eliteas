@@ -195,4 +195,30 @@ class SupportController extends Controller
             return view('servererror');
         }
     }
+
+    public function adminUpdatePriority(Request $request)
+    {
+        try {
+            if (!Auth::user()->hasRole('Admin')) {
+                return redirect()->route('support.create');
+            }
+            $request->validate([
+                'id' => 'required|integer|exists:support_tickets,id',
+                'priority' => 'required|in:Low,Medium,High',
+            ]);
+            $ticket = SupportTicket::findOrFail($request->id);
+            $ticket->priority = $request->priority;
+            $ticket->save();
+            if ($request->wantsJson() || $request->ajax()) {
+                return response()->json(['success' => true, 'priority' => $ticket->priority]);
+            }
+            return redirect()->route('support.index')->with('success', 'Priority updated');
+        } catch (\Throwable $th) {
+            ErrorLogger::logError($th, request()->fullUrl());
+            if ($request->wantsJson() || $request->ajax()) {
+                return response()->json(['success' => false], 500);
+            }
+            return view('servererror');
+        }
+    }
 }

@@ -23,12 +23,14 @@
 
                             <div class="d-flex justify-content-between align-items-start">
                                 <h6 class="mb-0">{{ $ticket->subject }}</h6>
-                                <span class="badge
-                                        @if($ticket->priority === 'High') bg-danger
-                                        @elseif($ticket->priority === 'Medium') bg-warning
-                                        @else bg-secondary @endif">
-                                    {{ $ticket->priority }}
-                                </span>
+                                <select class="form-select form-select-sm priority-select" data-id="{{ $ticket->id }}"
+                                    style="width:auto;">
+                                    <option value="High" {{ $ticket->priority == 'High' ? 'selected' : '' }}>High
+                                    </option>
+                                    <option value="Medium" {{ $ticket->priority == 'Medium' ? 'selected' : '' }}>Medium
+                                    </option>
+                                    <option value="Low" {{ $ticket->priority == 'Low' ? 'selected' : '' }}>Low</option>
+                                </select>
                             </div>
 
                             <div class="mt-2">
@@ -96,55 +98,86 @@
         </div>
     </div>
 </div>
+
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-    const selects = document.querySelectorAll('.ticket-status-select');
-    const url = '{{ route('support.adminUpdateStatus') }}';
-    const tokenMeta = document.querySelector('meta[name="csrf-token"]');
-    const csrf = tokenMeta ? tokenMeta.getAttribute('content') : '';
 
-    function updateBadge(badge, status) {
-        badge.textContent = status;
-        badge.classList.remove('bg-success', 'bg-info', 'bg-primary');
-        if (status === 'Closed') badge.classList.add('bg-success');
-        else if (status === 'In Progress') badge.classList.add('bg-info');
-        else badge.classList.add('bg-primary');
-    }
+    const csrf = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-    selects.forEach(function (select) {
-        select.addEventListener('change', async function (e) {
-            const newStatus = e.target.value;
-            const id = e.target.getAttribute('data-id');
-            e.target.disabled = true;
-            const cardBody = e.target.closest('.card-body');
-            const badge = cardBody.querySelector('.ticket-status-badge');
+    /* ===============================
+       STATUS CHANGE DROPDOWN
+    ================================ */
+    const statusSelects = document.querySelectorAll('.ticket-status-select');
+    const statusUrl = '{{ route('support.adminUpdateStatus') }}';
+
+    statusSelects.forEach(select => {
+        select.addEventListener('change', async function () {
+            const id = this.dataset.id;
+            const status = this.value;
+            const badge = this.closest('.card-body').querySelector('.ticket-status-badge');
+
+            this.disabled = true;
+
             try {
-                const resp = await fetch(url, {
+                const res = await fetch(statusUrl, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': csrf,
-                        'Accept': 'application/json'
+                        'X-CSRF-TOKEN': csrf
                     },
-                    body: JSON.stringify({ id, status: newStatus })
+                    body: JSON.stringify({ id, status })
                 });
-                if (!resp.ok) throw new Error('Network error');
-                const data = await resp.json();
-                if (data && data.success) {
-                    updateBadge(badge, newStatus);
-                } else {
-                    throw new Error('Update failed');
-                }
-            } catch (err) {
+
+                if (!res.ok) throw new Error('Failed');
+
+                // Update badge color
+                badge.textContent = status;
+                badge.classList.remove('bg-success', 'bg-info', 'bg-primary');
+
+                if (status === 'Closed') badge.classList.add('bg-success');
+                else if (status === 'In Progress') badge.classList.add('bg-info');
+                else badge.classList.add('bg-primary');
+
+            } catch (error) {
                 alert('Failed to update status');
-                // revert
-                const current = badge.textContent.trim();
-                e.target.value = current;
             } finally {
-                e.target.disabled = false;
+                this.disabled = false;
             }
         });
     });
+
+    /* ===============================
+       PRIORITY DROPDOWN CHANGE
+    ================================ */
+    const prioritySelects = document.querySelectorAll('.priority-select');
+    const priorityUrl = '{{ route('support.adminUpdatePriority') }}';
+
+    prioritySelects.forEach(select => {
+        select.addEventListener('change', async function () {
+            const id = this.dataset.id;
+            const priority = this.value;
+
+            this.disabled = true;
+
+            try {
+                const res = await fetch(priorityUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrf
+                    },
+                    body: JSON.stringify({ id, priority })
+                });
+
+                if (!res.ok) throw new Error('Failed');
+            } catch (error) {
+                alert('Failed to update priority');
+            } finally {
+                this.disabled = false;
+            }
+        });
+    });
+
 });
 </script>
 @endsection
