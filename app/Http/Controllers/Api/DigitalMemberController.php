@@ -217,6 +217,38 @@ class DigitalMemberController extends Controller
     }
 
 
+    public function getCityMemberCount()
+{
+    try {
+        $cities = City::withCount([
+            'members as member_count' => function ($query) {
+                $query->where('status', 'Active');
+            }
+        ])
+        ->whereHas('members', function ($q) {
+            $q->where('status', 'Active');
+        })
+        ->get(['id', 'cityName']);
+
+        return response()->json([
+            'success' => true,
+            'data' => $cities
+        ]);
+
+    } catch (\Throwable $th) {
+        Log::error('City Member Count Error', [
+            'message' => $th->getMessage()
+        ]);
+
+        return response()->json([
+            'success' => false,
+            'error' => 'Something went wrong'
+        ], 500);
+    }
+}
+
+
+
     // ibm module apis
 
     public function ibmIndex(Request $request)

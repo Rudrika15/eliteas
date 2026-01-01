@@ -1,127 +1,113 @@
 @extends('layouts.master')
 @section('content')
-    <style>
-        .circle-name {
-            color: #1d3268;
-        }
-    </style>
 
+<style>
+    /* Standardized styling for consistency */
+    .form-select:focus {
+        border-color: #e76a35;
+        box-shadow: 0 0 0 0.25rem rgba(231, 106, 53, 0.25);
+    }
+</style>
 
-    <div class="container-fluid mt-4">
-        <div class="row">
-            <!-- Left: Circle List (col-md-3) -->
-            <div class="col-md-3">
-                <!-- My Circle Section -->
-                <div class="bg-light rounded p-3 mb-3">
-                    <h6 class="fw-semibold text-muted mb-3">My Circle</h6>
-                    @if ($authCircle)
-                        <div class="d-flex justify-content-between align-items-center bg-white rounded shadow-sm p-2 mb-2" style="cursor: pointer;">
-                            <div class="d-flex align-items-center gap-2">
-                                <img src="{{ asset($authCircle->profilePicture ? (file_exists(public_path($authCircle->profilePicture)) ? $authCircle->profilePicture : 'ProfilePhoto/profile.png') : 'img/profile.png') }}" class="rounded-circle" width="40" height="40" alt="{{ $authCircle->circleName }}">
-                                <div>
-                                    <div class="fw-semibold circle-name">{{ $authCircle->circleName }}</div>
-                                    <small class=" circle-name">{{ $authCircle->city->cityName ?? 'N/A' }}</small>
-                                </div>
-                            </div>
-                            <div class="text-end">
-                                <div class="fw-semibold circle-name">₹ {{ number_format($authCircle->totalBusinessAmount ?? 0, 0) }}</div>
-                                {{-- <small class="text-muted circle-name">👥 <span class="circle-name"> {{ $authCircle->members_count }}</span></small> --}}
-                            </div>
-                        </div>
-                    @else
-                        <p class="text-muted small">You are not part of any circle yet.</p>
-                    @endif
-                </div>
+<div class="container-fluid mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-11">
+            <!-- Header Section -->
+            <div class="bg-white p-4 rounded-4 shadow-sm mb-4">
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
+                    <div>
+                        <h4 class="fw-bold text-dark mb-1">
+                            <i class="bi bi-people-fill text-primary me-2" style="color: #e76a35 !important;"></i>
+                            Circle Connections
+                        </h4>
+                        <p class="text-muted small mb-0">Browse circles and view their members</p>
+                    </div>
 
-                <!-- Filters -->
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <small class="text-muted">All Circle ({{ $circles->count() }})</small>
-                    <select class="form-select form-select-sm w-50">
-                        <option selected>All City</option>
-                        @foreach ($circles->pluck('city.cityName')->unique() as $cityName)
-                            <option>{{ $cityName }}</option>
-                        @endforeach
-                    </select>
-                </div>
+                    <div class="w-100 w-md-50">
+                        <select id="circleSelect"
+                            class="form-select form-select-lg shadow-none border-secondary-subtle">
+                            <option value="" disabled {{ !$authCircleId ? 'selected' : '' }}>Select a Circle</option>
 
-                <!-- All Circles -->
-                <div class="circle-list">
-                    @foreach ($circles as $index => $circle)
-                        <div class="circle-card d-flex justify-content-between align-items-center bg-white rounded shadow-sm p-2 mb-2" data-id="{{ $circle->id }}" style="cursor: pointer;">
-                            <div class="d-flex align-items-center gap-2">
-                                <span class="fw-bold text-muted">{{ $index + 1 }}.</span>
-                                <img src="{{ asset($circle->profilePicture ? (file_exists(public_path($circle->profilePicture)) ? $circle->profilePicture : 'ProfilePhoto/profile.png') : 'img/profile.png') }}" class="rounded-circle" width="40" height="40" alt="logo">
-                                <div>
-                                    <div class="fw-semibold circle-name">{{ $circle->circleName }}</div>
-                                    <small class=" circle-name">{{ $circle->city->cityName ?? 'N/A' }}</small>
-                                </div>
-                            </div>
-                            <div class="text-end">
-                                <div class="fw-semibold circle-name">₹ {{ number_format($circle->totalBusinessAmount ?? 0, 0) }}</div>
-                                {{-- <small class="text-muted">👥 {{ $circle->members_count }}</small> --}}
-                                <small class="text-muted circle-name">👥 <span class="circle-name"> {{ $circle->members_count }}</span></small>
-                            </div>
-                        </div>
-                    @endforeach
+                            @if($authCircle)
+                            <option value="{{ $authCircle->id }}" selected>
+                                My Circle - {{ $authCircle->circleName }} ({{ $authCircle->city->cityName ?? 'N/A' }})
+                            </option>
+                            @endif
+
+                            @foreach($circles as $circle)
+                            @if(!$authCircle || $circle->id != $authCircle->id)
+                            <option value="{{ $circle->id }}">
+                                {{ $circle->circleName }} ({{ $circle->city->cityName ?? 'N/A' }})
+                            </option>
+                            @endif
+                            @endforeach
+                        </select>
+                    </div>
                 </div>
             </div>
 
-            <!-- Right: Members List (col-md-9) -->
-            <div class="col-md-9">
-                <div id="memberCardsContainer" class="row g-4">
-                    {{-- Member cards will be dynamically loaded here --}}
-                    {{-- Each card should be wrapped like below --}}
-                    {{-- <div class="col-md-6"> @include('partials.member-card', ['member' => $member]) </div> --}}
+            <!-- Content Area -->
+            <div id="memberCardsContainer">
+                <!-- Content loaded via AJAX -->
+                <div class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status" style="color: #e76a35 !important;">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2 text-muted">Loading members...</p>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const circleSelect = document.getElementById('circleSelect');
+        const container = document.getElementById('memberCardsContainer');
 
+        function loadMembers(circleId) {
+            if (!circleId) return;
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const circles = document.querySelectorAll('.circle-card');
-            const container = document.getElementById('memberCardsContainer');
-            const defaultCircleId = "{{ $authCircleId }}"; // Blade will render this as a string or empty
+            container.innerHTML = `
+                <div class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status" style="color: #e76a35 !important;">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2 text-muted">Loading members...</p>
+                </div>
+            `;
 
-            // Fetch default circle members when the page loads
-            if (defaultCircleId && defaultCircleId !== "null") {
-                container.innerHTML = '<p class="text-center circle-name">Loading...</p>'; // Optional: show loading
-                fetch(`/get-circle-members/${defaultCircleId}`)
-                    .then(response => response.text())
-                    .then(html => {
-                        container.innerHTML = html;
-                    })
-                    .catch(error => {
-                        console.error('Error fetching members:', error);
-                    });
-            }
-
-            circles.forEach(circle => {
-                circle.addEventListener('click', function() {
-                    // Remove 'active' class from all cards
-                    circles.forEach(c => c.classList.remove('active'));
-
-                    // Add 'active' class to the clicked card
-                    this.classList.add('active');
-
-                    const circleId = this.getAttribute('data-id');
-                    container.innerHTML = '<p class="text-center circle-name">Loading...</p>'; // Optional: show loading
-                    fetch(`/get-circle-members/${circleId}`)
-                        .then(response => response.text())
-                        .then(html => {
-                            container.innerHTML = html;
-                        })
-                        .catch(error => {
-                            console.error('Error fetching members:', error);
-                        });
+            fetch(`/get-circle-members/${circleId}`)
+                .then(response => response.text())
+                .then(html => {
+                    container.innerHTML = html;
+                })
+                .catch(error => {
+                    console.error('Error fetching members:', error);
+                    container.innerHTML = `
+                        <div class="alert alert-danger text-center">
+                            Failed to load members. Please try again.
+                        </div>
+                    `;
                 });
-            });
+        }
+
+        // Initial load
+        if (circleSelect.value) {
+            loadMembers(circleSelect.value);
+        } else {
+             container.innerHTML = `
+                <div class="alert alert-info text-center">
+                    Please select a circle to view members.
+                </div>
+            `;
+        }
+
+        // Handle change
+        circleSelect.addEventListener('change', function() {
+            loadMembers(this.value);
         });
-    </script>
+    });
+</script>
 
-
-
-    <!-- Full CSS -->
 @endsection

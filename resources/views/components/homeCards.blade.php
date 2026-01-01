@@ -1587,9 +1587,13 @@ $totalIbms = \App\Models\CircleCall::where('status', 'Active')->count();
                                     @endif
 
                                     <!-- View Profile -->
-                                    <a href="#" class="text-decoration-none d-block w-100">
+                                    @if(isset($circlecalls['member']->id))
+                                    <a href="{{ route('foundPersonDetails', $circlecalls['member']->id) }}"
+                                        class="text-decoration-none d-block w-100">
                                         <button class="fb-btn fb-btn-secondary">View Profile</button>
                                     </a>
+                                    @endif
+
                                 </div>
                             </div>
                         </div>
@@ -1659,9 +1663,12 @@ $totalIbms = \App\Models\CircleCall::where('status', 'Active')->count();
                                     @endif
 
                                     <!-- View Profile -->
-                                    <a href="#" class="text-decoration-none d-block w-100">
+                                    @if(isset($busGiver['member']->id))
+                                    <a href="{{ route('foundPersonDetails', $busGiver['member']->id) }}"
+                                        class="text-decoration-none d-block w-100">
                                         <button class="fb-btn fb-btn-secondary">View Profile</button>
                                     </a>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -1712,15 +1719,17 @@ $totalIbms = \App\Models\CircleCall::where('status', 'Active')->count();
 
                                 <div class="mt-auto">
                                     <!-- Connect Button -->
-                                    @if ($refGiver['circleId'] == $authCircleId || $refGiver['connection_status'] ==
+                                    @if ($refGiver['circleId'] == $authCircleId || ($refGiver['connection_status'] ??
+                                    '') ==
                                     'Connected')
                                     <button type="button" class="fb-btn fb-btn-disabled">Connected</button>
-                                    @elseif ($refGiver['connection_status'] == 'Accepted')
+                                    @elseif (($refGiver['connection_status'] ?? '') == 'Accepted')
                                     <button class="fb-btn fb-btn-primary">Message</button>
-                                    @elseif ($refGiver['connection_status'] == 'Pending')
+                                    @elseif (($refGiver['connection_status'] ?? '') == 'Pending')
                                     <button type="button" class="fb-btn fb-btn-disabled">Requested</button>
-                                    @elseif ($refGiver['connection_status'] == 'Rejected' ||
-                                    $refGiver['connection_status'] == 'Not Connected')
+                                    @elseif ((($refGiver['connection_status'] ?? '') == 'Rejected' ||
+                                    ($refGiver['connection_status'] ?? 'Not Connected') == 'Not Connected') &&
+                                    !empty($refGiver['id']))
                                     <form action="{{ route('connect') }}" method="POST" class="d-block w-100">
                                         @csrf
                                         <input type="hidden" value="{{ $refGiver['id'] }}" name="memberId">
@@ -1729,9 +1738,12 @@ $totalIbms = \App\Models\CircleCall::where('status', 'Active')->count();
                                     @endif
 
                                     <!-- View Profile -->
-                                    <a href="#" class="text-decoration-none d-block w-100">
+                                    @if(isset($refGiver['id']))
+                                    <a href="{{ route('foundPersonDetails', $refGiver['id']) }}"
+                                        class="text-decoration-none d-block w-100">
                                         <button class="fb-btn fb-btn-secondary">View Profile</button>
                                     </a>
+                                    @endif
                                 </div>
                             </div>
                         </div>

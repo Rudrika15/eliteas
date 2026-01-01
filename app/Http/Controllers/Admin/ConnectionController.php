@@ -116,33 +116,59 @@ class ConnectionController extends Controller
         }
     }
 
+    // public function cityList(Request $request)
+    // {
+    //     try {
+    //         // ✅ Get all city IDs from members and circles
+    //         $memberCityIds = Member::whereNotNull('cityId')->pluck('cityId')->toArray();
+    //         $circleCityIds = Circle::whereNotNull('cityId')->pluck('cityId')->toArray();
+
+    //         // ✅ Merge and get unique city IDs
+    //         $allCityIds = array_unique(array_merge($memberCityIds, $circleCityIds));
+
+    //         // ✅ Get only those active cities
+    //         $cities = City::where('status', 'Active')
+    //             ->whereIn('id', $allCityIds)
+    //             ->orderBy('cityName', 'asc')
+    //             ->get();
+
+    //         $members = Member::where('status', 'Active')
+    //             ->get();
+
+
+    //         return view('admin.connection.cityList', compact('cities', 'members'));
+    //     } catch (\Throwable $th) {
+    //         ErrorLogger::logError($th, request()->fullUrl());
+    //         return view('servererror');
+    //     }
+    // }
+
     public function cityList(Request $request)
-    {
-        try {
-            // ✅ Get all city IDs from members and circles
-            $memberCityIds = Member::whereNotNull('cityId')->pluck('cityId')->toArray();
-            $circleCityIds = Circle::whereNotNull('cityId')->pluck('cityId')->toArray();
+{
+    try {
+        // Get all active cities which have members or circles
+        $cityIds = array_unique(array_merge(
+            Member::whereNotNull('cityId')->pluck('cityId')->toArray(),
+            Circle::whereNotNull('cityId')->pluck('cityId')->toArray()
+        ));
 
-            // ✅ Merge and get unique city IDs
-            $allCityIds = array_unique(array_merge($memberCityIds, $circleCityIds));
+        // Get cities with their members
+        $cities = City::with(['members' => function ($q) {
+                $q->where('status', 'Active');
+            }])
+            ->whereIn('id', $cityIds)
+            ->where('status', 'Active')
+            ->orderBy('cityName')
+            ->get();
 
-            // ✅ Get only those active cities
-            $cities = City::where('status', 'Active')
-                ->whereIn('id', $allCityIds)
-                ->orderBy('cityName', 'asc')
-                ->get();
+        return view('admin.connection.cityList', compact('cities'));
 
-            $members = Member::where('status', 'Active')
-                ->where('circleId', null)
-                ->get();
-
-
-            return view('admin.connection.cityList', compact('cities', 'members'));
-        } catch (\Throwable $th) {
-            ErrorLogger::logError($th, request()->fullUrl());
-            return view('servererror');
-        }
+    } catch (\Throwable $th) {
+        ErrorLogger::logError($th, request()->fullUrl());
+        return view('servererror');
     }
+}
+
 
     // public function cityList(Request $request)
     // {

@@ -196,7 +196,8 @@
                 <i class="fas fa-exclamation-triangle"></i> --}}
                 {{-- Payment Due: ₹ 800 --}}
                 {{-- Monthly Payment Due: ₹ {{ $totalAmountDue }} --}}
-            {{-- </div> --}}
+                {{--
+            </div> --}}
             @endrole
         </div>
 
@@ -474,10 +475,28 @@
                 @endif --}}
                 {{-- @endrole --}}
 
+                @role('Admin')
+                <li class="nav-item pe-3">
+                    <a class="nav-link" href="{{ route('support.index') }}"
+                        style="color: #1d3268; padding: 8px 12px; border-radius: 5px; background-color: rgba(29, 50, 102, 0.1);">
+                        <i class="bi bi-life-preserver me-1" style="color:#e76a35"></i><b>Support</b>
+                    </a>
+                </li>
+                @endrole
+
+                @role(['Member','Digital Member'])
+                <li class="nav-item pe-3">
+                    <a class="nav-link" href="{{ route('support.myIndex') }}"
+                        style="color: #1d3268; padding: 8px 12px; border-radius: 5px; background-color: rgba(29, 50, 102, 0.1);">
+                        <i class="bi bi-life-preserver me-1" style="color:#e76a35"></i><b>Support</b>
+                    </a>
+                </li>
+                @endrole
+
                 <li class="nav-item dropdown pe-3">
 
-                    <a id="profileDropdown" class="nav-link nav-profile d-flex align-items-center pe-2  dropdown-toggle" href="#"
-                        role="button" aria-expanded="false">
+                    <a id="profileDropdown" class="nav-link nav-profile d-flex align-items-center pe-2  dropdown-toggle"
+                        href="#" role="button" aria-expanded="false">
                         @if (isset(Auth::user()->member->profilePhoto) && file_exists(public_path('ProfilePhoto/' .
                         Auth::user()->member->profilePhoto)))
                         <img class="img-profile rounded-circle" style="width: 38px !important; height: 38px !important;"

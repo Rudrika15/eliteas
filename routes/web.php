@@ -37,6 +37,7 @@ use App\Http\Controllers\Admin\CircleMemberController;
 use App\Http\Controllers\Api\MonthlyPaymentController;
 use App\Http\Controllers\Admin\CircleMeetingController;
 use App\Http\Controllers\Admin\TrainerMasterController;
+use App\Http\Controllers\Admin\SupportController;
 use App\Http\Controllers\Auth\ChangePasswordController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\visitor\VisitorFormController;
@@ -840,8 +841,18 @@ Route::group(['middleware' => ['auth']], function () {
 
     // Route::get('call-Notify', [CircleCallController::class, 'callNotify'])->name('callNotify');
 
+    // support tickets
+    Route::get('support/index', [SupportController::class, 'index'])->name('support.index');
+    Route::get('support/create', [SupportController::class, 'create'])->name('support.create');
+    Route::get('support/my-index', [SupportController::class, 'myIndex'])->name('support.myIndex');
+    Route::post('support/store', [SupportController::class, 'store'])->name('support.store');
+    Route::get('support/edit/{id?}', [SupportController::class, 'edit'])->name('support.edit');
+    Route::post('support/update/{id?}', [SupportController::class, 'update'])->name('support.update');
+    Route::get('support/delete/{id?}', [SupportController::class, 'delete'])->name('support.delete');
+    Route::post('support/admin-update-status', [SupportController::class, 'adminUpdateStatus'])->name('support.adminUpdateStatus');
 
     //traininng master
+
 
     Route::get('trainingMaster/index', [TrainingMasterController::class, 'index'])->name('trainingMaster.index');
     Route::get('trainingMaster/create', [TrainingMasterController::class, 'create'])->name('trainingMaster.create');

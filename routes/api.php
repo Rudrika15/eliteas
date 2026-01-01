@@ -28,6 +28,7 @@ use App\Http\Controllers\Api\CircleMemberController;
 use App\Http\Controllers\Api\CircleMeetingController;
 use App\Http\Controllers\Api\TrainerMasterController;
 use App\Http\Controllers\Api\ChangePasswordController;
+use App\Http\Controllers\Api\SupportTicketController;
 use App\Http\Controllers\Api\ForgetPasswordController;
 use App\Http\Controllers\Api\BusinessCategoryController;
 use App\Http\Controllers\Api\MeetingInvitationController;
@@ -502,6 +503,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     //city wise digital member
 
+    Route::get('city-member-count', [DigitalMemberController::class, 'getCityMemberCount']);
     Route::get('/city-members', [DigitalMemberController::class, 'getCityMembers']);
     Route::get('/city-members/{id}', [DigitalMemberController::class, 'getCityMembers']);
     Route::get('/city-count', [DigitalMemberController::class, 'getCityCount']);
@@ -513,6 +515,12 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
 
     Route::get('city-wise-digital-member-index', [DigitalMemberController::class, 'cityWiseDigitalMember']);
+
+    // Support Tickets
+    Route::get('support-tickets-index', [SupportTicketController::class, 'index']);
+    Route::post('support-tickets-store', [SupportTicketController::class, 'store']);
+    Route::get('support-tickets/{id}', [SupportTicketController::class, 'show']);
+    Route::post('support-tickets-update/{id}', [SupportTicketController::class, 'update']);
 });
 
 //get app version

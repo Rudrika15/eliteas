@@ -57,12 +57,19 @@ class LeaderBoardController extends Controller
                 ->get();
 
             $busGiver = $busGiver->groupBy('businessGiverId')->map(function ($group) {
-                return [
-                    'user' => $group->first()->users,
-                    'amount' => $group->sum('amount'),
-                    'count' => $group->count()
-                ];
-            })->sortByDesc('amount')->values();
+    $user = $group->first()->users;
+
+    return [
+        'user' => $user ? [
+            'id' => $user->id,
+            'name' => $user->name,
+            'city' => optional($user->city)->name, // safe access
+        ] : null,
+        'amount' => $group->sum('amount'),
+        'count' => $group->count(),
+    ];
+})->sortByDesc('amount')->values();
+
 
             return Utils::sendResponse(
                 ['busGiver' => $busGiver],
