@@ -195,9 +195,7 @@
                             </div>
                         @endif
                         <div class="mt-auto">
-                            <a href="{{ route('foundPersonDetails', $member->id) }}" class="text-decoration-none d-block w-100">
-                                <button class="fb-btn fb-btn-primary w-100">View Profile</button>
-                            </a>
+                            <a href="{{ route('foundPersonDetails', $member->id) }}" class="fb-btn fb-btn-primary d-block w-100 text-decoration-none">View Profile</a>
                             @php
                                 $sameCircleConnected = $authCircleId !== null && $member->circleId !== null && $member->circleId == $authCircleId;
                                 $actuallyConnected = $member->connection_status == 'Connected' || $member->connection_status == 'Accepted';
@@ -232,11 +230,10 @@
                     </div>
                 </div>
             </div>
-        </div>
-    @empty
-        <div class="col-12">
-            <div class="alert alert-info text-center">No active members found.</div>
-        </div>
+        @empty
+            <div class="col-12">
+                <div class="alert alert-info text-center">No active members found.</div>
+            </div>
     @endforelse
 </div>
 

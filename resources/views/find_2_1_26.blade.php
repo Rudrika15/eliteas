@@ -41,25 +41,6 @@
     <link href="{{ asset('css/style.css') }}" rel="stylesheet" />
     <script src="https://code.jquery.com/jquery-3.7.1.js"
         integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
-    <style>
-        .keyword-pill { display: inline-block; background-color: #f3f5fb; color: #3a3a3a; font-size: 12px; padding: 6px 12px; margin: 5px 5px; border-radius: 20px; border: 1px solid #e0e4f0; cursor: default; }
-        .fb-card { background-color: #ffffff; border-radius: 10px; overflow: hidden; border: 1px solid #e0e0e0; display: flex; flex-direction: column; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); }
-        .fb-card-img-wrapper { width: 100%; padding-top: 100%; position: relative; background-color: #f8f9fa; border-bottom: 1px solid #e0e0e0; }
-        .fb-card-img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
-        .fb-card-body { padding: 16px; flex-grow: 1; display: flex; flex-direction: column; background-color: #ffffff; }
-        .fb-card-title { color: #1d3268; font-size: 20px; font-weight: 700; margin-bottom: 4px; line-height: 1.2; }
-        .fb-card-subtitle { color: #65676b; font-size: 15px; margin-bottom: 16px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-        .fb-card-info { color: #65676b; font-size: 14px; margin-bottom: 16px; line-height: 1.5; }
-        .fb-card-info i { color: #e76a35; }
-        .fb-badge { position: absolute; top: 10px; left: 10px; background: #e76a35; color: #fff; padding: 4px 10px; border-radius: 4px; font-size: 12px; font-weight: 600; z-index: 10; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); }
-        .fb-btn { width: 100%; border: none; border-radius: 6px; padding: 8px 0; font-weight: 600; font-size: 15px; cursor: pointer; transition: background 0.2s; display: flex; justify-content: center; align-items: center; text-decoration: none; }
-        .fb-btn:hover { text-decoration: none; }
-        .fb-btn-primary { background-color: #1d3268; color: #fff; }
-        .fb-btn-primary:hover { background-color: #15244d; color: #fff; }
-        .fb-btn-secondary { background-color: #e4e6eb; color: #1d3268; margin-top: 10px; }
-        .fb-btn-secondary:hover { background-color: #d8dadf; color: #1d3268; }
-        .fb-btn-disabled { background-color: #e4e6eb; color: #bcc0c4; cursor: default; }
-    </style>
 </head>
 
 <body class="" style=" mix-blend-mode: multiply;">
@@ -1072,35 +1053,42 @@
                 searchResultsElement.innerHTML = ''; // Clear previous results
 
                 var rowContainer = document.createElement('div');
-                rowContainer.classList.add('row', 'row-cols-3', 'g-4');
+                rowContainer.classList.add('row', 'g-4'); // g-4 for spacing between columns
 
                 if (response && response.members && Array.isArray(response.members)) {
                     response.members.forEach(function(member) {
                         var col = document.createElement('div');
-                        col.classList.add('col');
+                        col.classList.add('col-12', 'col-sm-6', 'col-lg-4');
+                        // 3 cards per row on md and above
 
                         var cardElement = document.createElement('div');
-                        cardElement.classList.add('fb-card', 'shadow-sm', 'h-100');
+                        // cardElement.classList.add('profile-card');
+                        cardElement.classList.add('profile-card', 'shadow-sm', 'rounded', 'border-0');
 
-                        var imgWrapper = document.createElement('div');
-                        imgWrapper.classList.add('fb-card-img-wrapper');
-                        var badge = document.createElement('span');
-                        badge.classList.add('fb-badge');
-                        badge.textContent = 'Member';
-                        var img = document.createElement('img');
-                        img.classList.add('fb-card-img');
-                        img.src = member.profilePhoto ? `/ProfilePhoto/${member.profilePhoto}` : 'img/profile.png';
-                        img.alt = 'Profile Image';
-                        imgWrapper.appendChild(badge);
-                        imgWrapper.appendChild(img);
-                        cardElement.appendChild(imgWrapper);
+                        // Header image
+                        var headerImg = document.createElement('img');
+                        headerImg.src = '{{ asset('img/header_img.jpeg') }}';
+                        headerImg.classList.add('header-image');
+                        cardElement.appendChild(headerImg);
 
+                        // Card body container
                         var cardBody = document.createElement('div');
-                        cardBody.classList.add('fb-card-body');
+                        cardBody.classList.add('text-center', 'p-3');
 
+                        // Profile Image
+                        var profileImg = document.createElement('img');
+                        profileImg.classList.add('profile-img', 'img-fluid', 'rounded-circle', 'mx-auto', 'd-block');
+                        profileImg.src = member.profilePhoto ?
+                            `/ProfilePhoto/${member.profilePhoto}` :
+                            'img/profile.png';
+
+                        cardBody.appendChild(profileImg);
+
+
+                        // Member Name
                         var memberName = document.createElement('h5');
                         memberName.textContent = `${capitalize(member.firstName)} ${capitalize(member.lastName)}`;
-                        memberName.classList.add('fb-card-title');
+                        memberName.classList.add('member-name'); // Add class for easier debugging
                         cardBody.appendChild(memberName);
 
                         // Function to fetch roles from the database (users table) using member.userId
@@ -1129,19 +1117,50 @@
                             });
                         }
 
-                        var subtitle = document.createElement('div');
-                        subtitle.classList.add('fb-card-subtitle');
-                        var locIcon = document.createElement('i');
-                        locIcon.className = 'bi bi-geo-alt-fill';
-                        subtitle.appendChild(locIcon);
-                        var locText = document.createTextNode(member.circle?.circleName || 'N/A');
-                        subtitle.appendChild(locText);
-                        cardBody.appendChild(subtitle);
+                        // Fetch the role and update UI
+                        getRoleFromDatabase(member.userId)
+                            .then(roles => {
+                                // Create position element
+                                var position = document.createElement('p');
+                                position.classList.add('position');
+                                console.log("Created position element.");
+
+                                // Check if there's a valid role to display
+                                if (roles.length > 0) {
+                                    position.textContent = `${roles[0]}`;
+                                    // position.textContent = `${roles[0]} at ${member.circle.circleName || ''}`;
+                                    console.log(`Displaying Role: ${roles[0]} at ${member.circle.circleName || ''}`);
+                                } else {
+                                    position.textContent = `Member at ${member.circle.circleName || ''}`;
+                                    console.log(`No valid role found. Displaying default: Member at ${member.circle.circleName || ''}`);
+                                }
+
+                                // Insert the position element **just after** the member name
+                                memberName.insertAdjacentElement('afterend', position);
+                                console.log("Inserted position element just below member name.");
+                            })
+                            .catch(error => {
+                                console.error("Failed to fetch role:", error);
+                            });
 
 
 
+                        // Info Section (Email, Phone, Circle)
                         var infoSection = document.createElement('div');
-                        infoSection.classList.add('fb-card-info');
+                        infoSection.classList.add('info-section');
+
+                        function createIconText(iconClass, text, tooltip = '') {
+                            var container = document.createElement('div');
+                            container.classList.add('icon-text');
+                            var icon = document.createElement('i');
+                            icon.className = iconClass;
+                            var span = document.createElement('div');
+                            span.textContent = text;
+                            if (tooltip) { span.title = tooltip; }
+                            container.appendChild(icon);
+                            container.appendChild(span);
+                            return container;
+                        }
 
                         const isConnected = (member.connection_status === 'Connected') || (member.connection_status === 'Accepted');
                         const authCircleId = window.authCircleId || null;
@@ -1156,37 +1175,51 @@
                         var phoneText = showContacts ? (member.user?.contactNo || 'N/A') : '****';
                         var circleText = member.circle?.circleName || 'N/A';
 
-                        var emailDiv = document.createElement('div');
-                        emailDiv.innerHTML = `<i class="bi bi-envelope-fill"></i> ${emailText}`;
-                        var phoneDiv = document.createElement('div');
-                        phoneDiv.innerHTML = `<i class="bi bi-telephone-fill"></i> ${phoneText}`;
-                        infoSection.appendChild(emailDiv);
-                        infoSection.appendChild(phoneDiv);
+                        var emailIconText = createIconText('bi bi-envelope-fill', emailText, emailTooltip);
+                        var phoneIconText = createIconText('bi bi-telephone-fill', phoneText);
+                        var circleIconText = createIconText('bi bi-people-fill', circleText);
+
+                        infoSection.appendChild(emailIconText);
+                        infoSection.appendChild(phoneIconText);
+                        infoSection.appendChild(circleIconText);
                         cardBody.appendChild(infoSection);
 
 
 
 
+                        // Company & Category Section
                         var companyCategorySection = document.createElement('div');
-                        companyCategorySection.classList.add('fb-card-info');
+                        companyCategorySection.classList.add('company-category-section');
 
-                        if (member.companyName) {
-                            var companyDiv = document.createElement('div');
-                            companyDiv.innerHTML = `<i class=\"bi bi-building\"></i> ${member.companyName}`;
-                            companyCategorySection.appendChild(companyDiv);
-                        }
+                        var companySection = document.createElement('div');
+                        companySection.classList.add('company-section');
+                        companySection.innerHTML = `
+                            <div class="logo">
+                                <img class="company-logo" src="${member.companyLogo ? `/CompanyLogo/${member.companyLogo}` : ''}" alt="Company Logo" onerror="this.style.display='none'" />
+                            </div>
+                            <h2 title="${member.companyName || 'Company Name'}">${member.companyName || 'Company Name'}</h2>
+                        `;
 
-                        var categoryName = (member.b_category && member.b_category.categoryName) ? member.b_category.categoryName : '';
-                        if (categoryName) {
-                            var catDiv = document.createElement('div');
-                            catDiv.innerHTML = `<i class=\"bi bi-tag\"></i> ${categoryName}`;
-                            companyCategorySection.appendChild(catDiv);
-                        }
 
+
+                        var categorySection = document.createElement('div');
+                        categorySection.classList.add('category-section');
+                        categorySection.innerHTML = `
+                            <div class="label">Category</div>
+                            <h3>${(member.b_category && member.b_category.categoryName) ? member.b_category.categoryName : 'N/A'}</h3>
+                        `;
+
+                        var divider = document.createElement('div');
+                        divider.classList.add('divider');
+
+                        companyCategorySection.appendChild(companySection);
+                        companyCategorySection.appendChild(divider);
+                        companyCategorySection.appendChild(categorySection);
                         cardBody.appendChild(companyCategorySection);
 
                         // Keywords Section
                         var keywordsContainer = document.createElement('div');
+                        keywordsContainer.classList.add('keywords-container', 'row');
 
                         console.log('Member keywords raw value:', member.keyWords); // Debugging log
 
@@ -1201,7 +1234,7 @@
                                     keywordsArray.forEach(keyword => {
                                         if (keyword) {
                                             var keywordPill = document.createElement('span');
-                                            keywordPill.classList.add('keyword-pill');
+                                            keywordPill.classList.add('keyword-pill', 'col');
                                             keywordPill.textContent = keyword;
                                             keywordsContainer.appendChild(keywordPill);
                                             hasKeywords = true; // Set flag to true if at least one keyword exists
@@ -1222,40 +1255,52 @@
                         cardElement.appendChild(cardBody);
 
 
-                        var viewProfileLink = document.createElement('a');
-                        viewProfileLink.href = `/foundPersonDetails/${member.id}`;
-                        viewProfileLink.className = 'fb-btn fb-btn-primary w-100 text-decoration-none';
-                        viewProfileLink.textContent = 'View Profile';
-                        cardBody.appendChild(viewProfileLink);
+                        // Bottom Actions
+                        var bottomActions = document.createElement('div');
+                        bottomActions.classList.add('bottom-actions');
 
-                        if (member.connection_status === 'Connected' || member.connection_status === 'Accepted') {
-                            var connectedBtn = document.createElement('button');
-                            connectedBtn.type = 'button';
-                            connectedBtn.className = 'fb-btn fb-btn-secondary fb-btn-disabled w-100 mt-2';
-                            connectedBtn.innerHTML = '<i class="bi bi-check-circle-fill me-2"></i> Connected';
-                            cardBody.appendChild(connectedBtn);
+                        // View Profile Button
+                        var viewProfile = createActionButton('bi bi-person-lines-fill', 'View Profile', `/foundPersonDetails/${member.id}`);
+                        viewProfile.classList.add('action-button', 'left-action'); // Add custom class
+
+                        // Divider Line
+                        var divider = document.createElement('div');
+                        divider.classList.add('B-divider');
+
+                        // Connect Button
+                        var connectButton;
+                        if (member.connection_status === 'Connected') {
+                            connectButton = createActionButton('bi bi-check-circle-fill', 'Connected', '#', true);
+                            connectButton.classList.add('connected'); // Add class for orange color
+                        } else if (member.connection_status === 'Accepted') {
+                            connectButton = createActionButton('bi bi-check-circle-fill', 'Connected', '#', true);
+                            connectButton.classList.add('connected'); // Add class for orange color
                         } else if (member.connection_status === 'Pending') {
-                            var pendingBtn = document.createElement('button');
-                            pendingBtn.type = 'button';
-                            pendingBtn.className = 'fb-btn fb-btn-secondary fb-btn-disabled w-100 mt-2';
-                            pendingBtn.innerHTML = '<i class="bi bi-clock me-2"></i> Requested';
-                            cardBody.appendChild(pendingBtn);
+                            connectButton = createActionButton('bi bi-hourglass-split', 'Requested', '#', true);
                         } else {
-                            var connectBtn = document.createElement('button');
-                            connectBtn.type = 'button';
-                            connectBtn.className = 'fb-btn fb-btn-secondary w-100 mt-2';
-                            connectBtn.innerHTML = '<i class="bi bi-person-plus-fill me-2"></i> Connect';
-                            connectBtn.addEventListener('click', function() { sendConnectionRequest(member.id, connectBtn); });
-                            cardBody.appendChild(connectBtn);
+                            connectButton = createActionButton('bi bi-person-plus-fill', 'Connect', '#');
+                            connectButton.addEventListener('click', function() {
+                                sendConnectionRequest(member.id, connectButton);
+                            });
                         }
+                        connectButton.classList.add('action-button', 'right-action', 'btn', 'w-100'); // Add custom class
+
+
+                        // Append elements
+                        bottomActions.appendChild(viewProfile);
+                        bottomActions.appendChild(divider);
+                        bottomActions.appendChild(connectButton);
+                        cardElement.appendChild(bottomActions);
                         col.appendChild(cardElement);
                         rowContainer.appendChild(col);
 
                         var inductionInfo = document.createElement('div');
-                        inductionInfo.classList.add('mt-2', 'text-center');
-                        inductionInfo.innerHTML = `<i class=\"bi bi-people-fill me-1 color-blue\"></i> <strong class=\"color-blue\">Inductions:</strong> <span class=\"fw-bold color-blue\">${member.induction_count || 0}</span>`;
-                        cardBody.appendChild(inductionInfo);
+                        inductionInfo.classList.add('induction-info', 'mt-2', 'text-center');
+                        inductionInfo.innerHTML = `<i class="bi bi-people-fill me-1 color-blue"></i> <strong class="color-blue">Inductions:</strong> <span class="fw-bold color-blue">${member.induction_count || 0}</span>`;
+                        cardElement.appendChild(inductionInfo);
 
+                        col.appendChild(cardElement);
+                        rowContainer.appendChild(col);
 
 
 

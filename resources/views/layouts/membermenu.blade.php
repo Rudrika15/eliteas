@@ -387,7 +387,7 @@
 </li> --}}
 
 
-<li class="nav-item">
+{{-- <li class="nav-item">
     <a class="nav-link collapsed" href="{{ route('subscription.memberSubscription') }}">
         <i class="bi bi-star" style="color: #e76a35"></i>
         <span class="text-blue">My Subscriptions</span>
@@ -398,7 +398,7 @@
         <i class="bi bi-currency-rupee" style="color: #e76a35"></i>
         <span class="text-blue">My Payment History</span>
     </a>
-</li>
+</li> --}}
 
 <li class="nav-item">
     <a class="nav-link collapsed" href="{{ route('help.userView') }}">
@@ -443,14 +443,14 @@
 @endif
 
 
-@if (Auth::user()->hasRole('ST'))
+{{-- @if (Auth::user()->hasRole('ST'))
 <li class="nav-item">
     <a class="nav-link collapsed " href="{{ route('monthlyPaymentsByRole.index') }}">
         <i class="bi bi-currency-rupee" style="color: #e76a35"></i>
         <span style="color: #1d2856">Manage Monthly Payment</span>
     </a>
 </li>
-@endif
+@endif --}}
 
 
 @if (Auth::user()->hasRole(['Circle Director', 'Vice President']))

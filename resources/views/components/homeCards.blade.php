@@ -1118,117 +1118,115 @@
 {{-- php code for get city count start --}}
 
 @php
-use App\Models\Member;
-use App\Models\Circle;
-use Illuminate\Support\Facades\DB;
+    use App\Models\Member;
+    use App\Models\Circle;
+    use Illuminate\Support\Facades\DB;
 
-// Get distinct city IDs from active members
-$memberCities = Member::where('status', 'Active')->whereNotNull('cityId')->distinct()->pluck('cityId')->toArray();
+    // Get distinct city IDs from active members
+    $memberCities = Member::where('status', 'Active')->whereNotNull('cityId')->distinct()->pluck('cityId')->toArray();
 
-// Get distinct city IDs from circles
-$circleCities = Circle::whereNotNull('cityId')->distinct()->pluck('cityId')->toArray();
+    // Get distinct city IDs from circles
+    $circleCities = Circle::whereNotNull('cityId')->distinct()->pluck('cityId')->toArray();
 
-// Combine both lists and remove duplicates
-$allCities = array_unique(array_merge($memberCities, $circleCities));
+    // Combine both lists and remove duplicates
+    $allCities = array_unique(array_merge($memberCities, $circleCities));
 
-// Final total unique count
-$cityCount = count($allCities);
-// dd($allCities);
+    // Final total unique count
+    $cityCount = count($allCities);
+    // dd($allCities);
 @endphp
 
 {{-- php code for get city count end --}}
 
 @role('Digital Member')
+    @php
+        $totalBusinessAmount = \App\Models\CircleMeetingMembersBusiness::where('status', 'Active')->sum('amount');
+        $totalReferences = \App\Models\CircleMeetingMembersReference::where('status', 'Active')->count();
+        $totalIbms = \App\Models\CircleCall::where('status', 'Active')->count();
+    @endphp
 
-@php
-$totalBusinessAmount = \App\Models\CircleMeetingMembersBusiness::where('status', 'Active')->sum('amount');
-$totalReferences = \App\Models\CircleMeetingMembersReference::where('status', 'Active')->count();
-$totalIbms = \App\Models\CircleCall::where('status', 'Active')->count();
-@endphp
+    <style>
+        .compact-stats .stat-card {
+            padding: 8px;
+            border-radius: 10px;
+        }
 
-<style>
-    .compact-stats .stat-card {
-        padding: 8px;
-        border-radius: 10px;
-    }
+        .compact-stats .stat-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #ab2626;
+            line-height: 1.2;
+        }
 
-    .compact-stats .stat-value {
-        font-size: 1.25rem;
-        font-weight: 700;
-        color: #ab2626;
-        line-height: 1.2;
-    }
+        .compact-stats .stat-label {
+            font-size: 0.75rem;
+            color: #6c757d;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-top: 2px;
+        }
 
-    .compact-stats .stat-label {
-        font-size: 0.75rem;
-        color: #6c757d;
-        text-transform: uppercase;
-        font-weight: 600;
-        margin-top: 2px;
-    }
-
-    .compact-stats .stat-icon {
-        position: static !important;
-        font-size: 1.75rem;
-        color: rgba(108, 117, 125, 0.6);
-    }
-</style>
-<div class="row mb-3 compact-stats">
-    <div class="col-md-4 col-12 mb-2">
-        <div class="card shadow-sm border-0 stat-card">
-            <div class="d-flex align-items-center justify-content-between p-2">
-                <div>
-                    <div class="stat-value">₹ {{ number_format($totalBusinessAmount ?? 0, 0) }}</div>
-                    <div class="stat-label">Total Business</div>
+        .compact-stats .stat-icon {
+            position: static !important;
+            font-size: 1.75rem;
+            color: rgba(108, 117, 125, 0.6);
+        }
+    </style>
+    <div class="row mb-3 compact-stats">
+        <div class="col-md-4 col-12 mb-2">
+            <div class="card shadow-sm border-0 stat-card">
+                <div class="d-flex align-items-center justify-content-between p-2">
+                    <div>
+                        <div class="stat-value">₹ {{ number_format($totalBusinessAmount ?? 0, 0) }}</div>
+                        <div class="stat-label">Total Business</div>
+                    </div>
+                    <i class="bi bi-cash-stack stat-icon"></i>
                 </div>
-                <i class="bi bi-cash-stack stat-icon"></i>
+            </div>
+        </div>
+        <div class="col-md-4 col-12 mb-2">
+            <div class="card shadow-sm border-0 stat-card">
+                <div class="d-flex align-items-center justify-content-between p-2">
+                    <div>
+                        <div class="stat-value">{{ $totalReferences }}</div>
+                        <div class="stat-label">Total Referrals</div>
+                    </div>
+                    <i class="bi bi-person-rolodex stat-icon"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 col-12 mb-2">
+            <div class="card shadow-sm border-0 stat-card">
+                <div class="d-flex align-items-center justify-content-between p-2">
+                    <div>
+                        <div class="stat-value">{{ $totalIbms }}</div>
+                        <div class="stat-label">Total IBMs</div>
+                    </div>
+                    <i class="bi bi-calendar-event stat-icon"></i>
+                </div>
             </div>
         </div>
     </div>
-    <div class="col-md-4 col-12 mb-2">
-        <div class="card shadow-sm border-0 stat-card">
-            <div class="d-flex align-items-center justify-content-between p-2">
-                <div>
-                    <div class="stat-value">{{ $totalReferences }}</div>
-                    <div class="stat-label">Total Referrals</div>
-                </div>
-                <i class="bi bi-person-rolodex stat-icon"></i>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4 col-12 mb-2">
-        <div class="card shadow-sm border-0 stat-card">
-            <div class="d-flex align-items-center justify-content-between p-2">
-                <div>
-                    <div class="stat-value">{{ $totalIbms }}</div>
-                    <div class="stat-label">Total IBMs</div>
-                </div>
-                <i class="bi bi-calendar-event stat-icon"></i>
-            </div>
-        </div>
-    </div>
-</div>
 
-<div class="row">
-    <!-- Cities Card -->
-    <div class="col-md-4">
-        <div class="card shadow-sm border-0 p-2 stat-card position-relative overflow-hidden">
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="content p-3">
-                        <h2 class="fw-bold text-gradient">{{ $cityCount }}</h2>
-                        <p class="text-uppercase text-muted fw-semibold">Cities</p>
+    <div class="row">
+        <!-- Cities Card -->
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 p-2 stat-card position-relative overflow-hidden">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="content p-3">
+                            <h2 class="fw-bold text-gradient">{{ $cityCount }}</h2>
+                            <p class="text-uppercase text-muted fw-semibold">Cities</p>
+                        </div>
                     </div>
                 </div>
+                <!-- Icon positioned at the bottom right, overlapping slightly -->
+                <i class="bi bi-buildings stat-icon position-absolute" style="bottom: -30px; right: -10px; font-size: 5rem; opacity: 0.6;"></i>
             </div>
-            <!-- Icon positioned at the bottom right, overlapping slightly -->
-            <i class="bi bi-buildings stat-icon position-absolute"
-                style="bottom: -30px; right: -10px; font-size: 5rem; opacity: 0.6;"></i>
         </div>
-    </div>
 
-    <!-- Circles Card -->
-    {{-- <div class="col-md-4">
+        <!-- Circles Card -->
+        {{-- <div class="col-md-4">
         <div class="card shadow-sm border-0 p-2 stat-card position-relative overflow-hidden">
             <div class="row">
                 <div class="col-md-6">
@@ -1242,564 +1240,546 @@ $totalIbms = \App\Models\CircleCall::where('status', 'Active')->count();
         </div>
     </div> --}}
 
-    <!-- Members Card -->
-    <div class="col-md-4">
-        <div class="card shadow-sm border-0 p-2 stat-card position-relative overflow-hidden">
-            <div class="row">
-                <div class="col-md-7">
-                    <div class="content p-3">
-                        <h2 class="fw-bold text-gradient">{{ $membersCount }}</h2>
-                        <p class="text-uppercase text-muted fw-semibold">Members Across UBN</p>
+        <!-- Members Card -->
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 p-2 stat-card position-relative overflow-hidden">
+                <div class="row">
+                    <div class="col-md-7">
+                        <div class="content p-3">
+                            <h2 class="fw-bold text-gradient">{{ $membersCount }}</h2>
+                            <p class="text-uppercase text-muted fw-semibold">Members Across UBN</p>
+                        </div>
                     </div>
                 </div>
+                <i class="bi bi-people stat-icon" style="bottom: -30px; right: -10px; font-size: 5rem; opacity: 0.6;"></i>
             </div>
-            <i class="bi bi-people stat-icon" style="bottom: -30px; right: -10px; font-size: 5rem; opacity: 0.6;"></i>
         </div>
     </div>
-</div>
 @endrole
 
 {{-- upcoming events css end --}}
 
 @role('Member')
 
-@php
-$totalBusinessAmount = \App\Models\CircleMeetingMembersBusiness::where('status', 'Active')->sum('amount');
-$totalReferences = \App\Models\CircleMeetingMembersReference::where('status', 'Active')->count();
-$totalIbms = \App\Models\CircleCall::where('status', 'Active')->count();
-@endphp
+    @php
+        $totalBusinessAmount = \App\Models\CircleMeetingMembersBusiness::where('status', 'Active')->sum('amount');
+        $totalReferences = \App\Models\CircleMeetingMembersReference::where('status', 'Active')->count();
+        $totalIbms = \App\Models\CircleCall::where('status', 'Active')->count();
+    @endphp
 
-<div class="container mt-4">
-    <div class="row">
-        <!-- Left Section (7 Columns) -->
-        <div class="col-lg-8 col-md-12">
-            <style>
-                .compact-stats .stat-card {
-                    padding: 8px;
-                    border-radius: 10px;
-                }
+    <div class="container mt-4">
+        <div class="row">
+            <!-- Left Section (7 Columns) -->
+            <div class="col-lg-8 col-md-12">
+                <style>
+                    .compact-stats .stat-card {
+                        padding: 8px;
+                        border-radius: 10px;
+                    }
 
-                .compact-stats .stat-value {
-                    font-size: 1.25rem;
-                    font-weight: 700;
-                    color: #ab2626;
-                    line-height: 1.2;
-                }
+                    .compact-stats .stat-value {
+                        font-size: 1.25rem;
+                        font-weight: 700;
+                        color: #ab2626;
+                        line-height: 1.2;
+                    }
 
-                .compact-stats .stat-label {
-                    font-size: 0.75rem;
-                    color: #6c757d;
-                    text-transform: uppercase;
-                    font-weight: 600;
-                    margin-top: 2px;
-                }
+                    .compact-stats .stat-label {
+                        font-size: 0.75rem;
+                        color: #6c757d;
+                        text-transform: uppercase;
+                        font-weight: 600;
+                        margin-top: 2px;
+                    }
 
-                .compact-stats .stat-icon {
-                    position: static !important;
-                    font-size: 1.75rem;
-                    color: rgba(108, 117, 125, 0.6);
-                }
-            </style>
-            <div class="row mb-3 compact-stats">
-                <div class="col-md-4 col-12 mb-2">
-                    <div class="card shadow-sm border-0 stat-card">
-                        <div class="d-flex align-items-center justify-content-between p-2">
-                            <div>
-                                <div class="stat-value">₹ {{ number_format($totalBusinessAmount ?? 0, 0) }}</div>
-                                <div class="stat-label">Total Business</div>
-                            </div>
-                            <i class="bi bi-cash-stack stat-icon"></i>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4 col-12 mb-2">
-                    <div class="card shadow-sm border-0 stat-card">
-                        <div class="d-flex align-items-center justify-content-between p-2">
-                            <div>
-                                <div class="stat-value">{{ $totalReferences }}</div>
-                                <div class="stat-label">Total Referrals</div>
-                            </div>
-                            <i class="bi bi-person-rolodex stat-icon"></i>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4 col-12 mb-2">
-                    <div class="card shadow-sm border-0 stat-card">
-                        <div class="d-flex align-items-center justify-content-between p-2">
-                            <div>
-                                <div class="stat-value">{{ $totalIbms }}</div>
-                                <div class="stat-label">Total IBMs</div>
-                            </div>
-                            <i class="bi bi-calendar-event stat-icon"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <!-- Cities Card -->
-                <div class="col-md-4">
-                    <div class="card shadow-sm border-0 p-2 stat-card position-relative overflow-hidden">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="content p-3">
-                                    <h2 class="fw-bold text-gradient">{{ $cityCount }}</h2>
-                                    <p class="text-uppercase text-muted fw-semibold">Cities</p>
+                    .compact-stats .stat-icon {
+                        position: static !important;
+                        font-size: 1.75rem;
+                        color: rgba(108, 117, 125, 0.6);
+                    }
+                </style>
+                <div class="row mb-3 compact-stats">
+                    <div class="col-md-4 col-12 mb-2">
+                        <div class="card shadow-sm border-0 stat-card">
+                            <div class="d-flex align-items-center justify-content-between p-2">
+                                <div>
+                                    <div class="stat-value">₹ {{ number_format($totalBusinessAmount ?? 0, 0) }}</div>
+                                    <div class="stat-label">Total Business</div>
                                 </div>
+                                <i class="bi bi-cash-stack stat-icon"></i>
                             </div>
                         </div>
-                        <!-- Icon positioned at the bottom right, overlapping slightly -->
-                        <i class="bi bi-buildings stat-icon position-absolute"
-                            style="bottom: -30px; right: -10px; font-size: 5rem; opacity: 0.6;"></i>
                     </div>
-                </div>
-
-                <!-- Circles Card -->
-                <div class="col-md-4">
-                    <div class="card shadow-sm border-0 p-2 stat-card position-relative overflow-hidden">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="content p-3">
-                                    <h2 class="fw-bold text-gradient">{{ $circleCount }}</h2>
-                                    <p class="text-uppercase text-muted fw-semibold">Circles</p>
+                    <div class="col-md-4 col-12 mb-2">
+                        <div class="card shadow-sm border-0 stat-card">
+                            <div class="d-flex align-items-center justify-content-between p-2">
+                                <div>
+                                    <div class="stat-value">{{ $totalReferences }}</div>
+                                    <div class="stat-label">Total Referrals</div>
                                 </div>
+                                <i class="bi bi-person-rolodex stat-icon"></i>
                             </div>
                         </div>
-                        <i class="bi bi-bullseye stat-icon"
-                            style="bottom: -30px; right: -10px; font-size: 5rem; opacity: 0.6;"></i>
                     </div>
-                </div>
-
-                <!-- Members Card -->
-                <div class="col-md-4">
-                    <div class="card shadow-sm border-0 p-2 stat-card position-relative overflow-hidden">
-                        <div class="row">
-                            <div class="col-md-7">
-                                <div class="content p-3">
-                                    <h2 class="fw-bold text-gradient">{{ $membersCount }}</h2>
-                                    <p class="text-uppercase text-muted fw-semibold">Members</p>
+                    <div class="col-md-4 col-12 mb-2">
+                        <div class="card shadow-sm border-0 stat-card">
+                            <div class="d-flex align-items-center justify-content-between p-2">
+                                <div>
+                                    <div class="stat-value">{{ $totalIbms }}</div>
+                                    <div class="stat-label">Total IBMs</div>
                                 </div>
+                                <i class="bi bi-calendar-event stat-icon"></i>
                             </div>
                         </div>
-                        <i class="bi bi-people stat-icon"
-                            style="bottom: -30px; right: -10px; font-size: 5rem; opacity: 0.6;"></i>
                     </div>
                 </div>
-            </div>
-
-
-
-            <h1 class="text-center card-title">Leaderboard</h1>
-            <style>
-                .fb-card {
-                    background-color: #ffffff;
-                    border-radius: 10px;
-                    overflow: hidden;
-                    border: 1px solid #e0e0e0;
-                    height: 100%;
-                    display: flex;
-                    flex-direction: column;
-                    font-family: sans-serif;
-                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-                }
-
-                .fb-card-img-wrapper {
-                    width: 100%;
-                    padding-top: 100%;
-                    /* 1:1 Aspect Ratio */
-                    position: relative;
-                    background-color: #f8f9fa;
-                    border-bottom: 1px solid #e0e0e0;
-                }
-
-                .fb-card-img {
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    object-fit: cover;
-                }
-
-                .fb-card-body {
-                    padding: 16px;
-                    flex-grow: 1;
-                    display: flex;
-                    flex-direction: column;
-                    background-color: #ffffff;
-                }
-
-                .fb-card-title {
-                    color: #1d3268;
-                    font-size: 20px;
-                    font-weight: 700;
-                    margin-bottom: 4px;
-                    line-height: 1.2;
-                }
-
-                .fb-card-subtitle {
-                    color: #65676b;
-                    font-size: 15px;
-                    margin-bottom: 16px;
-                    display: flex;
-                    align-items: center;
-                    gap: 6px;
-                    flex-wrap: wrap;
-                }
-
-                .fb-card-info {
-                    color: #65676b;
-                    font-size: 14px;
-                    margin-bottom: 16px;
-                    line-height: 1.5;
-                }
-
-                .fb-card-info i {
-                    color: #e76a35;
-                }
-
-                .fb-badge {
-                    position: absolute;
-                    top: 10px;
-                    left: 10px;
-                    background: #e76a35;
-                    color: #fff;
-                    padding: 4px 10px;
-                    border-radius: 4px;
-                    font-size: 12px;
-                    font-weight: 600;
-                    z-index: 10;
-                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-                }
-
-                .fb-btn {
-                    width: 100%;
-                    border: none;
-                    border-radius: 6px;
-                    padding: 8px 0;
-                    font-weight: 600;
-                    font-size: 15px;
-                    cursor: pointer;
-                    transition: background 0.2s;
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    text-decoration: none;
-                }
-
-                .fb-btn:hover {
-                    text-decoration: none;
-                }
-
-                .fb-btn-primary {
-                    background-color: #1d3268;
-                    color: #fff;
-                }
-
-                .fb-btn-primary:hover {
-                    background-color: #15244d;
-                    color: #fff;
-                }
-
-                .fb-btn-secondary {
-                    background-color: #e4e6eb;
-                    color: #1d3268;
-                    margin-top: 10px;
-                }
-
-                .fb-btn-secondary:hover {
-                    background-color: #d8dadf;
-                    color: #1d3268;
-                }
-
-                .fb-btn-disabled {
-                    background-color: #e4e6eb;
-                    color: #bcc0c4;
-                    cursor: default;
-                }
-            </style>
-
-            <div class="leaderboard mt-3">
-                <div class="row g-4">
-                    {{-- Card 1: Top IBM Member --}}
-                    @if ($circlecalls)
-                    <div class="col-sm-6 col-lg-4">
-                        <div class="fb-card shadow-sm">
-                            <div class="fb-card-img-wrapper">
-                                <span class="fb-badge">Top IBM Member</span>
-                                <img src="{{ asset('ProfilePhoto/' . ($circlecalls['member']->profilePhoto ?? 'profile.png')) }}"
-                                    class="fb-card-img" alt="Profile Image">
-                            </div>
-                            <div class="fb-card-body">
-                                <h5 class="fb-card-title">{{ $circlecalls['member']->firstName }} {{
-                                    $circlecalls['member']->lastName }}</h5>
-
-                                <div class="fb-card-subtitle">
-                                    <i class="bi bi-people-fill"></i>
-                                    {{ $circlecalls['member']->circle->circleName }}
-                                    <span>&bull;</span>
-                                    <span>{{ $circlecalls['count'] }} IBMs</span>
-                                </div>
-
-                                <div class="fb-card-info">
-                                    @if(!empty($circlecalls['member']->companyName))
-                                    <div><i class="bi bi-building me-1"></i> {{ $circlecalls['member']->companyName }}
+                <div class="row">
+                    <!-- Cities Card -->
+                    <div class="col-md-4">
+                        <div class="card shadow-sm border-0 p-2 stat-card position-relative overflow-hidden">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="content p-3">
+                                        <h2 class="fw-bold text-gradient">{{ $cityCount }}</h2>
+                                        <p class="text-uppercase text-muted fw-semibold">Cities</p>
                                     </div>
-                                    @endif
-                                    @if(!empty($circlecalls['member']->bCategory->categoryName))
-                                    <div><i class="bi bi-tag me-1"></i> {{
-                                        $circlecalls['member']->bCategory->categoryName }}</div>
-                                    @endif
-
-                                    {{-- Keywords --}}
-                                    @php
-                                    $keyWords = json_decode($circlecalls['member']->keyWords ?? '[]', true);
-                                    @endphp
-                                    @if (is_array($keyWords) && count($keyWords) > 0)
-                                    <div class="mt-2">
-                                        @foreach ($keyWords as $keyWord)
-                                        <span class="badge bg-secondary fw-normal me-1 mb-1">{{ $keyWord }}</span>
-                                        @endforeach
-                                    </div>
-                                    @endif
-                                </div>
-
-                                <div class="mt-auto">
-                                    <!-- Connect Button -->
-                                    @if ($circlecalls['member']->circleId == $authCircleId ||
-                                    $circlecalls['member']->connection_status == 'Connected')
-                                    <button type="button" class="fb-btn fb-btn-disabled">Connected</button>
-                                    @elseif ($circlecalls['member']->connection_status == 'Not Connected')
-                                    <form action="{{ route('connect') }}" method="POST" class="d-block w-100">
-                                        @csrf
-                                        <input type="hidden" value="{{ $circlecalls['member']->id }}" name="memberId">
-                                        <button type="submit" class="fb-btn fb-btn-primary">Connect</button>
-                                    </form>
-                                    @elseif ($circlecalls['member']->connection_status == 'Accepted')
-                                    <button class="fb-btn fb-btn-primary">Message</button>
-                                    @elseif ($circlecalls['member']->connection_status == 'Pending')
-                                    <button type="button" class="fb-btn fb-btn-disabled">Requested</button>
-                                    @elseif ($circlecalls['member']->connection_status == 'Rejected')
-                                    <form action="{{ route('connect') }}" method="POST" class="d-block w-100">
-                                        @csrf
-                                        <input type="hidden" value="{{ $circlecalls['member']->id }}" name="memberId">
-                                        <button type="submit" class="fb-btn fb-btn-primary">Connect</button>
-                                    </form>
-                                    @endif
-
-                                    <!-- View Profile -->
-                                    @if(isset($circlecalls['member']->id))
-                                    <a href="{{ route('foundPersonDetails', $circlecalls['member']->id) }}"
-                                        class="text-decoration-none d-block w-100">
-                                        <button class="fb-btn fb-btn-secondary">View Profile</button>
-                                    </a>
-                                    @endif
-
                                 </div>
                             </div>
+                            <!-- Icon positioned at the bottom right, overlapping slightly -->
+                            <i class="bi bi-buildings stat-icon position-absolute" style="bottom: -30px; right: -10px; font-size: 5rem; opacity: 0.6;"></i>
                         </div>
                     </div>
-                    @endif
 
-                    {{-- Card 2: Top Business Leader --}}
-                    @if ($busGiver)
-                    <div class="col-sm-6 col-lg-4">
-                        <div class="fb-card shadow-sm">
-                            <div class="fb-card-img-wrapper">
-                                <span class="fb-badge">Top Business Leader</span>
-                                <img src="{{ asset('ProfilePhoto/' . ($busGiver['member']->profilePhoto ?? 'profile.png')) }}"
-                                    class="fb-card-img" alt="Profile Image">
-                            </div>
-                            <div class="fb-card-body">
-                                <h5 class="fb-card-title">{{ $busGiver['user']->firstName }} {{
-                                    $busGiver['user']->lastName }}</h5>
-
-                                <div class="fb-card-subtitle">
-                                    <i class="bi bi-people-fill"></i>
-                                    {{ $busGiver['circle']['circleName'] }}
-                                    <span>&bull;</span>
-                                    <span>Business Given: {{ $busGiver['count'] }}</span>
-                                </div>
-
-                                <div class="fb-card-info">
-                                    <div><i class="bi bi-currency-rupee me-1"></i> {{ $busGiver['amount'] }}</div>
-                                    @if(!empty($busGiver['member']->companyName))
-                                    <div><i class="bi bi-building me-1"></i> {{ $busGiver['member']->companyName }}
+                    <!-- Circles Card -->
+                    <div class="col-md-4">
+                        <div class="card shadow-sm border-0 p-2 stat-card position-relative overflow-hidden">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="content p-3">
+                                        <h2 class="fw-bold text-gradient">{{ $circleCount }}</h2>
+                                        <p class="text-uppercase text-muted fw-semibold">Circles</p>
                                     </div>
-                                    @endif
-                                    @if(!empty($busGiver['member']->bCategory->categoryName))
-                                    <div><i class="bi bi-tag me-1"></i> {{ $busGiver['member']->bCategory->categoryName
-                                        }}</div>
-                                    @endif
-
-                                    {{-- Keywords --}}
-                                    @php
-                                    $keyWords = json_decode($busGiver['member']->keyWords ?? '[]', true);
-                                    @endphp
-                                    @if (is_array($keyWords) && count($keyWords) > 0)
-                                    <div class="mt-2">
-                                        @foreach ($keyWords as $keyWord)
-                                        <span class="badge bg-secondary fw-normal me-1 mb-1">{{ $keyWord }}</span>
-                                        @endforeach
-                                    </div>
-                                    @endif
-                                </div>
-
-                                <div class="mt-auto">
-                                    <!-- Connect Button -->
-                                    @if ($busGiver['member']->circleId == $authCircleId ||
-                                    $busGiver['member']->connection_status == 'Connected')
-                                    <button type="button" class="fb-btn fb-btn-disabled">Connected</button>
-                                    @elseif ($busGiver['member']->connection_status == 'Accepted')
-                                    <button class="fb-btn fb-btn-primary">Message</button>
-                                    @elseif ($busGiver['member']->connection_status == 'Pending')
-                                    <button type="button" class="fb-btn fb-btn-disabled">Requested</button>
-                                    @elseif ($busGiver['member']->connection_status == 'Rejected' ||
-                                    $busGiver['member']->connection_status == 'Not Connected')
-                                    <form action="{{ route('connect') }}" method="POST" class="d-block w-100">
-                                        @csrf
-                                        <input type="hidden" value="{{ $busGiver['member']->id }}" name="memberId">
-                                        <button type="submit" class="fb-btn fb-btn-primary">Connect</button>
-                                    </form>
-                                    @endif
-
-                                    <!-- View Profile -->
-                                    @if(isset($busGiver['member']->id))
-                                    <a href="{{ route('foundPersonDetails', $busGiver['member']->id) }}"
-                                        class="text-decoration-none d-block w-100">
-                                        <button class="fb-btn fb-btn-secondary">View Profile</button>
-                                    </a>
-                                    @endif
                                 </div>
                             </div>
+                            <i class="bi bi-bullseye stat-icon" style="bottom: -30px; right: -10px; font-size: 5rem; opacity: 0.6;"></i>
                         </div>
                     </div>
-                    @endif
 
-                    {{-- Card 3: Top Reference Giver --}}
-                    @if ($refGiver)
-                    <div class="col-sm-6 col-lg-4">
-                        <div class="fb-card shadow-sm">
-                            <div class="fb-card-img-wrapper">
-                                <span class="fb-badge">Top Reference Giver</span>
-                                <img src="{{ asset('ProfilePhoto/' . ($refGiver['profilePhoto'] ?? 'profile.png')) }}"
-                                    class="fb-card-img" alt="Profile Image">
-                            </div>
-                            <div class="fb-card-body">
-                                <h5 class="fb-card-title">{{ $refGiver['user']->firstName ?? 'N/A' }} {{
-                                    $refGiver['user']->lastName ?? 'N/A' }}</h5>
-
-                                <div class="fb-card-subtitle">
-                                    <i class="bi bi-people-fill"></i>
-                                    {{ $refGiver['circle'] ?? 'N/A' }}
-                                    <span>&bull;</span>
-                                    <span>References Given: {{ $refGiver['count'] ?? '0' }}</span>
-                                </div>
-
-                                <div class="fb-card-info">
-                                    @if(!empty($refGiver['companyName']))
-                                    <div><i class="bi bi-building me-1"></i> {{ $refGiver['companyName'] }}</div>
-                                    @endif
-                                    @if(!empty($refGiver['bCategory']['categoryName']))
-                                    <div><i class="bi bi-tag me-1"></i> {{ $refGiver['bCategory']['categoryName'] }}
+                    <!-- Members Card -->
+                    <div class="col-md-4">
+                        <div class="card shadow-sm border-0 p-2 stat-card position-relative overflow-hidden">
+                            <div class="row">
+                                <div class="col-md-7">
+                                    <div class="content p-3">
+                                        <h2 class="fw-bold text-gradient">{{ $membersCount }}</h2>
+                                        <p class="text-uppercase text-muted fw-semibold">Members</p>
                                     </div>
-                                    @endif
-
-                                    {{-- Keywords --}}
-                                    @php
-                                    $keyWords = json_decode($refGiver['keyWords'] ?? '[]', true);
-                                    @endphp
-                                    @if (is_array($keyWords) && count($keyWords) > 0)
-                                    <div class="mt-2">
-                                        @foreach ($keyWords as $keyWord)
-                                        <span class="badge bg-secondary fw-normal me-1 mb-1">{{ $keyWord }}</span>
-                                        @endforeach
-                                    </div>
-                                    @endif
-                                </div>
-
-                                <div class="mt-auto">
-                                    <!-- Connect Button -->
-                                    @if ($refGiver['circleId'] == $authCircleId || ($refGiver['connection_status'] ??
-                                    '') ==
-                                    'Connected')
-                                    <button type="button" class="fb-btn fb-btn-disabled">Connected</button>
-                                    @elseif (($refGiver['connection_status'] ?? '') == 'Accepted')
-                                    <button class="fb-btn fb-btn-primary">Message</button>
-                                    @elseif (($refGiver['connection_status'] ?? '') == 'Pending')
-                                    <button type="button" class="fb-btn fb-btn-disabled">Requested</button>
-                                    @elseif ((($refGiver['connection_status'] ?? '') == 'Rejected' ||
-                                    ($refGiver['connection_status'] ?? 'Not Connected') == 'Not Connected') &&
-                                    !empty($refGiver['id']))
-                                    <form action="{{ route('connect') }}" method="POST" class="d-block w-100">
-                                        @csrf
-                                        <input type="hidden" value="{{ $refGiver['id'] }}" name="memberId">
-                                        <button type="submit" class="fb-btn fb-btn-primary">Connect</button>
-                                    </form>
-                                    @endif
-
-                                    <!-- View Profile -->
-                                    @if(isset($refGiver['id']))
-                                    <a href="{{ route('foundPersonDetails', $refGiver['id']) }}"
-                                        class="text-decoration-none d-block w-100">
-                                        <button class="fb-btn fb-btn-secondary">View Profile</button>
-                                    </a>
-                                    @endif
                                 </div>
                             </div>
+                            <i class="bi bi-people stat-icon" style="bottom: -30px; right: -10px; font-size: 5rem; opacity: 0.6;"></i>
                         </div>
-                    </div>
-                    @endif
-                </div>
-            </div>
-
-
-            @if (count($nearestEvents) != 0)
-            <div class="bg-light py-5">
-                <div class="upcoming-events">
-                    <!-- Header -->
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h4 class="fw-bold" style="color: #1d3268;">Upcoming Events</h4>
-                        <a href="#" class="fw-bold text-decoration-none" style="color: #1d3268;">See All</a>
-                    </div>
-
-                    <!-- Horizontal Scrollable Cards -->
-                    <div class="events-container d-flex">
-                        @foreach ($nearestEvents as $event)
-                        <div class="event-card">
-                            <a href="{{ route('events.details', $event->id) }}" class="text-decoration-none">
-                                <img src="{{ $event->event_banner ? url('Event/' . $event->event_banner) : asset('images/event_default.png') }}"
-                                    alt="{{ $event->title }}">
-
-                                <!-- Event Info Overlay -->
-                                <div class="event-info">
-                                    <h6 class="fw-bold">{{ $event->title }}</h6>
-                                    <small class="fw-bold">📍 {{ $event->venue }}</small>
-                                    {{-- <small>📍 {{ $event->venue }}, {{ $event->location }}</small> --}}
-                                </div>
-
-                                <!-- Event Details -->
-                                <div
-                                    class="event-details d-flex justify-content-between align-items-center text-muted small">
-                                    <span class="fw-bold" style="color: #1d3268;">{{
-                                        \Carbon\Carbon::parse($event->date)->format('d M Y') }} | {{
-                                        \Carbon\Carbon::parse($event->start_time)->format('H:i') }} To {{
-                                        \Carbon\Carbon::parse($event->end_time)->format('H:i') }}</span>
-                                    {{-- <span>⏳ Time {{ $event->duration }}</span> --}}
-                                    <span class="price-tag fw-bold">₹ {{ $event->fees }}</span>
-                                </div>
-                            </a>
-                        </div>
-                        @endforeach
                     </div>
                 </div>
-            </div>
-            @else
-            <style>
-                .upcoming-events {
-                    display: none;
-                }
-            </style>
-            {{-- <div class="bg-light py-5">
+
+
+
+                <h1 class="text-center card-title" id="leaderboard-title"></h1>
+
+                <script>
+                    const date = new Date();
+                    const lastMonth = new Date(date.getFullYear(), date.getMonth() - 1, 1);
+                    const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+                    document.getElementById("leaderboard-title").innerHTML = `Leaderboard - ${months[lastMonth.getMonth()]} ${date.getFullYear()}`;
+                </script>
+
+                <style>
+                    .fb-card {
+                        background-color: #ffffff;
+                        border-radius: 10px;
+                        overflow: hidden;
+                        border: 1px solid #e0e0e0;
+                        height: 100%;
+                        display: flex;
+                        flex-direction: column;
+                        font-family: sans-serif;
+                        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+                    }
+
+                    .fb-card-img-wrapper {
+                        width: 100%;
+                        padding-top: 100%;
+                        /* 1:1 Aspect Ratio */
+                        position: relative;
+                        background-color: #f8f9fa;
+                        border-bottom: 1px solid #e0e0e0;
+                    }
+
+                    .fb-card-img {
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        object-fit: cover;
+                    }
+
+                    .fb-card-body {
+                        padding: 16px;
+                        flex-grow: 1;
+                        display: flex;
+                        flex-direction: column;
+                        background-color: #ffffff;
+                    }
+
+                    .fb-card-title {
+                        color: #1d3268;
+                        font-size: 20px;
+                        font-weight: 700;
+                        margin-bottom: 4px;
+                        line-height: 1.2;
+                    }
+
+                    .fb-card-subtitle {
+                        color: #65676b;
+                        font-size: 15px;
+                        margin-bottom: 16px;
+                        display: flex;
+                        align-items: center;
+                        gap: 6px;
+                        flex-wrap: wrap;
+                    }
+
+                    .fb-card-info {
+                        color: #65676b;
+                        font-size: 14px;
+                        margin-bottom: 16px;
+                        line-height: 1.5;
+                    }
+
+                    .fb-card-info i {
+                        color: #e76a35;
+                    }
+
+                    .fb-badge {
+                        position: absolute;
+                        top: 10px;
+                        left: 10px;
+                        background: #e76a35;
+                        color: #fff;
+                        padding: 4px 10px;
+                        border-radius: 4px;
+                        font-size: 12px;
+                        font-weight: 600;
+                        z-index: 10;
+                        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+                    }
+
+                    .fb-btn {
+                        width: 100%;
+                        border: none;
+                        border-radius: 6px;
+                        padding: 8px 0;
+                        font-weight: 600;
+                        font-size: 15px;
+                        cursor: pointer;
+                        transition: background 0.2s;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        text-decoration: none;
+                    }
+
+                    .fb-btn:hover {
+                        text-decoration: none;
+                    }
+
+                    .fb-btn-primary {
+                        background-color: #1d3268;
+                        color: #fff;
+                    }
+
+                    .fb-btn-primary:hover {
+                        background-color: #15244d;
+                        color: #fff;
+                    }
+
+                    .fb-btn-secondary {
+                        background-color: #e4e6eb;
+                        color: #1d3268;
+                        margin-top: 10px;
+                    }
+
+                    .fb-btn-secondary:hover {
+                        background-color: #d8dadf;
+                        color: #1d3268;
+                    }
+
+                    .fb-btn-disabled {
+                        background-color: #e4e6eb;
+                        color: #bcc0c4;
+                        cursor: default;
+                    }
+                </style>
+
+                <div class="leaderboard mt-3">
+                    <div class="row g-4">
+                        {{-- Card 1: Top IBM Member --}}
+                        @if ($circlecalls)
+                            <div class="col-sm-6 col-lg-4">
+                                <div class="fb-card shadow-sm">
+                                    <div class="fb-card-img-wrapper">
+                                        <span class="fb-badge">Top IBM Member</span>
+                                        <img src="{{ asset('ProfilePhoto/' . ($circlecalls['member']->profilePhoto ?? 'profile.png')) }}" class="fb-card-img" alt="Profile Image">
+                                    </div>
+                                    <div class="fb-card-body">
+                                        <h5 class="fb-card-title">{{ $circlecalls['member']->firstName }} {{ $circlecalls['member']->lastName }}</h5>
+
+                                        <div class="fb-card-subtitle">
+                                            <i class="bi bi-people-fill"></i>
+                                            {{ $circlecalls['member']->circle->circleName }}
+                                            <span>&bull;</span>
+                                            <span>{{ $circlecalls['count'] }} IBMs</span>
+                                        </div>
+
+                                        <div class="fb-card-info">
+                                            @if (!empty($circlecalls['member']->companyName))
+                                                <div><i class="bi bi-building me-1"></i> {{ $circlecalls['member']->companyName }}
+                                                </div>
+                                            @endif
+                                            @if (!empty($circlecalls['member']->bCategory->categoryName))
+                                                <div><i class="bi bi-tag me-1"></i> {{ $circlecalls['member']->bCategory->categoryName }}</div>
+                                            @endif
+
+                                            {{-- Keywords --}}
+                                            @php
+                                                $keyWords = json_decode($circlecalls['member']->keyWords ?? '[]', true);
+                                            @endphp
+                                            @if (is_array($keyWords) && count($keyWords) > 0)
+                                                <div class="mt-2">
+                                                    @foreach ($keyWords as $keyWord)
+                                                        <span class="badge bg-secondary fw-normal me-1 mb-1">{{ $keyWord }}</span>
+                                                    @endforeach
+                                                </div>
+                                            @endif
+                                        </div>
+
+                                        <div class="mt-auto">
+                                            <!-- Connect Button -->
+                                            @if ($circlecalls['member']->circleId == $authCircleId || $circlecalls['member']->connection_status == 'Connected')
+                                                <button type="button" class="fb-btn fb-btn-disabled">Connected</button>
+                                            @elseif ($circlecalls['member']->connection_status == 'Not Connected')
+                                                <form action="{{ route('connect') }}" method="POST" class="d-block w-100">
+                                                    @csrf
+                                                    <input type="hidden" value="{{ $circlecalls['member']->id }}" name="memberId">
+                                                    <button type="submit" class="fb-btn fb-btn-primary">Connect</button>
+                                                </form>
+                                            @elseif ($circlecalls['member']->connection_status == 'Accepted')
+                                                <button class="fb-btn fb-btn-primary">Message</button>
+                                            @elseif ($circlecalls['member']->connection_status == 'Pending')
+                                                <button type="button" class="fb-btn fb-btn-disabled">Requested</button>
+                                            @elseif ($circlecalls['member']->connection_status == 'Rejected')
+                                                <form action="{{ route('connect') }}" method="POST" class="d-block w-100">
+                                                    @csrf
+                                                    <input type="hidden" value="{{ $circlecalls['member']->id }}" name="memberId">
+                                                    <button type="submit" class="fb-btn fb-btn-primary">Connect</button>
+                                                </form>
+                                            @endif
+
+                                            <!-- View Profile -->
+                                            @if (isset($circlecalls['member']->id))
+                                                <a href="{{ route('foundPersonDetails', $circlecalls['member']->id) }}" class="text-decoration-none d-block w-100">
+                                                    <button class="fb-btn fb-btn-secondary">View Profile</button>
+                                                </a>
+                                            @endif
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+
+                        {{-- Card 2: Top Business Leader --}}
+                        @if ($busGiver)
+                            <div class="col-sm-6 col-lg-4">
+                                <div class="fb-card shadow-sm">
+                                    <div class="fb-card-img-wrapper">
+                                        <span class="fb-badge">Top Business Leader</span>
+                                        <img src="{{ asset('ProfilePhoto/' . ($busGiver['member']->profilePhoto ?? 'profile.png')) }}" class="fb-card-img" alt="Profile Image">
+                                    </div>
+                                    <div class="fb-card-body">
+                                        <h5 class="fb-card-title">{{ $busGiver['user']->firstName }} {{ $busGiver['user']->lastName }}</h5>
+
+                                        <div class="fb-card-subtitle">
+                                            <i class="bi bi-people-fill"></i>
+                                            {{ $busGiver['circle']['circleName'] }}
+                                            <span>&bull;</span>
+                                            <span>Business Given: {{ $busGiver['count'] }}</span>
+                                        </div>
+
+                                        <div class="fb-card-info">
+                                            <div><i class="bi bi-currency-rupee me-1"></i> {{ $busGiver['amount'] }}</div>
+                                            @if (!empty($busGiver['member']->companyName))
+                                                <div><i class="bi bi-building me-1"></i> {{ $busGiver['member']->companyName }}
+                                                </div>
+                                            @endif
+                                            @if (!empty($busGiver['member']->bCategory->categoryName))
+                                                <div><i class="bi bi-tag me-1"></i> {{ $busGiver['member']->bCategory->categoryName }}</div>
+                                            @endif
+
+                                            {{-- Keywords --}}
+                                            @php
+                                                $keyWords = json_decode($busGiver['member']->keyWords ?? '[]', true);
+                                            @endphp
+                                            @if (is_array($keyWords) && count($keyWords) > 0)
+                                                <div class="mt-2">
+                                                    @foreach ($keyWords as $keyWord)
+                                                        <span class="badge bg-secondary fw-normal me-1 mb-1">{{ $keyWord }}</span>
+                                                    @endforeach
+                                                </div>
+                                            @endif
+                                        </div>
+
+                                        <div class="mt-auto">
+                                            <!-- Connect Button -->
+                                            @if ($busGiver['member']->circleId == $authCircleId || $busGiver['member']->connection_status == 'Connected')
+                                                <button type="button" class="fb-btn fb-btn-disabled">Connected</button>
+                                            @elseif ($busGiver['member']->connection_status == 'Accepted')
+                                                <button class="fb-btn fb-btn-primary">Message</button>
+                                            @elseif ($busGiver['member']->connection_status == 'Pending')
+                                                <button type="button" class="fb-btn fb-btn-disabled">Requested</button>
+                                            @elseif ($busGiver['member']->connection_status == 'Rejected' || $busGiver['member']->connection_status == 'Not Connected')
+                                                <form action="{{ route('connect') }}" method="POST" class="d-block w-100">
+                                                    @csrf
+                                                    <input type="hidden" value="{{ $busGiver['member']->id }}" name="memberId">
+                                                    <button type="submit" class="fb-btn fb-btn-primary">Connect</button>
+                                                </form>
+                                            @endif
+
+                                            <!-- View Profile -->
+                                            @if (isset($busGiver['member']->id))
+                                                <a href="{{ route('foundPersonDetails', $busGiver['member']->id) }}" class="text-decoration-none d-block w-100">
+                                                    <button class="fb-btn fb-btn-secondary">View Profile</button>
+                                                </a>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+
+                        {{-- Card 3: Top Reference Giver --}}
+                        @if ($refGiver)
+                            <div class="col-sm-6 col-lg-4">
+                                <div class="fb-card shadow-sm">
+                                    <div class="fb-card-img-wrapper">
+                                        <span class="fb-badge">Top Reference Giver</span>
+                                        <img src="{{ asset('ProfilePhoto/' . ($refGiver['profilePhoto'] ?? 'profile.png')) }}" class="fb-card-img" alt="Profile Image">
+                                    </div>
+                                    <div class="fb-card-body">
+                                        <h5 class="fb-card-title">{{ $refGiver['user']->firstName ?? 'N/A' }} {{ $refGiver['user']->lastName ?? 'N/A' }}</h5>
+
+                                        <div class="fb-card-subtitle">
+                                            <i class="bi bi-people-fill"></i>
+                                            {{ $refGiver['circle'] ?? 'N/A' }}
+                                            <span>&bull;</span>
+                                            <span>References Given: {{ $refGiver['count'] ?? '0' }}</span>
+                                        </div>
+
+                                        <div class="fb-card-info">
+                                            @if (!empty($refGiver['companyName']))
+                                                <div><i class="bi bi-building me-1"></i> {{ $refGiver['companyName'] }}</div>
+                                            @endif
+                                            @if (!empty($refGiver['bCategory']['categoryName']))
+                                                <div><i class="bi bi-tag me-1"></i> {{ $refGiver['bCategory']['categoryName'] }}
+                                                </div>
+                                            @endif
+
+                                            {{-- Keywords --}}
+                                            @php
+                                                $keyWords = json_decode($refGiver['keyWords'] ?? '[]', true);
+                                            @endphp
+                                            @if (is_array($keyWords) && count($keyWords) > 0)
+                                                <div class="mt-2">
+                                                    @foreach ($keyWords as $keyWord)
+                                                        <span class="badge bg-secondary fw-normal me-1 mb-1">{{ $keyWord }}</span>
+                                                    @endforeach
+                                                </div>
+                                            @endif
+                                        </div>
+
+                                        <div class="mt-auto">
+                                            <!-- Connect Button -->
+                                            @if ($refGiver['circleId'] == $authCircleId || ($refGiver['connection_status'] ?? '') == 'Connected')
+                                                <button type="button" class="fb-btn fb-btn-disabled">Connected</button>
+                                            @elseif (($refGiver['connection_status'] ?? '') == 'Accepted')
+                                                <button class="fb-btn fb-btn-primary">Message</button>
+                                            @elseif (($refGiver['connection_status'] ?? '') == 'Pending')
+                                                <button type="button" class="fb-btn fb-btn-disabled">Requested</button>
+                                            @elseif ((($refGiver['connection_status'] ?? '') == 'Rejected' || ($refGiver['connection_status'] ?? 'Not Connected') == 'Not Connected') && !empty($refGiver['id']))
+                                                <form action="{{ route('connect') }}" method="POST" class="d-block w-100">
+                                                    @csrf
+                                                    <input type="hidden" value="{{ $refGiver['id'] }}" name="memberId">
+                                                    <button type="submit" class="fb-btn fb-btn-primary">Connect</button>
+                                                </form>
+                                            @endif
+
+                                            <!-- View Profile -->
+                                            @if (isset($refGiver['id']))
+                                                <a href="{{ route('foundPersonDetails', $refGiver['id']) }}" class="text-decoration-none d-block w-100">
+                                                    <button class="fb-btn fb-btn-secondary">View Profile</button>
+                                                </a>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+
+
+                @if (count($nearestEvents) != 0)
+                    <div class="bg-light py-5">
+                        <div class="upcoming-events">
+                            <!-- Header -->
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h4 class="fw-bold" style="color: #1d3268;">Upcoming Events</h4>
+                                <a href="#" class="fw-bold text-decoration-none" style="color: #1d3268;">See All</a>
+                            </div>
+
+                            <!-- Horizontal Scrollable Cards -->
+                            <div class="events-container d-flex">
+                                @foreach ($nearestEvents as $event)
+                                    <div class="event-card">
+                                        <a href="{{ route('events.details', $event->id) }}" class="text-decoration-none">
+                                            <img src="{{ $event->event_banner ? url('Event/' . $event->event_banner) : asset('images/event_default.png') }}" alt="{{ $event->title }}">
+
+                                            <!-- Event Info Overlay -->
+                                            <div class="event-info">
+                                                <h6 class="fw-bold">{{ $event->title }}</h6>
+                                                <small class="fw-bold">📍 {{ $event->venue }}</small>
+                                                {{-- <small>📍 {{ $event->venue }}, {{ $event->location }}</small> --}}
+                                            </div>
+
+                                            <!-- Event Details -->
+                                            <div class="event-details d-flex justify-content-between align-items-center text-muted small">
+                                                <span class="fw-bold" style="color: #1d3268;">{{ \Carbon\Carbon::parse($event->date)->format('d M Y') }} | {{ \Carbon\Carbon::parse($event->start_time)->format('H:i') }} To {{ \Carbon\Carbon::parse($event->end_time)->format('H:i') }}</span>
+                                                {{-- <span>⏳ Time {{ $event->duration }}</span> --}}
+                                                <span class="price-tag fw-bold">₹ {{ $event->fees }}</span>
+                                            </div>
+                                        </a>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+                @else
+                    <style>
+                        .upcoming-events {
+                            display: none;
+                        }
+                    </style>
+                    {{-- <div class="bg-light py-5">
                 <div class="upcoming-events">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h4 class="fw-bold" style="color: #1d3268;">Upcoming Events</h4>
@@ -1807,69 +1787,61 @@ $totalIbms = \App\Models\CircleCall::where('status', 'Active')->count();
                     <p class="text-muted text-center"><b>No Events for now.</b></p>
                 </div>
             </div> --}}
-            @endif
+                @endif
 
 
-            @if (count($nearestTraining) != 0)
-            <div class="bg-light py-5">
-                <div class="upcoming-events trainings">
-                    <!-- Header -->
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h4 class="fw-bold" style="color: #1d3268;">Upcoming Training Workshops</h4>
-                        <a href="#" class="fw-bold text-decoration-none" style="color: #1d3268;">See All</a>
-                    </div>
+                @if (count($nearestTraining) != 0)
+                    <div class="bg-light py-5">
+                        <div class="upcoming-events trainings">
+                            <!-- Header -->
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h4 class="fw-bold" style="color: #1d3268;">Upcoming Training Workshops</h4>
+                                <a href="#" class="fw-bold text-decoration-none" style="color: #1d3268;">See All</a>
+                            </div>
 
-                    <!-- Horizontal Scrollable Cards -->
-                    <div class="events-container d-flex">
-                        @foreach ($nearestTraining as $trainings)
-                        <div class="event-card">
-                            {{-- <a href="{{ route('events.details', $trainings->id) }}" class="text-decoration-none">
+                            <!-- Horizontal Scrollable Cards -->
+                            <div class="events-container d-flex">
+                                @foreach ($nearestTraining as $trainings)
+                                    <div class="event-card">
+                                        {{-- <a href="{{ route('events.details', $trainings->id) }}" class="text-decoration-none">
                                 --}}
-                                <img src="{{ $trainings->training_banner ? url('Training/' . $trainings->training_banner) : asset('images/profile.png') }}"
-                                    alt="{{ $trainings->title }}">
+                                        <img src="{{ $trainings->training_banner ? url('Training/' . $trainings->training_banner) : asset('images/profile.png') }}" alt="{{ $trainings->title }}">
 
-                                <!-- Event Info Overlay -->
-                                <div class="event-info">
-                                    <h6 class="fw-bold">{{ $trainings->title }}</h6>
-                                    <small class="fw-bold">📍 {{ $trainings->venue }}</small>
-                                    {{-- <small>📍 {{ $trainings->venue }}, {{ $trainings->location }}</small> --}}
-                                </div>
+                                        <!-- Event Info Overlay -->
+                                        <div class="event-info">
+                                            <h6 class="fw-bold">{{ $trainings->title }}</h6>
+                                            <small class="fw-bold">📍 {{ $trainings->venue }}</small>
+                                            {{-- <small>📍 {{ $trainings->venue }}, {{ $trainings->location }}</small> --}}
+                                        </div>
 
-                                <!-- Event Details -->
-                                <div
-                                    class="event-details d-flex justify-content-between align-items-center text-muted small">
-                                    <span class="fw-bold" style="color: #1d3268;">{{
-                                        \Carbon\Carbon::parse($trainings->date)->format('d M Y') }} | {{
-                                        \Carbon\Carbon::parse($trainings->start_time)->format('H:i') }} To {{
-                                        \Carbon\Carbon::parse($trainings->end_time)->format('H:i') }}</span>
-                                    {{-- <span>⏳ Time {{ $trainings->duration }}</span> --}}
-                                    <span class="price-tag fw-bold">₹ {{ $trainings->fees }}</span>
-                                </div>
-                            </a>
-                        </div>
+                                        <!-- Event Details -->
+                                        <div class="event-details d-flex justify-content-between align-items-center text-muted small">
+                                            <span class="fw-bold" style="color: #1d3268;">{{ \Carbon\Carbon::parse($trainings->date)->format('d M Y') }} | {{ \Carbon\Carbon::parse($trainings->start_time)->format('H:i') }} To {{ \Carbon\Carbon::parse($trainings->end_time)->format('H:i') }}</span>
+                                            {{-- <span>⏳ Time {{ $trainings->duration }}</span> --}}
+                                            <span class="price-tag fw-bold">₹ {{ $trainings->fees }}</span>
+                                        </div>
+                                        </a>
+                                    </div>
 
-                        <!-- Event Details -->
-                        <div class="event-details d-flex justify-content-between align-items-center text-muted small">
-                            <span class="fw-bold" style="color: #1d3268;">{{
-                                \Carbon\Carbon::parse($trainings->date)->format('d M Y') }} | {{
-                                \Carbon\Carbon::parse($trainings->start_time)->format('H:i') }} To {{
-                                \Carbon\Carbon::parse($trainings->end_time)->format('H:i') }}</span>
-                            {{-- <span>⏳ Time {{ $trainings->duration }}</span> --}}
-                            <span class="price-tag fw-bold">₹ {{ $trainings->fees }}</span>
-                        </div>
-                        </a>
-                    </div>
-                    @endforeach
-                </div>
+                                    <!-- Event Details -->
+                                    <div class="event-details d-flex justify-content-between align-items-center text-muted small">
+                                        <span class="fw-bold" style="color: #1d3268;">{{ \Carbon\Carbon::parse($trainings->date)->format('d M Y') }} | {{ \Carbon\Carbon::parse($trainings->start_time)->format('H:i') }} To {{ \Carbon\Carbon::parse($trainings->end_time)->format('H:i') }}</span>
+                                        {{-- <span>⏳ Time {{ $trainings->duration }}</span> --}}
+                                        <span class="price-tag fw-bold">₹ {{ $trainings->fees }}</span>
+                                    </div>
+                                    </a>
+                            </div>
+                @endforeach
             </div>
         </div>
-        @else
-        <style>
-            .upcoming-events .trainings {
-                display: none;
-            }
-        </style>
-        {{-- <div class="bg-light py-5">
+    </div>
+@else
+    <style>
+        .upcoming-events .trainings {
+            display: none;
+        }
+    </style>
+    {{-- <div class="bg-light py-5">
             <div class="upcoming-events trainings">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h4 class="fw-bold" style="color: #1d3268;">Upcoming Training Workshops</h4>
@@ -1877,7 +1849,7 @@ $totalIbms = \App\Models\CircleCall::where('status', 'Active')->count();
                 <p class="text-muted text-center"><b>No Training Workshops for now.</b></p>
             </div>
         </div> --}}
-        @endif
+    @endif
 
 
 
@@ -1887,81 +1859,74 @@ $totalIbms = \App\Models\CircleCall::where('status', 'Active')->count();
     <div class="col-lg-4 col-md-12">
         <div class="row">
             @if ($categoryNames->isNotEmpty())
-            <div class="card shadow-sm p-4 text-center">
-                <h4 class="mb-4 fw-bold">Vacant Categories</h4>
-                <div class="row">
-                    @foreach ($categoryNames as $categoryName)
-                    <div class="col-md-6 mb-3">
-                        <div class="card bottom-card border rounded p-2 pt-2" width="100%">
-                            <h5 class="m-0 card-text fw-bold">{{ $categoryName }}</h5>
-                        </div>
+                <div class="card shadow-sm p-4 text-center">
+                    <h4 class="mb-4 fw-bold">Vacant Categories</h4>
+                    <div class="row">
+                        @foreach ($categoryNames as $categoryName)
+                            <div class="col-md-6 mb-3">
+                                <div class="card bottom-card border rounded p-2 pt-2" width="100%">
+                                    <h5 class="m-0 card-text fw-bold">{{ $categoryName }}</h5>
+                                </div>
+                            </div>
+                        @endforeach
                     </div>
-                    @endforeach
                 </div>
-            </div>
             @endif
             @if ($meeting == null)
-            <div class="col-lg-12 col-md-12">
-                <div class="card shadow-sm p-4 text-center">
-                    <h4 class="mb-4 fw-bold">Upcoming Circle Meetings</h4>
-                    <div class="alert alert-info" role="alert">
-                        No upcoming circle meeting found
+                <div class="col-lg-12 col-md-12">
+                    <div class="card shadow-sm p-4 text-center">
+                        <h4 class="mb-4 fw-bold">Upcoming Circle Meetings</h4>
+                        <div class="alert alert-info" role="alert">
+                            No upcoming circle meeting found
+                        </div>
                     </div>
                 </div>
-            </div>
             @else
-            <div class="col-lg-12 col-md-12">
-                <div class="card circleMeeting shadow-sm p-4 ">
-                    <h4 class="mb-4 fw-bold" style="font-size: 18px; color:#1d3268;">&nbsp;Upcoming {{
-                        $meeting->circle->circleName }} Circle Meetings
-                    </h4>
-                    <div class="card event-card-upcoming shadow-sm p-3 mb-3">
-                        <div class="d-flex justify-content-between align-items-center">
-                            {{-- <span class="fw-bold">1.</span> --}}
-                            {{-- <div class="fw-bold" style="color: #1d3268;"></div> --}}
-                            <span class="fw-bold">{{ $meeting->date->format('j M Y') }} | {{ $meeting->meetingTime
-                                }}</span>
-                            <i class="bi bi-clipboard" onclick="copyMeetingLink()"></i>
-                            <button class="btn btn-outline-primary btn-sm"
-                                onclick="openInvitePage('{{ $signedUrl }}')">Invite</button>
-                        </div>
-                        {{-- <div class="d-flex align-items-center mt-2">
+                <div class="col-lg-12 col-md-12">
+                    <div class="card circleMeeting shadow-sm p-4 ">
+                        <h4 class="mb-4 fw-bold" style="font-size: 18px; color:#1d3268;">&nbsp;Upcoming {{ $meeting->circle->circleName }} Circle Meetings
+                        </h4>
+                        <div class="card event-card-upcoming shadow-sm p-3 mb-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                {{-- <span class="fw-bold">1.</span> --}}
+                                {{-- <div class="fw-bold" style="color: #1d3268;"></div> --}}
+                                <span class="fw-bold">{{ $meeting->date->format('j M Y') }} | {{ $meeting->meetingTime }}</span>
+                                <i class="bi bi-clipboard" onclick="copyMeetingLink()"></i>
+                                <button class="btn btn-outline-primary btn-sm" onclick="openInvitePage('{{ $signedUrl }}')">Invite</button>
+                            </div>
+                            {{-- <div class="d-flex align-items-center mt-2">
                             <i class="bi bi-clock me-2"></i> 2 Hours
                         </div> --}}
-                        <div class="d-flex align-items-center mt-2">
-                            <i class="bi bi-people-fill me-2 text-muted"></i> <span class="fw-bold text-muted">{{
-                                $meeting->circle->members->count() }}</span>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <i class="bi bi-geo-alt-fill me-2 text-muted"></i> <span class="fw-bold text-muted">{{
-                                $meeting->circle->city->cityName }}</span>
-                        </div>
-                        <hr>
-                        <div class="text-primary fw-semibold" data-bs-toggle="collapse"
-                            data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
-                            Invited People - {{ $myInvites->count() }} <i class="bi bi-chevron-down"></i>
-                        </div>
-                        <div class="collapse" id="collapseExample">
-                            <table class="table mt-2">
-                                <tbody>
-                                    @foreach ($myInvites as $invite)
-                                    <tr>
-                                        <td><small class="text-muted">{{ $invite->personName }}</small>
-                                        </td>
-                                        <td><small class="text-muted">{{ $invite->personEmail }}</small>
-                                        </td>
-                                        <td><small class="text-muted">{{ $invite->personContact }}</small>
-                                        </td>
-                                    </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
+                            <div class="d-flex align-items-center mt-2">
+                                <i class="bi bi-people-fill me-2 text-muted"></i> <span class="fw-bold text-muted">{{ $meeting->circle->members->count() }}</span>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-geo-alt-fill me-2 text-muted"></i> <span class="fw-bold text-muted">{{ $meeting->circle->city->cityName }}</span>
+                            </div>
+                            <hr>
+                            <div class="text-primary fw-semibold" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                                Invited People - {{ $myInvites->count() }} <i class="bi bi-chevron-down"></i>
+                            </div>
+                            <div class="collapse" id="collapseExample">
+                                <table class="table mt-2">
+                                    <tbody>
+                                        @foreach ($myInvites as $invite)
+                                            <tr>
+                                                <td><small class="text-muted">{{ $invite->personName }}</small>
+                                                </td>
+                                                <td><small class="text-muted">{{ $invite->personEmail }}</small>
+                                                </td>
+                                                <td><small class="text-muted">{{ $invite->personContact }}</small>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <input type="hidden" id="shareableMeetingLink"
-                value="{{ URL::signedRoute('visitor.form', ['slug' => $meeting->cm_slug, 'meetingId' => $meeting->id, 'ref' => auth()->user()->member->id]) }}">
+                <input type="hidden" id="shareableMeetingLink" value="{{ URL::signedRoute('visitor.form', ['slug' => $meeting->cm_slug, 'meetingId' => $meeting->id, 'ref' => auth()->user()->member->id]) }}">
             @endif
 
 
@@ -1992,7 +1957,7 @@ $totalIbms = \App\Models\CircleCall::where('status', 'Active')->count();
 
         </div>
     </div>
-</div>
-</div>
+    </div>
+    </div>
 
 @endrole

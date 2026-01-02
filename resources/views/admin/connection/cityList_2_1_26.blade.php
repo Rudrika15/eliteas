@@ -404,37 +404,12 @@
                                     </div>
 
                                     <div class="mt-auto">
-                                        <a href="{{ route('foundPersonDetails', $member->id) }}" class="fb-btn fb-btn-primary w-100 text-decoration-none">View Profile</a>
-                                        @php
-                                            $sameCircleConnected = (isset($authCircleId) && $authCircleId !== null && $member->circleId !== null && $member->circleId == $authCircleId);
-                                            $actuallyConnected = ($member->connection_status == 'Connected' || $member->connection_status == 'Accepted');
-                                            $showConnected = $sameCircleConnected || $actuallyConnected;
-                                        @endphp
-                                        @if ($showConnected)
-                                            <button type="button" class="fb-btn fb-btn-secondary fb-btn-disabled w-100 mt-2">
-                                                <i class="bi bi-check-circle-fill me-2"></i> Connected
+                                        <a href="{{ route('foundPersonDetails', $member->id) }}"
+                                            class="text-decoration-none d-block w-100">
+                                            <button class="fb-btn fb-btn-primary w-100">
+                                                View Profile
                                             </button>
-                                        @elseif ($member->connection_status == 'Not Connected')
-                                            <form action="{{ route('connect') }}" class="connectForm d-inline-block w-100 mt-2" method="POST">
-                                                @csrf
-                                                <input type="hidden" name="memberId" value="{{ $member->id }}">
-                                                <button type="submit" class="fb-btn fb-btn-secondary w-100">
-                                                    <i class="bi bi-person-plus-fill me-2"></i> Connect
-                                                </button>
-                                            </form>
-                                        @elseif ($member->connection_status == 'Pending')
-                                            <button type="button" class="fb-btn fb-btn-secondary fb-btn-disabled w-100 mt-2">
-                                                <i class="bi bi-clock me-2"></i> Requested
-                                            </button>
-                                        @elseif ($member->connection_status == 'Rejected')
-                                            <form action="{{ route('connect') }}" class="connectForm d-inline-block w-100 mt-2" method="POST">
-                                                @csrf
-                                                <input type="hidden" name="memberId" value="{{ $member->id }}">
-                                                <button type="submit" class="fb-btn fb-btn-secondary w-100">
-                                                    <i class="bi bi-person-plus-fill me-2"></i> Connect
-                                                </button>
-                                            </form>
-                                        @endif
+                                        </a>
                                     </div>
                                 </div>
                             </div>
@@ -482,28 +457,6 @@
             } else {
                 $('#noMembersFoundMsg').fadeIn();
             }
-        });
-
-        $(document).on('submit', '.connectForm', function(e) {
-            e.preventDefault();
-            var form = $(this);
-            var actionUrl = form.attr('action');
-            var formData = form.serialize();
-            $.ajax({
-                url: actionUrl,
-                method: 'POST',
-                data: formData,
-                success: function(response) {
-                    if (response.status === 'success') {
-                        Swal.fire({ icon: 'success', title: 'Success', text: response.message }).then(() => { location.reload(); });
-                    } else {
-                        Swal.fire({ icon: 'info', title: 'Info', text: response.message });
-                    }
-                },
-                error: function() {
-                    Swal.fire({ icon: 'error', title: 'Oops!', text: 'Something went wrong. Please try again.' });
-                }
-            });
         });
     });
 </script>

@@ -512,63 +512,112 @@
 
     <div class="container mt-5">
         <h1 class="text-center card-title mb-4">Members of {{ $circle->circleName }} Circle</h1>
-        <div class="row row-cols-3 g-4" id="searchResults">
+        <div class="row g-4" id="searchResults">
             @forelse ($circle->members as $member)
-                <div class="col">
-                    <div class="fb-card shadow-sm h-100">
-                        <div class="fb-card-img-wrapper">
-                            <span class="fb-badge">Member</span>
-                            <img src="{{ asset('ProfilePhoto/' . ($member->profilePhoto ?? 'profile.png')) }}" class="fb-card-img" alt="Profile Image">
-                        </div>
-                        <div class="fb-card-body">
-                            <h5 class="fb-card-title">{{ $member->firstName ?? 'N/A' }} {{ $member->lastName ?? 'N/A' }}</h5>
-                            <div class="fb-card-subtitle">
-                                <i class="bi bi-geo-alt-fill"></i>
-                                {{ $circle->circleName ?? 'N/A' }}
-                            </div>
-                            @php $isConnected = in_array($member->connection_status, ['Accepted', 'Connected']); @endphp
-                            <div class="fb-card-info">
-                                <div><i class="bi bi-envelope-fill"></i> {{ $isConnected ? ($member->user->email ?? 'N/A') : '****' }}</div>
-                                <div><i class="bi bi-telephone-fill"></i> {{ $isConnected ? ($member->user->contactNo ?? 'N/A') : '****' }}</div>
-                            </div>
-                            @if(!empty($member->companyName) || !empty($member->bCategory->categoryName))
-                                <div class="fb-card-info">
-                                    @if(!empty($member->companyName))
-                                        <div><i class="bi bi-building"></i> {{ $member->companyName }}</div>
-                                    @endif
-                                    @if(!empty($member->bCategory->categoryName))
-                                        <div><i class="bi bi-tag"></i> {{ $member->bCategory->categoryName }}</div>
-                                    @endif
+                <div class="col-12 col-sm-6 col-lg-4">
+                    <div class="profile-card shadow-sm rounded border-0">
+                        {{-- <img src="https://picsum.photos/600/120" class="header-image" alt="Header Image"> --}}
+                        <img src="{{ asset('img/header_img.jpeg') }}" class="header-image" alt="Header Image">
+
+                        <div class="text-center p-3">
+                            <img src="{{ asset('ProfilePhoto/' . ($member->profilePhoto ? (file_exists(public_path($member->profilePhoto)) ? $member->profilePhoto : 'ProfilePhoto/profile.png') : 'img/profile.png')) }}" class="profile-img img-fluid rounded-circle mx-auto d-block" alt="Profile Image">
+                            <h5 class="member-name" style="color: #e76a35; font-weight: bold;">
+                                {{ $member->firstName ?? 'N/A' }} {{ $member->lastName ?? 'N/A' }}
+                            </h5>
+                            <p class="position">{{ $member->users->roles ?? 'Position' }}</p>
+                            <div class="info-section">
+                                @php
+                                    $isConnected = in_array($member->connection_status, ['Accepted', 'Connected']);
+                                @endphp
+                                <div class="icon-text" title="{{ $isConnected ? $member->user->email ?? 'N/A' : '****' }}">
+                                    <i class="bi bi-envelope-fill" style="color: #787c80;"></i>
+                                    <span>{{ $isConnected ? Str::limit($member->user->email ?? 'N/A', 15) : '****' }}</span>
                                 </div>
-                            @endif
-                            @php $keyWords = json_decode($member->keyWords ?? '[]', true); @endphp
-                            @if (is_array($keyWords) && count($keyWords) > 0)
-                                <div>
+                                <div class="icon-text" title="{{ $isConnected ? $member->user->contactNo ?? 'N/A' : '****' }}">
+                                    <i class="bi bi-telephone-fill" style="color: #787c80;"></i>
+                                    <span>{{ $isConnected ? Str::limit($member->user->contactNo ?? 'N/A', 10) : '****' }}</span>
+                                </div>
+                                <div class="icon-text">
+                                    <i class="bi bi-people-fill" style="color: #787c80;"></i>
+                                    <span>{{ $circle->circleName ?? 'N/A' }}</span>
+                                </div>
+                            </div>
+                            <div class="company-category-section">
+                                <div class="company-section">
+                                    <div class="logo-section">
+                                        @if (!empty($member->companyLogo))
+                                            <img src="{{ asset('CompanyLogo/' . $member->companyLogo) }}" class="company-logo" alt="Company Logo">
+                                        @endif
+                                        <div class="initials" style="{{ empty($member->companyLogo) ? 'display:flex;' : 'display:none;' }}">
+                                            {{ strtoupper(substr($member->companyName ?? 'C', 0, 1)) }}
+                                        </div>
+                                    </div>
+                                    <h2 title="{{ $member->companyName ?? 'Company Name' }}">
+                                        {{ $member->companyName ?? 'Company Name' }}
+                                    </h2>
+                                </div>
+                                <div class="divider"></div>
+                                <div class="category-section">
+                                    <div class="label">Category</div>
+                                    <h3>{{ $member->bCategory->categoryName ?? 'N/A' }}</h3>
+                                </div>
+                            </div>
+                            <div class="keywords-container row">
+                                @php
+                                    $keyWords = json_decode($member->keyWords ?? '[]', true);
+                                @endphp
+                                @if (is_array($keyWords) && count($keyWords) > 0)
                                     @foreach ($keyWords as $keyWord)
-                                        <span class="keyword-pill">{{ $keyWord }}</span>
+                                        <span class="keyword-pill col">{{ $keyWord }}</span>
                                     @endforeach
-                                </div>
-                            @endif
-                            <div class="mt-auto">
-                                <a href="{{ route('foundPersonDetails', $member->id) }}" class="fb-btn fb-btn-primary d-block w-100 text-decoration-none">View Profile</a>
-                                @if ($member->circleId == $authCircleId || $member->connection_status == 'Connected' || $member->connection_status == 'Accepted')
-                                    <button type="button" class="fb-btn fb-btn-secondary fb-btn-disabled w-100 mt-2">
-                                        <i class="bi bi-check-circle-fill me-2"></i> Connected
+                                @endif
+                            </div>
+
+                            <div class="induction-count-section">
+                                <div class="label" style="color: #1d3268; font-weight: bold;">Induction Count : {{ $member->inductionCount ?? '0' }}</div>
+                            </div>
+
+                        </div>
+                        <div class="bottom-actions">
+                            <div id="viewProfile" class="action-button left-action">
+                                <a href="{{ route('foundPersonDetails', $member->id) }}">
+                                    <i class="bi bi-person-lines-fill" style="color: #1d3268;"></i><span style="color: #1d3268;">View Profile</span>
+                                </a>
+                            </div>
+                            <div class="B-divider"></div>
+                            <div id="connectButton" class="action-button right-action btn w-100">
+
+                                @if ($member->circleId == $authCircleId || $member->connection_status == 'Connected')
+                                    <button type="button" class="btn btn-connect fw-bold shadow-none" style="color: #e76a35;">
+                                        Connected &nbsp;<i class="bi bi-check-circle-fill" style="color: #e76a35;"></i>
                                     </button>
-                                @elseif ($member->connection_status == 'Not Connected' || $member->connection_status == 'Rejected')
-                                    <form action="{{ route('connect') }}" class="connectForm d-inline-block w-100 mt-2" method="POST">
+                                @elseif ($member->connection_status == 'Not Connected')
+                                    <form action="{{ route('connect') }}" id="connectForm" method="POST" class="d-inline-block">
                                         @csrf
-                                        <input type="hidden" value="{{ $member->id }}" name="memberId">
-                                        <button type="submit" class="fb-btn fb-btn-secondary w-100">
-                                            <i class="bi bi-person-plus-fill me-2"></i> Connect
+                                        <input type="hidden" value="{{ $member->id }}" name="memberId" id="memberId">
+                                        <button type="submit" class="btn btn-connect shadow-none fw-bold" id="connectBtn" style="color: #1d3268;">
+                                            Connect &nbsp;<i class="bi bi-person-plus-fill fw-bold" style="color: #1d3268;"></i>
                                         </button>
                                     </form>
-                                @elseif ($member->connection_status == 'Pending')
-                                    <button type="button" class="fb-btn fb-btn-secondary fb-btn-disabled w-100 mt-2">
-                                        <i class="bi bi-clock me-2"></i> Requested
+                                @elseif ($member->connection_status == 'Accepted')
+                                    <button id="messageButton" class="btn btn-connect ms-2">
+                                        Message
                                     </button>
+                                @elseif ($member->connection_status == 'Pending')
+                                    <button type="button" class="btn btn-connect fw-bold shadow-none" style="color: #e76a35;">
+                                        Requested &nbsp;<i class="bi bi-clock" style="color: #e76a35;"></i>
+                                    </button>
+                                @elseif ($member->connection_status == 'Rejected')
+                                    <form action="{{ route('connect') }}" id="connectForm" method="POST" class="d-inline-block">
+                                        @csrf
+                                        <input type="hidden" value="{{ $member->id }}" name="memberId" id="memberId">
+                                        <button type="submit" class="btn btn-connect shadow-none fw-bold" id="connectBtn" style="color: #1d3268;">
+                                            Connect &nbsp;<i class="bi bi-person-plus-fill fw-bold" style="color: #1d3268;"></i>
+                                        </button>
+                                    </form>
+                                @else
                                 @endif
-                                <div class="mt-2 text-center"><i class="bi bi-people-fill me-1 color-blue"></i> <strong class="color-blue">Inductions:</strong> <span class="fw-bold color-blue">{{ $member->inductionCount ?? '0' }}</span></div>
+
                             </div>
                         </div>
                     </div>
@@ -584,25 +633,38 @@
 
     <script>
         $(document).ready(function() {
-            $(document).on('submit', '.connectForm', function(e) {
-                e.preventDefault();
+            $('#connectForm').on('submit', function(e) {
+                e.preventDefault(); // Prevent form from submitting normally
+
                 var form = $(this);
                 var actionUrl = form.attr('action');
-                var formData = form.serialize();
+                var formData = form.serialize(); // Serialize form data
+
                 $.ajax({
                     url: actionUrl,
                     method: 'POST',
                     data: formData,
                     success: function(response) {
                         if (response.status === 'success') {
-                            Swal.fire({ icon: 'success', title: 'Success', text: response.message, confirmButtonText: 'Okay' })
-                                .then(() => { location.reload(); });
-                        } else {
-                            Swal.fire({ icon: 'info', title: 'Info', text: response.message });
+                            // Show SweetAlert success message
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success',
+                                text: response.message,
+                                confirmButtonText: 'Okay'
+                            }).then(() => {
+                                // Refresh the page after the user clicks "Okay"
+                                location.reload();
+                            });
                         }
                     },
                     error: function() {
-                        Swal.fire({ icon: 'error', title: 'Oops!', text: 'Something went wrong. Please try again.' });
+                        // Handle any error here (e.g., show an error message)
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops!',
+                            text: 'Something went wrong. Please try again.',
+                        });
                     }
                 });
             });
