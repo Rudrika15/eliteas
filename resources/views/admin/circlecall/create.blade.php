@@ -156,10 +156,10 @@
                         <input type="file" class="form-control @error('meetingImage') is-invalid @enderror" id="meetingImage" name="meetingImage" accept="image/*" onchange="previewPhoto(event)" value="{{ old('meetingImage') }}">
                         <label for="meetingImage">Upload Meeting Image</label>
                         <span class="text-danger mt-1 d-block"> 
-                            File size:Max 2MB</span>
+                            File size:Max 20MB</span>
                         @error('meetingImage')
                             <div class="invalid-tooltip">
-                                The Maximum file size is 2MB
+                                The Maximum file size is 20 MB
                             </div>
                         @enderror
                     </div>
@@ -394,9 +394,6 @@
                     },
                     meetingPlace: {
                         required: "Please enter the meeting place."
-                    },
-                    date: {
-                        required: "Please select a date."
                     },
                     remarks: {
                         required: "Please enter remarks."

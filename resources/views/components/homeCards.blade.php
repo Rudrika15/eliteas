@@ -1,3 +1,4 @@
+
 <style>
     /* Leaderboard style  */
     .profile-card {
@@ -1654,13 +1655,16 @@
                                                     <button type="submit" class="fb-btn fb-btn-primary">Connect</button>
                                                 </form>
                                             @endif
-
+                                            
+                                            
                                             <!-- View Profile -->
                                             @if (isset($busGiver['member']->id))
                                                 <a href="{{ route('foundPersonDetails', $busGiver['member']->id) }}" class="text-decoration-none d-block w-100">
                                                     <button class="fb-btn fb-btn-secondary">View Profile</button>
                                                 </a>
                                             @endif
+
+
                                         </div>
                                     </div>
                                 </div>
@@ -1732,7 +1736,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div>  
                         @endif
                     </div>
                 </div>

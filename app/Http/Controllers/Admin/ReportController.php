@@ -986,4 +986,15 @@ class ReportController extends Controller
         $endDate = $request->input('endDate');
         return Excel::download(new \App\Exports\CircleMemberAggregateExport($circleId, $startDate, $endDate), 'circle_member_report.xlsx');
     }
+
+    public function renewalReport(Request $request)
+    {
+        $circleId = $request->input('circleId');
+        $startDate = $request->input('startDate');
+        $endDate = $request->input('endDate');
+
+        
+    }
+
+
 }

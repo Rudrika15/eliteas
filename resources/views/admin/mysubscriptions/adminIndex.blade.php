@@ -64,19 +64,16 @@
                                             $today = \Carbon\Carbon::now();
                                             $warningThreshold = $today->copy()->addDays(10);
                                         @endphp
-                                        <span
-                                            class="badge {{ $validityDate->isPast() ? 'bg-danger' : ($validityDate->between($today, $warningThreshold) ? 'bg-warning' : 'bg-success') }}">
+                                        <span class="badge {{ $validityDate->isPast() ? 'bg-danger' : ($validityDate->between($today, $warningThreshold) ? 'bg-warning' : 'bg-success') }}">
                                             {{ $subscriptionData->validity ? $validityDate->format('d-M-Y') : '-' }}
                                         </span>
                                     </td>
                                     {{-- <td>{{ $subscriptionData->status ?? '-' }}</td> --}}
                                     <td>
-                                        <form action="{{ route('renewMembership.mail', $subscriptionData->userId) }}"
-                                            method="POST" class="d-inline">
+                                        <form action="{{ route('renewMembership.mail', $subscriptionData->userId) }}" method="POST" class="d-inline">
                                             @csrf
-                                            <button type="submit" class="btn btn-bg-blue btn-sm btn-tooltip">
-                                                <i class="bi bi-envelope"></i>
-                                                <span class="btn-text">Send Mail</span>
+                                            <button type="submit" class="btn btn-bg-blue btn-sm">
+                                                Renew Subscription
                                             </button>
                                         </form>
                                     </td>

@@ -420,16 +420,16 @@ class PaymentController extends Controller
             }
 
             // Send an email to the user
-            Mail::to($user->email)->send(new MembershipRenewed($user));
+            // Mail::to($user->email)->send(new MembershipRenewed($user));
 
-            session()->flash('success', 'Membership renewal email sent!');
+            session()->flash('success', 'Membership renewed Successfully!');
             return redirect()->back();
         } catch (\Throwable $th) {
             // Log the error
             ErrorLogger::logError($th, request()->fullUrl());
 
             // Return an error response or redirect
-            return response()->json(['message' => 'Failed to send mail'], 500);
+            return response()->json(['message' => 'Failed to renew membership!'], 500);
         }
     }
 

@@ -533,6 +533,15 @@
             </a>
         </li>
     </ul>
+    
+    <ul id="report-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="{{ route('admin.report.circleMember') }}">
+                <i class="bi bi-file-earmark-text" style="color: #e76a35"></i>
+                <span class="text-blue">Circle Member Renewal Report</span>
+            </a>
+        </li>
+    </ul>
 
 </li>
 

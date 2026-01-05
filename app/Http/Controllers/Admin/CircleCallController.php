@@ -293,20 +293,20 @@ class CircleCallController extends Controller
         $circleId = $circleId ?: $request->input('circleId');
 
         if (!$circleId) {
-             return '';
+            return '';
         }
 
         $members = Member::where('circleId', $circleId)
-        ->where('status', 'Active') // members table
-        ->whereHas('user', function ($q) {
-        $q->where('status', 'Active') // users table
-          ->whereHas('roles', function ($q) {
-              $q->whereIn('name', ['Member', 'Trainer']);
-          });
-        })
-        ->with(['user', 'contact', 'city', 'bCategory', 'circle'])
-        ->where('userId', '!=', Auth::id())
-        ->get();
+            ->where('status', 'Active') // members table
+            ->whereHas('user', function ($q) {
+                $q->where('status', 'Active') // users table
+                    ->whereHas('roles', function ($q) {
+                        $q->whereIn('name', ['Member', 'Trainer']);
+                    });
+            })
+            ->with(['user', 'contact', 'city', 'bCategory', 'circle'])
+            ->where('userId', '!=', Auth::id())
+            ->get();
 
         $authId = Auth::id();
         $authCircleId = Member::where('userId', $authId)->value('circleId');
@@ -510,7 +510,7 @@ class CircleCallController extends Controller
             'meetingPlace' => 'required',
             // 'date' => 'required|date',
             'remarks' => 'required',
-            'meetingImage' => 'mimes:jpeg,jpg,png,gif|max:2048',
+            'meetingImage' => 'mimes:jpeg,jpg,png,gif|max:20480|required',
         ]);
 
         if ($validator->fails()) {
@@ -566,38 +566,12 @@ class CircleCallController extends Controller
             $circlecall->meetingPlace = $request->meetingPlace;
 
             if ($request->hasFile('meetingImage')) {
-
-                $image = $request->file('meetingImage');
-                $imageName = time() . '.' . $image->getClientOriginalExtension();
-                $path = $image->getPathname();
-
-                // Detect MIME type
-                $mime = mime_content_type($path);
-
-                if ($mime === 'image/jpeg' || $mime === 'image/jpg') {
-                    $img = imagecreatefromjpeg($path);
-                } elseif ($mime === 'image/png') {
-                    $img = imagecreatefrompng($path);
-                } elseif ($mime === 'image/gif') {
-                    $img = imagecreatefromgif($path);
+                $imageName = $this->processAndCompressImage($request->file('meetingImage'));
+                if ($imageName) {
+                    $circlecall->meetingImage = $imageName;
                 } else {
                     return back()->withErrors(['meetingImage' => 'Unsupported image format'])->withInput();
                 }
-
-                // Resize
-                $width = 800;
-                $height = (imagesy($img) / imagesx($img)) * $width;
-                $resizedImg = imagescale($img, $width, $height);
-
-                // Always save as JPG
-                imagejpeg($resizedImg, public_path('meetingImage/' . $imageName), 75);
-
-                // Check size
-                if (filesize(public_path('meetingImage/' . $imageName)) > 2 * 1024 * 1024) {
-                    return redirect()->back()->withErrors(['meetingImage' => 'Image could not be compressed below 2MB'])->withInput();
-                }
-
-                $circlecall->meetingImage = $imageName;
             }
 
 
@@ -797,7 +771,7 @@ class CircleCallController extends Controller
                 'meetingPlace' => 'required|regex:/^([a-zA-Z]+)(\s[a-zA-Z]+)*$/',
                 'date' => 'required',
                 'remarks' => 'required',
-                'meetingImage' => 'mimes:jpeg,jpg,png,gif|max:2048',
+                'meetingImage' => 'mimes:jpeg,jpg,png,gif|max:20480|required',
             ]);
 
             $id = $request->id;
@@ -805,9 +779,13 @@ class CircleCallController extends Controller
             $circlecall->meetingPersonId = $request->meetingPersonId;
             $circlecall->meetingPlace = $request->meetingPlace;
 
-            if ($request->meetingImage) {
-                $circlecall->meetingImage = time() . '.' . $request->meetingImage->extension();
-                $request->meetingImage->move(public_path('meetingImage'), $circlecall->meetingImage);
+            if ($request->hasFile('meetingImage')) {
+                $imageName = $this->processAndCompressImage($request->file('meetingImage'));
+                if ($imageName) {
+                    $circlecall->meetingImage = $imageName;
+                } else {
+                    return back()->withErrors(['meetingImage' => 'Unsupported image format'])->withInput();
+                }
             }
 
             $circlecall->remarks = $request->remarks;
@@ -890,5 +868,60 @@ class CircleCallController extends Controller
         } catch (\Exception $e) {
             return response()->json(['error' => 'Something went wrong'], 500);
         }
+    }
+
+    private function processAndCompressImage($image)
+    {
+        $imageName = time() . '.jpg';
+        $destinationPath = public_path('meetingImage/' . $imageName);
+
+        // Get image info
+        $imageInfo = getimagesize($image->getPathname());
+        $width = $imageInfo[0];
+        $height = $imageInfo[1];
+        $mime = $imageInfo['mime'];
+
+        switch ($mime) {
+            case 'image/jpeg':
+            case 'image/jpg':
+                $img = imagecreatefromjpeg($image->getPathname());
+                break;
+            case 'image/png':
+                $img = imagecreatefrompng($image->getPathname());
+                break;
+            case 'image/gif':
+                $img = imagecreatefromgif($image->getPathname());
+                break;
+            default:
+                return null;
+        }
+
+        // Resize if width > 1000
+        $targetWidth = 1000;
+        if ($width > $targetWidth) {
+            $newHeight = ($height / $width) * $targetWidth;
+            $img = imagescale($img, $targetWidth, $newHeight);
+        }
+
+        // Handle transparency for PNG/GIF -> JPG
+        $bg = imagecreatetruecolor(imagesx($img), imagesy($img));
+        $white = imagecolorallocate($bg, 255, 255, 255);
+        imagefill($bg, 0, 0, $white);
+        imagecopy($bg, $img, 0, 0, 0, 0, imagesx($img), imagesy($img));
+        imagedestroy($img);
+        $img = $bg;
+
+        // Compress loop
+        $quality = 80;
+        do {
+            imagejpeg($img, $destinationPath, $quality);
+            clearstatcache();
+            $size = filesize($destinationPath);
+            $quality -= 5;
+        } while ($size > 1024 * 1024 && $quality >= 20); // Aim for < 1MB
+
+        imagedestroy($img);
+
+        return $imageName;
     }
 }
