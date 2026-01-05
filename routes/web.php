@@ -409,7 +409,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('refGiver/edit/{id?}', [CircleMeetingMemberReferenceController::class, 'edit'])->name('refGiver.edit');
     Route::post('refGiver/update/{id?}', [CircleMeetingMemberReferenceController::class, 'update'])->name('refGiver.update');
     Route::get('refGiver/delete/{id?}', [CircleMeetingMemberReferenceController::class, 'delete'])->name('refGiver.delete');
-
+    
+    Route::get('addBusiness/amount/{id?}', [CircleMeetingMemberReferenceController::class, 'addBusinessAmount'])->name('addBusiness.amount');
 
     Route::get('refGiver/refByOther', [CircleMeetingMemberReferenceController::class, 'refByOther'])->name('refGiver.refByOther');
     Route::post('refGiver/refByOtherStore', [CircleMeetingMemberReferenceController::class, 'refByOtherStore'])->name('refGiver.refByOtherStore');

@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\CircleMeetingMembersBusiness;
 use App\Models\CircleMeetingMembersReference;
 use App\Models\City;
+use App\Models\BusinessAmount;
 
 class CircleMeetingMemberReferenceController extends Controller
 {
@@ -135,6 +136,8 @@ class CircleMeetingMemberReferenceController extends Controller
     // }
 
 
+
+
     public function index(Request $request)
     {
         try {
@@ -233,6 +236,18 @@ class CircleMeetingMemberReferenceController extends Controller
 
 
 
+    public function addBusinessAmount(Request $request, $id)
+    {
+        try {
+            $busGiver = CircleMeetingMembersBusiness::findOrFail($id);
+            $paymentHistory = BusinessAmount::where('circleMeetingMemberBusinessId', $id)->get();
+            return view('admin.circlebusiness.edit', compact('busGiver', 'paymentHistory'));
+        } catch (\Throwable $th) {
+            ErrorLogger::logError($th, $request->fullUrl());
+            return view('servererror');
+        }
+    }
+
 
 
     //For show single data
@@ -315,15 +330,23 @@ class CircleMeetingMemberReferenceController extends Controller
 
     public function store(Request $request)
     {
-        $this->validate($request, [
-            // 'dateTime' => 'required',
-            // 'totalMeeting' => 'required',
-            // 'refGiven' => 'required',
-            // 'refTaken' => 'required',
-            // 'busGiven' => 'required',
-            // 'busTaken' => 'required',
-            // 'hotelName' => 'required',
-        ]);
+
+        // $this->validate($request, [
+        //     // 'dateTime' => 'required',
+        //     // 'totalMeeting' => 'required',
+        //     // 'refGiven' => 'required',
+        //     // 'refTaken' => 'required',
+        //     // 'busGiven' => 'required',
+        //     // 'busTaken' => 'required',
+        //     // 'hotelName' => 'required',
+        // ]);
+        
+        if ($request->group === 'external') {
+            $this->validate($request, [
+                'contactNameExternal' => 'required|string',
+                'contactNo' => 'required',
+            ]);
+        }
 
 
         // return $request;
@@ -369,15 +392,12 @@ class CircleMeetingMemberReferenceController extends Controller
 
     public function refByOtherStore(Request $request)
     {
-        $this->validate($request, [
-            // 'dateTime' => 'required',
-            // 'totalMeeting' => 'required',
-            // 'refGiven' => 'required',
-            // 'refTaken' => 'required',
-            // 'busGiven' => 'required',
-            // 'busTaken' => 'required',
-            // 'hotelName' => 'required',
-        ]);
+        if ($request->group === 'external') {
+            $this->validate($request, [
+                'contactNameExternal' => 'required|string',
+                'contactNo' => 'required',
+            ]);
+        }
 
 
         // return $request;

@@ -22,14 +22,12 @@
             <hr class="mb-5">
 
             <!-- Floating Labels Form -->
-            <form class="m-3 needs-validation" id="meetingMemberRefForm" enctype="multipart/form-data" method="post"
-                action="{{ route('refGiver.store') }}" novalidate>
+            <form class="m-3 needs-validation" id="meetingMemberRefForm" enctype="multipart/form-data" method="post" action="{{ route('refGiver.store') }}" novalidate>
                 @csrf
                 <div class="row">
                     <div class="col-sm-6">
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="group" id="internal" value="internal"
-                                checked="">
+                            <input class="form-check-input" type="radio" name="group" id="internal" value="internal" checked="">
                             <label class="form-check-label" for="internal">
                                 Internal
                             </label>
@@ -57,8 +55,7 @@
                     <div class="col-md-6">
 
                         <div class="form-floating">
-                            <select class="form-select @error('circleId') is-invalid @enderror" id="circleId"
-                                name="circleId" required>
+                            <select class="form-select @error('circleId') is-invalid @enderror" id="circleId" name="circleId" required>
                                 <option value="" selected disabled>Select Circle</option>
                                 <option value="{{ old('circleId', auth()->user()->member->circleId) }}" selected>
                                     {{ $circles->where('id', old('circleId', auth()->user()->member->circleId))->first()->circleName ?? '' }}
@@ -79,8 +76,7 @@
                     <!-- Member Dropdown -->
                     <div class="col-md-6">
                         <div class="form-floating">
-                            <select class="form-select @error('memberId') is-invalid @enderror" id="memberId"
-                                name="memberId" required>
+                            <select class="form-select @error('memberId') is-invalid @enderror" id="memberId" name="memberId" required>
                                 <option value="" disabled>Select Member</option>
                                 <!-- Options will be populated dynamically -->
                             </select>
@@ -99,8 +95,7 @@
                 <div class="form-floating">
 
                     <!-- Searchable input field -->
-                    <input type="text" class="form-control" id="meetingPersonName" name="memberName"
-                        placeholder="Select Member" readonly disabled>
+                    <input type="text" class="form-control" id="meetingPersonName" name="memberName" placeholder="Select Member" readonly disabled>
                     <label for="memberName">Member Name</label>
                     @error('memberId')
                         <div class="invalid-tooltip">
@@ -138,8 +133,7 @@
                 </div> --}}
                 <div class="mt-3">
                     <div class="form-floating ">
-                        <input type="text" class="form-control @error('description') is-invalid @enderror"
-                            id="description" name="description" placeholder="description">
+                        <input type="text" class="form-control @error('description') is-invalid @enderror" id="description" name="description" placeholder="description">
                         <label for="description">Description</label>
                         @error('description')
                             <div class="invalid-tooltip">
@@ -185,8 +179,7 @@
 
 
                     <div class="form-floating mt-3">
-                        <input type="text" class="form-control @error('contactName') is-invalid @enderror" id=""
-                            name="contactNameExternal" placeholder="Contact Name">
+                        <input type="text" class="form-control @error('contactName') is-invalid @enderror" id="" name="contactNameExternal" placeholder="Contact Name">
                         <label for="contactName">Contact Person Name</label>
                         @error('contactName')
                             <div class="invalid-tooltip">
@@ -197,10 +190,7 @@
 
                     <div class="">
                         <div class="form-floating mt-3">
-                            <input type="text"
-                                class="form-control @error('contactNo') is-invalid @enderror selectedMemberContact"
-                                id="contactPersonContact" name="contactNo" placeholder="Contact No" maxlength="10"
-                                oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
+                            <input type="text" class="form-control @error('contactNo') is-invalid @enderror selectedMemberContact" id="contactPersonContact" name="contactNo" placeholder="Contact No" maxlength="10" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
                             <label for="contactNo">Contact No</label>
                             @error('contactNo')
                                 <div class="invalid-tooltip">
@@ -211,8 +201,7 @@
                     </div>
                     <div class="">
                         <div class="form-floating mt-3">
-                            <input type="text" class="form-control @error('email') is-invalid @enderror"
-                                id="contactPersonEmail" name="email" placeholder="email">
+                            <input type="text" class="form-control @error('email') is-invalid @enderror" id="contactPersonEmail" name="email" placeholder="email">
                             <label for="email">Email</label>
                             @error('email')
                                 <div class="invalid-tooltip">
@@ -234,8 +223,7 @@
                 <div class="mt-3  ">
                     <label for="scale">Scale [1-5]</label>
                     <div class="form-floating mt-3">
-                        <input type="range" class="form-range  @error('scale') is-invalid @enderror" id="scale"
-                            name="scale" placeholder="scale" required min="1" max="5" step="1">
+                        <input type="range" class="form-range  @error('scale') is-invalid @enderror" id="scale" name="scale" placeholder="scale" required min="1" max="5" step="1">
                         <div class="d-flex justify-content-between align-items-center mt-2">
                             <span class="badge btn-bg-blue rounded-pill">1</span>
                             <span class="badge btn-bg-blue rounded-pill">2</span>
@@ -328,13 +316,22 @@
                 if (inputValue === "internal") {
                     $("#memberListDropdown").show();
                     $("#memberListInput").hide();
-                    // $('.contactName').val('');
-                    // $('.contactEmail').val('');
+                    $('input[name="contactNameExternal"]').prop('required', false);
+                    $('input[name="contactNo"]').prop('required', false);
                 } else if (inputValue === "external") {
                     $("#memberListDropdown").hide();
                     $("#memberListInput").show();
+                    $('input[name="contactNameExternal"]').prop('required', true);
+                    $('input[name="contactNo"]').prop('required', true);
                 }
             });
+            if ($('#external').is(':checked')) {
+                $('input[name="contactNameExternal"]').prop('required', true);
+                $('input[name="contactNo"]').prop('required', true);
+            } else {
+                $('input[name="contactNameExternal"]').prop('required', false);
+                $('input[name="contactNo"]').prop('required', false);
+            }
         });
     </script>
 

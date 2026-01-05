@@ -138,7 +138,6 @@
         {{-- <a href="{{ route('circlecall.create') }}" class="float-end btn btn-sm btn-bg-orange">
         <i class="bi bi-plus-circle"></i> Create IBM
     </a> --}}
-
         <button type="button" class="float-end btn btn-bg-orange" data-bs-toggle="modal" data-bs-target="#createIBMModal">
             Create Reference
         </button>
@@ -158,8 +157,7 @@
                             {{-- <div class="dropdown position-absolute top-0 end-0 m-2">
                                 <a href="#" class="text-black" data-bs-toggle="dropdown"><i class="bi bi-three-dots-vertical"></i></a>
                                 <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item color-blue" href="{{ route('circlecall.edit', $busGiverData->id) }}"><i class="bi bi-pencil-square me-2"></i>Edit</a></li>
-                                    <li><a class="dropdown-item text-danger" onclick="deleteRow('{{ route('circlecall.delete', $busGiverData->id) }}')"><i class="bi bi-trash me-2"></i>Delete</a></li>
+                                    <li><a class="dropdown-item color-blue" href="{{ route('addBusiness.amount', $busGiverData->id) }}"><i class="bi bi-pencil-square me-2"></i>Add Amount</a></li>
                                 </ul>
                             </div> --}}
                         </div>
@@ -198,6 +196,10 @@
             {{-- <a href="{{ route('refGiver.create') }}" class="btn btn-bg-orange btn-sm mt-3 btn-tooltip">
                 <i class="bi bi-plus-circle"></i>
                 <span class="btn-text">Add Reference Details</span>
+            </a> --}}
+            {{-- <a href="{{ route('refGiver.refByOther') }}" class="btn btn-bg-orange btn-sm mt-3 btn-tooltip">
+                <i class="bi bi-plus-circle"></i>
+                <span class="btn-text">Add Business Slip </span>
             </a> --}}
         </div>
         <div class="row mt-4">
@@ -478,12 +480,18 @@
             const internalRadio = document.getElementById('internal');
             const externalRadio = document.getElementById('external');
             const externalFields = document.getElementById('memberListInput');
+            const contactNameExternal = document.querySelector('input[name="contactNameExternal"]');
+            const contactNo = document.querySelector('input[name="contactNo"]');
 
             function toggleFields() {
                 if (externalRadio.checked) {
                     externalFields.style.display = 'block';
+                    if (contactNameExternal) contactNameExternal.required = true;
+                    if (contactNo) contactNo.required = true;
                 } else {
                     externalFields.style.display = 'none';
+                    if (contactNameExternal) contactNameExternal.required = false;
+                    if (contactNo) contactNo.required = false;
                 }
             }
 
@@ -595,13 +603,22 @@
                 if (inputValue === "internal") {
                     $("#memberListDropdown").show();
                     $("#memberListInput").hide();
-                    // $('.contactName').val('');
-                    // $('.contactEmail').val('');
+                    $('input[name="contactNameExternal"]').prop('required', false);
+                    $('input[name="contactNo"]').prop('required', false);
                 } else if (inputValue === "external") {
                     $("#memberListDropdown").hide();
                     $("#memberListInput").show();
+                    $('input[name="contactNameExternal"]').prop('required', true);
+                    $('input[name="contactNo"]').prop('required', true);
                 }
             });
+            if ($('#external').is(':checked')) {
+                $('input[name="contactNameExternal"]').prop('required', true);
+                $('input[name="contactNo"]').prop('required', true);
+            } else {
+                $('input[name="contactNameExternal"]').prop('required', false);
+                $('input[name="contactNo"]').prop('required', false);
+            }
         });
     </script>
 
