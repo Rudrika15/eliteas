@@ -143,133 +143,110 @@
         </button>
     </div>
 
-    <div id="tabByMe" class="tab-content active" style="display: block;">
-        <div class="row">
-            @foreach ($busGiver as $busGiverData)
-                <div class="col-md-6 col-lg-4 col-xl-3 mb-4">
-                    <div class="card shadow rounded-4 overflow-hidden">
-                        <div class="position-relative">
-                            {{-- <img src="https://picsum.photos/700/200?random={{ rand(1, 1000) }}" class="card-img-top" alt="cover"> --}}
-                            <img src="{{ asset('img/header_img.jpeg') }}" class="card-img-top" alt="cover">
-                            <div class="position-absolute top-100 start-50 translate-middle">
-                                <img src="{{ optional($busGiverData->businessGiverMember)->profilePhoto ? asset('ProfilePhoto/' . $busGiverData->businessGiverMember->profilePhoto) : asset('ProfilePhoto/profile.png') }}" class="rounded-circle border border-3 border-white" width="110" height="110" alt="Profile">
-                            </div>
-                            {{-- <div class="dropdown position-absolute top-0 end-0 m-2">
-                                <a href="#" class="text-black" data-bs-toggle="dropdown"><i class="bi bi-three-dots-vertical"></i></a>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item color-blue" href="{{ route('addBusiness.amount', $busGiverData->id) }}"><i class="bi bi-pencil-square me-2"></i>Add Amount</a></li>
-                                </ul>
-                            </div> --}}
-                        </div>
-                        <div class="card-body text-center pt-5 mt-3">
-                            {{-- Meeting Person Name --}}
-                            <h5 class="card-title mb-0">
-                                {{ $busGiverData->businessGiver->firstName ?? '-' }} {{ $busGiverData->businessGiver->lastName ?? '-' }}
-                            </h5>
-
-                            {{-- Circle Name and Date --}}
-                            <div class="text-muted small mb-2">
-                                <i class="bi bi-person-circle me-1 color-blue"></i> <span class="color-blue"> {{ $busGiverData->businessGiverMember->circle->circleName ?? '-' }} </span>
-                                <span class="me-4"></span>
-                                <i class="bi bi-calendar3 me-1 color-blue"></i> <span class="color-blue">{{ $busGiverData->date ? date('d-m-Y', strtotime($busGiverData->date)) : '-' }} </span>
-                            </div>
-
-                            {{-- Amount --}}
-                            <div class="text-muted small mb-2">
-                                <strong class="color-blue"> ₹ {{ $busGiverData->amount ?? '-' }} </strong>
-                            </div>
-
-                            {{-- Remarks --}}
-                            <div class="card-remark text-muted small mb-2">
-                                <span class="color-blue">{{ Str::limit($busGiverData->remarks ?? '', 25) }}{{ strlen($busGiverData->remarks ?? '') > 25 ? '...' : '' }} </span>
-                            </div>
-                        </div>
-                    </div>
+    <div class="container">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4 class="card-title">Reference</h4>
                 </div>
-            @endforeach
-        </div>
-    </div>
+                <div id="tabByMe" class="tab-content active">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Received From</th>
+                                    <th>Circle</th>
+                                    <th>Amount</th>
+                                    <th>Date</th>
+                                    <th>Remarks</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($busGiver as $busGiverData)
+                                    <tr>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ optional($busGiverData->businessGiver)->firstName ?? '-' }} {{ optional($busGiverData->businessGiver)->lastName ?? '-' }}</td>
+                                        <td>{{ optional($busGiverData->businessGiverMember->circle)->circleName ?? '-' }}</td>
+                                        <td>{{ $busGiverData->amount ? '₹ ' . $busGiverData->amount : '-' }}</td>
+                                        <td>{{ $busGiverData->date ? \Carbon\Carbon::parse($busGiverData->date)->format('d-m-Y') : '-' }}</td>
+                                        <td>{{ $busGiverData->remarks ?? '-' }}</td>
+                                        <td>
+                                            <a href="{{ route('addBusiness.amount', $busGiverData->id) }}" class="btn btn-sm btn-bg-blue">
+                                                <i class="bi bi-pencil"></i>
+                                                Add Amount
+                                            </a>
+                                        </td>
 
-
-    <div id="tabByOther" class="tab-content active" style="display: none;">
-        <div class="d-flex justify-content-end align-items-center mb-2">
-            {{-- <a href="{{ route('refGiver.create') }}" class="btn btn-bg-orange btn-sm mt-3 btn-tooltip">
-                <i class="bi bi-plus-circle"></i>
-                <span class="btn-text">Add Reference Details</span>
-            </a> --}}
-            {{-- <a href="{{ route('refGiver.refByOther') }}" class="btn btn-bg-orange btn-sm mt-3 btn-tooltip">
-                <i class="bi bi-plus-circle"></i>
-                <span class="btn-text">Add Business Slip </span>
-            </a> --}}
-        </div>
-        <div class="row mt-4">
-            @foreach ($refGiver as $refGiverData)
-                <div class="col-md-6 col-lg-4 col-xl-3 mb-4">
-                    <div class="card shadow rounded-4 overflow-hidden">
-                        <div class="position-relative">
-                            <img src="{{ asset('img/header_img.jpeg') }}" class="card-img-top" alt="cover">
-                            <div class="position-absolute top-100 start-50 translate-middle">
-                                <img src="{{ optional($refGiverData->members)->profilePhoto ? asset('ProfilePhoto/' . $refGiverData->members->profilePhoto) : asset('ProfilePhoto/profile.png') }}" class="rounded-circle border border-3 border-white" width="110" height="110" alt="Profile">
-                            </div>
-                            <div class="dropdown position-absolute top-0 end-0 m-2">
-                                <a href="#" class="text-black" data-bs-toggle="dropdown"><i class="bi bi-three-dots-vertical"></i></a>
-                                <ul class="dropdown-menu">
-                                    <li>
-                                        <a class="dropdown-item color-blue" href="{{ route('refGiver.edit', $refGiverData->id) }}">
-                                            <i class="bi bi-pencil-square me-2"></i>Edit
-                                        </a>
-                                    </li>
-
-                                    <li>
-                                        <a href="{{ route('refGiver.delete', $refGiverData->id) }}" class="dropdown-item text-danger deleteRefGiver" data-id="{{ $refGiverData->id }}">
-                                            <i class="bi bi-trash me-2"></i>Delete
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="card-body text-center pt-5 mt-3">
-                            {{-- Referred Person Name --}}
-                            <h5 class="card-title mb-0">{{ $refGiverData->members->firstName ?? '-' }} {{ $refGiverData->members->lastName ?? '-' }} </h5>
-
-                            {{-- Member Name & Date --}}
-                            <div class="text-muted small mb-2">
-                                <i class="bi bi-person-circle me-1 color-blue"></i>
-                                <span class="color-blue">
-                                    {{ $refGiverData->members->circle->circleName ?? '-' }}
-                                </span>
-                                <span class="me-4"></span>
-                                <i class="bi bi-calendar3 me-1 color-blue"></i>
-                                <span class="color-blue">
-                                    {{ \Carbon\Carbon::parse($refGiverData->created_at)->format('d-m-Y') ?? '-' }}
-                                </span>
-                            </div>
-
-                            {{-- Contact & Email
-                                    <div class="text-muted small mb-2">
-                                        <div><strong class="color-blue">📞 {{ $refGiverData->contactNo ?? ($refGiverData->members->user->contactNo ?? '-') }}</strong></div>
-                                        <div><strong class="color-blue">✉️ {{ $refGiverData->email ?? ($refGiverData->members->user->email ?? '-') }}</strong></div>
-                                    </div> --}}
-
-                            {{-- Scale & Status --}}
-                            <div class="text-muted small mb-2">
-                                @for ($i = 1; $i <= 5; $i++)
-                                    <i class="bi bi-star{{ $refGiverData->scale >= $i ? '-fill' : '' }} text-warning"></i>
-                                @endfor
-                            </div>
-                        </div>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="6" class="text-center text-muted">No records found</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                            {{ $busGiver->links() }}
+                        </table>
                     </div>
                 </div>
 
 
-                {{-- @include('admin.refGiver.edit_form', ['refGiver' => $refGiver]) if you're using partials --}}
-            @endforeach
+                <div id="tabByOther" class="tab-content active" style="display: none;">
+                    {{-- <div class="container">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h4 class="card-title">Reference</h4>
+                                    <a href="{{ route('refGiver.refByOther') }}" class="btn btn-bg-orange btn-sm">
+                                        <i class="bi bi-plus-circle"></i>
+                                        <span class="btn-text">Add Business Slip</span>
+                                    </a>
+                                </div> --}}
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Given To</th>
+                                    <th>Circle</th>
+                                    <th>Date</th>
+                                    <th>Scale</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($refGiver as $refGiverData)
+                                    <tr>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ optional($refGiverData->members)->firstName ?? '-' }} {{ optional($refGiverData->members)->lastName ?? '-' }}</td>
+                                        <td>{{ optional($refGiverData->members->circle)->circleName ?? '-' }}</td>
+                                        <td>{{ $refGiverData->created_at ? \Carbon\Carbon::parse($refGiverData->created_at)->format('d-m-Y') : '-' }}</td>
+                                        <td>
+                                            @for ($i = 1; $i <= 5; $i++)
+                                                <i class="bi bi-star{{ $refGiverData->scale >= $i ? '-fill' : '' }} text-warning"></i>
+                                            @endfor
+                                        </td>
+                                        <td>
+                                            <a href="{{ route('refGiver.edit', $refGiverData->id) }}" class="btn btn-sm btn-bg-blue">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="5" class="text-center text-muted">No records found</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="d-flex justify-content-end custom-pagination">
+                        {!! $refGiver->links() !!}
+                    </div>
+                </div>
+            </div>
         </div>
-
-        {{-- Pagination --}}
-        {{-- <div class="d-flex justify-content-end custom-pagination">
-            {!! $refGiver->links() !!}
-        </div> --}}
     </div>
 
     <!-- Modal -->

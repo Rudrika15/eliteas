@@ -861,7 +861,7 @@ class ConnectionController extends Controller
             // My Connections
             $connections = Connection::where(function ($query) use ($userId) {
                 $query->where('userId', $userId)->orWhere('memberId', $userId);
-            })
+            })->where('recordStatus', 'Active')
                 ->where('status', 'Accepted')
                 ->with([
                     'user:id,firstName,lastName,email,contactNo',
@@ -878,6 +878,7 @@ class ConnectionController extends Controller
 
             // Sent Requests
             $sentRequests = Connection::where('userId', $userId)
+                ->where('recordStatus', 'Active')
                 ->where('status', 'Pending')
                 ->with([
                     'receiver' => function ($query) {
@@ -891,6 +892,7 @@ class ConnectionController extends Controller
 
             // Received Requests
             $receivedRequests = Connection::where('memberId', $userId)
+                ->where('recordStatus', 'Active')
                 ->where('status', 'Pending')
                 ->with([
                     'user' => function ($query) {

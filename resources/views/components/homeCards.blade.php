@@ -1,4 +1,3 @@
-
 <style>
     /* Leaderboard style  */
     .profile-card {
@@ -1655,8 +1654,8 @@
                                                     <button type="submit" class="fb-btn fb-btn-primary">Connect</button>
                                                 </form>
                                             @endif
-                                            
-                                            
+
+
                                             <!-- View Profile -->
                                             @if (isset($busGiver['member']->id))
                                                 <a href="{{ route('foundPersonDetails', $busGiver['member']->id) }}" class="text-decoration-none d-block w-100">
@@ -1736,7 +1735,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>  
+                            </div>
                         @endif
                     </div>
                 </div>
@@ -1902,7 +1901,11 @@
                             <i class="bi bi-clock me-2"></i> 2 Hours
                         </div> --}}
                             <div class="d-flex align-items-center mt-2">
-                                <i class="bi bi-people-fill me-2 text-muted"></i> <span class="fw-bold text-muted">{{ $meeting->circle->members->count() }}</span>
+                                {{-- <i class="bi bi-people-fill me-2 text-muted"></i> <span class="fw-bold text-muted">{{ $meeting->circle->members->count() }}</span> --}}
+                                <i class="bi bi-people-fill me-2 text-muted"></i>
+                                <span class="fw-bold text-muted">
+                                    {{ $meeting->circle->members->where('status', 'Active')->count() }}
+                                </span>
                             </div>
                             <div class="d-flex align-items-center">
                                 <i class="bi bi-geo-alt-fill me-2 text-muted"></i> <span class="fw-bold text-muted">{{ $meeting->circle->city->cityName }}</span>

@@ -198,73 +198,94 @@
         </div>
     </div>
 
+    <div class="container">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4 class="card-title">Business Slips</h4>
+                </div>
 
-    <!-- Tab Content: Business Slip Received -->
-    <div class="tab-content active mt-3" id="tabReceived">
-        <div class="row">
-            @foreach ($busGiver as $busGiverData)
-                <div class="col-md-6 col-lg-4 col-xl-3 mb-4">
-                    <div class="card shadow rounded-4 overflow-hidden">
-                        <div class="position-relative">
-                            {{-- <img src="https://picsum.photos/700/200?random={{ rand(1, 1000) }}" class="card-img-top" alt="cover"> --}}
-                            <img src="{{ asset('img/header_img.jpeg') }}" class="card-img-top" alt="cover">
-                            <div class="position-absolute top-100 start-50 translate-middle">
-                                <img src="{{ optional($busGiverData->businessGiver)->profilePhoto ? asset('ProfilePhoto/' . $busGiverData->businessGiver->profilePhoto) : asset('ProfilePhoto/profile.png') }}" class="rounded-circle border border-3 border-white" width="110" height="110" alt="Profile">
-                            </div>
-                        </div>
-                        <div class="card-body text-center pt-5 mt-3">
-                            <h5 class="card-title mb-0">
-                                {{ optional($busGiverData->businessGiver)->firstName ?? '-' }} {{ optional($busGiverData->businessGiver)->lastName ?? '-' }}
-                            </h5>
-                            <div class="text-muted small mb-2">
-                                <i class="bi bi-calendar3 me-1"></i> {{ \Carbon\Carbon::parse($busGiverData->date)->format('d-m-Y') ?? '-' }}
-                            </div>
-                            <div class="text-muted small mb-2">
-                                <i class="bi bi-cash-coin me-1"></i> ₹ {{ $busGiverData->amount ?? '-' }}
-                            </div>
-                        </div>
+                <!-- Tab Content: Business Slip Received -->
+                <div class="tab-content active" id="tabReceived">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Giver Name</th>
+                                    {{-- <th>Profile</th> --}}
+                                    <th>Date</th>
+                                    <th>Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($busGiver as $busGiverData)
+                                    <tr>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ optional($busGiverData->businessGiver)->firstName ?? '-' }} {{ optional($busGiverData->businessGiver)->lastName ?? '-' }}</td>
+                                        {{-- <td>
+                                            <img src="{{ optional($busGiverData->businessGiver)->profilePhoto ? asset('ProfilePhoto/' . $busGiverData->businessGiver->profilePhoto) : asset('ProfilePhoto/profile.png') }}" class="rounded-circle" width="50" height="50" alt="Profile">
+                                        </td> --}}
+                                        <td>{{ \Carbon\Carbon::parse($busGiverData->date)->format('d-m-Y') ?? '-' }}</td>
+                                        <td>₹ {{ $busGiverData->amount ?? '-' }}</td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="5" class="text-center text-muted">No records found</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="d-flex justify-content-end mt-3 custom-pagination">
+                        {!! $busGiver->links() !!}
                     </div>
                 </div>
-            @endforeach
-        </div>
 
-        <div class="d-flex justify-content-end mt-3 custom-pagination">
-            {!! $busGiver->links() !!}
-        </div>
-    </div>
-
-    <!-- Tab Content: Business Slip Given -->
-    <div id="tabGiven" class="tab-content mt-3" style="display: none;">
-        <div class="row">
-            @foreach ($busGiveByOther as $busGiveByOtherData)
-                <div class="col-md-6 col-lg-4 col-xl-3 mb-4">
-                    <div class="card shadow rounded-4 overflow-hidden">
-                        <div class="position-relative">
-                            {{-- <img src="https://picsum.photos/700/200?random={{ rand(1, 1000) }}" class="card-img-top" alt="cover"> --}}
-                            <img src="{{ asset('img/header_img.jpeg') }}" class="card-img-top" alt="cover">
-                            <div class="position-absolute top-100 start-50 translate-middle">
-                                <img src="{{ optional($busGiveByOtherData->loginMember)->profilePhoto ? asset('ProfilePhoto/' . $busGiveByOtherData->loginMember->profilePhoto) : asset('ProfilePhoto/profile.png') }}" class="rounded-circle border border-3 border-white" width="110" height="110" alt="Profile">
-                            </div>
-                        </div>
-
-                        <div class="card-body text-center pt-5 mt-3">
-                            <h5 class="card-title mb-0">
-                                {{ optional($busGiveByOtherData->loginMember)->firstName ?? '-' }} {{ optional($busGiveByOtherData->loginMember)->lastName ?? '-' }}
-                            </h5>
-                            <div class="text-muted small mb-2">
-                                <i class="bi bi-calendar3 me-1"></i> {{ \Carbon\Carbon::parse($busGiveByOtherData->date)->format('d-m-Y') ?? '-' }}
-                            </div>
-                            <div class="text-muted small mb-2">
-                                <i class="bi bi-cash-coin me-1"></i> ₹ {{ $busGiveByOtherData->amount ?? '-' }}
-                            </div>
-                        </div>
+                <!-- Tab Content: Business Slip Given -->
+                <div id="tabGiven" class="tab-content" style="display: none;">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Member Name</th>
+                                    {{-- <th>Profile</th> --}}
+                                    <th>Date</th>
+                                    <th>Amount</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($busGiveByOther as $busGiveByOtherData)
+                                    <tr>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ optional($busGiveByOtherData->loginMember)->firstName ?? '-' }} {{ optional($busGiveByOtherData->loginMember)->lastName ?? '-' }}</td>
+                                        {{-- <td>
+                                            <img src="{{ optional($busGiveByOtherData->loginMember)->profilePhoto ? asset('ProfilePhoto/' . $busGiveByOtherData->loginMember->profilePhoto) : asset('ProfilePhoto/profile.png') }}" class="rounded-circle" width="50" height="50" alt="Profile">
+                                        </td> --}}
+                                        <td>{{ \Carbon\Carbon::parse($busGiveByOtherData->date)->format('d-m-Y') ?? '-' }}</td>
+                                        <td>₹ {{ $busGiveByOtherData->amount ?? '-' }}</td>
+                                        <td>
+                                            <a href="{{ route('refGiver.edit', $busGiveByOtherData->id) }}" class="btn btn-sm btn-bg-blue">
+                                                <i class="bi bi-pencil"></i>
+                                                Edit
+                                            </a>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="5" class="text-center text-muted">No records found</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="d-flex justify-content-end mt-3 custom-pagination">
+                        {!! $busGiveByOther->links() !!}
                     </div>
                 </div>
-            @endforeach
-        </div>
-
-        <div class="d-flex justify-content-end mt-3 custom-pagination">
-            {!! $busGiveByOther->links() !!}
+            </div>
         </div>
     </div>
 

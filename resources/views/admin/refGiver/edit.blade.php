@@ -159,7 +159,7 @@
                 <div class="form-floating">
 
                     <!-- Searchable input field -->
-                    <input type="text" class="form-control" id="meetingPersonName" name="memberName" placeholder="Select Member" value="{{ $refGiver->members->firstName . ' ' . $refGiver->members->lastName ?? '-' }}" readonly disabled>
+                    <input type="text" class="form-control" id="meetingPersonName" name="memberName" placeholder="Select Member" value="{{ $refGiver->members->firstName . ' ' . $refGiver->members->lastName ?? '-' }}" readonly>
                     <label for="memberName">Member Name</label>
                     @error('memberId')
                         <div class="invalid-tooltip">
@@ -463,19 +463,16 @@
                 if (memberId) {
                     $('#meetingPersonId').val(userId); // Set the correct userId
                     $('#meetingPersonName').val(firstName + ' ' + lastName); // Set the name
-                } else {
-                    $('#meetingPersonId').val(''); // Clear the fields if no member is selected
-                    $('#meetingPersonName').val('');
                 }
             });
 
             // On page load, set the circle and member dropdown values if they exist
-            var defaultCircleId = '{{ old('circleId', $refGiver->circleId) }}'; // Get the default circle ID
-            var defaultMemberId = '{{ old('memberId', $refGiver->members->id ?? '') }}'; // Get the default member ID (Member.id)
-            
-            // If there's a default circle, load members for that circle and set the default member
-            if (defaultCircleId) {
-                loadMembers(defaultCircleId, defaultMemberId); // Load members for the default circle and pre-select the default member
+            if ($('#circleId').length) {
+                var defaultCircleId = '{{ old('circleId', $refGiver->circleId) }}';
+                var defaultMemberId = '{{ old('memberId', $refGiver->members->id ?? '') }}';
+                if (defaultCircleId) {
+                    loadMembers(defaultCircleId, defaultMemberId);
+                }
             }
 
             // Handle circle dropdown change event
@@ -506,7 +503,8 @@
                         url: '/get-members-by-city/' + cityId,
                         method: 'GET',
                         data: {
-                            cityId: cityId },
+                            cityId: cityId
+                        },
                         success: function(response) {
                             // Controller returns a plain array of members. Support both formats.
                             var members = Array.isArray(response) ? response : (response.members || []);
@@ -542,9 +540,11 @@
             }
 
             // Load members on page load: use currently selected city in dropdown, fallback to authenticated member city
-            var defaultCityId = $('#city').val() || '{{ auth()->user()->member->cityId ?? '' }}';
-            if (defaultCityId) {
-                loadMembersByCity(defaultCityId);
+            if ($('#city').length) {
+                var defaultCityId = $('#city').val() || '{{ auth()->user()->member->cityId ?? '' }}';
+                if (defaultCityId) {
+                    loadMembersByCity(defaultCityId);
+                }
             }
 
             // Handle city dropdown change event
@@ -564,9 +564,6 @@
                 if (memberId) {
                     $('#meetingPersonId').val(userId);
                     $('#meetingPersonName').val((firstName || '') + ' ' + (lastName || ''));
-                } else {
-                    $('#meetingPersonId').val('');
-                    $('#meetingPersonName').val('');
                 }
 
                 console.log('Selected Member ID:', memberId);

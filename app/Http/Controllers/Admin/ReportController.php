@@ -489,6 +489,59 @@ class ReportController extends Controller
 
         return view('admin.report.joining', compact('members', 'circles'));
     }
+    
+    
+    public function getJoiningMembersRenewalDate(Request $request)
+    {
+        $startDate = $request->input('startDate');
+        $endDate = $request->input('endDate');
+        $circleId = $request->input('circleId');
+
+        // Fetch all active circles
+        $circles = Circle::where('status', 'Active')->pluck('circleName', 'id');
+
+        // Base query for active members
+        $query = Member::query()->where('status', 'Active');
+
+        // Apply circle filter if provided
+        if ($circleId) {
+            $query->where('circleId', $circleId);
+        }
+
+        // Apply date filters if provided
+        if ($startDate) {
+            $query->whereDate('created_at', '>=', $startDate);
+        }
+
+        if ($endDate) {
+            $query->whereDate('created_at', '<=', $endDate);
+        }
+
+        // Fetch data, group by circle, and include member names
+        $members = $query->with('circle')
+            ->get()
+            ->groupBy('circleId')
+            ->map(function ($group) {
+                $circle = $group->first()->circle;
+
+                return [
+                    'circleName' => $circle ? $circle->circleName : 'Unknown Circle',
+                    'member_count' => $group->count(),
+                    'member_list' => $group->map(function ($member) {
+                        return [
+                            'full_name' => $member->firstName . ' ' . $member->lastName,
+                            'joined_date' => $member->created_at->format('d-m-Y'),
+                        ];
+                    })->toArray(),
+                ];
+            })
+            ->sortByDesc('member_count')
+            ->values();
+
+
+
+        return view('admin.report.renewalMembers', compact('members', 'circles'));
+    }
 
 
     // public function memberWiseReport(Request $request)

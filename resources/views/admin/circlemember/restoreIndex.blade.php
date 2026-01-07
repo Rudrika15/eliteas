@@ -12,6 +12,23 @@
                     <a href="{{ route('circlemember.index') }}" class="btn btn-bg-orange btn-sm mt-3">BACK</a>
                 </div>
 
+                <form method="GET" id="searchForm" class="mb-3">
+                    <div class="input-group">
+                        <input type="text" name="search" id="searchInput" class="form-control" placeholder="Search member or circle" value="{{ request('search') }}">
+
+                        <a href="{{ route('circlemember.deletedMemberList') }}" class="btn btn-secondary">
+                            Reset
+                        </a>
+                    </div>
+                </form>
+
+                <!-- Loader -->
+                <div id="loader" class="text-center my-3" style="display:none;">
+                    <div class="spinner-border text-primary"></div>
+                </div>
+
+
+
                 <!-- Table with stripped rows -->
                 <div class="table-responsive">
                     <table class="table table-bordered table-striped table-hover">
@@ -61,6 +78,24 @@
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+    <script>
+        let timer;
+        const input = document.getElementById('searchInput');
+        const form = document.getElementById('searchForm');
+        const loader = document.getElementById('loader');
+
+        input.addEventListener('keyup', function() {
+            clearTimeout(timer);
+            loader.style.display = 'block';
+
+            timer = setTimeout(() => {
+                form.submit();
+            }, 500); // delay for typing
+        });
+    </script>
+
 
     <script>
         function confirmRestore(memberId) {

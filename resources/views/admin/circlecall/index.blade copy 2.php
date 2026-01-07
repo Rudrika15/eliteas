@@ -201,97 +201,88 @@
     </div>
 
     <!-- Tab Content: By Me -->
-    <div class="container">
-        <div class="card">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h4 class="card-title">IBM</h4>
-                </div>
-                <div id="tabByMe" class="tab-content active">
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-striped table-hover">
-                            <thead>
-                                <tr>
-                                    <th>No</th>
-                                    <th>IBM With</th>
-                                    <th>IBM Place</th>
-                                    <th>IBM Image</th>
-                                    <th>IBM Date</th>
-                                    <th>Remarks</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse ($circlecall as $circlecallData)
-                                    <tr>
-                                        <td>{{ $loop->iteration }}</td>
-                                        <td>{{ optional($circlecallData->meetingPerson)->firstName ?? '-' }} {{ optional($circlecallData->meetingPerson)->lastName ?? '-' }}</td>
-                                        <td>{{ $circlecallData->meetingPlace ?? '-' }}</td>
-                                        <td>
-                                            @if ($circlecallData->meetingImage)
-                                                <div class="meeting-image-wrapper" style="position: relative;">
-                                                    <img src="{{ url('meetingImage/' . basename($circlecallData->meetingImage)) }}" alt="Meeting Image" style="width: 100px; height: auto; border-radius: 5px;" onclick="openImage(this)">
-                                                    <div class="meeting-image-overlay" onclick="closeImage(event)"></div>
-                                                </div>
-                                            @else
-                                                <span></span>
-                                            @endif
-                                        </td>
-                                        <td>{{ $circlecallData->date ? \Carbon\Carbon::parse($circlecallData->date)->format('d-m-Y') : '-' }}</td>
-                                        <td>{{ $circlecallData->remarks ?? '-' }}</td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="7" class="text-center text-muted">No records found</td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+    <div id="tabByMe" class="tab-content active">
+        <div class="row">
+            @foreach ($circlecall as $circlecallData)
+                <div class="col-md-6 col-lg-4 col-xl-3 mb-4">
+                    <div class="card shadow rounded-4 overflow-hidden">
+                        <div class="position-relative">
+                            {{-- <img src="https://picsum.photos/700/200?random={{ rand(1, 1000) }}" class="card-img-top" alt="cover"> --}}
+                            <img src="{{ asset('img/header_img.jpeg') }}" class="card-img-top" alt="cover">
 
-                <!-- Tab Content: By Other -->
-                <div id="tabByOther" class="tab-content">
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-striped table-hover">
-                            <thead>
-                                <tr>
-                                    <th>No</th>
-                                    <th>IBM By</th>
-                                    <th>IBM Place</th>
-                                    <th>IBM Image</th>
-                                    <th>IBM Date</th>
-                                    <th>Remarks</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse ($callWith as $callWithData)
-                                    <tr>
-                                        <td>{{ $loop->iteration }}</td>
-                                        <td>{{ optional($callWithData->member)->firstName ?? '-' }} {{ optional($callWithData->member)->lastName ?? '-' }}</td>
-                                        <td>{{ $callWithData->meetingPlace ?? '-' }}</td>
-                                        <td>
-                                            @if ($callWithData->meetingImage)
-                                                <div class="meeting-image-wrapper" style="position: relative;">
-                                                    <img src="{{ url('meetingImage/' . basename($callWithData->meetingImage)) }}" alt="Meeting Image" style="width: 100px; height: auto; border-radius: 5px;" onclick="openImage(this)">
-                                                    <div class="meeting-image-overlay" onclick="closeImage(event)"></div>
-                                                </div>
-                                            @else
-                                                <span></span>
-                                            @endif
-                                        </td>
-                                        <td>{{ $callWithData->date ? \Carbon\Carbon::parse($callWithData->date)->format('d-m-Y') : '-' }}</td>
-                                        <td>{{ $callWithData->remarks ?? '-' }}</td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="7" class="text-center text-muted">No records found</td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
+                            <div class="position-absolute top-100 start-50 translate-middle">
+                                <img src="{{ $circlecallData->meetingPerson->profilePhoto ? asset('ProfilePhoto/' . $circlecallData->meetingPerson->profilePhoto) : asset('ProfilePhoto/profile.png') }}" class="rounded-circle border border-3 border-white" width="110" height="110" alt="Profile">
+                                {{-- <div class="position-absolute bottom-0 end-0 bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 24px; height: 24px; font-size: 12px; transform: translate(25%, 25%);">G</div> --}}
+                            </div>
+                            <div class="dropdown position-absolute top-0 end-0 m-2">
+                                <a href="#" class="text-black" data-bs-toggle="dropdown"><i class="bi bi-three-dots-vertical"></i></a>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a class="dropdown-item color-blue" href="{{ route('circlecall.edit', $circlecallData->id) }}" data-id="{{ $circlecallData->id }}">
+                                            <i class="bi bi-pencil-square me-2"></i>Edit
+                                        </a>
+                                    </li>
+
+                                    <li><a class="dropdown-item text-danger" onclick="deleteRow('{{ route('circlecall.delete', $circlecallData->id) }}')"><i class="bi bi-trash me-2"></i>Delete</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="card-body text-center pt-5 mt-3">
+                            <h5 class="card-title mb-0">{{ $circlecallData->meetingPerson->firstName ?? '-' }} {{ $circlecallData->meetingPerson->lastName ?? '-' }}</h5>
+                            {{-- <p class="text-muted small">Vice President at UBN</p> --}}
+                            <div class="text-muted small mb-2">
+                                <i class="bi bi-person-circle me-1"></i>{{ $circlecallData->meetingPerson->circle->circleName ?? '-' }}
+                                <span class="me-4"> </span>
+                                <i class="bi bi-calendar3 me-1"></i>{{ $circlecallData->date ? date('d-m-Y', strtotime($circlecallData->date)) : '-' }}
+                            </div>
+                            <div class="text-muted small mb-2">
+                                <i class="bi bi-geo-alt me-1"></i>{{ $circlecallData->meetingPlace ?? '-' }}
+                            </div>
+                            <div class="card-remark text-muted small mb-2">{{ Str::limit($circlecallData->remarks ?? '', 25) }}{{ strlen($circlecallData->remarks ?? '') > 25 ? '...' : '' }}</div>
+                            @if ($circlecallData->meetingImage)
+                                <a href="{{ url('meetingImage/' . basename($circlecallData->meetingImage)) }}" target="_blank" class="d-block text-decoration-none text-primary small mb-2">
+                                    <i class="bi bi-image"></i> View Uploaded Meeting Image
+                                </a>
+                            @endif
+                        </div>
                     </div>
                 </div>
-            </div>
+            @endforeach
+        </div>
+    </div>
+
+    <!-- Tab Content: By Other -->
+    <div id="tabByOther" class="tab-content">
+        <div class="row">
+            @foreach ($callWith as $callWithData)
+                <div class="col-md-6 col-lg-4 col-xl-3 mb-4">
+                    <div class="card shadow rounded-4 overflow-hidden">
+                        <div class="position-relative">
+                            <img src="{{ asset('img/header_img.jpeg') }}" class="card-img-top" alt="cover">
+                            <div class="position-absolute top-100 start-50 translate-middle">
+                                <img src="{{ $callWithData->member->profilePhoto ? asset('ProfilePhoto/' . $callWithData->member->profilePhoto) : asset('ProfilePhoto/profile.png') }}" class="rounded-circle border border-3 border-white" width="110" height="110" alt="Profile">
+                                {{-- <div class="position-absolute bottom-0 end-0 bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 24px; height: 24px; font-size: 12px; transform: translate(25%, 25%);">G</div> --}}
+                            </div>
+                        </div>
+                        <div class="card-body text-center pt-5 mt-3">
+                            <h5 class="card-title mb-0">{{ $callWithData->member->firstName ?? '-' }} {{ $callWithData->member->lastName ?? '-' }}</h5>
+                            {{-- <p class="text-muted small">Vice President at UBN</p> --}}
+                            <div class="text-muted small mb-2">
+                                <i class="bi bi-geo-alt me-1"></i>{{ $callWithData->meetingPlace ?? '-' }}
+                            </div>
+                            <div class="text-muted small mb-2">
+                                <i class="bi bi-calendar3 me-1"></i>{{ $callWithData->date ? date('d-m-Y', strtotime($callWithData->date)) : '-' }}
+                            </div>
+                            <div class="card-remark text-muted small mb-2">{{ Str::limit($callWithData->remarks ?? '', 25) }}{{ strlen($callWithData->remarks ?? '') > 25 ? '...' : '' }}</div>
+                            @if ($callWithData->meetingImage)
+                                <a href="{{ url('meetingImage/' . basename($callWithData->meetingImage)) }}" target="_blank" class="d-block text-decoration-none text-primary small mb-2">
+                                    <i class="bi bi-image"></i> View Uploaded Meeting Image
+                                </a>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            @endforeach
         </div>
     </div>
 
@@ -485,7 +476,7 @@
                                     // Calculate allowed range
                                     $today = \Illuminate\Support\Carbon::today()->format('Y-m-d');
                                     $pastLimit = \Illuminate\Support\Carbon::today()->subDays(15)->format('Y-m-d');
-                                    
+
                                     // Default selected date
                                     $selectedDate = old('date', request()->input('date') ?? $today);
                                     ?>

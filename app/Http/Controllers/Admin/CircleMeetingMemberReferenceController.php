@@ -151,7 +151,7 @@ class CircleMeetingMemberReferenceController extends Controller
                     ->with('members.circle:id,circleName')
                     ->with('refGiverName')
                     ->where('referenceGiverId', Auth::user()->id)
-                    ->get();
+                    ->paginate(10);
 
                 $refGiver->transform(function ($item) {
                     if ($item->members) {
@@ -165,7 +165,7 @@ class CircleMeetingMemberReferenceController extends Controller
                     ->where('loginMemberId', Auth::user()->id)
                     ->where('status', 'Active')
                     ->orderBy('id', 'DESC')
-                    ->get();
+                    ->paginate(10);
 
                 $busGiver->transform(function ($item) {
                     if ($item->businessGiverMember) {

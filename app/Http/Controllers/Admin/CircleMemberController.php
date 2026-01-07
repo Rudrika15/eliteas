@@ -183,29 +183,63 @@ class CircleMemberController extends Controller
     }
 
 
+    // public function deletedMemberList(Request $request)
+    // {
+    //     try {
+    //         $user = Auth::user();
+    //         $member = Member::where('status', 'Deleted')
+    //             ->whereHas('circle')
+    //             ->whereHas('contactDetails')
+    //             ->with(['circle', 'contactDetails', 'user', 'topsProfile', 'billingAddress'])
+    //             ->paginate(10);
+
+    //         $circle = Circle::where('status', 'Active')->orderBy('circleName', 'asc')->get();
+    //         $bCategory = BusinessCategory::where('status', 'Active')->orderBy('categoryName', 'asc')->get();
+    //         $membershipType = MembershipType::where('status', 'Active')->get();
+
+    //         return view('admin.circlemember.restoreIndex', compact('member', 'circle', 'bCategory', 'membershipType'));
+    //     } catch (\Throwable $th) {
+    //         ErrorLogger::logError(
+    //             $th,
+    //             $request->fullUrl()
+    //         );
+    //         return view('servererror');
+    //     }
+    // }
+
+
     public function deletedMemberList(Request $request)
     {
         try {
-            $user = Auth::user();
+            $search = $request->search;
+
             $member = Member::where('status', 'Deleted')
                 ->whereHas('circle')
                 ->whereHas('contactDetails')
+                ->when($search, function ($q) use ($search) {
+                    $q->where(function ($qq) use ($search) {
+                        $qq->where('firstName', 'like', "%$search%")
+                            ->orWhere('lastName', 'like', "%$search%")
+                            ->orWhereHas('circle', function ($c) use ($search) {
+                                $c->where('circleName', 'like', "%$search%");
+                            });
+                    });
+                })
                 ->with(['circle', 'contactDetails', 'user', 'topsProfile', 'billingAddress'])
-                ->paginate(10);
+                ->paginate(10)
+                ->withQueryString();
 
-            $circle = Circle::where('status', 'Active')->orderBy('circleName', 'asc')->get();
-            $bCategory = BusinessCategory::where('status', 'Active')->orderBy('categoryName', 'asc')->get();
+            $circle = Circle::where('status', 'Active')->orderBy('circleName')->get();
+            $bCategory = BusinessCategory::where('status', 'Active')->orderBy('categoryName')->get();
             $membershipType = MembershipType::where('status', 'Active')->get();
 
             return view('admin.circlemember.restoreIndex', compact('member', 'circle', 'bCategory', 'membershipType'));
         } catch (\Throwable $th) {
-            ErrorLogger::logError(
-                $th,
-                $request->fullUrl()
-            );
+            ErrorLogger::logError($th, $request->fullUrl());
             return view('servererror');
         }
     }
+
 
 
     public function induction($id)
@@ -854,6 +888,14 @@ class CircleMemberController extends Controller
                 $businessReference->save();
             }
 
+            $connection = Connection::where('memberId', $circlemember->userId)
+                ->orWhere('userId', $circlemember->userId)
+                ->get();
+            foreach ($connection as $conn) {
+                $conn->recordStatus = "Deleted";
+                $conn->save();
+            }
+
             return redirect()->route('circlemember.index')->with('success', 'Circle Member Deleted Successfully!');
         } catch (\Throwable $th) {
             // throw $th;
@@ -908,6 +950,14 @@ class CircleMemberController extends Controller
             foreach ($businessReferences as $businessReference) {
                 $businessReference->status = "Active";
                 $businessReference->save();
+            }
+
+            $connection = Connection::where('memberId', $circlemember->userId)
+                ->orWhere('userId', $circlemember->userId)
+                ->get();
+            foreach ($connection as $conn) {
+                $conn->recordStatus = "Active";
+                $conn->save();
             }
 
             return redirect()->route('circlemember.deletedMemberList')->with('success', 'Circle Member Restored Successfully!');

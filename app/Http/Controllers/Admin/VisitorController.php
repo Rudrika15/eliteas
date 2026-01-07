@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Exports\VisitorsExport;
 use App\Http\Controllers\Controller;
 use App\Models\BusinessCategory;
+use App\Models\Circle;
 use App\Models\Member;
 use App\Models\Schedule;
 use App\Models\VisitorRemarks;
@@ -348,7 +349,13 @@ class VisitorController extends Controller
             ->orderBy('date', 'asc')
             ->get();
 
-        return view('admin.visitor.create', compact('businessCategories', 'meetingList'));
+        $circles = Circle::where('status', 'Active')
+            ->orderBy('circleName', 'asc')
+            ->get();    
+
+            
+
+        return view('admin.visitor.create', compact('businessCategories', 'meetingList', 'circles'));
 
     } catch (\Throwable $th) {
         ErrorLogger::logError($th, $request->fullUrl());

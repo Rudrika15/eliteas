@@ -3,44 +3,43 @@
 @section('header', 'Visitor')
 @section('content')
 
-<div class="card">
-    <div class="card-body d-flex justify-content-between align-items-center">
-        <h5 class="card-title">Create Visitor</h5>
-        <a href="{{ route('visitors.index') }}" class="btn btn-bg-orange btn-sm">BACK</a>
-    </div>
-
-    <!-- Floating Labels Form -->
-    <form class="m-3 needs-validation" id="visitorForm" enctype="multipart/form-data" method="post"
-        action="{{ route('visitors.store') }}" novalidate>
-        @csrf
- 
-
-        <div class="row mb-3">
-            <div class="col-md-6">
-                <div class="form-floating">
-                    <select class="form-select" id="meetingId" name="meetingId">
-                        <option value="">Select Meeting Date</option>
-                        @foreach ($meetingList as $meeting)
-                        <option value="{{ $meeting->id }}">
-                            {{ \Carbon\Carbon::parse($meeting->date)->format('d-m-Y') }}
-                        </option>
-                        @endforeach
-                    </select>
-
-                    <label for="meetingId">Meeting Date</label>
-
-                    @error('meetingId')
-                    <div class="invalid-tooltip">
-                        {{ $message }}
-                    </div>
-                    @enderror
-                </div>
-            </div>
+    <div class="card">
+        <div class="card-body d-flex justify-content-between align-items-center">
+            <h5 class="card-title">Create Visitor</h5>
+            <a href="{{ route('visitors.index') }}" class="btn btn-bg-orange btn-sm">BACK</a>
         </div>
 
+        <!-- Floating Labels Form -->
+        <form class="m-3 needs-validation" id="visitorForm" enctype="multipart/form-data" method="post" action="{{ route('visitors.store') }}" novalidate>
+            @csrf
 
 
-        <div class="row mb-3">
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <select class="form-select" id="meetingId" name="meetingId">
+                            <option value="">Select Meeting Date</option>
+                            @foreach ($meetingList as $meeting)
+                                <option value="{{ $meeting->id }}">
+                                    {{ \Carbon\Carbon::parse($meeting->date)->format('d-m-Y') }}
+                                </option>
+                            @endforeach
+                        </select>
+
+                        <label for="meetingId">Meeting Date</label>
+
+                        @error('meetingId')
+                            <div class="invalid-tooltip">
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+                </div>
+            </div>
+
+
+
+            {{-- <div class="row mb-3">
             <div class="col-md-6">
                 <div class="form-floating">
                     <input type="text" class="form-control" id="firstName" name="firstName" placeholder="First Name">
@@ -174,11 +173,241 @@
                     @enderror
                 </div>
             </div>
-        </div>
-        <div class="text-center">
-            <button type="submit" class="btn btn-bg-blue">Submit</button>
-        </div>
-    </form><!-- End floating Labels Form -->
-</div>
+        </div> --}}
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <input type="text" class="form-control" name="firstName" placeholder="First Name">
+                        <label>First Name</label>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <input type="text" class="form-control" name="lastName" placeholder="Last Name">
+                        <label>Last Name</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <input type="text" class="form-control" name="mobileNo" placeholder="Mobile No" maxlength="10">
+                        <label>Mobile No</label>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <input type="email" class="form-control" name="email" placeholder="Email">
+                        <label>Email</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <input type="text" class="form-control" name="businessName" placeholder="Business Name">
+                        <label>Business Name</label>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <input type="text" class="form-control" name="city" placeholder="City">
+                        <label>City</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <select class="form-select" name="businessCategory">
+                            <option value="">Select Business Category</option>
+                            @foreach ($businessCategories as $category)
+                                <option value="{{ $category->id }}">{{ $category->categoryName }}</option>
+                            @endforeach
+                        </select>
+                        <label>Business Category</label>
+                    </div>
+                </div>
+
+                <!-- Referral Type -->
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <select class="form-select" id="refType">
+                            <option value="">Referred By</option>
+                            <option value="member">Member</option>
+                            <option value="other">Other</option>
+                        </select>
+                        <label>Referred Type</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Circle & Member (hidden initially) -->
+            <div class="row mb-3 d-none" id="memberBox">
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <select class="form-select" id="circleId">
+                            <option value="">Select Circle</option>
+                            @foreach ($circles as $circle)
+                                <option value="{{ $circle->id }}">{{ $circle->circleName }}</option>
+                            @endforeach
+                        </select>
+                        <label>Circle</label>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <select class="form-select" name="memberId" id="memberId">
+                            <option value="">Select Member</option>
+                        </select>
+                        <label>Member</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Other Referred By -->
+            <div class="row mb-3 d-none" id="otherBox">
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <input type="text" class="form-control" name="invitedBy" placeholder="Referred By">
+                        <label>Referred By</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <div class="form-floating">
+                        <textarea class="form-control" name="remarks"></textarea>
+                        <label>Remarks</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <div class="form-floating">
+                        <textarea class="form-control" name="otherDetails"></textarea>
+                        <label>Other Details</label>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center">
+                <button type="submit" class="btn btn-bg-blue">Submit</button>
+            </div>
+        </form><!-- End floating Labels Form -->
+    </div>
+
+
+    <script>
+        $(document).ready(function() {
+
+            // CSRF
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+
+            /* ===============================
+               REFERRAL TYPE (Member / Other)
+            =============================== */
+            $('#refType').on('change', function() {
+                $('#memberBox').addClass('d-none');
+                $('#otherBox').addClass('d-none');
+
+                if (this.value === 'member') {
+                    $('#memberBox').removeClass('d-none');
+                }
+
+                if (this.value === 'other') {
+                    $('#otherBox').removeClass('d-none');
+                }
+            });
+
+            /* ===============================
+               LOAD MEMBERS BY CIRCLE
+            =============================== */
+            function loadMembers(circleId) {
+                $('#memberId').empty().append('<option value="">Select Member</option>');
+
+                if (circleId) {
+                    $.ajax({
+                        url: '{{ route('members.byCircle') }}',
+                        method: 'GET',
+                        data: {
+                            circleId: circleId
+                        },
+                        success: function(response) {
+                            if (response.members && response.members.length > 0) {
+                                response.members.forEach(function(member) {
+                                    $('#memberId').append(
+                                        '<option value="' + member.id + '" ' +
+                                        'data-user-id="' + member.userId + '" ' +
+                                        'data-first-name="' + member.firstName + '" ' +
+                                        'data-last-name="' + member.lastName + '">' +
+                                        member.firstName + ' ' + member.lastName +
+                                        '</option>'
+                                    );
+                                });
+
+                                let defaultMemberId = '{{ auth()->user()->member->id }}';
+                                if (defaultMemberId) {
+                                    $('#memberId').val(defaultMemberId).trigger('change');
+                                }
+                            } else {
+                                $('#memberId').append('<option value="">No Members Found</option>');
+                            }
+                        },
+                        error: function() {
+                            $('#memberId').append('<option value="">Error loading members</option>');
+                        }
+                    });
+                }
+            }
+
+            /* ===============================
+               DEFAULT CIRCLE LOAD
+            =============================== */
+            let defaultCircleId = '{{ auth()->user()->member->circleId }}';
+            if (defaultCircleId) {
+                loadMembers(defaultCircleId);
+            }
+
+            $('#circleId').on('change', function() {
+                loadMembers($(this).val());
+            });
+
+            /* ===============================
+               MEMBER CHANGE
+            =============================== */
+            $('#memberId').on('change', function() {
+                let opt = $(this).find('option:selected');
+
+                let memberId = opt.val();
+                let userId = opt.data('user-id');
+                let firstName = opt.data('first-name');
+                let lastName = opt.data('last-name');
+
+                if (memberId) {
+                    $('#meetingPersonId').val(userId);
+                    $('#meetingPersonName').val(firstName + ' ' + lastName);
+                } else {
+                    $('#meetingPersonId').val('');
+                    $('#meetingPersonName').val('');
+                }
+            });
+
+        });
+    </script>
+
 
 @endsection
