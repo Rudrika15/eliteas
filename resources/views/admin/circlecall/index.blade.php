@@ -218,6 +218,7 @@
                                     <th>IBM Image</th>
                                     <th>IBM Date</th>
                                     <th>Remarks</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -238,6 +239,16 @@
                                         </td>
                                         <td>{{ $circlecallData->date ? \Carbon\Carbon::parse($circlecallData->date)->format('d-m-Y') : '-' }}</td>
                                         <td>{{ $circlecallData->remarks ?? '-' }}</td>
+                                        <td>
+                                            <a href="{{ route('circlecall.edit', $circlecallData->id) }}" class="btn btn-sm btn-bg-blue" title="Edit">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+
+                                            <a href="{{ route('circlecall.delete', $circlecallData->id) }}" class="btn btn-sm btn-danger" title="Delete">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </a>
+                                        </td>
+
                                     </tr>
                                 @empty
                                     <tr>

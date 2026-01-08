@@ -114,10 +114,111 @@ class DigitalMemberController extends Controller
         }
     }
 
+    // public function getCityMembers(Request $request, $id = null)
+    // {
+    //     try {
+    //         $businessMeetings = CircleMeetingMembersBusiness::with('member')
+    //             ->where('status', 'Active')
+    //             ->get();
+
+    //         if ($id) {
+    //             // ✅ Get members based on cityId
+    //             $city = City::with([
+    //                 'members' => function ($query) {
+    //                     $query->where('status', 'Active')
+    //                         ->with([
+    //                             'bCategory:id,categoryName',
+    //                             'user:id,email,contactNo'
+    //                         ]);
+    //                 }
+    //             ])->findOrFail($id);
+
+    //             $city->totalBusinessAmount = 0;
+
+    //             foreach ($city->members as $member) {
+    //                 $member->businessAmount = 0;
+    //                 $member->induction_count = Member::where('sponsoredBy', $member->id)->count();
+    //             }
+
+    //             foreach ($businessMeetings as $meeting) {
+    //                 $businessGiverCityId = Member::where('userId', $meeting->businessGiverId)->value('cityId');
+    //                 if ($businessGiverCityId == $city->id) {
+    //                     $city->totalBusinessAmount += $meeting->amount;
+
+    //                     foreach ($city->members as $member) {
+    //                         if ($member->userId == $meeting->loginMemberId) {
+    //                             $member->businessAmount += $meeting->amount;
+    //                         }
+    //                     }
+    //                 }
+    //             }
+
+    //             return response()->json([
+    //                 'success' => true,
+    //                 'city' => $city,
+    //             ]);
+    //         }
+
+    //         // ✅ Get all active cities with members
+    //         $cities = City::where('status', 'Active')
+    //             ->with([
+    //                 'members' => function ($query) {
+    //                     $query->where('status', 'Active')
+    //                         ->with([
+    //                             'bCategory:id,categoryName',
+    //                             'user:id,email,contactNo'
+    //                         ]);
+    //                 }
+    //             ])
+    //             ->withCount(['members' => function ($query) {
+    //                 $query->where('status', 'Active');
+    //             }])
+    //             ->get();
+
+    //         foreach ($cities as $city) {
+    //             $city->totalBusinessAmount = 0;
+
+    //             foreach ($city->members as $member) {
+    //                 $member->businessAmount = 0;
+    //                 $member->induction_count = Member::where('sponsoredBy', $member->id)->count();
+    //             }
+
+    //             foreach ($businessMeetings as $meeting) {
+    //                 $businessGiverCityId = Member::where('userId', $meeting->businessGiverId)->value('cityId');
+    //                 if ($businessGiverCityId == $city->id) {
+    //                     $city->totalBusinessAmount += $meeting->amount;
+
+    //                     foreach ($city->members as $member) {
+    //                         if ($member->userId == $meeting->loginMemberId) {
+    //                             $member->businessAmount += $meeting->amount;
+    //                         }
+    //                     }
+    //                 }
+    //             }
+    //         }
+
+    //         return response()->json([
+    //             'success' => true,
+    //             'cities' => $cities,
+    //         ]);
+    //     } catch (\Throwable $th) {
+    //         ErrorLogger::logError($th, request()->fullUrl());
+    //         Log::error('Error in getCityMembers', [
+    //             'message' => $th->getMessage(),
+    //             'trace' => $th->getTraceAsString()
+    //         ]);
+
+    //         return response()->json([
+    //             'success' => false,
+    //             'error' => 'An error occurred. Please try again later.',
+    //         ], 500);
+    //     }
+    // }
 
     public function getCityMembers(Request $request, $id = null)
     {
         try {
+            $authUserId = Auth::id();
             $businessMeetings = CircleMeetingMembersBusiness::with('member')
                 ->where('status', 'Active')
                 ->get();
@@ -139,6 +240,17 @@ class DigitalMemberController extends Controller
                 foreach ($city->members as $member) {
                     $member->businessAmount = 0;
                     $member->induction_count = Member::where('sponsoredBy', $member->id)->count();
+                    $connection = Connection::where(function ($query) use ($authUserId, $member) {
+                        $query->where('userId', $authUserId)->where('memberId', $member->userId)
+                            ->orWhere(function ($query) use ($authUserId, $member) {
+                                $query->where('userId', $member->userId)->where('memberId', $authUserId);
+                            });
+                    })->first();
+                    if ($connection && $connection->status === 'Accepted') {
+                        $member->connection_status = 'Connected';
+                    } else {
+                        $member->connection_status = $connection ? $connection->status : 'Not Connected';
+                    }
                 }
 
                 foreach ($businessMeetings as $meeting) {
@@ -182,6 +294,17 @@ class DigitalMemberController extends Controller
                 foreach ($city->members as $member) {
                     $member->businessAmount = 0;
                     $member->induction_count = Member::where('sponsoredBy', $member->id)->count();
+                    $connection = Connection::where(function ($query) use ($authUserId, $member) {
+                        $query->where('userId', $authUserId)->where('memberId', $member->userId)
+                            ->orWhere(function ($query) use ($authUserId, $member) {
+                                $query->where('userId', $member->userId)->where('memberId', $authUserId);
+                            });
+                    })->first();
+                    if ($connection && $connection->status === 'Accepted') {
+                        $member->connection_status = 'Connected';
+                    } else {
+                        $member->connection_status = $connection ? $connection->status : 'Not Connected';
+                    }
                 }
 
                 foreach ($businessMeetings as $meeting) {
@@ -218,34 +341,33 @@ class DigitalMemberController extends Controller
 
 
     public function getCityMemberCount()
-{
-    try {
-        $cities = City::withCount([
-            'members as member_count' => function ($query) {
-                $query->where('status', 'Active');
-            }
-        ])
-        ->whereHas('members', function ($q) {
-            $q->where('status', 'Active');
-        })
-        ->get(['id', 'cityName']);
+    {
+        try {
+            $cities = City::withCount([
+                'members as member_count' => function ($query) {
+                    $query->where('status', 'Active');
+                }
+            ])
+                ->whereHas('members', function ($q) {
+                    $q->where('status', 'Active');
+                })
+                ->get(['id', 'cityName']);
 
-        return response()->json([
-            'success' => true,
-            'data' => $cities
-        ]);
+            return response()->json([
+                'success' => true,
+                'data' => $cities
+            ]);
+        } catch (\Throwable $th) {
+            Log::error('City Member Count Error', [
+                'message' => $th->getMessage()
+            ]);
 
-    } catch (\Throwable $th) {
-        Log::error('City Member Count Error', [
-            'message' => $th->getMessage()
-        ]);
-
-        return response()->json([
-            'success' => false,
-            'error' => 'Something went wrong'
-        ], 500);
+            return response()->json([
+                'success' => false,
+                'error' => 'Something went wrong'
+            ], 500);
+        }
     }
-}
 
 
 

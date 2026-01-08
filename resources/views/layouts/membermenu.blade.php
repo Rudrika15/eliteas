@@ -419,14 +419,14 @@
 </li> --}}
 
 
-@if (Auth::user()->hasRole('Attendance Handler'))
+{{-- @if (Auth::user()->hasRole('Attendance Handler'))
     <li class="nav-item">
         <a class="nav-link collapsed" href="{{ route('attendance.meetingSchedules') }}">
             <i class="bi bi-person-video2" style="color: #e76a35"></i>
             <span class="text-blue">C M Attendances</span>
         </a>
     </li>
-@endif
+@endif --}}
 
 @if (Auth::user()->hasRole('Circle Director'))
     <li class="nav-item">
@@ -448,14 +448,14 @@
 @endif --}}
 
 
-@if (Auth::user()->hasRole(['Circle Director', 'Vice President']))
+{{-- @if (Auth::user()->hasRole(['Circle Director', 'Vice President']))
     <li class="nav-item">
         <a class="nav-link collapsed " href="{{ route('visitors.RoleWiseIndex') }}">
             <i class="bi bi-people-fill" style="color: #e76a35"></i>
             <span style="color: #1d2856">Visitor List</span>
         </a>
     </li>
-@endif
+@endif --}}
 
 {{-- <li class="nav-item">
     <a class="nav-link collapsed" href="{{ route('showForm') }}">

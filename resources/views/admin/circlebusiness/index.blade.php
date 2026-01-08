@@ -269,7 +269,6 @@
                                         <td>
                                             <a href="{{ route('refGiver.edit', $busGiveByOtherData->id) }}" class="btn btn-sm btn-bg-blue">
                                                 <i class="bi bi-pencil"></i>
-                                                Edit
                                             </a>
                                         </td>
                                     </tr>
