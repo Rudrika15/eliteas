@@ -409,7 +409,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('refGiver/edit/{id?}', [CircleMeetingMemberReferenceController::class, 'edit'])->name('refGiver.edit');
     Route::post('refGiver/update/{id?}', [CircleMeetingMemberReferenceController::class, 'update'])->name('refGiver.update');
     Route::get('refGiver/delete/{id?}', [CircleMeetingMemberReferenceController::class, 'delete'])->name('refGiver.delete');
-    
+
     Route::get('addBusiness/amount/{id?}', [CircleMeetingMemberReferenceController::class, 'addBusinessAmount'])->name('addBusiness.amount');
 
     Route::get('refGiver/refByOther', [CircleMeetingMemberReferenceController::class, 'refByOther'])->name('refGiver.refByOther');
@@ -574,7 +574,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/admin/reports/circle-member/export', [ReportController::class, 'exportCircleMemberReport'])->name('admin.report.circleMember.export');
     Route::get('/admin/report/joining-members', [ReportController::class, 'getJoiningMembers'])->name('admin.report.joining');
     Route::get('/admin/report/renewal-members', [ReportController::class, 'getJoiningMembersRenewalDate'])->name('admin.report.renewal');
-    
+    Route::get('/admin/report/renewal-members/export', [ReportController::class, 'exportRenewalMembers'])->name('admin.report.renewal.export');
+
 
     // vp report
     Route::get('/vp/report', [ReportController::class, 'vpReport'])->name('vp.report');

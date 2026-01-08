@@ -58,6 +58,7 @@ class MembershipSubscriptionController extends Controller
         try {
             $membershipType = membershipType::where('status', 'Active')->get();
             $allSubscriptions = MemberSubscriptions::where('status', 'Active')->paginate(10);
+            // $allSubscriptions = MemberSubscriptions::where('status', 'Active')->with(['user.member'])->paginate(10);
             return view('admin.mysubscriptions.adminIndex', compact('allSubscriptions', 'membershipType'));
         } catch (\Throwable $th) {
             // throw $th;

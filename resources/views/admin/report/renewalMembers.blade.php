@@ -7,13 +7,13 @@
         <div class="card">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h4 class="card-title">Joining Members Report</h4>
+                    <h4 class="card-title">Renewal / Joining Members Report</h4>
                 </div>
 
-                <div class="row mb-3">
-                    <div class="col-md-4">
-                        <form method="GET" action="{{ route('admin.report.joining') }}" id="dateFilterForm">
-                            <div class="row mb-3">
+                <form method="GET" action="{{ route('admin.report.renewal') }}" id="filterForm">
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <div class="row">
                                 <div class="col-md-6">
                                     <small class="text-muted me-1"><strong>From:</strong></small><br>
                                     <div class="d-flex align-items-center">
@@ -27,35 +27,27 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
 
-                            <div class="d-flex justify-content-end mb-3">
-                                <button type="submit" class="btn btn-bg-blue btn-sm">Submit</button>
-                                <button type="button" class="btn btn-bg-orange btn-sm ms-2" id="resetButton">Reset</button>
-                            </div>
-                        </form>
+                        <div class="col-md-4">
+                            <small class="text-muted me-1"><strong>Select Circle:</strong></small><br>
+                            <select name="circleId" id="circleId" class="form-control form-control-sm">
+                                <option value="">-- All Circles --</option>
+                                @foreach ($circles as $id => $name)
+                                    <option value="{{ $id }}" {{ request()->input('circleId') == $id ? 'selected' : '' }}>
+                                        {{ $name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="col-md-4 d-flex align-items-end">
+                            <button type="submit" class="btn btn-bg-blue btn-sm">Submit</button>
+                            <button type="submit" formaction="{{ route('admin.report.renewal.export') }}" class="btn btn-success btn-sm ms-2">Export Excel</button>
+                            <button type="button" class="btn btn-bg-orange btn-sm ms-2" id="resetButton">Reset</button>
+                        </div>
                     </div>
-                    {{-- <div class="col-md-4">
-                        <form method="GET" action="{{ route('admin.report.joining') }}" id="circleFilterForm">
-                            <div class="row mb-3">
-                                <div class="col-md-12">
-                                    <label for="circleId" class="form-label">Select Circle</label>
-                                    <select name="circleId" id="circleId" class="form-control form-control-sm">
-                                        <option value="">-- Select Circle --</option>
-                                        @foreach ($circles as $circle)
-                                            <option value="{{ is_string($circle) ? $circle : $circle->id }}" {{ request()->input('circleId') == (is_string($circle) ? $circle : $circle->id) ? 'selected' : '' }}>
-                                                {{ is_string($circle) ? $circle : $circle->name }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="d-flex justify-content-end mb-3">
-                                <button type="submit" class="btn btn-bg-blue btn-sm">Submit</button>
-                            </div>
-                        </form>
-                    </div> --}}
-                </div>
+                </form>
 
                 <div class="table-responsive">
                     <table class="table table-bordered table-striped table-hover" id="membersTable">
@@ -83,7 +75,7 @@
                                         <td></td>
                                         <td class="ps-4">→ {{ $member['full_name'] }}</td>
                                         <td>{{ $member['joined_date'] }}</td>
-                                        <td>{{ $member['joined_date'] }}</td>
+                                        <td>{{ $member['renewal_date'] }}</td>
                                     </tr>
                                 @endforeach
                             @empty
@@ -105,7 +97,7 @@
             document.getElementById('startDate').value = '';
             document.getElementById('endDate').value = '';
             document.getElementById('circleId').value = '';
-            document.getElementById('dateFilterForm').submit();
+            document.getElementById('filterForm').submit();
         });
     </script>
 

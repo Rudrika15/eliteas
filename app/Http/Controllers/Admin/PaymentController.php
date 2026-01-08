@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\MemberSubscriptions;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use App\Models\RenewSubscriptionHistory;
 use App\Models\VisitorEventRegister;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -394,44 +395,233 @@ class PaymentController extends Controller
 
 
 
+    // public function renewMembership($userId)
+    // {
+    //     try {
+    //         // Find the user by ID
+    //         $user = User::find($userId);
+
+    //         if (!$user) {
+    //             return response()->json(['message' => 'User not found!'], 404);
+    //         }
+
+    //         // Add your logic to renew the membership here
+    //         // Example: extend membership validity by one year
+    //         $subscription = MemberSubscriptions::where('userId', $userId)->first();
+
+    //         if ($subscription) {
+    //             if ($subscription->membershipType == 'Supreme - Yearly') {
+    //                 $subscription->validity = now()->addYear()->format('Y-m-d');
+    //             } elseif ($subscription->membershipType == 'Prestige Lifetime') {
+    //                 $subscription->validity = now()->addYears(5)->format('Y-m-d');
+    //             } elseif ($subscription->membershipType == 'Digital Membership') {
+    //                 $subscription->validity = now()->addYear()->format('Y-m-d');
+    //             }
+    //             $subscription->save();
+    //         } else {
+    //             return response()->json(['message' => 'Subscription not found!'], 404);
+    //         }
+
+    //         // Send an email to the user
+    //         // Mail::to($user->email)->send(new MembershipRenewed($user));
+
+    //         session()->flash('success', 'Membership renewed Successfully!');
+    //         return redirect()->back();
+    //     } catch (\Throwable $th) {
+    //         // Log the error
+    //         ErrorLogger::logError($th, request()->fullUrl());
+
+    //         // Return an error response or redirect
+    //         return response()->json(['message' => 'Failed to renew membership!'], 500);
+    //     }
+    // }
+
+
+    // public function renewMembership($userId)
+    // {
+    //     try {
+    //         $user = User::find($userId);
+
+    //         if (!$user) {
+    //             return response()->json(['message' => 'User not found!'], 404);
+    //         }
+
+    //         $subscription = MemberSubscriptions::where('userId', $userId)->first();
+
+    //         if (!$subscription) {
+    //             return response()->json(['message' => 'Subscription not found!'], 404);
+    //         }
+
+    //         // Extend validity
+    //         if ($subscription->membershipType == 'Supreme - Yearly') {
+    //             $newValidity = now()->addYear();
+    //         } elseif ($subscription->membershipType == 'Prestige Lifetime') {
+    //             $newValidity = now()->addYears(5);
+    //         } else {
+    //             $newValidity = now()->addYear();
+    //         }
+
+    //         $subscription->validity = $newValidity->format('Y-m-d');
+    //         $subscription->save();
+
+    //         // Get amount
+    //         $membership = MembershipType::where('membershipType', $subscription->membershipType)->first();
+
+    //         // Save renewal history
+    //         $renewal = new RenewSubscriptionHistory();
+    //         $renewal->userId            = $userId;
+    //         $renewal->renewedBy         = Auth::id();
+    //         $renewal->subscriptionType = $subscription->membershipType;
+    //         $renewal->renewalDate      = $newValidity->format('Y-m-d');
+    //         $renewal->amount            = $membership->amount ?? 0;
+    //         $renewal->save();
+
+    //         session()->flash('success', 'Membership renewed Successfully!');
+    //         return redirect()->back();
+    //     } catch (\Throwable $th) {
+    //         ErrorLogger::logError($th, request()->fullUrl());
+    //         return response()->json(['message' => 'Failed to renew membership!'], 500);
+    //     }
+    // }
+
+
+    // public function renewMembership($userId)
+    // {
+    //     try {
+    //         // 1. Find user
+    //         $user = User::find($userId);
+    //         if (!$user) {
+    //             return response()->json(['message' => 'User not found!'], 404);
+    //         }
+
+    //         // 2. Find subscription
+    //         $subscription = MemberSubscriptions::where('userId', $userId)->first();
+    //         if (!$subscription) {
+    //             return response()->json(['message' => 'Subscription not found!'], 404);
+    //         }
+
+    //         // 3. Decide base date (future validity OR today)
+    //         $currentValidity = $subscription->validity
+    //             ? \Carbon\Carbon::parse($subscription->validity)
+    //             : now();
+
+    //         $baseDate = $currentValidity->isFuture()
+    //             ? $currentValidity
+    //             : now();
+
+    //         // 4. Extend validity
+    //         if ($subscription->membershipType == 'Supreme - Yearly') {
+    //             $newValidity = $baseDate->addYear();
+    //         } elseif ($subscription->membershipType == 'Prestige Lifetime') {
+    //             $newValidity = $baseDate->addYears(5);
+    //         } else {
+    //             $newValidity = $baseDate->addYear();
+    //         }
+
+    //         // 5. Update subscription
+    //         $subscription->validity = $newValidity->format('Y-m-d');
+    //         $subscription->save();
+
+    //         // 6. Get amount from membership type table
+    //         $membership = MembershipType::where(
+    //             'membershipType',
+    //             $subscription->membershipType
+    //         )->first();
+
+    //         // 7. Save renewal history
+    //         $renewal = new RenewSubscriptionHistory();
+    //         $renewal->userId            = $userId;
+    //         $renewal->renewedBy         = Auth::id();
+    //         $renewal->subscriptionType = $subscription->membershipType;
+    //         $renewal->renewalDate      = $newValidity->format('Y-m-d');
+    //         $renewal->amount           = $membership->amount ?? 0;
+    //         $renewal->save();
+
+    //         // 8. Success
+    //         session()->flash('success', 'Membership renewed Successfully!');
+    //         return redirect()->back();
+    //     } catch (\Throwable $th) {
+    //         ErrorLogger::logError($th, request()->fullUrl());
+    //         return response()->json(['message' => 'Failed to renew membership!'], 500);
+    //     }
+    // }
+
+
     public function renewMembership($userId)
     {
         try {
-            // Find the user by ID
+            // 1. Find user
             $user = User::find($userId);
-
             if (!$user) {
-                return response()->json(['message' => 'User not found!'], 404);
+                return response()->json([
+                    'status'  => 'error',
+                    'message' => 'User not found!'
+                ], 404);
             }
 
-            // Add your logic to renew the membership here
-            // Example: extend membership validity by one year
+            // 2. Find subscription
             $subscription = MemberSubscriptions::where('userId', $userId)->first();
-
-            if ($subscription) {
-                if ($subscription->membershipType == 'Supreme - Yearly') {
-                    $subscription->validity = now()->addYear()->format('Y-m-d');
-                } elseif ($subscription->membershipType == 'Prestige Lifetime') {
-                    $subscription->validity = now()->addYears(5)->format('Y-m-d');
-                }
-                $subscription->save();
-            } else {
-                return response()->json(['message' => 'Subscription not found!'], 404);
+            if (!$subscription) {
+                return response()->json([
+                    'status'  => 'error',
+                    'message' => 'Subscription not found!'
+                ], 404);
             }
 
-            // Send an email to the user
-            // Mail::to($user->email)->send(new MembershipRenewed($user));
+            // 3. Decide base date (future validity OR today)
+            $currentValidity = $subscription->validity
+                ? \Carbon\Carbon::parse($subscription->validity)
+                : now();
 
-            session()->flash('success', 'Membership renewed Successfully!');
-            return redirect()->back();
+            $baseDate = $currentValidity->isFuture()
+                ? $currentValidity
+                : now();
+
+            // 4. Extend validity
+            if ($subscription->membershipType == 'Supreme - Yearly') {
+                $newValidity = $baseDate->addYear();
+            } elseif ($subscription->membershipType == 'Prestige Lifetime') {
+                $newValidity = $baseDate->addYears(5);
+            } else {
+                $newValidity = $baseDate->addYear();
+            }
+
+            // 5. Update subscription
+            $subscription->validity = $newValidity->format('Y-m-d');
+            $subscription->save();
+
+            // 6. Get amount from membership type table
+            $membership = MembershipType::where(
+                'membershipType',
+                $subscription->membershipType
+            )->first();
+
+            // 7. Save renewal history
+            $renewal = new RenewSubscriptionHistory();
+            $renewal->userId            = $userId;
+            $renewal->renewedBy         = Auth::id();
+            $renewal->subscriptionId    = $subscription->id; // Use ID instead of Type string
+            $renewal->renewalDate      = $newValidity->format('Y-m-d');
+            $renewal->amount           = $membership->amount ?? 0;
+            $renewal->save();
+
+            // 8. Success JSON (SweetAlert)
+            return response()->json([
+                'status'  => 'success',
+                'message' => 'Membership renewed successfully!'
+            ]);
         } catch (\Throwable $th) {
-            // Log the error
+
             ErrorLogger::logError($th, request()->fullUrl());
 
-            // Return an error response or redirect
-            return response()->json(['message' => 'Failed to renew membership!'], 500);
+            return response()->json([
+                'status'  => 'error',
+                'message' => 'Failed to renew membership!'
+            ], 500);
         }
     }
+
+
 
     // public function monthlyPayments(Request $request)
     // {

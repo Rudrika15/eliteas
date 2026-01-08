@@ -70,12 +70,9 @@
                                     </td>
                                     {{-- <td>{{ $subscriptionData->status ?? '-' }}</td> --}}
                                     <td>
-                                        <form action="{{ route('renewMembership.mail', $subscriptionData->userId) }}" method="POST" class="d-inline">
-                                            @csrf
-                                            <button type="submit" class="btn btn-bg-blue btn-sm">
-                                                Renew Subscription
-                                            </button>
-                                        </form>
+                                        <button type="button" class="btn btn-bg-blue btn-sm renew-btn" data-url="{{ route('renewMembership.mail', $subscriptionData->userId) }}">
+                                            Renew Subscription
+                                        </button>
                                     </td>
                                 </tr>
                             @endforeach
@@ -88,6 +85,9 @@
             </div>
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -114,5 +114,53 @@
             });
         });
     </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+
+            document.querySelectorAll('.renew-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+
+                    let url = this.dataset.url;
+
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: 'Do you want to renew this membership?',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Yes, Renew',
+                    }).then((result) => {
+
+                        if (result.isConfirmed) {
+
+                            fetch(url, {
+                                    method: 'POST',
+                                    headers: {
+                                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                        'Accept': 'application/json'
+                                    }
+                                })
+                                .then(res => res.json())
+                                .then(data => {
+
+                                    if (data.status === 'success') {
+                                        Swal.fire('Success', data.message, 'success')
+                                            .then(() => location.reload());
+                                    } else {
+                                        Swal.fire('Error', data.message, 'error');
+                                    }
+
+                                })
+                                .catch(() => {
+                                    Swal.fire('Error', 'Something went wrong!', 'error');
+                                });
+                        }
+                    });
+                });
+            });
+
+        });
+    </script>
+
 
 @endsection

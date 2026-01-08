@@ -9,6 +9,7 @@ use App\Models\CircleCall;
 use App\Models\CircleMeetingMembersBusiness;
 use App\Models\CircleMeetingMembersReference;
 use App\Models\Member;
+use App\Models\MemberSubscriptions;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Maatwebsite\Excel\Facades\Excel;
@@ -102,78 +103,78 @@ class ReportController extends Controller
 
 
     public function ibm(Request $request)
-{
-    $startDate = $request->input('startDate');
-    $endDate   = $request->input('endDate');
-    $circleId  = $request->input('circleId');
+    {
+        $startDate = $request->input('startDate');
+        $endDate   = $request->input('endDate');
+        $circleId  = $request->input('circleId');
 
-    // Dropdown circles
-    $circles = Circle::where('status', 'Active')
-        ->select('id', 'circleName')
-        ->get();
+        // Dropdown circles
+        $circles = Circle::where('status', 'Active')
+            ->select('id', 'circleName')
+            ->get();
 
-    if (!$startDate && !$endDate && !$circleId) {
-        $ibms = collect();
-    } else {
+        if (!$startDate && !$endDate && !$circleId) {
+            $ibms = collect();
+        } else {
 
-        $query = CircleCall::where('status', 'active');
+            $query = CircleCall::where('status', 'active');
 
-        // Date filters
-        if ($startDate) {
-            $query->whereDate('created_at', '>=', $startDate);
-        }
-        if ($endDate) {
-            $query->whereDate('created_at', '<=', $endDate);
-        }
+            // Date filters
+            if ($startDate) {
+                $query->whereDate('created_at', '>=', $startDate);
+            }
+            if ($endDate) {
+                $query->whereDate('created_at', '<=', $endDate);
+            }
 
-        // Circle filter
-        if ($circleId) {
-            $query->where(function ($q) use ($circleId) {
-                $q->whereHas('member', function ($sq) use ($circleId) {
-                    $sq->where('circleId', $circleId);
-                })->orWhereHas('meetingPerson', function ($sq) use ($circleId) {
-                    $sq->where('circleId', $circleId);
+            // Circle filter
+            if ($circleId) {
+                $query->where(function ($q) use ($circleId) {
+                    $q->whereHas('member', function ($sq) use ($circleId) {
+                        $sq->where('circleId', $circleId);
+                    })->orWhereHas('meetingPerson', function ($sq) use ($circleId) {
+                        $sq->where('circleId', $circleId);
+                    });
                 });
-            });
+            }
+
+            $ibms = $query->get()
+                ->flatMap(function ($item) {
+                    return [
+                        ['member_id' => $item->memberId],
+                        ['member_id' => $item->meetingPersonId],
+                    ];
+                })
+                ->groupBy('member_id')
+                ->map(function ($group, $memberId) use ($circleId) {
+                    // memberId here is actually the User ID from CircleCall
+                    $member = Member::with('circle')->where('userId', $memberId)->first();
+
+                    if (!$member) {
+                        return null;
+                    }
+
+                    if ($circleId && $member->circleId != $circleId) {
+                        return null;
+                    }
+
+                    return [
+                        'memberId'      => $member->id,
+                        'memberName'    => $member->firstName . ' ' . $member->lastName,
+                        'circleName'    => $member->circle->circleName ?? '',
+                        'member_count'  => $group->count(),
+                    ];
+                })
+
+                // 🔹 CHANGE 4: remove null rows
+                ->filter()
+
+                ->sortByDesc('member_count')
+                ->values();
         }
 
-        $ibms = $query->get()
-            ->flatMap(function ($item) {
-                return [
-                    ['member_id' => $item->memberId],
-                    ['member_id' => $item->meetingPersonId],
-                ];
-            })
-            ->groupBy('member_id')
-            ->map(function ($group, $memberId) use ($circleId) {
-                // memberId here is actually the User ID from CircleCall
-                $member = Member::with('circle')->where('userId', $memberId)->first();
-
-                if (!$member) {
-                    return null;
-                }
-
-                if ($circleId && $member->circleId != $circleId) {
-                    return null;
-                }
-
-                return [
-                    'memberId'      => $member->id,
-                    'memberName'    => $member->firstName . ' ' . $member->lastName,
-                    'circleName'    => $member->circle->circleName ?? '',
-                    'member_count'  => $group->count(),
-                ];
-            })
-
-            // 🔹 CHANGE 4: remove null rows
-            ->filter()
-
-            ->sortByDesc('member_count')
-            ->values();
+        return view('admin.report.ibm', compact('ibms', 'circles'));
     }
-
-    return view('admin.report.ibm', compact('ibms', 'circles'));
-}
 
 
 
@@ -489,8 +490,8 @@ class ReportController extends Controller
 
         return view('admin.report.joining', compact('members', 'circles'));
     }
-    
-    
+
+
     public function getJoiningMembersRenewalDate(Request $request)
     {
         $startDate = $request->input('startDate');
@@ -518,19 +519,41 @@ class ReportController extends Controller
         }
 
         // Fetch data, group by circle, and include member names
-        $members = $query->with('circle')
+        $memberRows = $query->with('circle')->get();
+
+        $subscriptionsByUserId = MemberSubscriptions::whereIn(
+            'userId',
+            $memberRows->pluck('userId')->filter()->unique()->values()
+        )
             ->get()
+            ->keyBy('userId');
+
+        $members = $memberRows
             ->groupBy('circleId')
-            ->map(function ($group) {
+            ->map(function ($group) use ($subscriptionsByUserId) {
                 $circle = $group->first()->circle;
 
                 return [
                     'circleName' => $circle ? $circle->circleName : 'Unknown Circle',
                     'member_count' => $group->count(),
-                    'member_list' => $group->map(function ($member) {
+                    'member_list' => $group->map(function ($member) use ($subscriptionsByUserId) {
+                        $validityRaw = optional($subscriptionsByUserId->get($member->userId))->validity;
+                        $validityDate = null;
+
+                        if ($validityRaw) {
+                            try {
+                                $validityDate = preg_match('/^\d{2}-\d{2}-\d{4}$/', $validityRaw)
+                                    ? Carbon::createFromFormat('d-m-Y', $validityRaw)
+                                    : Carbon::parse($validityRaw);
+                            } catch (\Throwable $th) {
+                                $validityDate = null;
+                            }
+                        }
+
                         return [
                             'full_name' => $member->firstName . ' ' . $member->lastName,
                             'joined_date' => $member->created_at->format('d-m-Y'),
+                            'renewal_date' => $validityDate ? $validityDate->format('d-m-Y') : '-',
                         ];
                     })->toArray(),
                 ];
@@ -1040,14 +1063,12 @@ class ReportController extends Controller
         return Excel::download(new \App\Exports\CircleMemberAggregateExport($circleId, $startDate, $endDate), 'circle_member_report.xlsx');
     }
 
-    public function renewalReport(Request $request)
+    public function exportRenewalMembers(Request $request)
     {
-        $circleId = $request->input('circleId');
         $startDate = $request->input('startDate');
         $endDate = $request->input('endDate');
+        $circleId = $request->input('circleId');
 
-        
+        return Excel::download(new \App\Exports\RenewalMembersExport($startDate, $endDate, $circleId), 'renewal_members_report.xlsx');
     }
-
-
 }

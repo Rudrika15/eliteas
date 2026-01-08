@@ -655,66 +655,65 @@ class ConnectionController extends Controller
 
 
     public function viewMemberProfile(Request $request)
-{
-    try {
-        $authUserId = Auth::id();
+    {
+        try {
+            $authUserId = Auth::id();
 
-        $member = Member::where('userId', $request->input('userId'))
-            ->with(
-                'user',
-                'circle',
-                'billingAddress',
-                'contactDetails',
-                'topsProfile',
-                'connections',
-                'bCategory'
-            )
-            ->first();
+            $member = Member::where('userId', $request->input('userId'))
+                ->with(
+                    'user',
+                    'circle',
+                    'billingAddress',
+                    'contactDetails',
+                    'topsProfile',
+                    'connections',
+                    'bCategory'
+                )
+                ->first();
 
-        if (!$member) {
+            if (!$member) {
+                return Utils::sendResponse([
+                    'message' => 'Member not found',
+                    'member'  => null
+                ], 404);
+            }
+
+            // 🔹 Connection status (ONLY from connection table)
+            $connection = Connection::where(function ($q) use ($authUserId, $member) {
+                $q->where('userId', $authUserId)
+                    ->where('memberId', $member->userId);
+            })->orWhere(function ($q) use ($authUserId, $member) {
+                $q->where('userId', $member->userId)
+                    ->where('memberId', $authUserId);
+            })->first();
+
+            if ($connection) {
+                $member->status = $connection->status; // Accepted / Pending / Rejected
+            } else {
+                $member->status = null;
+            }
+
+            // 🔹 Business category name
+            $member->businessCategoryName = $member->bCategory?->categoryName;
+
+            // 🔹 Induction count
+            $member->induction_count = Member::where('sponsoredBy', $member->id)->count();
+
+            // 🔹 Testimonials
+            $member->testimonials = Testimonial::where('memberId', $member->id)
+                ->with('user:id,firstName,lastName')
+                ->get() ?? [];
+
             return Utils::sendResponse([
-                'message' => 'Member not found',
-                'member'  => null
-            ], 404);
+                'message' => 'Member Profile',
+                'member'  => $member
+            ], 200);
+        } catch (\Throwable $th) {
+            return Utils::errorResponse([
+                'error' => $th->getMessage()
+            ], 'Internal Server Error', 500);
         }
-
-        // 🔹 Connection status (ONLY from connection table)
-        $connection = Connection::where(function ($q) use ($authUserId, $member) {
-            $q->where('userId', $authUserId)
-              ->where('memberId', $member->userId);
-        })->orWhere(function ($q) use ($authUserId, $member) {
-            $q->where('userId', $member->userId)
-              ->where('memberId', $authUserId);
-        })->first();
-
-        if ($connection) {
-            $member->status = $connection->status; // Accepted / Pending / Rejected
-        } else {
-            $member->status = null;
-        }
-
-        // 🔹 Business category name
-        $member->businessCategoryName = $member->bCategory?->categoryName;
-
-        // 🔹 Induction count
-        $member->induction_count = Member::where('sponsoredBy', $member->id)->count();
-
-        // 🔹 Testimonials
-        $member->testimonials = Testimonial::where('memberId', $member->id)
-            ->with('user:id,firstName,lastName')
-            ->get() ?? [];
-
-        return Utils::sendResponse([
-            'message' => 'Member Profile',
-            'member'  => $member
-        ], 200);
-
-    } catch (\Throwable $th) {
-        return Utils::errorResponse([
-            'error' => $th->getMessage()
-        ], 'Internal Server Error', 500);
     }
-}
 
 
 
@@ -1245,6 +1244,10 @@ class ConnectionController extends Controller
     public function getCategoryMembers($id = null)
     {
         try {
+            $authUserId = Auth::id();
+            $authMember = Member::where('userId', $authUserId)->where('status', 'Active')->first();
+            $authCircleId = $authMember ? $authMember->circleId : null;
+
             $businessMeetings = CircleMeetingMembersBusiness::with('member')->where('status', 'Active')->get();
 
             if ($id) {
@@ -1276,6 +1279,22 @@ class ConnectionController extends Controller
                         if ($meeting->member->id === $member->id) {
                             $member->businessAmount += $meeting->amount;
                             $totalBusinessAmount += $meeting->amount;
+                        }
+                    }
+
+                    // Connection Status Logic
+                    $member->connection_status = 'Not Connected';
+                    if ($authCircleId && $member->circleId == $authCircleId) {
+                        $member->connection_status = 'Connected';
+                    } elseif ($authUserId) {
+                        $connection = Connection::where(function ($query) use ($authUserId, $member) {
+                            $query->where('userId', $authUserId)->where('memberId', $member->userId);
+                        })->orWhere(function ($query) use ($authUserId, $member) {
+                            $query->where('userId', $member->userId)->where('memberId', $authUserId);
+                        })->first();
+
+                        if ($connection) {
+                            $member->connection_status = $connection->status === 'Accepted' ? 'Connected' : $connection->status;
                         }
                     }
                 }
@@ -1314,6 +1333,22 @@ class ConnectionController extends Controller
                         if ($meeting->member->id === $member->id) {
                             $member->businessAmount += $meeting->amount;
                             $category->totalBusinessAmount += $meeting->amount;
+                        }
+                    }
+
+                    // Connection Status Logic
+                    $member->connection_status = 'Not Connected';
+                    if ($authCircleId && $member->circleId == $authCircleId) {
+                        $member->connection_status = 'Connected';
+                    } elseif ($authUserId) {
+                        $connection = Connection::where(function ($query) use ($authUserId, $member) {
+                            $query->where('userId', $authUserId)->where('memberId', $member->userId);
+                        })->orWhere(function ($query) use ($authUserId, $member) {
+                            $query->where('userId', $member->userId)->where('memberId', $authUserId);
+                        })->first();
+
+                        if ($connection) {
+                            $member->connection_status = $connection->status === 'Accepted' ? 'Connected' : $connection->status;
                         }
                     }
                 }
