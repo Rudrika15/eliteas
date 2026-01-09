@@ -82,27 +82,57 @@ class AttendanceController extends Controller
     {
         try {
 
-
-
             $validatedData = $request->validate([
-                'userId' => 'array',
-                'userId.*' => 'integer|exists:users,id',
-                // 'personName' => 'array',
                 'circleId' => 'required|integer',
                 'meetingId' => 'required|integer',
+                'attendance' => 'nullable|array',
+                'attendance.*' => 'nullable|in:Present,Absent,Late,Medical,Sub',
+                'userId' => 'nullable|array',
+                'userId.*' => 'integer|exists:users,id',
             ]);
 
-            $userIds = $request->input('userId', []);
-            $circleId = $request->circleId;
-            $meetingId = $request->meetingId;
+            $circleId = (int) $validatedData['circleId'];
+            $meetingId = (int) $validatedData['meetingId'];
 
-            foreach ($userIds as $index => $userId) {
-                $attendance = new CircleMeetingsAttendances();
-                $attendance->userId = $userId ?? null;
-                $attendance->circleId = $circleId;
-                $attendance->meetingId = $meetingId;
-                $attendance->status = 'Present';
-                $attendance->save();
+            $attendanceMap = $request->input('attendance');
+            if (is_array($attendanceMap)) {
+                foreach ($attendanceMap as $userId => $status) {
+                    $userId = (int) $userId;
+                    $status = is_string($status) ? trim($status) : null;
+
+                    $attendance = CircleMeetingsAttendances::where('circleId', $circleId)
+                        ->where('meetingId', $meetingId)
+                        ->where('userId', $userId)
+                        ->first();
+
+                    if (!$status) {
+                        if ($attendance) {
+                            $attendance->delete();
+                        }
+                        continue;
+                    }
+
+                    if (!$attendance) {
+                        $attendance = new CircleMeetingsAttendances();
+                        $attendance->circleId = $circleId;
+                        $attendance->meetingId = $meetingId;
+                        $attendance->userId = $userId;
+                    }
+
+                    $attendance->status = $status;
+                    $attendance->save();
+                }
+            } else {
+                $userIds = $request->input('userId', []);
+
+                foreach ($userIds as $userId) {
+                    $attendance = new CircleMeetingsAttendances();
+                    $attendance->userId = $userId ?? null;
+                    $attendance->circleId = $circleId;
+                    $attendance->meetingId = $meetingId;
+                    $attendance->status = 'Present';
+                    $attendance->save();
+                }
             }
 
             return Utils::sendResponse([], 'Attendance successfully recorded', 200);
@@ -127,10 +157,23 @@ class AttendanceController extends Controller
             $meetingId = $request->meetingId;
 
             foreach ($personNames as $index => $personName) {
-                $attendance = new CircleMeetingsAttendances();
-                $attendance->circleId = $circleId;
-                $attendance->meetingId = $meetingId;
-                $attendance->name = $personName ?? null;
+                $personName = is_string($personName) ? trim($personName) : null;
+                if (!$personName) {
+                    continue;
+                }
+
+                $attendance = CircleMeetingsAttendances::where('circleId', $circleId)
+                    ->where('meetingId', $meetingId)
+                    ->where('name', $personName)
+                    ->first();
+
+                if (!$attendance) {
+                    $attendance = new CircleMeetingsAttendances();
+                    $attendance->circleId = $circleId;
+                    $attendance->meetingId = $meetingId;
+                    $attendance->name = $personName;
+                }
+
                 $attendance->status = 'Present';
                 $attendance->save();
             }

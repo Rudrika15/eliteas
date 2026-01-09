@@ -257,6 +257,9 @@
                                 @endforelse
                             </tbody>
                         </table>
+                        <div class="d-flex justify-content-end mt-3 custom-pagination">
+                            {!! $circlecall->links() !!}
+                        </div>
                     </div>
                 </div>
 
@@ -300,6 +303,9 @@
                                 @endforelse
                             </tbody>
                         </table>
+                        <div class="d-flex justify-content-end mt-3 custom-pagination">
+                            {!! $callWith->links() !!}
+                        </div>
                     </div>
                 </div>
             </div>

@@ -12,8 +12,10 @@ class CircleMeetingsAttendances extends Model
     protected $fillable = [
         'userId',
         'personName',
+        'name',
         'circleId',
         'meetingId',
+        'status',
         // Other fillable fields here
     ];
 

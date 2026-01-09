@@ -13,15 +13,15 @@ use App\Models\CircleMeetingsAttendances;
 class AttendanceController extends Controller
 {
 
-        function __construct()
+    function __construct()
     {
         // Applying middleware based on specific methods for attendance management
         $this->middleware('permission:attendance-take|attendance-list|attendance-create|attendance-edit', ['only' => ['takeAttendance']]);
         $this->middleware('permission:invited-attendance-take|invited-attendance-list|invited-attendance-create|invited-attendance-edit', ['only' => ['invitedAttendance']]);
         $this->middleware('permission:meeting-schedule-view|meeting-schedule-list', ['only' => ['meetingSchedules']]);
         $this->middleware('permission:attendance-list-view', ['only' => ['attendanceList']]);
-        $this->middleware('permission:attendance-store|attendance-store-create', ['only' => ['attendanceStore']]);
-        $this->middleware('permission:attendance-invite-store|attendance-invite-create', ['only' => ['invitedAttendanceStore']]);
+        $this->middleware('permission:attendance-store|attendance-store-create', ['only' => ['attendanceStore', 'updateStatus']]);
+        $this->middleware('permission:attendance-invite-store|attendance-invite-create', ['only' => ['invitedAttendanceStore', 'updateInvitedStatus']]);
     }
 
     public function takeAttendance(Request $request)
@@ -103,7 +103,10 @@ class AttendanceController extends Controller
             $user = auth()->user();
 
             $attendanceList = CircleMeetingsAttendances::where('circleId', auth()->user()->member->circle->id)
-                ->get();
+                ->when($request->id, function ($query) use ($request) {
+                    return $query->where('meetingId', $request->id);
+                })
+                ->paginate(10);
 
             return view('admin.attendance.attendanceList', compact('attendanceList'));
         } catch (\Throwable $th) {
@@ -121,26 +124,57 @@ class AttendanceController extends Controller
     public function attendanceStore(Request $request)
     {
         try {
-            // Validate the request
             $validatedData = $request->validate([
-                'userId' => 'array',
-                'userId.*' => 'integer|exists:users,id',
                 'circleId' => 'required|integer|exists:circles,id',
                 'meetingId' => 'required|integer|exists:schedules,id',
+                'attendance' => 'nullable|array',
+                'attendance.*' => 'nullable|in:Present,Absent,Late,Medical,Sub',
+                'userId' => 'nullable|array',
+                'userId.*' => 'integer|exists:users,id',
             ]);
 
-            $userIds = $request->input('userId', []);
-            $circleId = $validatedData['circleId'];
-            $meetingId = $validatedData['meetingId'];
+            $circleId = (int) $validatedData['circleId'];
+            $meetingId = (int) $validatedData['meetingId'];
 
-            // Store attendance records
-            foreach ($userIds as $index => $userId) {
-                $attendance = new CircleMeetingsAttendances();
-                $attendance->userId = $userId ?? null;
-                $attendance->circleId = $circleId;
-                $attendance->meetingId = $meetingId;
-                $attendance->status = 'Present';
-                $attendance->save();
+            $attendanceMap = $request->input('attendance');
+            if (is_array($attendanceMap)) {
+                foreach ($attendanceMap as $userId => $status) {
+                    $userId = (int) $userId;
+                    $status = is_string($status) ? trim($status) : null;
+
+                    $attendance = CircleMeetingsAttendances::where('circleId', $circleId)
+                        ->where('meetingId', $meetingId)
+                        ->where('userId', $userId)
+                        ->first();
+
+                    if (!$status) {
+                        if ($attendance) {
+                            $attendance->delete();
+                        }
+                        continue;
+                    }
+
+                    if (!$attendance) {
+                        $attendance = new CircleMeetingsAttendances();
+                        $attendance->circleId = $circleId;
+                        $attendance->meetingId = $meetingId;
+                        $attendance->userId = $userId;
+                    }
+
+                    $attendance->status = $status;
+                    $attendance->save();
+                }
+            } else {
+                $userIds = $request->input('userId', []);
+
+                foreach ($userIds as $userId) {
+                    $attendance = new CircleMeetingsAttendances();
+                    $attendance->userId = $userId ?? null;
+                    $attendance->circleId = $circleId;
+                    $attendance->meetingId = $meetingId;
+                    $attendance->status = 'Present';
+                    $attendance->save();
+                }
             }
 
             return redirect()->route('attendance.meetingSchedules')->with('success', 'Attendance successfully recorded.');
@@ -156,29 +190,211 @@ class AttendanceController extends Controller
         }
     }
 
+    public function updateStatus(Request $request)
+    {
+        try {
+            $validatedData = $request->validate([
+                'circleId' => 'required|integer|exists:circles,id',
+                'meetingId' => 'required|integer|exists:schedules,id',
+                'userId' => 'required|integer|exists:users,id',
+                'status' => 'nullable|in:Present,Absent,Late,Medical,Sub',
+            ]);
+
+            $circleId = (int) $validatedData['circleId'];
+            $meetingId = (int) $validatedData['meetingId'];
+            $userId = (int) $validatedData['userId'];
+            $status = $validatedData['status'] ?? null;
+
+            $attendance = CircleMeetingsAttendances::where('circleId', $circleId)
+                ->where('meetingId', $meetingId)
+                ->where('userId', $userId)
+                ->first();
+
+            if (!$status) {
+                if ($attendance) {
+                    $attendance->delete();
+                }
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Attendance cleared',
+                ]);
+            }
+
+            if (!$attendance) {
+                $attendance = new CircleMeetingsAttendances();
+                $attendance->circleId = $circleId;
+                $attendance->meetingId = $meetingId;
+                $attendance->userId = $userId;
+            }
+
+            $attendance->status = $status;
+            $attendance->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Attendance saved',
+            ]);
+        } catch (\Throwable $th) {
+            ErrorLogger::logError($th, $request->fullUrl());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to save attendance',
+            ], 500);
+        }
+    }
+
+    public function updateInvitedStatus(Request $request)
+    {
+        try {
+            $validatedData = $request->validate([
+                'circleId' => 'required|integer|exists:circles,id',
+                'meetingId' => 'required|integer|exists:schedules,id',
+                'personName' => 'required|string',
+                'status' => 'nullable|in:Present,Absent,Late,Medical,Sub',
+                'checked' => 'nullable|boolean',
+            ]);
+
+            $circleId = (int) $validatedData['circleId'];
+            $meetingId = (int) $validatedData['meetingId'];
+            $personName = trim($validatedData['personName']);
+            $status = $validatedData['status'] ?? null;
+            $checked = array_key_exists('checked', $validatedData) ? (bool) $validatedData['checked'] : null;
+
+            if ($personName === '') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Invalid person name',
+                ], 422);
+            }
+
+            $attendance = CircleMeetingsAttendances::where('circleId', $circleId)
+                ->where('meetingId', $meetingId)
+                ->where('name', $personName)
+                ->first();
+
+            if ($checked !== null) {
+                if (!$checked) {
+                    if ($attendance) {
+                        $attendance->delete();
+                    }
+
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'Attendance cleared',
+                    ]);
+                }
+
+                $status = 'Present';
+            }
+
+            if (!$status) {
+                if ($attendance) {
+                    $attendance->delete();
+                }
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Attendance cleared',
+                ]);
+            }
+
+            if (!$attendance) {
+                $attendance = new CircleMeetingsAttendances();
+                $attendance->circleId = $circleId;
+                $attendance->meetingId = $meetingId;
+                $attendance->name = $personName;
+            }
+
+            $attendance->status = $status;
+            $attendance->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Attendance saved',
+            ]);
+        } catch (\Throwable $th) {
+            ErrorLogger::logError($th, $request->fullUrl());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to save attendance',
+            ], 500);
+        }
+    }
+
 
     public function invitedAttendanceStore(Request $request)
     {
         try {
-            // Validate the request
-            $request->validate([
-                'personName' => 'array',
-                'personName.*' => 'string',
+            $validatedData = $request->validate([
                 'circleId' => 'required|integer|exists:circles,id',
                 'meetingId' => 'required|integer|exists:schedules,id',
+                'attendance' => 'nullable|array',
+                'attendance.*.name' => 'nullable|string',
+                'attendance.*.status' => 'nullable|in:Present,Absent,Late,Medical,Sub',
+                'personName' => 'nullable|array',
+                'personName.*' => 'string',
             ]);
 
-            $personNames = $request->input('personName', []);
-            $circleId = $request->circleId;
-            $meetingId = $request->meetingId;
+            $circleId = (int) $validatedData['circleId'];
+            $meetingId = (int) $validatedData['meetingId'];
 
-            foreach ($personNames as $personName) {
-                $attendance = new CircleMeetingsAttendances();
-                $attendance->circleId = $circleId;
-                $attendance->meetingId = $meetingId;
-                $attendance->name = $personName ?? null;
-                $attendance->status = 'Present';
-                $attendance->save();
+            $attendanceRows = $request->input('attendance');
+            if (is_array($attendanceRows)) {
+                foreach ($attendanceRows as $row) {
+                    $personName = isset($row['name']) && is_string($row['name']) ? trim($row['name']) : null;
+                    $status = isset($row['status']) && is_string($row['status']) ? trim($row['status']) : null;
+
+                    if (!$personName) {
+                        continue;
+                    }
+
+                    $attendance = CircleMeetingsAttendances::where('circleId', $circleId)
+                        ->where('meetingId', $meetingId)
+                        ->where('name', $personName)
+                        ->first();
+
+                    if (!$status) {
+                        if ($attendance) {
+                            $attendance->delete();
+                        }
+                        continue;
+                    }
+
+                    if (!$attendance) {
+                        $attendance = new CircleMeetingsAttendances();
+                        $attendance->circleId = $circleId;
+                        $attendance->meetingId = $meetingId;
+                        $attendance->name = $personName;
+                    }
+
+                    $attendance->status = $status;
+                    $attendance->save();
+                }
+            } else {
+                $personNames = $request->input('personName', []);
+
+                foreach ($personNames as $personName) {
+                    $personName = is_string($personName) ? trim($personName) : null;
+                    if (!$personName) {
+                        continue;
+                    }
+
+                    $attendance = CircleMeetingsAttendances::where('circleId', $circleId)
+                        ->where('meetingId', $meetingId)
+                        ->where('name', $personName)
+                        ->first();
+
+                    if (!$attendance) {
+                        $attendance = new CircleMeetingsAttendances();
+                        $attendance->circleId = $circleId;
+                        $attendance->meetingId = $meetingId;
+                        $attendance->name = $personName;
+                    }
+
+                    $attendance->status = 'Present';
+                    $attendance->save();
+                }
             }
 
             return redirect()->route('attendance.meetingSchedules')->with('success', 'Attendance successfully recorded.');

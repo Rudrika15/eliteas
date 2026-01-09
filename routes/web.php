@@ -639,6 +639,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/attendance/takeAttendance/{id?}', [AttendanceController::class, 'takeAttendance'])->name('attendance.takeAttendance');
     Route::get('/attendance/invitedAttendance/{id?}', [AttendanceController::class, 'invitedAttendance'])->name('attendance.invitedAttendance');
     Route::post('/attendance/attendanceStore', [AttendanceController::class, 'attendanceStore'])->name('attendance.attendanceStore');
+    Route::post('/attendance/updateStatus', [AttendanceController::class, 'updateStatus'])->name('attendance.updateStatus');
+    Route::post('/attendance/updateInvitedStatus', [AttendanceController::class, 'updateInvitedStatus'])->name('attendance.updateInvitedStatus');
     Route::post('/attendance/invitedAttendanceStore', [AttendanceController::class, 'invitedAttendanceStore'])->name('attendance.invitedAttendanceStore');
 
 

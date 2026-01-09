@@ -63,8 +63,6 @@
                                 </tr>
                             @endif
                         </tbody>
-
-
                     </table>
                     <div class="d-flex justify-content-end custom-pagination">
                         {!! $schedules->links() !!}
