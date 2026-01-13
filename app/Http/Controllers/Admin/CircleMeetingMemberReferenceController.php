@@ -340,7 +340,7 @@ class CircleMeetingMemberReferenceController extends Controller
         //     // 'busTaken' => 'required',
         //     // 'hotelName' => 'required',
         // ]);
-        
+
         if ($request->group === 'external') {
             $this->validate($request, [
                 'contactNameExternal' => 'required|string',
@@ -370,14 +370,14 @@ class CircleMeetingMemberReferenceController extends Controller
             $refGiver->save();
 
 
-            $busGiver = new CircleMeetingMembersBusiness();
-            // $busGiver->memberId = $request->memberId;
-            $busGiver->businessGiverId = Auth::user()->id;
-            $busGiver->loginMemberId = $refGiver->memberId;
-            $busGiver->amount = $request->amount;
-            $busGiver->date = Carbon::now()->toDateString();
-            $busGiver->status = 'Active';
-            $busGiver->save();
+            // $busGiver = new CircleMeetingMembersBusiness();
+            // // $busGiver->memberId = $request->memberId;
+            // $busGiver->businessGiverId = Auth::user()->id;
+            // $busGiver->loginMemberId = $refGiver->memberId;
+            // $busGiver->amount = $request->amount;
+            // $busGiver->date = Carbon::now()->toDateString();
+            // $busGiver->status = 'Active';
+            // $busGiver->save();
 
             return redirect()->route('refGiver.index')->with('success', ' Created Successfully!');
         } catch (\Throwable $th) {
@@ -402,28 +402,11 @@ class CircleMeetingMemberReferenceController extends Controller
 
         // return $request;
         try {
-            $refGiver = new CircleMeetingMembersReference();
-
-            $refGiver->referenceGiverId = $request->memberId;
-            $refGiver->memberId = Auth::user()->id;
-
-            if ($request->group == 'internal')
-                $refGiver->contactName = $request->contactNameInternal;
-            else
-                $refGiver->contactName = $request->contactNameExternal;
-
-            $refGiver->contactNo = $request->contactNo;
-            $refGiver->email = $request->email;
-            $refGiver->scale = $request->scale;
-            $refGiver->description = $request->description;
-            $refGiver->status = 'Active';
-
-            $refGiver->save();
-
 
             $busGiver = new CircleMeetingMembersBusiness();
             // $busGiver->memberId = $request->memberId;
-            $busGiver->businessGiverId = $refGiver->referenceGiverId;
+            // $busGiver->businessGiverId = $refGiver->referenceGiverId;
+            $busGiver->businessGiverId = $request->memberId;
             $busGiver->loginMemberId = Auth::user()->id;
             // $busGiver->loginMemberId = Auth::user()->id;
             $busGiver->amount = $request->amount;
@@ -431,6 +414,29 @@ class CircleMeetingMemberReferenceController extends Controller
             $busGiver->date = Carbon::now()->toDateString();
             $busGiver->status = 'Active';
             $busGiver->save();
+
+            
+            if ($request->create_reference == 1) {
+                $refGiver = new CircleMeetingMembersReference();
+
+                $refGiver->referenceGiverId = $request->memberId;
+                $refGiver->memberId = Auth::user()->id;
+
+                if ($request->group == 'internal')
+                    $refGiver->contactName = $request->contactNameInternal;
+                else
+                    $refGiver->contactName = $request->contactNameExternal;
+
+                $refGiver->contactNo = $request->contactNo;
+                $refGiver->email = $request->email;
+                $refGiver->scale = $request->scale;
+                $refGiver->description = $request->description;
+                $refGiver->status = 'Active';
+
+                $refGiver->save();
+            }
+
+
 
             return redirect()->route('refGiver.index')->with('success', ' Created Successfully!');
         } catch (\Throwable $th) {

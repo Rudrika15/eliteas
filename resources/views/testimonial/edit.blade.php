@@ -41,7 +41,7 @@
                         <select class="form-select @error('circleId') is-invalid @enderror" id="circleId" name="circleId" required>
                             <option value="" disabled>Select Circle</option>
                             @foreach ($circles as $circle)
-                                <option value="{{ $circle->id }}" {{ old('circleId', $refGiver->circleId ?? ($myTestimonial->circleId ?? '')) == $circle->id ? 'selected' : '' }}>
+                                <option value="{{ $circle->id }}" {{ old('circleId', $myTestimonial->circleId ?? (auth()->user()->member->circle->id ?? '')) == $circle->id ? 'selected' : '' }}>
                                     {{ $circle->circleName }}
                                 </option>
                             @endforeach
@@ -138,7 +138,7 @@
 
             // Server-side values (blade -> JS)
             var defaultCityId = {!! json_encode(old('city', $myTestimonial->city ?? (auth()->user()->member->cityId ?? ''))) !!};
-            var defaultCircleId = {!! json_encode(old('circleId', $refGiver->circleId ?? ($myTestimonial->circleId ?? ''))) !!};
+            var defaultCircleId = {!! json_encode(old('circleId', $myTestimonial->circleId ?? (auth()->user()->member->circle->id ?? ''))) !!};
             var preselectedUserId = {!! json_encode(old('circlePersonId', $myTestimonial->circlePersonId ?? '')) !!};
 
             // Utility: populate #memberId from array of members and select matching user-id
@@ -210,17 +210,20 @@
                     return;
                 }
 
-                // change URL if your route differs
-                $.get('/get-members-by-circle/' + circleId)
-                    .done(function(response) {
-                        var members = Array.isArray(response) ? response : (response.members || []);
+                $.ajax({
+                    url: '/members/byCircle',
+                    method: 'GET',
+                    data: { circleId: circleId },
+                    success: function(response) {
+                        var members = (response && response.members) ? response.members : [];
                         populateMembersList(members, selectedUserId);
-                    })
-                    .fail(function() {
+                    },
+                    error: function() {
                         $('#memberId').empty().append('<option value="">Error loading members</option>');
                         $('#circlePersonId').val('');
                         $('#circlePersonName').val('');
-                    });
+                    }
+                });
             }
 
             // Fill hidden and visible name from selected option

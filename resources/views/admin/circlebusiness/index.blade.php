@@ -430,6 +430,14 @@
                                 </div>
                             </div>
 
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="createReference" name="create_reference" value="1">
+                                <label class="form-check-label fw-bold" for="createReference">
+                                    Also create Reference
+                                </label>
+                            </div>
+
+
                             <div class="d-flex justify-content-end gap-2 mt-3">
                                 <button type="button" class="cancel-btn" data-bs-dismiss="modal">Cancel</button>
                                 <button type="submit" class="create-btn">Create Business Slip</button>

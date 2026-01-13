@@ -38,7 +38,7 @@ class TestimonialController extends Controller
                 ->where('status', 'Active')
                 ->paginate(10);
 
-           $myTestimonials = Testimonial::where('userId', Auth::user()->id)
+            $myTestimonials = Testimonial::where('userId', Auth::user()->id)
                 ->with('receiver')
                 ->where('status', 'Active')
                 ->paginate(10);
@@ -163,15 +163,17 @@ class TestimonialController extends Controller
 
             if (auth()->user()->hasRole('Member')) {
 
-
                 $circles = Circle::where('status', 'Active')->orderBy('circleName', 'ASC')->get();
-
-                $circleMember = Member::with('circle')
-                    ->where('status', 'Active')
+                $selectedCircleId = old('circleId', $myTestimonial->circleId ?? (Auth::user()->member->circleId ?? null));
+                $members = Member::where('status', 'Active')
+                    ->where('userId', '!=', Auth::id())
+                    ->when($selectedCircleId, function ($q) use ($selectedCircleId) {
+                        $q->where('circleId', $selectedCircleId);
+                    })
                     ->orderBy('firstName', 'ASC')
-                    ->get();
+                    ->get(['id', 'userId', 'firstName', 'lastName']);
 
-                return view('testimonial.edit', compact('circles', 'circleMember', 'myTestimonial') );
+                return view('testimonial.edit', compact('circles', 'members', 'myTestimonial'));
             }
 
             // For Digital Member
@@ -187,7 +189,6 @@ class TestimonialController extends Controller
 
                 return view('testimonial.edit', compact('cities', 'members', 'myTestimonial'));
             }
-
         } catch (\Throwable $th) {
             // Log the error
             ErrorLogger::logError($th, request()->fullUrl());
