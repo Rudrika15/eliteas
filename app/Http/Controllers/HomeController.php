@@ -244,9 +244,9 @@ class HomeController extends Controller
         $membersCount = Member::where('status', 'Active')->count();
         $circleCount = Circle::where('status', 'Active')->count();
         $cityCount = Member::where('status', 'Active')
-        ->whereNotNull('cityId')
-        ->distinct('cityId')
-        ->count('cityId');
+            ->whereNotNull('cityId')
+            ->distinct('cityId')
+            ->count('cityId');
 
         // $cityCount = Circle::where('status', 'Active')
         //     ->select('cityId')
@@ -587,7 +587,7 @@ class HomeController extends Controller
                 $previousMonth = now()->subMonth()->month;
 
                 // Get Circle Calls
-                $circlecalls = CircleCall::with(['member', 'meetingPerson'])
+                $circlecalls = CircleCall::with(['member.circle', 'member.bCategory', 'meetingPerson'])
                     ->whereHas('member.circle', function ($query) use ($cityId) {
                         $query->where('cityId', $cityId);
                     })
@@ -616,25 +616,19 @@ class HomeController extends Controller
                     ->groupBy('businessGiverId')
                     ->map(function ($group) {
                         $user = $group->first()->users;
-                        $member = $user->member()->select('circleId', 'businessCategoryId', 'profilePhoto')->first();
+                        $member = Member::with(['circle', 'bCategory'])
+                            ->where('userId', $user->id)
+                            ->where('status', 'Active')
+                            ->first();
 
                         if (!$member) {
                             return null;
                         }
 
-                        $circle = Circle::find($member->circleId);
-                        $businessCategory = BusinessCategory::find($member->businessCategoryId);
-
                         return [
-                            'user' => $user,
                             'member' => $member,
                             'amount' => $group->sum('amount'),
                             'count' => $group->count(),
-                            'circle' => $circle ? ['id' => $circle->id, 'circleName' => $circle->circleName] : null,
-                            'businessCategory' => $businessCategory ? [
-                                'id' => $businessCategory->id,
-                                'categoryName' => $businessCategory->categoryName,
-                            ] : null,
                         ];
                     })
                     ->filter()
@@ -657,29 +651,38 @@ class HomeController extends Controller
                             return null;
                         }
 
-                        $user = User::find($referenceGiverId);
-
-                        if (!$user || $user->status !== 'Active') {
-                            return null;
-                        }
-
-                        $member = Member::where('userId', $referenceGiverId)
+                        $member = Member::with(['circle', 'bCategory'])
+                            ->where('userId', $referenceGiverId)
                             ->where('status', 'Active')
                             ->first();
 
+                        if (!$member) {
+                            return null;
+                        }
+
                         return [
-                            'user' => $user,
+                            'member' => $member,
                             'count' => $group->count(),
-                            'businessCategoryId' => $member?->businessCategoryId,
-                            'businessCategory' => $member?->bcategory->categoryName,
-                            'circleId' => $member?->circleId,
-                            'circle' => $member?->circle->circleName,
-                            'profilePhoto' => $member?->profilePhoto,
                         ];
                     })
                     ->filter()
                     ->sortByDesc('count')
                     ->first();
+
+                if ($circlecalls && isset($circlecalls['member']) && $circlecalls['member']) {
+                    $circlecalls['member']->loadMissing(['circle', 'bCategory']);
+                    $this->setConnectionStatusForMember($circlecalls['member'], $authId, $authCircleId);
+                }
+
+                if ($busGiver && isset($busGiver['member']) && $busGiver['member']) {
+                    $busGiver['member']->loadMissing(['circle', 'bCategory']);
+                    $this->setConnectionStatusForMember($busGiver['member'], $authId, $authCircleId);
+                }
+
+                if ($refGiver && isset($refGiver['member']) && $refGiver['member']) {
+                    $refGiver['member']->loadMissing(['circle', 'bCategory']);
+                    $this->setConnectionStatusForMember($refGiver['member'], $authId, $authCircleId);
+                }
 
                 // Leaderboard code end
 
@@ -844,6 +847,40 @@ class HomeController extends Controller
 
         // Free up memory
         imagedestroy($image);
+    }
+
+    private function setConnectionStatusForMember($member, $authUserId, $authCircleId)
+    {
+        if (!$member) {
+            return;
+        }
+
+        $connection = Connection::where(function ($query) use ($authUserId, $member) {
+            $query->where('userId', $authUserId)
+                ->where('memberId', $member->userId)
+                ->orWhere(function ($query) use ($authUserId, $member) {
+                    $query->where('userId', $member->userId)
+                        ->where('memberId', $authUserId);
+                });
+        })->first();
+
+        if (!$connection) {
+            $member->connection_status = 'Not Connected';
+            return;
+        }
+
+        $status = $connection->status;
+        if ($status === 'Accepted') {
+            $member->connection_status = 'Connected';
+            return;
+        }
+
+        if ($status === null || $status === '') {
+            $member->connection_status = 'Pending';
+            return;
+        }
+
+        $member->connection_status = $status;
     }
 
 
@@ -1089,71 +1126,71 @@ class HomeController extends Controller
 
 
     public function search(Request $request)
-{
-    try {
-        $query = $request->input('query');
-        $authId = Auth::id(); // Get authenticated user ID
+    {
+        try {
+            $query = $request->input('query');
+            $authId = Auth::id(); // Get authenticated user ID
 
-        // Fetch the authenticated user's circle ID from the Members table
-        $authMember = Member::where('userId', $authId)->first();
-        $authCircleId = $authMember ? $authMember->circleId : null;
+            // Fetch the authenticated user's circle ID from the Members table
+            $authMember = Member::where('userId', $authId)->first();
+            $authCircleId = $authMember ? $authMember->circleId : null;
 
-        $normalized = strtolower(trim($query));
+            $normalized = strtolower(trim($query));
 
-        if ($normalized === 'digital member') {
-            $members = Member::where('userId', '!=', $authId)
-                ->where('status', 'Active')
-                ->whereNull('circleId')
-                ->with(['user', 'circle', 'bCategory'])
-                ->get();
-        } else {
-            $members = Member::where('userId', '!=', $authId)
-                ->where('status', 'Active')
-                ->where(function ($q) use ($query) {
-                    $q->where('firstName', 'like', '%' . $query . '%')
-                        ->orWhere('lastName', 'like', '%' . $query . '%')
-                        ->orWhere('keyWords', 'like', '%' . $query . '%');
-                })
-                ->with(['user', 'circle', 'bCategory'])
-                ->get();
-        }
-
-        // ✅ Add connection status and induction count
-        $members->map(function ($member) use ($authId, $authCircleId) {
-            // Connection by same circle
-            if ($authCircleId !== null && $member->circleId == $authCircleId) {
-                $member->connection_status = 'Connected';
+            if ($normalized === 'digital member') {
+                $members = Member::where('userId', '!=', $authId)
+                    ->where('status', 'Active')
+                    ->whereNull('circleId')
+                    ->with(['user', 'circle', 'bCategory'])
+                    ->get();
             } else {
-                $connection = Connection::where(function ($query) use ($authId, $member) {
-                    $query->where('userId', $authId)
-                        ->where('memberId', $member->userId)
-                        ->orWhere(function ($query) use ($authId, $member) {
-                            $query->where('userId', $member->userId)
-                                  ->where('memberId', $authId);
-                        });
-                })->first();
-
-                $member->connection_status = $connection ? $connection->status : 'Not Connected';
+                $members = Member::where('userId', '!=', $authId)
+                    ->where('status', 'Active')
+                    ->where(function ($q) use ($query) {
+                        $q->where('firstName', 'like', '%' . $query . '%')
+                            ->orWhere('lastName', 'like', '%' . $query . '%')
+                            ->orWhere('keyWords', 'like', '%' . $query . '%');
+                    })
+                    ->with(['user', 'circle', 'bCategory'])
+                    ->get();
             }
 
-            // Force "Connected" if accepted connection found
-            if ($member->connection_status !== 'Connected' && isset($connection) && $connection->status === 'Accepted') {
-                $member->connection_status = 'Connected';
-            }
+            // ✅ Add connection status and induction count
+            $members->map(function ($member) use ($authId, $authCircleId) {
+                // Connection by same circle
+                if ($authCircleId !== null && $member->circleId == $authCircleId) {
+                    $member->connection_status = 'Connected';
+                } else {
+                    $connection = Connection::where(function ($query) use ($authId, $member) {
+                        $query->where('userId', $authId)
+                            ->where('memberId', $member->userId)
+                            ->orWhere(function ($query) use ($authId, $member) {
+                                $query->where('userId', $member->userId)
+                                    ->where('memberId', $authId);
+                            });
+                    })->first();
 
-            // Count inductions sponsored by this member
-            $member->induction_count = Member::where('sponsoredBy', $member->id)->count() ?? 0;
-        });
+                    $member->connection_status = $connection ? $connection->status : 'Not Connected';
+                }
 
-        return response()->json([
-            'message' => "Search results for '$query'",
-            'members' => $members,
-        ]);
-    } catch (\Throwable $th) {
-        ErrorLogger::logError($th, request()->fullUrl());
-        return response()->json(['error' => 'Failed to perform search. Please try again.'], 500);
+                // Force "Connected" if accepted connection found
+                if ($member->connection_status !== 'Connected' && isset($connection) && $connection->status === 'Accepted') {
+                    $member->connection_status = 'Connected';
+                }
+
+                // Count inductions sponsored by this member
+                $member->induction_count = Member::where('sponsoredBy', $member->id)->count() ?? 0;
+            });
+
+            return response()->json([
+                'message' => "Search results for '$query'",
+                'members' => $members,
+            ]);
+        } catch (\Throwable $th) {
+            ErrorLogger::logError($th, request()->fullUrl());
+            return response()->json(['error' => 'Failed to perform search. Please try again.'], 500);
+        }
     }
-}
 
 
 

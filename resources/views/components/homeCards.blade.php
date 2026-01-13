@@ -1549,35 +1549,20 @@
                                             @if (!empty($circlecalls['member']->bCategory->categoryName))
                                                 <div><i class="bi bi-tag me-1"></i> {{ $circlecalls['member']->bCategory->categoryName }}</div>
                                             @endif
-
-                                            {{-- Keywords --}}
-                                            @php
-                                                $keyWords = json_decode($circlecalls['member']->keyWords ?? '[]', true);
-                                            @endphp
-                                            @if (is_array($keyWords) && count($keyWords) > 0)
-                                                <div class="mt-2">
-                                                    @foreach ($keyWords as $keyWord)
-                                                        <span class="badge bg-secondary fw-normal me-1 mb-1">{{ $keyWord }}</span>
-                                                    @endforeach
-                                                </div>
-                                            @endif
                                         </div>
 
                                         <div class="mt-auto">
                                             <!-- Connect Button -->
-                                            @if ($circlecalls['member']->circleId == $authCircleId || $circlecalls['member']->connection_status == 'Connected')
+                                            @php
+                                                $connectionStatus = $circlecalls['member']->connection_status ?? 'Not Connected';
+                                            @endphp
+                                            @if ($connectionStatus == 'Connected')
                                                 <button type="button" class="fb-btn fb-btn-disabled">Connected</button>
-                                            @elseif ($circlecalls['member']->connection_status == 'Not Connected')
-                                                <form action="{{ route('connect') }}" method="POST" class="d-block w-100">
-                                                    @csrf
-                                                    <input type="hidden" value="{{ $circlecalls['member']->id }}" name="memberId">
-                                                    <button type="submit" class="fb-btn fb-btn-primary">Connect</button>
-                                                </form>
-                                            @elseif ($circlecalls['member']->connection_status == 'Accepted')
+                                            @elseif ($connectionStatus == 'Accepted')
                                                 <button class="fb-btn fb-btn-primary">Message</button>
-                                            @elseif ($circlecalls['member']->connection_status == 'Pending')
+                                            @elseif ($connectionStatus == 'Pending')
                                                 <button type="button" class="fb-btn fb-btn-disabled">Requested</button>
-                                            @elseif ($circlecalls['member']->connection_status == 'Rejected')
+                                            @else
                                                 <form action="{{ route('connect') }}" method="POST" class="d-block w-100">
                                                     @csrf
                                                     <input type="hidden" value="{{ $circlecalls['member']->id }}" name="memberId">
@@ -1586,11 +1571,9 @@
                                             @endif
 
                                             <!-- View Profile -->
-                                            @if (isset($circlecalls['member']->id))
-                                                <a href="{{ route('foundPersonDetails', $circlecalls['member']->id) }}" class="text-decoration-none d-block w-100">
-                                                    <button class="fb-btn fb-btn-secondary">View Profile</button>
-                                                </a>
-                                            @endif
+                                            <a href="{{ route('foundPersonDetails', $circlecalls['member']->id) }}" class="text-decoration-none d-block w-100">
+                                                <button class="fb-btn fb-btn-secondary">View Profile</button>
+                                            </a>
 
                                         </div>
                                     </div>
@@ -1607,13 +1590,13 @@
                                         <img src="{{ asset('ProfilePhoto/' . ($busGiver['member']->profilePhoto ?? 'profile.png')) }}" class="fb-card-img" alt="Profile Image">
                                     </div>
                                     <div class="fb-card-body">
-                                        <h5 class="fb-card-title">{{ $busGiver['user']->firstName }} {{ $busGiver['user']->lastName }}</h5>
+                                        <h5 class="fb-card-title">{{ $busGiver['member']->firstName }} {{ $busGiver['member']->lastName }}</h5>
 
                                         <div class="fb-card-subtitle">
                                             <i class="bi bi-people-fill"></i>
-                                            {{ $busGiver['circle']['circleName'] }}
+                                            {{ $busGiver['member']->circle->circleName ?? 'N/A' }}
                                             <span>&bull;</span>
-                                            <span>Business Given: {{ $busGiver['count'] }}</span>
+                                            {{-- <span>Business Given: {{ $busGiver['count'] }}</span> --}}
                                         </div>
 
                                         <div class="fb-card-info">
@@ -1625,45 +1608,30 @@
                                             @if (!empty($busGiver['member']->bCategory->categoryName))
                                                 <div><i class="bi bi-tag me-1"></i> {{ $busGiver['member']->bCategory->categoryName }}</div>
                                             @endif
-
-                                            {{-- Keywords --}}
-                                            @php
-                                                $keyWords = json_decode($busGiver['member']->keyWords ?? '[]', true);
-                                            @endphp
-                                            @if (is_array($keyWords) && count($keyWords) > 0)
-                                                <div class="mt-2">
-                                                    @foreach ($keyWords as $keyWord)
-                                                        <span class="badge bg-secondary fw-normal me-1 mb-1">{{ $keyWord }}</span>
-                                                    @endforeach
-                                                </div>
-                                            @endif
                                         </div>
 
                                         <div class="mt-auto">
                                             <!-- Connect Button -->
-                                            @if ($busGiver['member']->circleId == $authCircleId || $busGiver['member']->connection_status == 'Connected')
+                                            @php
+                                                $connectionStatus = $busGiver['member']->connection_status ?? 'Not Connected';
+                                            @endphp
+                                            @if ($connectionStatus == 'Connected')
                                                 <button type="button" class="fb-btn fb-btn-disabled">Connected</button>
-                                            @elseif ($busGiver['member']->connection_status == 'Accepted')
+                                            @elseif ($connectionStatus == 'Accepted')
                                                 <button class="fb-btn fb-btn-primary">Message</button>
-                                            @elseif ($busGiver['member']->connection_status == 'Pending')
+                                            @elseif ($connectionStatus == 'Pending')
                                                 <button type="button" class="fb-btn fb-btn-disabled">Requested</button>
-                                            @elseif ($busGiver['member']->connection_status == 'Rejected' || $busGiver['member']->connection_status == 'Not Connected')
+                                            @else
                                                 <form action="{{ route('connect') }}" method="POST" class="d-block w-100">
                                                     @csrf
                                                     <input type="hidden" value="{{ $busGiver['member']->id }}" name="memberId">
                                                     <button type="submit" class="fb-btn fb-btn-primary">Connect</button>
                                                 </form>
                                             @endif
-
-
                                             <!-- View Profile -->
-                                            @if (isset($busGiver['member']->id))
-                                                <a href="{{ route('foundPersonDetails', $busGiver['member']->id) }}" class="text-decoration-none d-block w-100">
-                                                    <button class="fb-btn fb-btn-secondary">View Profile</button>
-                                                </a>
-                                            @endif
-
-
+                                            <a href="{{ route('foundPersonDetails', $busGiver['member']->id) }}" class="text-decoration-none d-block w-100">
+                                                <button class="fb-btn fb-btn-secondary">View Profile</button>
+                                            </a>
                                         </div>
                                     </div>
                                 </div>
@@ -1676,62 +1644,50 @@
                                 <div class="fb-card shadow-sm">
                                     <div class="fb-card-img-wrapper">
                                         <span class="fb-badge">Top Reference Giver</span>
-                                        <img src="{{ asset('ProfilePhoto/' . ($refGiver['profilePhoto'] ?? 'profile.png')) }}" class="fb-card-img" alt="Profile Image">
+                                        <img src="{{ asset('ProfilePhoto/' . ($refGiver['member']->profilePhoto ?? 'profile.png')) }}" class="fb-card-img" alt="Profile Image">
                                     </div>
                                     <div class="fb-card-body">
-                                        <h5 class="fb-card-title">{{ $refGiver['user']->firstName ?? 'N/A' }} {{ $refGiver['user']->lastName ?? 'N/A' }}</h5>
+                                        <h5 class="fb-card-title">{{ $refGiver['member']->firstName }} {{ $refGiver['member']->lastName }}</h5>
 
                                         <div class="fb-card-subtitle">
                                             <i class="bi bi-people-fill"></i>
-                                            {{ $refGiver['circle'] ?? 'N/A' }}
+                                            {{ $refGiver['member']->circle->circleName ?? 'N/A' }}
                                             <span>&bull;</span>
                                             <span>References Given: {{ $refGiver['count'] ?? '0' }}</span>
                                         </div>
 
                                         <div class="fb-card-info">
-                                            @if (!empty($refGiver['companyName']))
-                                                <div><i class="bi bi-building me-1"></i> {{ $refGiver['companyName'] }}</div>
+                                            @if (!empty($refGiver['member']->companyName))
+                                                <div><i class="bi bi-building me-1"></i> {{ $refGiver['member']->companyName }}</div>
                                             @endif
-                                            @if (!empty($refGiver['bCategory']['categoryName']))
-                                                <div><i class="bi bi-tag me-1"></i> {{ $refGiver['bCategory']['categoryName'] }}
-                                                </div>
-                                            @endif
-
-                                            {{-- Keywords --}}
-                                            @php
-                                                $keyWords = json_decode($refGiver['keyWords'] ?? '[]', true);
-                                            @endphp
-                                            @if (is_array($keyWords) && count($keyWords) > 0)
-                                                <div class="mt-2">
-                                                    @foreach ($keyWords as $keyWord)
-                                                        <span class="badge bg-secondary fw-normal me-1 mb-1">{{ $keyWord }}</span>
-                                                    @endforeach
-                                                </div>
+                                            @if (!empty($refGiver['member']->bCategory->categoryName))
+                                                <div><i class="bi bi-tag me-1"></i> {{ $refGiver['member']->bCategory->categoryName }}</div>
                                             @endif
                                         </div>
 
                                         <div class="mt-auto">
                                             <!-- Connect Button -->
-                                            @if ($refGiver['circleId'] == $authCircleId || ($refGiver['connection_status'] ?? '') == 'Connected')
+                                            @php
+                                                $connectionStatus = $refGiver['member']->connection_status ?? 'Not Connected';
+                                            @endphp
+                                            @if ($connectionStatus == 'Connected')
                                                 <button type="button" class="fb-btn fb-btn-disabled">Connected</button>
-                                            @elseif (($refGiver['connection_status'] ?? '') == 'Accepted')
+                                            @elseif ($connectionStatus == 'Accepted')
                                                 <button class="fb-btn fb-btn-primary">Message</button>
-                                            @elseif (($refGiver['connection_status'] ?? '') == 'Pending')
+                                            @elseif ($connectionStatus == 'Pending')
                                                 <button type="button" class="fb-btn fb-btn-disabled">Requested</button>
-                                            @elseif ((($refGiver['connection_status'] ?? '') == 'Rejected' || ($refGiver['connection_status'] ?? 'Not Connected') == 'Not Connected') && !empty($refGiver['id']))
+                                            @else
                                                 <form action="{{ route('connect') }}" method="POST" class="d-block w-100">
                                                     @csrf
-                                                    <input type="hidden" value="{{ $refGiver['id'] }}" name="memberId">
+                                                    <input type="hidden" value="{{ $refGiver['member']->id }}" name="memberId">
                                                     <button type="submit" class="fb-btn fb-btn-primary">Connect</button>
                                                 </form>
                                             @endif
 
                                             <!-- View Profile -->
-                                            @if (isset($refGiver['id']))
-                                                <a href="{{ route('foundPersonDetails', $refGiver['id']) }}" class="text-decoration-none d-block w-100">
-                                                    <button class="fb-btn fb-btn-secondary">View Profile</button>
-                                                </a>
-                                            @endif
+                                            <a href="{{ route('foundPersonDetails', $refGiver['member']->id) }}" class="text-decoration-none d-block w-100">
+                                                <button class="fb-btn fb-btn-secondary">View Profile</button>
+                                            </a>
                                         </div>
                                     </div>
                                 </div>

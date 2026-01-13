@@ -198,28 +198,17 @@
                             <a href="{{ route('foundPersonDetails', $member->id) }}" class="text-decoration-none d-block w-100">
                                 <button class="fb-btn fb-btn-primary w-100">View Profile</button>
                             </a>
-                            @php
-                                $sameCircleConnected = $authCircleId !== null && $member->circleId !== null && $member->circleId == $authCircleId;
-                                $actuallyConnected = $member->connection_status == 'Connected' || $member->connection_status == 'Accepted';
-                                $showConnected = $sameCircleConnected || $actuallyConnected;
-                            @endphp
-                            @if ($showConnected)
+
+                            @if ($member->connection_status == 'Connected' || $member->connection_status == 'Accepted')
                                 <button type="button" class="fb-btn fb-btn-secondary fb-btn-disabled w-100 mt-2">
                                     <i class="bi bi-check-circle-fill me-2"></i> Connected
                                 </button>
-                            @elseif ($member->connection_status == 'Not Connected')
-                                <form action="{{ route('connect') }}" class="connectForm d-inline-block w-100 mt-2" method="POST">
-                                    @csrf
-                                    <input type="hidden" name="memberId" value="{{ $member->id }}">
-                                    <button type="submit" class="fb-btn fb-btn-secondary w-100">
-                                        <i class="bi bi-person-plus-fill me-2"></i> Connect
-                                    </button>
-                                </form>
                             @elseif ($member->connection_status == 'Pending')
                                 <button type="button" class="fb-btn fb-btn-secondary fb-btn-disabled w-100 mt-2">
                                     <i class="bi bi-clock me-2"></i> Requested
                                 </button>
-                            @elseif ($member->connection_status == 'Rejected')
+                            @else
+                                {{-- Not Connected or Rejected --}}
                                 <form action="{{ route('connect') }}" class="connectForm d-inline-block w-100 mt-2" method="POST">
                                     @csrf
                                     <input type="hidden" name="memberId" value="{{ $member->id }}">

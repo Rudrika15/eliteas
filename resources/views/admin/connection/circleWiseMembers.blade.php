@@ -551,7 +551,7 @@
                             @endif
                             <div class="mt-auto">
                                 <a href="{{ route('foundPersonDetails', $member->id) }}" class="fb-btn fb-btn-primary d-block w-100 text-decoration-none">View Profile</a>
-                                @if ($member->circleId == $authCircleId || $member->connection_status == 'Connected' || $member->connection_status == 'Accepted')
+                                @if ($member->connection_status == 'Connected' || $member->connection_status == 'Accepted')
                                     <button type="button" class="fb-btn fb-btn-secondary fb-btn-disabled w-100 mt-2">
                                         <i class="bi bi-check-circle-fill me-2"></i> Connected
                                     </button>
