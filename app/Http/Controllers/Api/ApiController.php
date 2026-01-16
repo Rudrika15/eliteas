@@ -22,6 +22,8 @@ use App\Models\CircleMeetingMembersBusiness;
 use App\Models\CircleMeetingMembersReference;
 use App\Models\Connection;
 use App\Models\City;
+use App\Models\MeetingInvitation;
+use App\Models\VisitorsDetails;
 
 class ApiController extends Controller
 {
@@ -125,40 +127,39 @@ class ApiController extends Controller
 
 
     public function homeCounts()
-{
-    try {
-        $membersCount = Member::where('status', 'Active')->count();
-        $circleCount  = Circle::where('status', 'Active')->count();
+    {
+        try {
+            $membersCount = Member::where('status', 'Active')->count();
+            $circleCount  = Circle::where('status', 'Active')->count();
 
-        // ✅ Same city count logic (Members + Circles)
-        $memberCities = Member::where('status', 'Active')
-            ->whereNotNull('cityId')
-            ->distinct()
-            ->pluck('cityId')
-            ->toArray();
+            // ✅ Same city count logic (Members + Circles)
+            $memberCities = Member::where('status', 'Active')
+                ->whereNotNull('cityId')
+                ->distinct()
+                ->pluck('cityId')
+                ->toArray();
 
-        $circleCities = Circle::where('status', 'Active')
-            ->whereNotNull('cityId')
-            ->distinct()
-            ->pluck('cityId')
-            ->toArray();
+            $circleCities = Circle::where('status', 'Active')
+                ->whereNotNull('cityId')
+                ->distinct()
+                ->pluck('cityId')
+                ->toArray();
 
-        $cityCount = count(array_unique(array_merge($memberCities, $circleCities)));
+            $cityCount = count(array_unique(array_merge($memberCities, $circleCities)));
 
-        return Utils::sendResponse([
-            'membersCount' => $membersCount,
-            'circleCount'  => $circleCount,
-            'cityCount'    => $cityCount,
-        ], 'Success', 200);
-
-    } catch (\Throwable $th) {
-        return Utils::errorResponses(
-            ['error' => $th->getMessage()],
-            'Internal Server Error',
-            500
-        );
+            return Utils::sendResponse([
+                'membersCount' => $membersCount,
+                'circleCount'  => $circleCount,
+                'cityCount'    => $cityCount,
+            ], 'Success', 200);
+        } catch (\Throwable $th) {
+            return Utils::errorResponses(
+                ['error' => $th->getMessage()],
+                'Internal Server Error',
+                500
+            );
+        }
     }
-}
 
 
     public function membersActivityCount(Request $request, $id)
@@ -1827,26 +1828,84 @@ class ApiController extends Controller
     }
 
     public function totalCounts()
-{
-    try {
-        $totalBusiness = CircleMeetingMembersBusiness::where('status', 'Active')->sum('amount');
-        $totalReferences = CircleMeetingMembersReference::where('status', 'Active')->count();
-        $totalIbms = CircleCall::where('status', 'Active')->count();
+    {
+        try {
+            $totalBusiness = CircleMeetingMembersBusiness::where('status', 'Active')->sum('amount');
+            $totalReferences = CircleMeetingMembersReference::where('status', 'Active')->count();
+            $totalIbms = CircleCall::where('status', 'Active')->count();
 
-        return Utils::sendResponse([
-            'total_business' => $totalBusiness,
-            'total_references' => $totalReferences,
-            'total_ibms' => $totalIbms,
-        ], 'Total Counts fetched successfully', 200);
-
-    } catch (\Throwable $e) {
-        return Utils::errorResponse(
-            ['error' => $e->getMessage()],
-            'Internal Server Error',
-            500
-        );
+            return Utils::sendResponse([
+                'total_business' => $totalBusiness,
+                'total_references' => $totalReferences,
+                'total_ibms' => $totalIbms,
+            ], 'Total Counts fetched successfully', 200);
+        } catch (\Throwable $e) {
+            return Utils::errorResponse(
+                ['error' => $e->getMessage()],
+                'Internal Server Error',
+                500
+            );
+        }
     }
-}
+
+    public function storeVisitorApi(Request $request)
+    {
+        try {
+
+            $request->validate([
+                'firstName' => 'required|string',
+                'mobileNo'  => 'required',
+                'meetingId' => 'required',
+            ]);
 
 
+            $visitor = new VisitorsDetails();
+            $visitor->firstName = $request->firstName;
+            $visitor->lastName = $request->lastName;
+            $visitor->mobileNo = $request->mobileNo;
+            $visitor->businessName = $request->businessName;
+
+            // Business category
+            if ($request->businessCategory == 'other') {
+                $business = BusinessCategory::where('categoryName', $request->otherCategory)->first();
+
+                if (!$business) {
+                    $business = new BusinessCategory();
+                    $business->categoryName = $request->otherCategory;
+                    $business->save();
+                }
+
+                $visitor->businessCategory = $business->id;
+            } else {
+                $visitor->businessCategory = $request->businessCategory;
+            }
+
+            $visitor->product = $request->product;
+            $visitor->networkingGroup = $request->networkingGroup;
+            $visitor->circleMeet = $request->circleMeet;
+            $visitor->invitedBy = $request->invitedBy;
+            $visitor->knowUs = $request->knowUs;
+            $visitor->meetingId = $request->meetingId;
+            $visitor->status = 'Active';
+            $visitor->save();
+
+            // Invitation
+            $invitation = new MeetingInvitation();
+            $invitation->meetingId = $visitor->meetingId;
+            $invitation->invitedMemberId = $visitor->invitedBy;
+            $invitation->personName = $visitor->firstName . ' ' . $visitor->lastName;
+            $invitation->personEmail = null;
+            $invitation->personContact = $visitor->mobileNo;
+            $invitation->businessCategoryId = $visitor->businessCategory;
+            $invitation->save();
+
+            return Utils::sendResponse(
+                ['visitor_id' => $visitor->id],
+                'Information submitted successfully',
+                200
+            );
+        } catch (\Throwable $th) {
+            return Utils::errorResponse($th->getMessage(), 'Failed to submit information', 500);
+        }
+    }
 }

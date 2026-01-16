@@ -217,10 +217,14 @@
 
                 <div class="col-md-6">
                     <div class="form-floating">
-                        <input type="text" class="form-control" name="city" placeholder="City">
+                        <!-- Display City Name -->
+                        <input type="text" class="form-control" placeholder="City" value="{{ auth()->user()->member->circle->city->cityName ?? '' }}" readonly>
+                        <!-- Store City ID -->
+                        <input type="hidden" name="cityId" value="{{ auth()->user()->member->circle->cityId ?? '' }}">
                         <label>City</label>
                     </div>
                 </div>
+
             </div>
 
             <div class="row mb-3">
@@ -253,16 +257,20 @@
             <div class="row mb-3 d-none" id="memberBox">
                 <div class="col-md-6">
                     <div class="form-floating">
-                        <select class="form-select" id="circleId">
-                            <option value="">Select Circle</option>
+                        <select class="form-select" id="circleId" disabled>
                             @foreach ($circles as $circle)
-                                <option value="{{ $circle->id }}">{{ $circle->circleName }}</option>
+                                <option value="{{ $circle->id }}" {{ auth()->user()->member->circleId == $circle->id ? 'selected' : '' }}>
+                                    {{ $circle->circleName }}
+                                </option>
                             @endforeach
                         </select>
+                        <!-- Hidden field to submit value -->
+                        <input type="hidden" name="circleId" value="{{ auth()->user()->member->circleId }}">
                         <label>Circle</label>
                     </div>
                 </div>
 
+                
                 <div class="col-md-6">
                     <div class="form-floating">
                         <select class="form-select" name="memberId" id="memberId">

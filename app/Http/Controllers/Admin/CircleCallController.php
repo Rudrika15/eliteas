@@ -245,24 +245,50 @@ class CircleCallController extends Controller
     // }
 
 
+    // public function getMembersByCircle(Request $request)
+    // {
+    //     $circleId = $request->circleId;
+
+    //     $members = Member::with('circle')
+    //         ->where(function ($query) use ($circleId) {
+    //             $query->where('circleId', $circleId)
+    //                 ->where('status', 'Active')
+    //                 ->where('userId', '<>', Auth::id()) // exclude the authenticated user
+    //                 ->orWhere('firstName', 'UBN'); // always include UBN
+    //         })
+    //         ->orderBy('firstName', 'asc')
+    //         ->get();
+
+    //     return response()->json([
+    //         'members' => $members
+    //     ]);
+    // }
+
+
     public function getMembersByCircle(Request $request)
     {
         $circleId = $request->circleId;
 
-        $members = Member::with('circle')
-            ->where(function ($query) use ($circleId) {
-                $query->where('circleId', $circleId)
+        $query = Member::with('circle')
+            ->where(function ($q) use ($circleId) {
+                $q->where('circleId', $circleId)
                     ->where('status', 'Active')
-                    ->where('userId', '<>', Auth::id()) // exclude the authenticated user
-                    ->orWhere('firstName', 'UBN'); // always include UBN
-            })
-            ->orderBy('firstName', 'asc')
-            ->get();
+                    ->where('userId', '<>', Auth::id())
+                    ->orWhere('firstName', 'UBN');
+            });
+
+        // If user has VP role, include himself
+        if (Auth::user()->hasRole('Vice President')) {
+            $query->orWhere('userId', Auth::id());
+        }
+
+        $members = $query->orderBy('firstName', 'asc')->get();
 
         return response()->json([
             'members' => $members
         ]);
     }
+
 
 
 
