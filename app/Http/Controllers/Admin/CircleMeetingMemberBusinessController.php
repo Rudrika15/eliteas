@@ -214,6 +214,10 @@ class CircleMeetingMemberBusinessController extends Controller
             $busGiver->remarks = $request->remarks;
             $busGiver->status = 'Active';
 
+            if ($request->filled('referenceId')) {
+                $busGiver->referenceId = $request->referenceId;
+            }
+
             $busGiver->save();
 
             return redirect()->route('busGiver.index')->with('success', 'Created Successfully!');
@@ -253,6 +257,7 @@ class CircleMeetingMemberBusinessController extends Controller
 
             // return $busGiver;
             // $busGiver->memberId = $request->memberId;
+            $busGiver->referenceId = $request->referenceId;
             $busGiver->businessGiverId = $request->businessGiverId;
             $busGiver->loginMemberId = $request->loginMemberId;
             $busGiver->amount += $request->amount;

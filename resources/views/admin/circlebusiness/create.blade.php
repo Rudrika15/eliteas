@@ -70,6 +70,7 @@
                     </div>
                 </div>
                 <input type="hidden" name="loginMemberId" value="{{ $busGiver->loginMemberId }}">
+                <input type="hidden" name="referenceId" value="{{ isset($reference) ? $reference->id : '' }}">
                 {{-- <div class="col-md-6">
                     <div class="form-floating mt-3">
                         <input type="text" class="form-control @error('loginMember') is-invalid @enderror"
@@ -97,7 +98,7 @@
                 <div class="">
                     <div class="form-floating mt-3">
                         <input type="date" class="form-control @error('date') is-invalid @enderror" id="date"
-                            name="date" placeholder="date" required max="{{ Carbon::now()->format('Y-m-d') }}">
+                            name="date" placeholder="date" required max="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" value="{{ old('date', \Carbon\Carbon::now()->format('Y-m-d')) }}">
                         <label for="date">Date</label>
                         @error('date')
                             <div class="invalid-tooltip">

@@ -133,7 +133,7 @@
 
 
     <div class="tab-navigation mb-3">
-        <a href="#" class="tab-btn active" data-target="#tabByMe">Received ({{ $busGiver->count() }})</a>
+        <a href="#" class="tab-btn active" data-target="#tabByMe">Received ({{ $refReceiver->count() }})</a>
         <a href="#" class="tab-btn" data-target="#tabByOther">Given ({{ $refGiver->count() }})</a>
         {{-- <a href="{{ route('circlecall.create') }}" class="float-end btn btn-sm btn-bg-orange">
         <i class="bi bi-plus-circle"></i> Create IBM
@@ -157,28 +157,29 @@
                                     <th>No</th>
                                     <th>Received From</th>
                                     <th>Circle</th>
-                                    <th>Amount</th>
                                     <th>Date</th>
-                                    <th>Remarks</th>
+                                    <th>Scale</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse ($busGiver as $busGiverData)
+                                @forelse ($refReceiver as $refReceiverData)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
-                                        <td>{{ optional($busGiverData->businessGiver)->firstName ?? '-' }} {{ optional($busGiverData->businessGiver)->lastName ?? '-' }}</td>
-                                        <td>{{ optional($busGiverData->businessGiverMember->circle)->circleName ?? '-' }}</td>
-                                        <td>{{ $busGiverData->amount ? '₹ ' . $busGiverData->amount : '-' }}</td>
-                                        <td>{{ $busGiverData->date ? \Carbon\Carbon::parse($busGiverData->date)->format('d-m-Y') : '-' }}</td>
-                                        <td>{{ $busGiverData->remarks ?? '-' }}</td>
+                                        <td>{{ optional($refReceiverData->refGiver)->firstName ?? '-' }} {{ optional($refReceiverData->refGiver)->lastName ?? '-' }}</td>
+                                        <td>{{ optional($refReceiverData->refGiver->circle)->circleName ?? '-' }}</td>
+                                        <td>{{ $refReceiverData->created_at ? \Carbon\Carbon::parse($refReceiverData->created_at)->format('d-m-Y') : '-' }}</td>
                                         <td>
-                                            <a href="{{ route('addBusiness.amount', $busGiverData->id) }}" class="btn btn-sm btn-bg-blue">
-                                                <i class="bi bi-pencil"></i>
-                                                Add Amount
-                                            </a>
+                                            @for ($i = 1; $i <= 5; $i++)
+                                                <i class="bi bi-star{{ $refReceiverData->scale >= $i ? '-fill' : '' }} text-warning"></i>
+                                            @endfor
                                         </td>
-
+                                        <td>
+                                            {{-- <a href="{{ route('refGiver.edit', $refReceiverData->id) }}" class="btn btn-sm btn-bg-blue">
+                                                <i class="bi bi-pencil"></i>
+                                            </a> --}}
+                                            <a href="{{ route('addBusiness.amount', $refReceiverData->id) }}" class="btn btn-sm btn-bg-blue">Add Amount</a>
+                                        </td>
                                     </tr>
                                 @empty
                                     <tr>
@@ -186,8 +187,10 @@
                                     </tr>
                                 @endforelse
                             </tbody>
-                            {{ $busGiver->links() }}
                         </table>
+                        <div class="d-flex justify-content-end custom-pagination">
+                            {!! $refReceiver->links() !!}
+                        </div>
                     </div>
                 </div>
 
