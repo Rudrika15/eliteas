@@ -46,6 +46,13 @@
                                                 <span>No video available</span>
                                             @endif
                                         </td>
+                                        <td>
+                                            @if ($helpData->pdf)
+                                                <a href="{{ asset('help/' . $helpData->pdf) }}" target="_blank" class="btn btn-primary btn-sm">View PDF</a>
+                                            @else
+                                                <span>No PDF available</span>
+                                            @endif
+                                        </td>
                                         <td>{{ $helpData->description ?? '' }}</td>
                                     </tr>
                                 @endforeach

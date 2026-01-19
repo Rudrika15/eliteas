@@ -188,9 +188,13 @@
     {{-- modal style end --}}
 
 
-    <div class="tab-navigation mb-3">
-        <a href="#" class="tab-btn active" data-target="#tabByMe">By Me ({{ $circlecall->total() }})</a>
-        <a href="#" class="tab-btn" data-target="#tabByOther">By Other ({{ $callWith->total() }})</a>
+    @php
+        $activeTab = request('tab', 'by_me');
+    @endphp
+
+    <div class="tab-navigation mb-3" id="ibm-tabs">
+        <a href="#" class="tab-btn {{ $activeTab == 'by_me' ? 'active' : '' }}" data-target="#tabByMe">By Me ({{ $circlecall->total() }})</a>
+        <a href="#" class="tab-btn {{ $activeTab == 'by_other' ? 'active' : '' }}" data-target="#tabByOther">By Other ({{ $callWith->total() }})</a>
         {{-- <a href="{{ route('circlecall.create') }}" class="float-end btn btn-sm btn-bg-orange">
             <i class="bi bi-plus-circle"></i> Create IBM
         </a> --}}
@@ -207,7 +211,7 @@
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h4 class="card-title">IBM</h4>
                 </div>
-                <div id="tabByMe" class="tab-content active">
+                <div id="tabByMe" class="tab-content {{ $activeTab == 'by_me' ? 'active' : '' }}">
                     <div class="table-responsive">
                         <table class="table table-bordered table-striped table-hover">
                             <thead>
@@ -258,7 +262,7 @@
                             </tbody>
                         </table>
                         <div class="d-flex justify-content-end mt-3 custom-pagination">
-                            {!! $circlecall->links() !!}
+                            {!! $circlecall->appends(['tab' => 'by_me'])->links() !!}
                         </div>
                     </div>
                 </div>
@@ -304,7 +308,7 @@
                             </tbody>
                         </table>
                         <div class="d-flex justify-content-end mt-3 custom-pagination">
-                            {!! $callWith->links() !!}
+                            {!! $callWith->appends(request()->query())->appends(['tab' => 'by_other'])->fragment('ibm-tabs')->links() !!}
                         </div>
                     </div>
                 </div>
@@ -413,30 +417,6 @@
 
 
                             {{-- For Digital Member Role --}}
-                            @if (auth()->user()->hasRole('Digital Member'))
-                                <!-- City Dropdown -->
-                                <div class="mb-3">
-                                    <label for="city" class="form-label fw-bold color-blue required">
-                                        City <span class="text-danger">*</span>
-                                    </label>
-                                    <select class="form-select" id="city" name="city" required>
-                                        <option value="">Select City</option>
-                                        @foreach ($cities as $city)
-                                            <option value="{{ $city->id }}">{{ $city->cityName }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-
-                                <!-- Member Dropdown -->
-                                <div class="mb-3">
-                                    <label for="memberId" class="form-label fw-bold color-blue required">
-                                        Member <span class="text-danger">*</span>
-                                    </label>
-                                    <select class="form-select" id="memberId" name="memberId" required>
-                                        <option value="">Select Member</option>
-                                    </select>
-                                </div>
-                            @endif
 
                             <!-- Meeting Person -->
                             <div class="mb-3">
@@ -524,18 +504,6 @@
                                     <input type="date" class="form-control" id="date" name="date" value="" required>
                                 </div>
                             @endif --}}
-
-
-                            @if (auth()->user()->hasRole('Digital Member'))
-                                <!-- Date -->
-                                <div class="mb-3">
-                                    <label for="date" class="form-label fw-bold color-blue required">
-                                        Date <span class="text-danger">*</span>
-                                    </label>
-
-                                    <input type="date" class="form-control" id="date" name="date" value="" required>
-                                </div>
-                            @endif
 
 
                             <!-- Remarks -->
@@ -748,114 +716,54 @@
         });
     </script>
 
-    @if (auth()->user()->hasRole('Digital Member'))
-        {{-- script for digital member --}}
-        <script>
-            $(document).ready(function() {
-                console.log("✅ Document Ready");
-
-                $.ajaxSetup({
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    }
-                });
-
-                function loadMembers(cityId) {
-                    console.log("🏙️ loadMembers() called with cityId:", cityId);
-
-                    $('#memberId').empty().append('<option value="">Select Member</option>');
-
-                    if (cityId) {
-                        let url = '/get-members-by-city/' + cityId;
-                        console.log("🚀 Sending AJAX to:", url);
-
-                        $.ajax({
-                            url: url,
-                            method: 'GET',
-                            success: function(response) {
-                                console.log("✅ Response received:", response);
-                                console.log("🔢 Member count:", response?.length ?? 0);
-
-                                if (response && response.length > 0) {
-                                    response.forEach(function(member, index) {
-                                        console.log(`👤 Member [${index}]:`, member);
-                                        $('#memberId').append(
-                                            `<option value="${member.id}"
-                                        data-user-id="${member.userId}"
-                                        data-first-name="${member.firstName ?? ''}"
-                                        data-last-name="${member.lastName ?? ''}">
-                                        ${(member.firstName ?? '')} ${(member.lastName ?? '')}
-                                    </option>`
-                                        );
-                                    });
-                                } else {
-                                    console.warn("⚠️ No members found for cityId:", cityId);
-                                    $('#memberId').append('<option value="">No Members Found</option>');
-                                }
-                            },
-                            error: function(xhr, status, error) {
-                                console.error("❌ AJAX Error:", {
-                                    status,
-                                    error,
-                                    responseText: xhr.responseText
-                                });
-                                $('#memberId').append('<option value="">Error loading members</option>');
-                            }
-                        });
-                    } else {
-                        console.warn("⚠️ No cityId provided");
-                    }
-                }
-
-                var defaultCityId = '{{ auth()->user()->member->city_id ?? '' }}';
-
-                if (defaultCityId) {
-                    loadMembers(defaultCityId);
-                }
-
-                $('#city').on('change', function() {
-                    var cityId = $(this).val();
-                    console.log("🏙️ City changed:", cityId);
-                    loadMembers(cityId);
-                });
-
-                $('#memberId').on('change', function() {
-                    var selected = $(this).find('option:selected');
-                    var memberId = selected.val();
-                    var userId = selected.data('user-id');
-                    var firstName = selected.data('first-name');
-                    var lastName = selected.data('last-name');
-
-                    console.log("👤 Member ID changed:", memberId);
-                    console.log("👤 Member User ID:", userId);
-                    console.log("👤 Member Name:", firstName + ' ' + lastName);
-
-
-                    if (memberId) {
-                        $('#meetingPersonId').val(userId);
-                        $('#meetingPersonName').val(firstName + ' ' + lastName);
-                    } else {
-                        $('#meetingPersonId').val('');
-                        $('#meetingPersonName').val('');
-                    }
-                });
-            });
-        </script>
-    @endif
-
-
-
     <script>
         document.querySelectorAll('.tab-btn').forEach(btn => {
             btn.addEventListener('click', function(e) {
                 e.preventDefault();
-                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-
-                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                const target = document.querySelector(this.getAttribute('data-target'));
-                target.classList.add('active');
+                // Update UI immediately
+                switchTab(this);
             });
+        });
+
+        function switchTab(clickedBtn) {
+            // Deactivate all
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+            // Activate current
+            clickedBtn.classList.add('active');
+            const target = document.querySelector(clickedBtn.getAttribute('data-target'));
+            if (target) target.classList.add('active');
+
+            // Update URL
+            const tabName = clickedBtn.getAttribute('data-target') === '#tabByOther' ? 'by_other' : 'by_me';
+            const url = new URL(window.location);
+            url.searchParams.set('tab', tabName);
+            window.history.pushState({}, '', url);
+        }
+
+        // Initialize tab from URL on page load
+        document.addEventListener("DOMContentLoaded", function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const activeTab = urlParams.get('tab');
+
+            if (activeTab === 'by_other') {
+                const tabBtn = document.querySelector('[data-target="#tabByOther"]');
+                if (tabBtn) {
+                    // We manually trigger the UI switch without pushState (or with it, doesn't matter much on load)
+                    // But better to just set classes directly to avoid history pollution if needed, 
+                    // though reusing switchTab is cleaner.
+
+                    // Deactivate defaults
+                    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+                    // Activate desired
+                    tabBtn.classList.add('active');
+                    const target = document.querySelector(tabBtn.getAttribute('data-target'));
+                    if (target) target.classList.add('active');
+                }
+            }
         });
 
         function deleteRow(url) {

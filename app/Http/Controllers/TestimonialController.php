@@ -91,33 +91,17 @@ class TestimonialController extends Controller
     {
         try {
 
-            // For normal Member
-            if (auth()->user()->hasRole('Member')) {
+            $circles = Circle::where('status', 'Active')->orderBy('circleName', 'ASC')->get();
 
+            $circleMember = Member::with('circle')
+                ->where('circleId', Auth::user()->member->circleId)
+                ->where('status', 'Active')
+                ->where('id', '!=', Auth::user()->member->id)
+                ->orderBy('firstName', 'ASC')
+                ->get();
 
-                $circles = Circle::where('status', 'Active')->orderBy('circleName', 'ASC')->get();
+            return view('testimonial.create', compact('circles', 'circleMember'));
 
-                $circleMember = Member::with('circle')
-                    ->where('status', 'Active')
-                    ->orderBy('firstName', 'ASC')
-                    ->get();
-
-                return view('testimonial.create', compact('circles', 'circleMember'));
-            }
-
-            // For Digital Member
-            if (auth()->user()->hasRole('Digital Member')) {
-
-                $cities = City::where('status', 'Active')->orderBy('cityName', 'ASC')->get();
-
-                $members = Member::where('status', 'Active')
-                    ->where('id', '!=', Auth::user()->member->id)
-                    ->where('circleId', null)
-                    ->orderBy('firstName', 'ASC')
-                    ->get();
-
-                return view('testimonial.create', compact('cities', 'members'));
-            }
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, $request->fullUrl());
             return view('servererror');

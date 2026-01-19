@@ -151,7 +151,7 @@ class CircleMeetingMemberReferenceController extends Controller
                     ->with('members.circle:id,circleName')
                     ->with('refGiverName')
                     ->where('referenceGiverId', Auth::user()->id)
-                    ->paginate(10);
+                    ->paginate(10, ['*'], 'page_ref');
 
                 $refGiver->transform(function ($item) {
                     if ($item->members) {
@@ -165,7 +165,7 @@ class CircleMeetingMemberReferenceController extends Controller
                     ->where('loginMemberId', Auth::user()->id)
                     ->where('status', 'Active')
                     ->orderBy('id', 'DESC')
-                    ->paginate(10);
+                    ->paginate(10, ['*'], 'page_bus');
 
                 $busGiver->transform(function ($item) {
                     if ($item->businessGiverMember) {
@@ -184,49 +184,6 @@ class CircleMeetingMemberReferenceController extends Controller
                 $circlemeeting = CircleMeeting::where('status', 'Active')->get();
 
                 return view('admin.refGiver.index', compact('refGiver', 'busGiver', 'circles', 'circleMember', 'circlemeeting'));
-            }
-
-            // For Digital Member
-            if (auth()->user()->hasRole('Digital Member')) {
-
-                $refGiver = CircleMeetingMembersReference::where('status', 'Active')
-                    ->orderBy('id', 'DESC')
-                    ->with('members')
-                    ->with('refGiverName')
-                    ->where('referenceGiverId', Auth::user()->id)
-                    ->get();
-
-                $refGiver->transform(function ($item) {
-                    if ($item->members) {
-                        $item->members->induction_count = Member::where('sponsoredBy', $item->members->id)->count() ?? 0;
-                    }
-                    return $item;
-                });
-
-                $busGiver = CircleMeetingMembersBusiness::with('businessGiverMember')
-                    ->where('loginMemberId', Auth::user()->id)
-                    ->where('status', 'Active')
-                    ->orderBy('id', 'DESC')
-                    ->get();
-
-                $busGiver->transform(function ($item) {
-                    if ($item->businessGiverMember) {
-                        $item->businessGiverMember->induction_count = Member::where('sponsoredBy', $item->businessGiverMember->id)->count() ?? 0;
-                    }
-                    return $item;
-                });
-
-                $cities = City::where('status', 'Active')->orderBy('cityName', 'ASC')->get();
-
-                $circleMember = Member::where('userId', '!=', Auth::user()->id)
-                    ->where('circleId', null)
-                    ->where('status', 'Active')
-                    ->orderBy('firstName', 'ASC')
-                    ->get();
-
-                $circlemeeting = CircleMeeting::where('status', 'Active')->get();
-
-                return view('admin.refGiver.index', compact('refGiver', 'busGiver', 'cities', 'circleMember', 'circlemeeting'));
             }
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, $request->fullUrl());
@@ -340,7 +297,7 @@ class CircleMeetingMemberReferenceController extends Controller
         //     // 'busTaken' => 'required',
         //     // 'hotelName' => 'required',
         // ]);
-        
+
         if ($request->group === 'external') {
             $this->validate($request, [
                 'contactNameExternal' => 'required|string',

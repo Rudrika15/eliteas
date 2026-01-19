@@ -338,7 +338,7 @@
         <li class="nav-item">
             <a class="nav-link" href="{{ route('help.index') }}">
                 <i class="bi bi-person-vcard" style="color: #e76a35"></i>
-                <span style="color: #1d2856">Help</span>
+                <span style="color: #1d2856">Resources</span>
             </a>
         </li>
     </ul>

@@ -463,7 +463,8 @@ Route::group(['middleware' => ['auth']], function () {
 
     //Business Caategory
 
-    Route::get('/bCategory/index', [BusinessCategoryController::class, 'index'])->name('bCategory.index');
+    Route::get('bCategory/index', [BusinessCategoryController::class, 'index'])->name('bCategory.index');
+    Route::get('bCategory/members/{id}', [BusinessCategoryController::class, 'getMembers'])->name('bCategory.members');
     Route::get('bCategory/show/{id?}', [BusinessCategoryController::class, 'show'])->name('bCategory.show');
     Route::get('bCategory/create', [BusinessCategoryController::class, 'create'])->name('bCategory.create');
     Route::post('bCategory/store', [BusinessCategoryController::class, 'store'])->name('bCategory.store');

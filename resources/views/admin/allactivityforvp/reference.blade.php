@@ -66,7 +66,7 @@
                         </tbody>
                     </table>
                     <div class="d-flex justify-content-end custom-pagination">
-                        {{-- {!! $refrences->links() !!} --}}
+                        {!! $refrences->links() !!}
                     </div>
                 </div>
                 <!-- End Table with stripped rows -->

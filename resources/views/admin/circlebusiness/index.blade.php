@@ -238,7 +238,7 @@
                         </table>
                     </div>
                     <div class="d-flex justify-content-end mt-3 custom-pagination">
-                        {!! $busGiver->links() !!}
+                        {!! $busGiver->appends(['tab' => 'received'])->links() !!}
                     </div>
                 </div>
 
@@ -281,7 +281,7 @@
                         </table>
                     </div>
                     <div class="d-flex justify-content-end mt-3 custom-pagination">
-                        {!! $busGiveByOther->links() !!}
+                        {!! $busGiveByOther->appends(['tab' => 'given'])->links() !!}
                     </div>
                 </div>
             </div>
@@ -307,7 +307,7 @@
                         <!-- Circle and Member Selection -->
                         <div class="card p-3 shadow-sm border-0 rounded">
 
-                            {{-- @if (auth()->user()->hasRole('Member'))
+                            @if (auth()->user()->hasRole('Member'))
 
                                 <div class="mb-3">
                                     <label for="circleId" class="form-label fw-bold color-blue required">Circle <span class="text-danger">*</span></label>
@@ -321,12 +321,12 @@
                                         @endforeach
                                     </select>
                                     {{-- <label for="circleId">Circle</label> --}}
-                            {{-- @error('circleId')
+                                    @error('circleId')
                                         <div class="invalid-tooltip">This field is required.</div>
                                     @enderror
                                 </div>
 
-                            @endif --}}
+                            @endif
 
 
                             @if (auth()->user()->hasRole('Member'))
@@ -345,22 +345,6 @@
                                     @error('circleId')
                                         <div class="invalid-tooltip">This field is required.</div>
                                     @enderror
-                                </div>
-                            @endif
-
-
-                            @if (auth()->user()->hasRole('Digital Member'))
-                                <!-- City Dropdown -->
-                                <div class="mb-3">
-                                    <label for="city" class="form-label fw-bold color-blue required">
-                                        City <span class="text-danger">*</span>
-                                    </label>
-                                    <select class="form-select" id="city" name="city" required>
-                                        <option value="">Select City</option>
-                                        @foreach ($cities as $city)
-                                            <option value="{{ $city->id }}">{{ $city->cityName }}</option>
-                                        @endforeach
-                                    </select>
                                 </div>
                             @endif
 
@@ -444,6 +428,20 @@
 
     <!-- Tab Toggle Script -->
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check for tab parameter in URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const activeTab = urlParams.get('tab');
+
+            if (activeTab === 'given') {
+                const givenTabBtn = document.querySelector('.tab-btn[data-tab="tabGiven"]');
+                if (givenTabBtn) givenTabBtn.click();
+            } else if (activeTab === 'received') {
+                const receivedTabBtn = document.querySelector('.tab-btn[data-tab="tabReceived"]');
+                if (receivedTabBtn) receivedTabBtn.click();
+            }
+        });
+
         document.querySelectorAll('.tab-btn').forEach(function(tabBtn) {
             tabBtn.addEventListener('click', function(e) {
                 e.preventDefault();
@@ -454,12 +452,10 @@
                 // Hide all tab contents
                 document.querySelectorAll('.tab-content').forEach(tab => tab.style.display = 'none');
 
-                // Add active class to clicked tab
-                tabBtn.classList.add('active');
-
-                // Show the selected tab content
-                const tabId = tabBtn.getAttribute('data-tab');
-                document.getElementById(tabId).style.display = 'block';
+                // Activate clicked tab
+                this.classList.add('active');
+                const targetTab = this.getAttribute('data-tab');
+                document.getElementById(targetTab).style.display = 'block';
             });
         });
     </script>

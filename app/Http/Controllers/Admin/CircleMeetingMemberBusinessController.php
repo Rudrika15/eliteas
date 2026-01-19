@@ -84,7 +84,7 @@ class CircleMeetingMemberBusinessController extends Controller
                 $busGiver = CircleMeetingMembersBusiness::where('loginMemberId', Auth::user()->id)
                     ->where('status', 'Active')
                     ->orderBy('id', 'DESC')
-                    ->paginate(10);
+                    ->paginate(10, ['*'], 'page_received');
 
                 // Transform underlying collection items
                 $busGiver->getCollection()->transform(function ($item) {
@@ -96,7 +96,7 @@ class CircleMeetingMemberBusinessController extends Controller
                     ->where('businessGiverId', Auth::user()->id)
                     ->where('status', 'Active')
                     ->orderBy('id', 'DESC')
-                    ->paginate(10);
+                    ->paginate(10, ['*'], 'page_given');
 
                 // Transform underlying collection items
                 $busGiveByOther->getCollection()->transform(function ($item) {
@@ -112,43 +112,6 @@ class CircleMeetingMemberBusinessController extends Controller
                 $circlemeeting = CircleMeeting::where('status', 'Active')->get();
 
                 return view('admin.circlebusiness.index', compact('busGiver', 'busGiveByOther', 'circlemeeting', 'circles', 'circleMember'));
-            }
-
-            if (auth()->user()->hasRole('Digital Member')) {
-                // For Digital Member (without $circles)
-                $busGiver = CircleMeetingMembersBusiness::where('loginMemberId', Auth::user()->id)
-                    ->where('status', 'Active')
-                    ->orderBy('id', 'DESC')
-                    ->paginate(10);
-
-                // Transform underlying collection items
-                $busGiver->getCollection()->transform(function ($item) {
-                    $item->amount = isset($item->amount) ? number_format($item->amount, 2) : '-';
-                    return $item;
-                });
-
-                $busGiveByOther = CircleMeetingMembersBusiness::with('loginMember')
-                    ->where('businessGiverId', Auth::user()->id)
-                    ->where('status', 'Active')
-                    ->orderBy('id', 'DESC')
-                    ->paginate(10);
-
-                // Transform underlying collection items
-                $busGiveByOther->getCollection()->transform(function ($item) {
-                    $item->amount = isset($item->amount) ? number_format($item->amount, 2) : '-';
-                    return $item;
-                });
-
-                $circleMember = Member::where('circleId', null)
-                    ->where('userId', '!=', Auth::user()->id) // Exclude the logged-in user
-                    ->where('status', 'Active')
-                    ->orderBy('firstName', 'ASC')
-                    ->get();
-
-                // Use City model for cities with correct field name
-                $cities = City::where('status', 'Active')->orderBy('cityName', 'ASC')->get();
-
-                return view('admin.circlebusiness.index', compact('busGiver', 'busGiveByOther', 'circleMember', 'cities'));
             }
 
             // Default unauthorized

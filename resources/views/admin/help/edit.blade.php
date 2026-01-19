@@ -57,6 +57,22 @@
                     @enderror
                 </div>
 
+                <div class="col-md-6 mt-3">
+                    <label for="pdf" class="form-label">PDF</label>
+                    <input type="file" class="form-control @error('pdf') is-invalid @enderror" id="pdf" name="pdf" accept="application/pdf">
+                    <!-- Display existing PDF link -->
+                    @if ($help->pdf)
+                        <div class="mt-2">
+                            <a href="{{ asset('help/' . $help->pdf) }}" target="_blank">View Current PDF</a>
+                        </div>
+                    @endif
+                    @error('pdf')
+                        <div class="invalid-feedback">
+                            {{ $message }}
+                        </div>
+                    @enderror
+                </div>
+
             </div>
 
             <div class="row mb-3">

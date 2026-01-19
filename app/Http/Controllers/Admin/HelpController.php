@@ -73,6 +73,10 @@ class HelpController extends Controller
                 $help->video = time() . '.' . $request->video->extension();
                 $request->video->move(public_path('help'), $help->video);
             }
+            if ($request->pdf) {
+                $help->pdf = time() . '.' . $request->pdf->extension();
+                $request->pdf->move(public_path('help'), $help->pdf);
+            }
             $help->description = $request->description;
             $help->status = 'Active';
             $help->save();
@@ -120,6 +124,10 @@ class HelpController extends Controller
             if ($request->video) {
                 $help->video = time() . '.' . $request->video->extension();
                 $request->video->move(public_path('help'), $help->video);
+            }
+            if ($request->pdf) {
+                $help->pdf = time() . '.' . $request->pdf->extension();
+                $request->pdf->move(public_path('help'), $help->pdf);
             }
             $help->description = $request->description;
             $help->status = 'Active';

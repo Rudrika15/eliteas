@@ -133,11 +133,8 @@
 
 
     <div class="tab-navigation mb-3">
-        <a href="#" class="tab-btn active" data-target="#tabByMe">Received ({{ $busGiver->count() }})</a>
-        <a href="#" class="tab-btn" data-target="#tabByOther">Given ({{ $refGiver->count() }})</a>
-        {{-- <a href="{{ route('circlecall.create') }}" class="float-end btn btn-sm btn-bg-orange">
-        <i class="bi bi-plus-circle"></i> Create IBM
-    </a> --}}
+        <a href="#" class="tab-btn active" data-target="#tabByMe">Received ({{ $busGiver->total() }})</a>
+        <a href="#" class="tab-btn" data-target="#tabByOther">Given ({{ $refGiver->total() }})</a>
         <button type="button" class="float-end btn btn-bg-orange" data-bs-toggle="modal" data-bs-target="#createIBMModal">
             Create Reference
         </button>
@@ -186,13 +183,13 @@
                                     </tr>
                                 @endforelse
                             </tbody>
-                            {{ $busGiver->links() }}
+                            {!! $busGiver->appends(['tab' => 'received'])->links() !!}
                         </table>
                     </div>
                 </div>
 
 
-                <div id="tabByOther" class="tab-content active" style="display: none;">
+                <div id="tabByOther" class="tab-content" style="display: none;">
                     {{-- <div class="container">
                         <div class="card">
                             <div class="card-body">
@@ -242,7 +239,7 @@
                         </table>
                     </div>
                     <div class="d-flex justify-content-end custom-pagination">
-                        {!! $refGiver->links() !!}
+                        {!! $refGiver->appends(['tab' => 'given'])->links() !!}
                     </div>
                 </div>
             </div>
@@ -348,33 +345,6 @@
                                     @error('memberId')
                                         <div class="invalid-tooltip">This field is required.</div>
                                     @enderror
-                                </div>
-                            @endif
-
-
-                            {{-- For Digital Member Role --}}
-                            @if (auth()->user()->hasRole('Digital Member'))
-                                <!-- City Dropdown -->
-                                <div class="mb-3">
-                                    <label for="city" class="form-label fw-bold color-blue required">
-                                        City <span class="text-danger">*</span>
-                                    </label>
-                                    <select class="form-select" id="city" name="city" required>
-                                        <option value="">Select City</option>
-                                        @foreach ($cities as $city)
-                                            <option value="{{ $city->id }}">{{ $city->cityName }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-
-                                <!-- Member Dropdown -->
-                                <div class="mb-3">
-                                    <label for="memberId" class="form-label fw-bold color-blue required">
-                                        Member <span class="text-danger">*</span>
-                                    </label>
-                                    <select class="form-select" id="memberId" name="memberId" required>
-                                        <option value="">Select Member</option>
-                                    </select>
                                 </div>
                             @endif
 
@@ -504,12 +474,14 @@
 
     <script>
         $(document).ready(function() {
+            // Define click handler
             $('.tab-btn').click(function(e) {
                 e.preventDefault();
 
                 // Remove active class from all buttons and hide all content
                 $('.tab-btn').removeClass('active');
                 $('.tab-content').hide();
+                $('.tab-content').removeClass('active');
 
                 // Add active class to clicked tab
                 $(this).addClass('active');
@@ -517,7 +489,19 @@
                 // Show target tab content
                 let target = $(this).data('target');
                 $(target).show();
+                $(target).addClass('active');
             });
+
+            // Check for tab parameter in URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const activeTab = urlParams.get('tab');
+
+            if (activeTab === 'given') {
+                $('.tab-btn[data-target="#tabByOther"]').trigger('click');
+            } else {
+                // Default to Received
+                $('.tab-btn[data-target="#tabByMe"]').trigger('click');
+            }
         });
     </script>
 
@@ -692,97 +676,6 @@
             });
         });
     </script>
-
-
-    <script>
-        $(document).ready(function() {
-            // Set up CSRF token for AJAX requests
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-
-            // Function to load members for a selected city
-            function loadMembersByCity(cityId) {
-                // Clear the member dropdown
-                $('#memberId').empty().append('<option value="" disabled>Select Member</option>');
-
-                if (cityId) {
-                    $.ajax({
-                        url: '/get-members-by-city/' + cityId,
-                        method: 'GET',
-                        data: {
-                            cityId: cityId
-                        },
-                        success: function(response) {
-                            // Controller returns a plain array of members. Support both formats.
-                            var members = Array.isArray(response) ? response : (response.members || []);
-
-                            if (members.length > 0) {
-                                members.forEach(function(member) {
-                                    $('#memberId').append(
-                                        '<option value="' + member.id +
-                                        '" data-user-id="' + (member.userId || member.id) +
-                                        '" data-first-name="' + (member.firstName || '') +
-                                        '" data-last-name="' + (member.lastName || '') + '">' +
-                                        ((member.firstName || '') + ' ' + (member.lastName || '')).trim() +
-                                        '</option>'
-                                    );
-                                });
-
-                                // Pre-select the authenticated member if exists in the list
-                                var defaultMemberId = '{{ auth()->user()->member->id ?? '' }}';
-                                if (defaultMemberId) {
-                                    $('#memberId').val(defaultMemberId).trigger('change');
-                                }
-                            } else {
-                                $('#memberId').append('<option value="">No Members Found</option>');
-                            }
-                        },
-                        error: function() {
-                            $('#memberId').append('<option value="">Error loading members</option>');
-                        }
-                    });
-                }
-            }
-
-            // Load members on page load if a city is selected by default
-            var defaultCityId = '{{ auth()->user()->member->cityId ?? '' }}';
-            if (defaultCityId) {
-                loadMembersByCity(defaultCityId);
-            }
-
-            // Handle city dropdown change event
-            $('#city').on('change', function() {
-                var cityId = $(this).val();
-                loadMembersByCity(cityId);
-            });
-
-            // Handle member dropdown change event
-            $('#memberId').on('change', function() {
-                var selectedOption = $(this).find('option:selected');
-                var memberId = selectedOption.val();
-                var userId = selectedOption.data('user-id');
-                var firstName = selectedOption.data('first-name');
-                var lastName = selectedOption.data('last-name');
-
-                if (memberId) {
-                    $('#meetingPersonId').val(userId);
-                    $('#meetingPersonName').val((firstName || '') + ' ' + (lastName || ''));
-                } else {
-                    $('#meetingPersonId').val('');
-                    $('#meetingPersonName').val('');
-                }
-
-                console.log('Selected Member ID:', memberId);
-                console.log('Selected Member User ID:', userId);
-                console.log('Selected Member Name:', (firstName || '') + ' ' + (lastName || ''));
-            });
-        });
-    </script>
-
-
 
 
     {{-- //ref by other --}}

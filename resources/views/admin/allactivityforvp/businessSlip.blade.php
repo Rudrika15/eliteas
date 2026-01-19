@@ -60,7 +60,7 @@
                     </tbody>
                 </table>
                 <div class="d-flex justify-content-end custom-pagination">
-                    {{-- {!! $businesses->links() !!} --}}
+                    {!! $businesses->links() !!}
                 </div>
             </div>
             <!-- End Table with stripped rows -->
