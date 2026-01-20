@@ -183,7 +183,7 @@ class CircleMeetingMemberReferenceController extends Controller
                 $circlemeeting = CircleMeeting::where('status', 'Active')->get();
 
                 return view('admin.refGiver.index', compact('refGiver', 'refReceiver', 'circles', 'circleMember', 'circlemeeting'));
-            }
+        }
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, $request->fullUrl());
             return view('servererror');

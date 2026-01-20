@@ -213,6 +213,7 @@
                                 <tr>
                                     <th>No</th>
                                     <th>Giver Name</th>
+                                    <th>Reference Description</th>
                                     {{-- <th>Profile</th> --}}
                                     <th>Date</th>
                                     <th>Amount</th>
@@ -223,6 +224,7 @@
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ optional($busGiverData->businessGiver)->firstName ?? '-' }} {{ optional($busGiverData->businessGiver)->lastName ?? '-' }}</td>
+                                        <td>{{ optional($busGiverData->reference)->description ?? '-' }}</td>
                                         {{-- <td>
                                             <img src="{{ optional($busGiverData->businessGiver)->profilePhoto ? asset('ProfilePhoto/' . $busGiverData->businessGiver->profilePhoto) : asset('ProfilePhoto/profile.png') }}" class="rounded-circle" width="50" height="50" alt="Profile">
                                         </td> --}}
@@ -231,7 +233,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="5" class="text-center text-muted">No records found</td>
+                                        <td colspan="6" class="text-center text-muted">No records found</td>
                                     </tr>
                                 @endforelse
                             </tbody>
@@ -250,9 +252,11 @@
                                 <tr>
                                     <th>No</th>
                                     <th>Member Name</th>
+                                    <th>Reference Description</th>
                                     {{-- <th>Profile</th> --}}
                                     <th>Date</th>
                                     <th>Amount</th>
+                                    <th>Remarks</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -261,11 +265,13 @@
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ optional($busGiveByOtherData->loginMember)->firstName ?? '-' }} {{ optional($busGiveByOtherData->loginMember)->lastName ?? '-' }}</td>
+                                        <td>{{ optional($busGiveByOtherData->reference)->description ?? '-' }}</td>
                                         {{-- <td>
                                             <img src="{{ optional($busGiveByOtherData->loginMember)->profilePhoto ? asset('ProfilePhoto/' . $busGiveByOtherData->loginMember->profilePhoto) : asset('ProfilePhoto/profile.png') }}" class="rounded-circle" width="50" height="50" alt="Profile">
                                         </td> --}}
                                         <td>{{ \Carbon\Carbon::parse($busGiveByOtherData->date)->format('d-m-Y') ?? '-' }}</td>
                                         <td>₹ {{ $busGiveByOtherData->amount ?? '-' }}</td>
+                                        <td>{{ $busGiveByOtherData->remarks ?? '-' }}</td>
                                         <td>
                                             <a href="{{ route('refGiver.edit', $busGiveByOtherData->id) }}" class="btn btn-sm btn-bg-blue">
                                                 <i class="bi bi-pencil"></i>
@@ -274,7 +280,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="5" class="text-center text-muted">No records found</td>
+                                        <td colspan="6" class="text-center text-muted">No records found</td>
                                     </tr>
                                 @endforelse
                             </tbody>

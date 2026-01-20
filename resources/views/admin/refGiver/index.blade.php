@@ -158,6 +158,7 @@
                                     <th>Received From</th>
                                     <th>Circle</th>
                                     <th>Date</th>
+                                    <th>Description</th>
                                     <th>Scale</th>
                                     <th>Action</th>
                                 </tr>
@@ -169,6 +170,7 @@
                                         <td>{{ optional($refReceiverData->refGiver)->firstName ?? '-' }} {{ optional($refReceiverData->refGiver)->lastName ?? '-' }}</td>
                                         <td>{{ optional($refReceiverData->refGiver->circle)->circleName ?? '-' }}</td>
                                         <td>{{ $refReceiverData->created_at ? \Carbon\Carbon::parse($refReceiverData->created_at)->format('d-m-Y') : '-' }}</td>
+                                        <td>{{ $refReceiverData->description ?? '-' }}</td>
                                         <td>
                                             @for ($i = 1; $i <= 5; $i++)
                                                 <i class="bi bi-star{{ $refReceiverData->scale >= $i ? '-fill' : '' }} text-warning"></i>
@@ -214,6 +216,7 @@
                                     <th>Given To</th>
                                     <th>Circle</th>
                                     <th>Date</th>
+                                    <th>Description</th>
                                     <th>Scale</th>
                                     <th>Action</th>
                                 </tr>
@@ -225,6 +228,7 @@
                                         <td>{{ optional($refGiverData->members)->firstName ?? '-' }} {{ optional($refGiverData->members)->lastName ?? '-' }}</td>
                                         <td>{{ optional($refGiverData->members->circle)->circleName ?? '-' }}</td>
                                         <td>{{ $refGiverData->created_at ? \Carbon\Carbon::parse($refGiverData->created_at)->format('d-m-Y') : '-' }}</td>
+                                        <td>{{ $refGiverData->description ?? '-' }}</td>
                                         <td>
                                             @for ($i = 1; $i <= 5; $i++)
                                                 <i class="bi bi-star{{ $refGiverData->scale >= $i ? '-fill' : '' }} text-warning"></i>
