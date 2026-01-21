@@ -32,24 +32,25 @@
                                         <td>{{ $helpData->title ?? '' }}</td>
                                         <td>
                                             @if ($helpData->photo)
-                                                <img src="{{ asset('help/' . $helpData->photo) }}" alt="Photo Preview" width="100" height="100" style="object-fit: cover;" class="clickable-image" data-image="{{ asset('help/' . $helpData->photo) }}">
+                                                <img src="{{ asset('help/' . $helpData->photo) }}" alt="Photo Preview" width="100" height="100" style="object-fit: cover; cursor: pointer;" class="clickable-image" data-image="{{ asset('help/' . $helpData->photo) }}" data-bs-toggle="modal" data-bs-target="#imageModal">
                                             @else
                                                 <span>No photo available</span>
                                             @endif
                                         </td>
                                         <td>
                                             @if ($helpData->video)
-                                                <video width="100" height="100" controls class="clickable-video" data-video="{{ asset('help/' . $helpData->video) }}">
-                                                    <source src="{{ asset('help/' . $helpData->video) }}" type="video/mp4">
-                                                    Your browser does not support the video tag.
-                                                </video>
+                                                <button type="button" class="btn btn-primary btn-sm play-video-btn" data-video="{{ asset('help/' . $helpData->video) }}" data-bs-toggle="modal" data-bs-target="#videoModal">
+                                                    Play Video
+                                                </button>
                                             @else
                                                 <span>No video available</span>
                                             @endif
                                         </td>
                                         <td>
                                             @if ($helpData->pdf)
-                                                <a href="{{ asset('help/' . $helpData->pdf) }}" target="_blank" class="btn btn-primary btn-sm">View PDF</a>
+                                                <button type="button" class="btn btn-info btn-sm view-pdf-btn" data-pdf="{{ asset('help/' . $helpData->pdf) }}" data-bs-toggle="modal" data-bs-target="#pdfModal">
+                                                    View PDF
+                                                </button>
                                             @else
                                                 <span>No PDF available</span>
                                             @endif
@@ -72,57 +73,298 @@
 
                 <!-- Media Preview Container -->
                 <div id="mediaPreviewContainer" class="mt-4">
-                    <!-- Image or Video content will be loaded here -->
+                    <!-- Image content will be loaded here -->
+                </div>
+
+                <!-- Modals -->
+                <!-- Image Modal -->
+                <div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="imageModalLabel">Image Preview</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body text-center p-0">
+                                <img id="modalImagePreview" src="" class="img-fluid" alt="Full Preview">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Video Modal (Plyr) -->
+                <div class="modal fade" id="videoModal" tabindex="-1" role="dialog" aria-labelledby="videoModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="videoModalLabel">Video Player</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body p-0">
+                                <video id="plyr-video-player" playsinline controls>
+                                    <source src="" type="video/mp4" />
+                                </video>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PDF Modal (PDF.js) -->
+                <div class="modal fade" id="pdfModal" tabindex="-1" role="dialog" aria-labelledby="pdfModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-xl" role="document" style="height: 90vh;">
+                        <div class="modal-content h-100">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="pdfModalLabel">PDF Viewer</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body p-0 d-flex flex-column" style="background: #525659; overflow: hidden;">
+                                <!-- PDF Toolbar -->
+                                <div class="pdf-toolbar d-flex justify-content-between align-items-center p-2 text-white" style="background: #323639;">
+                                    <div>
+                                        <button class="btn btn-sm btn-secondary" id="pdf-prev">Previous</button>
+                                        <button class="btn btn-sm btn-secondary" id="pdf-next">Next</button>
+                                        <span class="ms-2">Page: <span id="page-num"></span> / <span id="page-count"></span></span>
+                                    </div>
+                                    <div>
+                                        <button class="btn btn-sm btn-secondary" id="pdf-zoom-out">-</button>
+                                        <span class="mx-2" id="pdf-scale-display">100%</span>
+                                        <button class="btn btn-sm btn-secondary" id="pdf-zoom-in">+</button>
+                                    </div>
+                                </div>
+                                <!-- PDF Canvas Container -->
+                                <div id="pdf-render-container" style="overflow: auto; flex: 1; text-align: center; padding: 20px;">
+                                    <canvas id="pdf-render"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Styles for Plyr and Custom -->
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+    <style>
+        .pdf-toolbar button {
+            background-color: #555;
+            border: none;
+        }
+
+        .pdf-toolbar button:hover {
+            background-color: #777;
+        }
+
+        #pdf-render {
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            max-width: 100%;
+        }
+    </style>
+
 @endsection
 
 @section('scripts')
+    <!-- Plyr JS -->
+    <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
+    <!-- PDF.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+
     <script>
-        // Show Image in Preview Container
-        document.querySelectorAll('.clickable-image').forEach(image => {
-            image.addEventListener('click', function() {
-                var imageUrl = this.getAttribute('data-image');
-                var mediaPreviewContainer = document.getElementById('mediaPreviewContainer');
+        document.addEventListener('DOMContentLoaded', function() {
+            // Shared close handler
+            function handleModalClose(modalId) {
+                var modalEl = document.getElementById(modalId);
+                if (modalEl) {
+                    var modal = bootstrap.Modal.getInstance(modalEl);
+                    if (modal) {
+                        modal.hide();
+                    }
+                }
+            }
 
-                // Clear previous content in the container
-                mediaPreviewContainer.innerHTML = '';
-
-                // Add the image to the preview container
-                var imgElement = document.createElement('img');
-                imgElement.src = imageUrl;
-                imgElement.classList.add('img-fluid');
-                imgElement.alt = 'Image Preview';
-
-                mediaPreviewContainer.appendChild(imgElement);
+            // Image Modal Logic
+            const imageModal = document.getElementById('imageModal');
+            imageModal.addEventListener('show.bs.modal', function(event) {
+                const triggerElement = event.relatedTarget;
+                const imageUrl = triggerElement.getAttribute('data-image');
+                const modalImage = document.getElementById('modalImagePreview');
+                modalImage.src = imageUrl;
+            });
+            imageModal.addEventListener('hidden.bs.modal', function() {
+                const modalImage = document.getElementById('modalImagePreview');
+                modalImage.src = '';
             });
         });
 
-        // Play Video in Preview Container
-        document.querySelectorAll('.clickable-video').forEach(video => {
-            video.addEventListener('click', function() {
-                var videoUrl = this.getAttribute('data-video');
-                var mediaPreviewContainer = document.getElementById('mediaPreviewContainer');
+        // --- Plyr Video Player Setup ---
+        const player = new Plyr('#plyr-video-player', {
+            controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen'],
+            // Disable download button in controls
+            listeners: {
+                seek: function(e) {
+                    return true;
+                }
+            }
+        });
 
-                // Clear previous content in the container
-                mediaPreviewContainer.innerHTML = '';
-
-                // Add the video to the preview container
-                var videoElement = document.createElement('video');
-                videoElement.width = '100%';
-                videoElement.height = 'auto';
-                videoElement.controls = true;
-
-                var sourceElement = document.createElement('source');
-                sourceElement.src = videoUrl;
-                sourceElement.type = 'video/mp4';
-
-                videoElement.appendChild(sourceElement);
-                mediaPreviewContainer.appendChild(videoElement);
+        // Handle Play Video Click
+        document.querySelectorAll('.play-video-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const videoUrl = this.dataset.video;
+                player.source = {
+                    type: 'video',
+                    sources: [{
+                        src: videoUrl,
+                        type: 'video/mp4',
+                    }, ],
+                };
+                // Wait for source to update then play
+                setTimeout(() => player.play(), 100);
             });
         });
+
+        // Stop video on modal close
+        const videoModalEl = document.getElementById('videoModal');
+        if (videoModalEl) {
+            videoModalEl.addEventListener('hidden.bs.modal', function() {
+                player.stop();
+            });
+        }
+
+
+        // --- PDF.js Setup ---
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+
+        let pdfDoc = null,
+            pageNum = 1,
+            pageRendering = false,
+            pageNumPending = null,
+            scale = 1.0, // Initial scale
+            canvas = document.getElementById('pdf-render'),
+            ctx = canvas.getContext('2d');
+
+        /**
+         * Get page info from document, resize canvas accordingly, and render page.
+         * @param num Page number.
+         */
+        function renderPage(num) {
+            pageRendering = true;
+            // Fetch page
+            pdfDoc.getPage(num).then(function(page) {
+                const viewport = page.getViewport({
+                    scale: scale
+                });
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+
+                // Render PDF page into canvas context
+                const renderContext = {
+                    canvasContext: ctx,
+                    viewport: viewport
+                };
+                const renderTask = page.render(renderContext);
+
+                // Wait for render to finish
+                renderTask.promise.then(function() {
+                    pageRendering = false;
+                    if (pageNumPending !== null) {
+                        // New page rendering is pending
+                        renderPage(pageNumPending);
+                        pageNumPending = null;
+                    }
+                });
+            });
+
+            // Update page counters
+            document.getElementById('page-num').textContent = num;
+            document.getElementById('pdf-scale-display').textContent = Math.round(scale * 100) + '%';
+        }
+
+        /**
+         * If another page rendering in progress, waits until the rendering is
+         * finised. Otherwise, executes rendering immediately.
+         */
+        function queueRenderPage(num) {
+            if (pageRendering) {
+                pageNumPending = num;
+            } else {
+                renderPage(num);
+            }
+        }
+
+        /**
+         * Displays previous page.
+         */
+        function onPrevPage() {
+            if (pageNum <= 1) {
+                return;
+            }
+            pageNum--;
+            queueRenderPage(pageNum);
+        }
+        document.getElementById('pdf-prev').addEventListener('click', onPrevPage);
+
+        /**
+         * Displays next page.
+         */
+        function onNextPage() {
+            if (pageNum >= pdfDoc.numPages) {
+                return;
+            }
+            pageNum++;
+            queueRenderPage(pageNum);
+        }
+        document.getElementById('pdf-next').addEventListener('click', onNextPage);
+
+        /**
+         * Zoom controls
+         */
+        document.getElementById('pdf-zoom-in').addEventListener('click', function() {
+            scale += 0.25;
+            renderPage(pageNum);
+        });
+
+        document.getElementById('pdf-zoom-out').addEventListener('click', function() {
+            if (scale <= 0.5) return;
+            scale -= 0.25;
+            renderPage(pageNum);
+        });
+
+        // Handle View PDF Click
+        document.querySelectorAll('.view-pdf-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const pdfUrl = this.dataset.pdf;
+
+                // Reset state
+                pageNum = 1;
+                scale = 1.0;
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                document.getElementById('page-count').textContent = '...';
+
+                // Asynchronously download PDF
+                pdfjsLib.getDocument(pdfUrl).promise.then(function(pdfDoc_) {
+                    pdfDoc = pdfDoc_;
+                    document.getElementById('page-count').textContent = pdfDoc.numPages;
+
+                    // Initial/first page rendering
+                    renderPage(pageNum);
+                }).catch(function(error) {
+                    console.error('Error loading PDF:', error);
+                    // Handle error (e.g. show message in canvas container)
+                });
+            });
+        });
+
+        // Reset PDF on close (optional, mainly just to clear memory or reset view)
+        const pdfModalEl = document.getElementById('pdfModal');
+        if (pdfModalEl) {
+            pdfModalEl.addEventListener('hidden.bs.modal', function() {
+                if (pdfDoc) {
+                    pdfDoc.destroy();
+                    pdfDoc = null;
+                }
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            });
+        }
     </script>
 @endsection
