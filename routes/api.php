@@ -150,6 +150,12 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::delete('circle-meeting-member-businesses/{id}', [CircleMeetingMemberBusinessController::class, 'delete']);
 
     Route::get('circle-meeting-member-businesses/paymentHistory/{id}', [CircleMeetingMemberBusinessController::class, 'paymentHistory']);
+
+    //new api for bus given and recieved
+    Route::get('/business/received', [CircleMeetingMemberBusinessController::class, 'businessReceived']);
+    Route::get('/business/given', [CircleMeetingMemberBusinessController::class, 'businessGiven']);
+
+
     // Reference Giver
 
     Route::get('circle-meeting-member-references-index', [CircleMeetingMemberReferenceController::class, 'index']);

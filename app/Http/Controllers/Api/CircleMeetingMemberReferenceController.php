@@ -32,7 +32,6 @@ class CircleMeetingMemberReferenceController extends Controller
                 ->where('referenceGiverId', Auth::user()->id)
                 ->get();
 
-
             $refGiver->transform(function ($item) {
                 if ($item->members) {
                     $item->members->induction_count = Member::where('sponsoredBy', $item->members->id)->count();
@@ -52,13 +51,28 @@ class CircleMeetingMemberReferenceController extends Controller
     public function receivedRef(Request $request)
     {
         try {
-            $busGiver = CircleMeetingMembersBusiness::where('loginMemberId', Auth::user()->id)
-                ->where('status', 'Active')
+            // $busGiver = CircleMeetingMembersBusiness::where('loginMemberId', Auth::user()->id)
+            //     ->where('status', 'Active')
+            //     ->orderBy('id', 'DESC')
+            //     ->get();
+
+
+            $refReceiver = CircleMeetingMembersReference::where('status', 'Active')
                 ->orderBy('id', 'DESC')
-                ->get();
+                ->with('refGiver')
+                ->with('refGiver.circle:id,circleName')
+                ->where('memberId', Auth::user()->id)
+                ->paginate(10);
+
+            $refReceiver->transform(function ($item) {
+                if ($item->refGiver) {
+                    $item->refGiver->induction_count = Member::where('sponsoredBy', $item->refGiver->id)->count() ?? 0;
+                }
+                return $item;
+            });
 
 
-            return Utils::sendResponse(['busGiver' => $busGiver], 'Circle Meeting Member References retrieved successfully', 200);
+            return Utils::sendResponse(['refReceiver' => $refReceiver], 'Circle Meeting Member References retrieved successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
@@ -145,14 +159,14 @@ class CircleMeetingMemberReferenceController extends Controller
 
             $refGiver->save();
 
-            $busGiver = new CircleMeetingMembersBusiness();
-            $busGiver->businessGiverId = Auth::user()->id;
-            $busGiver->loginMemberId = $refGiver->memberId;
-            $busGiver->amount = $request->amount;
-            $busGiver->remarks = $request->remarks;
-            $busGiver->date = Carbon::now()->toDateString();
-            $busGiver->status = 'Active';
-            $busGiver->save();
+            // $busGiver = new CircleMeetingMembersBusiness();
+            // $busGiver->businessGiverId = Auth::user()->id;
+            // $busGiver->loginMemberId = $refGiver->memberId;
+            // $busGiver->amount = $request->amount;
+            // $busGiver->remarks = $request->remarks;
+            // $busGiver->date = Carbon::now()->toDateString();
+            // $busGiver->status = 'Active';
+            // $busGiver->save();
 
             // Send notification to the specified member
             $memberId = $request->memberId;
@@ -207,30 +221,39 @@ class CircleMeetingMemberReferenceController extends Controller
                 // 'hotelName' => 'required',
             ]);
 
-            $refGiver = new CircleMeetingMembersReference();
-            $refGiver->referenceGiverId = $request->referenceGiverId;
-            $refGiver->memberId = Auth::user()->id;
-
-            if ($request->group == 'internal') {
-                $refGiver->contactName = $request->contactNameInternal;
-            } else {
-                $refGiver->contactName = $request->contactNameExternal;
-            }
-
-            $refGiver->contactNo = $request->contactNo;
-            $refGiver->email = $request->email;
-            $refGiver->scale = $request->scale;
-            $refGiver->description = $request->description;
-            $refGiver->status = 'Active';
-            $refGiver->save();
-
             $busGiver = new CircleMeetingMembersBusiness();
-            $busGiver->businessGiverId = $refGiver->referenceGiverId;
+            $busGiver->businessGiverId = $request->memberId;
             $busGiver->loginMemberId = Auth::user()->id;
             $busGiver->amount = $request->amount;
             $busGiver->date = Carbon::now()->toDateString();
             $busGiver->status = 'Active';
             $busGiver->save();
+
+
+
+            if ($request->create_reference == 1) {
+
+                $refGiver = new CircleMeetingMembersReference();
+                $refGiver->referenceGiverId = $request->memberId;
+                $refGiver->memberId = Auth::user()->id;
+
+                if ($request->group == 'internal') {
+                    $refGiver->contactName = $request->contactNameInternal;
+                } else {
+                    $refGiver->contactName = $request->contactNameExternal;
+                }
+
+                $refGiver->contactNo = $request->contactNo;
+                $refGiver->email = $request->email;
+                $refGiver->scale = $request->scale;
+                $refGiver->description = $request->description;
+                $refGiver->status = 'Active';
+                $refGiver->save();
+
+
+                $busGiver->referenceId = $refGiver->id;
+                $busGiver->save();
+            }
 
             return Utils::sendResponse(
                 [

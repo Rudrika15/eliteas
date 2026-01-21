@@ -217,6 +217,7 @@
                                     {{-- <th>Profile</th> --}}
                                     <th>Date</th>
                                     <th>Amount</th>
+                                    <th>Remarks</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -230,6 +231,7 @@
                                         </td> --}}
                                         <td>{{ \Carbon\Carbon::parse($busGiverData->date)->format('d-m-Y') ?? '-' }}</td>
                                         <td>₹ {{ $busGiverData->amount ?? '-' }}</td>
+                                        <td>{{ $busGiverData->remarks ?? '-' }}</td>
                                     </tr>
                                 @empty
                                     <tr>

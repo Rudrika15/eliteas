@@ -152,6 +152,77 @@ class CircleMeetingMemberBusinessController extends Controller
     }
 
 
+    public function businessReceived(Request $request)
+    {
+        try {
+
+            if (!auth()->user()->hasRole('Member')) {
+                return Utils::errorResponse(['error' => 'Unauthorized'], 'Unauthorized access', 403);
+            }
+
+            $busReceived = CircleMeetingMembersBusiness::with('reference')
+                ->where('loginMemberId', auth()->id())
+                ->where('status', 'Active')
+                ->orderBy('id', 'DESC')
+                ->paginate(10);
+
+            $busReceived->getCollection()->transform(function ($item) {
+                $item->amount = isset($item->amount) ? number_format($item->amount, 2) : '-';
+                return $item;
+            });
+
+            return Utils::sendResponse(
+                ['business_received' => $busReceived],
+                'Business received list',
+                200
+            );
+        } catch (\Throwable $th) {
+
+            return Utils::errorResponse(
+                ['error' => $th->getMessage()],
+                'Internal Server Error',
+                500
+            );
+        }
+    }
+
+
+    public function businessGiven(Request $request)
+    {
+        try {
+
+            if (!auth()->user()->hasRole('Member')) {
+                return Utils::errorResponse(['error' => 'Unauthorized'], 'Unauthorized access', 403);
+            }
+
+            $busGiven = CircleMeetingMembersBusiness::with(['loginMember', 'reference'])
+                ->where('businessGiverId', auth()->id())
+                ->where('status', 'Active')
+                ->orderBy('id', 'DESC')
+                ->paginate(10);
+
+            $busGiven->getCollection()->transform(function ($item) {
+                $item->amount = isset($item->amount) ? number_format($item->amount, 2) : '-';
+                return $item;
+            });
+
+            return Utils::sendResponse(
+                ['business_given' => $busGiven],
+                'Business given list',
+                200
+            );
+        } catch (\Throwable $th) {
+
+            return Utils::errorResponse(
+                ['error' => $th->getMessage()],
+                'Internal Server Error',
+                500
+            );
+        }
+    }
+
+
+
 
 
     public function busGiven(Request $request)
@@ -194,29 +265,77 @@ class CircleMeetingMemberBusinessController extends Controller
         }
     }
 
+    // public function create(Request $request)
+    // {
+    //     $validator = Validator::make($request->all(), [
+    //         'businessGiver' => 'required',
+    //         'loginMember' => 'required',
+    //         'amount' => 'required',
+    //         'date' => 'required',
+    //         'remarks' => 'required',
+    //     ]);
+
+    //     if ($validator->fails()) {
+    //         return Utils::errorResponse(['error' => $validator->errors()->first()], 'Invalid Input', 400);
+    //     }
+
+    //     try {
+    //         $busGiver = new CircleMeetingMembersBusiness();
+    //         $busGiver->fill($request->all());
+    //         $busGiver->status = 'Active';
+    //         $busGiver->save();
+
+    //         return Utils::sendResponse(['busGiver' => $busGiver], 'Circle Meeting Member Business Created Successfully!', 201);
+    //     } catch (\Throwable $th) {
+    //         return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
+    //     }
+    // }
+
+
     public function create(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'businessGiver' => 'required',
-            'loginMember' => 'required',
-            'amount' => 'required',
-            'date' => 'required',
-            'remarks' => 'required',
+            'businessGiverId' => 'required',
+            'loginMemberId'   => 'required',
+            'amount'          => 'required',
+            'date'            => 'required',
+            'remarks'         => 'required',
         ]);
 
         if ($validator->fails()) {
-            return Utils::errorResponse(['error' => $validator->errors()->first()], 'Invalid Input', 400);
+            return Utils::errorResponse(
+                ['error' => $validator->errors()->first()],
+                'Invalid Input',
+                400
+            );
         }
 
         try {
             $busGiver = new CircleMeetingMembersBusiness();
-            $busGiver->fill($request->all());
-            $busGiver->status = 'Active';
+            $busGiver->businessGiverId = $request->businessGiverId;
+            $busGiver->loginMemberId   = $request->loginMemberId;
+            $busGiver->amount          = $request->amount;
+            $busGiver->date            = $request->date;
+            $busGiver->remarks         = $request->remarks;
+            $busGiver->status          = 'Active';
+
+            if ($request->filled('referenceId')) {
+                $busGiver->referenceId = $request->referenceId;
+            }
             $busGiver->save();
 
-            return Utils::sendResponse(['busGiver' => $busGiver], 'Circle Meeting Member Business Created Successfully!', 201);
+            return Utils::sendResponse(
+                ['busGiver' => $busGiver],
+                'Created Successfully!',
+                201
+            );
         } catch (\Throwable $th) {
-            return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
+
+            return Utils::errorResponse(
+                ['error' => $th->getMessage()],
+                'Internal Server Error',
+                500
+            );
         }
     }
 
@@ -254,16 +373,16 @@ class CircleMeetingMemberBusinessController extends Controller
             $busGiver->status = 'Active';
             $busGiver->save();
 
-            $businessAmount = new BusinessAmount();
-            $businessAmount->circleMeetingMemberBusinessId = $id;
-            $businessAmount->amount = $request->amount;
-            $businessAmount->date = Carbon::now()->toDateString();
-            $businessAmount->status = 'Active';
-            $businessAmount->save();
+            // $businessAmount = new BusinessAmount();
+            // $businessAmount->circleMeetingMemberBusinessId = $id;
+            // $businessAmount->amount = $request->amount;
+            // $businessAmount->date = Carbon::now()->toDateString();
+            // $businessAmount->status = 'Active';
+            // $businessAmount->save();
 
             return Utils::sendResponse([
                 'busGiver' => $busGiver,
-                'businessAmount' => $businessAmount,
+                // 'businessAmount' => $businessAmount,
                 'userId' => $user->id,
                 'profilePhoto' => $member->profilePhoto,
                 'firstName' => $user->firstName,

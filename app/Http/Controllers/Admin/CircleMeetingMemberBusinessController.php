@@ -179,7 +179,6 @@ class CircleMeetingMemberBusinessController extends Controller
             if ($request->filled('referenceId')) {
                 $busGiver->referenceId = $request->referenceId;
             }
-
             $busGiver->save();
 
             return redirect()->route('busGiver.index')->with('success', 'Created Successfully!');

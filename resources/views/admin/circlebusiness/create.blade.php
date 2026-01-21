@@ -31,8 +31,7 @@
             </div>
             <hr class="mb-5">
             <!-- Floating Labels Form -->
-            <form class="m-3 needs-validation" id="circleMemberBusForm" enctype="multipart/form-data" method="post"
-                action="{{ route('busGiver.store') }}" novalidate>
+            <form class="m-3 needs-validation" id="circleMemberBusForm" enctype="multipart/form-data" method="post" action="{{ route('busGiver.store') }}" novalidate>
                 @csrf
 
                 {{-- <div class="col-md-6"> --}}
@@ -55,12 +54,8 @@
                 <div class="">
 
                     <div class="form-floating mt-6">
-                        <input type="hidden" name="businessGiverId" id=""
-                            value="{{ $busGiver->businessGiverId }}">
-                        <input type="text" class="form-control @error('businessGiver') is-invalid @enderror"
-                            id="businessGiver" name="businessGiver"
-                            value="{{ $busGiver->loginMember->firstName . ' ' . $busGiver->loginMember->lastName }}"
-                            placeholder="Reference Giver" readonly required>
+                        <input type="hidden" name="businessGiverId" id="" value="{{ $busGiver->businessGiverId }}">
+                        <input type="text" class="form-control @error('businessGiver') is-invalid @enderror" id="businessGiver" name="businessGiver" value="{{ $busGiver->loginMember->firstName . ' ' . $busGiver->loginMember->lastName }}" placeholder="Reference Giver" readonly required>
                         <label for="businessGiver">Business Giver</label>
                         @error('businessGiver')
                             <div class="invalid-tooltip">
@@ -85,8 +80,7 @@
                 </div> --}}
                 <div class="">
                     <div class="form-floating mt-3">
-                        <input type="number" class="form-control @error('amount') is-invalid @enderror" id="amount"
-                            name="amount" placeholder="Amount" required oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
+                        <input type="number" class="form-control @error('amount') is-invalid @enderror" id="amount" name="amount" placeholder="Amount" required oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
                         <label for="amount">Amount</label>
                         @error('amount')
                             <div class="invalid-tooltip">
@@ -97,10 +91,20 @@
                 </div>
                 <div class="">
                     <div class="form-floating mt-3">
-                        <input type="date" class="form-control @error('date') is-invalid @enderror" id="date"
-                            name="date" placeholder="date" required max="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" value="{{ old('date', \Carbon\Carbon::now()->format('Y-m-d')) }}">
+                        <input type="date" class="form-control @error('date') is-invalid @enderror" id="date" name="date" placeholder="date" required max="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" value="{{ old('date', \Carbon\Carbon::now()->format('Y-m-d')) }}">
                         <label for="date">Date</label>
                         @error('date')
+                            <div class="invalid-tooltip">
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+                </div>
+                <div class="">
+                    <div class="form-floating mt-3">
+                        <input type="text" class="form-control @error('remarks') is-invalid @enderror" id="remarks" name="remarks" placeholder="remarks" >
+                        <label for="remarks">Remarks</label>
+                        @error('remarks')
                             <div class="invalid-tooltip">
                                 {{ $message }}
                             </div>
