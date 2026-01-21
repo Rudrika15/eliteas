@@ -20,6 +20,7 @@
                                 <th>Title</th>
                                 <th>Photo</th>
                                 <th>Video</th>
+                                <th>PDF</th>
                                 <th>Description</th>
                             </tr>
                         </thead>
