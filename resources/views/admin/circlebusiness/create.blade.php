@@ -55,7 +55,7 @@
 
                     <div class="form-floating mt-6">
                         <input type="hidden" name="businessGiverId" id="" value="{{ $busGiver->businessGiverId }}">
-                        <input type="text" class="form-control @error('businessGiver') is-invalid @enderror" id="businessGiver" name="businessGiver" value="{{ $busGiver->loginMember->firstName . ' ' . $busGiver->loginMember->lastName }}" placeholder="Reference Giver" readonly required>
+                        <input type="text" class="form-control @error('businessGiver') is-invalid @enderror" id="businessGiver" name="businessGiver" value="{{ $busGiver->businessGiver->firstName . ' ' . $busGiver->businessGiver->lastName }}" placeholder="Reference Giver" readonly required>
                         <label for="businessGiver">Business Giver</label>
                         @error('businessGiver')
                             <div class="invalid-tooltip">

@@ -155,6 +155,10 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/business/received', [CircleMeetingMemberBusinessController::class, 'businessReceived']);
     Route::get('/business/given', [CircleMeetingMemberBusinessController::class, 'businessGiven']);
 
+    //add amount 
+    Route::post('/add-business-amount/{id}', [CircleMeetingMemberBusinessController::class, 'addBusinessAmountApi']);
+
+
 
     // Reference Giver
 

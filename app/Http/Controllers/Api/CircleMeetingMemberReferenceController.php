@@ -62,7 +62,7 @@ class CircleMeetingMemberReferenceController extends Controller
                 ->with('refGiver')
                 ->with('refGiver.circle:id,circleName')
                 ->where('memberId', Auth::user()->id)
-                ->paginate(10);
+                ->get();
 
             $refReceiver->transform(function ($item) {
                 if ($item->refGiver) {
@@ -225,6 +225,7 @@ class CircleMeetingMemberReferenceController extends Controller
             $busGiver->businessGiverId = $request->memberId;
             $busGiver->loginMemberId = Auth::user()->id;
             $busGiver->amount = $request->amount;
+            $busGiver->remarks = $request->remarks;
             $busGiver->date = Carbon::now()->toDateString();
             $busGiver->status = 'Active';
             $busGiver->save();
