@@ -140,20 +140,20 @@
             function loadMembersByCity(cityId) {
                 $('#memberId').empty().append('<option value="" disabled selected>Select Member</option>');
 
-                if (cityId) {
+                if (circleId) {
                     $.ajax({
-                        url: '/get-members-by-city/' + cityId,
+                        url: '/members/byCircle',
                         method: 'GET',
                         data: {
-                            cityId: cityId
+                            circleId: circleId
                         },
                         success: function(response) {
-                            var members = Array.isArray(response) ? response : (response.members || []);
+                            var members = (response && response.members) ? response.members : [];
 
                             if (members.length > 0) {
                                 members.forEach(function(member) {
                                     $('#memberId').append(
-                                        '<option value="' + member.id +
+                                        '<option value="' + (member.id) +
                                         '" data-user-id="' + (member.userId || member.id) +
                                         '" data-first-name="' + (member.firstName || '') +
                                         '" data-last-name="' + (member.lastName || '') + '">' +
@@ -161,6 +161,7 @@
                                         '</option>'
                                     );
                                 });
+
                                 var oldMemberId = '{{ old('memberId') }}';
                                 if (oldMemberId) {
                                     $('#memberId').val(oldMemberId).trigger('change');

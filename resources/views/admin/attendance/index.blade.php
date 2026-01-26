@@ -79,8 +79,7 @@
 
                                         <select name="attendance[{{ $member->userId }}]" class="form-select attendance-select status-select {{ strtolower($attendance?->status ?? 'none') }}">
                                             <option value="">Select Status</option>
-
-                                            <option value="Present" {{ $attendance?->status == 'Present' ? 'selected' : '' }}>Present</option>
+                                            <option value="Present" {{ ($attendance?->status ?? 'Present') == 'Present' ? 'selected' : '' }}>Present</option>
                                             <option value="Absent" {{ $attendance?->status == 'Absent' ? 'selected' : '' }}>Absent</option>
                                             <option value="Late" {{ $attendance?->status == 'Late' ? 'selected' : '' }}>Late</option>
                                             <option value="Medical" {{ $attendance?->status == 'Medical' ? 'selected' : '' }}>Medical</option>

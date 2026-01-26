@@ -114,6 +114,8 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
 
 
+
+
     Route::get('/home-counts', [ApiController::class, 'homeCounts']);
     Route::get('/members-activity-counts/{id?}', [ApiController::class, 'membersActivityCount']);
 
@@ -522,6 +524,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/total-counts', [ApiController::class, 'totalCounts']);
 
 
+    Route::post('/visitors/store', [ApiController::class, 'storeVisitorApi']);
 
 
     Route::get('city-wise-digital-member-index', [DigitalMemberController::class, 'cityWiseDigitalMember']);

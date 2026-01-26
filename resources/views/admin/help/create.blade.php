@@ -54,6 +54,16 @@
                     @enderror
                 </div>
 
+                <div class="col-md-6 mt-3">
+                    <label for="pdf" class="form-label">PDF</label>
+                    <input type="file" class="form-control @error('pdf') is-invalid @enderror" id="pdf" name="pdf" accept="application/pdf">
+                    @error('pdf')
+                        <div class="invalid-feedback">
+                            {{ $message }}
+                        </div>
+                    @enderror
+                </div>
+
                 <script>
                     function previewImage(event, previewId) {
                         var reader = new FileReader();

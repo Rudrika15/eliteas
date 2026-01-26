@@ -85,7 +85,7 @@ class CircleMeetingMemberBusinessController extends Controller
                     ->where('loginMemberId', Auth::user()->id)
                     ->where('status', 'Active')
                     ->orderBy('id', 'DESC')
-                    ->paginate(10);
+                    ->paginate(10, ['*'], 'page_received');
 
                 // Transform underlying collection items
                 $busGiver->getCollection()->transform(function ($item) {
@@ -97,7 +97,7 @@ class CircleMeetingMemberBusinessController extends Controller
                     ->where('businessGiverId', Auth::user()->id)
                     ->where('status', 'Active')
                     ->orderBy('id', 'DESC')
-                    ->paginate(10);
+                    ->paginate(10, ['*'], 'page_given');
 
                 // Transform underlying collection items
                 $busGiveByOther->getCollection()->transform(function ($item) {
@@ -114,6 +114,8 @@ class CircleMeetingMemberBusinessController extends Controller
 
                 return view('admin.circlebusiness.index', compact('busGiver', 'busGiveByOther', 'circlemeeting', 'circles', 'circleMember'));
             }
+
+            // Default unauthorized
             return redirect()->back()->with('error', 'Unauthorized access.');
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, $request->fullUrl());

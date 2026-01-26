@@ -20,16 +20,42 @@ class BusinessCategoryController extends Controller
     }
 
 
-
+    // public function index(Request $request)
+    // {
+    //     try {
+    //         $businessCategory = BusinessCategory::where('status', 'Active')->orderBy('categoryName', 'asc')->paginate(25);
+    //         return view('admin.businesscategory.index', compact('businessCategory'));
+    //     } catch (\Throwable $th) {
+    //         // throw $th;
+    //         ErrorLogger::logError($th, $request->fullUrl());
+    //         return view('servererror');
+    //     }
+    // }
     public function index(Request $request)
     {
         try {
-            $businessCategory = BusinessCategory::where('status', 'Active')->orderBy('categoryName', 'asc')->paginate(25);
+            $businessCategory = BusinessCategory::where('status', 'Active')
+                ->withCount('members')
+                ->orderBy('categoryName', 'asc')
+                ->paginate(25);
             return view('admin.businesscategory.index', compact('businessCategory'));
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError($th, $request->fullUrl());
             return view('servererror');
+        }
+    }
+
+    public function getMembers($id)
+    {
+        try {
+            $members = \App\Models\Member::where('businessCategoryId', $id)
+                ->with(['user', 'circle'])
+                ->get(['id', 'userId', 'circleId', 'firstName', 'lastName', 'status']);
+
+            return response()->json(['members' => $members]);
+        } catch (\Throwable $th) {
+            return response()->json(['error' => $th->getMessage()], 500);
         }
     }
 

@@ -205,7 +205,7 @@
     <li class="nav-item">
         <a class="nav-link collapsed" href="{{ route('help.userView') }}">
             <i class="bi bi-question-circle" style="color: #e76a35"></i>
-            <span class="text-blue">Help</span>
+            <span class="text-blue">Resources</span>
         </a>
     </li>
 @endrole
@@ -450,7 +450,8 @@
 
 @if (Auth::user()->hasRole(['Circle Director', 'Vice President']))
     <li class="nav-item">
-        <a class="nav-link collapsed " href="{{ route('visitors.RoleWiseIndex') }}">
+        {{-- <a class="nav-link collapsed " href="{{ route('visitors.RoleWiseIndex') }}"> --}}
+        <a class="nav-link collapsed " href="{{ route('visitors.index') }}">
             <i class="bi bi-people-fill" style="color: #e76a35"></i>
             <span style="color: #1d2856">Visitor List</span>
         </a>

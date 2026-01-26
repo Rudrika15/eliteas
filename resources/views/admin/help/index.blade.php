@@ -21,6 +21,7 @@
                                 <th>S.No</th>
                                 <th>Title</th>
                                 <th>Photo</th>
+                                <th>PDF</th>
                                 <th>Video</th>
                                 <th>Description</th>
                                 <th>Status</th>
@@ -37,6 +38,13 @@
                                             <img src="{{ asset('help/' . $helpData->photo) }}" alt="Photo Preview" width="100" height="100" style="object-fit: cover;">
                                         @else
                                             <span>No photo available</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if ($helpData->pdf)
+                                            <a href="{{ asset('help/' . $helpData->pdf) }}" target="_blank">View PDF</a>
+                                        @else
+                                            <span>No PDF available</span>
                                         @endif
                                     </td>
                                     <td>

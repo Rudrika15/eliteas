@@ -141,28 +141,6 @@ class CircleCallController extends Controller
                 ));
             }
 
-            // ✅ If user has "Digital Member" role
-            elseif (Auth::user()->hasRole('Digital Member')) {
-
-                $userCityId = Auth::user()->member->cityId;
-
-                $circleMember = Member::whereNull('circleId')
-                    ->where('cityId', $userCityId)
-                    ->where('status', 'Active')
-                    ->get();
-
-                $cities = City::where('status', 'Active')
-                    ->orderBy('cityName', 'asc')
-                    ->get();
-
-                return view('admin.circlecall.index', compact(
-                    'cities',
-                    'circlecall',
-                    'callWith',
-                    'circleMember'
-                ));
-            }
-
             // Default unauthorized
             return redirect()->back()->with('error', 'Unauthorized access.');
         } catch (\Throwable $th) {
@@ -245,24 +223,56 @@ class CircleCallController extends Controller
     // }
 
 
+    // public function getMembersByCircle(Request $request)
+    // {
+    //     $circleId = $request->circleId;
+
+    //     $members = Member::with('circle')
+    //         ->where(function ($query) use ($circleId) {
+    //             $query->where('circleId', $circleId)
+    //                 ->where('status', 'Active')
+    //                 ->where('userId', '<>', Auth::id()) // exclude the authenticated user
+    //                 ->orWhere('firstName', 'UBN'); // always include UBN
+    //         })
+    //         ->orderBy('firstName', 'asc')
+    //         ->get();
+
+    //     return response()->json([
+    //         'members' => $members
+    //     ]);
+    // }
+
+
     public function getMembersByCircle(Request $request)
     {
         $circleId = $request->circleId;
 
-        $members = Member::with('circle')
-            ->where(function ($query) use ($circleId) {
-                $query->where('circleId', $circleId)
-                    ->where('status', 'Active')
-                    ->where('userId', '<>', Auth::id()) // exclude the authenticated user
-                    ->orWhere('firstName', 'UBN'); // always include UBN
-            })
-            ->orderBy('firstName', 'asc')
-            ->get();
+        if ($circleId == 'digital') {
+            $query = Member::where('circleId', null)
+                ->where('status', 'Active')
+                ->where('userId', '<>', Auth::id());
+        } else {
+            $query = Member::with('circle')
+                ->where(function ($q) use ($circleId) {
+                    $q->where('circleId', $circleId)
+                        ->where('status', 'Active')
+                        ->where('userId', '<>', Auth::id())
+                        ->orWhere('firstName', 'UBN');
+                });
+
+            // If user has VP role, include himself
+            if (Auth::user()->hasRole('Vice President')) {
+                $query->orWhere('userId', Auth::id());
+            }
+        }
+
+        $members = $query->orderBy('firstName', 'asc')->get();
 
         return response()->json([
             'members' => $members
         ]);
     }
+
 
 
 

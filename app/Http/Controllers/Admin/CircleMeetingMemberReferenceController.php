@@ -150,7 +150,7 @@ class CircleMeetingMemberReferenceController extends Controller
                     ->with('members.circle:id,circleName')
                     ->with('refGiverName')
                     ->where('referenceGiverId', Auth::user()->id)
-                    ->paginate(10);
+                    ->paginate(10, ['*'], 'page_ref');
 
                 $refGiver->transform(function ($item) {
                     if ($item->members) {

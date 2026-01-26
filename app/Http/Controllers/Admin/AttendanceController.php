@@ -29,7 +29,8 @@ class AttendanceController extends Controller
         try {
             $user = auth()->user();
 
-            $circleMembers = $user->member->circle->members;
+            // $circleMembers = $user->member->circle->members;
+            $circleMembers = $user->member->circle->members()->where('status', 'Active')->get();
 
             $meetingId = $request->id;
 
