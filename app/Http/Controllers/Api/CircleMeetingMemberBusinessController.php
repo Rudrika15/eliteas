@@ -387,11 +387,11 @@ class CircleMeetingMemberBusinessController extends Controller
                 $refGiver->referenceGiverId = $busGiver->businessGiverId;
                 $refGiver->memberId = Auth::user()->id;
 
-                if ($request->group == 'internal') {
-                    $refGiver->contactName = $request->contactNameInternal;
-                } else {
-                    $refGiver->contactName = $request->contactNameExternal;
-                }
+                // if ($request->group == 'internal') {
+                //     $refGiver->contactName = $request->contactNameInternal;
+                // } else {
+                //     $refGiver->contactName = $request->contactNameExternal;
+                // }
 
                 $refGiver->contactNo = $request->contactNo;
                 $refGiver->email = $request->email;
@@ -439,12 +439,14 @@ class CircleMeetingMemberBusinessController extends Controller
             $busGiver->remarks = $request->remarks;
             $busGiver->status = 'Active';
 
+            $busGiver->save();
+
             return Utils::sendResponse(
                 [
                     'busGiver' => $busGiver,
                     'reference' => $reference
                 ],
-                'Created Successfully!',
+                'Business Amount Added Successfully!',
                 201
             );
         } catch (\Throwable $th) {
