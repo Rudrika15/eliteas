@@ -203,7 +203,7 @@ class CircleMeetingMemberBusinessController extends Controller
                 return Utils::errorResponse(['error' => 'Unauthorized'], 'Unauthorized access', 403);
             }
 
-            $busGiven = CircleMeetingMembersBusiness::with(['loginMember', 'reference'])
+            $busGiven = CircleMeetingMembersBusiness::with(['loginMember', 'businessGiverMember', 'reference'])
                 ->where('businessGiverId', auth()->id())
                 ->where('status', 'Active')
                 ->orderBy('id', 'DESC')
