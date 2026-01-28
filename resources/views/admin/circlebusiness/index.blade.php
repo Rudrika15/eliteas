@@ -311,12 +311,9 @@
                 <div class="modal-body">
                     <form class="needs-validation" id="meetingMemberRefForm" enctype="multipart/form-data" method="post" action="{{ route('refGiver.refByOtherStore') }}" novalidate>
                         @csrf
-
                         <!-- Circle and Member Selection -->
                         <div class="card p-3 shadow-sm border-0 rounded">
-
                             @if (auth()->user()->hasRole('Member'))
-
                                 <div class="mb-3">
                                     <label for="circleId" class="form-label fw-bold color-blue required">Circle <span class="text-danger">*</span></label>
                                     <select class="form-select @error('circleId') is-invalid @enderror" id="circleId" name="circleId" required>
@@ -333,11 +330,8 @@
                                         <div class="invalid-tooltip">This field is required.</div>
                                     @enderror
                                 </div>
-
                             @endif
-
-
-                            @if (auth()->user()->hasRole('Member'))
+                            {{-- @if (auth()->user()->hasRole('Member'))
                                 <div class="mb-3">
                                     <label for="circleId" class="form-label fw-bold color-blue required">
                                         Circle <span class="text-danger">*</span>
@@ -354,7 +348,7 @@
                                         <div class="invalid-tooltip">This field is required.</div>
                                     @enderror
                                 </div>
-                            @endif
+                            @endif --}}
 
 
                             <div class="mb-3" id="memberListDropdown">
