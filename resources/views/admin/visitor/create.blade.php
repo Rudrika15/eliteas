@@ -352,7 +352,8 @@
                         url: '{{ route('members.byCircle') }}',
                         method: 'GET',
                         data: {
-                            circleId: circleId
+                            circleId: circleId,
+                            is_visitor: 'true'
                         },
                         success: function(response) {
                             if (response.members && response.members.length > 0) {

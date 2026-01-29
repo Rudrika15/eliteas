@@ -232,6 +232,7 @@
                                         <td>{{ \Carbon\Carbon::parse($busGiverData->date)->format('d-m-Y') ?? '-' }}</td>
                                         <td>₹ {{ $busGiverData->amount ?? '-' }}</td>
                                         <td>{{ $busGiverData->remarks ?? '-' }}</td>
+
                                     </tr>
                                 @empty
                                     <tr>
@@ -259,7 +260,7 @@
                                     <th>Date</th>
                                     <th>Amount</th>
                                     <th>Remarks</th>
-                                    <th>Action</th>
+                                    {{-- <th>Action</th> --}}
                                 </tr>
                             </thead>
                             <tbody>
@@ -274,11 +275,11 @@
                                         <td>{{ \Carbon\Carbon::parse($busGiveByOtherData->date)->format('d-m-Y') ?? '-' }}</td>
                                         <td>₹ {{ $busGiveByOtherData->amount ?? '-' }}</td>
                                         <td>{{ $busGiveByOtherData->remarks ?? '-' }}</td>
-                                        <td>
+                                        {{-- <td>
                                             <a href="{{ route('refGiver.edit', $busGiveByOtherData->id) }}" class="btn btn-sm btn-bg-blue">
                                                 <i class="bi bi-pencil"></i>
                                             </a>
-                                        </td>
+                                        </td> --}}
                                     </tr>
                                 @empty
                                     <tr>
@@ -318,11 +319,10 @@
                                     <label for="circleId" class="form-label fw-bold color-blue required">Circle <span class="text-danger">*</span></label>
                                     <select class="form-select @error('circleId') is-invalid @enderror" id="circleId" name="circleId" required>
                                         <option value="" selected disabled>Select Circle</option>
-                                        <option value="{{ old('circleId', auth()->user()->member->circleId) }}" selected>
-                                            {{ $circles->where('id', old('circleId', auth()->user()->member->circleId))->first()->circleName ?? '' }}
-                                        </option>
                                         @foreach ($circles as $circle)
-                                            <option value="{{ $circle->id }}">{{ $circle->circleName }}</option>
+                                            <option value="{{ $circle->id }}" {{ old('circleId', auth()->user()->member->circleId) == $circle->id ? 'selected' : '' }}>
+                                                {{ $circle->circleName }}
+                                            </option>
                                         @endforeach
                                     </select>
                                     {{-- <label for="circleId">Circle</label> --}}
@@ -531,7 +531,7 @@
             // Function to load members for a selected circle
             function loadMembers(circleId) {
                 // Clear the member dropdown
-                $('#memberId').empty().append('<option value="" disabled>Select Member</option>');
+                $('#memberId').empty().append('<option value="" selected disabled>Select Member</option>');
 
                 if (circleId) {
                     $.ajax({
@@ -593,87 +593,6 @@
                 console.log('Selected Member ID:', memberId);
                 console.log('Selected Member User ID:', userId); // Log the correct userId
                 console.log('Selected Member Name:', firstName + ' ' + lastName);
-            });
-        });
-    </script>
-
-
-    <script>
-        $(document).ready(function() {
-            // Set up CSRF token for AJAX requests
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-
-            // Function to load members for a selected city
-            function loadMembersByCity(cityId) {
-                // Clear the member dropdown
-                $('#memberId').empty().append('<option value="" disabled>Select Member</option>');
-
-                if (cityId) {
-                    $.ajax({
-                        url: '/get-members-by-city/' + cityId,
-                        method: 'GET',
-                        data: {
-                            cityId: cityId
-                        },
-                        success: function(response) {
-                            // Controller returns a plain array of members. Support both formats.
-                            var members = Array.isArray(response) ? response : (response.members || []);
-
-                            if (members.length > 0) {
-                                members.forEach(function(member) {
-                                    $('#memberId').append(
-                                        '<option value="' + (member.userId || member.id) +
-                                        '" data-user-id="' + (member.userId || member.id) +
-                                        '" data-first-name="' + (member.firstName || '') +
-                                        '" data-last-name="' + (member.lastName || '') + '">' +
-                                        ((member.firstName || '') + ' ' + (member.lastName || '')).trim() +
-                                        '</option>'
-                                    );
-                                });
-                            }
-                        },
-                        error: function() {
-                            $('#memberId').append('<option value="">Error loading members</option>');
-                        }
-                    });
-                }
-            }
-
-            // Load members on page load if a city is selected by default
-            var defaultCityId = '{{ auth()->user()->member->cityId ?? '' }}';
-            if (defaultCityId) {
-                loadMembersByCity(defaultCityId);
-            }
-
-            // Handle city dropdown change event
-            $('#city').on('change', function() {
-                var cityId = $(this).val();
-                loadMembersByCity(cityId);
-            });
-
-            // Handle member dropdown change event
-            $('#memberId').on('change', function() {
-                var selectedOption = $(this).find('option:selected');
-                var memberId = selectedOption.val();
-                var userId = selectedOption.data('user-id');
-                var firstName = selectedOption.data('first-name');
-                var lastName = selectedOption.data('last-name');
-
-                if (memberId) {
-                    $('#meetingPersonId').val(userId);
-                    $('#meetingPersonName').val((firstName || '') + ' ' + (lastName || ''));
-                } else {
-                    $('#meetingPersonId').val('');
-                    $('#meetingPersonName').val('');
-                }
-
-                console.log('Selected Member ID:', memberId);
-                console.log('Selected Member User ID:', userId);
-                console.log('Selected Member Name:', (firstName || '') + ' ' + (lastName || ''));
             });
         });
     </script>

@@ -176,6 +176,7 @@ class CircleCallController extends Controller
                     $query->where('status', 'Active')
                         ->orWhere('firstName', 'UBN');
                 })
+                ->where('userId', '!=', Auth::id())
                 ->orderBy('firstName', 'asc')
                 ->get();
 
@@ -253,6 +254,7 @@ class CircleCallController extends Controller
                 ->where('userId', '<>', Auth::id());
         } else {
             $query = Member::with('circle')
+                ->whereNotNull('circleId')
                 ->where(function ($q) use ($circleId) {
                     $q->where('circleId', $circleId)
                         ->where('status', 'Active')
@@ -260,9 +262,11 @@ class CircleCallController extends Controller
                         ->orWhere('firstName', 'UBN');
                 });
 
-            // If user has VP role, include himself
-            if (Auth::user()->hasRole('Vice President')) {
-                $query->orWhere('userId', Auth::id());
+            // If user has VP role, include himself ONLY if request comes from visitor module
+            if ($request->has('is_visitor') && $request->is_visitor == 'true') {
+                if (Auth::user()->hasRole('Vice President')) {
+                    $query->orWhere('userId', Auth::id());
+                }
             }
         }
 

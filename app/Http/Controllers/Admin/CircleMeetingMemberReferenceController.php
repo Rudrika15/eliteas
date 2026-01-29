@@ -437,7 +437,8 @@ class CircleMeetingMemberReferenceController extends Controller
             // $busGiver->status = 'Active';
             // $busGiver->save();
 
-            return redirect()->route('refGiver.index')->with('success', ' Created Successfully!');
+            // return redirect()->route('refGiver.index')->with('success', ' Created Successfully!');
+            return redirect()->back()->with('success', ' Created Successfully!');
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError(

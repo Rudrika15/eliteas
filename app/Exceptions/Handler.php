@@ -6,6 +6,8 @@ use Throwable;
 use App\Utils\ErrorLogger;
 use Illuminate\Http\Exceptions\PostTooLargeException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Database\QueryException;
+
 
 class Handler extends ExceptionHandler
 {
@@ -42,6 +44,14 @@ class Handler extends ExceptionHandler
 
     public function render($request, Throwable $exception)
     {
+
+        if ($exception instanceof QueryException) {
+            return response()->view('dberror', [], 503);
+        }
+
+        if ($this->isHttpException($exception)) {
+            return response()->view('servererror', [], 500);
+        }
 
         if ($this->isHttpException($exception)) {
             return response()->view('servererror', [], 500);

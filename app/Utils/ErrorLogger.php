@@ -40,7 +40,14 @@ class ErrorLogger
         // $errorLog->request_data = json_encode(request()->except(['password', 'token']));
         // $errorLog->is_suspicious = Str::contains($exception->getMessage(), ['phpinfo', '_controller', '.env']);
 
-        $errorLog->save();
+        // $errorLog->save();
+
+        try {
+            $errorLog->save();
+        } catch (\Throwable $e) {
+            // ignore
+        }
+
 
         Log::error($exception->getMessage(), [
             'url' => $errorLog->url,

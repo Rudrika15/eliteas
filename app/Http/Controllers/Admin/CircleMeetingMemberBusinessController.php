@@ -183,7 +183,8 @@ class CircleMeetingMemberBusinessController extends Controller
             }
             $busGiver->save();
 
-            return redirect()->route('busGiver.index')->with('success', 'Created Successfully!');
+            // return redirect()->route('busGiver.index')->with('success', 'Created Successfully!');
+            return redirect()->back()->with('success', 'Created Successfully!');
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError(

@@ -385,7 +385,7 @@
                                     <select class="form-select @error('circleId') is-invalid @enderror" id="circleId" name="circleId" required>
                                         <option value="" selected disabled>Select Circle</option>
                                         @foreach ($circles as $circle)
-                                            <option value="{{ $circle->id }}" {{ old('circleId') == $circle->id ? 'selected' : '' }}>
+                                            <option value="{{ $circle->id }}" {{ old('circleId', auth()->user()->member->circleId) == $circle->id ? 'selected' : '' }}>
                                                 {{ $circle->circleName }}
                                             </option>
                                         @endforeach
@@ -415,8 +415,6 @@
                             @endif
 
 
-
-                            {{-- For Digital Member Role --}}
 
                             <!-- Meeting Person -->
                             <div class="mb-3">
@@ -638,7 +636,7 @@
             // Function to load members for a selected circle
             function loadMembers(circleId) {
                 // Clear the member dropdown
-                $('#memberId').empty().append('<option value="">Select Member</option>');
+                $('#memberId').empty().append('<option value="" selected disabled>Select Member</option>');
 
                 if (circleId) {
                     $.ajax({
@@ -659,6 +657,7 @@
                                 });
 
                                 // Pre-select the authenticated member if exists in the list
+                                /*
                                 var defaultMemberId =
                                     '{{ auth()->user()->member->id }}'; // Assuming memberId is available
                                 if (defaultMemberId) {
@@ -666,6 +665,7 @@
                                         'change'
                                     ); // Set the default selected member and trigger the change event
                                 }
+                                */
                             } else {
                                 $('#memberId').append('<option value="">No Members Found</option>');
                             }
