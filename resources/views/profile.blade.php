@@ -96,6 +96,30 @@
 
                                 <div class="col-md-6 mt-3">
                                     <div class="form-floating">
+                                        <select class="form-select @error('landmark') is-invalid @enderror" id="landmark" name="landmark">
+                                            <option value="" disabled selected>Select Landmark</option>
+                                            @if (isset($landmarks))
+                                                @foreach ($landmarks as $lm)
+                                                    <option value="{{ $lm }}" {{ old('landmark', $member->landmark ?? '') == $lm ? 'selected' : '' }}>{{ $lm }}</option>
+                                                @endforeach
+                                            @endif
+                                            <option value="Other" {{ old('landmark', $member->landmark ?? '') == 'Other' ? 'selected' : '' }}>Other</option>
+                                        </select>
+                                        <label for="landmark">Landmark</label>
+                                        @error('landmark')
+                                            <div class="invalid-tooltip">
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
+                                    </div>
+                                    <div class="form-floating mt-2" id="otherLandmarkDiv" style="display: none;">
+                                        <input type="text" class="form-control" id="other_landmark" name="other_landmark" placeholder="Enter Landmark" value="{{ old('other_landmark') }}">
+                                        <label for="other_landmark">Enter Landmark</label>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 mt-3">
+                                    <div class="form-floating">
                                         <input type="text" class="form-control @error('firstName') is-invalid @enderror" id="firstName" name="firstName" value="{{ $user->firstName ?? '-' }}" placeholder="First Name">
                                         <label for="firstName">First Name</label>
                                         @error('firstName')
@@ -1880,4 +1904,71 @@
     </script>
 
 
+    <script>
+        $(document).ready(function() {
+            // Landmark Other Toggle
+            function toggleOtherLandmark() {
+                if ($('#landmark').val() === 'Other') {
+                    $('#otherLandmarkDiv').show();
+                    $('#other_landmark').prop('required', true);
+                } else {
+                    $('#otherLandmarkDiv').hide();
+                    $('#other_landmark').prop('required', false);
+                }
+            }
+
+            $('#landmark').change(toggleOtherLandmark);
+            toggleOtherLandmark(); // Run on load
+
+            // City Change - Fetch Landmarks
+            $('#city').change(function() {
+                var cityId = $(this).val();
+                if (cityId) {
+                    $.ajax({
+                        url: '/get-landmarks/' + cityId,
+                        type: 'GET',
+                        success: function(data) {
+                            var landmarkSelect = $('#landmark');
+                            landmarkSelect.empty();
+                            landmarkSelect.append('<option value="" disabled selected>Select Landmark</option>');
+
+                            $.each(data, function(key, value) {
+                                landmarkSelect.append('<option value="' + value + '">' + value + '</option>');
+                            });
+
+                            landmarkSelect.append('<option value="Other">Other</option>');
+
+                            // Reset Other field
+                            $('#otherLandmarkDiv').hide();
+                            $('#other_landmark').val('');
+                        },
+                        error: function() {
+                            console.error('Error fetching landmarks');
+                        }
+                    });
+                } else {
+                    $('#landmark').empty().append('<option value="" disabled selected>Select Landmark</option><option value="Other">Other</option>');
+                }
+            });
+
+            // Duplicate Landmark Check
+            $('#other_landmark').on('blur input', function() {
+                var newValue = $(this).val().trim().toLowerCase();
+                var exists = false;
+
+                $('#landmark option').each(function() {
+                    if ($(this).val().toLowerCase() === newValue && $(this).val() !== 'Other' && $(this).val() !== '') {
+                        exists = true;
+                        return false; // Break loop
+                    }
+                });
+
+                if (exists) {
+                    alert('Warning: This landmark is already in the list. Please select it from the dropdown.');
+                    // Optional: You might want to clear the input or reset the selection
+                    // $(this).val(''); 
+                }
+            });
+        });
+    </script>
 @endsection

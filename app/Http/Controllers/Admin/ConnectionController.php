@@ -154,7 +154,8 @@ class ConnectionController extends Controller
 
             // Get cities with their members
             $cities = City::with(['members' => function ($q) {
-                $q->where('status', 'Active');
+                $q->where('status', 'Active')
+                    ->where('userId', '!=', Auth::id());
             }])
                 ->whereIn('id', $cityIds)
                 ->where('status', 'Active')

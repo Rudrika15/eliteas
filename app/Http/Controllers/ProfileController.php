@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\State;
 use App\Models\Member;
 use App\Models\Country;
+use App\Models\Landmark;
 use App\Utils\ErrorLogger;
 use App\Models\TopsProfile;
 use Illuminate\Http\Request;
@@ -24,6 +25,24 @@ class ProfileController extends Controller
         $this->middleware('permission:profile-member', ['only' => ['member']]);
         $this->middleware('permission:profile-member-update', ['only' => ['memberUpdate']]);
     }
+
+    public function getLandmarks($cityId)
+    {
+        try {
+            $landmarks = Landmark::where('cityId', $cityId)
+                ->where('status', 'Active')
+                ->pluck('name');
+
+            return response()->json($landmarks);
+        } catch (\Throwable $th) {
+            ErrorLogger::logError(
+                $th,
+                request()->fullUrl()
+            );
+            return response()->json(['error' => 'Something went wrong'], 500);
+        }
+    }
+
 
 
     public function member($id = 0)
@@ -44,7 +63,14 @@ class ProfileController extends Controller
             $billing = BillingAddress::where('memberId', $member->id)->first();
             $tops = TopsProfile::where('memberId', $member->id)->first();
 
-            return view('profile', compact('member', 'user', 'country', 'states', 'city', 'contactDetails', 'billing', 'tops'));
+            $landmarks = [];
+            if ($member->cityId) {
+                $landmarks = Landmark::where('cityId', $member->cityId)
+                    ->where('status', 'Active')
+                    ->pluck('name');
+            }
+
+            return view('profile', compact('member', 'user', 'country', 'states', 'city', 'contactDetails', 'billing', 'tops', 'landmarks'));
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError(
@@ -115,6 +141,29 @@ class ProfileController extends Controller
             // $member->keyWords = $request->keyWords;
             $keywords = array_filter([$request->keyword1, $request->keyword2, $request->keyword3]);
             $member->keyWords = $keywords;
+            $member->cityId = $request->city;
+
+            $landmarkName = $request->landmark;
+            if ($landmarkName == 'Other') {
+                $landmarkName = $request->other_landmark;
+                // Save new landmark to landmarks table if it doesn't exist
+                if ($landmarkName) {
+                    // Check if it already exists (case insensitive check recommended)
+                    $existingLandmark = Landmark::where('cityId', $request->city)
+                        ->where('name', $landmarkName)
+                        ->first();
+
+                    if (!$existingLandmark) {
+                        Landmark::create([
+                            'cityId' => $request->city,
+                            'name' => $landmarkName,
+                            'status' => 'Active'
+                        ]);
+                    }
+                }
+            }
+            $member->landmark = $landmarkName;
+
             $member->status = 'Active';
             $member->save();
 

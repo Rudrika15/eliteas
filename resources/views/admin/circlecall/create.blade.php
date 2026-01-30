@@ -14,44 +14,6 @@
 
             {{-- @include('circleMemberMaster') --}}
 
-            {{-- <div class="row mb-3 mt-3">
-                <!-- Circle Dropdown -->
-                <div class="col-md-6">
-                    <div class="form-floating">
-                        <select class="form-select @error('circleId') is-invalid @enderror" id="circleId" name="circleId" required>
-                            <option value="" selected disabled>Select Circle</option>
-                            <option value="{{ old('circleId', auth()->user()->member->circleId) }}" selected>
-                                {{ $circles->where('id', old('circleId', auth()->user()->member->circleId))->first()->circleName ?? '' }}</option>
-                            @foreach ($circles as $circle)
-                                <option value="{{ $circle->id }}">{{ $circle->circleName }}</option>
-                            @endforeach
-                        </select>
-                        <label for="circleId">Circle</label>
-                        @error('circleId')
-                            <div class="invalid-tooltip">
-                                This field is required.
-                            </div>
-                        @enderror
-                    </div>
-                </div>
-
-                <!-- Member Dropdown -->
-                <div class="col-md-6">
-                    <div class="form-floating">
-                        <select class="form-select @error('memberId') is-invalid @enderror" id="memberId" name="memberId" required>
-                            <option value="">Select Member</option>
-                            <!-- Options will be populated dynamically -->
-                        </select>
-                        <label for="memberId">Member</label>
-                        @error('memberId')
-                            <div class="invalid-tooltip">
-                                This field is required.
-                            </div>
-                        @enderror
-                    </div>
-                </div>
-            </div> --}}
-
 
             <div class="row mb-3 mt-3">
 
@@ -81,42 +43,9 @@
                         <div class="form-floating">
                             <select class="form-select @error('memberId') is-invalid @enderror" id="memberId" name="memberId" required>
                                 <option value="">Select Member</option>
-                                @foreach ($members as $member)
-                                    <option value="{{ $member->id }}">{{ $member->name }}</option>
+                                @foreach ($circleMember as $member)
+                                    <option value="{{ $member->id }}">{{ $member->firstName }} {{ $member->lastName }}</option>
                                 @endforeach
-                            </select>
-                            <label for="memberId">Member</label>
-                            @error('memberId')
-                                <div class="invalid-tooltip">This field is required.</div>
-                            @enderror
-                        </div>
-                    </div>
-                @endif
-
-
-                {{-- If user has "digital member" role --}}
-                @if (auth()->user()->hasRole('digital member'))
-                    <!-- City Dropdown -->
-                    <div class="col-md-6">
-                        <div class="form-floating">
-                            <select class="form-select @error('city') is-invalid @enderror" id="city" name="city" required>
-                                <option value="">Select City</option>
-                                @foreach ($cities as $city)
-                                    <option value="{{ $city->id }}">{{ $city->cityName }}</option>
-                                @endforeach
-                            </select>
-                            <label for="city">City</label>
-                            @error('city')
-                                <div class="invalid-tooltip">This field is required.</div>
-                            @enderror
-                        </div>
-                    </div>
-
-                    <!-- Member Dropdown -->
-                    <div class="col-md-6">
-                        <div class="form-floating">
-                            <select class="form-select @error('memberId') is-invalid @enderror" id="memberId" name="memberId" required>
-                                <option value="">Select Member</option>
                             </select>
                             <label for="memberId">Member</label>
                             @error('memberId')
@@ -155,7 +84,7 @@
                     <div class="form-floating mt-3">
                         <input type="file" class="form-control @error('meetingImage') is-invalid @enderror" id="meetingImage" name="meetingImage" accept="image/*" onchange="previewPhoto(event)" value="{{ old('meetingImage') }}">
                         <label for="meetingImage">Upload Meeting Image</label>
-                        <span class="text-danger mt-1 d-block"> 
+                        <span class="text-danger mt-1 d-block">
                             File size:Max 20MB</span>
                         @error('meetingImage')
                             <div class="invalid-tooltip">
@@ -193,7 +122,7 @@
                     <div class="form-floating mt-3">
                         <?php
                         use Illuminate\Support\Carbon;
-
+                        
                         $nearestDate = $scheduleDate->min();
                         $nearestDate = $nearestDate ? Carbon::parse($nearestDate)->subDay()->format('Y-m-d') : Carbon::now()->format('Y-m-d');
                         $selectedDate = request()->input('date') ?? (Carbon::now()->format('Y-m-d') == $nearestDate ? Carbon::now()->format('Y-m-d') : $nearestDate);

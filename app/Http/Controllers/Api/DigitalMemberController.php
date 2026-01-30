@@ -9,6 +9,7 @@ use App\Models\CircleMeetingMembersBusiness;
 use App\Models\CircleMeetingMembersReference;
 use App\Models\City;
 use App\Models\Connection;
+use App\Models\Landmark;
 use App\Models\Member;
 use App\Models\User;
 use App\Utils\ErrorLogger;
@@ -214,6 +215,145 @@ class DigitalMemberController extends Controller
     //         ], 500);
     //     }
     // }
+
+    public function getCityLandmarkMembers(Request $request, $cityId = null, $landmarkName = null)
+    {
+        try {
+            $authUserId = Auth::id();
+            $businessMeetings = CircleMeetingMembersBusiness::with('member')
+                ->where('status', 'Active')
+                ->get();
+
+            // Case 1: No City ID -> Return all Cities (Same as original)
+            if (!$cityId) {
+                $cities = City::where('status', 'Active')
+                    ->with([
+                        'members' => function ($query) {
+                            $query->where('status', 'Active')
+                                ->with([
+                                    'bCategory:id,categoryName',
+                                    'user:id,email,contactNo'
+                                ]);
+                        }
+                    ])
+                    ->withCount(['members' => function ($query) {
+                        $query->where('status', 'Active');
+                    }])
+                    ->get();
+
+                // Logic for business amount and connections for each city's members
+                foreach ($cities as $city) {
+                    $city->totalBusinessAmount = 0;
+                    foreach ($city->members as $member) {
+                        $member->businessAmount = 0;
+                        $member->induction_count = Member::where('sponsoredBy', $member->id)->count();
+                        $connection = Connection::where(function ($query) use ($authUserId, $member) {
+                            $query->where('userId', $authUserId)->where('memberId', $member->userId)
+                                ->orWhere(function ($query) use ($authUserId, $member) {
+                                    $query->where('userId', $member->userId)->where('memberId', $authUserId);
+                                });
+                        })->first();
+                        $member->connection_status = ($connection && $connection->status === 'Accepted') ? 'Connected' : ($connection ? $connection->status : 'Not Connected');
+                    }
+
+                    foreach ($businessMeetings as $meeting) {
+                        $businessGiverCityId = Member::where('userId', $meeting->businessGiverId)->value('cityId');
+                        if ($businessGiverCityId == $city->id) {
+                            $city->totalBusinessAmount += $meeting->amount;
+                            foreach ($city->members as $member) {
+                                if ($member->userId == $meeting->loginMemberId) {
+                                    $member->businessAmount += $meeting->amount;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                return response()->json([
+                    'success' => true,
+                    'cities' => $cities,
+                ]);
+            }
+
+            // Case 2: City ID provided -> Check for Landmark
+
+            // If Landmark Name is NOT provided, return Landmarks list for this city
+            if (!$landmarkName) {
+                // We also return the city object for context, but mainly landmarks
+                $city = City::findOrFail($cityId);
+
+                // Fetch landmarks from Landmarks table
+                // Note: We might want to only show landmarks that have active members? 
+                // For now, let's fetch all active landmarks for the city
+                $landmarks = Landmark::where('cityId', $cityId)
+                    ->where('status', 'Active')
+                    ->pluck('name');
+
+                // Also fetch distinct landmarks from members if not in landmarks table?
+                // The requirement is "based on city selection show the landmark list"
+
+                return response()->json([
+                    'success' => true,
+                    'city' => $city,
+                    'landmarks' => $landmarks
+                ]);
+            }
+
+            // Case 3: City ID AND Landmark provided -> Return Members for that landmark
+            $city = City::with([
+                'members' => function ($query) use ($landmarkName) {
+                    $query->where('status', 'Active')
+                        ->where('landmark', $landmarkName) // Filter by landmark
+                        ->with([
+                            'bCategory:id,categoryName',
+                            'user:id,email,contactNo'
+                        ]);
+                }
+            ])->findOrFail($cityId);
+
+            $city->totalBusinessAmount = 0;
+
+            foreach ($city->members as $member) {
+                $member->businessAmount = 0;
+                $member->induction_count = Member::where('sponsoredBy', $member->id)->count();
+                $connection = Connection::where(function ($query) use ($authUserId, $member) {
+                    $query->where('userId', $authUserId)->where('memberId', $member->userId)
+                        ->orWhere(function ($query) use ($authUserId, $member) {
+                            $query->where('userId', $member->userId)->where('memberId', $authUserId);
+                        });
+                })->first();
+                $member->connection_status = ($connection && $connection->status === 'Accepted') ? 'Connected' : ($connection ? $connection->status : 'Not Connected');
+            }
+
+            foreach ($businessMeetings as $meeting) {
+                $businessGiverCityId = Member::where('userId', $meeting->businessGiverId)->value('cityId');
+                if ($businessGiverCityId == $city->id) {
+                    $city->totalBusinessAmount += $meeting->amount;
+                    foreach ($city->members as $member) {
+                        if ($member->userId == $meeting->loginMemberId) {
+                            $member->businessAmount += $meeting->amount;
+                        }
+                    }
+                }
+            }
+
+            return response()->json([
+                'success' => true,
+                'city' => $city, // This contains the filtered members
+            ]);
+        } catch (\Throwable $th) {
+            ErrorLogger::logError($th, request()->fullUrl());
+            Log::error('Error in getCityLandmarkMembers', [
+                'message' => $th->getMessage(),
+                'trace' => $th->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'error' => 'An error occurred. Please try again later.',
+            ], 500);
+        }
+    }
 
     public function getCityMembers(Request $request, $id = null)
     {

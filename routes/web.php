@@ -216,6 +216,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::post('/get-states', [FranchiseController::class, 'getStates'])->name('get.states');
     Route::post('/get-cities', [FranchiseController::class, 'getCities'])->name('get.cities');
+    Route::get('/get-landmarks/{cityId}', [ProfileController::class, 'getLandmarks'])->name('get.landmarks');
     Route::post('get/state-country', [FranchiseController::class, 'getStateAndCountry'])->name('get.state.country');
 
 

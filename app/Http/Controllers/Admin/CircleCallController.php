@@ -254,11 +254,13 @@ class CircleCallController extends Controller
                 ->where('userId', '<>', Auth::id());
         } else {
             $query = Member::with('circle')
-                ->whereNotNull('circleId')
                 ->where(function ($q) use ($circleId) {
-                    $q->where('circleId', $circleId)
-                        ->where('status', 'Active')
-                        ->where('userId', '<>', Auth::id())
+                    $q->where(function ($sub) use ($circleId) {
+                        $sub->whereNotNull('circleId')
+                            ->where('circleId', $circleId)
+                            ->where('status', 'Active')
+                            ->where('userId', '<>', Auth::id());
+                    })
                         ->orWhere('firstName', 'UBN');
                 });
 
