@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exports\AttendanceReportExport;
+use App\Exports\CircleActivityReportExport;
 use App\Exports\MemberReportExport;
 use App\Http\Controllers\Controller;
 use App\Models\Circle;
@@ -15,6 +17,10 @@ use Illuminate\Support\Carbon;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Str;
 use App\Exports\CircleVPReportExport;
+use App\Models\TrainingRegister;
+use App\Models\Testimonial;
+use Illuminate\Support\Facades\Auth;
+use App\Models\CircleMeetingsAttendances;
 
 class ReportController extends Controller
 {
@@ -1070,5 +1076,193 @@ class ReportController extends Controller
         $circleId = $request->input('circleId');
 
         return Excel::download(new \App\Exports\RenewalMembersExport($startDate, $endDate, $circleId), 'renewal_members_report.xlsx');
+    }
+
+    public function circleActivityReport(Request $request)
+    {
+        $user = Auth::user();
+        $authMember = Member::where('userId', $user->id)->first();
+
+        $circleId = $authMember ? $authMember->circleId : null;
+        $circleName = '';
+        if ($circleId) {
+            $circle = Circle::find($circleId);
+            $circleName = $circle ? $circle->circleName : '';
+        }
+
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+
+        $reportData = collect();
+
+        if ($circleId) {
+            $members = Member::where('circleId', $circleId)
+                ->where('status', 'Active')
+                ->get();
+
+            // Get all user IDs in this circle for Inside/Outside check
+            $circleUserIds = $members->pluck('userId')->toArray();
+
+            foreach ($members as $member) {
+                $uid = $member->userId;
+
+                // 1. IBM (Count) - Participated
+                $ibmCount = CircleCall::where('status', 'Active')
+                    ->where(function ($q) use ($uid) {
+                        $q->where('memberId', $uid)
+                            ->orWhere('meetingPersonId', $uid);
+                    })
+                    ->when($startDate, fn($q) => $q->whereDate('created_at', '>=', $startDate))
+                    ->when($endDate, fn($q) => $q->whereDate('created_at', '<=', $endDate))
+                    ->count();
+
+                // 2. References
+                // Given Inside
+                $refGivenInside = CircleMeetingMembersReference::where('status', 'Active')
+                    ->where('referenceGiverId', $uid)
+                    ->whereIn('memberId', $circleUserIds)
+                    ->when($startDate, fn($q) => $q->whereDate('created_at', '>=', $startDate))
+                    ->when($endDate, fn($q) => $q->whereDate('created_at', '<=', $endDate))
+                    ->count();
+
+                // Given Outside
+                $refGivenOutside = CircleMeetingMembersReference::where('status', 'Active')
+                    ->where('referenceGiverId', $uid)
+                    ->whereNotIn('memberId', $circleUserIds)
+                    ->when($startDate, fn($q) => $q->whereDate('created_at', '>=', $startDate))
+                    ->when($endDate, fn($q) => $q->whereDate('created_at', '<=', $endDate))
+                    ->count();
+
+                // Received Inside
+                $refReceivedInside = CircleMeetingMembersReference::where('status', 'Active')
+                    ->where('memberId', $uid)
+                    ->whereIn('referenceGiverId', $circleUserIds)
+                    ->when($startDate, fn($q) => $q->whereDate('created_at', '>=', $startDate))
+                    ->when($endDate, fn($q) => $q->whereDate('created_at', '<=', $endDate))
+                    ->count();
+
+                // Received Outside
+                $refReceivedOutside = CircleMeetingMembersReference::where('status', 'Active')
+                    ->where('memberId', $uid)
+                    ->whereNotIn('referenceGiverId', $circleUserIds)
+                    ->when($startDate, fn($q) => $q->whereDate('created_at', '>=', $startDate))
+                    ->when($endDate, fn($q) => $q->whereDate('created_at', '<=', $endDate))
+                    ->count();
+
+                // 3. Business (Sum)
+                // Given
+                $businessGiven = CircleMeetingMembersBusiness::where('status', 'Active')
+                    ->where('businessGiverId', $uid)
+                    ->when($startDate, fn($q) => $q->whereDate('created_at', '>=', $startDate))
+                    ->when($endDate, fn($q) => $q->whereDate('created_at', '<=', $endDate))
+                    ->sum('amount');
+
+                // Received
+                $businessReceived = CircleMeetingMembersBusiness::where('status', 'Active')
+                    ->where('loginMemberId', $uid)
+                    ->when($startDate, fn($q) => $q->whereDate('created_at', '>=', $startDate))
+                    ->when($endDate, fn($q) => $q->whereDate('created_at', '<=', $endDate))
+                    ->sum('amount');
+
+                // 4. Training (Count)
+                $trainingCount = TrainingRegister::where('userId', $uid)
+                    ->where('status', 'Active')
+                    ->when($startDate, fn($q) => $q->whereDate('created_at', '>=', $startDate))
+                    ->when($endDate, fn($q) => $q->whereDate('created_at', '<=', $endDate))
+                    ->count();
+
+                // 5. Testimonials (Count)
+                // Given
+                $testimonialGiven = Testimonial::where('userId', $uid)
+                    ->where('status', 'Active')
+                    ->when($startDate, fn($q) => $q->whereDate('created_at', '>=', $startDate))
+                    ->when($endDate, fn($q) => $q->whereDate('created_at', '<=', $endDate))
+                    ->count();
+
+                // Received
+                $testimonialReceived = Testimonial::where('memberId', $uid)
+                    ->where('status', 'Active')
+                    ->when($startDate, fn($q) => $q->whereDate('created_at', '>=', $startDate))
+                    ->when($endDate, fn($q) => $q->whereDate('created_at', '<=', $endDate))
+                    ->count();
+
+                $reportData->push([
+                    'member_name' => $member->firstName . ' ' . $member->lastName,
+                    'ibm' => $ibmCount,
+                    'ref_given_inside' => $refGivenInside,
+                    'ref_given_outside' => $refGivenOutside,
+                    'ref_received_inside' => $refReceivedInside,
+                    'ref_received_outside' => $refReceivedOutside,
+                    'business_given' => $businessGiven,
+                    'business_received' => $businessReceived,
+                    'training' => $trainingCount,
+                    'testimonial_given' => $testimonialGiven,
+                    'testimonial_received' => $testimonialReceived,
+                ]);
+            }
+        }
+
+        if ($request->has('export')) {
+            return Excel::download(new \App\Exports\CircleActivityReportExport($reportData, $startDate, $endDate, $circleName), 'circle_activity_report.xlsx');
+        }
+
+        return view('admin.report.circleActivityReport', compact('reportData', 'startDate', 'endDate'));
+    }
+
+    public function attendanceReport(Request $request)
+    {
+        $user = Auth::user();
+        $authMember = Member::where('userId', $user->id)->first();
+
+        $circleId = $authMember ? $authMember->circleId : null;
+        $circleName = '';
+        if ($circleId) {
+            $circle = Circle::find($circleId);
+            $circleName = $circle ? $circle->circleName : '';
+        }
+
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+
+        $reportData = collect();
+
+        if ($circleId) {
+            $members = Member::where('circleId', $circleId)
+                ->where('status', 'Active')
+                ->get();
+
+            foreach ($members as $member) {
+                // Get counts for each status
+                $stats = CircleMeetingsAttendances::where('userId', $member->userId)
+                    ->where('circle_meetings_attendances.circleId', $circleId)
+                    ->join('schedules', 'circle_meetings_attendances.meetingId', '=', 'schedules.id')
+                    ->when($startDate, fn($q) => $q->whereDate('schedules.date', '>=', $startDate))
+                    ->when($endDate, fn($q) => $q->whereDate('schedules.date', '<=', $endDate))
+                    ->selectRaw("
+                        SUM(CASE WHEN circle_meetings_attendances.status = 'Present' THEN 1 ELSE 0 END) as present_count,
+                        SUM(CASE WHEN circle_meetings_attendances.status = 'Absent' THEN 1 ELSE 0 END) as absent_count,
+                        SUM(CASE WHEN circle_meetings_attendances.status = 'Late' THEN 1 ELSE 0 END) as late_count,
+                        SUM(CASE WHEN circle_meetings_attendances.status = 'Medical' THEN 1 ELSE 0 END) as medical_count,
+                        SUM(CASE WHEN circle_meetings_attendances.status = 'Sub' THEN 1 ELSE 0 END) as sub_count
+                    ")
+                    ->first();
+
+                $reportData->push([
+                    'circle_name' => $circleName,
+                    'member_name' => $member->firstName . ' ' . $member->lastName,
+                    'present' => $stats->present_count ?? 0,
+                    'absent' => $stats->absent_count ?? 0,
+                    'late' => $stats->late_count ?? 0,
+                    'medical' => $stats->medical_count ?? 0,
+                    'substitute' => $stats->sub_count ?? 0,
+                ]);
+            }
+        }
+
+        if ($request->has('export')) {
+            return Excel::download(new AttendanceReportExport($reportData, $startDate, $endDate, $circleName), 'attendance_report.xlsx');
+        }
+
+        return view('admin.report.attendanceReport', compact('reportData', 'startDate', 'endDate'));
     }
 }

@@ -319,7 +319,7 @@ class DigitalMemberController extends Controller
         }
     }
 
-    public function getCityMembers(Request $request, $id = null)
+    public function getCityMembers(Request $request, $id = null, $landmark = null)
     {
         try {
             $authUserId = Auth::id();
@@ -328,7 +328,7 @@ class DigitalMemberController extends Controller
                 ->get();
 
             if ($id) {
-                $landmark = $request->input('landmark');
+                $landmark = $landmark ?? $request->input('landmark');
 
                 // ✅ Get members based on cityId
                 $city = City::with([

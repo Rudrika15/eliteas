@@ -69,10 +69,26 @@
     </li>
 
     <li class="nav-item">
-        <a class="nav-link collapsed" href="{{ route('vp.report') }}">
-            <i class="bi bi-person" style="color: #e76a35"></i>
-            <span style="color: #1d2856">Report</span>
+        <a class="nav-link collapsed" data-bs-target="#reports-nav" data-bs-toggle="collapse" href="#">
+            <i class="bi bi-file-earmark-bar-graph" style="color: #e76a35"></i><span>Reports</span><i class="bi bi-chevron-down ms-auto" style="color: #e76a35"></i>
         </a>
+        <ul id="reports-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+            <li>
+                <a href="{{ route('vp.report') }}">
+                    <i class="bi bi-circle"></i><span>VP Report</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('admin.report.circleActivity') }}">
+                    <i class="bi bi-circle"></i><span>Circle Activity Report</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('admin.report.attendance') }}">
+                    <i class="bi bi-circle"></i><span>Attendance Report</span>
+                </a>
+            </li>
+        </ul>
     </li>
 @endrole
 

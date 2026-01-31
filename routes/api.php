@@ -517,7 +517,8 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     Route::get('city-member-count', [DigitalMemberController::class, 'getCityMemberCount']);
     Route::get('/city-members', [DigitalMemberController::class, 'getCityMembers']);
-    Route::get('/city-members/{id}', [DigitalMemberController::class, 'getCityMembers']);
+    // Route::get('/city-members/{id}', [DigitalMemberController::class, 'getCityMembers']);
+    Route::get('/city-members/{id}/{landmark?}', [DigitalMemberController::class, 'getCityMembers']);
 
     // New API for City -> Landmark -> Members flow
     Route::get('/city-landmark-members', [DigitalMemberController::class, 'getCityLandmarkMembers']); // List all cities
