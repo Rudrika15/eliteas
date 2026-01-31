@@ -109,8 +109,17 @@ class Member extends Model
     }
 
     public function city()
-{
-    return $this->belongsTo(City::class, 'cityId');
-}
+    {
+        return $this->belongsTo(City::class, 'cityId');
+    }
 
+    public function sponsees()
+    {
+        return $this->hasMany(Member::class, 'sponsoredBy', 'id');
+    }
+
+    public function businessReceived()
+    {
+        return $this->hasMany(CircleMeetingMembersBusiness::class, 'loginMemberId', 'userId');
+    }
 }

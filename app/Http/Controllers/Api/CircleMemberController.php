@@ -258,6 +258,16 @@ class CircleMemberController extends Controller
             $circlesData = [];
             $circles = Circle::where('status', 'Active')->get();
 
+            // Fetch the UBN member (always include this user)
+            $ubnMember = Member::where('firstName', 'UBN')
+                ->where('status', 'Active')
+                ->where('id', '!=', $authMemberId)
+                ->whereHas('user', function ($query) {
+                    $query->where('status', 'Active');
+                })
+                ->select('id', 'circleId', 'firstName', 'lastName', 'userId')
+                ->first();
+
             foreach ($circles as $circle) {
                 $circleData = [
                     'id' => $circle->id,
@@ -272,6 +282,11 @@ class CircleMemberController extends Controller
                     })
                     ->select('id', 'circleId', 'firstName', 'lastName', 'userId')
                     ->get();
+
+                // Inject UBN member if not present
+                if ($ubnMember && !$circleMembers->contains('id', $ubnMember->id)) {
+                    $circleMembers->push($ubnMember);
+                }
 
                 $membersData = [];
 

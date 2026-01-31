@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Models\User;
 use App\Utils\Utils;
 use App\Models\Member;
+use App\Models\Landmark;
 use App\Models\TopsProfile;
 use Illuminate\Http\Request;
 use App\Models\BillingAddress;
@@ -405,6 +406,26 @@ class LoginController extends Controller
         $member->lastName = $request->input('lastName', $member->lastName);
         // $member->username = $request->input('username', $member->username);
         $member->suffix = $request->input('suffix', $member->suffix);
+
+        if ($request->has('landmark')) {
+            $landmarkName = $request->input('landmark');
+            $member->landmark = $landmarkName;
+
+            if ($member->cityId && !empty($landmarkName)) {
+                $exists = Landmark::where('cityId', $member->cityId)
+                    ->where('name', $landmarkName)
+                    ->exists();
+
+                if (!$exists) {
+                    Landmark::create([
+                        'cityId' => $member->cityId,
+                        'name' => $landmarkName,
+                        'status' => 'Active'
+                    ]);
+                }
+            }
+        }
+
         $member->displayName = $request->input('displayName', $member->displayName);
         $member->gender = $request->input('gender', $member->gender);
         $member->companyName = $request->input('companyName', $member->companyName);
