@@ -8,7 +8,9 @@ use App\Models\VisitorsDetails;
 use App\Models\BusinessCategory;
 use App\Models\MeetingInvitation;
 use App\Http\Controllers\Controller;
+use App\Models\Member;
 use App\Models\Visitor;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\URL;
 use Throwable;
 
@@ -104,6 +106,9 @@ class VisitorFormController extends Controller
             $visitor->lastName = $request->lastName;
             $visitor->mobileNo = $request->mobileNo;
             $visitor->businessName = $request->businessName;
+            $visitor->createdBy = Auth::user()->id;
+            $visitor->circleMeet = $request->circleMeet;
+
 
             // Determine business category and assign it to the visitor
             if ($request->businessCategory == 'other') {
@@ -146,7 +151,7 @@ class VisitorFormController extends Controller
             return redirect()->back()->with('success', 'Your Information Submitted Successfully!');
         } catch (\Throwable $th) {
             // Log the error
-            // throw $th;
+            throw $th;
             ErrorLogger::logError($th, $request->fullUrl());
             // Return a generic error view or message
             return redirect()->back()->with('error', 'Failed to submit your information');
