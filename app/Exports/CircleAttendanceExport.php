@@ -4,19 +4,18 @@ namespace App\Exports;
 
 use Illuminate\Contracts\View\View;
 use Maatwebsite\Excel\Concerns\FromView;
+use Maatwebsite\Excel\Concerns\WithTitle;
 
-class CircleAttendanceCombinedExport implements FromView
+class CircleAttendanceExport implements FromView, WithTitle
 {
-    protected $circleActivityData;
-    protected $attendanceData;
+    protected $reportData;
     protected $startDate;
     protected $endDate;
     protected $circleName;
 
-    public function __construct($circleActivityData, $attendanceData, $startDate, $endDate, $circleName)
+    public function __construct($reportData, $startDate, $endDate, $circleName)
     {
-        $this->circleActivityData = $circleActivityData;
-        $this->attendanceData = $attendanceData;
+        $this->reportData = $reportData;
         $this->startDate = $startDate;
         $this->endDate = $endDate;
         $this->circleName = $circleName;
@@ -25,11 +24,15 @@ class CircleAttendanceCombinedExport implements FromView
     public function view(): View
     {
         return view('exports.circleAttendanceCombined', [
-            'activityReportData' => $this->circleActivityData,
-            'attendanceReportData' => $this->attendanceData,
+            'reportData' => $this->reportData,
             'startDate' => $this->startDate,
             'endDate' => $this->endDate,
             'circleName' => $this->circleName
         ]);
+    }
+
+    public function title(): string
+    {
+        return 'Report';
     }
 }

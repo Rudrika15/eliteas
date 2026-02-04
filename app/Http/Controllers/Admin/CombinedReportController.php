@@ -15,6 +15,7 @@ use App\Models\Testimonial;
 use App\Models\CircleMeetingsAttendances;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\CircleAttendanceCombinedExport;
+use App\Exports\CircleAttendanceExport;
 
 class CombinedReportController extends Controller
 {
@@ -33,8 +34,7 @@ class CombinedReportController extends Controller
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
 
-        $circleActivityData = collect();
-        $attendanceData = collect();
+        $reportData = collect();
 
         if ($circleId) {
             $members = Member::where('circleId', $circleId)
@@ -113,20 +113,6 @@ class CombinedReportController extends Controller
                     ->when($endDate, fn($q) => $q->whereDate('created_at', '<=', $endDate))
                     ->count();
 
-                $circleActivityData->push([
-                    'member_name' => $member->firstName . ' ' . $member->lastName,
-                    'ibm' => $ibmCount,
-                    'ref_given_inside' => $refGivenInside,
-                    'ref_given_outside' => $refGivenOutside,
-                    'ref_received_inside' => $refReceivedInside,
-                    'ref_received_outside' => $refReceivedOutside,
-                    'business_given' => $businessGiven,
-                    'business_received' => $businessReceived,
-                    'training' => $trainingCount,
-                    'testimonial_given' => $testimonialGiven,
-                    'testimonial_received' => $testimonialReceived,
-                ]);
-
                 $stats = CircleMeetingsAttendances::where('userId', $member->userId)
                     ->where('circle_meetings_attendances.circleId', $circleId)
                     ->join('schedules', 'circle_meetings_attendances.meetingId', '=', 'schedules.id')
@@ -141,9 +127,18 @@ class CombinedReportController extends Controller
                     ")
                     ->first();
 
-                $attendanceData->push([
-                    'circle_name' => $circleName,
+                $reportData->push([
                     'member_name' => $member->firstName . ' ' . $member->lastName,
+                    'ibm' => $ibmCount,
+                    'ref_given_inside' => $refGivenInside,
+                    'ref_given_outside' => $refGivenOutside,
+                    'ref_received_inside' => $refReceivedInside,
+                    'ref_received_outside' => $refReceivedOutside,
+                    'business_given' => $businessGiven,
+                    'business_received' => $businessReceived,
+                    'training' => $trainingCount,
+                    'testimonial_given' => $testimonialGiven,
+                    'testimonial_received' => $testimonialReceived,
                     'present' => $stats->present_count ?? 0,
                     'absent' => $stats->absent_count ?? 0,
                     'late' => $stats->late_count ?? 0,
@@ -155,14 +150,13 @@ class CombinedReportController extends Controller
 
         if ($request->has('export')) {
             return Excel::download(
-                new CircleAttendanceCombinedExport($circleActivityData, $attendanceData, $startDate, $endDate, $circleName),
+                new CircleAttendanceExport($reportData, $startDate, $endDate, $circleName),
                 'circle_attendance_report.xlsx'
             );
         }
 
         return view('admin.report.circleAttendanceCombined', [
-            'circleActivityData' => $circleActivityData,
-            'attendanceData' => $attendanceData,
+            'reportData' => $reportData,
             'startDate' => $startDate,
             'endDate' => $endDate,
         ]);

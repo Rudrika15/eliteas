@@ -34,11 +34,11 @@
                     </div>
                 </form>
 
-                <h5 class="mt-3 mb-2">Circle Activity</h5>
-                <div class="table-responsive">
+                <div class="table-responsive mt-3">
                     <table class="table table-bordered table-striped">
                         <thead>
                             <tr>
+                                <th>No</th>
                                 <th>Member Name</th>
                                 <th>IBM</th>
                                 <th>Ref Given (In)</th>
@@ -50,11 +50,17 @@
                                 <th>Training</th>
                                 <th>Testimonial Given</th>
                                 <th>Testimonial Rec</th>
+                                <th>P</th>
+                                <th>A</th>
+                                <th>L</th>
+                                <th>M</th>
+                                <th>S</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse($circleActivityData as $data)
+                            @forelse($reportData as $data)
                                 <tr>
+                                    <td>{{ $loop->iteration }}</td>
                                     <td>{{ $data['member_name'] }}</td>
                                     <td>{{ $data['ibm'] }}</td>
                                     <td>{{ $data['ref_given_inside'] }}</td>
@@ -66,35 +72,6 @@
                                     <td>{{ $data['training'] }}</td>
                                     <td>{{ $data['testimonial_given'] }}</td>
                                     <td>{{ $data['testimonial_received'] }}</td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="11" class="text-center">No data found or no circle assigned.</td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-
-                <h5 class="mt-4 mb-2">Attendance</h5>
-                <div class="table-responsive">
-                    <table class="table table-bordered table-striped">
-                        <thead>
-                            <tr>
-                                <th>No</th>
-                                <th>Member Name</th>
-                                <th>P - Presence</th>
-                                <th>A - Absent</th>
-                                <th>L - Late</th>
-                                <th>M - Medical</th>
-                                <th>S - Substitute</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse($attendanceData as $data)
-                                <tr>
-                                    <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $data['member_name'] }}</td>
                                     <td>{{ $data['present'] }}</td>
                                     <td>{{ $data['absent'] }}</td>
                                     <td>{{ $data['late'] }}</td>
@@ -103,7 +80,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="7" class="text-center">No data found or no circle assigned.</td>
+                                    <td colspan="17" class="text-center">No data found or no circle assigned.</td>
                                 </tr>
                             @endforelse
                         </tbody>
