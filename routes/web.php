@@ -55,6 +55,7 @@ use App\Http\Controllers\Admin\DatabaseBackupController;
 use App\Http\Controllers\Admin\EventTypeController;
 use App\Http\Controllers\Admin\MemberCardController;
 use App\Http\Controllers\Admin\ReportController;
+use App\Http\Controllers\Admin\CombinedReportController;
 use App\Http\Controllers\Admin\SlotController;
 use App\Http\Controllers\admin\TemplateDetailController;
 use App\Http\Controllers\Admin\UpdateAppController;
@@ -585,6 +586,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::get('/admin/reports/circle-activity', [ReportController::class, 'circleActivityReport'])->name('admin.report.circleActivity');
     Route::get('/admin/reports/attendance', [ReportController::class, 'attendanceReport'])->name('admin.report.attendance');
+    Route::get('/admin/reports/circle-attendance-combined', [CombinedReportController::class, 'index'])->name('admin.report.circleAttendanceCombined');
 
     // excel report
     Route::get('admin/report/member-report', [ReportController::class, 'memberWiseReport'])->name('admin.memberWiseReport');

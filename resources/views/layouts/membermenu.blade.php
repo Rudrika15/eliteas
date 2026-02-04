@@ -88,6 +88,11 @@
                     <i class="bi bi-circle"></i><span>Attendance Report</span>
                 </a>
             </li>
+            <li>
+                <a href="{{ route('admin.report.circleAttendanceCombined') }}">
+                    <i class="bi bi-circle"></i><span>Circle & Attendance Report</span>
+                </a>
+            </li>
         </ul>
     </li>
 @endrole
