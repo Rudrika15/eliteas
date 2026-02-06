@@ -80,6 +80,22 @@ class CircleMeetingMemberBusinessController extends Controller
     {
         try {
             if (auth()->user()->hasRole('Member')) {
+
+                // Lock Logic Setup
+                $user = Auth::user();
+                $memberAuth = Member::where('userId', $user->id)->first();
+                $circleId = $memberAuth ? $memberAuth->circleId : null;
+                $schedules = collect();
+                $isLocked = false;
+
+                if ($circleId) {
+                    $schedules = Schedule::where('circleId', $circleId)->orderBy('date', 'asc')->get();
+                    $nextMeeting = $schedules->first(function ($item) {
+                        return $item->date >= Carbon::now()->format('Y-m-d');
+                    });
+                    $isLocked = $nextMeeting ? $nextMeeting->is_locked : false;
+                }
+
                 // For Member
                 $busGiver = CircleMeetingMembersBusiness::with('reference')
                     ->where('loginMemberId', Auth::user()->id)
@@ -88,8 +104,14 @@ class CircleMeetingMemberBusinessController extends Controller
                     ->paginate(10, ['*'], 'page_received');
 
                 // Transform underlying collection items
-                $busGiver->getCollection()->transform(function ($item) {
+                $busGiver->getCollection()->transform(function ($item) use ($schedules) {
                     $item->amount = isset($item->amount) ? number_format($item->amount, 2) : '-';
+                    // Lock Logic
+                    $dateToCheck = $item->date ? $item->date : $item->created_at->format('Y-m-d');
+                    $meeting = $schedules->first(function ($s) use ($dateToCheck) {
+                        return $s->date >= $dateToCheck;
+                    });
+                    $item->is_locked_row = $meeting ? $meeting->is_locked : false;
                     return $item;
                 });
 
@@ -100,8 +122,14 @@ class CircleMeetingMemberBusinessController extends Controller
                     ->paginate(10, ['*'], 'page_given');
 
                 // Transform underlying collection items
-                $busGiveByOther->getCollection()->transform(function ($item) {
+                $busGiveByOther->getCollection()->transform(function ($item) use ($schedules) {
                     $item->amount = isset($item->amount) ? number_format($item->amount, 2) : '-';
+                    // Lock Logic
+                    $dateToCheck = $item->date ? $item->date : $item->created_at->format('Y-m-d');
+                    $meeting = $schedules->first(function ($s) use ($dateToCheck) {
+                        return $s->date >= $dateToCheck;
+                    });
+                    $item->is_locked_row = $meeting ? $meeting->is_locked : false;
                     return $item;
                 });
 
@@ -112,7 +140,10 @@ class CircleMeetingMemberBusinessController extends Controller
                     ->get();
                 $circlemeeting = CircleMeeting::where('status', 'Active')->get();
 
-                return view('admin.circlebusiness.index', compact('busGiver', 'busGiveByOther', 'circlemeeting', 'circles', 'circleMember'));
+                $minDate = Carbon::now()->subDays(15)->format('Y-m-d');
+                $maxDate = Carbon::now()->format('Y-m-d');
+
+                return view('admin.circlebusiness.index', compact('busGiver', 'busGiveByOther', 'circlemeeting', 'circles', 'circleMember', 'isLocked', 'minDate', 'maxDate'));
             }
 
             // Default unauthorized
@@ -146,7 +177,9 @@ class CircleMeetingMemberBusinessController extends Controller
     {
         try {
             $busGiver = CircleMeetingMembersBusiness::find($id);
-            return view('admin.circlebusiness.create', compact('busGiver'));
+            $minDate = Carbon::now()->subDays(15)->format('Y-m-d');
+            $maxDate = Carbon::now()->format('Y-m-d');
+            return view('admin.circlebusiness.create', compact('busGiver', 'minDate', 'maxDate'));
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError(
@@ -167,8 +200,22 @@ class CircleMeetingMemberBusinessController extends Controller
             // 'busGiven' => 'required',
             // 'busTaken' => 'required',
             // 'hotelName' => 'required',
-        ]);
+       // ]);
         try {
+            // Lock Check
+            $dateToCheck = $request->date ? $request->date : Carbon::now()->format('Y-m-d');
+            $user = Auth::user();
+            $member = Member::where('userId', $user->id)->first();
+            if ($member) {
+                $schedule = Schedule::where('circleId', $member->circleId)
+                    ->where('date', '>=', $dateToCheck)
+                    ->orderBy('date', 'asc')
+                    ->first();
+                if ($schedule && $schedule->is_locked) {
+                    return redirect()->back()->with('error', 'The meeting for this date is locked. You cannot add new entries.');
+                }
+            }
+
             $busGiver = new CircleMeetingMembersBusiness();
             // $busGiver->memberId = $request->memberId;
             $busGiver->businessGiverId = $request->businessGiverId;
@@ -218,6 +265,21 @@ class CircleMeetingMemberBusinessController extends Controller
         try {
             $id = $request->id;
             $busGiver = CircleMeetingMembersBusiness::find($id);
+
+            // Lock Check
+            $user = Auth::user();
+            $member = Member::where('userId', $user->id)->first();
+            if ($member) {
+                 // Check based on ORIGINAL date
+                 $dateToCheck = $busGiver->date ? $busGiver->date : $busGiver->created_at->format('Y-m-d');
+                 $schedule = Schedule::where('circleId', $member->circleId)
+                    ->where('date', '>=', $dateToCheck)
+                    ->orderBy('date', 'asc')
+                    ->first();
+                if ($schedule && $schedule->is_locked) {
+                    return redirect()->back()->with('error', 'This record is locked and cannot be updated.');
+                }
+            }
 
             // return $busGiver;
             // $busGiver->memberId = $request->memberId;
@@ -309,6 +371,22 @@ class CircleMeetingMemberBusinessController extends Controller
     {
         try {
             $busGiver = CircleMeetingMembersBusiness::find($id);
+
+            // Lock Check
+            $user = Auth::user();
+            $member = Member::where('userId', $user->id)->first();
+            if ($member) {
+                 // Check based on ORIGINAL date
+                 $dateToCheck = $busGiver->date ? $busGiver->date : $busGiver->created_at->format('Y-m-d');
+                 $schedule = Schedule::where('circleId', $member->circleId)
+                    ->where('date', '>=', $dateToCheck)
+                    ->orderBy('date', 'asc')
+                    ->first();
+                if ($schedule && $schedule->is_locked) {
+                    return redirect()->back()->with('error', 'This record is locked and cannot be deleted.');
+                }
+            }
+
             $busGiver->status = "Deleted";
             $busGiver->save();
 

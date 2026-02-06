@@ -192,9 +192,15 @@
             <a href="#" class="tab-btn" data-tab="tabGiven">Business Slip Given ({{ $busGiveByOther->total() }})</a>
         </div>
         <div>
-            <a href="javascript:void(0);" class="btn btn-sm btn-bg-orange" data-bs-toggle="modal" data-bs-target="#businessSlipModal">
-                <i class="bi bi-plus-circle"></i> Create Business Slip
-            </a>
+            @if (isset($isLocked) && $isLocked)
+                <button type="button" class="btn btn-sm btn-secondary" disabled>
+                    <i class="bi bi-lock-fill"></i> Locked
+                </button>
+            @else
+                <a href="javascript:void(0);" class="btn btn-sm btn-bg-orange" data-bs-toggle="modal" data-bs-target="#businessSlipModal">
+                    <i class="bi bi-plus-circle"></i> Create Business Slip
+                </a>
+            @endif
         </div>
     </div>
 
@@ -260,7 +266,7 @@
                                     <th>Date</th>
                                     <th>Amount</th>
                                     <th>Remarks</th>
-                                    {{-- <th>Action</th> --}}
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -275,11 +281,24 @@
                                         <td>{{ \Carbon\Carbon::parse($busGiveByOtherData->date)->format('d-m-Y') ?? '-' }}</td>
                                         <td>₹ {{ $busGiveByOtherData->amount ?? '-' }}</td>
                                         <td>{{ $busGiveByOtherData->remarks ?? '-' }}</td>
-                                        {{-- <td>
-                                            <a href="{{ route('refGiver.edit', $busGiveByOtherData->id) }}" class="btn btn-sm btn-bg-blue">
-                                                <i class="bi bi-pencil"></i>
-                                            </a>
-                                        </td> --}}
+                                        <td>
+                                            @php
+                                                $rowDate = $busGiveByOtherData->date ? \Carbon\Carbon::parse($busGiveByOtherData->date)->format('Y-m-d') : ($busGiveByOtherData->created_at ? $busGiveByOtherData->created_at->format('Y-m-d') : null);
+                                                $isDateExpired = $rowDate && isset($minDate) && $rowDate < $minDate;
+                                            @endphp
+                                            @if ((isset($busGiveByOtherData->is_locked_row) && $busGiveByOtherData->is_locked_row) || $isDateExpired)
+                                                <button class="btn btn-sm btn-secondary" title="Locked" disabled>
+                                                    <i class="bi bi-lock-fill"></i>
+                                                </button>
+                                            @else
+                                                <a href="{{ route('busGiver.edit', $busGiveByOtherData->id) }}" class="btn btn-sm btn-bg-blue" title="Edit">
+                                                    <i class="bi bi-pencil"></i>
+                                                </a>
+                                                <a href="{{ route('busGiver.delete', $busGiveByOtherData->id) }}" class="btn btn-sm btn-danger" title="Delete" onclick="return confirm('Are you sure you want to delete this record?');">
+                                                    <i class="bi bi-trash"></i>
+                                                </a>
+                                            @endif
+                                        </td>
                                     </tr>
                                 @empty
                                     <tr>
@@ -310,7 +329,7 @@
                 </div>
 
                 <div class="modal-body">
-                    <form class="needs-validation" id="meetingMemberRefForm" enctype="multipart/form-data" method="post" action="{{ route('refGiver.refByOtherStore') }}" novalidate>
+                    <form class="needs-validation" id="meetingMemberRefForm" enctype="multipart/form-data" method="post" action="{{ route('busGiver.store') }}" novalidate>
                         @csrf
                         <!-- Circle and Member Selection -->
                         <div class="card p-3 shadow-sm border-0 rounded">
@@ -368,6 +387,14 @@
                                 <label for="memberName" class="form-label fw-bold color-blue">Member Name<span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="meetingPersonName" name="memberName" placeholder="Select Member" readonly>
                                 <input type="hidden" id="meetingPersonId" name="meetingPersonId">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="date" class="form-label fw-bold color-blue required">Date <span class="text-danger">*</span></label>
+                                <?php
+                                $defaultDate = \Illuminate\Support\Carbon::today()->format('Y-m-d');
+                                ?>
+                                <input type="date" class="form-control" id="date" name="date" min="{{ $minDate ?? \Illuminate\Support\Carbon::today()->subDays(15)->format('Y-m-d') }}" max="{{ $maxDate ?? \Illuminate\Support\Carbon::today()->format('Y-m-d') }}" value="{{ $defaultDate }}" required>
                             </div>
 
                             <!-- Remarks and Amount -->

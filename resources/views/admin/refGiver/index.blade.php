@@ -140,9 +140,15 @@
     </a> --}}
         {{-- <a href="#" class="tab-btn active" data-target="#tabByMe">Received ({{ $busGiver->total() }})</a>
         <a href="#" class="tab-btn" data-target="#tabByOther">Given ({{ $refGiver->total() }})</a> --}}
-        <button type="button" class="float-end btn btn-bg-orange" data-bs-toggle="modal" data-bs-target="#createIBMModal">
-            Create Reference
-        </button>
+        @if (isset($isLocked) && $isLocked)
+            <button type="button" class="float-end btn btn-secondary" disabled>
+                <i class="bi bi-lock-fill"></i> Locked
+            </button>
+        @else
+            <button type="button" class="float-end btn btn-bg-orange" data-bs-toggle="modal" data-bs-target="#createIBMModal">
+                Create Reference
+            </button>
+        @endif
     </div>
 
     <div class="container">
@@ -182,7 +188,11 @@
                                             {{-- <a href="{{ route('refGiver.edit', $refReceiverData->id) }}" class="btn btn-sm btn-bg-blue">
                                                 <i class="bi bi-pencil"></i>
                                             </a> --}}
-                                            <a href="{{ route('addBusiness.amount', $refReceiverData->id) }}" class="btn btn-sm btn-bg-blue">Add Amount</a>
+                                            @if (isset($isLocked) && $isLocked)
+                                                <button class="btn btn-sm btn-secondary" title="Locked" disabled>Add Amount</button>
+                                            @else
+                                                <a href="{{ route('addBusiness.amount', $refReceiverData->id) }}" class="btn btn-sm btn-bg-blue">Add Amount</a>
+                                            @endif
                                         </td>
                                     </tr>
                                 @empty
@@ -238,9 +248,19 @@
                                             @endfor
                                         </td>
                                         <td>
-                                            <a href="{{ route('refGiver.edit', $refGiverData->id) }}" class="btn btn-sm btn-bg-blue">
-                                                <i class="bi bi-pencil"></i>
-                                            </a>
+                                            @php
+                                                $rowDate = $refGiverData->created_at ? \Carbon\Carbon::parse($refGiverData->created_at)->format('Y-m-d') : null;
+                                                $isDateExpired = $rowDate && isset($minDate) && $rowDate < $minDate;
+                                            @endphp
+                                            @if ((isset($refGiverData->is_locked_row) && $refGiverData->is_locked_row) || $isDateExpired)
+                                                <button class="btn btn-sm btn-secondary" title="Locked" disabled>
+                                                    <i class="bi bi-lock-fill"></i>
+                                                </button>
+                                            @else
+                                                <a href="{{ route('refGiver.edit', $refGiverData->id) }}" class="btn btn-sm btn-bg-blue">
+                                                    <i class="bi bi-pencil"></i>
+                                                </a>
+                                            @endif
                                         </td>
                                     </tr>
                                 @empty
@@ -402,6 +422,14 @@
                             </div>
 
                             <!-- Description -->
+                            <div class="mt-3">
+                                <label for="date" class="form-label fw-bold color-blue required">Date <span class="text-danger">*</span></label>
+                                <input type="date" class="form-control" id="date" name="date"
+                                    min="{{ $minDate ?? \Illuminate\Support\Carbon::today()->subDays(15)->format('Y-m-d') }}"
+                                    max="{{ $maxDate ?? \Illuminate\Support\Carbon::today()->format('Y-m-d') }}"
+                                    value="{{ \Illuminate\Support\Carbon::today()->format('Y-m-d') }}" required>
+                            </div>
+
                             <div class="mt-3">
                                 <label for="description" class="form-label fw-bold color-blue">Description</label>
                                 <input type="text" class="form-control @error('description') is-invalid @enderror" id="description" name="description" placeholder="Description">

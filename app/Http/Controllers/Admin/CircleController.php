@@ -776,24 +776,24 @@ class CircleController extends Controller
         }
     }
 
-    public function lockUnlock(Request $request, $id)
-    {
-        try {
-            $schedule = Schedule::findOrFail($id);
+    // public function lockUnlock(Request $request, $id)
+    // {
+    //     try {
+    //         $schedule = Schedule::findOrFail($id);
 
-            $schedule->lockUnlock = $request->input('lockUnlock') === 'yes' ? 'yes' : 'no';
-            $schedule->lockDate = Carbon::now()->format('d-m-Y');
-            $schedule->save();
+    //         $schedule->lockUnlock = $request->input('lockUnlock') === 'yes' ? 'yes' : 'no';
+    //         $schedule->lockDate = Carbon::now()->format('d-m-Y');
+    //         $schedule->save();
 
-            return response()->json([
-                'success' => true,
-                'lockUnlock' => $schedule->lockUnlock
-            ]);
-        } catch (\Throwable $th) {
-            ErrorLogger::logError($th, $request->fullUrl());
-            return response()->json(['success' => false], 500);
-        }
-    }
+    //         return response()->json([
+    //             'success' => true,
+    //             'lockUnlock' => $schedule->lockUnlock
+    //         ]);
+    //     } catch (\Throwable $th) {
+    //         ErrorLogger::logError($th, $request->fullUrl());
+    //         return response()->json(['success' => false], 500);
+    //     }
+    // }
 
 
     public function memberList(Request $request, $id)

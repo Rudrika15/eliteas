@@ -199,9 +199,15 @@
             <i class="bi bi-plus-circle"></i> Create IBM
         </a> --}}
 
-        <button type="button" class="float-end btn btn-bg-orange" data-bs-toggle="modal" data-bs-target="#createIBMModal">
-            Create IBM
-        </button>
+        @if (isset($isLocked) && $isLocked)
+            <button type="button" class="float-end btn btn-secondary" disabled>
+                <i class="bi bi-lock-fill"></i> Locked
+            </button>
+        @else
+            <button type="button" class="float-end btn btn-bg-orange" data-bs-toggle="modal" data-bs-target="#createIBMModal">
+                Create IBM
+            </button>
+        @endif
     </div>
 
     <!-- Tab Content: By Me -->
@@ -244,13 +250,23 @@
                                         <td>{{ $circlecallData->date ? \Carbon\Carbon::parse($circlecallData->date)->format('d-m-Y') : '-' }}</td>
                                         <td>{{ $circlecallData->remarks ?? '-' }}</td>
                                         <td>
-                                            <a href="{{ route('circlecall.edit', $circlecallData->id) }}" class="btn btn-sm btn-bg-blue" title="Edit">
-                                                <i class="fas fa-edit"></i>
-                                            </a>
+                                            @php
+                                                $rowDate = $circlecallData->date ? \Carbon\Carbon::parse($circlecallData->date)->format('Y-m-d') : null;
+                                                $isDateExpired = $rowDate && isset($minDate) && $rowDate < $minDate;
+                                            @endphp
+                                            @if ((isset($circlecallData->is_locked_row) && $circlecallData->is_locked_row) || $isDateExpired)
+                                                <button class="btn btn-sm btn-secondary" title="Locked" disabled>
+                                                    <i class="fas fa-lock"></i>
+                                                </button>
+                                            @else
+                                                <a href="{{ route('circlecall.edit', $circlecallData->id) }}" class="btn btn-sm btn-bg-blue" title="Edit">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
 
-                                            <a href="{{ route('circlecall.delete', $circlecallData->id) }}" class="btn btn-sm btn-danger" title="Delete">
-                                                <i class="fas fa-trash-alt"></i>
-                                            </a>
+                                                <a href="{{ route('circlecall.delete', $circlecallData->id) }}" class="btn btn-sm btn-danger" title="Delete">
+                                                    <i class="fas fa-trash-alt"></i>
+                                                </a>
+                                            @endif
                                         </td>
 
                                     </tr>
@@ -477,14 +493,10 @@
                                         Date <span class="text-danger">*</span>
                                     </label>
                                     <?php
-                                    // Calculate allowed range
-                                    $today = \Illuminate\Support\Carbon::today()->format('Y-m-d');
-                                    $pastLimit = \Illuminate\Support\Carbon::today()->subDays(15)->format('Y-m-d');
-                                    
                                     // Default selected date
-                                    $selectedDate = old('date', request()->input('date') ?? $today);
+                                    $selectedDate = old('date', request()->input('date') ?? \Illuminate\Support\Carbon::today()->format('Y-m-d'));
                                     ?>
-                                    <input type="date" class="form-control" id="date" name="date" min="{{ $pastLimit }}" max="{{ $today }}" value="{{ $selectedDate }}" required>
+                                    <input type="date" class="form-control" id="date" name="date" min="{{ $minDate ?? \Illuminate\Support\Carbon::today()->subDays(15)->format('Y-m-d') }}" max="{{ $maxDate ?? \Illuminate\Support\Carbon::today()->format('Y-m-d') }}" value="{{ $selectedDate }}" required>
                                 </div>
                             @endif
 

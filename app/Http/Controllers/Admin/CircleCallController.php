@@ -73,12 +73,15 @@ class CircleCallController extends Controller
     //             ->pluck('date'); // Pluck all 'date' values from the query result
 
     //         $lastDate = Schedule::where('circleId', Auth::user()->member->circle->id)
-    //             ->where('date', '<', now())
-    //             ->orderBy('date', 'desc')
-    //             ->pluck('date')
-    //             ->first();
+                ->where('date', '<', now())
+                ->orderBy('date', 'desc')
+                ->pluck('date')
+                ->first();
 
-    //         return view('admin.circlecall.index', compact('circlecall', 'callWith', 'circles', 'scheduleDate', 'lastDate', 'circleMember'));
+            $minDate = Carbon::now()->subDays(15)->format('Y-m-d');
+            $maxDate = Carbon::now()->format('Y-m-d');
+
+            return view('admin.circlecall.index', compact('circlecall', 'callWith', 'circles', 'scheduleDate', 'lastDate', 'circleMember', 'minDate', 'maxDate'));
     //     } catch (\Throwable $th) {
     //         // throw $th;
     //         ErrorLogger::logError($th, $request->fullUrl());
@@ -131,13 +134,38 @@ class CircleCallController extends Controller
                     ->pluck('date')
                     ->first();
 
+                // Lock Check & Row Transformation
+                $schedules = Schedule::where('circleId', Auth::user()->member->circle->id)
+                    ->orderBy('date', 'asc')
+                    ->get(['date', 'is_locked']);
+
+                $currentSchedule = $schedules->where('date', '>=', Carbon::today())->first(); // Next meeting
+                if (!$currentSchedule) $currentSchedule = $schedules->last(); // Or last meeting
+
+                $isLocked = $currentSchedule ? $currentSchedule->is_locked : false;
+
+                $minDate = Carbon::now()->subDays(15)->format('Y-m-d');
+                $maxDate = Carbon::now()->format('Y-m-d');
+
+                // Transform circlecall to add lock status
+                $circlecall->getCollection()->transform(function ($item) use ($schedules) {
+                    $meeting = $schedules->first(function ($s) use ($item) {
+                        return $s->date >= $item->date;
+                    });
+                    $item->is_locked_row = $meeting ? $meeting->is_locked : false;
+                    return $item;
+                });
+
                 return view('admin.circlecall.index', compact(
                     'circlecall',
                     'callWith',
                     'circles',
                     'scheduleDate',
                     'lastDate',
-                    'circleMember'
+                    'circleMember',
+                    'isLocked',
+                    'minDate',
+                    'maxDate'
                 ));
             }
 
@@ -543,37 +571,20 @@ class CircleCallController extends Controller
 
             $circleId = $member->circleId;
 
-            // // ✅ Schedule से latest meeting निकालो
-            // $latestSchedule = Schedule::where('circleId', $circleId)
-            //     ->whereDate('date', '<=', Carbon::today()) // ✅ केवल आज या उससे पहले की date
-            //     ->orderBy('date', 'desc')
-            //     ->first();
+            // Check if the meeting associated with the entry date is locked
+            $schedule = Schedule::where('circleId', $circleId)
+                ->where('date', '>=', $request->date)
+                ->orderBy('date', 'asc')
+                ->first();
 
-            // if ($latestSchedule) {
-            //     if ($latestSchedule->lockUnlock === 'yes') {
-            //         return redirect()->back()
-            //             ->with('error', 'You cannot create a IBM because the last meeting (' . $latestSchedule->date . ') is locked.')
-            //             ->withInput();
-            //     }
-            // }
+            // If no future meeting found, check the latest one (fallback)
+            if (!$schedule) {
+                $schedule = Schedule::where('circleId', $circleId)->orderBy('date', 'desc')->first();
+            }
 
-
-            // ✅ Latest locked meeting निकालो
-            // $latestLockedMeeting = Schedule::where('circleId', $circleId)
-            //     ->where('lockUnlock', 'yes')
-            //     ->orderBy('date', 'desc')
-            //     ->first();
-
-            // if ($latestLockedMeeting) {
-            //     $lockedDate = Carbon::parse($latestLockedMeeting->date);
-
-            //     // अगर user जो date भेज रहा है वो lockedDate से पहले या उसी दिन है → रोक दो
-            //     if (Carbon::parse($request->date)->lte($lockedDate)) {
-            //         return redirect()->back()
-            //             ->with('error', 'You cannot create an IBM on or before ' . $lockedDate->format('d-m-Y') . ' because that meeting is locked.')
-            //             ->withInput();
-            //     }
-            // }
+            if ($schedule && $schedule->is_locked) {
+                return redirect()->back()->with('error', 'The meeting for this date is locked. You cannot add new entries.');
+            }
 
             // ✅ अब आपका पुराना code
             $circlecall = new CircleCall();
@@ -792,6 +803,33 @@ class CircleCallController extends Controller
 
             $id = $request->id;
             $circlecall = CircleCall::find($id);
+
+            // Lock Check
+            $member = Member::where('userId', Auth::id())->first();
+            if ($member) {
+                $circleId = $member->circleId;
+                // Check if the meeting for the OLD date is locked
+                $schedule = Schedule::where('circleId', $circleId)
+                    ->where('date', '>=', $circlecall->date)
+                    ->orderBy('date', 'asc')
+                    ->first();
+
+                if ($schedule && $schedule->is_locked) {
+                    return redirect()->back()->with('error', 'This record is locked and cannot be updated.');
+                }
+
+                // Check if the meeting for the NEW date is locked (if changing date)
+                if ($request->date != $circlecall->date) {
+                    $newSchedule = Schedule::where('circleId', $circleId)
+                        ->where('date', '>=', $request->date)
+                        ->orderBy('date', 'asc')
+                        ->first();
+                    if ($newSchedule && $newSchedule->is_locked) {
+                        return redirect()->back()->with('error', 'The target date belongs to a locked meeting.');
+                    }
+                }
+            }
+
             $circlecall->meetingPersonId = $request->meetingPersonId;
             $circlecall->meetingPlace = $request->meetingPlace;
 

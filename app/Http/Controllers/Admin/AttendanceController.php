@@ -10,6 +10,11 @@ use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
 use App\Models\CircleMeetingsAttendances;
 
+use App\Models\CircleCall;
+use App\Models\CircleMeetingMembersReference;
+use App\Models\CircleMeetingMembersBusiness;
+use Carbon\Carbon;
+
 class AttendanceController extends Controller
 {
 
@@ -24,6 +29,22 @@ class AttendanceController extends Controller
         $this->middleware('permission:attendance-invite-store|attendance-invite-create', ['only' => ['invitedAttendanceStore', 'updateInvitedStatus']]);
     }
 
+    public function toggleLock($meetingId)
+    {
+        try {
+            $schedule = Schedule::find($meetingId);
+            if ($schedule) {
+                $schedule->is_locked = !$schedule->is_locked;
+                $schedule->save();
+                return redirect()->back()->with('success', 'Meeting lock status updated.');
+            }
+            return redirect()->back()->with('error', 'Meeting not found.');
+        } catch (\Throwable $th) {
+            ErrorLogger::logError($th, request()->fullUrl());
+            return redirect()->back()->with('error', 'Something went wrong.');
+        }
+    }
+
     public function takeAttendance(Request $request)
     {
         try {
@@ -36,10 +57,56 @@ class AttendanceController extends Controller
 
             $circleId = Schedule::where('id', $meetingId)->first()->circleId;
 
+            // --- Logic for Task 1: Fetch Activity Data ---
+            $currentMeeting = Schedule::find($meetingId);
+            $currentDate = $currentMeeting->date;
+
+            // Find previous meeting date
+            $lastMeeting = Schedule::where('circleId', $circleId)
+                ->where('date', '<', $currentDate)
+                ->orderBy('date', 'desc')
+                ->first();
+
+            // Default to 15 days ago if no last meeting
+            $startDate = $lastMeeting ? $lastMeeting->date : Carbon::parse($currentDate)->subDays(15)->format('Y-m-d');
+
+            // Fetch data for each member
+            foreach ($circleMembers as $member) {
+                // IBM (CircleCall) - Assuming 'memberId' is the user's ID in this table based on usage
+                $member->ibmCount = CircleCall::where('status', 'Active')
+                    ->where(function ($q) use ($member) {
+                        $q->where('memberId', $member->userId)
+                            ->orWhere('meetingPersonId', $member->userId);
+                    })
+                    // Filter by date range (using created_at or date if available)
+                    ->where(function ($q) use ($startDate, $currentDate) {
+                        $q->whereBetween('date', [$startDate, $currentDate])
+                            ->orWhere(function ($subQ) use ($startDate, $currentDate) {
+                                $subQ->whereDate('created_at', '>=', $startDate)
+                                    ->whereDate('created_at', '<=', $currentDate);
+                            });
+                    })
+                    ->count();
+
+                // Reference
+                $member->refCount = CircleMeetingMembersReference::where('status', 'Active')
+                    ->where('referenceGiverId', $member->userId)
+                    ->whereDate('created_at', '>=', $startDate)
+                    ->whereDate('created_at', '<=', $currentDate)
+                    ->count();
+
+                // Business
+                $member->bizCount = CircleMeetingMembersBusiness::where('status', 'Active')
+                    ->where('loginMemberId', $member->userId)
+                    ->whereBetween('date', [$startDate, $currentDate])
+                    ->count();
+            }
+            // ---------------------------------------------
+
             $meetingInvitations = MeetingInvitation::where('meetingId', $meetingId)
                 ->get();
 
-            return view('admin.attendance.index', compact('circleMembers', 'meetingInvitations', 'meetingId', 'circleId'));
+            return view('admin.attendance.index', compact('circleMembers', 'meetingInvitations', 'meetingId', 'circleId', 'currentMeeting'));
         } catch (\Throwable $th) {
             // Log the error using the utility class
             ErrorLogger::logError($th, $request->fullUrl());
@@ -86,9 +153,8 @@ class AttendanceController extends Controller
                 ->where('date', '<', now())
                 ->paginate(10);
 
-                return view('admin.attendance.meetingSchedule', compact('schedules'));
-        
-            } catch (\Throwable $th) {
+            return view('admin.attendance.meetingSchedule', compact('schedules'));
+        } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError(
                 $th,

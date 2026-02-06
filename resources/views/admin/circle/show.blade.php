@@ -53,7 +53,7 @@
                             <th>Venue</th>
                             <th>Time</th>
                             <th>Remarks</th>
-                            <th>Lock/Unlock</th>
+                            {{-- <th>Lock/Unlock</th> --}}
                             <th>Status</th>
                             <th>Action</th>
                         </tr>
@@ -88,11 +88,11 @@
                                 <td>{{ $schedulesData->venue }}</td>
                                 <td>{{ $schedulesData->meetingTime }}</td>
                                 <td>{{ $schedulesData->remarks }}</td>
-                                <td>
+                                {{-- <td>
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" id="lock-{{ $schedulesData->id }}" {{ $schedulesData->lockUnlock === 'yes' ? 'checked' : '' }} onchange="updateLock({{ $schedulesData->id }}, this.checked)">
                                     </div>
-                                </td>
+                                </td> --}}
 
                                 <td>{{ $schedulesData->status }}</td>
                                 <td>

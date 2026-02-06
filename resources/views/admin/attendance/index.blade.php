@@ -48,7 +48,18 @@
         <div class="card">
             <div class="card-body d-flex justify-content-between align-items-center">
                 <h5 class="card-title">Take Attendance of Circle Members</h5>
-                <a href="{{ route('attendance.meetingSchedules') }}" class="btn btn-bg-orange btn-sm">BACK</a>
+                <div>
+                    @if (isset($currentMeeting->is_locked) && $currentMeeting->is_locked)
+                        <a href="{{ route('attendance.toggleLock', $meetingId) }}" class="btn btn-danger btn-sm me-2">
+                            <i class="bi bi-lock-fill"></i> Unlock
+                        </a>
+                    @else
+                        <a href="{{ route('attendance.toggleLock', $meetingId) }}" class="btn btn-success btn-sm me-2">
+                            <i class="bi bi-unlock-fill"></i> Lock
+                        </a>
+                    @endif
+                    <a href="{{ route('attendance.meetingSchedules') }}" class="btn btn-bg-orange btn-sm">BACK</a>
+                </div>
             </div>
             <form id="attendanceForm" action="{{ route('attendance.attendanceStore') }}" method="POST">
                 @csrf
@@ -63,7 +74,10 @@
                             <tr>
                                 <th width="5%" class="text-center">No</th>
                                 <th>Name</th>
-                                <th width="5%">Fill the Status</th>
+                                <th class="text-center">IBM</th>
+                                <th class="text-center">Ref</th>
+                                <th class="text-center">Biz</th>
+                                <th width="15%">Fill the Status</th>
                                 {{-- <th width="5%"><input type="checkbox" id="checkAll"> Select All </th> --}}
                             </tr>
                         </thead>
@@ -72,6 +86,9 @@
                                 <tr>
                                     <td class="text-center">{{ $loop->iteration }}</td>
                                     <td>{{ $member->firstName }} {{ $member->lastName }}</td>
+                                    <td class="text-center">{{ $member->ibmCount ?? 0 }}</td>
+                                    <td class="text-center">{{ $member->refCount ?? 0 }}</td>
+                                    <td class="text-center">{{ $member->bizCount ?? 0 }}</td>
                                     <td>
                                         @php
                                             $attendance = App\Models\CircleMeetingsAttendances::where('circleId', $circleId)->where('meetingId', $meetingId)->where('userId', $member->userId)->first();
