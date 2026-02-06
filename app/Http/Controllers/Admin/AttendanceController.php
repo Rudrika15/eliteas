@@ -85,15 +85,13 @@ class AttendanceController extends Controller
                 ->orderBy('date', 'desc')
                 ->where('date', '<', now())
                 ->paginate(10);
-
-            return view('admin.attendance.meetingSchedule', compact('schedules'));
+                return view('admin.attendance.meetingSchedule', compact('schedules'));
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError(
                 $th,
                 $request->fullUrl()
             );
-
             return view('servererror');
         }
     }
