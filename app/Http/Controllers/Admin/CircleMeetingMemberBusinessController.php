@@ -112,7 +112,33 @@ class CircleMeetingMemberBusinessController extends Controller
                     ->get();
                 $circlemeeting = CircleMeeting::where('status', 'Active')->get();
 
-                return view('admin.circlebusiness.index', compact('busGiver', 'busGiveByOther', 'circlemeeting', 'circles', 'circleMember'));
+                // Lock Logic
+                $lastSchedule = Schedule::where('circleId', Auth::user()->member->circle->id)
+                    ->where('date', '<', now())
+                    ->orderBy('date', 'desc')
+                    ->first();
+
+                $isLocked = $lastSchedule ? $lastSchedule->is_locked : false;
+                $lockedStartDate = null;
+                $lockedEndDate = null;
+
+                // Default rolling window for Not Locked state
+                $allowedStartDate = Carbon::now()->subDays(15)->format('Y-m-d');
+                $allowedEndDate = Carbon::now()->format('Y-m-d');
+
+                if ($isLocked) {
+                    $previousSchedule = Schedule::where('circleId', Auth::user()->member->circle->id)
+                        ->where('date', '<', $lastSchedule->date)
+                        ->orderBy('date', 'desc')
+                        ->first();
+
+                    $lockedEndDate = Carbon::parse($lastSchedule->date)->endOfDay();
+                    $lockedStartDate = $previousSchedule
+                        ? Carbon::parse($previousSchedule->date)->startOfDay()
+                        : Carbon::parse($lastSchedule->date)->subDays(15)->startOfDay();
+                }
+
+                return view('admin.circlebusiness.index', compact('busGiver', 'busGiveByOther', 'circlemeeting', 'circles', 'circleMember', 'isLocked', 'lockedStartDate', 'lockedEndDate', 'allowedStartDate', 'allowedEndDate'));
             }
 
             // Default unauthorized

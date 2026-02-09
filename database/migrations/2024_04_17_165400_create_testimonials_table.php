@@ -11,15 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('testimonials', function (Blueprint $table) {
-            $table->id();
-            $table ->integer('userId');
-            $table ->integer('memberId');
-            $table -> longText('message');
-            $table -> enum('status',['Active','InActive']);
-            $table -> date('uploadedDate');
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('testimonials')) {
+            Schema::create('testimonials', function (Blueprint $table) {
+                $table->id();
+                $table ->integer('userId');
+                $table ->integer('memberId');
+                $table -> longText('message');
+                $table -> enum('status',['Active','InActive']);
+                $table -> date('uploadedDate');
+                $table->timestamps();
+            });
+        }
     }
 
     /**

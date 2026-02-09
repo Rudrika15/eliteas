@@ -43,6 +43,7 @@
                                 <th>Email</th>
                                 <th>Scale</th>
                                 <th>Description</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -61,6 +62,13 @@
                                     <td>{{ $refrenceData->email ?? '-' }}</td>
                                     <td>{{ $refrenceData->scale ?? '-' }}</td>
                                     <td>{{ $refrenceData->description ?? '-' }}</td>
+                                    <td>
+                                        <a href="{{ route('refGiver.delete', $refrenceData->id) }}"
+                                            class="btn btn-danger btn-sm"
+                                            onclick="return confirm('Are you sure you want to delete this record?')">
+                                            <i class="bi bi-trash"></i>  
+                                        </a>
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>

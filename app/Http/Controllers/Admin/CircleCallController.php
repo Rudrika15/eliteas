@@ -125,11 +125,32 @@ class CircleCallController extends Controller
                     ->where('status', 'Active')
                     ->pluck('date');
 
-                $lastDate = Schedule::where('circleId', Auth::user()->member->circle->id)
+                $lastSchedule = Schedule::where('circleId', Auth::user()->member->circle->id)
                     ->where('date', '<', now())
                     ->orderBy('date', 'desc')
-                    ->pluck('date')
                     ->first();
+
+                $lastDate = $lastSchedule ? $lastSchedule->date : null;
+                $isLocked = $lastSchedule ? $lastSchedule->is_locked : false;
+
+                $lockedStartDate = null;
+                $lockedEndDate = null;
+
+                // Default rolling window for Not Locked state
+                $allowedStartDate = Carbon::now()->subDays(15)->format('Y-m-d');
+                $allowedEndDate = Carbon::now()->format('Y-m-d');
+
+                if ($isLocked) {
+                    $previousSchedule = Schedule::where('circleId', Auth::user()->member->circle->id)
+                        ->where('date', '<', $lastDate)
+                        ->orderBy('date', 'desc')
+                        ->first();
+
+                    $lockedEndDate = Carbon::parse($lastDate)->endOfDay();
+                    $lockedStartDate = $previousSchedule
+                        ? Carbon::parse($previousSchedule->date)->startOfDay()
+                        : Carbon::parse($lastDate)->subDays(15)->startOfDay();
+                }
 
                 return view('admin.circlecall.index', compact(
                     'circlecall',
@@ -137,6 +158,11 @@ class CircleCallController extends Controller
                     'circles',
                     'scheduleDate',
                     'lastDate',
+                    'isLocked',
+                    'lockedStartDate',
+                    'lockedEndDate',
+                    'allowedStartDate',
+                    'allowedEndDate',
                     'circleMember'
                 ));
             }

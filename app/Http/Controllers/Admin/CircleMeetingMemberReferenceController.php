@@ -16,6 +16,7 @@ use App\Models\CircleMeetingMembersBusiness;
 use App\Models\CircleMeetingMembersReference;
 use App\Models\City;
 use App\Models\BusinessAmount;
+use App\Models\Schedule;
 
 class CircleMeetingMemberReferenceController extends Controller
 {
@@ -182,7 +183,33 @@ class CircleMeetingMemberReferenceController extends Controller
 
                 $circlemeeting = CircleMeeting::where('status', 'Active')->get();
 
-                return view('admin.refGiver.index', compact('refGiver', 'refReceiver', 'circles', 'circleMember', 'circlemeeting'));
+                // Lock Logic
+                $lastSchedule = Schedule::where('circleId', Auth::user()->member->circle->id)
+                    ->where('date', '<', now())
+                    ->orderBy('date', 'desc')
+                    ->first();
+
+                $isLocked = $lastSchedule ? $lastSchedule->is_locked : false;
+                $lockedStartDate = null;
+                $lockedEndDate = null;
+
+                // Default rolling window for Not Locked state
+                $allowedStartDate = Carbon::now()->subDays(15)->format('Y-m-d');
+                $allowedEndDate = Carbon::now()->format('Y-m-d');
+
+                if ($isLocked) {
+                    $previousSchedule = Schedule::where('circleId', Auth::user()->member->circle->id)
+                        ->where('date', '<', $lastSchedule->date)
+                        ->orderBy('date', 'desc')
+                        ->first();
+
+                    $lockedEndDate = Carbon::parse($lastSchedule->date)->endOfDay();
+                    $lockedStartDate = $previousSchedule
+                        ? Carbon::parse($previousSchedule->date)->startOfDay()
+                        : Carbon::parse($lastSchedule->date)->subDays(15)->startOfDay();
+                }
+
+                return view('admin.refGiver.index', compact('refGiver', 'refReceiver', 'circles', 'circleMember', 'circlemeeting', 'isLocked', 'lockedStartDate', 'lockedEndDate', 'allowedStartDate', 'allowedEndDate'));
             }
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, $request->fullUrl());

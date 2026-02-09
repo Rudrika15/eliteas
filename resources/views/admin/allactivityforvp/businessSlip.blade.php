@@ -41,6 +41,7 @@
                             <th>Amount</th>
                             <th>Date</th>
                             <th>Remarks</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -55,6 +56,13 @@
                                 <td>{{ $businessData->amount ?? '-' }}</td>
                                 <td>{{ \Carbon\Carbon::parse($businessData->created_at)->format('d-m-Y') ?? '-' }}</td>
                                 <td>{{ $businessData->remarks ?? '-' }}</td>
+                                <td>
+                                    <a href="{{ route('busGiver.delete', $businessData->id) }}"
+                                        class="btn btn-danger btn-sm"
+                                        onclick="return confirm('Are you sure you want to delete this record?')">
+                                        <i class="bi bi-trash"></i>  
+                                    </a>
+                                </td>
                             </tr>
                         @endforeach
                     </tbody>

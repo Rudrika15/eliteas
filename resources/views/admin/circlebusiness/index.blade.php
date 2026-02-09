@@ -192,9 +192,24 @@
             <a href="#" class="tab-btn" data-tab="tabGiven">Business Slip Given ({{ $busGiveByOther->total() }})</a>
         </div>
         <div>
+            @php
+                $isCreationLocked = false;
+                if(isset($isLocked) && $isLocked && isset($lockedEndDate)) {
+                     if(now()->lte(\Carbon\Carbon::parse($lockedEndDate))) {
+                          $isCreationLocked = true;
+                     }
+                }
+            @endphp
+
+            @if(!$isCreationLocked)
             <a href="javascript:void(0);" class="btn btn-sm btn-bg-orange" data-bs-toggle="modal" data-bs-target="#businessSlipModal">
                 <i class="bi bi-plus-circle"></i> Create Business Slip
             </a>
+            @else
+            <button class="btn btn-sm btn-secondary" disabled>
+                <i class="fas fa-lock"></i> Locked
+            </button>
+            @endif
         </div>
     </div>
 

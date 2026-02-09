@@ -13,6 +13,7 @@ class Schedule extends Model
         'circleId',
         'day',
         'date',
+        'is_locked',
     ];
 
     public function circle()
