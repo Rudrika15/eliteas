@@ -75,8 +75,11 @@
                                 <th width="5%" class="text-center">No</th>
                                 <th>Name</th>
                                 <th class="text-center">IBM</th>
-                                <th class="text-center">Ref</th>
-                                <th class="text-center">Biz</th>
+                                <th class="text-center">Ref Given (In/Out)</th>
+                                <th class="text-center">Ref Rcvd (In/Out)</th>
+                                <th class="text-center">Biz Given</th>
+                                <th class="text-center">Biz Rcvd</th>
+                                <th class="text-center">Last Status</th>
                                 <th width="15%">Fill the Status</th>
                                 {{-- <th width="5%"><input type="checkbox" id="checkAll"> Select All </th> --}}
                             </tr>
@@ -87,8 +90,19 @@
                                     <td class="text-center">{{ $loop->iteration }}</td>
                                     <td>{{ $member->firstName }} {{ $member->lastName }}</td>
                                     <td class="text-center">{{ $member->ibmCount ?? 0 }}</td>
-                                    <td class="text-center">{{ $member->refCount ?? 0 }}</td>
-                                    <td class="text-center">{{ $member->bizCount ?? 0 }}</td>
+                                    <td class="text-center">
+                                        {{ $member->refGivenInside ?? 0 }} / {{ $member->refGivenOutside ?? 0 }}
+                                    </td>
+                                    <td class="text-center">
+                                        {{ $member->refReceivedInside ?? 0 }} / {{ $member->refReceivedOutside ?? 0 }}
+                                    </td>
+                                    <td class="text-center">{{ $member->businessGiven ?? 0 }}</td>
+                                    <td class="text-center">{{ $member->businessReceived ?? 0 }}</td>
+                                    <td class="text-center">
+                                        <span class="badge rounded-pill status-select {{ strtolower($member->lastMeetingStatus ?? 'none') }}">
+                                            {{ $member->lastMeetingStatus ?? 'N/A' }}
+                                        </span>
+                                    </td>
                                     <td>
                                         @php
                                             $attendance = App\Models\CircleMeetingsAttendances::where('circleId', $circleId)->where('meetingId', $meetingId)->where('userId', $member->userId)->first();

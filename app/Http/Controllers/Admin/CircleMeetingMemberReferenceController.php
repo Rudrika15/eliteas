@@ -103,6 +103,16 @@ class CircleMeetingMemberReferenceController extends Controller
                 $minDate = Carbon::now()->subDays(15)->format('Y-m-d');
                 $maxDate = Carbon::now()->format('Y-m-d');
 
+                $lastLockedMeeting = $schedules->where('is_locked', true)
+                    ->where('date', '>=', $minDate)
+                    ->where('date', '<', $maxDate)
+                    ->sortByDesc('date')
+                    ->first();
+
+                if ($lastLockedMeeting) {
+                    $minDate = Carbon::parse($lastLockedMeeting->date)->addDay()->format('Y-m-d');
+                }
+
                 // Fetch business givers
     //             $busGiver = CircleMeetingMembersBusiness::with('businessGiverMember')
     //                 ->with('businessGiverMember.circle:id,circleName')
@@ -211,6 +221,16 @@ class CircleMeetingMemberReferenceController extends Controller
 
                 $minDate = Carbon::now()->subDays(15)->format('Y-m-d');
                 $maxDate = Carbon::now()->format('Y-m-d');
+
+                $lastLockedMeeting = $schedules->where('is_locked', true)
+                    ->where('date', '>=', $minDate)
+                    ->where('date', '<', $maxDate)
+                    ->sortByDesc('date')
+                    ->first();
+
+                if ($lastLockedMeeting) {
+                    $minDate = Carbon::parse($lastLockedMeeting->date)->addDay()->format('Y-m-d');
+                }
 
                 return view('admin.refGiver.index', compact('refGiver', 'refReceiver', 'circles', 'circleMember', 'circlemeeting', 'isLocked', 'minDate', 'maxDate'));
             }

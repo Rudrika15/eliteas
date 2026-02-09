@@ -69,37 +69,95 @@ class AttendanceController extends Controller
 
             // Default to 15 days ago if no last meeting
             $startDate = $lastMeeting ? $lastMeeting->date : Carbon::parse($currentDate)->subDays(15)->format('Y-m-d');
+            // If we have a last meeting, we want data strictly AFTER that meeting date (start > last_meeting_date)
+            // But if we use created_at, we want created_at > last_meeting_date?
+            // Usually reports use inclusive or exclusive. ReportController uses >= startDate.
+            // If startDate is lastMeeting->date, we probably want > lastMeeting->date to avoid double counting if run on the same day?
+            // But user said "last meeting date to clicked meeting date".
+            // Let's stick to ReportController logic: >= startDate.
+            // Actually, if I use >= lastMeetingDate, I might include things entered ON the last meeting date (which might have been counted in last meeting).
+            // But the user said "like last meeting date to clicked meeting date".
+            // I'll use >= for now, but maybe > is better if using created_at.
+            // Let's look at ReportController: it takes startDate from input.
+            // I will use >=.
+
+            $operator = '>='; // Matches ReportController logic
+
+            // Get all user IDs in this circle for Inside/Outside check (for Reference)
+            $circleUserIds = $circleMembers->pluck('userId')->toArray();
 
             // Fetch data for each member
             foreach ($circleMembers as $member) {
-                // IBM (CircleCall) - Assuming 'memberId' is the user's ID in this table based on usage
-                $member->ibmCount = CircleCall::where('status', 'Active')
-                    ->where(function ($q) use ($member) {
-                        $q->where('memberId', $member->userId)
-                            ->orWhere('meetingPersonId', $member->userId);
-                    })
-                    // Filter by date range (using created_at or date if available)
-                    ->where(function ($q) use ($startDate, $currentDate) {
-                        $q->whereBetween('date', [$startDate, $currentDate])
-                            ->orWhere(function ($subQ) use ($startDate, $currentDate) {
-                                $subQ->whereDate('created_at', '>=', $startDate)
-                                    ->whereDate('created_at', '<=', $currentDate);
-                            });
-                    })
-                    ->count();
+                $uid = $member->userId;
 
-                // Reference
-                $member->refCount = CircleMeetingMembersReference::where('status', 'Active')
-                    ->where('referenceGiverId', $member->userId)
-                    ->whereDate('created_at', '>=', $startDate)
+                // 1. IBM (Count) - Participated (Match ReportController: memberId OR meetingPersonId)
+                $member->ibmCount = CircleCall::where('status', 'Active')
+                    ->where(function ($q) use ($uid) {
+                        $q->where('memberId', $uid)
+                            ->orWhere('meetingPersonId', $uid);
+                    })
+                    ->whereDate('created_at', $operator, $startDate)
                     ->whereDate('created_at', '<=', $currentDate)
                     ->count();
 
-                // Business
-                $member->bizCount = CircleMeetingMembersBusiness::where('status', 'Active')
-                    ->where('loginMemberId', $member->userId)
-                    ->whereBetween('date', [$startDate, $currentDate])
+                // 2. References
+                // Given Inside
+                $member->refGivenInside = CircleMeetingMembersReference::where('status', 'Active')
+                    ->where('referenceGiverId', $uid)
+                    ->whereIn('memberId', $circleUserIds)
+                    ->whereDate('created_at', $operator, $startDate)
+                    ->whereDate('created_at', '<=', $currentDate)
                     ->count();
+
+                // Given Outside
+                $member->refGivenOutside = CircleMeetingMembersReference::where('status', 'Active')
+                    ->where('referenceGiverId', $uid)
+                    ->whereNotIn('memberId', $circleUserIds)
+                    ->whereDate('created_at', $operator, $startDate)
+                    ->whereDate('created_at', '<=', $currentDate)
+                    ->count();
+
+                // Received Inside
+                $member->refReceivedInside = CircleMeetingMembersReference::where('status', 'Active')
+                    ->where('memberId', $uid)
+                    ->whereIn('referenceGiverId', $circleUserIds)
+                    ->whereDate('created_at', $operator, $startDate)
+                    ->whereDate('created_at', '<=', $currentDate)
+                    ->count();
+
+                // Received Outside
+                $member->refReceivedOutside = CircleMeetingMembersReference::where('status', 'Active')
+                    ->where('memberId', $uid)
+                    ->whereNotIn('referenceGiverId', $circleUserIds)
+                    ->whereDate('created_at', $operator, $startDate)
+                    ->whereDate('created_at', '<=', $currentDate)
+                    ->count();
+
+                // 3. Business (Sum)
+                // Given
+                $member->businessGiven = CircleMeetingMembersBusiness::where('status', 'Active')
+                    ->where('businessGiverId', $uid)
+                    ->whereDate('created_at', $operator, $startDate)
+                    ->whereDate('created_at', '<=', $currentDate)
+                    ->sum('amount');
+
+                // Received
+                $member->businessReceived = CircleMeetingMembersBusiness::where('status', 'Active')
+                    ->where('loginMemberId', $uid)
+                    ->whereDate('created_at', $operator, $startDate)
+                    ->whereDate('created_at', '<=', $currentDate)
+                    ->sum('amount');
+
+                // 4. Last Meeting Status
+                if ($lastMeeting) {
+                    $lastAttendance = CircleMeetingsAttendances::where('circleId', $circleId)
+                        ->where('meetingId', $lastMeeting->id)
+                        ->where('userId', $uid)
+                        ->first();
+                    $member->lastMeetingStatus = $lastAttendance ? $lastAttendance->status : 'N/A';
+                } else {
+                    $member->lastMeetingStatus = 'N/A';
+                }
             }
             // ---------------------------------------------
 

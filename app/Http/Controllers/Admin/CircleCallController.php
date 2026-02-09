@@ -73,15 +73,15 @@ class CircleCallController extends Controller
     //             ->pluck('date'); // Pluck all 'date' values from the query result
 
     //         $lastDate = Schedule::where('circleId', Auth::user()->member->circle->id)
-                ->where('date', '<', now())
-                ->orderBy('date', 'desc')
-                ->pluck('date')
-                ->first();
+    //             ->where('date', '<', now())
+    //             ->orderBy('date', 'desc')
+    //             ->pluck('date')
+    //             ->first();
 
-            $minDate = Carbon::now()->subDays(15)->format('Y-m-d');
-            $maxDate = Carbon::now()->format('Y-m-d');
+    //         $minDate = Carbon::now()->subDays(15)->format('Y-m-d');
+    //         $maxDate = Carbon::now()->format('Y-m-d');
 
-            return view('admin.circlecall.index', compact('circlecall', 'callWith', 'circles', 'scheduleDate', 'lastDate', 'circleMember', 'minDate', 'maxDate'));
+    //         return view('admin.circlecall.index', compact('circlecall', 'callWith', 'circles', 'scheduleDate', 'lastDate', 'circleMember', 'minDate', 'maxDate'));
     //     } catch (\Throwable $th) {
     //         // throw $th;
     //         ErrorLogger::logError($th, $request->fullUrl());
@@ -146,6 +146,16 @@ class CircleCallController extends Controller
 
                 $minDate = Carbon::now()->subDays(15)->format('Y-m-d');
                 $maxDate = Carbon::now()->format('Y-m-d');
+
+                $lastLockedMeeting = $schedules->where('is_locked', true)
+                    ->where('date', '>=', $minDate)
+                    ->where('date', '<', $maxDate)
+                    ->sortByDesc('date')
+                    ->first();
+
+                if ($lastLockedMeeting) {
+                    $minDate = Carbon::parse($lastLockedMeeting->date)->addDay()->format('Y-m-d');
+                }
 
                 // Transform circlecall to add lock status
                 $circlecall->getCollection()->transform(function ($item) use ($schedules) {
@@ -223,7 +233,7 @@ class CircleCallController extends Controller
 
             return view('admin.circlecall.create', compact('circles', 'circleMember', 'scheduleDate', 'lastDate'));
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
             ErrorLogger::logError(
                 $th,
                 $request->fullUrl()
@@ -798,11 +808,15 @@ class CircleCallController extends Controller
                 'meetingPlace' => 'required|regex:/^([a-zA-Z]+)(\s[a-zA-Z]+)*$/',
                 'date' => 'required',
                 'remarks' => 'required',
-                'meetingImage' => 'mimes:jpeg,jpg,png,gif|max:20480|required',
+                'meetingImage' => 'nullable|mimes:jpeg,jpg,png,gif|max:20480',
             ]);
 
             $id = $request->id;
             $circlecall = CircleCall::find($id);
+
+            if (!$circlecall) {
+                return redirect()->back()->with('error', 'Circle Call not found.');
+            }
 
             // Lock Check
             $member = Member::where('userId', Auth::id())->first();

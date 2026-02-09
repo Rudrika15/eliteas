@@ -143,6 +143,16 @@ class CircleMeetingMemberBusinessController extends Controller
                 $minDate = Carbon::now()->subDays(15)->format('Y-m-d');
                 $maxDate = Carbon::now()->format('Y-m-d');
 
+                $lastLockedMeeting = $schedules->where('is_locked', true)
+                    ->where('date', '>=', $minDate)
+                    ->where('date', '<', $maxDate)
+                    ->sortByDesc('date')
+                    ->first();
+
+                if ($lastLockedMeeting) {
+                    $minDate = Carbon::parse($lastLockedMeeting->date)->addDay()->format('Y-m-d');
+                }
+
                 return view('admin.circlebusiness.index', compact('busGiver', 'busGiveByOther', 'circlemeeting', 'circles', 'circleMember', 'isLocked', 'minDate', 'maxDate'));
             }
 
@@ -319,7 +329,7 @@ class CircleMeetingMemberBusinessController extends Controller
 
             return view('admin.circlebusiness.updatePayment', compact('payment', 'busGiver'));
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
             ErrorLogger::logError($th, $request->fullUrl());
             return view('servererror');
         }
