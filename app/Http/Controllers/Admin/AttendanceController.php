@@ -77,7 +77,7 @@ class AttendanceController extends Controller
                 $ibmCount = CircleCall::where('status', 'active')
                     ->where(function ($q) use ($uid) {
                         $q->where('memberId', $uid)
-                          ->orWhere('meetingPersonId', $uid);
+                            ->orWhere('meetingPersonId', $uid);
                     })
                     ->whereDate('created_at', '>=', $startDate)
                     ->whereDate('created_at', '<=', $endDate)
@@ -283,8 +283,6 @@ class AttendanceController extends Controller
                 'meetingId' => 'required|integer|exists:schedules,id',
                 'attendance' => 'nullable|array',
                 'attendance.*' => 'nullable|in:Present,Absent,Late,Medical,Sub',
-                'userId' => 'nullable|array',
-                'userId.*' => 'integer|exists:users,id',
             ]);
 
             $circleId = (int) $validatedData['circleId'];
@@ -292,9 +290,7 @@ class AttendanceController extends Controller
 
             // Loop through the attendance data and save each record
             if (isset($validatedData['attendance'])) {
-                foreach ($validatedData['attendance'] as $index => $status) {
-                    $userId = $validatedData['userId'][$index];
-
+                foreach ($validatedData['attendance'] as $userId => $status) {
                     CircleMeetingsAttendances::updateOrCreate(
                         [
                             'circleId' => $circleId,

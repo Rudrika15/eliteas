@@ -266,19 +266,7 @@ $activeTab = request('tab', 'by_me');
                                 <td>{{ $circlecallData->remarks ?? '-' }}</td>
                                 <td>
                                     @php
-                                    $callDate = \Carbon\Carbon::parse($circlecallData->date);
-                                    $isLockedRecord = false;
-                                    
-                                    if(isset($isLocked) && $isLocked && isset($lockedStartDate) && isset($lockedEndDate)) {
-                                         if($callDate->between($lockedStartDate, $lockedEndDate)) {
-                                              $isLockedRecord = true;
-                                         }
-                                    } elseif (isset($allowedStartDate)) {
-                                         // If not locked, restrict if older than allowedStartDate (15 days)
-                                         if ($callDate->lt(\Carbon\Carbon::parse($allowedStartDate))) {
-                                              $isLockedRecord = true;
-                                         }
-                                    }
+                                    $isLockedRecord = $isLocked ?? false;
                                     @endphp
 
                                     @if(!$isLockedRecord)

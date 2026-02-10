@@ -71,6 +71,7 @@ class AllActivityController extends Controller
                 ->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {
                     $query->whereBetween('date', [$startDate, $endDate]);
                 })
+                ->orderBy('created_at', 'desc')
                 ->paginate(10);
 
             return view('admin.allactivityforvp.ibm', compact('circlecalls', 'startDate', 'endDate'));
@@ -111,7 +112,7 @@ class AllActivityController extends Controller
                 $query->whereBetween('created_at', [$startDate, $endDate]);
             }
 
-            $refrences = $query->paginate(10);
+            $refrences = $query->orderBy('created_at', 'desc')->paginate(10);
 
             return view('admin.allactivityforvp.reference', compact('refrences'));
         } catch (\Throwable $th) {
@@ -149,7 +150,7 @@ class AllActivityController extends Controller
                 $query->whereBetween('created_at', [$startDate, $endDate]);
             }
 
-            $businesses = $query->paginate(10);
+            $businesses = $query->orderBy('created_at', 'desc')->paginate(10);
 
             return view('admin.allactivityforvp.businessSlip', compact('businesses'));
         } catch (\Throwable $th) {

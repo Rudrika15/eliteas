@@ -3,255 +3,232 @@
 @section('title', 'UBN - Referance')
 @section('content')
 
-<style>
-    .tab-navigation {
-        border-bottom: 2px solid #eaeaea;
-        margin-bottom: 1rem;
-    }
+    <style>
+        .tab-navigation {
+            border-bottom: 2px solid #eaeaea;
+            margin-bottom: 1rem;
+        }
 
-    .tab-navigation a {
-        padding: 10px 20px;
-        display: inline-block;
-        text-decoration: none;
-        font-weight: 600;
-        color: #333;
-    }
+        .tab-navigation a {
+            padding: 10px 20px;
+            display: inline-block;
+            text-decoration: none;
+            font-weight: 600;
+            color: #333;
+        }
 
-    .tab-navigation a.active {
-        color: #ff6600;
-        border-bottom: 3px solid #ff6600;
-    }
+        .tab-navigation a.active {
+            color: #ff6600;
+            border-bottom: 3px solid #ff6600;
+        }
 
-    .profile-badge {
-        position: absolute;
-        top: 65%;
-        left: 58%;
-        transform: translate(-50%, -50%);
-        background: #ffcc00;
-        color: white;
-        border-radius: 50%;
-        padding: 4px 8px;
-        font-size: 0.75rem;
-        font-weight: bold;
-    }
+        .profile-badge {
+            position: absolute;
+            top: 65%;
+            left: 58%;
+            transform: translate(-50%, -50%);
+            background: #ffcc00;
+            color: white;
+            border-radius: 50%;
+            padding: 4px 8px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
 
-    .card-remark {
-        background-color: #f9f9f9;
-        border-radius: 6px;
-        padding: 10px;
-        font-size: 0.85rem;
-        color: #555;
-        margin-bottom: 10px;
-    }
+        .card-remark {
+            background-color: #f9f9f9;
+            border-radius: 6px;
+            padding: 10px;
+            font-size: 0.85rem;
+            color: #555;
+            margin-bottom: 10px;
+        }
 
-    .tab-content {
-        display: none;
-    }
+        .tab-content {
+            display: none;
+        }
 
-    .tab-content.active {
-        display: block;
-    }
-</style>
-
-
-<style>
-    /* Slide-in modal from the right */
-    .modal.right .modal-dialog {
-        position: fixed;
-        right: 0;
-        margin: 0;
-        height: 100%;
-        max-width: 500px;
-        /* Adjust width */
-        transform: translateX(100%);
-        transition: transform 0.3s ease-out;
-    }
-
-    .modal.right .modal-content {
-        height: 100%;
-        overflow-y: auto;
-        border-radius: 0;
-    }
-
-    .modal.right.show .modal-dialog {
-        transform: translateX(0);
-    }
-
-    .modal-card {
-        background: #fff;
-        border-radius: 8px;
-        padding: 20px;
-        box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
-        width: 100%;
-        max-width: 500px;
-        /* Optional max width */
-        margin: auto;
-    }
-
-    .button-row {
-        display: flex;
-        margin-top: 20px;
-    }
-
-    .cancel-btn,
-    .create-btn {
-        flex: 1;
-        height: 40px;
-        font-weight: 500;
-        border-radius: 4px;
-        border: 1px solid transparent;
-        transition: all 0.3s ease;
-    }
-
-    .cancel-btn {
-        background-color: #fff;
-        border: 1px solid #223366;
-        color: #223366;
-        margin-right: 10px;
-    }
-
-    .cancel-btn:hover {
-        background-color: #f0f0f0;
-    }
-
-    .create-btn {
-        background: linear-gradient(to right, #223366, #E06836);
-        color: white;
-        border: none;
-    }
-
-    .create-btn:hover {
-        opacity: 0.9;
-    }
-
-    .modal-lg-custom {
-        max-width: 900px;
-        /* or any width you prefer */
-        width: 90%;
-    }
-</style>
+        .tab-content.active {
+            display: block;
+        }
+    </style>
 
 
-<div class="tab-navigation mb-3">
-    <a href="#" class="tab-btn active" data-target="#tabByMe">Received ({{ $refReceiver->count() }})</a>
-    <a href="#" class="tab-btn" data-target="#tabByOther">Given ({{ $refGiver->count() }})</a>
-    {{-- <a href="{{ route('circlecall.create') }}" class="float-end btn btn-sm btn-bg-orange">
+    <style>
+        /* Slide-in modal from the right */
+        .modal.right .modal-dialog {
+            position: fixed;
+            right: 0;
+            margin: 0;
+            height: 100%;
+            max-width: 500px;
+            /* Adjust width */
+            transform: translateX(100%);
+            transition: transform 0.3s ease-out;
+        }
+
+        .modal.right .modal-content {
+            height: 100%;
+            overflow-y: auto;
+            border-radius: 0;
+        }
+
+        .modal.right.show .modal-dialog {
+            transform: translateX(0);
+        }
+
+        .modal-card {
+            background: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+            /* Optional max width */
+            margin: auto;
+        }
+
+        .button-row {
+            display: flex;
+            margin-top: 20px;
+        }
+
+        .cancel-btn,
+        .create-btn {
+            flex: 1;
+            height: 40px;
+            font-weight: 500;
+            border-radius: 4px;
+            border: 1px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .cancel-btn {
+            background-color: #fff;
+            border: 1px solid #223366;
+            color: #223366;
+            margin-right: 10px;
+        }
+
+        .cancel-btn:hover {
+            background-color: #f0f0f0;
+        }
+
+        .create-btn {
+            background: linear-gradient(to right, #223366, #E06836);
+            color: white;
+            border: none;
+        }
+
+        .create-btn:hover {
+            opacity: 0.9;
+        }
+
+        .modal-lg-custom {
+            max-width: 900px;
+            /* or any width you prefer */
+            width: 90%;
+        }
+    </style>
+
+
+    <div class="tab-navigation mb-3">
+        <a href="#" class="tab-btn active" data-target="#tabByMe">Received ({{ $refReceiver->count() }})</a>
+        <a href="#" class="tab-btn" data-target="#tabByOther">Given ({{ $refGiver->count() }})</a>
+        {{-- <a href="{{ route('circlecall.create') }}" class="float-end btn btn-sm btn-bg-orange">
         <i class="bi bi-plus-circle"></i> Create IBM
     </a> --}}
-    {{-- <a href="#" class="tab-btn active" data-target="#tabByMe">Received ({{ $busGiver->total() }})</a>
+        {{-- <a href="#" class="tab-btn active" data-target="#tabByMe">Received ({{ $busGiver->total() }})</a>
     <a href="#" class="tab-btn" data-target="#tabByOther">Given ({{ $refGiver->total() }})</a> --}}
 
-    @php
-    $isCreationLocked = false;
-    if(isset($isLocked) && $isLocked && isset($lockedEndDate)) {
-    if(now()->lte(\Carbon\Carbon::parse($lockedEndDate))) {
-    $isCreationLocked = true;
-    }
-    }
-    @endphp
+        @php
+            $isCreationLocked = false;
+            if (isset($isLocked) && $isLocked && isset($lockedEndDate)) {
+                if (now()->lte(\Carbon\Carbon::parse($lockedEndDate))) {
+                    $isCreationLocked = true;
+                }
+            }
+        @endphp
 
-    @if(!$isCreationLocked)
-    <button type="button" class="float-end btn btn-bg-orange" data-bs-toggle="modal" data-bs-target="#createIBMModal">
-        Create Reference
-    </button>
-    @else
-    <button type="button" class="float-end btn btn-secondary" disabled>
-        <i class="fas fa-lock"></i> Locked
-    </button>
-    @endif
-</div>
+        @if (!$isCreationLocked)
+            <button type="button" class="float-end btn btn-bg-orange" data-bs-toggle="modal" data-bs-target="#createIBMModal">
+                Create Reference
+            </button>
+        @else
+            <button type="button" class="float-end btn btn-secondary" disabled>
+                <i class="fas fa-lock"></i> Locked
+            </button>
+        @endif
+    </div>
 
-<div class="container">
-    <div class="card">
-        <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h4 class="card-title">Reference</h4>
-            </div>
-            <div id="tabByMe" class="tab-content active">
-                <div class="table-responsive">
-                    <table class="table table-bordered table-striped table-hover">
-                        <thead>
-                            <tr>
-                                <th>No</th>
-                                <th>Received From</th>
-                                <th>Circle</th>
-                                <th>Date</th>
-                                <th>Description</th>
-                                <th>Scale</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse ($refReceiver as $refReceiverData)
-                            <tr>
-                                <td>{{ $loop->iteration }}</td>
-                                <td>{{ optional($refReceiverData->refGiver)->firstName ?? '-' }} {{
-                                    optional($refReceiverData->refGiver)->lastName ?? '-' }}</td>
-                                <td>{{ optional($refReceiverData->refGiver->circle)->circleName ?? '-' }}</td>
-                                <td>{{ $refReceiverData->created_at ?
-                                    \Carbon\Carbon::parse($refReceiverData->created_at)->format('d-m-Y') : '-' }}</td>
-                                <td>{{ $refReceiverData->description ?? '-' }}</td>
-                                <td>
-                                    @for ($i = 1; $i <= 5; $i++) <i
-                                        class="bi bi-star{{ $refReceiverData->scale >= $i ? '-fill' : '' }} text-warning">
-                                        </i>
-                                        @endfor
-                                </td>
-                                <td>
-                                    {{-- <a href="{{ route('refGiver.edit', $refReceiverData->id) }}"
+    <div class="container">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4 class="card-title">Reference</h4>
+                </div>
+                <div id="tabByMe" class="tab-content active">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Received From</th>
+                                    <th>Circle</th>
+                                    <th>Date</th>
+                                    <th>Description</th>
+                                    <th>Scale</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($refReceiver as $refReceiverData)
+                                    <tr>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ optional($refReceiverData->refGiver)->firstName ?? '-' }} {{ optional($refReceiverData->refGiver)->lastName ?? '-' }}</td>
+                                        <td>{{ optional($refReceiverData->refGiver->circle)->circleName ?? '-' }}</td>
+                                        <td>{{ $refReceiverData->created_at ? \Carbon\Carbon::parse($refReceiverData->created_at)->format('d-m-Y') : '-' }}</td>
+                                        <td>{{ $refReceiverData->description ?? '-' }}</td>
+                                        <td>
+                                            @for ($i = 1; $i <= 5; $i++)
+                                                <i class="bi bi-star{{ $refReceiverData->scale >= $i ? '-fill' : '' }} text-warning">
+                                                </i>
+                                            @endfor
+                                        </td>
+                                        <td>
+                                            {{-- <a href="{{ route('refGiver.edit', $refReceiverData->id) }}"
                                         class="btn btn-sm btn-bg-blue">
                                         <i class="bi bi-pencil"></i>
                                     </a> --}}
-                                    @php
-                                    $refReceiverDate = $refReceiverData->created_at ?
-                                    \Carbon\Carbon::parse($refReceiverData->created_at) : null;
-                                    $isReceiverLocked = false;
+                                            @php
+                                                $isReceiverLocked = $isLocked ?? false;
+                                            @endphp
 
-                                    if(isset($isLocked) && $isLocked && isset($lockedEndDate)) {
-                                    if(now()->lte(\Carbon\Carbon::parse($lockedEndDate))) {
-                                    // This logic seems to check if we are currently in a locked period for CREATION?
-                                    // But here we are checking if we can Add Amount to an existing record.
-                                    // If the record itself is "locked" (old), maybe we can't add amount?
-                                    // The previous logic was checking $isCreationLocked for the button.
-                                    // But for a specific row, we should check the row's date.
-                                    $isReceiverLocked = true;
-                                    }
-                                    }
-
-                                    // Check 15 days rule if not locked
-                                    if (!$isReceiverLocked && isset($allowedStartDate) && $refReceiverDate) {
-                                    if ($refReceiverDate->lt(\Carbon\Carbon::parse($allowedStartDate))) {
-                                    $isReceiverLocked = true;
-                                    }
-                                    }
-                                    @endphp
-
-                                    @if(!$isCreationLocked && !$isReceiverLocked)
-                                    <a href="{{ route('addBusiness.amount', $refReceiverData->id) }}"
-                                        class="btn btn-sm btn-bg-blue">Add Amount</a>
-                                    @else
-                                    <button class="btn btn-sm btn-secondary" disabled><i class="fas fa-lock"></i> Add
-                                        Amount</button>
-                                    @endif
-                                </td>
-                            </tr>
-                            @empty
-                            <tr>
-                                <td colspan="6" class="text-center text-muted">No records found</td>
-                            </tr>
-                            @endforelse
-                        </tbody>
-                        {{-- {!! $busGiver->appends(['tab' => 'received'])->links() !!} --}}
-                    </table>
-                    <div class="d-flex justify-content-end custom-pagination">
-                        {!! $refReceiver->links() !!}
+                                            @if (!$isCreationLocked && !$isReceiverLocked)
+                                                <a href="{{ route('addBusiness.amount', $refReceiverData->id) }}" class="btn btn-sm btn-bg-blue">Add Amount</a>
+                                            @else
+                                                <button class="btn btn-sm btn-secondary" disabled><i class="fas fa-lock"></i> Add
+                                                    Amount</button>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="6" class="text-center text-muted">No records found</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                            {{-- {!! $busGiver->appends(['tab' => 'received'])->links() !!} --}}
+                        </table>
+                        <div class="d-flex justify-content-end custom-pagination">
+                            {!! $refReceiver->links() !!}
+                        </div>
                     </div>
                 </div>
-            </div>
 
 
-            <div id="tabByOther" class="tab-content" style="display: none;">
-                {{-- <div class="container">
+                <div id="tabByOther" class="tab-content" style="display: none;">
+                    {{-- <div class="container">
                     <div class="card">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center mb-3">
@@ -261,123 +238,101 @@
                                     <span class="btn-text">Add Business Slip</span>
                                 </a>
                             </div> --}}
-                            <div class="table-responsive">
-                                <table class="table table-bordered table-striped table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th>No</th>
-                                            <th>Given To</th>
-                                            <th>Circle</th>
-                                            <th>Date</th>
-                                            <th>Description</th>
-                                            <th>Scale</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @forelse ($refGiver as $refGiverData)
-                                        <tr>
-                                            <td>{{ $loop->iteration }}</td>
-                                            <td>{{ optional($refGiverData->members)->firstName ?? '-' }} {{
-                                                optional($refGiverData->members)->lastName ?? '-' }}</td>
-                                            <td>{{ optional($refGiverData->members->circle)->circleName ?? '-' }}</td>
-                                            <td>{{ $refGiverData->created_at ?
-                                                \Carbon\Carbon::parse($refGiverData->created_at)->format('d-m-Y') : '-'
-                                                }}</td>
-                                            <td>{{ $refGiverData->description ?? '-' }}</td>
-                                            <td>
-                                                @for ($i = 1; $i <= 5; $i++) <i
-                                                    class="bi bi-star{{ $refGiverData->scale >= $i ? '-fill' : '' }} text-warning">
-                                                    </i>
-                                                    @endfor
-                                            </td>
-                                            <td>
-                                                @php
-                                                $refDate = $refGiverData->created_at ?
-                                                \Carbon\Carbon::parse($refGiverData->created_at) : null;
-                                                $isRowLocked = false;
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Given To</th>
+                                    <th>Circle</th>
+                                    <th>Date</th>
+                                    <th>Description</th>
+                                    <th>Scale</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($refGiver as $refGiverData)
+                                    <tr>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ optional($refGiverData->members)->firstName ?? '-' }} {{ optional($refGiverData->members)->lastName ?? '-' }}</td>
+                                        <td>{{ optional($refGiverData->members->circle)->circleName ?? '-' }}</td>
+                                        <td>{{ $refGiverData->created_at ? \Carbon\Carbon::parse($refGiverData->created_at)->format('d-m-Y') : '-' }}</td>
+                                        <td>{{ $refGiverData->description ?? '-' }}</td>
+                                        <td>
+                                            @for ($i = 1; $i <= 5; $i++)
+                                                <i class="bi bi-star{{ $refGiverData->scale >= $i ? '-fill' : '' }} text-warning">
+                                                </i>
+                                            @endfor
+                                        </td>
+                                        <td>
+                                            @php
+                                                $isRowLocked = $isLocked ?? false;
+                                            @endphp
 
-                                                if($refDate && isset($isLocked) && $isLocked && isset($lockedStartDate)
-                                                && isset($lockedEndDate)) {
-                                                if($refDate->between($lockedStartDate, $lockedEndDate)) {
-                                                $isRowLocked = true;
-                                                }
-                                                } elseif (isset($allowedStartDate) && $refDate) {
-                                                // If not locked, restrict if older than allowedStartDate (15 days)
-                                                if ($refDate->lt(\Carbon\Carbon::parse($allowedStartDate))) {
-                                                $isRowLocked = true;
-                                                }
-                                                }
-                                                @endphp
-
-                                                @if(!$isRowLocked)
-                                                <a href="{{ route('refGiver.edit', $refGiverData->id) }}"
-                                                    class="btn btn-sm btn-bg-blue">
+                                            @if (!$isRowLocked)
+                                                <a href="{{ route('refGiver.edit', $refGiverData->id) }}" class="btn btn-sm btn-bg-blue">
                                                     <i class="bi bi-pencil"></i>
                                                 </a>
-                                                @else
+                                            @else
                                                 <span class="badge bg-secondary"><i class="fas fa-lock"></i>
                                                     Locked</span>
-                                                @endif
-                                            </td>
-                                        </tr>
-                                        @empty
-                                        <tr>
-                                            <td colspan="5" class="text-center text-muted">No records found</td>
-                                        </tr>
-                                        @endforelse
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div class="d-flex justify-content-end custom-pagination">
-                                {!! $refGiver->appends(['tab' => 'given'])->links() !!}
-                            </div>
-                        </div>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="5" class="text-center text-muted">No records found</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="d-flex justify-content-end custom-pagination">
+                        {!! $refGiver->appends(['tab' => 'given'])->links() !!}
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
 
-            <!-- Modal -->
-            <div class="modal fade right" id="createIBMModal" tabindex="-1" aria-labelledby="createIBMModalLabel"
-                aria-hidden="true">
-                <div class="modal-dialog modal-lg-custom">
-                    <div class="modal-content border-0 rounded-3 shadow">
-                        <div class="modal-header bg-light border-bottom-0 rounded-top">
-                            <h5 class="modal-title color-blue fw-bold" id="createIBMModalLabel">Circle Meeting Member
-                                Reference</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
+    <!-- Modal -->
+    <div class="modal fade right" id="createIBMModal" tabindex="-1" aria-labelledby="createIBMModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg-custom">
+            <div class="modal-content border-0 rounded-3 shadow">
+                <div class="modal-header bg-light border-bottom-0 rounded-top">
+                    <h5 class="modal-title color-blue fw-bold" id="createIBMModalLabel">Circle Meeting Member
+                        Reference</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
 
-                        <div class="modal-body">
+                <div class="modal-body">
 
 
-                            <!-- Circle & Member Dropdowns -->
-                            <form class="m-3 needs-validation" id="meetingMemberRefForm" enctype="multipart/form-data"
-                                method="POST" action="{{ route('refGiver.store') }}" novalidate>
-                                @csrf
+                    <!-- Circle & Member Dropdowns -->
+                    <form class="m-3 needs-validation" id="meetingMemberRefForm" enctype="multipart/form-data" method="POST" action="{{ route('refGiver.store') }}" novalidate>
+                        @csrf
 
-                                <div class="card p-3 shadow-sm border-0 rounded">
-                                    <div class="row mb-3">
-                                        <!-- Internal / External Radio -->
-                                        <div class="col-sm-6">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="radio" name="group" id="internal"
-                                                    value="internal" checked>
-                                                <label class="form-check-label" for="internal">Internal</label>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-6">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="radio" name="group" id="external"
-                                                    value="external">
-                                                <label class="form-check-label" for="external">External</label>
-                                            </div>
-                                        </div>
+                        <div class="card p-3 shadow-sm border-0 rounded">
+                            <div class="row mb-3">
+                                <!-- Internal / External Radio -->
+                                <div class="col-sm-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="group" id="internal" value="internal" checked>
+                                        <label class="form-check-label" for="internal">Internal</label>
                                     </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="group" id="external" value="external">
+                                        <label class="form-check-label" for="external">External</label>
+                                    </div>
+                                </div>
+                            </div>
 
-                                    {{-- @if (auth()->user()->hasRole('Member')) --}}
-                                    <!-- Circle Dropdown -->
-                                    {{-- <div class="mb-3">
+                            {{-- @if (auth()->user()->hasRole('Member')) --}}
+                            <!-- Circle Dropdown -->
+                            {{-- <div class="mb-3">
                                         <div class="col-md-12">
                                             <label for="circleId" class="form-label fw-bold color-blue required">Circle
                                                 <span class="text-danger">*</span></label>
@@ -401,13 +356,13 @@
                                             </div>
                                         </div> --}}
 
-                                        <!-- Member Dropdown -->
-                                        {{-- <div class="col-md-12"> --}}
-                                            {{-- <label for="memberId"
+                            <!-- Member Dropdown -->
+                            {{-- <div class="col-md-12"> --}}
+                            {{-- <label for="memberId"
                                                 class="form-label fw-bold color-blue required">Member <span
                                                     class="text-danger">*</span></label> --}}
-                                            {{-- <div class="form-floating"> --}}
-                                                {{-- <select class="form-select @error('memberId') is-invalid @enderror"
+                            {{-- <div class="form-floating"> --}}
+                            {{-- <select class="form-select @error('memberId') is-invalid @enderror"
                                                     id="memberId" name="memberId" required>
                                                     <option value="" disabled>Select Member</option>
                                                 </select>
@@ -419,140 +374,119 @@
                                             @endif --}}
 
 
-                                            @if (auth()->user()->hasRole('Member'))
-                                            <!-- Circle Dropdown -->
-                                            <div class="mb-3">
-                                                <div class="col-md-12">
-                                                    <label for="circleId"
-                                                        class="form-label fw-bold color-blue required">
-                                                        Circle <span class="text-danger">*</span>
-                                                    </label>
-                                                    <select class="form-select @error('circleId') is-invalid @enderror"
-                                                        id="circleId" name="circleId" required>
-                                                        <option value="" selected disabled>Select Circle</option>
-                                                        @foreach ($circles as $circle)
-                                                        <option value="{{ $circle->id }}">{{ $circle->circleName }}
-                                                        </option>
-                                                        @endforeach
-                                                    </select>
-                                                    @error('circleId')
-                                                    <div class="invalid-tooltip">This field is required.</div>
-                                                    @enderror
-                                                </div>
-                                            </div>
+                            @if (auth()->user()->hasRole('Member'))
+                                <!-- Circle Dropdown -->
+                                <div class="mb-3">
+                                    <div class="col-md-12">
+                                        <label for="circleId" class="form-label fw-bold color-blue required">
+                                            Circle <span class="text-danger">*</span>
+                                        </label>
+                                        <select class="form-select @error('circleId') is-invalid @enderror" id="circleId" name="circleId" required>
+                                            <option value="" selected disabled>Select Circle</option>
+                                            @foreach ($circles as $circle)
+                                                <option value="{{ $circle->id }}">{{ $circle->circleName }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        @error('circleId')
+                                            <div class="invalid-tooltip">This field is required.</div>
+                                        @enderror
+                                    </div>
+                                </div>
 
-                                            <!-- Member Dropdown -->
-                                            <div class="col-md-12">
-                                                <label for="memberId" class="form-label fw-bold color-blue required">
-                                                    Member <span class="text-danger">*</span>
-                                                </label>
-                                                <select class="form-select @error('memberId') is-invalid @enderror"
-                                                    id="memberId" name="memberId" required>
-                                                    <option value="" selected disabled>Select Member</option>
-                                                </select>
-                                                @error('memberId')
-                                                <div class="invalid-tooltip">This field is required.</div>
-                                                @enderror
-                                            </div>
-                                            @endif
+                                <!-- Member Dropdown -->
+                                <div class="col-md-12">
+                                    <label for="memberId" class="form-label fw-bold color-blue required">
+                                        Member <span class="text-danger">*</span>
+                                    </label>
+                                    <select class="form-select @error('memberId') is-invalid @enderror" id="memberId" name="memberId" required>
+                                        <option value="" selected disabled>Select Member</option>
+                                    </select>
+                                    @error('memberId')
+                                        <div class="invalid-tooltip">This field is required.</div>
+                                    @enderror
+                                </div>
+                            @endif
 
 
-                                            <!-- Member Name (readonly) -->
-                                            <input type="hidden" id="meetingPersonId" name="memberId">
-                                            <div class="mt-3">
-                                                <label for="meetingPersonName"
-                                                    class="form-label fw-bold color-blue required">Member Name <span
-                                                        class="text-danger">*</span></label>
-                                                <input type="text" class="form-control" id="meetingPersonName"
-                                                    name="memberName" placeholder="Select Member" readonly disabled>
-                                                @error('memberId')
-                                                <div class="invalid-tooltip">{{ $message }}</div>
-                                                @enderror
-                                            </div>
+                            <!-- Member Name (readonly) -->
+                            <input type="hidden" id="meetingPersonId" name="memberId">
+                            <div class="mt-3">
+                                <label for="meetingPersonName" class="form-label fw-bold color-blue required">Member Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="meetingPersonName" name="memberName" placeholder="Select Member" readonly disabled>
+                                @error('memberId')
+                                    <div class="invalid-tooltip">{{ $message }}</div>
+                                @enderror
+                            </div>
 
-                                            <!-- External Contact Person Fields -->
-                                            <div id="memberListInput" style="display:none;">
-                                                <h4 class="mt-3 text-blue">Contact Person Details</h4>
+                            <!-- External Contact Person Fields -->
+                            <div id="memberListInput" style="display:none;">
+                                <h4 class="mt-3 text-blue">Contact Person Details</h4>
 
-                                                <div class="mt-3">
-                                                    <label for="contactName"
-                                                        class="form-label fw-bold color-blue">Contact Person
-                                                        Name</label>
-                                                    <input type="text"
-                                                        class="form-control @error('contactName') is-invalid @enderror"
-                                                        name="contactNameExternal" placeholder="Contact Name">
-                                                    @error('contactName')
-                                                    <div class="invalid-tooltip">{{ $message }}</div>
-                                                    @enderror
-                                                </div>
+                                <div class="mt-3">
+                                    <label for="contactName" class="form-label fw-bold color-blue">Contact Person
+                                        Name</label>
+                                    <input type="text" class="form-control @error('contactName') is-invalid @enderror" name="contactNameExternal" placeholder="Contact Name">
+                                    @error('contactName')
+                                        <div class="invalid-tooltip">{{ $message }}</div>
+                                    @enderror
+                                </div>
 
-                                                <div class="mt-3">
-                                                    <label for="contactNo" class="form-label fw-bold color-blue">Contact
-                                                        No</label>
-                                                    <input type="text"
-                                                        class="form-control @error('contactNo') is-invalid @enderror"
-                                                        id="contactPersonContact" name="contactNo"
-                                                        placeholder="Contact No" maxlength="10"
-                                                        oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-                                                    @error('contactNo')
-                                                    <div class="invalid-tooltip">{{ $message }}</div>
-                                                    @enderror
-                                                </div>
+                                <div class="mt-3">
+                                    <label for="contactNo" class="form-label fw-bold color-blue">Contact
+                                        No</label>
+                                    <input type="text" class="form-control @error('contactNo') is-invalid @enderror" id="contactPersonContact" name="contactNo" placeholder="Contact No" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                                    @error('contactNo')
+                                        <div class="invalid-tooltip">{{ $message }}</div>
+                                    @enderror
+                                </div>
 
-                                                <div class="mt-3">
-                                                    <label for="email"
-                                                        class="form-label fw-bold color-blue">Email</label>
-                                                    <input type="text"
-                                                        class="form-control @error('email') is-invalid @enderror"
-                                                        id="contactPersonEmail" name="email" placeholder="Email">
-                                                    @error('email')
-                                                    <div class="invalid-tooltip">{{ $message }}</div>
-                                                    @enderror
-                                                </div>
-                                            </div>
+                                <div class="mt-3">
+                                    <label for="email" class="form-label fw-bold color-blue">Email</label>
+                                    <input type="text" class="form-control @error('email') is-invalid @enderror" id="contactPersonEmail" name="email" placeholder="Email">
+                                    @error('email')
+                                        <div class="invalid-tooltip">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
 
-                                            <!-- Description -->
-                                            <div class="mt-3">
-                                                <label for="description"
-                                                    class="form-label fw-bold color-blue">Description</label>
-                                                <input type="text"
-                                                    class="form-control @error('description') is-invalid @enderror"
-                                                    id="description" name="description" placeholder="Description">
-                                                @error('description')
-                                                <div class="invalid-tooltip">{{ $message }}</div>
-                                                @enderror
-                                            </div>
+                            <!-- Description -->
+                            <div class="mt-3">
+                                <label for="description" class="form-label fw-bold color-blue">Description</label>
+                                <input type="text" class="form-control @error('description') is-invalid @enderror" id="description" name="description" placeholder="Description">
+                                @error('description')
+                                    <div class="invalid-tooltip">{{ $message }}</div>
+                                @enderror
+                            </div>
 
-                                            <!-- Scale -->
-                                            <div class="mt-4">
-                                                <label for="scale" class="form-label fw-bold color-blue">Scale [1-5]
-                                                </label>
-                                                <input type="range"
-                                                    class="form-range @error('scale') is-invalid @enderror" id="scale"
-                                                    name="scale" min="1" max="5" step="1" required>
-                                                <div class="d-flex justify-content-between align-items-center mt-2">
-                                                    @foreach (range(1, 5) as $num)
-                                                    <span class="badge btn-bg-blue rounded-pill">{{ $num }}</span>
-                                                    @endforeach
-                                                </div>
-                                                @error('scale')
-                                                <div class="invalid-tooltip">{{ $message }}</div>
-                                                @enderror
-                                            </div>
+                            <!-- Scale -->
+                            <div class="mt-4">
+                                <label for="scale" class="form-label fw-bold color-blue">Scale [1-5]
+                                </label>
+                                <input type="range" class="form-range @error('scale') is-invalid @enderror" id="scale" name="scale" min="1" max="5" step="1" required>
+                                <div class="d-flex justify-content-between align-items-center mt-2">
+                                    @foreach (range(1, 5) as $num)
+                                        <span class="badge btn-bg-blue rounded-pill">{{ $num }}</span>
+                                    @endforeach
+                                </div>
+                                @error('scale')
+                                    <div class="invalid-tooltip">{{ $message }}</div>
+                                @enderror
+                            </div>
 
-                                            <!-- Buttons -->
-                                            <div class="d-flex justify-content-end gap-2 mt-4">
-                                                <button type="reset" class="cancel-btn">Reset</button>
-                                                <button type="submit" class="create-btn">Submit</button>
-                                            </div>
-                            </form>
-                        </div>
-                    </div>
+                            <!-- Buttons -->
+                            <div class="d-flex justify-content-end gap-2 mt-4">
+                                <button type="reset" class="cancel-btn">Reset</button>
+                                <button type="submit" class="create-btn">Submit</button>
+                            </div>
+                    </form>
                 </div>
             </div>
+        </div>
+    </div>
 
-            <script>
-                document.addEventListener('DOMContentLoaded', function() {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
             const internalRadio = document.getElementById('internal');
             const externalRadio = document.getElementById('external');
             const externalFields = document.getElementById('memberListInput');
@@ -575,12 +509,12 @@
             externalRadio.addEventListener('change', toggleFields);
             toggleFields(); // Initial state on page load
         });
-            </script>
+    </script>
 
 
 
-            <script>
-                $(document).on('click', '.deleteRefGiver', function(e) {
+    <script>
+        $(document).on('click', '.deleteRefGiver', function(e) {
             e.preventDefault();
             const url = $(this).attr('href');
 
@@ -598,11 +532,11 @@
                 }
             });
         });
-            </script>
+    </script>
 
 
-            <script>
-                $(document).ready(function() {
+    <script>
+        $(document).ready(function() {
             // Define click handler
             $('.tab-btn').click(function(e) {
                 e.preventDefault();
@@ -632,10 +566,10 @@
                 $('.tab-btn[data-target="#tabByMe"]').trigger('click');
             }
         });
-            </script>
+    </script>
 
-            <script>
-                document.addEventListener("DOMContentLoaded", function() {
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
             var scaleInput = document.getElementById("scale");
             var scaleOutput = document.getElementById("scaleOutput");
 
@@ -643,12 +577,12 @@
                 scaleOutput.textContent = scaleInput.value;
             });
         });
-            </script>
+    </script>
 
 
 
-            <script type="text/javascript">
-                var path = "{{ route('getMemberForRef') }}";
+    <script type="text/javascript">
+        var path = "{{ route('getMemberForRef') }}";
 
         $('#search').select2({
             placeholder: 'Select Member',
@@ -678,13 +612,13 @@
             $('#selectedMemberId').val(data.id);
             $('#memberName').val(data.firstName);
         });
-            </script>
+    </script>
 
 
-            {{-- toggle between internal and external --}}
+    {{-- toggle between internal and external --}}
 
-            <script>
-                $(document).ready(function() {
+    <script>
+        $(document).ready(function() {
             // Show the internal portion by default
             $("#memberListDropdown").show();
 
@@ -710,14 +644,14 @@
                 $('input[name="contactNo"]').prop('required', false);
             }
         });
-            </script>
+    </script>
 
 
-            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
 
-            <script>
-                $(document).ready(function() {
+    <script>
+        $(document).ready(function() {
             // Set up CSRF token for AJAX requests
             $.ajaxSetup({
                 headers: {
@@ -804,10 +738,10 @@
                 console.log('Selected Member Name:', firstName + ' ' + lastName);
             });
         });
-            </script>
+    </script>
 
 
-            {{-- //ref by other --}}
+    {{-- //ref by other --}}
 
 
-            @endsection
+@endsection
