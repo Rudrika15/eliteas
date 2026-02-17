@@ -63,7 +63,7 @@ class AttendanceController extends Controller
 
             $endDate = Carbon::parse($currentSchedule->date)->endOfDay();
             $startDate = $previousSchedule
-                ? Carbon::parse($previousSchedule->date)->startOfDay()
+                ? Carbon::parse($previousSchedule->date)->addDay()->startOfDay()
                 : Carbon::parse($currentSchedule->date)->subDays(15)->startOfDay();
 
             $lastMeetingId = $previousSchedule ? $previousSchedule->id : null;
@@ -143,26 +143,17 @@ class AttendanceController extends Controller
                     ->whereDate('created_at', '<=', $endDate)
                     ->count();
 
-                // Testimonial Received
                 $testimonialReceived = Testimonial::where('memberId', $uid)
                     ->where('status', 'Active')
                     ->whereDate('created_at', '>=', $startDate)
                     ->whereDate('created_at', '<=', $endDate)
                     ->count();
 
-                // Cumulative Attendance Stats (All time for this circle)
-                $attStats = CircleMeetingsAttendances::where('userId', $uid)
+                $currentStatus = CircleMeetingsAttendances::where('meetingId', $meetingId)
                     ->where('circleId', $circleId)
-                    ->selectRaw("
-                        SUM(CASE WHEN status = 'Present' THEN 1 ELSE 0 END) as present_count,
-                        SUM(CASE WHEN status = 'Absent' THEN 1 ELSE 0 END) as absent_count,
-                        SUM(CASE WHEN status = 'Late' THEN 1 ELSE 0 END) as late_count,
-                        SUM(CASE WHEN status = 'Medical' THEN 1 ELSE 0 END) as medical_count,
-                        SUM(CASE WHEN status = 'Sub' THEN 1 ELSE 0 END) as sub_count
-                    ")
-                    ->first();
+                    ->where('userId', $uid)
+                    ->value('status');
 
-                // Last Meeting Attendance Status
                 $lastStatus = 'N/A';
                 if ($lastMeetingId) {
                     $att = CircleMeetingsAttendances::where('meetingId', $lastMeetingId)
@@ -182,11 +173,11 @@ class AttendanceController extends Controller
                     'training' => $trainingCount,
                     'testimonial_given' => $testimonialGiven,
                     'testimonial_received' => $testimonialReceived,
-                    'present' => $attStats->present_count ?? 0,
-                    'absent' => $attStats->absent_count ?? 0,
-                    'late' => $attStats->late_count ?? 0,
-                    'medical' => $attStats->medical_count ?? 0,
-                    'substitute' => $attStats->sub_count ?? 0,
+                    'present' => $currentStatus === 'Present' ? 'Y' : '-',
+                    'absent' => $currentStatus === 'Absent' ? 'Y' : '-',
+                    'late' => $currentStatus === 'Late' ? 'Y' : '-',
+                    'medical' => $currentStatus === 'Medical' ? 'Y' : '-',
+                    'substitute' => $currentStatus === 'Sub' ? 'Y' : '-',
                     'last_att' => $lastStatus
                 ];
             }

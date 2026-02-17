@@ -40,7 +40,10 @@
                                         <td class="text-center">
                                             {{ \Carbon\Carbon::parse($scheduleData->date)->format('l') }}</td>
                                         <td class="text-center">
-                                            {{-- <div class="btn-group" role="group"> --}}
+                                            <a href="{{ route('visitors.create', ['meetingId' => $scheduleData->id, 'source' => 'invitedAttendance']) }}" class="btn btn-success btn-tooltip">
+                                                <i class="bi bi-plus"></i>
+                                                <span class="btn-text">Add Visitor</span>
+                                            </a>
                                             <a href="{{ route('attendance.takeAttendance', $scheduleData->id) }}" class="btn btn-bg-orange btn-tooltip">
                                                 <i class="bi bi-person-check"></i>
                                                 <span class="btn-text">Internal Attendance</span>
@@ -53,7 +56,6 @@
                                                 <i class="bi bi-person-fill"></i>
                                                 <span class="btn-text">Attendance List</span>
                                             </a>
-                                            {{-- </div> --}}
                                         </td>
                                     </tr>
                                 @endforeach

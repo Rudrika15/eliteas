@@ -377,7 +377,7 @@ class VisitorController extends Controller
             $visitors->email = $request->email;
             $visitors->businessName = $request->businessName;
             $visitors->businessCategory = $request->businessCategory;
-            $visitors->invitedBy = $request->invitedBy;
+            $visitors->invitedBy = $request->memberId ?: $request->invitedBy;
             $visitors->city = $request->city;
             $visitors->createdBy = Auth::user()->id;
             $visitors->circleId = Member::where('userId', auth()->id())->value('circleId');

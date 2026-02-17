@@ -47,7 +47,10 @@
         <div class="card">
             <div class="card-body d-flex justify-content-between align-items-center">
                 <h5 class="card-title">Take Attendance of Invited Peoples</h5>
-                <a href="{{ route('attendance.meetingSchedules') }}" class="btn btn-bg-orange btn-sm">BACK</a>
+                <div class="d-flex gap-2">
+                    <a href="{{ route('visitors.create', ['meetingId' => $meetingId, 'source' => 'invitedAttendance']) }}" class="btn btn-success btn-sm">+</a>
+                    <a href="{{ route('attendance.meetingSchedules') }}" class="btn btn-bg-orange btn-sm">BACK</a>
+                </div>
             </div>
             <form id="invitedAttendanceForm" action="{{ route('attendance.invitedAttendanceStore') }}" method="POST">
                 @csrf

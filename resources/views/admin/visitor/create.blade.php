@@ -17,14 +17,17 @@
             <div class="row mb-3">
                 <div class="col-md-6">
                     <div class="form-floating">
-                        <select class="form-select" id="meetingId" name="meetingId">
+                        <select class="form-select" id="meetingId" name="meetingId" {{ request('source') === 'invitedAttendance' && request('meetingId') ? 'disabled' : '' }}>
                             <option value="">Select Meeting Date</option>
                             @foreach ($meetingList as $meeting)
-                                <option value="{{ $meeting->id }}">
+                                <option value="{{ $meeting->id }}" {{ (int) $meeting->id === (int) request('meetingId') ? 'selected' : '' }}>
                                     {{ \Carbon\Carbon::parse($meeting->date)->format('d-m-Y') }}
                                 </option>
                             @endforeach
                         </select>
+                        @if (request('source') === 'invitedAttendance' && request('meetingId'))
+                            <input type="hidden" name="meetingId" value="{{ request('meetingId') }}">
+                        @endif
 
                         <label for="meetingId">Meeting Date</label>
 
@@ -218,7 +221,7 @@
                 <div class="col-md-6">
                     <div class="form-floating">
                         <!-- Display City Name -->
-                        <input type="text" class="form-control" placeholder="City" value="{{ auth()->user()->member->circle->city->cityName ?? '' }}" readonly>
+                        <input type="text" name="city" class="form-control" placeholder="City" value="{{ auth()->user()->member->circle->city->cityName ?? '' }}" readonly>
                         <!-- Store City ID -->
                         <input type="hidden" name="cityId" value="{{ auth()->user()->member->circle->cityId ?? '' }}">
                         <label>City</label>
@@ -270,7 +273,7 @@
                     </div>
                 </div>
 
-                
+
                 <div class="col-md-6">
                     <div class="form-floating">
                         <select class="form-select" name="memberId" id="memberId">
