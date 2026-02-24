@@ -162,6 +162,13 @@
 </li> --}}
 
     <li class="nav-item">
+        <a class="nav-link collapsed" href="{{ route('social-wall.index') }}">
+            <i class="bi bi-people" style="color: #e76a35"></i>
+            <span class="text-blue">Social Wall</span>
+        </a>
+    </li>
+
+    <li class="nav-item">
         <a class="nav-link collapsed" href="{{ route('chat.index') }}">
             <i class="bi bi-chat" style="color: #e76a35"></i>
             <span class="text-blue">My Chats</span>
@@ -269,6 +276,13 @@
                 </a>
             </li>
         </ul>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link collapsed" href="{{ route('social-wall.index') }}">
+            <i class="bi bi-people" style="color: #e76a35"></i>
+            <span class="text-blue">Social Wall</span>
+        </a>
     </li>
 
     <li class="nav-item">

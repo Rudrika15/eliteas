@@ -45,6 +45,7 @@ use App\Http\Controllers\Api\SpecificAskController;
 use App\Http\Controllers\Api\UpdateAppController;
 use App\Http\Controllers\Api\VisitorController;
 use App\Http\Controllers\Api\CityCountController;
+use App\Http\Controllers\Api\SocialWallController;
 
 // use App\Http\Controllers\Api\CircleMeetingMemberBusinessController;
 
@@ -117,6 +118,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
 
     Route::get('/home-counts', [ApiController::class, 'homeCounts']);
+    Route::get('/my-stats', [ApiController::class, 'myStats']);
     Route::get('/members-activity-counts/{id?}', [ApiController::class, 'membersActivityCount']);
 
 
@@ -540,6 +542,17 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('support-tickets-store', [SupportTicketController::class, 'store']);
     Route::get('support-tickets/{id}', [SupportTicketController::class, 'show']);
     Route::post('support-tickets-update/{id}', [SupportTicketController::class, 'update']);
+
+    // ================= Social Wall APIs =================
+    Route::post('social-wall/post', [SocialWallController::class, 'createPost']);
+    Route::get('social-wall/feed', [SocialWallController::class, 'getFeed']);
+    Route::post('social-wall/like', [SocialWallController::class, 'toggleLike']);
+    Route::post('social-wall/comment', [SocialWallController::class, 'addComment']);
+    Route::get('social-wall/comments/{postId}', [SocialWallController::class, 'getComments']);
+    Route::post('social-wall/post/edit', [SocialWallController::class, 'editPost']);
+    Route::post('social-wall/post/delete', [SocialWallController::class, 'deletePost']);
+    Route::post('social-wall/comment/edit', [SocialWallController::class, 'editComment']);
+    Route::post('social-wall/comment/delete', [SocialWallController::class, 'deleteComment']);
 });
 
 //get app version

@@ -1908,4 +1908,47 @@ class ApiController extends Controller
             return Utils::errorResponse($th->getMessage(), 'Failed to submit information', 500);
         }
     }
+
+
+    public function myStats()
+    {
+        try {
+            $authUserId = Auth::id();
+
+            // Received References
+            $myReceivedReferences = CircleMeetingMembersReference::where('memberId', $authUserId)
+                ->where('status', 'Active')
+                ->count();
+
+            // Given References
+            $myGivenReferences = CircleMeetingMembersReference::where('referenceGiverId', $authUserId)
+                ->where('status', 'Active')
+                ->count();
+
+            // Given Business Amount
+            $myGivenBusiness = CircleMeetingMembersBusiness::where('businessGiverId', $authUserId)
+                ->where('status', 'Active')
+                ->sum('amount');
+
+            // Received Business Amount
+            $myReceivedBusiness = CircleMeetingMembersBusiness::where('loginMemberId', $authUserId)
+                ->where('status', 'Active')
+                ->sum('amount');
+
+            // IBM Count
+            $myIbmCount = CircleCall::where('memberId', $authUserId)
+                ->where('status', 'Active')
+                ->count();
+
+            return Utils::sendResponse([
+                'received_references' => $myReceivedReferences,
+                'given_references' => $myGivenReferences,
+                'given_business' => $myGivenBusiness,
+                'received_business' => $myReceivedBusiness,
+                'ibm_count' => $myIbmCount,
+            ], 'My stats fetched successfully', 200);
+        } catch (\Throwable $th) {
+            return Utils::errorResponse($th->getMessage(), 'Internal Server Error', 500);
+        }
+    }
 }

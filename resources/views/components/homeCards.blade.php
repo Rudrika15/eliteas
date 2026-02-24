@@ -1817,6 +1817,101 @@
     <!-- Right Section (5 Columns) -->
     <div class="col-lg-4 col-md-12">
         <div class="row">
+            @php
+                $authUserId = Auth::id();
+
+                // Received References
+                $myReceivedReferences = \App\Models\CircleMeetingMembersReference::where('memberId', $authUserId)->where('status', 'Active')->count();
+
+                // Given References
+                $myGivenReferences = \App\Models\CircleMeetingMembersReference::where('referenceGiverId', $authUserId)->where('status', 'Active')->count();
+
+                // Given Business Amount
+                $myGivenBusiness = \App\Models\CircleMeetingMembersBusiness::where('businessGiverId', $authUserId)->where('status', 'Active')->sum('amount');
+
+                // Received Business Amount
+                $myReceivedBusiness = \App\Models\CircleMeetingMembersBusiness::where('loginMemberId', $authUserId)->where('status', 'Active')->sum('amount');
+
+                // IBM Count
+                $myIbmCount = \App\Models\CircleCall::where('memberId', $authUserId)->where('status', 'Active')->count();
+            @endphp
+
+            <div class="col-lg-12 col-md-12 mb-4">
+                <div class="card shadow-sm border-0" style="border-radius: 12px; overflow: hidden;">
+                    <div class="card-header border-0 py-3" style="background: linear-gradient(135deg, #1d3268 0%, #3a5bb0 100%);">
+                        <h5 class="mb-0 fw-bold text-white"><i class="bi bi-person-lines-fill me-2"></i>My Stats</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="list-group list-group-flush">
+                            <!-- Received References -->
+                            <div class="list-group-item d-flex align-items-center justify-content-between p-3" style="border-left: 5px solid #28a745; transition: background 0.3s;">
+                                <div class="d-flex align-items-center">
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 45px; height: 45px; background-color: rgba(40, 167, 69, 0.1); color: #28a745;">
+                                        <i class="bi bi-arrow-down-left-circle fs-4"></i>
+                                    </div>
+                                    <div>
+                                        <small class="text-muted text-uppercase fw-bold" style="font-size: 0.75rem; letter-spacing: 0.5px;">Received Refs</small>
+                                        <h5 class="mb-0 fw-bold text-dark">{{ $myReceivedReferences }}</h5>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Given References -->
+                            <div class="list-group-item d-flex align-items-center justify-content-between p-3" style="border-left: 5px solid #17a2b8; transition: background 0.3s;">
+                                <div class="d-flex align-items-center">
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 45px; height: 45px; background-color: rgba(23, 162, 184, 0.1); color: #17a2b8;">
+                                        <i class="bi bi-arrow-up-right-circle fs-4"></i>
+                                    </div>
+                                    <div>
+                                        <small class="text-muted text-uppercase fw-bold" style="font-size: 0.75rem; letter-spacing: 0.5px;">Given Refs</small>
+                                        <h5 class="mb-0 fw-bold text-dark">{{ $myGivenReferences }}</h5>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Given Business -->
+                            <div class="list-group-item d-flex align-items-center justify-content-between p-3" style="border-left: 5px solid #ffc107; transition: background 0.3s;">
+                                <div class="d-flex align-items-center">
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 45px; height: 45px; background-color: rgba(255, 193, 7, 0.1); color: #ffc107;">
+                                        <i class="bi bi-currency-exchange fs-4"></i>
+                                    </div>
+                                    <div>
+                                        <small class="text-muted text-uppercase fw-bold" style="font-size: 0.75rem; letter-spacing: 0.5px;">Given Business</small>
+                                        <h5 class="mb-0 fw-bold text-dark">₹{{ number_format($myGivenBusiness, 0) }}</h5>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Received Business -->
+                            <div class="list-group-item d-flex align-items-center justify-content-between p-3" style="border-left: 5px solid #dc3545; transition: background 0.3s;">
+                                <div class="d-flex align-items-center">
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 45px; height: 45px; background-color: rgba(220, 53, 69, 0.1); color: #dc3545;">
+                                        <i class="bi bi-cash-coin fs-4"></i>
+                                    </div>
+                                    <div>
+                                        <small class="text-muted text-uppercase fw-bold" style="font-size: 0.75rem; letter-spacing: 0.5px;">Received Business</small>
+                                        <h5 class="mb-0 fw-bold text-dark">₹{{ number_format($myReceivedBusiness, 0) }}</h5>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- IBM Count -->
+                            <div class="list-group-item d-flex align-items-center justify-content-between p-3" style="border-left: 5px solid #6f42c1; transition: background 0.3s;">
+                                <div class="d-flex align-items-center">
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 45px; height: 45px; background-color: rgba(111, 66, 193, 0.1); color: #6f42c1;">
+                                        <i class="bi bi-people-fill fs-4"></i>
+                                    </div>
+                                    <div>
+                                        <small class="text-muted text-uppercase fw-bold" style="font-size: 0.75rem; letter-spacing: 0.5px;">IBM Count</small>
+                                        <h5 class="mb-0 fw-bold text-dark">{{ $myIbmCount }}</h5>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             @if ($categoryNames->isNotEmpty())
                 <div class="card shadow-sm p-4 text-center">
                     <h4 class="mb-4 fw-bold">Vacant Categories</h4>

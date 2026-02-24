@@ -93,4 +93,19 @@ class User extends Authenticatable
     {
         return $this->hasMany(Member::class, 'createdBy', 'id');
     }
+
+    public function posts()
+    {
+        return $this->hasMany(Post::class, 'userId', 'id');
+    }
+
+    public function likes()
+    {
+        return $this->hasMany(Like::class, 'userId', 'id');
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class, 'userId', 'id');
+    }
 }

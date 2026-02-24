@@ -560,6 +560,18 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::get('/connection/{categoryId}/categoryList', [ConnectionController::class, 'categoryMembers'])->name('connection.category.members');
 
+    // ================= Social Wall Routes =================
+    Route::get('/social-wall', [App\Http\Controllers\Admin\SocialWallController::class, 'index'])->name('social-wall.index');
+    Route::post('/social-wall/store', [App\Http\Controllers\Admin\SocialWallController::class, 'store'])->name('social-wall.store');
+    Route::post('/social-wall/like', [App\Http\Controllers\Admin\SocialWallController::class, 'toggleLike'])->name('social-wall.like');
+    Route::post('/social-wall/comment', [App\Http\Controllers\Admin\SocialWallController::class, 'addComment'])->name('social-wall.comment');
+    Route::post('/social-wall/comment/edit', [App\Http\Controllers\Admin\SocialWallController::class, 'editComment'])->name('social-wall.comment.edit');
+    Route::post('/social-wall/comment/delete', [App\Http\Controllers\Admin\SocialWallController::class, 'deleteComment'])->name('social-wall.comment.delete');
+    Route::get('/social-wall/comments/{postId}', [App\Http\Controllers\Admin\SocialWallController::class, 'getComments'])->name('social-wall.comments');
+    Route::post('/social-wall/post/delete', [App\Http\Controllers\Admin\SocialWallController::class, 'deletePost'])->name('social-wall.post.delete');
+    Route::post('/social-wall/post/edit', [App\Http\Controllers\Admin\SocialWallController::class, 'editPost'])->name('social-wall.post.edit');
+    Route::get('/social-wall/post/{postId}', [App\Http\Controllers\Admin\SocialWallController::class, 'getPostDetails'])->name('social-wall.post.details');
+
 
 
 

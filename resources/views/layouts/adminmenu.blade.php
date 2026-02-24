@@ -92,6 +92,13 @@
 </li> --}}
 
 <li class="nav-item">
+    <a class="nav-link collapsed" href="{{ route('social-wall.index') }}">
+        <i class="bi bi-people" style="color: #e76a35"></i>
+        <span style="color: #1d2856">Social Wall</span>
+    </a>
+</li>
+
+<li class="nav-item">
     <a class="nav-link collapsed" data-bs-target="#allActivity-nav" data-bs-toggle="collapse" href="#">
         <i class="bi bi-person-gear" style="color: #e76a35"></i><span>All Activity</span><i class="bi bi-chevron-down ms-auto" style="color: #e76a35"></i>
     </a>
