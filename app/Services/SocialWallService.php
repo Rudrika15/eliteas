@@ -62,7 +62,9 @@ class SocialWallService
                 'user.member' => function ($q) {
                     $q->select('id', 'userId', 'profilePhoto');
                 },
-                'media',
+                'media' => function ($q) {
+                    $q->where('status', 'Active');
+                },
                 'likes' => function ($q) {
                     $q->where('status', 'Active');
                 },

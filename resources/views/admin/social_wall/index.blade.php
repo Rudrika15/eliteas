@@ -4,6 +4,29 @@
 
 @section('content')
     <style>
+        #preview-container {
+            max-height: 80px;
+        }
+
+        /* Custom scrollbar for preview container */
+        #preview-container::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        #preview-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+
+        #preview-container::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 3px;
+        }
+
+        #preview-container::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
         .social-wall-container {
             max-width: 800px;
             margin: 0 auto;
@@ -73,13 +96,13 @@
 
         .post-media-grid.grid-2 {
             grid-template-columns: 1fr 1fr;
-            height: 300px;
+            height: 240px;
         }
 
         .post-media-grid.grid-3 {
             grid-template-columns: 1fr 1fr;
             grid-template-rows: 1fr 1fr;
-            height: 400px;
+            height: 320px;
         }
 
         .post-media-grid.grid-3 .media-item:first-child {
@@ -89,13 +112,13 @@
         .post-media-grid.grid-4 {
             grid-template-columns: 1fr 1fr;
             grid-template-rows: 1fr 1fr;
-            height: 400px;
+            height: 320px;
         }
 
         .post-media-grid.grid-5-plus {
             grid-template-columns: 1fr 1fr;
             grid-template-rows: 1fr 1fr;
-            height: 400px;
+            height: 320px;
         }
 
         /* Removed span 2 for grid-5-plus to allow 2x2 grid for 4 items */
@@ -412,7 +435,7 @@
 
         .preview-item img,
         .preview-item video {
-            height: 100px;
+            height: 70px;
             border-radius: 8px;
             object-fit: cover;
         }
@@ -618,7 +641,7 @@
 
     {{-- Comment Modal --}}
     <div id="comment-modal" class="modal fade" tabindex="-1" aria-hidden="true" style="z-index: 10002;">
-        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-dialog modal-sm modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Comments</h5>
@@ -897,7 +920,7 @@
             xhr.onerror = function() {
                 document.getElementById('progress-container').style.display = 'none';
                 document.getElementById('upload-btn').disabled = false;
-                alert('Upload failed. Please check your connection.');
+                Swal.fire('Upload failed', 'Please check your connection and try again.', 'error');
             };
 
             xhr.send(formData);
@@ -994,7 +1017,7 @@
                     .then(response => response.json())
                     .then(data => {
                         if (data.error) {
-                            alert(data.error);
+                            Swal.fire('Error', data.error, 'error');
                         } else {
                             input.value = '';
                             // Append new comment
@@ -1039,36 +1062,47 @@
         }
 
         function deleteComment(commentId, prefix = '') {
-            if (!confirm('Are you sure you want to delete this comment?')) return;
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "This comment will be removed.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Optimistic UI update
+                    var mainEl = document.getElementById('comment-container-' + commentId);
+                    var modalEl = document.getElementById('modal-comment-container-' + commentId);
+                    if (mainEl) mainEl.remove();
+                    if (modalEl) modalEl.remove();
 
-            // Optimistic UI update
-            var mainEl = document.getElementById('comment-container-' + commentId);
-            var modalEl = document.getElementById('modal-comment-container-' + commentId);
-
-            if (mainEl) mainEl.remove();
-            if (modalEl) modalEl.remove();
-
-            fetch("{{ route('social-wall.comment.delete') }}", {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    body: JSON.stringify({
-                        comment_id: commentId
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (!data.success) {
-                        alert(data.message || 'Error deleting comment');
-                        location.reload();
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    location.reload();
-                });
+                    fetch("{{ route('social-wall.comment.delete') }}", {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            },
+                            body: JSON.stringify({
+                                comment_id: commentId
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (!data.success) {
+                                Swal.fire('Error', data.message || 'Error deleting comment', 'error')
+                                    .then(() => location.reload());
+                            } else {
+                                Swal.fire('Deleted!', 'Comment deleted successfully.', 'success');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            Swal.fire('Error', 'Something went wrong.', 'error');
+                        });
+                }
+            });
         }
 
         function enableEditComment(commentId, prefix = '') {
@@ -1109,13 +1143,14 @@
                 .then(response => response.json())
                 .then(data => {
                     if (!data.success) {
-                        alert(data.message || 'Error updating comment');
-                        location.reload();
+                        Swal.fire('Error', (data.message || 'Error updating comment'), 'error')
+                            .then(() => location.reload());
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    location.reload();
+                    Swal.fire('Error', 'Something went wrong.', 'error')
+                        .then(() => location.reload());
                 });
         }
 
@@ -1249,13 +1284,13 @@
                             mediaContainer.innerHTML = '<span class="text-muted small">No media</span>';
                         }
                     } else {
-                        alert(data.message || 'Error fetching post details');
-                        modal.hide();
+                        Swal.fire('Error', data.message || 'Error fetching post details', 'error');
+                        modal.hide && modal.hide();
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('Error fetching post details');
+                    Swal.fire('Error', 'Error fetching post details', 'error');
                 });
         }
 
@@ -1311,15 +1346,22 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        alert('Post updated successfully');
-                        location.reload();
+                        // Close the modal first
+                        var modalEl = document.getElementById('edit-post-modal');
+                        var modal = bootstrap.Modal.getInstance(modalEl);
+                        if (modal) {
+                            modal.hide();
+                        }
+
+                        Swal.fire('Updated!', 'Post updated successfully.', 'success')
+                            .then(() => location.reload());
                     } else {
-                        alert(data.message || 'Error updating post');
+                        Swal.fire('Error', data.message || 'Error updating post', 'error');
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('Error updating post');
+                    Swal.fire('Error', 'Error updating post', 'error');
                 });
         }
 
