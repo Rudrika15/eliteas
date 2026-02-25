@@ -174,6 +174,9 @@
                     @endif
                     <div class="mt-auto">
                         <a href="{{ route('foundPersonDetails', $member->receiverMember->id) }}" class="fb-btn fb-btn-primary w-100 text-decoration-none">View Profile</a>
+                        <div class="mt-2 text-center fw-bold" style="color: #1d3268;">
+                            Sponsored - {{ $member->receiverMember->sponsored_count ?? $member->receiverMember->sponsored->count() }}
+                        </div>
                         <button type="button" class="fb-btn fb-btn-secondary fb-btn-disabled w-100 mt-2">
                             <i class="bi bi-clock me-2"></i> Requested
                         </button>

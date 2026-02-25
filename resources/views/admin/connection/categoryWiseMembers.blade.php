@@ -377,6 +377,9 @@
                             </div>
                         </div>
 
+                        <div class="mt-2 text-center fw-bold pb-2" style="color: #1d3268;">
+                            Sponsored - {{ $member->sponsored_count ?? $member->sponsored->count() }}
+                        </div>
                         <!-- Bottom Actions -->
                         <div class="bottom-actions">
                             <!-- View Profile Button -->

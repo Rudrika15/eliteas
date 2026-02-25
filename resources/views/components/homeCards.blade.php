@@ -1570,6 +1570,10 @@
                                                 </form>
                                             @endif
 
+                                            <div class="mt-2 text-center fw-bold" style="color: #1d3268;">
+                                                Sponsored - {{ $circlecalls['member']->sponsored->count() }}
+                                            </div>
+
                                             <!-- View Profile -->
                                             <a href="{{ route('foundPersonDetails', $circlecalls['member']->id) }}" class="text-decoration-none d-block w-100">
                                                 <button class="fb-btn fb-btn-secondary">View Profile</button>
@@ -1628,6 +1632,11 @@
                                                     <button type="submit" class="fb-btn fb-btn-primary">Connect</button>
                                                 </form>
                                             @endif
+
+                                            <div class="mt-2 text-center fw-bold" style="color: #1d3268;">
+                                                Sponsored - {{ $busGiver['member']->sponsored->count() }}
+                                            </div>
+
                                             <!-- View Profile -->
                                             <a href="{{ route('foundPersonDetails', $busGiver['member']->id) }}" class="text-decoration-none d-block w-100">
                                                 <button class="fb-btn fb-btn-secondary">View Profile</button>
@@ -1684,8 +1693,72 @@
                                                 </form>
                                             @endif
 
+                                            <div class="mt-2 text-center fw-bold" style="color: #1d3268;">
+                                                Sponsored - {{ $refGiver['member']->sponsored->count() }}
+                                            </div>
+
                                             <!-- View Profile -->
                                             <a href="{{ route('foundPersonDetails', $refGiver['member']->id) }}" class="text-decoration-none d-block w-100">
+                                                <button class="fb-btn fb-btn-secondary">View Profile</button>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+
+                        {{-- Card 4: Top Induction --}}
+                        @if (isset($induction) && $induction)
+                            <div class="col-sm-6 col-lg-4">
+                                <div class="fb-card shadow-sm">
+                                    <div class="fb-card-img-wrapper">
+                                        <span class="fb-badge">Top Induction</span>
+                                        <img src="{{ asset('ProfilePhoto/' . ($induction['member']->profilePhoto ?? 'profile.png')) }}" class="fb-card-img" alt="Profile Image">
+                                    </div>
+                                    <div class="fb-card-body">
+                                        <h5 class="fb-card-title">{{ $induction['member']->firstName }} {{ $induction['member']->lastName }}</h5>
+
+                                        <div class="fb-card-subtitle">
+                                            <i class="bi bi-people-fill"></i>
+                                            {{ $induction['member']->circle->circleName ?? 'N/A' }}
+                                            <span>&bull;</span>
+                                            <span>Inductions: {{ $induction['count'] ?? '0' }}</span>
+                                        </div>
+
+                                        <div class="fb-card-info">
+                                            @if (!empty($induction['member']->companyName))
+                                                <div><i class="bi bi-building me-1"></i> {{ $induction['member']->companyName }}</div>
+                                            @endif
+                                            @if (!empty($induction['member']->bCategory->categoryName))
+                                                <div><i class="bi bi-tag me-1"></i> {{ $induction['member']->bCategory->categoryName }}</div>
+                                            @endif
+                                        </div>
+
+                                        <div class="mt-auto">
+                                            <!-- Connect Button -->
+                                            @php
+                                                $connectionStatus = $induction['member']->connection_status ?? 'Not Connected';
+                                            @endphp
+                                            @if ($connectionStatus == 'Connected')
+                                                <button type="button" class="fb-btn fb-btn-disabled">Connected</button>
+                                            @elseif ($connectionStatus == 'Accepted')
+                                                <button class="fb-btn fb-btn-primary">Message</button>
+                                            @elseif ($connectionStatus == 'Pending')
+                                                <button type="button" class="fb-btn fb-btn-disabled">Requested</button>
+                                            @else
+                                                <form action="{{ route('connect') }}" method="POST" class="d-block w-100">
+                                                    @csrf
+                                                    <input type="hidden" value="{{ $induction['member']->id }}" name="memberId">
+                                                    <button type="submit" class="fb-btn fb-btn-primary">Connect</button>
+                                                </form>
+                                            @endif
+
+                                            <div class="mt-2 text-center fw-bold" style="color: #1d3268;">
+                                                Sponsored - {{ $induction['member']->sponsored->count() }}
+                                            </div>
+
+                                            <!-- View Profile -->
+                                            <a href="{{ route('foundPersonDetails', $induction['member']->id) }}" class="text-decoration-none d-block w-100">
                                                 <button class="fb-btn fb-btn-secondary">View Profile</button>
                                             </a>
                                         </div>
@@ -1831,9 +1904,6 @@
 
                 // Received Business Amount
                 $myReceivedBusiness = \App\Models\CircleMeetingMembersBusiness::where('loginMemberId', $authUserId)->where('status', 'Active')->sum('amount');
-
-                // IBM Count
-                $myIbmCount = \App\Models\CircleCall::where('memberId', $authUserId)->where('status', 'Active')->count();
             @endphp
 
             <div class="col-lg-12 col-md-12 mb-4">
@@ -1841,69 +1911,56 @@
                     <div class="card-header border-0 py-3" style="background: linear-gradient(135deg, #1d3268 0%, #3a5bb0 100%);">
                         <h5 class="mb-0 fw-bold text-white"><i class="bi bi-person-lines-fill me-2"></i>My Stats</h5>
                     </div>
-                    <div class="card-body p-0">
-                        <div class="list-group list-group-flush">
+                    <div class="card-body p-3">
+                        <div class="row g-3">
                             <!-- Received References -->
-                            <div class="list-group-item d-flex align-items-center justify-content-between p-3" style="border-left: 5px solid #28a745; transition: background 0.3s;">
-                                <div class="d-flex align-items-center">
-                                    <div class="rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 45px; height: 45px; background-color: rgba(40, 167, 69, 0.1); color: #28a745;">
-                                        <i class="bi bi-arrow-down-left-circle fs-4"></i>
+                            <div class="col-6">
+                                <div class="d-flex align-items-center p-2 border rounded h-100" style="border-left: 5px solid #28a745 !important; background-color: #fff;">
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 35px; height: 35px; background-color: rgba(40, 167, 69, 0.1); color: #28a745; flex-shrink: 0;">
+                                        <i class="bi bi-arrow-down-left-circle fs-5"></i>
                                     </div>
                                     <div>
-                                        <small class="text-muted text-uppercase fw-bold" style="font-size: 0.75rem; letter-spacing: 0.5px;">Received Refs</small>
+                                        <small class="text-muted text-uppercase fw-bold d-block" style="font-size: 0.65rem; letter-spacing: 0.5px; line-height: 1.2;">Received Refs</small>
                                         <h5 class="mb-0 fw-bold text-dark">{{ $myReceivedReferences }}</h5>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Given References -->
-                            <div class="list-group-item d-flex align-items-center justify-content-between p-3" style="border-left: 5px solid #17a2b8; transition: background 0.3s;">
-                                <div class="d-flex align-items-center">
-                                    <div class="rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 45px; height: 45px; background-color: rgba(23, 162, 184, 0.1); color: #17a2b8;">
-                                        <i class="bi bi-arrow-up-right-circle fs-4"></i>
+                            <div class="col-6">
+                                <div class="d-flex align-items-center p-2 border rounded h-100" style="border-left: 5px solid #17a2b8 !important; background-color: #fff;">
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 35px; height: 35px; background-color: rgba(23, 162, 184, 0.1); color: #17a2b8; flex-shrink: 0;">
+                                        <i class="bi bi-arrow-up-right-circle fs-5"></i>
                                     </div>
                                     <div>
-                                        <small class="text-muted text-uppercase fw-bold" style="font-size: 0.75rem; letter-spacing: 0.5px;">Given Refs</small>
+                                        <small class="text-muted text-uppercase fw-bold d-block" style="font-size: 0.65rem; letter-spacing: 0.5px; line-height: 1.2;">Given Refs</small>
                                         <h5 class="mb-0 fw-bold text-dark">{{ $myGivenReferences }}</h5>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Given Business -->
-                            <div class="list-group-item d-flex align-items-center justify-content-between p-3" style="border-left: 5px solid #ffc107; transition: background 0.3s;">
-                                <div class="d-flex align-items-center">
-                                    <div class="rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 45px; height: 45px; background-color: rgba(255, 193, 7, 0.1); color: #ffc107;">
-                                        <i class="bi bi-currency-exchange fs-4"></i>
-                                    </div>
-                                    <div>
-                                        <small class="text-muted text-uppercase fw-bold" style="font-size: 0.75rem; letter-spacing: 0.5px;">Given Business</small>
-                                        <h5 class="mb-0 fw-bold text-dark">₹{{ number_format($myGivenBusiness, 0) }}</h5>
-                                    </div>
-                                </div>
-                            </div>
-
                             <!-- Received Business -->
-                            <div class="list-group-item d-flex align-items-center justify-content-between p-3" style="border-left: 5px solid #dc3545; transition: background 0.3s;">
-                                <div class="d-flex align-items-center">
-                                    <div class="rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 45px; height: 45px; background-color: rgba(220, 53, 69, 0.1); color: #dc3545;">
-                                        <i class="bi bi-cash-coin fs-4"></i>
+                            <div class="col-6">
+                                <div class="d-flex align-items-center p-2 border rounded h-100" style="border-left: 5px solid #dc3545 !important; background-color: #fff;">
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 35px; height: 35px; background-color: rgba(220, 53, 69, 0.1); color: #dc3545; flex-shrink: 0;">
+                                        <i class="bi bi-cash-coin fs-5"></i>
                                     </div>
                                     <div>
-                                        <small class="text-muted text-uppercase fw-bold" style="font-size: 0.75rem; letter-spacing: 0.5px;">Received Business</small>
-                                        <h5 class="mb-0 fw-bold text-dark">₹{{ number_format($myReceivedBusiness, 0) }}</h5>
+                                        <small class="text-muted text-uppercase fw-bold d-block" style="font-size: 0.65rem; letter-spacing: 0.5px; line-height: 1.2;">Received Business</small>
+                                        <h5 class="mb-0 fw-bold text-dark" style="font-size: 0.9rem;">₹{{ number_format($myReceivedBusiness, 0) }}</h5>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- IBM Count -->
-                            <div class="list-group-item d-flex align-items-center justify-content-between p-3" style="border-left: 5px solid #6f42c1; transition: background 0.3s;">
-                                <div class="d-flex align-items-center">
-                                    <div class="rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 45px; height: 45px; background-color: rgba(111, 66, 193, 0.1); color: #6f42c1;">
-                                        <i class="bi bi-people-fill fs-4"></i>
+                            <!-- Given Business -->
+                            <div class="col-6">
+                                <div class="d-flex align-items-center p-2 border rounded h-100" style="border-left: 5px solid #ffc107 !important; background-color: #fff;">
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 35px; height: 35px; background-color: rgba(255, 193, 7, 0.1); color: #ffc107; flex-shrink: 0;">
+                                        <i class="bi bi-currency-exchange fs-5"></i>
                                     </div>
                                     <div>
-                                        <small class="text-muted text-uppercase fw-bold" style="font-size: 0.75rem; letter-spacing: 0.5px;">IBM Count</small>
-                                        <h5 class="mb-0 fw-bold text-dark">{{ $myIbmCount }}</h5>
+                                        <small class="text-muted text-uppercase fw-bold d-block" style="font-size: 0.65rem; letter-spacing: 0.5px; line-height: 1.2;">Given Business</small>
+                                        <h5 class="mb-0 fw-bold text-dark" style="font-size: 0.9rem;">₹{{ number_format($myGivenBusiness, 0) }}</h5>
                                     </div>
                                 </div>
                             </div>

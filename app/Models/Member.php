@@ -22,6 +22,11 @@ class Member extends Model
         'userId',
     ];
 
+    public function sponsored()
+    {
+        return $this->hasMany(Member::class, 'sponsoredBy', 'id');
+    }
+
     public function roles()
     {
         return $this->belongsToMany(Role::class);

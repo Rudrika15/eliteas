@@ -263,10 +263,9 @@
                                 @endif
                             </div>
 
-                            <div class="induction-count-section rounded bg-light mt-2">
-                                <div class="label" style="color: #1d3268; font-weight: bold;">Induction Count : {{
-                                    $myConnectionsData->inductionCount ?? '0' }}</div>
-                            </div>
+                            <div class="mt-2 text-center fw-bold" style="color: #1d3268;">
+                                    Sponsored - {{ $myConnectionsData->inductionCount ?? '0' }}
+                                </div>
                         </div>
 
                         <div class="bottom-actions">

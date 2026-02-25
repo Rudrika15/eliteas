@@ -3,67 +3,181 @@
 @section('content')
 
 
-<!doctype html>
-<html lang="en">
+    <!doctype html>
+    <html lang="en">
 
-<head>
-    <title>UBN - Search User</title>
-    <!-- Required meta tags -->
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <head>
+        <title>UBN - Search User</title>
+        <!-- Required meta tags -->
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 
-    <!-- Bootstrap CSS v5.3.2 -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" />
-    {{-- add csrf --}}
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    {{-- <title>Dashboard - Admin</title> --}}
-    <meta content="" name="description">
-    <meta content="" name="keywords">
+        <!-- Bootstrap CSS v5.3.2 -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" />
+        {{-- add csrf --}}
+        <meta name="csrf-token" content="{{ csrf_token() }}">
+        {{-- <title>Dashboard - Admin</title> --}}
+        <meta content="" name="description">
+        <meta content="" name="keywords">
 
-    <!-- Favicons -->
-    <link href="{{ asset('img/favicon.png') }}" rel="icon" />
-    <link href="{{ asset('img/apple-touch-icon.png') }}" rel="apple-touch-icon" />
+        <!-- Favicons -->
+        <link href="{{ asset('img/favicon.png') }}" rel="icon" />
+        <link href="{{ asset('img/apple-touch-icon.png') }}" rel="apple-touch-icon" />
 
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link
-        href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
-        rel="stylesheet">
-    <!-- Vendor CSS Files -->
-    <link href="{{ asset('vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet" />
-    <link href="{{ asset('vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet" />
-    <link href="{{ asset('vendor/boxicons/css/boxicons.min.css') }}" rel="stylesheet" />
-    <link href="{{ asset('vendor/quill/quill.snow.css') }}" rel="stylesheet" />
-    <link href="{{ asset('vendor/remixicon/remixicon.css') }}" rel="stylesheet" />
-    <link href="{{ asset('vendor/simple-datatables/style.css') }}" rel="stylesheet" />
-    <!-- Template     Main CSS File -->
-    <link href="{{ asset('css/style.css') }}" rel="stylesheet" />
-    <script src="https://code.jquery.com/jquery-3.7.1.js"
-        integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
-    <style>
-        .keyword-pill { display: inline-block; background-color: #f3f5fb; color: #3a3a3a; font-size: 12px; padding: 6px 12px; margin: 5px 5px; border-radius: 20px; border: 1px solid #e0e4f0; cursor: default; }
-        .fb-card { background-color: #ffffff; border-radius: 10px; overflow: hidden; border: 1px solid #e0e0e0; display: flex; flex-direction: column; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); }
-        .fb-card-img-wrapper { width: 100%; padding-top: 100%; position: relative; background-color: #f8f9fa; border-bottom: 1px solid #e0e0e0; }
-        .fb-card-img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
-        .fb-card-body { padding: 16px; flex-grow: 1; display: flex; flex-direction: column; background-color: #ffffff; }
-        .fb-card-title { color: #1d3268; font-size: 20px; font-weight: 700; margin-bottom: 4px; line-height: 1.2; }
-        .fb-card-subtitle { color: #65676b; font-size: 15px; margin-bottom: 16px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-        .fb-card-info { color: #65676b; font-size: 14px; margin-bottom: 16px; line-height: 1.5; }
-        .fb-card-info i { color: #e76a35; }
-        .fb-badge { position: absolute; top: 10px; left: 10px; background: #e76a35; color: #fff; padding: 4px 10px; border-radius: 4px; font-size: 12px; font-weight: 600; z-index: 10; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); }
-        .fb-btn { width: 100%; border: none; border-radius: 6px; padding: 8px 0; font-weight: 600; font-size: 15px; cursor: pointer; transition: background 0.2s; display: flex; justify-content: center; align-items: center; text-decoration: none; }
-        .fb-btn:hover { text-decoration: none; }
-        .fb-btn-primary { background-color: #1d3268; color: #fff; }
-        .fb-btn-primary:hover { background-color: #15244d; color: #fff; }
-        .fb-btn-secondary { background-color: #e4e6eb; color: #1d3268; margin-top: 10px; }
-        .fb-btn-secondary:hover { background-color: #d8dadf; color: #1d3268; }
-        .fb-btn-disabled { background-color: #e4e6eb; color: #bcc0c4; cursor: default; }
-    </style>
-</head>
+        <!-- Google Fonts -->
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+        <!-- Vendor CSS Files -->
+        <link href="{{ asset('vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet" />
+        <link href="{{ asset('vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet" />
+        <link href="{{ asset('vendor/boxicons/css/boxicons.min.css') }}" rel="stylesheet" />
+        <link href="{{ asset('vendor/quill/quill.snow.css') }}" rel="stylesheet" />
+        <link href="{{ asset('vendor/remixicon/remixicon.css') }}" rel="stylesheet" />
+        <link href="{{ asset('vendor/simple-datatables/style.css') }}" rel="stylesheet" />
+        <!-- Template     Main CSS File -->
+        <link href="{{ asset('css/style.css') }}" rel="stylesheet" />
+        <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+        <style>
+            .keyword-pill {
+                display: inline-block;
+                background-color: #f3f5fb;
+                color: #3a3a3a;
+                font-size: 12px;
+                padding: 6px 12px;
+                margin: 5px 5px;
+                border-radius: 20px;
+                border: 1px solid #e0e4f0;
+                cursor: default;
+            }
 
-<body class="" style=" mix-blend-mode: multiply;">
-    {{--
+            .fb-card {
+                background-color: #ffffff;
+                border-radius: 10px;
+                overflow: hidden;
+                border: 1px solid #e0e0e0;
+                display: flex;
+                flex-direction: column;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            }
+
+            .fb-card-img-wrapper {
+                width: 100%;
+                padding-top: 100%;
+                position: relative;
+                background-color: #f8f9fa;
+                border-bottom: 1px solid #e0e0e0;
+            }
+
+            .fb-card-img {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+            .fb-card-body {
+                padding: 16px;
+                flex-grow: 1;
+                display: flex;
+                flex-direction: column;
+                background-color: #ffffff;
+            }
+
+            .fb-card-title {
+                color: #1d3268;
+                font-size: 20px;
+                font-weight: 700;
+                margin-bottom: 4px;
+                line-height: 1.2;
+            }
+
+            .fb-card-subtitle {
+                color: #65676b;
+                font-size: 15px;
+                margin-bottom: 16px;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                flex-wrap: wrap;
+            }
+
+            .fb-card-info {
+                color: #65676b;
+                font-size: 14px;
+                margin-bottom: 16px;
+                line-height: 1.5;
+            }
+
+            .fb-card-info i {
+                color: #e76a35;
+            }
+
+            .fb-badge {
+                position: absolute;
+                top: 10px;
+                left: 10px;
+                background: #e76a35;
+                color: #fff;
+                padding: 4px 10px;
+                border-radius: 4px;
+                font-size: 12px;
+                font-weight: 600;
+                z-index: 10;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            }
+
+            .fb-btn {
+                width: 100%;
+                border: none;
+                border-radius: 6px;
+                padding: 8px 0;
+                font-weight: 600;
+                font-size: 15px;
+                cursor: pointer;
+                transition: background 0.2s;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                text-decoration: none;
+            }
+
+            .fb-btn:hover {
+                text-decoration: none;
+            }
+
+            .fb-btn-primary {
+                background-color: #1d3268;
+                color: #fff;
+            }
+
+            .fb-btn-primary:hover {
+                background-color: #15244d;
+                color: #fff;
+            }
+
+            .fb-btn-secondary {
+                background-color: #e4e6eb;
+                color: #1d3268;
+                margin-top: 10px;
+            }
+
+            .fb-btn-secondary:hover {
+                background-color: #d8dadf;
+                color: #1d3268;
+            }
+
+            .fb-btn-disabled {
+                background-color: #e4e6eb;
+                color: #bcc0c4;
+                cursor: default;
+            }
+        </style>
+    </head>
+
+    <body class="" style=" mix-blend-mode: multiply;">
+        {{--
 
     <body class="" style=" mix-blend-mode: multiply; background: linear-gradient(to right, #1d2856, #e76a35);"> --}}
         <header>
@@ -74,12 +188,10 @@
             <div class="pt-5 px-3">
                 <div class="row d-flex justify-content-center align-items-center">
                     <div class="col-md-1">
-                        <img src="{{ asset('img/logo4.png') }}" alt="UBN" class="pb-2" width="100"
-                            style="max-width: 100%; height: auto;">
+                        <img src="{{ asset('img/logo4.png') }}" alt="UBN" class="pb-2" width="100" style="max-width: 100%; height: auto;">
                     </div>
                     <div class="col-md-10">
-                        <input type="text" name="query" id="searchInput" class="form-control"
-                            placeholder="Enter search keyword" title="Enter search keyword">
+                        <input type="text" name="query" id="searchInput" class="form-control" placeholder="Enter search keyword" title="Enter search keyword">
                     </div>
                     <div class="col-auto">
                         <a href="{{ route('home') }}" class="btn btn-bg-orange btn-sm">BACK</a>
@@ -177,8 +289,7 @@
             </div>
         </footer><!-- End Footer --> --}}
 
-        <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
-                class="bi bi-arrow-up-short"></i></a>
+        <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
         <!-- Vendor JS Files -->
 
@@ -198,19 +309,16 @@
         <script src="{{ asset('js/main.js') }}"></script>
 
         <!-- Bootstrap JavaScript Libraries -->
-        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
-            integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous">
-        </script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
-            integrity="sha384-BBlxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBlxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
         <div id="searchResults"></div>
 
         @auth
-        <script>
-            window.authCircleId = @json(optional(\App\Models\Member::where('userId', Auth::id())->first())->circleId);
-        </script>
+            <script>
+                window.authCircleId = @json(optional(\App\Models\Member::where('userId', Auth::id())->first())->circleId);
+            </script>
         @endauth
 
         {{-- <style>
@@ -1042,7 +1150,9 @@
             function performSearch(query) {
                 if (!query) {
                     var el = document.getElementById('searchResults');
-                    if (el) { el.innerHTML = ''; }
+                    if (el) {
+                        el.innerHTML = '';
+                    }
                     return;
                 }
                 var xhr = new XMLHttpRequest();
@@ -1059,7 +1169,9 @@
                         console.error('Request failed. Status:', xhr.status);
                     }
                 };
-                xhr.onerror = function() { console.error('Network error during search'); };
+                xhr.onerror = function() {
+                    console.error('Network error during search');
+                };
                 xhr.send();
             }
 
@@ -1193,8 +1305,8 @@
                         var hasKeywords = false; // Flag to track if valid keywords exist
 
                         if (member.keyWords) {
-                             try {
-                                 var keywordsArray = JSON.parse(member.keyWords);
+                            try {
+                                var keywordsArray = JSON.parse(member.keyWords);
                                 console.log('Parsed keywords array:', keywordsArray); // Debugging log
 
                                 if (Array.isArray(keywordsArray) && keywordsArray.length > 0) {
@@ -1228,6 +1340,12 @@
                         viewProfileLink.textContent = 'View Profile';
                         cardBody.appendChild(viewProfileLink);
 
+                        var inductionInfo = document.createElement('div');
+                        inductionInfo.classList.add('mt-2', 'text-center', 'fw-bold');
+                        inductionInfo.style.color = '#1d3268';
+                        inductionInfo.innerHTML = `Sponsored - ${member.induction_count || 0}`;
+                        cardBody.appendChild(inductionInfo);
+
                         if (member.connection_status === 'Connected' || member.connection_status === 'Accepted') {
                             var connectedBtn = document.createElement('button');
                             connectedBtn.type = 'button';
@@ -1245,16 +1363,13 @@
                             connectBtn.type = 'button';
                             connectBtn.className = 'fb-btn fb-btn-secondary w-100 mt-2';
                             connectBtn.innerHTML = '<i class="bi bi-person-plus-fill me-2"></i> Connect';
-                            connectBtn.addEventListener('click', function() { sendConnectionRequest(member.id, connectBtn); });
+                            connectBtn.addEventListener('click', function() {
+                                sendConnectionRequest(member.id, connectBtn);
+                            });
                             cardBody.appendChild(connectBtn);
                         }
                         col.appendChild(cardElement);
                         rowContainer.appendChild(col);
-
-                        var inductionInfo = document.createElement('div');
-                        inductionInfo.classList.add('mt-2', 'text-center');
-                        inductionInfo.innerHTML = `<i class=\"bi bi-people-fill me-1 color-blue\"></i> <strong class=\"color-blue\">Inductions:</strong> <span class=\"fw-bold color-blue\">${member.induction_count || 0}</span>`;
-                        cardBody.appendChild(inductionInfo);
 
 
 
@@ -1553,28 +1668,28 @@
         <!-- end -->
 
         @if (Session::get('success'))
-        <script>
-            Swal.fire({
+            <script>
+                Swal.fire({
                     icon: 'success',
                     title: "{{ Session::get('success') }}",
                     showConfirmButton: true,
 
                 });
-        </script>
+            </script>
         @endif
 
         @if (Session::get('error'))
-        <script>
-            Swal.fire({
+            <script>
+                Swal.fire({
                     icon: 'error',
                     title: "{{ Session::get('error') }}",
                     showConfirmButton: true,
                 });
-        </script>
+            </script>
         @endif
     </body>
 
-</html>
+    </html>
 
 
 @endsection

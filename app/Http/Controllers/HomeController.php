@@ -684,6 +684,46 @@ class HomeController extends Controller
                     $this->setConnectionStatusForMember($refGiver['member'], $authId, $authCircleId);
                 }
 
+                // Get Highest Induction
+                $induction = Member::where('status', 'Active')
+                    ->whereYear('created_at', $previousYear)
+                    ->whereMonth('created_at', $previousMonth)
+                    ->whereNotNull('sponsoredBy')
+                    ->get()
+                    ->groupBy('sponsoredBy')
+                    ->map(function ($group) use ($cityId) {
+                        $sponsorId = $group->first()->sponsoredBy;
+
+                        if (!$sponsorId) {
+                            return null;
+                        }
+
+                        $member = Member::with(['circle', 'bCategory'])
+                            ->where('id', $sponsorId)
+                            ->where('status', 'Active')
+                            ->whereHas('circle', function ($query) use ($cityId) {
+                                $query->where('cityId', $cityId);
+                            })
+                            ->first();
+
+                        if (!$member) {
+                            return null;
+                        }
+
+                        return [
+                            'member' => $member,
+                            'count' => $group->count(),
+                        ];
+                    })
+                    ->filter()
+                    ->sortByDesc('count')
+                    ->first();
+
+                if ($induction && isset($induction['member']) && $induction['member']) {
+                    $induction['member']->loadMissing(['circle', 'bCategory']);
+                    $this->setConnectionStatusForMember($induction['member'], $authId, $authCircleId);
+                }
+
                 // Leaderboard code end
 
 
@@ -784,7 +824,7 @@ class HomeController extends Controller
 
 
 
-                return view('home', compact('circleCount', 'authCircleId', 'categoryNames', 'membersCount', 'signedUrl', 'birthdaysToday', 'templates', 'count', 'monthlyPayments', 'totalAmountDue', 'nearestEvents', 'circlecalls', 'busGiver', 'refGiver', 'nearestTraining', 'testimonials', 'meeting', 'businessCategory', 'myInvites', 'todaysBirthdays'));
+                return view('home', compact('circleCount', 'authCircleId', 'categoryNames', 'membersCount', 'signedUrl', 'birthdaysToday', 'templates', 'count', 'monthlyPayments', 'totalAmountDue', 'nearestEvents', 'circlecalls', 'busGiver', 'refGiver', 'induction', 'nearestTraining', 'testimonials', 'meeting', 'businessCategory', 'myInvites', 'todaysBirthdays'));
             }
 
             return view('home', compact('circleCount', 'membersCount', 'count', 'nearestTraining', 'businessCategory', 'myInvites', 'birthdaysToday', 'templates'));

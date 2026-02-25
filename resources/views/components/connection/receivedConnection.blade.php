@@ -174,6 +174,9 @@
                     @endif
                     <div class="mt-auto">
                         <a href="{{ route('foundPersonDetails', $member->members->id) }}" class="fb-btn fb-btn-primary w-100 text-decoration-none">View Profile</a>
+                        <div class="mt-2 text-center fw-bold" style="color: #1d3268;">
+                            Sponsored - {{ $member->members->sponsored_count ?? $member->members->sponsored->count() }}
+                        </div>
                         <div class="d-flex gap-2 mt-2">
                             <a href="{{ route('connection.reject', $member->id) }}" class="fb-btn fb-btn-secondary flex-fill"><i class="bi bi-x-circle me-2"></i> Reject</a>
                             <a href="{{ route('connection.accept', $member->id) }}" class="fb-btn fb-btn-secondary flex-fill"><i class="bi bi-check-circle me-2"></i> Accept</a>

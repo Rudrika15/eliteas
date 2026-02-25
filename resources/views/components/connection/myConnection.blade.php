@@ -89,6 +89,11 @@
                     @endif
                     <div class="mt-auto">
                         <a href="{{ route('foundPersonDetails', $member->connectedMember->id) }}" class="fb-btn fb-btn-primary w-100 text-decoration-none">View Profile</a>
+                        
+                        <div class="mt-2 text-center fw-bold" style="color: #1d3268;">
+                            Sponsored - {{ $member->connectedMember->sponsored_count ?? $member->connectedMember->sponsored->count() }}
+                        </div>
+
                         <button type="button" class="fb-btn fb-btn-secondary fb-btn-disabled w-100 mt-2">
                             <i class="bi bi-check-circle-fill me-2"></i> Connected
                         </button>

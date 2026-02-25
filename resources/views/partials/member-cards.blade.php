@@ -196,10 +196,14 @@
                         @endif
                         <div class="mt-auto">
                             <a href="{{ route('foundPersonDetails', $member->id) }}" class="text-decoration-none d-block w-100">
-                                <button class="fb-btn fb-btn-primary w-100">View Profile</button>
-                            </a>
+                            <button class="fb-btn fb-btn-primary w-100">View Profile</button>
+                        </a>
 
-                            @if ($member->connection_status == 'Connected' || $member->connection_status == 'Accepted')
+                        <div class="mt-2 text-center fw-bold" style="color: #1d3268;">
+                            Sponsored - {{ $member->sponsored_count ?? $member->sponsored->count() }}
+                        </div>
+
+                        @if ($member->connection_status == 'Connected' || $member->connection_status == 'Accepted')
                                 <button type="button" class="fb-btn fb-btn-secondary fb-btn-disabled w-100 mt-2">
                                     <i class="bi bi-check-circle-fill me-2"></i> Connected
                                 </button>

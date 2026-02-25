@@ -568,8 +568,7 @@
                                         <i class="bi bi-clock me-2"></i> Requested
                                     </button>
                                 @endif
-                                <div class="mt-2 text-center"><i class="bi bi-people-fill me-1 color-blue"></i> <strong class="color-blue">Inductions:</strong> <span class="fw-bold color-blue">{{ $member->inductionCount ?? '0' }}</span></div>
-                            </div>
+                                </div>
                         </div>
                     </div>
                 </div>
