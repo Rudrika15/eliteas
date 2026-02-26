@@ -142,7 +142,7 @@
             <div class="fb-card shadow-sm h-100">
                 <div class="fb-card-img-wrapper">
                     <span class="fb-badge">Member</span>
-                    <img src="{{ asset('ProfilePhoto/' . ($member->receiver->profilePhoto ?? 'profile.png')) }}" class="fb-card-img" alt="Profile Image">
+                    <img src="{{ asset('ProfilePhoto/' . ($member->receiverMember->profilePhoto ?? 'profile.png')) }}" class="fb-card-img" alt="Profile Image">
                 </div>
                 <div class="fb-card-body">
                     <h5 class="fb-card-title">{{ $member->receiver->firstName ?? 'N/A' }} {{ $member->receiver->lastName ?? 'N/A' }}</h5>
@@ -175,7 +175,7 @@
                     <div class="mt-auto">
                         <a href="{{ route('foundPersonDetails', $member->receiverMember->id) }}" class="fb-btn fb-btn-primary w-100 text-decoration-none">View Profile</a>
                         <div class="mt-2 text-center fw-bold" style="color: #1d3268;">
-                            Sponsored - {{ $member->receiverMember->sponsored_count ?? $member->receiverMember->sponsored->count() }}
+                            Inductions - {{ $member->receiverMember->sponsored_count ?? $member->receiverMember->sponsored->count() }}
                         </div>
                         <button type="button" class="fb-btn fb-btn-secondary fb-btn-disabled w-100 mt-2">
                             <i class="bi bi-clock me-2"></i> Requested

@@ -146,6 +146,10 @@ class ConnectionController extends Controller
     public function cityList(Request $request)
     {
         try {
+            $authUserId = Auth::id();
+            $authMember = Member::where('userId', $authUserId)->where('status', 'Active')->first();
+            $authCircleId = $authMember ? $authMember->circleId : null;
+
             // Get all active cities which have members or circles
             $cityIds = array_unique(array_merge(
                 Member::whereNotNull('cityId')->pluck('cityId')->toArray(),
@@ -162,7 +166,27 @@ class ConnectionController extends Controller
                 ->orderBy('cityName')
                 ->get();
 
-            return view('admin.connection.cityList', compact('cities'));
+            foreach ($cities as $city) {
+                foreach ($city->members as $member) {
+                    $member->connection_status = 'Not Connected';
+
+                    if ($authCircleId && $member->circleId == $authCircleId) {
+                        $member->connection_status = 'Connected';
+                    } elseif ($authUserId) {
+                        $connection = Connection::where(function ($query) use ($authUserId, $member) {
+                            $query->where('userId', $authUserId)->where('memberId', $member->userId);
+                        })->orWhere(function ($query) use ($authUserId, $member) {
+                            $query->where('userId', $member->userId)->where('memberId', $authUserId);
+                        })->first();
+
+                        if ($connection) {
+                            $member->connection_status = $connection->status === 'Accepted' ? 'Connected' : $connection->status;
+                        }
+                    }
+                }
+            }
+
+            return view('admin.connection.cityList', compact('cities', 'authCircleId'));
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, request()->fullUrl());
             return view('servererror');

@@ -200,7 +200,7 @@
                         </a>
 
                         <div class="mt-2 text-center fw-bold" style="color: #1d3268;">
-                            Sponsored - {{ $member->sponsored_count ?? $member->sponsored->count() }}
+                            Inductions - {{ $member->sponsored_count ?? $member->sponsored->count() }}
                         </div>
 
                         @if ($member->connection_status == 'Connected' || $member->connection_status == 'Accepted')

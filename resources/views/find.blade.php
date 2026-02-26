@@ -1343,7 +1343,7 @@
                         var inductionInfo = document.createElement('div');
                         inductionInfo.classList.add('mt-2', 'text-center', 'fw-bold');
                         inductionInfo.style.color = '#1d3268';
-                        inductionInfo.innerHTML = `Sponsored - ${member.induction_count || 0}`;
+                        inductionInfo.innerHTML = `Inductions - ${member.induction_count || 0}`;
                         cardBody.appendChild(inductionInfo);
 
                         if (member.connection_status === 'Connected' || member.connection_status === 'Accepted') {

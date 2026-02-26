@@ -82,7 +82,7 @@
 
                         {{-- Preload selected member if available --}}
                         @foreach ($members as $member)
-                            <option value="{{ $member->id }}" data-user-id="{{ $member->userId ?? $member->id }}" data-first-name="{{ $member->firstName }}" data-last-name="{{ $member->lastName }}" {{ old('memberIdSelect', $myTestimonial->circlePersonId ?? '') == ($member->userId ?? $member->id) ? 'selected' : '' }}>
+                            <option value="{{ $member->id }}" data-user-id="{{ $member->userId ?? $member->id }}" data-first-name="{{ $member->firstName }}" data-last-name="{{ $member->lastName }}" {{ old('memberIdSelect', $myTestimonial->memberId ?? '') == ($member->userId ?? $member->id) ? 'selected' : '' }}>
                                 {{ $member->firstName }} {{ $member->lastName }}
                             </option>
                         @endforeach
@@ -97,8 +97,8 @@
             {{-- MEMBER NAME (readonly) --}}
             <div class="col-md-12">
                 <div class="form-floating mt-3">
-                    <input type="hidden" id="circlePersonId" name="circlePersonId" value="{{ old('circlePersonId', $myTestimonial->circlePersonId ?? '') }}" required>
-                    <input type="text" class="form-control @error('circlePersonId') is-invalid @enderror" id="circlePersonName" value="{{ old('circlePersonName', $myTestimonial->circlePersonName ?? '') }}" placeholder="Select Member" required disabled>
+                    <input type="hidden" id="circlePersonId" name="circlePersonId" value="{{ old('circlePersonId', $myTestimonial->memberId ?? '') }}" required>
+                    <input type="text" class="form-control @error('circlePersonId') is-invalid @enderror" id="circlePersonName" value="{{ old('circlePersonName', (optional($myTestimonial->receiver)->firstName ?? '') . ' ' . (optional($myTestimonial->receiver)->lastName ?? '')) }}" placeholder="Select Member" required disabled>
                     <label for="meetingPersonName"><span style="color:red">*</span> Member Name</label>
                     @error('circlePersonId')
                         <div class="invalid-tooltip">This field is required.</div>
@@ -139,7 +139,7 @@
             // Server-side values (blade -> JS)
             var defaultCityId = {!! json_encode(old('city', $myTestimonial->city ?? (auth()->user()->member->cityId ?? ''))) !!};
             var defaultCircleId = {!! json_encode(old('circleId', $myTestimonial->circleId ?? (auth()->user()->member->circle->id ?? ''))) !!};
-            var preselectedUserId = {!! json_encode(old('circlePersonId', $myTestimonial->circlePersonId ?? '')) !!};
+            var preselectedUserId = {!! json_encode(old('circlePersonId', $myTestimonial->memberId ?? '')) !!};
 
             // Utility: populate #memberId from array of members and select matching user-id
             function populateMembersList(members, selectedUserId) {
@@ -213,7 +213,9 @@
                 $.ajax({
                     url: '/members/byCircle',
                     method: 'GET',
-                    data: { circleId: circleId },
+                    data: {
+                        circleId: circleId
+                    },
                     success: function(response) {
                         var members = (response && response.members) ? response.members : [];
                         populateMembersList(members, selectedUserId);

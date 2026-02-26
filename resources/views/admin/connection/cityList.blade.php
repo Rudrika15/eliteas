@@ -414,8 +414,8 @@
                                                 <div class="mt-auto">
                                                     <a href="{{ route('foundPersonDetails', $member->id) }}" class="fb-btn fb-btn-primary w-100 text-decoration-none">View Profile</a>
                                                     <div class="mt-2 text-center fw-bold" style="color: #1d3268;">
-                                                        Sponsored - {{ $member->sponsored_count ?? $member->sponsored->count() }}
-                                                    </div>
+                                                    Inductions - {{ $member->sponsored_count ?? $member->sponsored->count() }}
+                                                </div>
                                                     @php
                                                         $sameCircleConnected = isset($authCircleId) && $authCircleId !== null && $member->circleId !== null && $member->circleId == $authCircleId;
                                                         $actuallyConnected = $member->connection_status == 'Connected' || $member->connection_status == 'Accepted';

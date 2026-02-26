@@ -1538,16 +1538,16 @@
                                             <i class="bi bi-people-fill"></i>
                                             {{ $circlecalls['member']->circle->circleName }}
                                             <span>&bull;</span>
-                                            <span>{{ $circlecalls['count'] }} IBMs</span>
+                                            <b><span>{{ $circlecalls['count'] }} IBMs</span></b>
                                         </div>
 
                                         <div class="fb-card-info">
                                             @if (!empty($circlecalls['member']->companyName))
-                                                <div><i class="bi bi-building me-1"></i> {{ $circlecalls['member']->companyName }}
+                                                <div><i class="bi bi-building me-1"></i> <b>{{ $circlecalls['member']->companyName }}</b>
                                                 </div>
                                             @endif
                                             @if (!empty($circlecalls['member']->bCategory->categoryName))
-                                                <div><i class="bi bi-tag me-1"></i> {{ $circlecalls['member']->bCategory->categoryName }}</div>
+                                                <div><i class="bi bi-tag me-1"></i> <b>{{ $circlecalls['member']->bCategory->categoryName }}</b></div>
                                             @endif
                                         </div>
 
@@ -1571,14 +1571,13 @@
                                             @endif
 
                                             <div class="mt-2 text-center fw-bold" style="color: #1d3268;">
-                                                Sponsored - {{ $circlecalls['member']->sponsored->count() }}
+                                                Inductions - {{ $circlecalls['member']->sponsored->count() }}
                                             </div>
 
                                             <!-- View Profile -->
                                             <a href="{{ route('foundPersonDetails', $circlecalls['member']->id) }}" class="text-decoration-none d-block w-100">
                                                 <button class="fb-btn fb-btn-secondary">View Profile</button>
                                             </a>
-
                                         </div>
                                     </div>
                                 </div>
@@ -1604,13 +1603,13 @@
                                         </div>
 
                                         <div class="fb-card-info">
-                                            <div><i class="bi bi-currency-rupee me-1"></i> {{ $busGiver['amount'] }}</div>
+                                            <div><i class="bi bi-currency-rupee me-1"></i> <b>{{ $busGiver['amount'] }}</b></div>
                                             @if (!empty($busGiver['member']->companyName))
-                                                <div><i class="bi bi-building me-1"></i> {{ $busGiver['member']->companyName }}
+                                                <div><i class="bi bi-building me-1"></i> <b>{{ $busGiver['member']->companyName }}</b>
                                                 </div>
                                             @endif
                                             @if (!empty($busGiver['member']->bCategory->categoryName))
-                                                <div><i class="bi bi-tag me-1"></i> {{ $busGiver['member']->bCategory->categoryName }}</div>
+                                                <div><i class="bi bi-tag me-1"></i> <b>{{ $busGiver['member']->bCategory->categoryName }}</b></div>
                                             @endif
                                         </div>
 
@@ -1634,7 +1633,7 @@
                                             @endif
 
                                             <div class="mt-2 text-center fw-bold" style="color: #1d3268;">
-                                                Sponsored - {{ $busGiver['member']->sponsored->count() }}
+                                                Inductions - {{ $busGiver['member']->sponsored->count() }}
                                             </div>
 
                                             <!-- View Profile -->
@@ -1662,15 +1661,15 @@
                                             <i class="bi bi-people-fill"></i>
                                             {{ $refGiver['member']->circle->circleName ?? 'N/A' }}
                                             <span>&bull;</span>
-                                            <span>References Given: {{ $refGiver['count'] ?? '0' }}</span>
+                                            <b><span>References Given: {{ $refGiver['count'] ?? '0' }}</span></b>
                                         </div>
 
                                         <div class="fb-card-info">
                                             @if (!empty($refGiver['member']->companyName))
-                                                <div><i class="bi bi-building me-1"></i> {{ $refGiver['member']->companyName }}</div>
+                                                <div><i class="bi bi-building me-1"></i> <b>{{ $refGiver['member']->companyName }}</b></div>
                                             @endif
                                             @if (!empty($refGiver['member']->bCategory->categoryName))
-                                                <div><i class="bi bi-tag me-1"></i> {{ $refGiver['member']->bCategory->categoryName }}</div>
+                                                <div><i class="bi bi-tag me-1"></i> <b>{{ $refGiver['member']->bCategory->categoryName }}</b></div>
                                             @endif
                                         </div>
 
@@ -1694,7 +1693,7 @@
                                             @endif
 
                                             <div class="mt-2 text-center fw-bold" style="color: #1d3268;">
-                                                Sponsored - {{ $refGiver['member']->sponsored->count() }}
+                                                Inductions - {{ $refGiver['member']->sponsored->count() }}
                                             </div>
 
                                             <!-- View Profile -->
@@ -1722,15 +1721,15 @@
                                             <i class="bi bi-people-fill"></i>
                                             {{ $induction['member']->circle->circleName ?? 'N/A' }}
                                             <span>&bull;</span>
-                                            <span>Inductions: {{ $induction['count'] ?? '0' }}</span>
+                                            <b><span>Inductions: {{ $induction['count'] ?? '0' }}</span></b>
                                         </div>
 
                                         <div class="fb-card-info">
                                             @if (!empty($induction['member']->companyName))
-                                                <div><i class="bi bi-building me-1"></i> {{ $induction['member']->companyName }}</div>
+                                                <div><i class="bi bi-building me-1"></i> <b>{{ $induction['member']->companyName }}</b></div>
                                             @endif
                                             @if (!empty($induction['member']->bCategory->categoryName))
-                                                <div><i class="bi bi-tag me-1"></i> {{ $induction['member']->bCategory->categoryName }}</div>
+                                                <div><i class="bi bi-tag me-1"></i> <b>{{ $induction['member']->bCategory->categoryName }}</b></div>
                                             @endif
                                         </div>
 
@@ -1754,7 +1753,7 @@
                                             @endif
 
                                             <div class="mt-2 text-center fw-bold" style="color: #1d3268;">
-                                                Sponsored - {{ $induction['member']->sponsored->count() }}
+                                                Inductions - {{ $induction['member']->sponsored->count() }}
                                             </div>
 
                                             <!-- View Profile -->

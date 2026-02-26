@@ -1276,7 +1276,7 @@ class ConnectionController extends Controller
 
                     // Calculate business amount
                     foreach ($businessMeetings as $meeting) {
-                        if ($meeting->member->id === $member->id) {
+                        if ($meeting->member && $meeting->member->id === $member->id) {
                             $member->businessAmount += $meeting->amount;
                             $totalBusinessAmount += $meeting->amount;
                         }
@@ -1330,7 +1330,7 @@ class ConnectionController extends Controller
                     $member->induction_count = Member::where('sponsoredBy', $member->id)->count();
 
                     foreach ($businessMeetings as $meeting) {
-                        if ($meeting->member->id === $member->id) {
+                        if ($meeting->member && $meeting->member->id === $member->id) {
                             $member->businessAmount += $meeting->amount;
                             $category->totalBusinessAmount += $meeting->amount;
                         }

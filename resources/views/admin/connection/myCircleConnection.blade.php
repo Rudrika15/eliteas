@@ -264,7 +264,7 @@
                             </div>
 
                             <div class="mt-2 text-center fw-bold" style="color: #1d3268;">
-                                    Sponsored - {{ $myConnectionsData->inductionCount ?? '0' }}
+                                    Inductions - {{ $myConnectionsData->inductionCount ?? '0' }}
                                 </div>
                         </div>
 
