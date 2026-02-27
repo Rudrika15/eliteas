@@ -171,6 +171,9 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
     Route::get('birthday/canvas/{id?}', [App\Http\Controllers\HomeController::class, 'birthday'])->name('birthday.canvas');
 
+    // Top Networkers
+    Route::get('/top-networkers', [App\Http\Controllers\TopNetworkerController::class, 'index'])->name('topNetworkers.index');
+
     Route::get('franchise/show/{id?}', [FranchiseController::class, 'show'])->name('franchise.show');
     Route::get('/franchise/index', [FranchiseController::class, 'index'])->name('franchise.index');
     Route::get('franchise/create', [FranchiseController::class, 'create'])->name('franchise.create');
