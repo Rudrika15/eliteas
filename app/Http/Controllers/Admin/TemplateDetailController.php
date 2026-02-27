@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\TemplateDetail;
 use App\Http\Controllers\Controller;
+use App\Models\TemplateDetail;
 use Illuminate\Http\Request;
 
 class TemplateDetailController extends Controller
@@ -18,9 +18,9 @@ class TemplateDetailController extends Controller
         $tempDetail = TemplateDetail::with(['Template' => function ($query) use ($id) {
             $query->where('id', '=', $id);
         }])->where('templateId', '=', $id)->orderBy('id', 'DESC')->get();
+
         return view('admin.templateDetail.index', \compact('tempDetail'));
     }
-
 
     public function create()
     {
@@ -47,12 +47,12 @@ class TemplateDetailController extends Controller
 
         try {
             $id = $request->templateId;
-            $template = new TemplateDetail();
+            $template = new TemplateDetail;
             $template->templateId = $id;
             $template->title = $request->title;
 
             if ($request->templateIcon) {
-                $template->templateIcon = time() . '.' . $request->templateIcon->extension();
+                $template->templateIcon = time().'.'.$request->templateIcon->extension();
                 $request->templateIcon->move(public_path('templateIcon'), $template->templateIcon);
             }
 
@@ -67,6 +67,7 @@ class TemplateDetailController extends Controller
             $template->frameHeight = $request->frameHeight;
 
             $template->save();
+
             return redirect()->back()->with('success', 'Added successfully');
         } catch (\Throwable $th) {
             throw $th;
@@ -81,6 +82,7 @@ class TemplateDetailController extends Controller
     public function edit($id)
     {
         $template = TemplateDetail::find($id);
+
         return view('admin.templateDetail.edit', \compact('template'));
     }
 
@@ -105,7 +107,7 @@ class TemplateDetailController extends Controller
             $template = TemplateDetail::find($id);
             $template->title = $request->title;
             if ($request->templateIcon) {
-                $template->templateIcon = time() . '.' . $request->templateIcon->extension();
+                $template->templateIcon = time().'.'.$request->templateIcon->extension();
                 $request->templateIcon->move(public_path('templateIcon'), $template->templateIcon);
             }
             $template->bottom = $request->bottom;
@@ -118,6 +120,7 @@ class TemplateDetailController extends Controller
             $template->textLength = $request->textLength;
             $template->frameHeight = $request->frameHeight;
             $template->save();
+
             return redirect()->route('template.index')->with('success', 'Update successfully');
         } catch (\Throwable $th) {
             throw $th;
@@ -127,6 +130,7 @@ class TemplateDetailController extends Controller
     public function destroy($id)
     {
         $template = TemplateDetail::find($id)->delete();
+
         return redirect()->back()->with('success', 'Deleted successfully');
     }
 }

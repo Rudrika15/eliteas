@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Services\SocialWallService;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class SocialWallController extends Controller
 {
@@ -21,14 +21,16 @@ class SocialWallController extends Controller
     public function index()
     {
         $posts = $this->socialWallService->getFeed(10);
-        return view('admin.social_wall.index', compact('posts'));
+        $notifications = $this->socialWallService->getNotifications(8);
+
+        return view('admin.social_wall.index', compact('posts', 'notifications'));
     }
 
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'caption' => 'nullable|string',
-            'attachments.*' => 'nullable|file|mimes:jpeg,png,jpg,gif,mp4,mov,avi|max:10240', // Max 10MB
+            'attachments.*' => 'nullable|file|image|mimes:jpeg,png,jpg,gif,webp|max:10240', // Max 10MB
         ], [
             'attachments.*.max' => 'The file size must not be greater than 10 MB.',
         ]);
@@ -37,16 +39,18 @@ class SocialWallController extends Controller
             if ($request->ajax()) {
                 return response()->json(['errors' => $validator->errors()], 422);
             }
+
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
         $hasCaption = trim((string) $request->input('caption')) !== '';
         $hasAttachment = $request->hasFile('attachments') && count($request->file('attachments')) > 0;
 
-        if (!$hasCaption && !$hasAttachment) {
+        if (! $hasCaption && ! $hasAttachment) {
             if ($request->ajax()) {
                 return response()->json(['error' => 'Post must have a caption or attachment.'], 422);
             }
+
             return redirect()->back()->withErrors(['error' => 'Post must have a caption or attachment.']);
         }
 
@@ -58,11 +62,11 @@ class SocialWallController extends Controller
         if ($request->hasFile('attachments')) {
             foreach ($request->file('attachments') as $file) {
                 $extension = $file->getClientOriginalExtension();
-                $type = 'video'; // Default to video if not image
+                $type = 'image';
                 $finalPath = '';
 
                 // Ensure directory exists
-                if (!file_exists(public_path('posts'))) {
+                if (! file_exists(public_path('posts'))) {
                     mkdir(public_path('posts'), 0777, true);
                 }
 
@@ -72,34 +76,35 @@ class SocialWallController extends Controller
                     try {
                         $image = imagecreatefromstring(file_get_contents($file));
                         if ($image) {
-                            $filename = uniqid() . '_' . time() . '.webp';
-                            $path = public_path('posts/' . $filename);
+                            $filename = uniqid().'_'.time().'.webp';
+                            $path = public_path('posts/'.$filename);
                             imagewebp($image, $path, 80); // 80% quality
                             imagedestroy($image);
-                            $finalPath = 'posts/' . $filename;
+                            $finalPath = 'posts/'.$filename;
                         } else {
                             // Fallback if image creation fails
-                            $filename = uniqid() . '_' . time() . '.' . $extension;
+                            $filename = uniqid().'_'.time().'.'.$extension;
                             $file->move(public_path('posts'), $filename);
-                            $finalPath = 'posts/' . $filename;
+                            $finalPath = 'posts/'.$filename;
                         }
                     } catch (\Exception $e) {
                         // Fallback on error
-                        $filename = uniqid() . '_' . time() . '.' . $extension;
+                        $filename = uniqid().'_'.time().'.'.$extension;
                         $file->move(public_path('posts'), $filename);
-                        $finalPath = 'posts/' . $filename;
+                        $finalPath = 'posts/'.$filename;
                     }
-                } else {
-                    // Video or other allowed types
-                    $filename = uniqid() . '_' . time() . '.' . $extension;
+                } elseif (in_array(strtolower($extension), ['webp'])) {
+                    $filename = uniqid().'_'.time().'.webp';
                     $file->move(public_path('posts'), $filename);
-                    $finalPath = 'posts/' . $filename;
+                    $finalPath = 'posts/'.$filename;
+                } else {
+                    continue;
                 }
 
                 if ($finalPath) {
                     $attachmentsData[] = [
                         'path' => $finalPath,
-                        'type' => $type
+                        'type' => $type,
                     ];
                 }
             }
@@ -107,7 +112,7 @@ class SocialWallController extends Controller
 
         $data['attachments'] = $attachmentsData;
         // For backward compatibility
-        if (!empty($attachmentsData)) {
+        if (! empty($attachmentsData)) {
             $data['attachment'] = $attachmentsData[0]['path'];
         }
 
@@ -129,10 +134,11 @@ class SocialWallController extends Controller
             // Return JSON for AJAX
             return response()->json([
                 'status' => $like->status == 'Active' ? 'liked' : 'unliked',
-                'count' => \App\Models\Like::where('postId', $postId)->where('status', 'Active')->count()
+                'count' => \App\Models\Like::where('postId', $postId)->where('status', 'Active')->count(),
             ]);
         } catch (\Exception $e) {
-            \Log::error('Social Wall Like Error: ' . $e->getMessage());
+            \Log::error('Social Wall Like Error: '.$e->getMessage());
+
             return response()->json(['error' => 'Failed to like post', 'message' => $e->getMessage()], 500);
         }
     }
@@ -155,14 +161,14 @@ class SocialWallController extends Controller
 
         $html = view('admin.social_wall.partials.comment_list', [
             'comments' => collect([$comment]),
-            'prefix' => ''
+            'prefix' => '',
         ])->render();
 
         // Return JSON for AJAX
         return response()->json([
             'comment' => $comment,
             'html' => $html,
-            'count' => \App\Models\Comment::where('postId', $request->postId)->where('status', 'Active')->count()
+            'count' => \App\Models\Comment::where('postId', $request->postId)->where('status', 'Active')->count(),
         ]);
     }
 
@@ -179,7 +185,7 @@ class SocialWallController extends Controller
 
         $comment = \App\Models\Comment::find($request->comment_id);
 
-        if (!$comment) {
+        if (! $comment) {
             return response()->json(['success' => false, 'message' => 'Comment not found.'], 404);
         }
 
@@ -205,7 +211,7 @@ class SocialWallController extends Controller
 
         $comment = \App\Models\Comment::find($request->comment_id);
 
-        if (!$comment) {
+        if (! $comment) {
             return response()->json(['success' => false, 'message' => 'Comment not found.'], 404);
         }
 
@@ -232,7 +238,7 @@ class SocialWallController extends Controller
 
         return view('admin.social_wall.partials.comment_list', [
             'comments' => $comments,
-            'prefix' => 'modal-'
+            'prefix' => 'modal-',
         ])->render();
     }
 
@@ -263,6 +269,7 @@ class SocialWallController extends Controller
             if ($post->userId !== Auth::id()) {
                 return response()->json(['success' => false, 'message' => 'Unauthorized.'], 403);
             }
+
             return response()->json(['success' => true, 'post' => $post]);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => 'Post not found.'], 404);
@@ -274,7 +281,7 @@ class SocialWallController extends Controller
         $validator = Validator::make($request->all(), [
             'postId' => 'required|exists:posts,id',
             'caption' => 'nullable|string',
-            'attachments.*' => 'nullable|file|mimes:jpeg,png,jpg,gif,mp4,mov,avi,wmv|max:10240', // 10MB
+            'attachments.*' => 'nullable|file|image|mimes:jpeg,png,jpg,gif,webp|max:10240', // 10MB
             'deleted_media' => 'nullable|array',
             'deleted_media.*' => 'integer|exists:post_media,id',
         ]);
@@ -290,18 +297,50 @@ class SocialWallController extends Controller
             if ($request->hasFile('attachments')) {
                 $attachments = [];
                 foreach ($request->file('attachments') as $file) {
-                    $path = $file->store('social_wall_media', 'public');
-                    $type = str_starts_with($file->getMimeType(), 'video') ? 'video' : 'image';
-                    $attachments[] = ['path' => $path, 'type' => $type];
+                    $extension = $file->getClientOriginalExtension();
+                    $finalPath = '';
+
+                    if (! file_exists(public_path('posts'))) {
+                        mkdir(public_path('posts'), 0777, true);
+                    }
+
+                    if (in_array(strtolower($extension), ['jpg', 'jpeg', 'png', 'gif'])) {
+                        try {
+                            $image = imagecreatefromstring(file_get_contents($file));
+                            if ($image) {
+                                $filename = uniqid().'_'.time().'.webp';
+                                $path = public_path('posts/'.$filename);
+                                imagewebp($image, $path, 80);
+                                imagedestroy($image);
+                                $finalPath = 'posts/'.$filename;
+                            } else {
+                                $filename = uniqid().'_'.time().'.'.$extension;
+                                $file->move(public_path('posts'), $filename);
+                                $finalPath = 'posts/'.$filename;
+                            }
+                        } catch (\Exception $e) {
+                            $filename = uniqid().'_'.time().'.'.$extension;
+                            $file->move(public_path('posts'), $filename);
+                            $finalPath = 'posts/'.$filename;
+                        }
+                    } elseif (in_array(strtolower($extension), ['webp'])) {
+                        $filename = uniqid().'_'.time().'.webp';
+                        $file->move(public_path('posts'), $filename);
+                        $finalPath = 'posts/'.$filename;
+                    }
+
+                    if ($finalPath) {
+                        $attachments[] = ['path' => $finalPath, 'type' => 'image'];
+                    }
                 }
                 $data['attachments'] = $attachments;
             }
 
             $post = $this->socialWallService->updatePost($request->postId, $data);
-            return response()->json(['success' => true, 'message' => 'Post updated successfully.', 'post' => $post]);
 
+            return response()->json(['success' => true, 'message' => 'Post updated successfully.', 'post' => $post]);
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => 'Error updating post: ' . $e->getMessage()], 500);
+            return response()->json(['success' => false, 'message' => 'Error updating post: '.$e->getMessage()], 500);
         }
     }
 }

@@ -7,9 +7,8 @@ use App\Mail\ConEventRegistrationMail;
 use App\Mail\VisitorRegisteredMail;
 use App\Models\AllPayments;
 use App\Models\BusinessCategory;
-use App\Models\ConquerEvent;
-use App\Models\EventRegister;
 use App\Models\Event;
+use App\Models\EventRegister;
 use App\Models\Member;
 use App\Models\Razorpay;
 use App\Models\User;
@@ -34,12 +33,11 @@ class ConEventController extends Controller
         return view('conquer.mainPage.main', compact('event', 'currentDate'));
     }
 
-
-
     public function eventLogin()
     {
         // $event = Event::where('status', 'Active')->first();
         $event = Event::where('status', 'Active')->orderBy('created_at', 'desc')->first();
+
         return view('conquer.mainPage.eventLogin', compact('event'));
     }
 
@@ -63,10 +61,10 @@ class ConEventController extends Controller
         ])->withInput();
     }
 
-
     public function logoutVisitor()
     {
         session()->flush(); // Clears all session data
+
         return redirect()->route('main.event')->with('success', 'You have been logged out successfully.');
     }
 
@@ -80,7 +78,6 @@ class ConEventController extends Controller
             ->orderBy('event_date', 'desc')
             ->first();
 
-
         $totalRegisterCount = VisitorEventRegister::where('eventId', $nearestEvents->id)->count() + EventRegister::where('eventId', $nearestEvents->id)->count();
 
         // if ($nearestEvents) {
@@ -92,8 +89,6 @@ class ConEventController extends Controller
         // }
         return view('visitor.visitorDashboard', compact('nearestEvents', 'totalRegisterCount'));
     }
-
-
 
     // public function conEventLogin(Request $request)
     // {
@@ -130,7 +125,6 @@ class ConEventController extends Controller
 
     //         $memberId = $member->id;
     //         $eventId = $event->id;
-
 
     //         // Check if the member is already registered for the event
     //         $existingRegistration = EventRegister::where('memberId', $memberId)
@@ -182,7 +176,6 @@ class ConEventController extends Controller
     //         ])->withInput();
     //     }
     // }
-
 
     //     public function conEventLogin(Request $request)
     // {
@@ -306,7 +299,6 @@ class ConEventController extends Controller
     //     }
     // }
 
-
     public function conEventLogin(Request $request)
     {
         try {
@@ -323,7 +315,7 @@ class ConEventController extends Controller
             $event = Event::where('status', 'Active')->orderBy('created_at', 'desc')->first();
 
             // Validate the existence of the event
-            if (!$event) {
+            if (! $event) {
                 return redirect()->back()->withErrors([
                     'email' => 'No active event found.',
                 ])->withInput();
@@ -334,7 +326,7 @@ class ConEventController extends Controller
                 // Fetch the corresponding member record
                 $member = Member::where('userId', $user->id)->first();
 
-                if (!$member) {
+                if (! $member) {
                     return redirect()->back()->withErrors([
                         'email' => 'No member record found for the authenticated user.',
                     ])->withInput();
@@ -355,25 +347,25 @@ class ConEventController extends Controller
                 // Fetch the event record
                 $eventRecord = Event::find($request->eventId);
 
-                if (!$eventRecord) {
+                if (! $eventRecord) {
                     return redirect()->back()->with('error', 'Event not found.');
                 }
 
                 // If event has fees, proceed to payment
                 if ($eventRecord->fees > 0) {
                     // Store payment details (razorpay or another service)
-                    $razorpay = new Razorpay();
+                    $razorpay = new Razorpay;
                     $razorpay->r_payment_id = $request->paymentId;
                     $razorpay->user_email = null;
                     $razorpay->amount = $request->amount / 100;
                     $razorpay->save();
 
-                    $registration = new EventRegister();
+                    $registration = new EventRegister;
                     $registration->memberId = $memberId;
                     $registration->eventId = $eventId;
                     $registration->save();
 
-                    $allPayments = new AllPayments();
+                    $allPayments = new AllPayments;
                     $allPayments->memberId = $registration->memberId;
                     $allPayments->amount = $razorpay->amount;
                     $allPayments->paymentType = 'RazorPay';
@@ -388,7 +380,7 @@ class ConEventController extends Controller
                 // Handle free event logic
                 if ($eventRecord->fees == 0) {
                     // Register the member for the event
-                    $registration = new EventRegister();
+                    $registration = new EventRegister;
                     $registration->memberId = $memberId;
                     $registration->eventId = $eventId;
                     $registration->save();
@@ -409,9 +401,9 @@ class ConEventController extends Controller
             }
         } catch (\Exception $e) {
             // Log the error for debugging purposes
-            Log::error('Error during event login: ' . $e->getMessage(), [
+            Log::error('Error during event login: '.$e->getMessage(), [
                 'request_data' => $request->all(),
-                'exception' => $e
+                'exception' => $e,
             ]);
 
             // Redirect back with an error message
@@ -419,22 +411,17 @@ class ConEventController extends Controller
         }
     }
 
-
-
-
-
     public function visitor()
     {
         // $event = Event::where('status', 'Active')->first();
         $event = Event::where('status', 'Active')->orderBy('created_at', 'desc')->first();
         $businessCategory = BusinessCategory::where('status', 'Active')->get();
+
         return view('conquer.mainPage.visitor', compact('businessCategory', 'event'));
     }
 
-
     public function registerFromVisitor(Request $request)
     {
-
 
         $visitorId = session('visitor_id');
 
@@ -446,14 +433,13 @@ class ConEventController extends Controller
             return redirect()->back()->with('error', 'You are already registered for this event.');
         }
 
-        $visitor = new VisitorEventRegister();
+        $visitor = new VisitorEventRegister;
         $visitor->visitorId = $visitorId;
         $visitor->eventId = $request->eventId;
         $visitor->save();
 
         return redirect()->back()->with('success', 'You have successfully registered for the event.');
     }
-
 
     // public function handleVisitorRegistration(Request $request)
     // {
@@ -536,9 +522,9 @@ class ConEventController extends Controller
     public function visitorLogin()
     {
         $event = Event::where('status', 'Active')->orderBy('created_at', 'desc')->first();
+
         return view('visitor.visitorLogin', compact('event'));
     }
-
 
     public function handleVisitorRegistration(Request $request)
     {
@@ -571,7 +557,7 @@ class ConEventController extends Controller
             }
 
             // Create a new visitor record if not already in the Visitors table
-            $visitor = new User();
+            $visitor = new User;
             $visitor->firstName = $request->firstName;
             $visitor->lastName = $request->lastName;
             $visitor->email = $request->email;
@@ -581,7 +567,7 @@ class ConEventController extends Controller
             $visitor->save();
             $visitor->assignRole('Visitor');
 
-            $visitorDetails = new VisitorsDetails();
+            $visitorDetails = new VisitorsDetails;
             $visitorDetails->userId = $visitor->id;
             $visitorDetails->firstName = $request->firstName;
             $visitorDetails->lastName = $request->lastName;
@@ -609,13 +595,13 @@ class ConEventController extends Controller
             // Fetch the event details
             $eventRecord = Event::find($request->eventId);
 
-            if (!$eventRecord) {
+            if (! $eventRecord) {
                 return redirect()->back()->with('error', 'Event not found.');
             }
 
             if ($eventRecord->fees > 0) {
                 // Create a new Razorpay record
-                $razorpay = new Razorpay();
+                $razorpay = new Razorpay;
                 $razorpay->r_payment_id = $request->paymentId;
                 $razorpay->user_email = $visitor->email;
                 $razorpay->amount = $request->amount / 100;
@@ -623,7 +609,7 @@ class ConEventController extends Controller
             }
 
             // Create a new VisitorEventRegister record
-            $eventRegister = new VisitorEventRegister();
+            $eventRegister = new VisitorEventRegister;
             $eventRegister->eventId = $request->eventId;
             $eventRegister->visitorId = $visitor->id;
             $eventRegister->PaymentStatus = 'paid';
@@ -660,19 +646,16 @@ class ConEventController extends Controller
         }
     }
 
-
     public function thankYouUser()
     {
 
         return view('conquer.mainPage.thankYouUser');
     }
+
     public function thankYou()
     {
         return view('conquer.mainPage.thankYou');
     }
-
-
-
 
     // public function conquerUserStore(Request $request)
     // {

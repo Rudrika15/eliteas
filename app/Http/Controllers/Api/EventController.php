@@ -2,24 +2,23 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Utils\Utils;
+use App\Http\Controllers\Controller;
+use App\Models\AllPayments;
 use App\Models\Event;
+use App\Models\EventRegister;
 use App\Models\Member;
 use App\Models\Razorpay;
-use App\Models\AllPayments;
-use Illuminate\Http\Request;
-use App\Models\EventRegister;
-use Illuminate\Support\Facades\URL;
-use App\Http\Controllers\Controller;
 use App\Models\SlotBooking;
 use App\Models\VisitorEventRegister;
 use App\Utils\ErrorLogger;
+use App\Utils\Utils;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\URL;
 
 class EventController extends Controller
 {
-
     public function memberEventIndexd(Request $request)
     {
         try {
@@ -27,6 +26,7 @@ class EventController extends Controller
                 ->where('status', 'Active')
                 ->orderBy('id', 'DESC')
                 ->paginate(10);
+
             return view('admin.event.memberEventIndex', compact('event'));
         } catch (\Throwable $th) {
             // throw $th;
@@ -34,6 +34,7 @@ class EventController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
@@ -46,6 +47,7 @@ class EventController extends Controller
                 ->where('eventStatus', 'Publish')
                 ->orderBy('id', 'DESC')
                 ->get();
+
             return Utils::sendResponse(['Event' => $event], 'Event Data Fetched Successfully', 200);
         } catch (\Throwable $th) {
             // Return with an error message
@@ -53,6 +55,7 @@ class EventController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return Utils::errorResponse(['error' => 'Failed to fetch Event Data. Please try again.'], 'Internal Server Error', 500);
         }
     }
@@ -63,7 +66,7 @@ class EventController extends Controller
             $memberId = Auth::user()->id;
             // Fetch the event
             $event = Event::where('id', $id)->where('eventStatus', 'Publish')->first();
-            if (!$event) {
+            if (! $event) {
                 return Utils::errorResponse(['error' => 'Event not found or not published.'], 'Event Not Found', 404);
             }
             // Fetch the member's slot bookings for the event
@@ -79,8 +82,9 @@ class EventController extends Controller
                     $query->select('id', 'userId', 'firstName', 'lastName', 'profilePhoto');
                 }])
                 ->get();
+
             return Utils::sendResponse([
-                //'event' => $event,
+                // 'event' => $event,
                 'slotBooking' => $slotBooking,
             ], 'Slot Booking Data Fetched Successfully', 200);
         } catch (\Throwable $th) {
@@ -89,6 +93,7 @@ class EventController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return Utils::errorResponse(['error' => 'Failed to fetch Slot Booking Data. Please try again.'], 'Internal Server Error', 500);
         }
     }
@@ -125,6 +130,7 @@ class EventController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return Utils::errorResponse(
                 ['error' => 'Failed to update booking status. Please try again.'],
                 'Internal Server Error',
@@ -133,13 +139,10 @@ class EventController extends Controller
         }
     }
 
-
-
-
     public function eventRegister(Request $request, $eventId)
     {
         try {
-            $eventregister = new EventRegister();
+            $eventregister = new EventRegister;
             $eventregister->userId = Auth::user()->id;
             $eventregister->eventId = $eventId;
             $eventregister->personName = $request->personName;
@@ -209,7 +212,6 @@ class EventController extends Controller
     //     }
     // }
 
-
     public function index(Request $request)
     {
         try {
@@ -219,9 +221,9 @@ class EventController extends Controller
             // Check if the user exists and get their member ID from the members table
             $memberId = Member::where('userId', $authUser->id)->value('id');
 
-            if (!$memberId) {
+            if (! $memberId) {
                 return Utils::errorResponse([
-                    'error' => 'Member not found.'
+                    'error' => 'Member not found.',
                 ], 'Not Found', 404);
             }
 
@@ -245,10 +247,9 @@ class EventController extends Controller
 
             if ($events->isEmpty()) {
                 return Utils::sendResponse([
-                    'events' => []
+                    'events' => [],
                 ], 'No upcoming events for now.', 200);
             }
-
 
             // Create signed URLs for the events' links
             // $eventLinks = $events->map(function ($event) use ($memberId) {
@@ -266,11 +267,10 @@ class EventController extends Controller
                     'eventSlug' => $event->event_slug,
                     'eventLink' => URL::signedRoute('event.link', [
                         'slug' => $event->event_slug,
-                        'ref' => $memberId
-                    ]) // No expiry parameter now
+                        'ref' => $memberId,
+                    ]), // No expiry parameter now
                 ];
             });
-
 
             // Return the response with the future events and their registration details
             return Utils::sendResponse([
@@ -289,10 +289,9 @@ class EventController extends Controller
                     $eventLink = [
                         'eventLink' => URL::signedRoute('event.link', [
                             'slug' => $event->event_slug, // Ensure parameter name matches the route
-                            'ref' => $memberId // Using the correct member ID
-                        ])
+                            'ref' => $memberId, // Using the correct member ID
+                        ]),
                     ];
-
 
                     // Reorder the array to place eventLink before registrations
                     $reorderedEvent = array_merge(
@@ -302,14 +301,15 @@ class EventController extends Controller
                     );
 
                     return $reorderedEvent;
-                })
+                }),
             ], 'Upcoming events retrieved successfully', 200);
         } catch (\Throwable $th) {
             // Log the error for debugging purposes
-            Log::error('Error retrieving events: ' . $th->getMessage());
+            Log::error('Error retrieving events: '.$th->getMessage());
+
             // Return with an error message
             return Utils::errorResponse([
-                'error' => 'Failed to retrieve events. Please try again.'
+                'error' => 'Failed to retrieve events. Please try again.',
             ], 'Internal Server Error', 500);
         }
     }
@@ -366,7 +366,6 @@ class EventController extends Controller
     //         ], 'Internal Server Error', 500);
     //     }
     // }
-
 
     // public function eventDetails(Request $request, $id)
     // {
@@ -425,9 +424,9 @@ class EventController extends Controller
             // Get the member ID from the members table
             $memberId = Member::where('userId', $authUser->id)->value('id');
 
-            if (!$memberId) {
+            if (! $memberId) {
                 return Utils::errorResponse([
-                    'error' => 'Member not found.'
+                    'error' => 'Member not found.',
                 ], 'Not Found', 404);
             }
 
@@ -440,9 +439,9 @@ class EventController extends Controller
                 ->whereDate('event_date', '>=', now()->format('Y-m-d'))
                 ->find($id);
 
-            if (!$event) {
+            if (! $event) {
                 return Utils::errorResponse([
-                    'error' => 'Event not found or inactive.'
+                    'error' => 'Event not found or inactive.',
                 ], 'Not Found', 404);
             }
 
@@ -452,22 +451,21 @@ class EventController extends Controller
             // Generate signed link
             $eventLink = URL::signedRoute('event.link', [
                 'slug' => $event->event_slug,
-                'ref' => $memberId
+                'ref' => $memberId,
             ], now()->addMinutes(60));
 
             return Utils::sendResponse([
                 'event' => $event,
                 'eventLink' => $eventLink,
                 'registration_count' => $event->registrations->count(),
-                'isRegistered' => $isRegistered
+                'isRegistered' => $isRegistered,
             ], 'Event details retrieved successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse([
-                'error' => $th->getMessage()
+                'error' => $th->getMessage(),
             ], 'Internal Server Error', 500);
         }
     }
-
 
     // public function eventDetails(Request $request, $id = null)
     // {
@@ -586,12 +584,10 @@ class EventController extends Controller
     //     }
     // }
 
-
-
     public function storeUserDetails(Request $request)
     {
         try {
-            $eventReg = new EventRegister();
+            $eventReg = new EventRegister;
 
             $isRegistered = EventRegister::where('memberId', auth()->user()->member->id)
                 ->where('eventId', $request->eventId)
@@ -599,7 +595,7 @@ class EventController extends Controller
 
             if ($isRegistered) {
                 return Utils::errorResponse([
-                    'error' => 'You are already registered for this event.'
+                    'error' => 'You are already registered for this event.',
                 ], 'Already Registered', 400);
             }
 
@@ -612,11 +608,10 @@ class EventController extends Controller
         } catch (\Throwable $th) {
             // Return with an error message
             return Utils::errorResponse([
-                'error' => 'Failed to save your data. Please try again.'
+                'error' => 'Failed to save your data. Please try again.',
             ], 'Internal Server Error', 500);
         }
     }
-
 
     public function checkRegistration(Request $request)
     {
@@ -629,12 +624,12 @@ class EventController extends Controller
                 ->exists();
 
             return Utils::sendResponse([
-                'isRegistered' => $isRegistered
+                'isRegistered' => $isRegistered,
             ], 'Registration check completed successfully', 200);
         } catch (\Throwable $th) {
             // Return with an error message
             return Utils::errorResponse([
-                'error' => 'Something went wrong. Please try again.'
+                'error' => 'Something went wrong. Please try again.',
             ], 'Internal Server Error', 500);
         }
     }
@@ -650,12 +645,12 @@ class EventController extends Controller
                 ->exists();
 
             return Utils::sendResponse([
-                'isRegistered' => $isRegistered
+                'isRegistered' => $isRegistered,
             ], 'Registration check completed successfully', 200);
         } catch (\Throwable $th) {
             // Return with an error message
             return Utils::errorResponse([
-                'error' => 'Something went wrong. Please try again.'
+                'error' => 'Something went wrong. Please try again.',
             ], 'Internal Server Error', 500);
         }
     }
@@ -677,17 +672,18 @@ class EventController extends Controller
                     },
                     'members.bCategory' => function ($query) {
                         $query->select('id', 'categoryName');
-                    }
+                    },
                 ])
                 ->get();
+
             return Utils::sendResponse([
                 'event' => $event,
-                'registerList' => $registerList
+                'registerList' => $registerList,
             ], 'Event registration list retrieved successfully', 200);
         } catch (\Throwable $th) {
             // Return with an error message
             return Utils::errorResponse([
-                'error' => 'Failed to retrieve event registration list. Please try again.'
+                'error' => 'Failed to retrieve event registration list. Please try again.',
             ], 'Internal Server Error', 500);
         }
     }
@@ -698,21 +694,21 @@ class EventController extends Controller
             // Validate the request
 
             // Store the payment ID in the table
-            $payment = new Razorpay();
+            $payment = new Razorpay;
             $payment->r_payment_id = $request->input('paymentId');
             $payment->user_email = Auth::user()->email;
             $payment->amount = $request->input('amount') / 100;
             $payment->save();
 
             // Register for the event
-            $eventPayment = new EventRegister();
+            $eventPayment = new EventRegister;
             $eventPayment->eventId = $request->eventId;
             $eventPayment->memberId = Auth::user()->member->id;
             $eventPayment->paymentStatus = 'paid';
             $eventPayment->save();
 
             // Store the payment details
-            $allPayments = new AllPayments();
+            $allPayments = new AllPayments;
             $allPayments->memberId = $eventPayment->memberId;
             $allPayments->amount = $payment->amount;
             $allPayments->paymentType = 'RazorPay'; // Hardcoded for RazorPay
@@ -726,7 +722,7 @@ class EventController extends Controller
         } catch (\Throwable $th) {
             // Return with an error message
             return Utils::errorResponse([
-                'error' => 'Failed to store payment ID. Please try again.'
+                'error' => 'Failed to store payment ID. Please try again.',
             ], 'Internal Server Error', 500);
         }
     }
@@ -734,7 +730,7 @@ class EventController extends Controller
     public function handleEventRegistration(Request $request)
     {
         try {
-            $eventPayment = new EventRegister();
+            $eventPayment = new EventRegister;
             $eventPayment->eventId = $request->eventId;
             $eventPayment->memberId = Auth::user()->member->id;
             $eventPayment->paymentStatus = 'unpaid';
@@ -745,25 +741,24 @@ class EventController extends Controller
         } catch (\Throwable $th) {
             // Return with an error message
             return Utils::errorResponse([
-                'error' => 'Failed to register for the event, please try again.'
+                'error' => 'Failed to register for the event, please try again.',
             ], 'Internal Server Error', 500);
         }
     }
-
 
     public function userEventPayment(Request $request)
     {
         try {
 
             // Store the payment ID in the table
-            $payment = new Razorpay();
+            $payment = new Razorpay;
             $payment->r_payment_id = $request->input('paymentId');
             $payment->user_email = $request->personEmail;
             $payment->amount = $request->input('amount') / 100;
             $payment->save();
 
             // Register for the event
-            $eventPayment = new EventRegister();
+            $eventPayment = new EventRegister;
             $eventPayment->eventId = $request->eventId;
             $eventPayment->personName = $request->personName;
             $eventPayment->personEmail = $request->personEmail;
@@ -772,7 +767,7 @@ class EventController extends Controller
             $eventPayment->save();
 
             // Store the payment details
-            $allPayments = new AllPayments();
+            $allPayments = new AllPayments;
             $allPayments->amount = $payment->amount;
             $allPayments->paymentType = 'RazorPay'; // Hardcoded for RazorPay
             $allPayments->date = now()->format('Y-m-d');
@@ -785,11 +780,10 @@ class EventController extends Controller
         } catch (\Throwable $th) {
             // Return with an error message
             return Utils::errorResponse([
-                'error' => 'Failed to store payment ID. Please try again.'
+                'error' => 'Failed to store payment ID. Please try again.',
             ], 'Internal Server Error', 500);
         }
     }
-
 
     public function eventPaymentVisitor(Request $request)
     {
@@ -804,20 +798,20 @@ class EventController extends Controller
             $visitorId = Auth()->id();
 
             // Store the payment ID in the Razorpay payments table
-            $payment = new Razorpay();
+            $payment = new Razorpay;
             $payment->r_payment_id = $validatedData['paymentId'];
-            $payment->amount = $validatedData['amount']  / 100; // Convert paise to rupees
+            $payment->amount = $validatedData['amount'] / 100; // Convert paise to rupees
             $payment->save();
 
             // Register for the event
-            $eventPayment = new VisitorEventRegister();
+            $eventPayment = new VisitorEventRegister;
             $eventPayment->eventId = $visitorId;
             $eventPayment->visitorId = $visitorId;
             $eventPayment->paymentStatus = 'paid';
             $eventPayment->save();
 
             // Store the payment details in the AllPayments table
-            $allPayments = new AllPayments();
+            $allPayments = new AllPayments;
             $allPayments->amount = $payment->amount;
             $allPayments->paymentType = 'RazorPay';
             $allPayments->date = now()->format('Y-m-d');

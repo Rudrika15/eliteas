@@ -2,21 +2,19 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use App\Models\Location;
 use App\Utils\ErrorLogger;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
 class LocationController extends Controller
 {
-
     public function __construct()
     {
         // Apply middleware for event-related permissions
         $this->middleware('permission:location-save', ['only' => ['saveLocation']]);
     }
-
 
     public function saveLocation(Request $request)
     {
@@ -40,7 +38,7 @@ class LocationController extends Controller
                 $location->save();
             } else {
                 // If no location exists, create a new one
-                $location = new Location();
+                $location = new Location;
                 $location->userId = $user->id; // Use snake_case for column names
                 $location->latitude = $validated['latitude'];
                 $location->longitude = $validated['longitude'];

@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\User;
-use App\Models\Message;
-use App\Models\Conversation;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Conversation;
+use App\Models\Message;
+use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Log;
@@ -39,7 +39,6 @@ class ChatController extends Controller
     //     return redirect()->back()->with('success', 'Message sent Successfully. You can now chat from My Chats Section.');
     // }
 
-
     public function sendMessage(Request $request)
     {
         // Validate the request
@@ -60,15 +59,15 @@ class ChatController extends Controller
         })->first();
 
         // If no conversation exists, create a new one
-        if (!$conversation) {
-            $conversation = new Conversation();
+        if (! $conversation) {
+            $conversation = new Conversation;
             $conversation->user_one_id = $authId;
             $conversation->user_two_id = $receiverId;
             $conversation->save();
         }
 
         // Create a new message
-        $message = new Message();
+        $message = new Message;
         $message->conversation_id = $conversation->id;
         $message->sender_id = $authId; // Authenticated user's ID as the sender
         $message->message = Crypt::encryptString($request->message); // Encrypt the message
@@ -79,12 +78,12 @@ class ChatController extends Controller
         $receiver = User::find($receiverId); // Find the receiver by their ID
 
         // Prepare notification details
-        $userName = $sender->firstName . ' ' . $sender->lastName;
+        $userName = $sender->firstName.' '.$sender->lastName;
         $title = 'New Message';
-        $body = 'You received a new message from ' . $userName;
+        $body = 'You received a new message from '.$userName;
 
         // Send notification to the specific receiver
-        if (!empty($receiver->fcm_token)) {
+        if (! empty($receiver->fcm_token)) {
             $serviceAccountPath = storage_path('app/public/ubn_notification.json');
             $factory = (new Factory)->withServiceAccount($serviceAccountPath);
             $messaging = $factory->createMessaging();
@@ -94,22 +93,18 @@ class ChatController extends Controller
 
             try {
                 $messaging->send($notificationMessage);
-                Log::info('Notification sent to token: ' . $receiver->fcm_token);
+                Log::info('Notification sent to token: '.$receiver->fcm_token);
             } catch (\Kreait\Firebase\Exception\Messaging\NotFound $e) {
-                Log::error('Token not found: ' . $receiver->fcm_token);
+                Log::error('Token not found: '.$receiver->fcm_token);
             } catch (\Kreait\Firebase\Exception\Messaging\InvalidArgument $e) {
-                Log::error('Invalid argument error with token: ' . $receiver->fcm_token);
+                Log::error('Invalid argument error with token: '.$receiver->fcm_token);
             } catch (\Exception $e) {
-                Log::error('General error sending to token: ' . $receiver->fcm_token . '. Error: ' . $e->getMessage());
+                Log::error('General error sending to token: '.$receiver->fcm_token.'. Error: '.$e->getMessage());
             }
         }
 
-
-
-
         return redirect()->back()->with('success', 'Message sent Successfully. You can now chat from My Chats Section.');
     }
-
 
     // public function getMessages()
     // {
@@ -162,7 +157,6 @@ class ChatController extends Controller
         // Return the filtered messages as JSON response
         return response()->json($messages);
     }
-
 
     public function getList()
     {
@@ -224,9 +218,6 @@ class ChatController extends Controller
         }
     }
 
-
-
-
     // public function typing(Request $request)
     // {
     //     $receiverId = $request->receiverId;
@@ -263,10 +254,10 @@ class ChatController extends Controller
                 ->where('user_two_id', $authUserId);
         })->first();
 
-        if (!$conversation) {
+        if (! $conversation) {
             return response()->json([
                 'user' => $user,
-                'messages' => []
+                'messages' => [],
             ]);
         }
 
@@ -277,13 +268,13 @@ class ChatController extends Controller
             ->map(function ($message) use ($authUserId) {
                 return [
                     'text' => $message->message,
-                    'sentByUser' => $message->sender_id == $authUserId
+                    'sentByUser' => $message->sender_id == $authUserId,
                 ];
             });
 
         return response()->json([
             'user' => $user,
-            'messages' => $messages
+            'messages' => $messages,
         ]);
     }
 }

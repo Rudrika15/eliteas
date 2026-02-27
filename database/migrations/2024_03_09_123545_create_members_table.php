@@ -33,7 +33,7 @@ return new class extends Migration
             $table->string('timeZone');
             $table->string('profilePhoto');
             $table->string('companyLogo');
-            $table->string('goals');                   
+            $table->string('goals');
             $table->string('accomplishment');
             $table->string('interests');
             $table->string('networks');

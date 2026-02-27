@@ -161,14 +161,14 @@
     </ul>
 </li> --}}
 
-{{-- Temprory disable this menu  --}}
+    {{-- Temprory disable this menu  --}}
 
-    {{-- <li class="nav-item">
+    <li class="nav-item">
         <a class="nav-link collapsed" href="{{ route('social-wall.index') }}">
             <i class="bi bi-people" style="color: #e76a35"></i>
-            <span class="text-blue">Social Wall</span>
+            <span class="text-blue">Network Feed </span>
         </a>
-    </li> --}}
+    </li>
 
     <li class="nav-item">
         <a class="nav-link collapsed" href="{{ route('chat.index') }}">
@@ -283,7 +283,7 @@
     <li class="nav-item">
         <a class="nav-link collapsed" href="{{ route('social-wall.index') }}">
             <i class="bi bi-people" style="color: #e76a35"></i>
-            <span class="text-blue">Social Wall</span>
+            <span class="text-blue">Network Feed</span>
         </a>
     </li>
 
@@ -435,7 +435,7 @@
     <li class="nav-item">
         <a class="nav-link collapsed" href="{{ route('help.userView') }}">
             <i class="bi bi-question-circle" style="color: #e76a35"></i>
-            <span class="text-blue">Help</span>
+            <span class="text-blue">Resources</span>
         </a>
     </li>
 @endrole

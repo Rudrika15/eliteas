@@ -27,6 +27,25 @@
                         @enderror
                     </div>
                 </div>
+
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <select class="form-select @error('resourceCatId') is-invalid @enderror" id="resourceCatId" name="resourceCatId" required>
+                            <option value="" disabled {{ old('resourceCatId', $help->resourceCatId) ? '' : 'selected' }}>Select Category</option>
+                            @foreach (($categories ?? []) as $c)
+                                <option value="{{ $c->id }}" {{ (string) old('resourceCatId', $help->resourceCatId) === (string) $c->id ? 'selected' : '' }}>
+                                    {{ $c->categoryName }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <label for="resourceCatId">Resource Category</label>
+                        @error('resourceCatId')
+                            <div class="invalid-tooltip">
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+                </div>
             </div>
 
             <div class="row mb-3">

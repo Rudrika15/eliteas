@@ -10,6 +10,7 @@ class Razorpay extends Model
     use HasFactory;
 
     protected $table = 'razorpays';
+
     protected $guarded = ['id'];
 
     protected $fillable = [

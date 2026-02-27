@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Utils\Utils;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\AllPayments;
 use App\Models\Member;
 use App\Models\MemberSubscriptions;
 use App\Utils\ErrorLogger;
+use App\Utils\Utils;
+use Illuminate\Http\Request;
 
 class PaymentController extends Controller
 {
@@ -18,7 +18,7 @@ class PaymentController extends Controller
             $user = auth()->user();
 
             // Ensure the user has an associated member and circle
-            if (!$user->member || !$user->member->circle) {
+            if (! $user->member || ! $user->member->circle) {
                 return Utils::errorResponse([], 'User does not belong to a circle', 404);
             }
 
@@ -32,7 +32,6 @@ class PaymentController extends Controller
             //     ->with('user:id,firstName,lastName')
             //     ->whereIn('memberId', $circleMembers)
             //     ->get();
-
 
             $payments = AllPayments::select('id', 'memberId', 'paymentType', 'date', 'paymentMode', 'amount', 'remarks')
                 ->with('user:id,firstName,lastName')
@@ -50,6 +49,7 @@ class PaymentController extends Controller
         } catch (\Throwable $th) {
             // Log the error and return an error response
             ErrorLogger::logError($th, request()->fullUrl());
+
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
@@ -71,6 +71,7 @@ class PaymentController extends Controller
                 if ($subscription->allPayments instanceof \Illuminate\Support\Collection) {
                     $subscription->allPayments->transform(function ($payment) {
                         $payment->amount = isset($payment->amount) ? number_format($payment->amount, 2) : '-';
+
                         return $payment;
                     });
                 }
@@ -87,7 +88,7 @@ class PaymentController extends Controller
 
             // Return a generic error response
             return Utils::errorResponses([
-                'error' => $th->getMessage()
+                'error' => $th->getMessage(),
             ], 'Internal Server Error', 500);
         }
     }
@@ -114,6 +115,7 @@ class PaymentController extends Controller
         } catch (\Throwable $th) {
             // Log error and return error response
             ErrorLogger::logError($th, $request->fullUrl());
+
             return Utils::errorResponse('An error occurred while retrieving payments', 'Internal Server Error', 500);
         }
     }

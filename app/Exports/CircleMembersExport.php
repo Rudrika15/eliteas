@@ -2,7 +2,6 @@
 
 namespace App\Exports;
 
-use App\Models\CircleMember;
 use App\Models\Member;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
@@ -35,7 +34,6 @@ class CircleMembersExport implements FromCollection, WithHeadings
             ->get();
     }
 
-
     public function headings(): array
     {
         return [
@@ -45,7 +43,7 @@ class CircleMembersExport implements FromCollection, WithHeadings
             'Business Category ID',
             'Membership Type',
             'Contact No',
-            'Email'
+            'Email',
         ];
     }
 }

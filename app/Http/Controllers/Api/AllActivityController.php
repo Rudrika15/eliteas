@@ -2,18 +2,16 @@
 
 namespace App\Http\Controllers\Api;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\SpecificAsk;
-use Illuminate\Support\Facades\Validator;
-use App\Utils\Utils;
-use Illuminate\Support\Facades\Auth;
+use App\Models\CircleCall;
 use App\Models\CircleMeetingMembersBusiness;
 use App\Models\CircleMeetingMembersReference;
 use App\Models\Member;
-use App\Models\CircleCall;
 use App\Models\User;
+use App\Utils\Utils;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AllActivityController extends Controller
 {
@@ -27,7 +25,7 @@ class AllActivityController extends Controller
                 ->where('userId', $userId)
                 ->first();
 
-            if (!$member) {
+            if (! $member) {
                 return Utils::errorResponse([], 'Member not found', 404);
             }
 
@@ -91,7 +89,6 @@ class AllActivityController extends Controller
     //     }
     // }
 
-
     public function refrenceVp(Request $request)
     {
         try {
@@ -102,7 +99,7 @@ class AllActivityController extends Controller
                 ->where('userId', $userId)
                 ->first();
 
-            if (!$member) {
+            if (! $member) {
                 return Utils::errorResponse([], 'Member not found', 404);
             }
 
@@ -128,7 +125,6 @@ class AllActivityController extends Controller
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
-
 
     // public function businessVp(Request $request)
     // {
@@ -177,7 +173,7 @@ class AllActivityController extends Controller
                 ->where('userId', $userId)
                 ->first();
 
-            if (!$member) {
+            if (! $member) {
                 return Utils::errorResponse([], 'Member not found', 404);
             }
 

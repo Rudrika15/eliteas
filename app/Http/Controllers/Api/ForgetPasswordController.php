@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
 class ForgetPasswordController extends Controller
@@ -14,7 +14,6 @@ class ForgetPasswordController extends Controller
     /**
      * Initiate forgot password process.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function forgotPassword(Request $request)
@@ -28,7 +27,7 @@ class ForgetPasswordController extends Controller
         DB::table('password_resets')->insert([
             'email' => $request->email,
             'token' => $token,
-            'created_at' => now()
+            'created_at' => now(),
         ]);
 
         Mail::send('email.forgetPassword', ['token' => $token], function ($message) use ($request) {

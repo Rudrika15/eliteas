@@ -2,15 +2,14 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\ErrorLog;
-use App\Utils\ErrorLogger;
-use App\Models\ErrorLogWeb;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\ErrorLog;
+use App\Models\ErrorLogWeb;
+use App\Utils\ErrorLogger;
+use Illuminate\Http\Request;
 
 class ErrorListController extends Controller
 {
-
     public function __construct()
     {
         // Apply middleware for error log management permissions
@@ -18,11 +17,11 @@ class ErrorListController extends Controller
         $this->middleware('permission:error-edit', ['only' => ['updateErrorStatus']]);
     }
 
-
     public function index()
     {
         try {
             $errorList = ErrorLog::orderBy('created_at', 'desc')->paginate(10);
+
             return view('admin.errorList.index', compact('errorList'));
         } catch (\Throwable $th) {
             // throw $th;
@@ -30,6 +29,7 @@ class ErrorListController extends Controller
                 $th,
                 request()->fullUrl()
             );
+
             return view('servererror');
         }
     }
@@ -58,6 +58,7 @@ class ErrorListController extends Controller
                 $th,
                 request()->fullUrl()
             );
+
             // Return a response with error details
             return response()->json(['success' => false, 'message' => 'An error occurred while updating the status'], 500);
         }

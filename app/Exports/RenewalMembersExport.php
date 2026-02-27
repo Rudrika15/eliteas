@@ -12,7 +12,9 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 class RenewalMembersExport implements FromCollection, WithHeadings
 {
     protected $startDate;
+
     protected $endDate;
+
     protected $circleId;
 
     public function __construct($startDate = null, $endDate = null, $circleId = null)
@@ -69,7 +71,7 @@ class RenewalMembersExport implements FromCollection, WithHeadings
 
             return [
                 'Circle Name' => $member->circle ? $member->circle->circleName : 'Unknown Circle',
-                'Member Name' => $member->firstName . ' ' . $member->lastName,
+                'Member Name' => $member->firstName.' '.$member->lastName,
                 'Joining Date' => $member->created_at->format('d-m-Y'),
                 'Renewal Date' => $validityDate ? $validityDate->format('d-m-Y') : '-',
             ];

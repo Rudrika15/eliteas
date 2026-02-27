@@ -5,14 +5,17 @@ namespace App\Exports;
 use App\Models\CircleCall;
 use App\Models\CircleMeetingMembersBusiness;
 use App\Models\CircleMeetingMembersReference;
-use App\Models\Member;
 use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Maatwebsite\Excel\Concerns\FromView;
 
 class MemberReportExport implements FromView
 {
-    protected $memberId, $startDate, $endDate;
+    protected $memberId;
+
+    protected $startDate;
+
+    protected $endDate;
 
     public function __construct($memberId, $startDate = null, $endDate = null)
     {
@@ -34,28 +37,29 @@ class MemberReportExport implements FromView
                 $q->where('memberId', $this->memberId)
                     ->orWhere('meetingPersonId', $this->memberId);
             })
-            ->when($this->startDate, fn($q) => $q->whereDate('created_at', '>=', $this->startDate))
-            ->when($this->endDate, fn($q) => $q->whereDate('created_at', '<=', $this->endDate))
+            ->when($this->startDate, fn ($q) => $q->whereDate('created_at', '>=', $this->startDate))
+            ->when($this->endDate, fn ($q) => $q->whereDate('created_at', '<=', $this->endDate))
             ->get()
             ->map(function ($call) {
                 if ($call->meetingPersonId == $this->memberId) {
                     $call->setRelation('meetingPersonReport', $call->member);
                 }
+
                 return $call;
             });
 
         $business = CircleMeetingMembersBusiness::with('loginMember')
             ->where('status', 'Active')
             ->where('businessGiverId', $this->memberId)
-            ->when($this->startDate, fn($q) => $q->whereDate('created_at', '>=', $this->startDate))
-            ->when($this->endDate, fn($q) => $q->whereDate('created_at', '<=', $this->endDate))
+            ->when($this->startDate, fn ($q) => $q->whereDate('created_at', '>=', $this->startDate))
+            ->when($this->endDate, fn ($q) => $q->whereDate('created_at', '<=', $this->endDate))
             ->get();
 
         $reference = CircleMeetingMembersReference::with('refReceiver')
             ->where('status', 'Active')
             ->where('referenceGiverId', $this->memberId)
-            ->when($this->startDate, fn($q) => $q->whereDate('created_at', '>=', $this->startDate))
-            ->when($this->endDate, fn($q) => $q->whereDate('created_at', '<=', $this->endDate))
+            ->when($this->startDate, fn ($q) => $q->whereDate('created_at', '>=', $this->startDate))
+            ->when($this->endDate, fn ($q) => $q->whereDate('created_at', '<=', $this->endDate))
             ->get();
 
         return view('admin.report.memberReportExcel', [
@@ -64,7 +68,7 @@ class MemberReportExport implements FromView
             'business' => $business,
             'reference' => $reference,
             'startDate' => $startDate,
-            'endDate' => $endDate
+            'endDate' => $endDate,
         ]);
     }
 }

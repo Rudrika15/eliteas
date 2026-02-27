@@ -2,16 +2,14 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\City;
-use App\Utils\Utils;
-use App\Models\State;
-use App\Models\Circle;
-use App\Models\Member;
-use App\Models\Country;
-use App\Models\CircleMember;
-use Illuminate\Http\Request;
-use App\Models\BusinessCategory;
 use App\Http\Controllers\Controller;
+use App\Models\BusinessCategory;
+use App\Models\Circle;
+use App\Models\CircleMember;
+use App\Models\City;
+use App\Models\Member;
+use App\Utils\Utils;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class CircleMemberController extends Controller
@@ -24,6 +22,7 @@ class CircleMemberController extends Controller
                 ->where('status', 'Active')
                 ->orderBy('id', 'DESC')
                 ->get();
+
             return Utils::sendResponse(['circleMembers' => $circleMembers], 'Circle members retrieved successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
@@ -47,6 +46,7 @@ class CircleMemberController extends Controller
     {
         try {
             $circleMember = CircleMember::findOrFail($id);
+
             return Utils::sendResponse(['circleMember' => $circleMember], 'Circle member retrieved successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
@@ -65,7 +65,7 @@ class CircleMemberController extends Controller
         }
 
         try {
-            $circleMember = new CircleMember();
+            $circleMember = new CircleMember;
             $circleMember->circleId = $request->circleId;
             $circleMember->memberId = $request->memberId;
             $circleMember->status = 'Active';
@@ -92,7 +92,7 @@ class CircleMemberController extends Controller
         try {
             $circleMember = CircleMember::find($id);
 
-            if (!$circleMember) {
+            if (! $circleMember) {
                 return Utils::errorResponse(['error' => 'Circle Member not found.'], 'Not Found', 404);
             }
 
@@ -112,7 +112,7 @@ class CircleMemberController extends Controller
         try {
             $circleMember = CircleMember::find($id);
 
-            if (!$circleMember) {
+            if (! $circleMember) {
                 return Utils::errorResponse(['error' => 'Circle Member not found.'], 'Not Found', 404);
             }
 
@@ -125,7 +125,7 @@ class CircleMemberController extends Controller
         }
     }
 
-    //api for circle wise member data 
+    // api for circle wise member data
 
     // public function circleWiseMember(Request $request)
     // {
@@ -187,11 +187,9 @@ class CircleMemberController extends Controller
     //     }
     // }
 
-
     // public function circleWiseMember(Request $request)
     // {
     //     try {
-
 
     //     } catch (\Throwable $th) {
     //         return Utils::errorResponse([
@@ -249,7 +247,7 @@ class CircleMemberController extends Controller
     public function circleWiseMember(Request $request)
     {
         try {
-            if (!auth()->check()) {
+            if (! auth()->check()) {
                 return Utils::errorResponse([], 'Unauthorized', 401);
             }
 
@@ -284,7 +282,7 @@ class CircleMemberController extends Controller
                     ->get();
 
                 // Inject UBN member if not present
-                if ($ubnMember && !$circleMembers->contains('id', $ubnMember->id)) {
+                if ($ubnMember && ! $circleMembers->contains('id', $ubnMember->id)) {
                     $circleMembers->push($ubnMember);
                 }
 
@@ -315,15 +313,10 @@ class CircleMemberController extends Controller
             return Utils::sendResponse($circlesData, 'Data retrieved successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse([
-                'error' => $th->getMessage()
+                'error' => $th->getMessage(),
             ], 'Internal Server Error', 500);
         }
     }
-
-
-
-
-
 
     // public function categoryWiseMember(Request $request)
     // {
@@ -370,13 +363,12 @@ class CircleMemberController extends Controller
     //     }
     // }
 
-
     public function categoryWiseMember(Request $request)
     {
         try {
             $categoryData = [];
 
-            if (!auth()->check()) {
+            if (! auth()->check()) {
                 return Utils::errorResponse([], 'Unauthorized', 401);
             }
 
@@ -424,15 +416,10 @@ class CircleMemberController extends Controller
             return Utils::sendResponse($categoryData, 'Data retrieved successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse([
-                'error' => $th->getMessage()
+                'error' => $th->getMessage(),
             ], 'Internal Server Error', 500);
         }
     }
-
-
-
-
-
 
     // public function circleWiseMember(Request $request)
     // {
@@ -453,7 +440,5 @@ class CircleMemberController extends Controller
     //         ], 'Internal Server Error', 500);
     //     }
     // }
-
-
 
 }

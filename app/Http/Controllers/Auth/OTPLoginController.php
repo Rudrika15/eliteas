@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Auth;
 
-use Carbon\Carbon;
+use App\Http\Controllers\Controller;
 use App\Models\Otp;
 use App\Models\User;
 use App\Utils\ErrorLogger;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 
@@ -24,6 +24,7 @@ class OTPLoginController extends Controller
                 $th,
                 request()->fullUrl()
             );
+
             return view('servererror');
         }
     }
@@ -33,7 +34,7 @@ class OTPLoginController extends Controller
     {
         try {
             $request->validate([
-                'phone' => 'required'
+                'phone' => 'required',
             ]);
 
             // Fetch the user based on phone number
@@ -47,19 +48,19 @@ class OTPLoginController extends Controller
                     $numbers = $request->phone;
                     $sender = urlencode('DGSAPI');
                     $message = "Your One Time Verification Password is {$otp}.";
-                    $username = "BrandBeans";
-                    $smstype = "TRANS";
+                    $username = 'BrandBeans';
+                    $smstype = 'TRANS';
 
                     // Prepare data for POST request
-                    $data = array(
+                    $data = [
                         'apikey' => $apiKey,
                         'numbers' => $numbers,
-                        "sender" => $sender,
-                        "message" => $message,
-                        "username" => $username,
-                        "sendername" => $sender,
-                        "smstype" => $smstype,
-                    );
+                        'sender' => $sender,
+                        'message' => $message,
+                        'username' => $username,
+                        'sendername' => $sender,
+                        'smstype' => $smstype,
+                    ];
 
                     // Send the POST request with cURL
                     $ch = curl_init('http://sms.hspsms.com/sendSMS');
@@ -80,7 +81,7 @@ class OTPLoginController extends Controller
                         $otpRecord->save();
                     } else {
                         // Create new OTP record if none exists (fallback)
-                        $otpRecord = new Otp();
+                        $otpRecord = new Otp;
                         $otpRecord->otp = $otp;
                         $otpRecord->mobileno = $request->phone;
                         $otpRecord->time = $time;
@@ -100,6 +101,7 @@ class OTPLoginController extends Controller
                 $th,
                 request()->fullUrl()
             );
+
             return view('servererror');
         }
     }
@@ -109,7 +111,7 @@ class OTPLoginController extends Controller
     {
         try {
             $phone = $request->session()->get('phone');
-            if (!$phone) {
+            if (! $phone) {
                 return redirect()->route('otp.request');
             }
 
@@ -119,6 +121,7 @@ class OTPLoginController extends Controller
                 $th,
                 request()->fullUrl()
             );
+
             return view('servererror');
         }
     }
@@ -134,10 +137,10 @@ class OTPLoginController extends Controller
                 'otp3' => 'required|digits:1',
                 'otp4' => 'required|digits:1',
                 'otp5' => 'required|digits:1',
-                'otp6' => 'required|digits:1'
+                'otp6' => 'required|digits:1',
             ]);
 
-            $otp = $request->otp1 . $request->otp2 . $request->otp3 . $request->otp4 . $request->otp5 . $request->otp6;
+            $otp = $request->otp1.$request->otp2.$request->otp3.$request->otp4.$request->otp5.$request->otp6;
 
             // Fetch the user based on phone number
             $user = User::where('contactNo', $request->phone)->first();
@@ -145,6 +148,7 @@ class OTPLoginController extends Controller
 
             if ($user && $otpRecord && Carbon::parse($otpRecord->time)->addMinutes(10)->isFuture()) {
                 Auth::login($user);
+
                 return redirect()->intended('/'); // redirect to the intended page after login
             }
 
@@ -156,22 +160,21 @@ class OTPLoginController extends Controller
                 $th,
                 request()->fullUrl()
             );
+
             return view('servererror');
         }
     }
-
 
     // public function showVerifyOtpForm(Request $request)
     // {
     //     return view('auth.otpVerify')->withErrors(['message' => 'Invalid OTP or OTP has expired.'])->with('phone', $request->phone);
     // }
 
-
     // Resend OTP
     public function resendOTP(Request $request)
     {
         $request->validate([
-            'phone' => 'required'
+            'phone' => 'required',
         ]);
 
         // Fetch the user based on phone number
@@ -185,19 +188,19 @@ class OTPLoginController extends Controller
                 $numbers = $request->phone;
                 $sender = urlencode('DGSAPI');
                 $message = "Your One Time Verification Password is {$otp}.";
-                $username = "BrandBeans";
-                $smstype = "TRANS";
+                $username = 'BrandBeans';
+                $smstype = 'TRANS';
 
                 // Prepare data for POST request
-                $data = array(
+                $data = [
                     'apikey' => $apiKey,
                     'numbers' => $numbers,
-                    "sender" => $sender,
-                    "message" => $message,
-                    "username" => $username,
-                    "sendername" => $sender,
-                    "smstype" => $smstype,
-                );
+                    'sender' => $sender,
+                    'message' => $message,
+                    'username' => $username,
+                    'sendername' => $sender,
+                    'smstype' => $smstype,
+                ];
 
                 // Send the POST request with cURL
                 $ch = curl_init('http://sms.hspsms.com/sendSMS');
@@ -218,7 +221,7 @@ class OTPLoginController extends Controller
                     $otpRecord->save();
                 } else {
                     // Create new OTP record if none exists (fallback)
-                    $otpRecord = new Otp();
+                    $otpRecord = new Otp;
                     $otpRecord->otp = $otp;
                     $otpRecord->mobileno = $request->phone;
                     $otpRecord->time = $time;

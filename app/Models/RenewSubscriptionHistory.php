@@ -8,7 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class RenewSubscriptionHistory extends Model
 {
     use HasFactory;
+
     protected $table = 'renewSubscription';
+
     protected $fillable = [
         'userId',
         'renewedBy',

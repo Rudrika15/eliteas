@@ -14,8 +14,6 @@ class VisitorRegisteredMail extends Mailable
 
     /**
      * Create a new message instance.
-     *
-     * @param array $eventDetails
      */
     public function __construct(array $eventDetails = [])
     {

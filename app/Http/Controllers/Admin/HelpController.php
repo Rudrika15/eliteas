@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use App\Models\Help;
+use App\Models\ResourceCategory;
 use App\Utils\ErrorLogger;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 
 class HelpController extends Controller
 {
-
     public function __construct()
     {
         // Apply middleware for help-related permissions
@@ -20,15 +20,16 @@ class HelpController extends Controller
         $this->middleware('permission:help-delete', ['only' => ['delete']]);
     }
 
-
     public function index(Request $request)
     {
         try {
             $help = Help::where('status', 'Active')->paginate(10);
+
             return view('admin.help.index', compact('help'));
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError($th, request()->fullUrl());
+
             return view('servererror');
         }
     }
@@ -36,11 +37,21 @@ class HelpController extends Controller
     public function userView(Request $request)
     {
         try {
-            $help = Help::where('status', 'Active')->paginate(10);
-            return view('admin.help.userView', compact('help'));
+            $categories = ResourceCategory::where('status', 'Active')->orderBy('categoryName', 'asc')->get();
+            $selectedCategoryId = $request->resourceCatId;
+
+            $query = Help::where('status', 'Active');
+            if ($selectedCategoryId) {
+                $query->where('resourceCatId', $selectedCategoryId);
+            }
+
+            $help = $query->paginate(10)->appends($request->query());
+
+            return view('admin.help.userView', compact('help', 'categories', 'selectedCategoryId'));
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError($th, request()->fullUrl());
+
             return view('servererror');
         }
     }
@@ -48,10 +59,13 @@ class HelpController extends Controller
     public function create()
     {
         try {
-            return view('admin.help.create');
+            $categories = ResourceCategory::where('status', 'Active')->orderBy('categoryName', 'asc')->get();
+
+            return view('admin.help.create', compact('categories'));
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError($th, request()->fullUrl());
+
             return view('servererror');
         }
     }
@@ -60,44 +74,54 @@ class HelpController extends Controller
     {
         $this->validate($request, [
             'title' => 'required',
+            'resourceCatId' => 'required|exists:resource_categories,id',
         ]);
 
         try {
-            $help = new Help();
+            $help = new Help;
             $help->title = $request->title;
+            $help->resourceCatId = $request->resourceCatId;
             if ($request->photo) {
-                $help->photo = time() . '.' . $request->photo->extension();
+                $help->photo = time().'.'.$request->photo->extension();
                 $request->photo->move(public_path('help'), $help->photo);
             }
             if ($request->video) {
-                $help->video = time() . '.' . $request->video->extension();
+                $help->video = time().'.'.$request->video->extension();
                 $request->video->move(public_path('help'), $help->video);
             }
             if ($request->pdf) {
-                $help->pdf = time() . '.' . $request->pdf->extension();
+                $help->pdf = time().'.'.$request->pdf->extension();
                 $request->pdf->move(public_path('help'), $help->pdf);
             }
             $help->description = $request->description;
             $help->status = 'Active';
             $help->save();
 
-            return redirect()->route('help.index')->with('success', 'Help Created Successfully!');
+            return redirect()->route('help.index')->with('success', 'Resource Created Successfully!');
         } catch (\Throwable $th) {
-            //throw $th;
+            // throw $th;
             ErrorLogger::logError($th, request()->fullUrl());
+
             return view('servererror');
         }
     }
-
 
     public function edit(Request $request, $id)
     {
         try {
             $help = Help::find($id);
-            return view('admin.help.edit', compact('help'));
+            $categories = ResourceCategory::where('status', 'Active')
+                ->when($help?->resourceCatId, function ($q) use ($help) {
+                    $q->orWhere('id', $help->resourceCatId);
+                })
+                ->orderBy('categoryName', 'asc')
+                ->get();
+
+            return view('admin.help.edit', compact('help', 'categories'));
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError($th, request()->fullUrl());
+
             return view('servererror');
         }
     }
@@ -107,58 +131,61 @@ class HelpController extends Controller
         $this->validate($request, [
             'id' => 'required|exists:helps,id',
             'title' => 'required',
+            'resourceCatId' => 'required|exists:resource_categories,id',
         ]);
 
         try {
             $help = Help::find($request->id);
 
-            if (!$help) {
-                return redirect()->route('help.index')->with('error', 'Help not found.');
+            if (! $help) {
+                return redirect()->route('help.index')->with('error', 'Resource not found.');
             }
 
             $help->title = $request->title;
+            $help->resourceCatId = $request->resourceCatId;
             if ($request->photo) {
-                $help->photo = time() . '.' . $request->photo->extension();
+                $help->photo = time().'.'.$request->photo->extension();
                 $request->photo->move(public_path('help'), $help->photo);
             }
             if ($request->video) {
-                $help->video = time() . '.' . $request->video->extension();
+                $help->video = time().'.'.$request->video->extension();
                 $request->video->move(public_path('help'), $help->video);
             }
             if ($request->pdf) {
-                $help->pdf = time() . '.' . $request->pdf->extension();
+                $help->pdf = time().'.'.$request->pdf->extension();
                 $request->pdf->move(public_path('help'), $help->pdf);
             }
             $help->description = $request->description;
             $help->status = 'Active';
             $help->save();
 
-            return redirect()->route('help.index')->with('success', 'Help details updated successfully.');
+            return redirect()->route('help.index')->with('success', 'Resource details updated successfully.');
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError($th, request()->fullUrl());
-            return redirect()->route('help.index')->with('error', 'Failed to update help details.');
+
+            return redirect()->route('help.index')->with('error', 'Failed to update resource details.');
         }
     }
-
 
     public function delete($id)
     {
         try {
             $help = Help::find($id);
 
-            if (!$help) {
-                return redirect()->route('help.index')->with('error', 'Help not found.');
+            if (! $help) {
+                return redirect()->route('help.index')->with('error', 'Resource not found.');
             }
 
             $help->status = 'Deleted';
             $help->save();
 
-            return redirect()->route('help.index')->with('success', 'Help deleted successfully.');
+            return redirect()->route('help.index')->with('success', 'Resource deleted successfully.');
         } catch (\Throwable $th) {
-            //throw $th;
+            // throw $th;
             ErrorLogger::logError($th, request()->fullUrl());
-            return redirect()->route('help.index')->with('error', 'Failed to delete help.');
+
+            return redirect()->route('help.index')->with('error', 'Failed to delete resource.');
         }
     }
 }

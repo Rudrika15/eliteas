@@ -13,10 +13,12 @@ class Training extends Model
     {
         return $this->belongsTo(TrainerMaster::class, 'trainingId', 'id');
     }
+
     public function trainers()
     {
         return $this->hasMany(TrainingTrainers::class, 'trainingId', 'id');
     }
+
     public function member()
     {
         return $this->belongsTo(Member::class, 'trainerId', 'userId');
@@ -41,5 +43,4 @@ class Training extends Model
     {
         return $this->belongsTo(TrainingMaster::class, 'trainingMasterId', 'id');
     }
-
 }

@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Utils\Utils;
-use App\Models\AppVersion;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\AppVersion;
+use App\Utils\Utils;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class UpdateAppController extends Controller
@@ -26,7 +26,7 @@ class UpdateAppController extends Controller
 
             $appSettings = AppVersion::first(); // Assuming a single settings record
 
-            if (!$appSettings) {
+            if (! $appSettings) {
                 return Utils::errorResponse(null, 'App settings not found', 404);
             }
 
@@ -45,9 +45,10 @@ class UpdateAppController extends Controller
     {
         try {
             $appSettings = AppVersion::first(); // Assuming a single settings record
-            if (!$appSettings) {
+            if (! $appSettings) {
                 return Utils::errorResponse(null, 'App settings not found', 404);
             }
+
             return Utils::sendResponse(['version' => $appSettings->version, 'major' => $appSettings->major], 'App settings fetched successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse($th->getMessage(), 'Internal Server Error', 500);

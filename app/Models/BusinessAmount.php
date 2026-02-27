@@ -13,5 +13,4 @@ class BusinessAmount extends Model
     {
         return $this->belongsTo(CircleMeetingMembersBusiness::class, 'id', 'circleMeetingMemberBusinessId');
     }
-
 }

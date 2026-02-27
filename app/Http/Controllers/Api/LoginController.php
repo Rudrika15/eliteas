@@ -2,23 +2,22 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\User;
-use App\Utils\Utils;
-use App\Models\Member;
-use App\Models\Landmark;
-use App\Models\TopsProfile;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use App\Models\BillingAddress;
 use App\Models\ContactDetails;
-use App\Http\Controllers\Controller;
+use App\Models\Landmark;
+use App\Models\Member;
+use App\Models\TopsProfile;
+use App\Models\User;
 use App\Utils\ErrorLogger;
+use App\Utils\Utils;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Spatie\Permission\Models\Role;
 
 class LoginController extends Controller
 {
-
     public function login(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -66,11 +65,10 @@ class LoginController extends Controller
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError($th, $request->fullUrl());
+
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
-
-
 
     public function getRolePermissions()
     {
@@ -93,14 +91,13 @@ class LoginController extends Controller
                         'id' => $permission->id,
                         'name' => $permission->name,
                     ];
-                })
+                }),
             ];
         }
 
         // Return the response with roles and their active permissions
         return Utils::sendResponse($rolePermissions, 'Role and Permission List');
     }
-
 
     // public function profile(Request $request)
     // {
@@ -131,14 +128,13 @@ class LoginController extends Controller
 
     // }
 
-
     public function profile(Request $request)
     {
         $user = Auth::user();
 
         $member = Member::where('userId', $user->id)->first();
 
-        if (!$member) {
+        if (! $member) {
             return response()->json(['error' => 'Member not found'], 404);
         }
 
@@ -166,12 +162,9 @@ class LoginController extends Controller
         ]);
     }
 
-
-
     // public function memberUpdate(Request $request)
     // {
     //     $user = Auth::user();
-
 
     //     $member = Member::where('userId', $user->id)->first();
 
@@ -181,7 +174,6 @@ class LoginController extends Controller
 
     //     $updatedFields = array_filter($request->all());
 
-
     //     foreach ($updatedFields as $key => $value) {
     //         $member->{$key} = $value;
     //     }
@@ -190,8 +182,6 @@ class LoginController extends Controller
 
     //     return Utils::sendResponse([$member, 'message' => 'Your Profile data updated successfully'], 200);
     // }
-
-
 
     public function billingAddressUpdate(Request $request)
     {
@@ -203,20 +193,17 @@ class LoginController extends Controller
 
         $user = Auth::user();
         $member = $user->member;
-        //update only billingAddress table data of logged in user
+        // update only billingAddress table data of logged in user
         $billingAddress = BillingAddress::where('memberId', $member->id)->first();
-
-
 
         if ($billingAddress) {
             $billingAddress->update($request->all());
+
             return Utils::sendResponse([$billingAddress, 'message' => 'Billing Address data updated successfully'], 200);
         } else {
             return Utils::errorResponse(['error' => 'Billing Address not found'], 404);
         }
     }
-
-
 
     public function contactDetailsUpdate(Request $request)
     {
@@ -229,17 +216,18 @@ class LoginController extends Controller
         $user = Auth::user();
         $member = $user->member;
 
-
-        //update only contactDetails table data of logged in user
+        // update only contactDetails table data of logged in user
         $contactDetails = ContactDetails::where('memberId', $member->id)->first();
 
         if ($contactDetails) {
             $contactDetails->update($request->all());
+
             return Utils::sendResponse([$contactDetails, 'message' => 'Contact Details data updated successfully'], 200);
         } else {
             return Utils::errorResponse(['error' => 'Contact Details not found'], 404);
         }
     }
+
     public function topsProfileUpdate(Request $request)
     {
         $validator = Validator::make($request->all(), []);
@@ -251,18 +239,19 @@ class LoginController extends Controller
         $user = Auth::user();
         $member = $user->member;
 
-        //update only topsProfile table data of logged in user
+        // update only topsProfile table data of logged in user
         $topsProfile = TopsProfile::where('memberId', $member->id)->first();
 
         if ($topsProfile) {
             $topsProfile->update($request->all());
+
             return Utils::sendResponse([$topsProfile, 'message' => 'Tops Profile data updated successfully'], 200);
         } else {
             return Utils::errorResponse(['error' => 'Tops Profile not found'], 404);
         }
     }
 
-    //admin side profile edit or update
+    // admin side profile edit or update
 
     public function memberUpdateAdmin(Request $request, $id)
     {
@@ -294,18 +283,16 @@ class LoginController extends Controller
             // $member->profilePhoto = $request->input('profilePhoto', $member->profilePhoto);
 
             if ($request->profilePhoto) {
-                $member->profilePhoto = time() . '.' . $request->profilePhoto->extension();
-                $request->profilePhoto->move(public_path('ProfilePhoto'),  $member->profilePhoto);
+                $member->profilePhoto = time().'.'.$request->profilePhoto->extension();
+                $request->profilePhoto->move(public_path('ProfilePhoto'), $member->profilePhoto);
             }
-
 
             // $member->companyLogo = $request->input('companyLogo', $member->companyLogo);
 
             if ($request->companyLogo) {
-                $member->companyLogo = time() . '.' . $request->companyLogo->extension();
-                $request->companyLogo->move(public_path('ProfilePhoto'),  $member->companyLogo);
+                $member->companyLogo = time().'.'.$request->companyLogo->extension();
+                $request->companyLogo->move(public_path('ProfilePhoto'), $member->companyLogo);
             }
-
 
             $member->goals = $request->input('goals', $member->goals);
             $member->accomplishment = $request->input('accomplishment', $member->accomplishment);
@@ -381,7 +368,6 @@ class LoginController extends Controller
             $billing->bPinCode = $request->input('bPinCode', $billing->bPinCode);
             $billing->save();
 
-
             return Utils::sendResponse([$member, $tops, $contact, $billing, 'message' => 'Member Profile data updated successfully'], 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => 'Member Profile not found'], 404);
@@ -391,17 +377,15 @@ class LoginController extends Controller
     public function memberUpdate(Request $request)
     {
 
-
         $user = Auth::user();
-
 
         $member = Member::where('userId', $user->id)->first();
 
-        if (!$member) {
+        if (! $member) {
             return Utils::errorResponse(['error' => 'Member not found'], 404);
         }
         $member->title = $request->input('title', $member->title);
-        $member->birthDate  = $request->input('birthDate', $member->birthDate);
+        $member->birthDate = $request->input('birthDate', $member->birthDate);
         $member->firstName = $request->input('firstName', $member->firstName);
         $member->lastName = $request->input('lastName', $member->lastName);
         // $member->username = $request->input('username', $member->username);
@@ -411,16 +395,16 @@ class LoginController extends Controller
             $landmarkName = $request->input('landmark');
             $member->landmark = $landmarkName;
 
-            if ($member->cityId && !empty($landmarkName)) {
+            if ($member->cityId && ! empty($landmarkName)) {
                 $exists = Landmark::where('cityId', $member->cityId)
                     ->where('name', $landmarkName)
                     ->exists();
 
-                if (!$exists) {
+                if (! $exists) {
                     Landmark::create([
                         'cityId' => $member->cityId,
                         'name' => $landmarkName,
-                        'status' => 'Active'
+                        'status' => 'Active',
                     ]);
                 }
             }
@@ -452,34 +436,32 @@ class LoginController extends Controller
 
         $member->keyWords = empty($keyWords) ? null : json_encode($keyWords);
 
-
         $member->language = $request->input('language', $member->language);
         $member->timeZone = $request->input('timeZone', $member->timeZone);
 
         if ($request->hasFile('profilePhoto')) {
             $file = $request->file('profilePhoto');
-            $filename = time() . '.' . $file->getClientOriginalExtension();
+            $filename = time().'.'.$file->getClientOriginalExtension();
             if ($member->profilePhoto) {
-                $filePath = public_path('ProfilePhoto/') . $member->profilePhoto;
+                $filePath = public_path('ProfilePhoto/').$member->profilePhoto;
                 if (file_exists($filePath)) {
                     unlink($filePath);
                 }
             }
-            $file->move(public_path('ProfilePhoto'),  $filename);
+            $file->move(public_path('ProfilePhoto'), $filename);
             $member->profilePhoto = $filename;
         }
 
-
         if ($request->hasFile('companyLogo')) {
             $file = $request->file('companyLogo');
-            $filename = time() . '.' . $file->getClientOriginalExtension();
+            $filename = time().'.'.$file->getClientOriginalExtension();
             if ($member->companyLogo) {
-                $filePath = public_path('CompanyLogo/') . $member->companyLogo;
+                $filePath = public_path('CompanyLogo/').$member->companyLogo;
                 if (file_exists($filePath)) {
                     unlink($filePath);
                 }
             }
-            $file->move(public_path('CompanyLogo'),  $filename);
+            $file->move(public_path('CompanyLogo'), $filename);
             $member->companyLogo = $filename;
         }
 
@@ -496,9 +478,7 @@ class LoginController extends Controller
         $member->receiveUpdates = $request->input('receiveUpdates', $member->receiveUpdates);
         $member->shareRevenue = $request->input('shareRevenue', $member->shareRevenue);
 
-
         $member->save();
-
 
         return Utils::sendResponse([$member, 'message' => 'Member Profile data updated successfully'], 200);
     }

@@ -5,10 +5,10 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Testimonial;
 use App\Models\User;
+use App\Utils\Utils;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Utils\Utils;
 use Illuminate\Support\Facades\Log;
 use Kreait\Firebase\Factory;
 use Kreait\Firebase\Messaging\CloudMessage;
@@ -20,7 +20,7 @@ class TestimonialController extends Controller
     {
         try {
             $authUser = Auth::user();
-            if (!$authUser) {
+            if (! $authUser) {
                 return Utils::errorResponse('Unauthorized', 'Unauthorized', 401);
             }
 
@@ -36,7 +36,7 @@ class TestimonialController extends Controller
     {
         try {
             $authUser = Auth::user()->member->id;
-            if (!$authUser) {
+            if (! $authUser) {
                 return Utils::errorResponse('Unauthorized', 'Unauthorized', 401);
             }
 
@@ -52,6 +52,7 @@ class TestimonialController extends Controller
     {
         try {
             $testimonials = Testimonial::all();
+
             return Utils::sendResponse($testimonials, 'Testimonials retrieved successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse($th->getMessage(), 'Internal Server Error', 500);
@@ -63,10 +64,10 @@ class TestimonialController extends Controller
         try {
             $request->validate([
                 'circlePersonId' => 'required',
-                'message' => 'required'
+                'message' => 'required',
             ]);
 
-            $testimonial = new Testimonial();
+            $testimonial = new Testimonial;
             $testimonial->userId = Auth::user()->id;
             $testimonial->memberId = $request->circlePersonId;
             $testimonial->message = $request->message;
@@ -80,7 +81,7 @@ class TestimonialController extends Controller
 
             if ($user && $user->fcm_token) {
                 $title = 'Testimonial';
-                $body = $user->firstName . ' ' . $user->lastName . ' has Created Testimonial about you.';
+                $body = $user->firstName.' '.$user->lastName.' has Created Testimonial about you.';
 
                 $serviceAccountPath = storage_path('app/public/ubn_notification.json');
                 $factory = (new Factory)->withServiceAccount($serviceAccountPath);
@@ -91,17 +92,17 @@ class TestimonialController extends Controller
 
                 try {
                     $messaging->send($message);
-                    Log::info('Notification sent to token: ' . $user->fcm_token);
+                    Log::info('Notification sent to token: '.$user->fcm_token);
                     // $notificationSent = true;
                 } catch (\Kreait\Firebase\Exception\Messaging\NotFound $e) {
-                    Log::error('Token not found: ' . $user->fcm_token);
+                    Log::error('Token not found: '.$user->fcm_token);
                 } catch (\Kreait\Firebase\Exception\Messaging\InvalidArgument $e) {
-                    Log::error('Invalid argument error with token: ' . $user->fcm_token);
+                    Log::error('Invalid argument error with token: '.$user->fcm_token);
                 } catch (\Exception $e) {
-                    Log::error('General error sending to token: ' . $user->fcm_token . '. Error: ' . $e->getMessage());
+                    Log::error('General error sending to token: '.$user->fcm_token.'. Error: '.$e->getMessage());
                 }
             } else {
-                Log::error('No FCM token found for user ID: ' . $circlePersonId);
+                Log::error('No FCM token found for user ID: '.$circlePersonId);
             }
 
             return Utils::sendResponse($testimonial, 'Testimonial created successfully', 201);
@@ -110,12 +111,11 @@ class TestimonialController extends Controller
         }
     }
 
-
     public function destroy($id)
     {
         try {
             $testimonial = Testimonial::find($id);
-            if (!$testimonial) {
+            if (! $testimonial) {
                 return Utils::errorResponse('Testimonial not found', 'Not Found', 404);
             }
             $testimonial->delete();
@@ -126,11 +126,11 @@ class TestimonialController extends Controller
         }
     }
 
-
     public function archives()
     {
         try {
             $testimonials = Testimonial::onlyTrashed()->get();
+
             return Utils::sendResponse($testimonials, 'Archived testimonials retrieved successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse($th->getMessage(), 'Internal Server Error', 500);
@@ -141,7 +141,7 @@ class TestimonialController extends Controller
     {
         try {
             $testimonial = Testimonial::withTrashed()->find($id);
-            if (!$testimonial) {
+            if (! $testimonial) {
                 return Utils::errorResponse('Testimonial not found', 'Not Found', 404);
             }
             $testimonial->restore();

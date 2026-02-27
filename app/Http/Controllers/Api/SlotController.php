@@ -2,14 +2,12 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\CircleType;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Slot;
 use App\Models\SlotBooking;
 use App\Utils\ErrorLogger;
-use Illuminate\Support\Facades\Validator;
 use App\Utils\Utils;
+use Illuminate\Http\Request;
 
 class SlotController extends Controller
 {
@@ -23,7 +21,7 @@ class SlotController extends Controller
 
         try {
             // Create a new SlotBooking record
-            $slot = new SlotBooking();
+            $slot = new SlotBooking;
             $slot->eventId = $request->eventId;
             $slot->slotId = $request->slotId;
             // $slot->visitorId = $request->visitorId;
@@ -37,11 +35,12 @@ class SlotController extends Controller
             // Return success response
             return Utils::sendResponse([
                 'message' => 'Booking Successful!',
-                'slotBooking' => $slot
+                'slotBooking' => $slot,
             ], 'Success');
         } catch (\Throwable $th) {
             // Log error and return server error response
             ErrorLogger::logError($th, $request->fullUrl());
+
             return Utils::errorResponse(
                 ['error' => 'An error occurred while processing the booking.'],
                 'Server Error',
@@ -49,7 +48,6 @@ class SlotController extends Controller
             );
         }
     }
-
 
     public function slotBookingMemberAPI(Request $request)
     {
@@ -63,7 +61,7 @@ class SlotController extends Controller
             ]);
 
             // Create a new SlotBooking
-            $slot = new SlotBooking();
+            $slot = new SlotBooking;
             $slot->eventId = $request->eventId;
             $slot->slotId = $request->slotId;
             $slot->userId = $userId;
@@ -76,7 +74,7 @@ class SlotController extends Controller
             // Return success response
             return Utils::sendResponse([
                 'message' => 'Booking Successful!',
-                'slotBooking' => $slot
+                'slotBooking' => $slot,
             ], 'Success');
         } catch (\Throwable $th) {
             // Log error and return error response
@@ -103,7 +101,7 @@ class SlotController extends Controller
             ], 'Slot Retrieved successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse([
-                'error' => 'Failed to retrieve slot. Please try again.'
+                'error' => 'Failed to retrieve slot. Please try again.',
             ], 'Internal Server Error', 500);
         }
     }

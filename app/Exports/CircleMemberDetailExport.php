@@ -12,7 +12,9 @@ use Maatwebsite\Excel\Concerns\FromView;
 class CircleMemberDetailExport implements FromView
 {
     protected $circleId;
+
     protected $startDate;
+
     protected $endDate;
 
     public function __construct($circleId, $startDate = null, $endDate = null)
@@ -35,24 +37,24 @@ class CircleMemberDetailExport implements FromView
             $ibm = CircleCall::with('meetingPersonReport')
                 ->where('status', 'Active')
                 ->where('memberId', $uid)
-                ->when($this->startDate, fn($q) => $q->whereDate('created_at', '>=', $this->startDate))
-                ->when($this->endDate, fn($q) => $q->whereDate('created_at', '<=', $this->endDate))
+                ->when($this->startDate, fn ($q) => $q->whereDate('created_at', '>=', $this->startDate))
+                ->when($this->endDate, fn ($q) => $q->whereDate('created_at', '<=', $this->endDate))
                 ->get()
                 ->unique('id');
 
             $ref = CircleMeetingMembersReference::with('refReceiver')
                 ->where('status', 'Active')
                 ->where('referenceGiverId', $uid)
-                ->when($this->startDate, fn($q) => $q->whereDate('created_at', '>=', $this->startDate))
-                ->when($this->endDate, fn($q) => $q->whereDate('created_at', '<=', $this->endDate))
+                ->when($this->startDate, fn ($q) => $q->whereDate('created_at', '>=', $this->startDate))
+                ->when($this->endDate, fn ($q) => $q->whereDate('created_at', '<=', $this->endDate))
                 ->get()
                 ->unique('id');
 
             $bus = CircleMeetingMembersBusiness::with('loginMember')
                 ->where('status', 'Active')
                 ->where('businessGiverId', $uid)
-                ->when($this->startDate, fn($q) => $q->whereDate('created_at', '>=', $this->startDate))
-                ->when($this->endDate, fn($q) => $q->whereDate('created_at', '<=', $this->endDate))
+                ->when($this->startDate, fn ($q) => $q->whereDate('created_at', '>=', $this->startDate))
+                ->when($this->endDate, fn ($q) => $q->whereDate('created_at', '<=', $this->endDate))
                 ->get()
                 ->unique('id');
 
@@ -71,4 +73,3 @@ class CircleMemberDetailExport implements FromView
         ]);
     }
 }
-

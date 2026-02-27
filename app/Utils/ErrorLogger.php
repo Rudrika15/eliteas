@@ -7,15 +7,10 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
-
 class ErrorLogger
 {
     /**
      * Log an error to the database and optionally to a log file.
-     *
-     * @param \Throwable $exception
-     * @param string|null $url
-     * @return void
      */
     public static function logError(\Throwable $exception, ?string $url = null): void
     {
@@ -26,7 +21,7 @@ class ErrorLogger
 
         // $userId = Auth::user()->id;
 
-        $errorLog = new ErrorLog();
+        $errorLog = new ErrorLog;
         $errorLog->url = $url ?? request()->fullUrl();
         $errorLog->error_message = $exception->getMessage();
         $errorLog->date = now()->toDateString();
@@ -47,7 +42,6 @@ class ErrorLogger
         } catch (\Throwable $e) {
             // ignore
         }
-
 
         Log::error($exception->getMessage(), [
             'url' => $errorLog->url,

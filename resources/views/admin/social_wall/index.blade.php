@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title', 'UBN - Social Wall')
+@section('title', 'UBN - Network Feed')
 
 @section('content')
     <style>
@@ -27,9 +27,128 @@
             background: #555;
         }
 
-        .social-wall-container {
-            max-width: 800px;
+        .social-wall-layout {
+            max-width: 1400px;
             margin: 0 auto;
+            padding: 0 12px;
+        }
+
+        @media (min-width: 992px) {
+            .social-wall-layout {
+                padding: 0 24px;
+            }
+        }
+
+        .social-wall-container {
+            width: 100%;
+            margin: 0;
+        }
+
+        .social-wall-sidebar {
+            position: sticky;
+            top: 90px;
+        }
+
+        .sidebar-card {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            margin-bottom: 16px;
+        }
+
+        .sidebar-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .sidebar-title {
+            font-weight: 700;
+            font-size: 14px;
+            color: #222;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .sidebar-title i {
+            color: #0d6efd;
+        }
+
+        .sidebar-badge {
+            font-size: 12px;
+            font-weight: 700;
+            color: #0d6efd;
+            background: rgba(13, 110, 253, 0.1);
+            padding: 3px 10px;
+            border-radius: 999px;
+        }
+
+        .sidebar-scroll {
+            max-height: 320px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .sidebar-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sidebar-scroll::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+
+        .sidebar-scroll::-webkit-scrollbar-thumb {
+            background: #c7c7c7;
+            border-radius: 3px;
+        }
+
+        .sidebar-scroll::-webkit-scrollbar-thumb:hover {
+            background: #a9a9a9;
+        }
+
+        .sidebar-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .recent-post-item {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+            padding: 10px;
+            border-radius: 10px;
+            text-decoration: none;
+            color: inherit;
+            transition: background-color .15s ease, box-shadow .15s ease;
+        }
+
+        .recent-post-item:hover {
+            background: #f7f9ff;
+            box-shadow: inset 0 0 0 1px rgba(13, 110, 253, .15);
+        }
+
+        .recent-post-item:active {
+            background: #eef4ff;
+        }
+
+        .recent-post-snippet {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .post-highlight {
+            box-shadow: 0 0 0 2px rgba(13, 110, 253, .35), 0 6px 18px rgba(0, 0, 0, 0.08);
+            scroll-margin-top: 90px;
         }
 
         .create-post-card {
@@ -92,6 +211,7 @@
 
         .post-media-grid.grid-1 {
             grid-template-columns: 1fr;
+            height: clamp(260px, 45vw, 420px);
         }
 
         .post-media-grid.grid-2 {
@@ -441,193 +561,282 @@
         }
     </style>
 
-    <div class="social-wall-container">
-        {{-- Create Post --}}
-        <div class="create-post-card">
-            <form id="create-post-form" onsubmit="uploadPost(event)" enctype="multipart/form-data">
-                <div class="mb-3">
-                    <textarea name="caption" class="form-control border-0" rows="2" placeholder="What's on your mind?"></textarea>
-                </div>
+    <div class="social-wall-layout">
+        <div class="row g-4 justify-content-center">
+            <div class="col-12 col-lg-8 col-xl-7">
+                <div class="social-wall-container">
+                    {{-- Create Post --}}
+                    <div class="create-post-card">
+                        <form id="create-post-form" onsubmit="uploadPost(event)" enctype="multipart/form-data">
+                            <div class="mb-3">
+                                <textarea name="caption" class="form-control border-0" rows="2" placeholder="What's on your mind?"></textarea>
+                            </div>
 
-                {{-- Validation Errors --}}
-                <div id="validation-errors"></div>
+                            {{-- Validation Errors --}}
+                            <div id="validation-errors"></div>
 
-                <div class="d-flex justify-content-between align-items-center border-top pt-2">
-                    <div>
-                        <label class="btn btn-sm btn-light text-primary mb-0" style="cursor: pointer;">
-                            <i class="bi bi-image"></i> Photo/Video
-                            <input type="file" name="attachments[]" accept="image/*,video/*" multiple hidden onchange="previewFiles(this)">
-                        </label>
-                        <span id="file-count" class="ms-2 text-muted small"></span>
-                    </div>
-                    <button type="submit" id="upload-btn" class="btn btn-primary btn-sm px-4">Post</button>
-                </div>
+                            <div class="d-flex justify-content-between align-items-center border-top pt-2">
+                                <div>
+                                    <label class="btn btn-sm btn-light text-primary mb-0" style="cursor: pointer;">
+                                        <i class="bi bi-image"></i> Photo
+                                        <input type="file" name="attachments[]" accept="image/*" multiple hidden onchange="previewFiles(this)">
+                                    </label>
+                                    <span id="file-count" class="ms-2 text-muted small"></span>
+                                </div>
+                                <button type="submit" id="upload-btn" class="btn btn-primary btn-sm px-4">Post</button>
+                            </div>
 
-                {{-- Previews --}}
-                <div id="preview-container" class="mt-2" style="display:none; white-space: nowrap; overflow-x: auto;">
-                    {{-- Previews will be injected here --}}
-                </div>
+                            {{-- Previews --}}
+                            <div id="preview-container" class="mt-2" style="display:none; white-space: nowrap; overflow-x: auto;">
+                                {{-- Previews will be injected here --}}
+                            </div>
 
-                {{-- Progress Bar --}}
-                <div id="progress-container">
-                    <div class="progress">
-                        <div id="progress-bar" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
-                    </div>
-                    <small class="text-muted text-center d-block mt-1">Uploading...</small>
-                </div>
+                            {{-- Progress Bar --}}
+                            <div id="progress-container">
+                                <div class="progress">
+                                    <div id="progress-bar" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                                </div>
+                                <small class="text-muted text-center d-block mt-1">Uploading...</small>
+                            </div>
 
-                {{-- Success Animation --}}
-                <div id="success-animation">
-                    <i class="bi bi-check-circle-fill" style="font-size: 2rem;"></i>
-                    <p>Post created successfully!</p>
-                </div>
-            </form>
-        </div>
-
-        {{-- Posts Feed --}}
-        @foreach ($posts as $post)
-            <div class="post-card" id="post-{{ $post->id }}">
-                <div class="post-header">
-                    @php
-                        $postUserMember = optional($post->user->member);
-                        $postUserPhoto = $postUserMember->profilePhoto ?? null;
-                    @endphp
-                    <img src="{{ $postUserPhoto ? asset($postUserPhoto) : asset('profile.png') }}" alt="User" class="post-avatar" onerror="this.src='{{ asset('profile.png') }}'">
-                    <div class="post-user-info">
-                        <h6>{{ $post->user->firstName }} {{ $post->user->lastName }}</h6>
-                        <span>{{ $post->created_at->diffForHumans() }}</span>
+                            {{-- Success Animation --}}
+                            <div id="success-animation">
+                                <i class="bi bi-check-circle-fill" style="font-size: 2rem;"></i>
+                                <p>Post created successfully!</p>
+                            </div>
+                        </form>
                     </div>
 
-                    @if (Auth::id() === $post->userId || Auth::user()->role === 'Admin')
-                        <div class="ms-auto dropdown">
-                            <button class="btn btn-link text-dark p-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="bi bi-three-dots-vertical"></i>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                                @if (Auth::id() === $post->userId)
-                                    <li><a class="dropdown-item" href="javascript:void(0)" onclick="openEditPostModal({{ $post->id }})"><i class="bi bi-pencil me-2"></i>Edit Post</a></li>
-                                @endif
-                                <li><a class="dropdown-item text-danger" href="javascript:void(0)" onclick="deletePost({{ $post->id }})"><i class="bi bi-trash me-2"></i>Delete Post</a></li>
-                            </ul>
-                        </div>
-                    @endif
-                </div>
-
-                <div class="post-content">
-                    @if ($post->caption)
-                        <div class="post-text">{{ $post->caption }}</div>
-                    @endif
-
-                    {{-- Multiple Media Support --}}
-                    @if ($post->media && $post->media->count() > 0)
-                        @php
-                            $mediaCount = $post->media->count();
-                            $gridClass = '';
-                            if ($mediaCount == 1) {
-                                $gridClass = 'grid-1';
-                            } elseif ($mediaCount == 2) {
-                                $gridClass = 'grid-2';
-                            } elseif ($mediaCount == 3) {
-                                $gridClass = 'grid-3';
-                            } elseif ($mediaCount == 4) {
-                                $gridClass = 'grid-4';
-                            } else {
-                                $gridClass = 'grid-5-plus';
-                            }
-
-                            $mediaList = $post->media->map(function ($m) {
-                                return [
-                                    'src' => asset($m->file_path),
-                                    'type' => $m->file_type,
-                                    'ext' => pathinfo($m->file_path, PATHINFO_EXTENSION),
-                                ];
-                            });
-
-                            $displayMedia = $post->media->take(4);
-                        @endphp
-                        <div class="post-media-grid {{ $gridClass }}" data-media="{{ json_encode($mediaList) }}">
-                            @foreach ($displayMedia as $index => $media)
+                    {{-- Posts Feed --}}
+                    @foreach ($posts as $post)
+                        <div class="post-card" id="post-{{ $post->id }}">
+                            <div class="post-header">
                                 @php
-                                    $isLast = $index === 3;
-                                    $remaining = $mediaCount - 4;
+                                    $postUserMember = optional($post->user->member);
+                                    $postUserPhoto = $postUserMember->profilePhoto ?? null;
                                 @endphp
-                                <div class="media-item" onclick="openGallery(this, {{ $index }})">
-                                    @if ($media->file_type === 'image' || in_array(strtolower(pathinfo($media->file_path, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png', 'gif', 'webp']))
-                                        <img src="{{ asset($media->file_path) }}" alt="Post Attachment">
-                                    @else
-                                        <video>
-                                            <source src="{{ asset($media->file_path) }}" type="video/{{ pathinfo($media->file_path, PATHINFO_EXTENSION) }}">
-                                        </video>
-                                    @endif
+                                <img src="{{ $postUserPhoto ? asset($postUserPhoto) : asset('profile.png') }}" alt="User" class="post-avatar" onerror="this.src='{{ asset('profile.png') }}'">
+                                <div class="post-user-info">
+                                    <h6>{{ $post->user->firstName }} {{ $post->user->lastName }}</h6>
+                                    <span>{{ $post->created_at->diffForHumans() }}</span>
+                                </div>
 
-                                    @if ($isLast && $remaining > 0)
-                                        <div class="more-overlay">+{{ $remaining }}</div>
+                                @if (Auth::id() === $post->userId || Auth::user()->role === 'Admin')
+                                    <div class="ms-auto dropdown">
+                                        <button class="btn btn-link text-dark p-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="bi bi-three-dots-vertical"></i>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            @if (Auth::id() === $post->userId)
+                                                <li><a class="dropdown-item" href="javascript:void(0)" onclick="openEditPostModal({{ $post->id }})"><i class="bi bi-pencil me-2"></i>Edit Post</a></li>
+                                            @endif
+                                            <li><a class="dropdown-item text-danger" href="javascript:void(0)" onclick="deletePost({{ $post->id }})"><i class="bi bi-trash me-2"></i>Delete Post</a></li>
+                                        </ul>
+                                    </div>
+                                @endif
+                            </div>
+
+                            <div class="post-content">
+                                @if ($post->caption)
+                                    <div class="post-text">{{ $post->caption }}</div>
+                                @endif
+
+                                {{-- Multiple Media Support --}}
+                                @if ($post->media && $post->media->count() > 0)
+                                    @php
+                                        $mediaCount = $post->media->count();
+                                        $gridClass = '';
+                                        if ($mediaCount == 1) {
+                                            $gridClass = 'grid-1';
+                                        } elseif ($mediaCount == 2) {
+                                            $gridClass = 'grid-2';
+                                        } elseif ($mediaCount == 3) {
+                                            $gridClass = 'grid-3';
+                                        } elseif ($mediaCount == 4) {
+                                            $gridClass = 'grid-4';
+                                        } else {
+                                            $gridClass = 'grid-5-plus';
+                                        }
+
+                                        $mediaList = $post->media->map(function ($m) {
+                                            return [
+                                                'src' => asset($m->file_path),
+                                                'type' => $m->file_type,
+                                                'ext' => pathinfo($m->file_path, PATHINFO_EXTENSION),
+                                            ];
+                                        });
+
+                                        $displayMedia = $post->media->take(4);
+                                    @endphp
+                                    <div class="post-media-grid {{ $gridClass }}" data-media="{{ json_encode($mediaList) }}">
+                                        @foreach ($displayMedia as $index => $media)
+                                            @php
+                                                $isLast = $index === 3;
+                                                $remaining = $mediaCount - 4;
+                                            @endphp
+                                            <div class="media-item" onclick="openGallery(this, {{ $index }})">
+                                                @if ($media->file_type === 'image' || in_array(strtolower(pathinfo($media->file_path, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png', 'gif', 'webp']))
+                                                    <img src="{{ asset($media->file_path) }}" alt="Post Attachment">
+                                                @else
+                                                    <video>
+                                                        <source src="{{ asset($media->file_path) }}" type="video/{{ pathinfo($media->file_path, PATHINFO_EXTENSION) }}">
+                                                    </video>
+                                                @endif
+
+                                                @if ($isLast && $remaining > 0)
+                                                    <div class="more-overlay">+{{ $remaining }}</div>
+                                                @endif
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                    {{-- Legacy Single Attachment Support --}}
+                                @elseif ($post->attachment)
+                                    <div class="post-media-grid grid-1">
+                                        <div class="media-item" onclick="openLightbox('{{ asset($post->attachment) }}', '{{ pathinfo($post->attachment, PATHINFO_EXTENSION) }}')">
+                                            @php
+                                                $ext = pathinfo($post->attachment, PATHINFO_EXTENSION);
+                                                $isImage = in_array(strtolower($ext), ['jpg', 'jpeg', 'png', 'gif', 'webp']);
+                                            @endphp
+                                            @if ($isImage)
+                                                <img src="{{ asset($post->attachment) }}" alt="Post Attachment">
+                                            @else
+                                                <video>
+                                                    <source src="{{ asset($post->attachment) }}" type="video/{{ $ext }}">
+                                                </video>
+                                            @endif
+                                        </div>
+                                    </div>
+                                @endif
+                            </div>
+
+                            <div class="post-stats">
+                                <span id="like-count-{{ $post->id }}">{{ $post->likes_count }} Likes</span>
+                                <span onclick="toggleComments({{ $post->id }})" style="cursor: pointer;">{{ $post->comments_count }} Comments</span>
+                            </div>
+
+                            <div class="post-actions">
+                                <button type="button" class="action-btn {{ $post->isLikedByCurrentUser ? 'liked' : '' }}" onclick="toggleLike({{ $post->id }}, this)">
+                                    <i class="bi {{ $post->isLikedByCurrentUser ? 'bi-hand-thumbs-up-fill' : 'bi-hand-thumbs-up' }}"></i> Like
+                                </button>
+                                <button type="button" class="action-btn" onclick="toggleComments({{ $post->id }})">
+                                    <i class="bi bi-chat"></i> Comment
+                                </button>
+                            </div>
+
+                            <div class="comment-section" id="comments-{{ $post->id }}">
+                                <div class="comment-input-area">
+                                    @php
+                                        $authMember = optional(Auth::user()->member);
+                                        $authPhoto = $authMember->profilePhoto ?? null;
+                                    @endphp
+                                    <img src="{{ $authPhoto ? asset($authPhoto) : asset('profile.png') }}" class="comment-avatar" onerror="this.src='{{ asset('profile.png') }}'">
+                                    <div class="comment-input-wrapper">
+                                        <input type="text" placeholder="Write a comment..." id="comment-input-{{ $post->id }}" onkeypress="handleCommentSubmit(event, {{ $post->id }})">
+                                        <button class="comment-send-btn" onclick="submitComment({{ $post->id }})">
+                                            <i class="bi bi-send-fill"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="comment-list" id="comment-list-{{ $post->id }}">
+                                    @include('admin.social_wall.partials.comment_list', ['comments' => $post->comments->take(3), 'prefix' => ''])
+                                    @if ($post->comments->count() > 3)
+                                        <div class="text-center mt-2">
+                                            <button class="btn btn-link btn-sm" onclick="showAllComments({{ $post->id }})">See more comments</button>
+                                        </div>
                                     @endif
                                 </div>
-                            @endforeach
-                        </div>
-                        {{-- Legacy Single Attachment Support --}}
-                    @elseif ($post->attachment)
-                        <div class="post-media-grid grid-1">
-                            <div class="media-item" onclick="openLightbox('{{ asset($post->attachment) }}', '{{ pathinfo($post->attachment, PATHINFO_EXTENSION) }}')">
-                                @php
-                                    $ext = pathinfo($post->attachment, PATHINFO_EXTENSION);
-                                    $isImage = in_array(strtolower($ext), ['jpg', 'jpeg', 'png', 'gif', 'webp']);
-                                @endphp
-                                @if ($isImage)
-                                    <img src="{{ asset($post->attachment) }}" alt="Post Attachment">
-                                @else
-                                    <video>
-                                        <source src="{{ asset($post->attachment) }}" type="video/{{ $ext }}">
-                                    </video>
-                                @endif
                             </div>
                         </div>
-                    @endif
-                </div>
+                    @endforeach
 
-                <div class="post-stats">
-                    <span id="like-count-{{ $post->id }}">{{ $post->likes_count }} Likes</span>
-                    <span onclick="toggleComments({{ $post->id }})" style="cursor: pointer;">{{ $post->comments_count }} Comments</span>
-                </div>
-
-                <div class="post-actions">
-                    <button type="button" class="action-btn {{ $post->isLikedByCurrentUser ? 'liked' : '' }}" onclick="toggleLike({{ $post->id }}, this)">
-                        <i class="bi {{ $post->isLikedByCurrentUser ? 'bi-hand-thumbs-up-fill' : 'bi-hand-thumbs-up' }}"></i> Like
-                    </button>
-                    <button type="button" class="action-btn" onclick="toggleComments({{ $post->id }})">
-                        <i class="bi bi-chat"></i> Comment
-                    </button>
-                </div>
-
-                <div class="comment-section" id="comments-{{ $post->id }}">
-                    <div class="comment-input-area">
-                        @php
-                            $authMember = optional(Auth::user()->member);
-                            $authPhoto = $authMember->profilePhoto ?? null;
-                        @endphp
-                        <img src="{{ $authPhoto ? asset($authPhoto) : asset('profile.png') }}" class="comment-avatar" onerror="this.src='{{ asset('profile.png') }}'">
-                        <div class="comment-input-wrapper">
-                            <input type="text" placeholder="Write a comment..." id="comment-input-{{ $post->id }}" onkeypress="handleCommentSubmit(event, {{ $post->id }})">
-                            <button class="comment-send-btn" onclick="submitComment({{ $post->id }})">
-                                <i class="bi bi-send-fill"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="comment-list" id="comment-list-{{ $post->id }}">
-                        @include('admin.social_wall.partials.comment_list', ['comments' => $post->comments->take(3), 'prefix' => ''])
-                        @if ($post->comments->count() > 3)
-                            <div class="text-center mt-2">
-                                <button class="btn btn-link btn-sm" onclick="showAllComments({{ $post->id }})">See more comments</button>
-                            </div>
-                        @endif
+                    <div class="d-flex justify-content-center">
+                        {!! $posts->links() !!}
                     </div>
                 </div>
             </div>
-        @endforeach
 
-        <div class="d-flex justify-content-center">
-            {!! $posts->links() !!}
+            <div class="d-none d-lg-block col-lg-4 col-xl-4 col-xxl-3">
+                <div class="social-wall-sidebar">
+                    <div class="sidebar-card">
+                        <div class="sidebar-card-header">
+                            <div class="sidebar-title"><i class="bi bi-bell"></i> Notifications</div>
+                            @php
+                                $items = isset($notifications) ? $notifications : collect();
+                            @endphp
+                            <div class="sidebar-badge">{{ $items->count() }}</div>
+                        </div>
+                        <div class="sidebar-scroll">
+                            @forelse ($items as $n)
+                                @php
+                                    $actor = $n['actor'] ?? null;
+                                    $actorMember = optional($actor?->member);
+                                    $actorPhoto = $actorMember->profilePhoto ?? null;
+                                    $name = 'Someone';
+                                    if ($actor) {
+                                        $name = $actor->id === Auth::id() ? 'You' : $actor->firstName . ' ' . $actor->lastName;
+                                    }
+                                    $message = $n['type'] === 'comment' ? 'commented on your post' : 'liked your post';
+                                    $time = \Carbon\Carbon::parse($n['created_at'])->diffForHumans();
+                                @endphp
+                                <a class="recent-post-item mb-2" href="#post-{{ $n['postId'] }}" onclick="openPostFromSidebar({{ $n['postId'] }}, '{{ $n['type'] }}')">
+                                    <img src="{{ $actorPhoto ? asset($actorPhoto) : asset('profile.png') }}" alt="User" class="sidebar-avatar" onerror="this.src='{{ asset('profile.png') }}'">
+                                    <div class="flex-grow-1" style="min-width: 0;">
+                                        <div class="small"><span class="fw-semibold">{{ $name }}</span> {{ $message }}</div>
+                                        @if (($n['type'] ?? '') === 'comment' && !empty($n['comment'] ?? ''))
+                                            <div class="text-muted small recent-post-snippet">"{{ \Illuminate\Support\Str::limit($n['comment'], 80) }}"</div>
+                                        @endif
+                                        <div class="text-muted" style="font-size: 11px;">{{ $time }}</div>
+                                    </div>
+                                </a>
+                            @empty
+                                <div class="text-muted small">No notifications yet.</div>
+                            @endforelse
+                        </div>
+                    </div>
+
+                    <div class="sidebar-card">
+                        <div class="sidebar-card-header">
+                            <div class="sidebar-title"><i class="bi bi-newspaper"></i> Network Feed</div>
+                        </div>
+                        <div class="text-muted small">Share photos, like posts, and comment to connect with your circle.</div>
+                        <div class="text-muted small mt-2">Tip: Use a clear caption and upload a high-quality photo.</div>
+                    </div>
+
+                    <div class="sidebar-card">
+                        <div class="sidebar-card-header">
+                            <div class="sidebar-title"><i class="bi bi-clock-history"></i> Recent Posts</div>
+                            @php
+                                $recentPosts = $posts
+                                    ->getCollection()
+                                    ->filter(function ($p) {
+                                        return $p->created_at && $p->created_at->gte(now()->subMinutes(15));
+                                    })
+                                    ->take(12);
+                            @endphp
+                            <div class="sidebar-badge">{{ $recentPosts->count() }}</div>
+                        </div>
+                        <div class="sidebar-scroll">
+                            @forelse ($recentPosts as $p)
+                                @php
+                                    $pUserMember = optional($p->user->member);
+                                    $pUserPhoto = $pUserMember->profilePhoto ?? null;
+                                    $snippet = $p->caption ? \Illuminate\Support\Str::limit($p->caption, 70) : 'Photo post';
+                                @endphp
+                                <a class="recent-post-item mb-2" href="#post-{{ $p->id }}" onclick="scrollToPost({{ $p->id }})">
+                                    <img src="{{ $pUserPhoto ? asset($pUserPhoto) : asset('profile.png') }}" alt="User" class="sidebar-avatar" onerror="this.src='{{ asset('profile.png') }}'">
+                                    <div class="flex-grow-1" style="min-width: 0;">
+                                        <div class="small fw-semibold text-truncate">{{ $p->user->firstName }} {{ $p->user->lastName }}</div>
+                                        <div class="text-muted small recent-post-snippet">{{ $snippet }}</div>
+                                        <div class="text-muted" style="font-size: 11px;">{{ $p->created_at->diffForHumans() }}</div>
+                                    </div>
+                                </a>
+                            @empty
+                                <div class="text-muted small">No posts in last 15 minutes.</div>
+                            @endforelse
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -678,8 +887,8 @@
 
                         <div class="mb-3">
                             <label class="btn btn-sm btn-outline-primary" style="cursor: pointer;">
-                                <i class="bi bi-plus-lg"></i> Add More Photos/Videos
-                                <input type="file" id="edit-post-attachments" name="attachments[]" accept="image/*,video/*" multiple hidden onchange="handleEditFiles(this)">
+                                <i class="bi bi-plus-lg"></i> Add More Photos
+                                <input type="file" id="edit-post-attachments" name="attachments[]" accept="image/*" multiple hidden onchange="handleEditFiles(this)">
                             </label>
                             <div id="edit-new-media-preview" class="d-flex flex-wrap gap-2 mt-2">
                                 <!-- New media previews -->
@@ -841,12 +1050,6 @@
                             previewContainer.appendChild(div);
                         }
                         reader.readAsDataURL(file);
-                    } else if (file.type.startsWith('video/')) {
-                        var video = document.createElement('video');
-                        video.src = URL.createObjectURL(file);
-                        video.controls = false; // Just preview thumbnail
-                        div.appendChild(video);
-                        previewContainer.appendChild(div);
                     }
                 });
             } else {
@@ -1307,14 +1510,11 @@
                     div.style.height = '80px';
 
                     reader.onload = function(e) {
-                        var mediaEl;
-                        if (file.type.startsWith('video/')) {
-                            mediaEl = document.createElement('video');
-                            mediaEl.src = e.target.result;
-                        } else {
-                            mediaEl = document.createElement('img');
-                            mediaEl.src = e.target.result;
+                        if (!file.type.startsWith('image/')) {
+                            return;
                         }
+                        var mediaEl = document.createElement('img');
+                        mediaEl.src = e.target.result;
                         mediaEl.style.width = '100%';
                         mediaEl.style.height = '100%';
                         mediaEl.style.objectFit = 'cover';
@@ -1325,6 +1525,36 @@
                     reader.readAsDataURL(file);
                 });
             }
+        }
+
+        function openPostFromSidebar(postId, type) {
+            scrollToPost(postId);
+            if (type === 'comment') {
+                setTimeout(function() {
+                    try {
+                        toggleComments(postId);
+                    } catch (e) {}
+                }, 350);
+            }
+        }
+
+        function scrollToPost(postId) {
+            var el = document.getElementById('post-' + postId);
+            if (!el) return;
+
+            document.querySelectorAll('.post-card.post-highlight').forEach(function(card) {
+                card.classList.remove('post-highlight');
+            });
+
+            el.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+
+            el.classList.add('post-highlight');
+            setTimeout(function() {
+                el.classList.remove('post-highlight');
+            }, 2500);
         }
 
         function updatePost(event) {

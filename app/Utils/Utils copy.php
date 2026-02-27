@@ -9,7 +9,7 @@ class Utils
         return response()->json([
             'success' => true,
             'data' => $data,
-            'message' => $message
+            'message' => $message,
         ], $statusCode);
     }
 
@@ -17,7 +17,7 @@ class Utils
     {
         return response()->json([
             'success' => false,
-            'message' => $message
+            'message' => $message,
         ], $statusCode);
     }
 }

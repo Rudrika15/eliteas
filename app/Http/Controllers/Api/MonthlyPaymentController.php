@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Utils\Utils;
-use App\Models\Razorpay;
-use App\Models\AllPayments;
-use Illuminate\Http\Request;
-use App\Models\MonthlyPayment;
 use App\Http\Controllers\Controller;
+use App\Models\AllPayments;
 use App\Models\Circle;
 use App\Models\Member;
+use App\Models\MonthlyPayment;
+use App\Models\Razorpay;
 use App\Models\User;
 use App\Utils\ErrorLogger;
+use App\Utils\Utils;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class MonthlyPaymentController extends Controller
@@ -26,7 +26,7 @@ class MonthlyPaymentController extends Controller
             ]);
 
             // Store the payment ID in the Razorpay table
-            $payment = new Razorpay();
+            $payment = new Razorpay;
             $payment->r_payment_id = $request->input('paymentId');
             $payment->user_email = Auth::user()->email;
             $payment->amount = $request->input('amount') / 100;
@@ -42,7 +42,7 @@ class MonthlyPaymentController extends Controller
                 ]);
 
             // Store the payment details in AllPayments
-            $allPayments = new AllPayments();
+            $allPayments = new AllPayments;
             $allPayments->memberId = Auth::user()->member->id;
             $allPayments->amount = $payment->amount;
             $allPayments->paymentType = 'RazorPay'; // Hardcoded for RazorPay
@@ -56,7 +56,7 @@ class MonthlyPaymentController extends Controller
         } catch (\Throwable $th) {
             // Return with an error message
             return Utils::errorResponse([
-                'error' => 'Failed to store payment ID. Please try again.'
+                'error' => 'Failed to store payment ID. Please try again.',
             ], 'Internal Server Error', 500);
         }
     }
@@ -91,7 +91,7 @@ class MonthlyPaymentController extends Controller
             $response = [
                 'unpaidPayments' => $unpaidPayments, // All unpaid payment details
                 'unpaidMonths' => $unpaidPayments->pluck('month'), // List of unpaid months
-                'totalAmount' => $totalUnpaidAmount // Total amount based on unpaid months
+                'totalAmount' => $totalUnpaidAmount, // Total amount based on unpaid months
             ];
 
             // Return the response with the total unpaid amount, unpaid months, and user details
@@ -99,7 +99,7 @@ class MonthlyPaymentController extends Controller
         } catch (\Throwable $th) {
             // Handle any exceptions and return an error message
             return Utils::errorResponse([
-                'error' => 'Failed to retrieve monthly payments. Please try again.'
+                'error' => 'Failed to retrieve monthly payments. Please try again.',
             ], 'Internal Server Error', 500);
         }
     }
@@ -125,7 +125,7 @@ class MonthlyPaymentController extends Controller
                 $monthlyPayment->save();
 
                 // Add record to the AllPayments table
-                $allMonthly = new AllPayments();
+                $allMonthly = new AllPayments;
                 $allMonthly->memberId = $payment->memberId;
                 $allMonthly->paymentType = 'Offline';
                 $allMonthly->date = now()->format('Y-m-d');
@@ -150,6 +150,7 @@ class MonthlyPaymentController extends Controller
         } catch (\Throwable $th) {
             // Log error and return error response
             ErrorLogger::logError($th, $request->fullUrl());
+
             return Utils::errorResponse('An error occurred while updating payment status', 'Internal Server Error', 500);
         }
     }
@@ -158,7 +159,7 @@ class MonthlyPaymentController extends Controller
     {
         try {
             // Authenticate the user
-            if (!auth()->check()) {
+            if (! auth()->check()) {
                 return Utils::errorResponse('Unauthorized', 'Unauthorized', 401);
             }
 
@@ -168,7 +169,7 @@ class MonthlyPaymentController extends Controller
             // Fetch the circleId from the members table based on the authenticated user
             $member = Member::where('userId', $userId)->first();
 
-            if (!$member) {
+            if (! $member) {
                 return Utils::errorResponse('Member not found', 'Not Found', 404);
             }
 
@@ -201,7 +202,7 @@ class MonthlyPaymentController extends Controller
 
                     if ($user) {
                         // Add the name to the payment data
-                        $payment->memberName = $user->firstName . ' ' . $user->lastName;
+                        $payment->memberName = $user->firstName.' '.$user->lastName;
                     } else {
                         $payment->memberName = 'Unknown User'; // In case user not found
                     }
@@ -215,7 +216,7 @@ class MonthlyPaymentController extends Controller
                 [
                     'monthlyPayments' => $monthlyPayments,
                     'status' => $status,
-                    'circles' => $circles
+                    'circles' => $circles,
                 ],
                 'Monthly payments retrieved successfully',
                 200
@@ -223,6 +224,7 @@ class MonthlyPaymentController extends Controller
         } catch (\Throwable $th) {
             // Log the error and return a response for unexpected errors
             ErrorLogger::logError($th, $request->fullUrl());
+
             return Utils::errorResponse('An error occurred while fetching monthly payments', 'Internal Server Error', 500);
         }
     }

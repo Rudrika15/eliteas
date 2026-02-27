@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 
 class UpdateAppController extends Controller
 {
-
     public function __construct()
     {
 
@@ -19,6 +18,7 @@ class UpdateAppController extends Controller
     public function edit()
     {
         $updateApp = AppVersion::first();
+
         return view('admin.updateApp.edit', compact('updateApp'));
     }
 

@@ -2,20 +2,19 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\Member;
-use App\Models\Connection;
-use App\Utils\ErrorLogger;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\BusinessCategory;
 use App\Models\Circle;
 use App\Models\CircleMeetingMembersBusiness;
 use App\Models\City;
+use App\Models\Connection;
+use App\Models\Member;
+use App\Utils\ErrorLogger;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class ConnectionController extends Controller
 {
-
     public function __construct()
     {
         // Apply middleware for connection-related permissions
@@ -51,7 +50,6 @@ class ConnectionController extends Controller
     //     }
     // }
 
-
     public function circleList(Request $request)
     {
         try {
@@ -62,22 +60,19 @@ class ConnectionController extends Controller
 
             $authCircle = $authCircleId
                 ? Circle::where('status', 'Active')
-                ->withCount('members')
-                ->with('city')
-                ->find($authCircleId)
+                    ->withCount('members')
+                    ->with('city')
+                    ->find($authCircleId)
                 : null;
-
 
             // $businessMeetings = CircleMeetingMembersBusiness::with('member')
             //     ->where('status', 'Active')
             //     ->get();
 
-
-
             $circles = Circle::where('status', 'Active')
                 ->orderBy('circleName', 'asc')
                 ->with('city:id,cityName')
-                ->withCount(['members' => fn($q) => $q->where('status', 'Active')])
+                ->withCount(['members' => fn ($q) => $q->where('status', 'Active')])
                 ->get();
 
             $businessMeetings = CircleMeetingMembersBusiness::with('member')
@@ -86,8 +81,7 @@ class ConnectionController extends Controller
 
             $circles->each(function ($circle) use ($businessMeetings) {
                 $filtered = $businessMeetings->filter(
-                    fn($m) =>
-                    Member::where('userId', $m->businessGiverId)->value('circleId') == $circle->id
+                    fn ($m) => Member::where('userId', $m->businessGiverId)->value('circleId') == $circle->id
                 );
                 $circle->totalBusinessAmount = $filtered->sum('amount');
             });
@@ -96,6 +90,7 @@ class ConnectionController extends Controller
             if ($authCircle) {
                 $filtered = $businessMeetings->filter(function ($m) use ($authCircle) {
                     $circleId = Member::where('userId', $m->businessGiverId)->value('circleId');
+
                     return $circleId == $authCircle->id;
                 });
 
@@ -112,6 +107,7 @@ class ConnectionController extends Controller
             return view('admin.connection.circleList', compact('circles', 'members', 'defaultCircle', 'authCircle', 'authCircleId'));
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, request()->fullUrl());
+
             return view('servererror');
         }
     }
@@ -134,7 +130,6 @@ class ConnectionController extends Controller
 
     //         $members = Member::where('status', 'Active')
     //             ->get();
-
 
     //         return view('admin.connection.cityList', compact('cities', 'members'));
     //     } catch (\Throwable $th) {
@@ -189,10 +184,10 @@ class ConnectionController extends Controller
             return view('admin.connection.cityList', compact('cities', 'authCircleId'));
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, request()->fullUrl());
+
             return view('servererror');
         }
     }
-
 
     // public function cityList(Request $request)
     // {
@@ -206,14 +201,12 @@ class ConnectionController extends Controller
     //             ->where('circleId', null)
     //             ->get();
 
-
     //         return view('admin.connection.cityList', compact('cities', 'members'));
     //     } catch (\Throwable $th) {
     //         ErrorLogger::logError($th, request()->fullUrl());
     //         return view('servererror');
     //     }
     // }
-
 
     public function getCityMembers($cityId)
     {
@@ -239,7 +232,6 @@ class ConnectionController extends Controller
 
     //     return view('partials.member-cards', ['members' => $circle->members, 'circleName' => $circle->circleName]);
     // }
-
 
     // public function getMembers($circleId)
     // {
@@ -291,12 +283,11 @@ class ConnectionController extends Controller
     //     ]);
     // }
 
-
     public function getMembers($circleId)
     {
         $circle = Circle::with(['members.user', 'members.bCategory'])->find($circleId);
 
-        if (!$circle) {
+        if (! $circle) {
             return response()->json(['error' => 'Circle not found'], 404);
         }
 
@@ -328,6 +319,7 @@ class ConnectionController extends Controller
         // Induction count
         $members->map(function ($member) {
             $member->induction_count = Member::where('sponsoredBy', $member->id)->count();
+
             return $member;
         });
 
@@ -335,11 +327,9 @@ class ConnectionController extends Controller
             'members' => $circle->members,
             'circleName' => $circle->circleName,
             'authCircleId' => $authCircleId,
-            'success' => 'Request Sent Successfully!'
+            'success' => 'Request Sent Successfully!',
         ]);
     }
-
-
 
     // public function circleList()
     // {
@@ -380,7 +370,6 @@ class ConnectionController extends Controller
     //         return view('servererror');
     //     }
     // }
-
 
     // public function showMembers($id)
     // {
@@ -430,8 +419,6 @@ class ConnectionController extends Controller
     //     }
     // }
 
-
-
     // public function categoryList()
     // {
     //     try {
@@ -471,6 +458,7 @@ class ConnectionController extends Controller
                 $th,
                 request()->fullUrl()
             );
+
             return view('servererror');
         }
     }
@@ -494,10 +482,10 @@ class ConnectionController extends Controller
             return view('admin.connection.digitalmember.categoryList', compact('categories'));
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, request()->fullUrl());
+
             return view('servererror');
         }
     }
-
 
     // public function showCategoryWiseMembers($id)
     // {
@@ -546,7 +534,6 @@ class ConnectionController extends Controller
     //     }
     // }
 
-
     // public function categoryMembers($categoryId)
     // {
     //     try {
@@ -587,7 +574,6 @@ class ConnectionController extends Controller
     //         return response()->json(['message' => 'Server error'], 500);
     //     }
     // }
-
 
     //     public function categoryMembers($categoryId)
     // {
@@ -637,7 +623,6 @@ class ConnectionController extends Controller
     //         return response()->json(['message' => 'Server error'], 500);
     //     }
     // }
-
 
     // public function categoryMembers($categoryId)
     // {
@@ -690,7 +675,6 @@ class ConnectionController extends Controller
     //     }
     // }
 
-
     public function categoryMembers($categoryId)
     {
         try {
@@ -706,10 +690,10 @@ class ConnectionController extends Controller
                             $q->where('status', 'Active');
                         })
                         ->with(['user', 'bCategory', 'circle']);
-                }
+                },
             ])->find($categoryId);
 
-            if (!$category) {
+            if (! $category) {
                 return response()->json(['message' => 'Category not found.'], 404);
             }
 
@@ -739,22 +723,17 @@ class ConnectionController extends Controller
             ]);
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, request()->fullUrl());
+
             return response()->json(['message' => 'Server error'], 500);
         }
     }
-
-
-
-
-
-
 
     public function connect(Request $request)
     {
         $member = Member::find($request->input('memberId'));
         $userId = Auth::id();
 
-        if (!$member) {
+        if (! $member) {
             if ($request->expectsJson() || $request->ajax()) {
                 return response()->json([
                     'status' => 'error',
@@ -801,7 +780,7 @@ class ConnectionController extends Controller
             return redirect()->back()->with('success', $message);
         }
 
-        $connection = new Connection();
+        $connection = new Connection;
         $connection->memberId = $memberId;
         $connection->userId = $userId;
         $connection->status = 'Pending';
@@ -856,7 +835,7 @@ class ConnectionController extends Controller
                     },
                     'receiverMember' => function ($query) {
                         $query->select('userId', 'id', 'profilePhoto');
-                    }
+                    },
                 ])
                 ->paginate(10);
 
@@ -870,9 +849,6 @@ class ConnectionController extends Controller
             return view('servererror');
         }
     }
-
-
-
 
     // public function myConnections()
     // {
@@ -934,7 +910,6 @@ class ConnectionController extends Controller
         try {
             $userId = Auth::id();
 
-
             // Fetch connections where the authenticated user is either the userId or memberId
             $connections = Connection::where(function ($query) use ($userId) {
                 $query->where('userId', $userId)
@@ -965,7 +940,6 @@ class ConnectionController extends Controller
         }
     }
 
-
     public function myConnections()
     {
         try {
@@ -980,7 +954,7 @@ class ConnectionController extends Controller
                     'user:id,firstName,lastName,email,contactNo',
                     'receiver:id,firstName,lastName,email,contactNo',
                     'members:id,userId,profilePhoto,circleId,companyName,companyLogo,keyWords,businessCategoryId',
-                    'member:id,userId,profilePhoto,circleId,companyName,companyLogo,keyWords,businessCategoryId'
+                    'member:id,userId,profilePhoto,circleId,companyName,companyLogo,keyWords,businessCategoryId',
                 ])
                 ->get();
 
@@ -999,7 +973,7 @@ class ConnectionController extends Controller
                     },
                     'receiverMember' => function ($query) {
                         $query->select('userId', 'id', 'profilePhoto', 'circleId', 'companyName', 'companyLogo', 'keyWords', 'businessCategoryId');
-                    }
+                    },
                 ])
                 ->get();
 
@@ -1013,7 +987,7 @@ class ConnectionController extends Controller
                     },
                     'members' => function ($query) {
                         $query->select('id', 'userId', 'profilePhoto', 'circleId', 'companyName', 'companyLogo', 'keyWords', 'businessCategoryId');
-                    }
+                    },
                 ])
                 ->get();
 
@@ -1024,6 +998,7 @@ class ConnectionController extends Controller
             ));
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, request()->fullUrl());
+
             return view('servererror');
         }
     }
@@ -1042,6 +1017,7 @@ class ConnectionController extends Controller
             // Add induction_count to each member
             $myConnections->getCollection()->transform(function ($member) {
                 $member->induction_count = Member::where('sponsoredBy', $member->id)->count();
+
                 return $member;
             });
 
@@ -1055,15 +1031,12 @@ class ConnectionController extends Controller
         }
     }
 
-
-
-
     public function accept($id)
     {
         try {
             $connection = Connection::findOrFail($id);
 
-            $connection->status = "Accepted";
+            $connection->status = 'Accepted';
             $connection->save();
 
             return redirect()->route('connection.myConnections')

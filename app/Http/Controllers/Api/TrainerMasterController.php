@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\TrainerMaster;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\TrainerMaster;
 use App\Utils\Utils;
+use Illuminate\Http\Request;
 
 class TrainerMasterController extends Controller
 {
@@ -13,6 +13,7 @@ class TrainerMasterController extends Controller
     {
         try {
             $trainers = TrainerMaster::where('status', 'Active')->get();
+
             return Utils::sendResponse(['trainers' => $trainers], 'Trainers retrieved successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
@@ -23,6 +24,7 @@ class TrainerMasterController extends Controller
     {
         try {
             $trainer = TrainerMaster::findOrFail($id);
+
             return Utils::sendResponse(['trainer' => $trainer], 'Trainer retrieved successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
@@ -36,7 +38,7 @@ class TrainerMasterController extends Controller
         ]);
 
         try {
-            $trainer = new TrainerMaster();
+            $trainer = new TrainerMaster;
             $trainer->trainerName = $request->trainerName;
             $trainer->status = 'Active';
             $trainer->save();
@@ -56,7 +58,7 @@ class TrainerMasterController extends Controller
         try {
             $trainer = TrainerMaster::find($id);
 
-            if (!$trainer) {
+            if (! $trainer) {
                 return Utils::errorResponse(['error' => 'Trainer not found.'], 'Not Found', 404);
             }
 
@@ -75,7 +77,7 @@ class TrainerMasterController extends Controller
         try {
             $trainer = TrainerMaster::find($id);
 
-            if (!$trainer) {
+            if (! $trainer) {
                 return Utils::errorResponse(['error' => 'Trainer not found.'], 'Not Found', 404);
             }
 

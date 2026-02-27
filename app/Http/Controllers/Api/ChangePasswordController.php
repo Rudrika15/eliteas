@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use App\Utils\Utils;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
@@ -21,7 +21,7 @@ class ChangePasswordController extends Controller
             ]);
 
             // Check if the current password matches the stored password
-            if (!Hash::check($request->currentPassword, Auth::user()->password)) {
+            if (! Hash::check($request->currentPassword, Auth::user()->password)) {
                 return Utils::errorResponse(
                     ['currentPassword' => 'The current password does not match our records.'],
                     'Validation Error',

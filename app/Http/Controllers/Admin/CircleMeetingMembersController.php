@@ -2,18 +2,15 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use App\Models\Circle;
+use App\Models\CircleMeetingMember;
 use App\Models\Member;
 use App\Utils\ErrorLogger;
-use App\Models\CircleMember;
 use Illuminate\Http\Request;
-use App\Models\CircleMeetingMember;
-use Illuminate\Support\Facades\URL;
-use App\Http\Controllers\Controller;
 
 class CircleMeetingMembersController extends Controller
 {
-
     public function __construct()
     {
         // Apply middleware for circle meeting-related permissions
@@ -23,7 +20,6 @@ class CircleMeetingMembersController extends Controller
         $this->middleware('permission:circle-meeting-member-delete', ['only' => ['delete']]);
     }
 
-
     public function index(Request $request)
     {
         try {
@@ -31,6 +27,7 @@ class CircleMeetingMembersController extends Controller
                 ->where('status', 'Active')
                 ->orderBy('id', 'DESC')
                 ->get();
+
             return view('admin.circlemeetingmember.index', compact('meetingmember'));
         } catch (\Throwable $th) {
             // throw $th;
@@ -38,14 +35,17 @@ class CircleMeetingMembersController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
-    //For show single data
+
+    // For show single data
     public function view(Request $request, $id)
     {
         try {
             $meetingmember = CircleMeetingMember::findOrFail($id);
+
             return response()->json($meetingmember);
         } catch (\Throwable $th) {
             // throw $th;
@@ -53,13 +53,16 @@ class CircleMeetingMembersController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
+
     public function create(Request $request)
     {
         try {
             $member = Member::where('status', 'Active')->orderBy('memberName', 'asc')->get();
+
             return view('admin.circlemeetingmember.create', compact('member'));
         } catch (\Throwable $th) {
             // throw $th;
@@ -67,6 +70,7 @@ class CircleMeetingMembersController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
@@ -78,7 +82,7 @@ class CircleMeetingMembersController extends Controller
             'attandance' => 'required',
         ]);
         try {
-            $meetingmember = new CircleMeetingMember();
+            $meetingmember = new CircleMeetingMember;
             $meetingmember->memberId = $request->memberId;
             $meetingmember->attandance = $request->attandance;
             $meetingmember->status = 'Active';
@@ -92,6 +96,7 @@ class CircleMeetingMembersController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
@@ -101,6 +106,7 @@ class CircleMeetingMembersController extends Controller
         try {
             $meetingmember = CircleMeetingMember::find($id);
             $member = Member::where('status', 'Active')->orderBy('memberName', 'asc')->get();
+
             return view('admin.circlemeetingmember.edit', compact('meetingmember', 'member'));
         } catch (\Throwable $th) {
             // throw $th;
@@ -108,6 +114,7 @@ class CircleMeetingMembersController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
@@ -128,7 +135,6 @@ class CircleMeetingMembersController extends Controller
 
             $meetingmember->save();
 
-
             return redirect()->route('meetingmember.index')->with('success', 'Circle Member Updated Successfully!');
         } catch (\Throwable $th) {
             // throw $th;
@@ -136,15 +142,16 @@ class CircleMeetingMembersController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
 
-    function delete(Request $request, $id)
+    public function delete(Request $request, $id)
     {
         try {
             $meetingmember = CircleMeetingMember::find($id);
-            $meetingmember->status = "Deleted";
+            $meetingmember->status = 'Deleted';
             $meetingmember->save();
 
             return redirect()->route('meetingmember.index')->with('success', 'Circle Member Deleted Successfully!');
@@ -154,6 +161,7 @@ class CircleMeetingMembersController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }

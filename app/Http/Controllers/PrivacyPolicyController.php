@@ -3,11 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Utils\ErrorLogger;
-use Illuminate\Http\Request;
 
 class PrivacyPolicyController extends Controller
 {
-
     // public function __construct()
     // {
     //     $this->middleware('permission:policy-index', ['only' => ['index', 'view']]);
@@ -25,5 +23,4 @@ class PrivacyPolicyController extends Controller
             return response()->view('servererror');
         }
     }
-
 }

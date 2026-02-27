@@ -2,20 +2,17 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\State;
-use App\Models\Member;
-use App\Models\Country;
-use App\Utils\ErrorLogger;
-use App\Models\AllPayments;
-use Illuminate\Http\Request;
-use App\Models\MemberPayment;
-use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
+use App\Models\AllPayments;
+use App\Models\Country;
+use App\Models\Member;
+use App\Models\MemberPayment;
+use App\Models\State;
+use App\Utils\ErrorLogger;
+use Illuminate\Http\Request;
 
 class MemberPaymentController extends Controller
 {
-
-
     public function __construct()
     {
         // Apply middleware for event-related permissions
@@ -24,7 +21,6 @@ class MemberPaymentController extends Controller
         $this->middleware('permission:event-edit', ['only' => ['edit', 'update']]);
         $this->middleware('permission:event-delete', ['only' => ['delete']]);
     }
-
 
     // public function index(Request $request)
     // {
@@ -89,8 +85,6 @@ class MemberPaymentController extends Controller
     //         $payments->status = 'Active';
     //         $payments->save();
 
-
-
     //         return redirect()->route('state.index')->with('success', 'State Created Successfully!');
     //     } catch (\Throwable $th) {
     //         // throw $th;
@@ -134,7 +128,6 @@ class MemberPaymentController extends Controller
     //         $state->status = 'Active';
 
     //         $state->save();
-
 
     //         return redirect()->route('state.index')->with('success', 'State Created Successfully!');
     //     } catch (\Throwable $th) {

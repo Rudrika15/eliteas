@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Api;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\CircleMeetingsAttendances;
 use App\Models\MeetingInvitation;
 use App\Models\Schedule;
 use App\Utils\ErrorLogger;
 use App\Utils\Utils;
+use Illuminate\Http\Request;
 
 class AttendanceController extends Controller
 {
@@ -105,15 +105,16 @@ class AttendanceController extends Controller
                         ->where('userId', $userId)
                         ->first();
 
-                    if (!$status) {
+                    if (! $status) {
                         if ($attendance) {
                             $attendance->delete();
                         }
+
                         continue;
                     }
 
-                    if (!$attendance) {
-                        $attendance = new CircleMeetingsAttendances();
+                    if (! $attendance) {
+                        $attendance = new CircleMeetingsAttendances;
                         $attendance->circleId = $circleId;
                         $attendance->meetingId = $meetingId;
                         $attendance->userId = $userId;
@@ -126,7 +127,7 @@ class AttendanceController extends Controller
                 $userIds = $request->input('userId', []);
 
                 foreach ($userIds as $userId) {
-                    $attendance = new CircleMeetingsAttendances();
+                    $attendance = new CircleMeetingsAttendances;
                     $attendance->userId = $userId ?? null;
                     $attendance->circleId = $circleId;
                     $attendance->meetingId = $meetingId;
@@ -138,6 +139,7 @@ class AttendanceController extends Controller
             return Utils::sendResponse([], 'Attendance successfully recorded', 200);
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, request()->fullUrl());
+
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
@@ -158,7 +160,7 @@ class AttendanceController extends Controller
 
             foreach ($personNames as $index => $personName) {
                 $personName = is_string($personName) ? trim($personName) : null;
-                if (!$personName) {
+                if (! $personName) {
                     continue;
                 }
 
@@ -167,8 +169,8 @@ class AttendanceController extends Controller
                     ->where('name', $personName)
                     ->first();
 
-                if (!$attendance) {
-                    $attendance = new CircleMeetingsAttendances();
+                if (! $attendance) {
+                    $attendance = new CircleMeetingsAttendances;
                     $attendance->circleId = $circleId;
                     $attendance->meetingId = $meetingId;
                     $attendance->name = $personName;

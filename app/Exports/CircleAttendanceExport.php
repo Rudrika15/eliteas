@@ -9,8 +9,11 @@ use Maatwebsite\Excel\Concerns\WithTitle;
 class CircleAttendanceExport implements FromView, WithTitle
 {
     protected $reportData;
+
     protected $startDate;
+
     protected $endDate;
+
     protected $circleName;
 
     public function __construct($reportData, $startDate, $endDate, $circleName)
@@ -27,7 +30,7 @@ class CircleAttendanceExport implements FromView, WithTitle
             'reportData' => $this->reportData,
             'startDate' => $this->startDate,
             'endDate' => $this->endDate,
-            'circleName' => $this->circleName
+            'circleName' => $this->circleName,
         ]);
     }
 

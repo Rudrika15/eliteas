@@ -4,7 +4,6 @@ namespace App\Mail;
 
 use App\Models\SupportTicket;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
@@ -32,6 +31,6 @@ class SupportTicketNotification extends Mailable
     public function build()
     {
         return $this->markdown('emails.support_ticket_notification')
-                    ->subject('New Support Ticket Created: ' . $this->ticket->subject);
+            ->subject('New Support Ticket Created: '.$this->ticket->subject);
     }
 }

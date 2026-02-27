@@ -2,20 +2,19 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use App\Models\Circle;
-use App\Models\Member;
 use App\Models\CircleCall;
+use App\Models\CircleMeetingMembersBusiness;
+use App\Models\CircleMeetingMembersReference;
+use App\Models\Member;
 use App\Utils\ErrorLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
-use App\Http\Controllers\Controller;
-use App\Models\CircleMeetingMembersBusiness;
-use App\Models\CircleMeetingMembersReference;
 
 class AllActivityController extends Controller
 {
-
-    function __construct()
+    public function __construct()
     {
         // Applying middleware based on the specific methods for IBM, Reference, and Business.
         $this->middleware('permission:ibm-list|ibm-create|ibm-edit|ibm-delete', ['only' => ['ibm']]);
@@ -29,21 +28,23 @@ class AllActivityController extends Controller
     public function ibm()
     {
         $ibms = CircleCall::where('status', 'Active')->paginate(10);
+
         return view('admin.allactivity.ibm', compact('ibms'));
     }
 
     public function refrence()
     {
         $refrences = CircleMeetingMembersReference::where('status', 'Active')->paginate(10);
+
         return view('admin.allactivity.reference', compact('refrences'));
     }
 
     public function business()
     {
         $businesses = CircleMeetingMembersBusiness::where('status', 'Active')->paginate(10);
+
         return view('admin.allactivity.businessSlip', compact('businesses'));
     }
-
 
     public function ibmVp(Request $request)
     {
@@ -78,12 +79,10 @@ class AllActivityController extends Controller
         } catch (\Throwable $th) {
             // Log error and return error view
             ErrorLogger::logError($th, request()->fullUrl());
+
             return view('servererror');
         }
     }
-
-
-
 
     public function refrenceVp(Request $request)
     {
@@ -118,10 +117,10 @@ class AllActivityController extends Controller
         } catch (\Throwable $th) {
             // Log error and return error view
             ErrorLogger::logError($th, request()->fullUrl());
+
             return view('servererror');
         }
     }
-
 
     public function businessVp(Request $request)
     {
@@ -156,17 +155,10 @@ class AllActivityController extends Controller
         } catch (\Throwable $th) {
             // Log error and return error view
             ErrorLogger::logError($th, request()->fullUrl());
+
             return view('servererror');
         }
     }
-
-
-
-
-
-
-
-
 
     // public function activityAllByCircle(Request $request)
     // {
@@ -189,7 +181,6 @@ class AllActivityController extends Controller
     //             return                 $circlecalls = CircleCall::with(['member', 'meetingPerson'])
     //                 ->where('status', 'Active')
     //                 ->get();
-
 
     //             // Fetch all active business givers from the previous month
     //             $busGiver = CircleMeetingMembersBusiness::where('status', 'Active')

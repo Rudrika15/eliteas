@@ -2,24 +2,21 @@
 
 namespace App\Http\Controllers\Admin;
 
-
-use Carbon\Carbon;
+use App\Http\Controllers\Controller;
+use App\Models\BusinessAmount;
+use App\Models\Circle;
+use App\Models\CircleMeeting;
+use App\Models\CircleMeetingMembersBusiness;
+use App\Models\City;
 use App\Models\Member;
 use App\Models\Schedule;
 use App\Utils\ErrorLogger;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
-use App\Models\CircleMeeting;
-use App\Models\BusinessAmount;
-use Illuminate\Support\Facades\URL;
-use App\Http\Controllers\Controller;
-use App\Models\Circle;
-use Illuminate\Support\Facades\Auth;
-use App\Models\CircleMeetingMembersBusiness;
-use App\Models\City; // Added City model import
+use Illuminate\Support\Facades\Auth; // Added City model import
 
 class CircleMeetingMemberBusinessController extends Controller
 {
-
     public function __construct()
     {
         // Apply middleware for circle call-related permissions
@@ -64,7 +61,6 @@ class CircleMeetingMemberBusinessController extends Controller
     //             ->orderBy('firstName', 'ASC')
     //             ->get();
 
-
     //         $circlemeeting = CircleMeeting::where('status', 'Active')->get();
 
     //         return view('admin.circlebusiness.index', compact('busGiver', 'busGiveByOther', 'circlemeeting', 'circles', 'circleMember'));
@@ -74,7 +70,6 @@ class CircleMeetingMemberBusinessController extends Controller
     //         return view('servererror');
     //     }
     // }
-
 
     public function index(Request $request)
     {
@@ -90,6 +85,7 @@ class CircleMeetingMemberBusinessController extends Controller
                 // Transform underlying collection items
                 $busGiver->getCollection()->transform(function ($item) {
                     $item->amount = isset($item->amount) ? number_format($item->amount, 2) : '-';
+
                     return $item;
                 });
 
@@ -102,6 +98,7 @@ class CircleMeetingMemberBusinessController extends Controller
                 // Transform underlying collection items
                 $busGiveByOther->getCollection()->transform(function ($item) {
                     $item->amount = isset($item->amount) ? number_format($item->amount, 2) : '-';
+
                     return $item;
                 });
 
@@ -145,19 +142,17 @@ class CircleMeetingMemberBusinessController extends Controller
             return redirect()->back()->with('error', 'Unauthorized access.');
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, $request->fullUrl());
+
             return view('servererror');
         }
     }
 
-
-
-
-
-    //For show single data
+    // For show single data
     public function view(Request $request, $id)
     {
         try {
             $busGiver = CircleMeetingMembersBusiness::findOrFail($id);
+
             return response()->json($busGiver);
         } catch (\Throwable $th) {
             // throw $th;
@@ -165,13 +160,16 @@ class CircleMeetingMemberBusinessController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
+
     public function create(Request $request, $id)
     {
         try {
             $busGiver = CircleMeetingMembersBusiness::find($id);
+
             return view('admin.circlebusiness.create', compact('busGiver'));
         } catch (\Throwable $th) {
             // throw $th;
@@ -179,6 +177,7 @@ class CircleMeetingMemberBusinessController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
@@ -195,7 +194,7 @@ class CircleMeetingMemberBusinessController extends Controller
             // 'hotelName' => 'required',
         ]);
         try {
-            $busGiver = new CircleMeetingMembersBusiness();
+            $busGiver = new CircleMeetingMembersBusiness;
             // $busGiver->memberId = $request->memberId;
             $busGiver->businessGiverId = $request->businessGiverId;
             $busGiver->loginMemberId = $request->loginMemberId;
@@ -217,6 +216,7 @@ class CircleMeetingMemberBusinessController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
@@ -226,6 +226,7 @@ class CircleMeetingMemberBusinessController extends Controller
         try {
             $busGiver = CircleMeetingMembersBusiness::find($id);
             $paymentHistory = BusinessAmount::where('circleMeetingMemberBusinessId', $id)->get();
+
             return view('admin.circlebusiness.edit', compact('busGiver', 'paymentHistory'));
         } catch (\Throwable $th) {
             // throw $th;
@@ -255,13 +256,12 @@ class CircleMeetingMemberBusinessController extends Controller
             $busGiver->status = 'Active';
             $busGiver->update();
 
-            $businessAmount = new BusinessAmount();
+            $businessAmount = new BusinessAmount;
             $businessAmount->circleMeetingMemberBusinessId = $id;
             $businessAmount->amount = $request->amount;
             $businessAmount->date = Carbon::now()->toDateString();
             $businessAmount->status = 'Active';
             $businessAmount->save();
-
 
             return redirect()->route('busGiver.index')->with('success', ' Updated Successfully!');
         } catch (\Throwable $th) {
@@ -270,6 +270,7 @@ class CircleMeetingMemberBusinessController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
@@ -285,10 +286,10 @@ class CircleMeetingMemberBusinessController extends Controller
         } catch (\Throwable $th) {
             throw $th;
             ErrorLogger::logError($th, $request->fullUrl());
+
             return view('servererror');
         }
     }
-
 
     public function updatePayment(Request $request, $id)
     {
@@ -326,16 +327,16 @@ class CircleMeetingMemberBusinessController extends Controller
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError($th, $request->fullUrl());
+
             return redirect()->back()->with('error', 'Failed to update payment.');
         }
     }
 
-
-    function delete(Request $request, $id)
+    public function delete(Request $request, $id)
     {
         try {
             $busGiver = CircleMeetingMembersBusiness::find($id);
-            $busGiver->status = "Deleted";
+            $busGiver->status = 'Deleted';
             $busGiver->save();
 
             return redirect()->route('busGiver.index')->with('success', ' Deleted Successfully!');
@@ -345,6 +346,7 @@ class CircleMeetingMemberBusinessController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }

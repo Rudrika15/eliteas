@@ -13,5 +13,4 @@ class Otp extends Model
         'contactNo',
         'otp',
     ];
-
 }

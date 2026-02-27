@@ -17,7 +17,7 @@ class VisitorsExport implements FromView
     public function view(): View
     {
         return view('exports.visitors', [
-            'visitors' => $this->visitors
+            'visitors' => $this->visitors,
         ]);
     }
 }

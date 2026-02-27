@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Api;
 
-use Carbon\Carbon;
+use App\Http\Controllers\Controller;
 use App\Models\Otp;
 use App\Models\User;
 use App\Utils\Utils;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 
@@ -17,7 +17,7 @@ class OTPLoginController extends Controller
     public function sendOTP(Request $request)
     {
         $request->validate([
-            'phone' => 'required'
+            'phone' => 'required',
         ]);
 
         try {
@@ -32,19 +32,19 @@ class OTPLoginController extends Controller
                 $numbers = $request->phone;
                 $sender = urlencode('DGSAPI');
                 $message = "Your One Time Verification Password is {$otp}.";
-                $username = "BrandBeans";
-                $smstype = "TRANS";
+                $username = 'BrandBeans';
+                $smstype = 'TRANS';
 
                 // Prepare data for POST request
-                $data = array(
+                $data = [
                     'apikey' => $apiKey,
                     'numbers' => $numbers,
-                    "sender" => $sender,
-                    "message" => $message,
-                    "username" => $username,
-                    "sendername" => $sender,
-                    "smstype" => $smstype,
-                );
+                    'sender' => $sender,
+                    'message' => $message,
+                    'username' => $username,
+                    'sendername' => $sender,
+                    'smstype' => $smstype,
+                ];
 
                 // Send the POST request with cURL
                 $ch = curl_init('http://sms.hspsms.com/sendSMS');
@@ -68,7 +68,7 @@ class OTPLoginController extends Controller
                     $otpRecord->save();
                 } else {
                     // Create new OTP record if none exists (fallback)
-                    $otpRecord = new Otp();
+                    $otpRecord = new Otp;
                     $otpRecord->otp = $otp;
                     $otpRecord->mobileno = $request->phone;
                     $otpRecord->time = $time;
@@ -91,7 +91,7 @@ class OTPLoginController extends Controller
     {
         $request->validate([
             'phone' => 'required',
-            'otp' => 'required'
+            'otp' => 'required',
         ]);
 
         try {
@@ -100,6 +100,7 @@ class OTPLoginController extends Controller
                 $demoUser = User::where('contactNo', $request->phone)->first();
                 Auth::login($demoUser);
                 $token = $demoUser->createToken('AuthToken')->plainTextToken;
+
                 return Utils::sendResponse([
                     'user' => $demoUser->only([
                         'id',
@@ -108,7 +109,7 @@ class OTPLoginController extends Controller
                         'email',
                         'contactNo',
                     ]),
-                    'token' => $token
+                    'token' => $token,
                 ], 'Demo OTP verification successful', 200);
             }
 
@@ -119,6 +120,7 @@ class OTPLoginController extends Controller
             if ($user && $otpRecord && Carbon::parse($otpRecord->time)->addMinutes(10)->isFuture()) {
                 Auth::login($user);
                 $token = $user->createToken('AuthToken')->plainTextToken; // Generate auth token
+
                 return Utils::sendResponse([
                     'user' => $user->only([
                         'id',
@@ -127,7 +129,7 @@ class OTPLoginController extends Controller
                         'email',
                         'contactNo',
                     ]),
-                    'token' => $token // Include auth token in the response
+                    'token' => $token, // Include auth token in the response
                 ], 'OTP verification successful', 200);
             }
 

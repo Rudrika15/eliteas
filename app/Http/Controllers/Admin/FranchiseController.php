@@ -2,24 +2,21 @@
 
 namespace App\Http\Controllers\Admin;
 
-use DataTables;
+use App\Http\Controllers\Controller;
+use App\Mail\WelcomeMemberEmail;
 use App\Models\City;
-use App\Models\User;
-use App\Models\State;
 use App\Models\Country;
 use App\Models\Franchise;
+use App\Models\State;
+use App\Models\User;
 use App\Utils\ErrorLogger;
-use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use App\Mail\WelcomeMemberEmail;
-use Illuminate\Support\Facades\URL;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 
 class FranchiseController extends Controller
 {
-
     public function __construct()
     {
         // Apply middleware for event-related permissions
@@ -32,17 +29,17 @@ class FranchiseController extends Controller
         $this->middleware('permission:franchise-get-cities', ['only' => ['getCities']]);
     }
 
-
-
     public function index(Request $request)
     {
         try {
             $user = User::where('status', 'Active')->get();
             $franchises = Franchise::where('status', 'Active')->orderBy('franchiseName', 'asc')->paginate(10);
+
             return view('admin.franchise.index', compact('franchises', 'user'));
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError($th, request()->fullUrl());
+
             return view('servererror');
         }
     }
@@ -51,10 +48,12 @@ class FranchiseController extends Controller
     {
         try {
             $franchises = Franchise::findOrFail($id);
+
             return response()->json($franchises);
         } catch (\Throwable $th) {
-            //throw $th;
+            // throw $th;
             ErrorLogger::logError($th, request()->fullUrl());
+
             return view('servererror');
         }
     }
@@ -66,10 +65,12 @@ class FranchiseController extends Controller
             $countries = Country::where('status', 'Active')->orderBy('countryName', 'ASC')->get();
             $states = State::where('status', 'Active')->orderBy('stateName', 'ASC')->get();
             $cities = City::where('status', 'Active')->orderBy('cityName', 'ASC')->get();
+
             return view('admin.franchise.create', compact('franchises', 'countries', 'states', 'cities'));
         } catch (\Throwable $th) {
-            //throe $th;
+            // throe $th;
             ErrorLogger::logError($th, request()->fullUrl());
+
             return view('servererror');
         }
     }
@@ -122,7 +123,6 @@ class FranchiseController extends Controller
     //     }
     // }
 
-
     public function store(Request $request)
     {
         // Validate required fields based on the checkbox state
@@ -136,7 +136,7 @@ class FranchiseController extends Controller
 
         try {
             // Create Franchise
-            $franchises = new Franchise();
+            $franchises = new Franchise;
             $franchises->franchiseName = $request->franchiseName;
             $franchises->franchiseContactDetails = $request->franchiseContactDetails;
             $franchises->cityId = $request->cityId;
@@ -144,7 +144,7 @@ class FranchiseController extends Controller
             $franchises->status = 'Active';
 
             // Only create a user if 'managedByUbn' is unchecked
-            if (!$request->managedByUbn) {
+            if (! $request->managedByUbn) {
                 // Generate a random password
                 $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()';
                 $password = '';
@@ -175,12 +175,10 @@ class FranchiseController extends Controller
             return redirect()->route('franchise.index')->with('success', 'Franchise and User Created Successfully!');
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, request()->fullUrl());
+
             return view('servererror');
         }
     }
-
-
-
 
     public function edit(Request $request, $id)
     {
@@ -198,6 +196,7 @@ class FranchiseController extends Controller
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError($th, request()->fullUrl());
+
             return view('servererror');
         }
     }
@@ -206,7 +205,7 @@ class FranchiseController extends Controller
     {
         $this->validate($request, [
             'id' => 'required|exists:franchises,id',
-            'franchiseName' => 'required|unique:franchises,id,' . $request->id,
+            'franchiseName' => 'required|unique:franchises,id,'.$request->id,
             'franchiseContactDetails' => 'required',
         ]);
 
@@ -214,12 +213,11 @@ class FranchiseController extends Controller
             $franchises = Franchise::find($request->id);
             $user = $franchises ? $franchises->user : null; // Check if franchises object exists before trying to find user
 
-            if (!$franchises) {
+            if (! $franchises) {
                 return redirect()->route('franchise.index')->with('error', 'Franchise not found.');
             }
 
-
-            if (!$user) {
+            if (! $user) {
                 return redirect()->route('franchise.index')->with('error', 'User not found.');
             }
 
@@ -244,17 +242,17 @@ class FranchiseController extends Controller
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError($th, request()->fullUrl());
+
             return view('servererror');
         }
     }
-
 
     public function delete($id)
     {
         try {
             $franchise = Franchise::find($id);
 
-            if (!$franchise) {
+            if (! $franchise) {
                 return redirect()->route('franchise.index')->with('error', 'Franchise not found.');
             }
 
@@ -265,6 +263,7 @@ class FranchiseController extends Controller
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError($th, request()->fullUrl());
+
             return redirect()->route('franchise.index')->with('error', 'Failed to delete franchise.');
         }
     }
@@ -295,7 +294,6 @@ class FranchiseController extends Controller
     //     return $options;
     // }
 
-
     // Example Laravel Controller Method
     public function getStates(Request $request)
     {
@@ -304,8 +302,9 @@ class FranchiseController extends Controller
 
         $options = '<option value="">Select State</option>';
         foreach ($states as $state) {
-            $options .= '<option value="' . $state->id . '">' . $state->stateName . '</option>';
+            $options .= '<option value="'.$state->id.'">'.$state->stateName.'</option>';
         }
+
         return response()->json($options);
     }
 
@@ -318,7 +317,7 @@ class FranchiseController extends Controller
         $options = '<option value="">Select City</option>';
 
         foreach ($cities as $city) {
-            $options .= '<option value="' . $city->id . '">' . $city->cityName . '</option>';
+            $options .= '<option value="'.$city->id.'">'.$city->cityName.'</option>';
         }
 
         return response()->json($options);
@@ -330,6 +329,7 @@ class FranchiseController extends Controller
         if ($city) {
             $state = $city->state; // Assuming City belongs to State
             $country = $state->country; // Assuming State belongs to Country
+
             return response()->json([
                 'stateId' => $state->id,
                 'countryId' => $country->id,

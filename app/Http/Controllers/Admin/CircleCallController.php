@@ -2,29 +2,28 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Carbon\Carbon;
-use App\Models\User;
+use App\Http\Controllers\Controller;
 use App\Models\Circle;
+use App\Models\CircleCall;
+use App\Models\CircleMember;
+use App\Models\City;
+use App\Models\Connection;
 use App\Models\Member;
 use App\Models\Schedule;
-use App\Models\CircleCall;
+use App\Models\User;
 use App\Utils\ErrorLogger;
-use App\Models\CircleMember;
-use App\Models\Connection;
-use Illuminate\Http\Request;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
-use App\Http\Controllers\Controller;
-use App\Models\City;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 use Kreait\Firebase\Factory;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\Notification;
 
 class CircleCallController extends Controller
 {
-
     public function __construct()
     {
         // Apply middleware for circle call-related permissions
@@ -39,7 +38,6 @@ class CircleCallController extends Controller
         $this->middleware('permission:get-member-for-ref', ['only' => ['getMemberForRef']]);
         $this->middleware('permission:get-member-for-ref-Giver', ['only' => ['getMemberForRefGiver']]);
     }
-
 
     // public function index(Request $request)
     // {
@@ -58,13 +56,11 @@ class CircleCallController extends Controller
     //             ->orderBy('id', 'DESC')
     //             ->paginate(10);
 
-
     //         $circles = Circle::where('status', 'Active')->orderBy('circleName', 'asc')->get();
 
     //         $circleMember = Member::with('circle')
     //             ->where('status', 'Active')
     //             ->get(); // Ensure 'circleId' is included
-
 
     //         // return $scheduleDate = Schedule::where('circleId', Auth::user()->member->circle->id)->where('status', 'Active')->get(['date']);
     //         $scheduleDate = Schedule::where('circleId', Auth::user()->member->circle->id)
@@ -85,7 +81,6 @@ class CircleCallController extends Controller
     //         return view('servererror');
     //     }
     // }
-
 
     public function index(Request $request)
     {
@@ -119,7 +114,6 @@ class CircleCallController extends Controller
                     ->where('userId', '!=', auth()->id())
                     ->orderBy('firstName', 'asc')
                     ->get();
-
 
                 $scheduleDate = Schedule::where('circleId', Auth::user()->member->circle->id)
                     ->where('status', 'Active')
@@ -171,13 +165,12 @@ class CircleCallController extends Controller
             return redirect()->back()->with('error', 'Unauthorized access.');
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, $request->fullUrl());
+
             return view('servererror');
         }
     }
 
-
-
-    //For show single data
+    // For show single data
     public function view(Request $request, $id)
     {
         try {
@@ -188,6 +181,7 @@ class CircleCallController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
@@ -205,7 +199,6 @@ class CircleCallController extends Controller
                 ->where('userId', '!=', Auth::id())
                 ->orderBy('firstName', 'asc')
                 ->get();
-
 
             // return $scheduleDate = Schedule::where('circleId', Auth::user()->member->circle->id)->where('status', 'Active')->get(['date']);
             $scheduleDate = Schedule::where('circleId', Auth::user()->member->circle->id)
@@ -226,10 +219,10 @@ class CircleCallController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
-
 
     // public function getMembersByCircle(Request $request)
     // {
@@ -249,7 +242,6 @@ class CircleCallController extends Controller
     //     return response()->json(['members' => []]);
     // }
 
-
     // public function getMembersByCircle(Request $request)
     // {
     //     $circleId = $request->circleId;
@@ -268,7 +260,6 @@ class CircleCallController extends Controller
     //         'members' => $members
     //     ]);
     // }
-
 
     public function getMembersByCircle(Request $request)
     {
@@ -301,19 +292,15 @@ class CircleCallController extends Controller
         $members = $query->orderBy('firstName', 'asc')->get();
 
         return response()->json([
-            'members' => $members
+            'members' => $members,
         ]);
     }
 
-
-
-
-
-    function getCircle(Request $request): JsonResponse
+    public function getCircle(Request $request): JsonResponse
     {
         $query = $request->input('q');
 
-        $circles = Circle::where('circleName', 'LIKE', '%' . $query . '%')
+        $circles = Circle::where('circleName', 'LIKE', '%'.$query.'%')
             ->where('status', 'Active') // Add condition to get only active circles
             ->get();
 
@@ -327,14 +314,12 @@ class CircleCallController extends Controller
         ]);
     }
 
-
-
     public function getCircleMembers(Request $request, $circleId = null)
     {
 
         $circleId = $circleId ?: $request->input('circleId');
 
-        if (!$circleId) {
+        if (! $circleId) {
             return '';
         }
 
@@ -370,7 +355,7 @@ class CircleCallController extends Controller
         return view('partials.member-cards', compact('members', 'authCircleId'))->render();
     }
 
-    function getMember(Request $request): JsonResponse
+    public function getMember(Request $request): JsonResponse
     {
         $query = $request->input('q');
         $all = $request->input('all');
@@ -384,7 +369,7 @@ class CircleCallController extends Controller
             $data = User::whereHas('roles', function ($q) {
                 $q->where('name', 'Member');
             })
-                ->where('firstName', 'LIKE', '%' . $query . '%')
+                ->where('firstName', 'LIKE', '%'.$query.'%')
                 ->where('id', '!=', Auth::user()->id)
                 ->with('member.circle') // Include circle information
                 ->get();
@@ -395,15 +380,16 @@ class CircleCallController extends Controller
                 ->whereHas('member', function ($q) use ($myCircle) {
                     $q->where('circleId', $myCircle->circle->id);
                 })
-                ->where('firstName', 'LIKE', '%' . $query . '%')
+                ->where('firstName', 'LIKE', '%'.$query.'%')
                 ->where('id', '!=', Auth::user()->id)
                 ->with('member.circle') // Include circle information
                 ->get();
         }
+
         return response()->json($data);
     }
 
-    function getMemberForRef(Request $request): JsonResponse
+    public function getMemberForRef(Request $request): JsonResponse
     {
         $query = $request->input('q');
 
@@ -412,17 +398,15 @@ class CircleCallController extends Controller
         $data = User::whereHas('roles', function ($q) {
             $q->where('name', 'Member');
         })
-            ->where('firstName', 'LIKE', '%' . $query . '%')
+            ->where('firstName', 'LIKE', '%'.$query.'%')
             ->where('id', '!=', Auth::user()->id)
             ->with('member.circle') // Include circle information
             ->get();
 
-
         return response()->json($data);
     }
 
-
-    function getMemberForRefGiver(Request $request): JsonResponse
+    public function getMemberForRefGiver(Request $request): JsonResponse
     {
         $query = $request->input('q');
 
@@ -431,15 +415,13 @@ class CircleCallController extends Controller
         $data = User::whereHas('roles', function ($q) {
             $q->where('name', 'Member');
         })
-            ->where('firstName', 'LIKE', '%' . $query . '%')
+            ->where('firstName', 'LIKE', '%'.$query.'%')
             ->where('id', '!=', Auth::user()->id)
             ->with('member.circle')
             ->get();
 
-
         return response()->json($data);
     }
-
 
     // public function store(Request $request)
     // {
@@ -472,7 +454,6 @@ class CircleCallController extends Controller
     //         $circlecall->remarks = $request->remarks;
     //         $circlecall->status = 'Active';
 
-
     //         $circlecall->save();
 
     //         return redirect()->route('circlecall.index')->with('success', 'Data Added Successfully!');
@@ -486,7 +467,6 @@ class CircleCallController extends Controller
     //         return view('servererror');
     //     }
     // }
-
 
     // public function store(Request $request)
     // {
@@ -545,7 +525,6 @@ class CircleCallController extends Controller
     //     }
     // }
 
-
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -563,7 +542,7 @@ class CircleCallController extends Controller
             // ✅ Member से circleId लो
             $member = Member::where('userId', Auth::id())->first();
 
-            if (!$member) {
+            if (! $member) {
                 return redirect()->back()->withErrors(['error' => 'Member not found'])->withInput();
             }
 
@@ -583,7 +562,6 @@ class CircleCallController extends Controller
             //     }
             // }
 
-
             // ✅ Latest locked meeting निकालो
             // $latestLockedMeeting = Schedule::where('circleId', $circleId)
             //     ->where('lockUnlock', 'yes')
@@ -602,7 +580,7 @@ class CircleCallController extends Controller
             // }
 
             // ✅ अब आपका पुराना code
-            $circlecall = new CircleCall();
+            $circlecall = new CircleCall;
             $circlecall->memberId = Auth::user()->id;
             $circlecall->meetingPersonId = $request->meetingPersonId;
             $circlecall->meetingPlace = $request->meetingPlace;
@@ -616,7 +594,6 @@ class CircleCallController extends Controller
                 }
             }
 
-
             $circlecall->date = $request->date;
             $circlecall->remarks = $request->remarks;
             $circlecall->status = 'Active';
@@ -627,11 +604,10 @@ class CircleCallController extends Controller
             return redirect()->route('circlecall.index')->with('success', 'Data Added Successfully!');
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, $request->fullUrl());
+
             return view('servererror');
         }
     }
-
-
 
     // public function store(Request $request)
     // {
@@ -692,12 +668,9 @@ class CircleCallController extends Controller
     //     }
     // }
 
-
-
     // public function edit(Request $request, $id)
     // {
     //     try {
-
 
     //         if (Auth::user()->role == 'Member') {
 
@@ -719,7 +692,6 @@ class CircleCallController extends Controller
     //                 ->first();
     //         }
 
-
     //         if (Auth::user()->role == 'Digital Member') {
     //             $circlecall = CircleCall::find($id);
     //             $member = Member::where('status', '!=', 'Deleted')->where('circleId', null)->orderBy('firstName', 'asc')->get();
@@ -736,7 +708,6 @@ class CircleCallController extends Controller
     //     }
     // }
 
-
     public function edit(Request $request, $id)
     {
         try {
@@ -745,7 +716,7 @@ class CircleCallController extends Controller
 
             $circlecall = CircleCall::find($id);
 
-            if (!$circlecall) {
+            if (! $circlecall) {
                 return redirect()->back()->with('error', 'Circle Call not found.');
             }
 
@@ -798,12 +769,10 @@ class CircleCallController extends Controller
             return redirect()->back()->with('error', 'Unauthorized access.');
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, $request->fullUrl());
+
             return view('servererror');
         }
     }
-
-
-
 
     public function update(Request $request)
     {
@@ -847,12 +816,11 @@ class CircleCallController extends Controller
         }
     }
 
-
-    function delete(Request $request, $id)
+    public function delete(Request $request, $id)
     {
         try {
             $call = CircleCall::find($id);
-            $call->status = "Deleted";
+            $call->status = 'Deleted';
             $call->save();
 
             return redirect()->route('circlecall.index')->with('Success', 'Circle call Deleted Successfully!');
@@ -862,6 +830,7 @@ class CircleCallController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
@@ -883,19 +852,19 @@ class CircleCallController extends Controller
                     ->withNotification(Notification::create($title, $body));
                 try {
                     $messaging->send($message);
-                    Log::info('Notification sent to token: ' . $user->fcm_token);
+                    Log::info('Notification sent to token: '.$user->fcm_token);
                 } catch (\Kreait\Firebase\Exception\Messaging\NotFound $e) {
-                    Log::error('Token not found: ' . $user->fcm_token);
+                    Log::error('Token not found: '.$user->fcm_token);
                 } catch (\Kreait\Firebase\Exception\Messaging\InvalidArgument $e) {
-                    Log::error('Invalid argument error with token: ' . $user->fcm_token);
+                    Log::error('Invalid argument error with token: '.$user->fcm_token);
                 } catch (\Exception $e) {
-                    Log::error('General error sending to token: ' . $user->fcm_token . '. Error: ' . $e->getMessage());
+                    Log::error('General error sending to token: '.$user->fcm_token.'. Error: '.$e->getMessage());
                 }
             }
         }
     }
 
-    //digital member functions
+    // digital member functions
 
     public function getMembersByCity($cityId)
     {
@@ -914,8 +883,8 @@ class CircleCallController extends Controller
 
     private function processAndCompressImage($image)
     {
-        $imageName = time() . '.jpg';
-        $destinationPath = public_path('meetingImage/' . $imageName);
+        $imageName = time().'.jpg';
+        $destinationPath = public_path('meetingImage/'.$imageName);
 
         // Get image info
         $imageInfo = getimagesize($image->getPathname());

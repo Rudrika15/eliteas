@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class CircleCall extends Model
 {
     protected $table = 'circle_meeting_members_121';
+
     use HasFactory;
 
     protected $fillable = [
@@ -22,6 +23,7 @@ class CircleCall extends Model
     {
         return $this->belongsTo(Member::class, 'id');
     }
+
     public function user()
     {
         return $this->belongsTo(User::class, 'id');
@@ -31,6 +33,7 @@ class CircleCall extends Model
     {
         return $this->belongsTo(Member::class, 'memberId', 'userId');
     }
+
     public function meetingPerson()
     {
         return $this->belongsTo(Member::class, 'meetingPersonId', 'userId');

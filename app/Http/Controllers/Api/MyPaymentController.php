@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use App\Models\AllPayments;
 use Illuminate\Http\Request;
-use App\Models\MemberSubscriptions;
 use Illuminate\Support\Facades\Log;
-use App\Http\Controllers\Controller;
 
 class MyPaymentController extends Controller
 {
@@ -21,7 +20,7 @@ class MyPaymentController extends Controller
             return response()->json([
                 'success' => true,
                 'data' => $payments,
-                'message' => 'Payments retrieved successfully'
+                'message' => 'Payments retrieved successfully',
             ], 200);
         } catch (\Throwable $th) {
             // throw $th;
@@ -30,7 +29,7 @@ class MyPaymentController extends Controller
 
             return response()->json([
                 'success' => false,
-                'message' => 'Server error. Please try again later.'
+                'message' => 'Server error. Please try again later.',
             ], 500);
         }
     }

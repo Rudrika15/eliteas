@@ -2,24 +2,21 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\Member;
-use App\Models\CircleCall;
-use App\Utils\ErrorLogger;
-use App\Models\Testimonial;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\CircleCall;
 use App\Models\CircleMeetingMembersBusiness;
 use App\Models\CircleMeetingMembersReference;
+use App\Models\Member;
+use App\Models\Testimonial;
+use App\Utils\ErrorLogger;
+use Illuminate\Http\Request;
 
 class CircleMemberActivityController extends Controller
 {
-
     public function __construct()
     {
         $this->middleware('permission:circle-member-activity', ['only' => ['activity']]);
     }
-
-
 
     public function activity(Request $request, $id)
     {
@@ -38,6 +35,7 @@ class CircleMemberActivityController extends Controller
         } catch (\Throwable $th) {
             // Log the error and return the error view
             ErrorLogger::logError($th, $request->fullUrl());
+
             return view('servererror');
         }
     }

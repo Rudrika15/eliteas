@@ -2,18 +2,16 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Utils\ErrorLogger;
-use Illuminate\Http\Request;
-use App\Models\MembershipType;
-use App\Models\MemberSubscriptions;
 use App\Exports\SubscriptionsExport;
 use App\Http\Controllers\Controller;
+use App\Models\MembershipType;
+use App\Models\MemberSubscriptions;
+use App\Utils\ErrorLogger;
+use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 
 class MembershipSubscriptionController extends Controller
 {
-
-
     public function __construct()
     {
         // Apply middleware for event-related permissions
@@ -21,7 +19,6 @@ class MembershipSubscriptionController extends Controller
         $this->middleware('permission:member-subscription-member-data', ['only' => ['memberData']]);
         $this->middleware('permission:member-subscription-export', ['only' => ['exportSubscriptions']]);
     }
-
 
     public function index(Request $request)
     {
@@ -37,6 +34,7 @@ class MembershipSubscriptionController extends Controller
                 if ($subscription->allPayments instanceof \Illuminate\Support\Collection) {
                     $subscription->allPayments->transform(function ($payment) {
                         $payment->amount = isset($payment->amount) ? number_format($payment->amount, 2) : '-';
+
                         return $payment;
                     });
                 }
@@ -46,27 +44,26 @@ class MembershipSubscriptionController extends Controller
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError($th, request()->fullUrl());
+
             return view('servererror');
         }
     }
-
-
-
 
     public function memberData(Request $request)
     {
         try {
             $membershipType = membershipType::where('status', 'Active')->get();
             $allSubscriptions = MemberSubscriptions::where('status', 'Active')->paginate(10);
+
             // $allSubscriptions = MemberSubscriptions::where('status', 'Active')->with(['user.member'])->paginate(10);
             return view('admin.mysubscriptions.adminIndex', compact('allSubscriptions', 'membershipType'));
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError($th, request()->fullUrl());
+
             return view('servererror');
         }
     }
-
 
     // public function checkMembershipValidity()
     // {
@@ -86,15 +83,16 @@ class MembershipSubscriptionController extends Controller
     //     }
     // }
 
-
     public function exportSubscriptions(Request $request)
     {
         try {
             $membershipType = $request->input('membershipType');
+
             return Excel::download(new SubscriptionsExport($membershipType), 'subscriptions.xlsx');
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError($th, $request->fullUrl());
+
             return redirect()->back()->with('error', 'Failed to export subscriptions');
         }
     }

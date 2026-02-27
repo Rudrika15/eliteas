@@ -2,21 +2,18 @@
 
 namespace App\Http\Controllers\visitor;
 
-use App\Utils\ErrorLogger;
-use Illuminate\Http\Request;
-use App\Models\VisitorsDetails;
+use App\Http\Controllers\Controller;
 use App\Models\BusinessCategory;
 use App\Models\MeetingInvitation;
-use App\Http\Controllers\Controller;
-use App\Models\Member;
 use App\Models\Visitor;
+use App\Models\VisitorsDetails;
+use App\Utils\ErrorLogger;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\URL;
 use Throwable;
 
 class VisitorFormController extends Controller
 {
-
     public function storsssse()
     {
 
@@ -27,6 +24,7 @@ class VisitorFormController extends Controller
     {
         try {
             $visitors = VisitorsDetails::latest()->paginate(10);
+
             return view('visitor.index', compact('visitors'));
         } catch (\Throwable $th) {
             // Log the error
@@ -40,6 +38,7 @@ class VisitorFormController extends Controller
     public function visitorForm()
     {
         $businessCategory = BusinessCategory::where('status', 'Active')->orderBy('categoryName', 'asc')->get();
+
         return view('visitor.visitorForm', compact('businessCategory'));
     }
 
@@ -101,7 +100,7 @@ class VisitorFormController extends Controller
     {
         try {
             // Create a new VisitorsDetails object
-            $visitor = new VisitorsDetails();
+            $visitor = new VisitorsDetails;
             $visitor->firstName = $request->firstName;
             $visitor->lastName = $request->lastName;
             $visitor->mobileNo = $request->mobileNo;
@@ -109,13 +108,12 @@ class VisitorFormController extends Controller
             $visitor->createdBy = Auth::user()->id;
             $visitor->circleMeet = $request->circleMeet;
 
-
             // Determine business category and assign it to the visitor
             if ($request->businessCategory == 'other') {
                 // If 'other', assign the otherCategory value and check if already exists
                 $business = BusinessCategory::where('categoryName', $request->otherCategory)->first();
-                if (!$business) {
-                    $business = new BusinessCategory();
+                if (! $business) {
+                    $business = new BusinessCategory;
                     $business->categoryName = $request->otherCategory;
                     $business->save();
                 }
@@ -137,41 +135,39 @@ class VisitorFormController extends Controller
             // Save the visitor information
             $visitor->save();
 
-            $invitation = new MeetingInvitation();
+            $invitation = new MeetingInvitation;
             $invitation->meetingId = $request->meetingId;
             $invitation->invitedMemberId = $visitor->invitedBy;
-            $invitation->personName = $request->firstName . ' ' . $request->lastName;
+            $invitation->personName = $request->firstName.' '.$request->lastName;
             $invitation->personEmail = null;
             $invitation->personContact = $visitor->mobileNo;
             $invitation->businessCategoryId = $visitor->businessCategory;
             // $invitation->personEmail = 'Unpaid';
             $invitation->save();
 
-
             return redirect()->back()->with('success', 'Your Information Submitted Successfully!');
         } catch (\Throwable $th) {
             // Log the error
             throw $th;
             ErrorLogger::logError($th, $request->fullUrl());
+
             // Return a generic error view or message
             return redirect()->back()->with('error', 'Failed to submit your information');
         }
     }
 
-
     public function visitorsFormView()
     {
         $businessCategory = BusinessCategory::where('status', 'Active')->orderBy('categoryName', 'asc')->get();
+
         return view('visitor.visitorForms', compact('businessCategory'));
     }
-
-
 
     public function visitorStore(Request $request)
     {
         try {
             // Create a new VisitorsDetails object
-            $visitor = new VisitorsDetails();
+            $visitor = new VisitorsDetails;
             $visitor->firstName = $request->firstName;
             $visitor->lastName = $request->lastName;
             $visitor->mobileNo = $request->mobileNo;
@@ -181,8 +177,8 @@ class VisitorFormController extends Controller
             if ($request->businessCategory == 'other') {
                 // If 'other', assign the otherCategory value and check if already exists
                 $business = BusinessCategory::where('categoryName', $request->otherCategory)->first();
-                if (!$business) {
-                    $business = new BusinessCategory();
+                if (! $business) {
+                    $business = new BusinessCategory;
                     $business->categoryName = $request->otherCategory;
                     $business->save();
                 }
@@ -203,7 +199,6 @@ class VisitorFormController extends Controller
             // Save the visitor information
             $visitor->save();
 
-
             return redirect()->route('visitors.form.view')->with('success', 'Your Information Submitted Successfully!');
         } catch (\Throwable $th) {
             // Log the error
@@ -214,7 +209,6 @@ class VisitorFormController extends Controller
             return redirect()->route('visitors.form.view')->with('error', 'Failed to submit your information');
         }
     }
-
 
     public function updateRemark(Request $request)
     {
@@ -260,11 +254,11 @@ class VisitorFormController extends Controller
                 $th,
                 request()->fullUrl()
             );
+
             // In case of an error, redirect to servererror view
             return view('servererror');
         }
     }
-
 
     public function profileUpdate(Request $request)
     {
@@ -284,11 +278,10 @@ class VisitorFormController extends Controller
             $visitor->gender = $request->gender;
 
             if ($request->profilePhoto) {
-                $visitor->profilePhoto = time() . '.' . $request->profilePhoto->extension();
+                $visitor->profilePhoto = time().'.'.$request->profilePhoto->extension();
                 $request->profilePhoto->move(public_path('ProfilePhoto'), $visitor->profilePhoto);
             }
             $visitor->save();
-
 
             return redirect()->route('visitor.profile')->with('success', 'Profile Updated Successfully!');
         } catch (Throwable $th) {
@@ -297,6 +290,7 @@ class VisitorFormController extends Controller
                 $th,
                 request()->fullUrl()
             );
+
             return view('servererror');
         }
     }

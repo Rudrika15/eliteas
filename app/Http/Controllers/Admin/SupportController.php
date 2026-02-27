@@ -8,7 +8,6 @@ use App\Models\SupportTicket;
 use App\Utils\ErrorLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Mail;
 
 class SupportController extends Controller
@@ -16,13 +15,15 @@ class SupportController extends Controller
     public function index(Request $request)
     {
         try {
-            if (!Auth::user()->hasRole('Admin')) {
+            if (! Auth::user()->hasRole('Admin')) {
                 return redirect()->route('support.create');
             }
             $tickets = SupportTicket::orderByDesc('created_at')->paginate(10);
+
             return view('admin.support.index', compact('tickets'));
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, request()->fullUrl());
+
             return view('servererror');
         }
     }
@@ -33,9 +34,11 @@ class SupportController extends Controller
             if (Auth::user()->hasRole('Admin')) {
                 return redirect()->route('support.index');
             }
+
             return view('admin.support.create');
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, request()->fullUrl());
+
             return view('servererror');
         }
     }
@@ -47,16 +50,17 @@ class SupportController extends Controller
                 return redirect()->route('support.index');
             }
             $tickets = SupportTicket::where('userId', Auth::id())->orderByDesc('created_at')->paginate(10);
+
             return view('admin.support.memberIndex', compact('tickets'));
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, request()->fullUrl());
+
             return view('servererror');
         }
     }
 
     public function store(Request $request)
     {
-
 
         $request->validate([
             'subject' => 'required|string|max:255',
@@ -66,25 +70,24 @@ class SupportController extends Controller
         ]);
 
         try {
-            $ticket = new SupportTicket();
+            $ticket = new SupportTicket;
             $ticket->userId = Auth::id();
             $ticket->subject = $request->subject;
             $ticket->description = $request->description;
-            $ticket->priority =  'Low';
+            $ticket->priority = 'Low';
             $ticket->status = 'Open';
 
             if ($request->hasFile('attachment')) {
                 $dir = public_path('support_attachments');
-                if (!is_dir($dir)) {
+                if (! is_dir($dir)) {
                     @mkdir($dir, 0775, true);
                 }
-                $fileName = time() . '_' . $request->attachment->getClientOriginalName();
+                $fileName = time().'_'.$request->attachment->getClientOriginalName();
                 $request->attachment->move($dir, $fileName);
                 $ticket->attachment = $fileName;
             }
 
             $ticket->save();
-
 
             $adminEmail = 'care.ubncommunity@gmail.com';
 
@@ -93,6 +96,7 @@ class SupportController extends Controller
             return redirect()->route('support.myIndex')->with('success', 'Ticket created successfully');
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, request()->fullUrl());
+
             return view('servererror');
         }
     }
@@ -107,9 +111,11 @@ class SupportController extends Controller
             if ($ticket->userId !== Auth::id()) {
                 return redirect()->route('support.create');
             }
+
             return view('admin.support.edit', compact('ticket'));
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, request()->fullUrl());
+
             return view('servererror');
         }
     }
@@ -134,15 +140,15 @@ class SupportController extends Controller
             }
             $ticket->subject = $request->subject;
             $ticket->description = $request->description;
-            $ticket->priority =  'Low';
+            $ticket->priority = 'Low';
             $ticket->status = 'Open';
 
             if ($request->hasFile('attachment')) {
                 $dir = public_path('support_attachments');
-                if (!is_dir($dir)) {
+                if (! is_dir($dir)) {
                     @mkdir($dir, 0775, true);
                 }
-                $fileName = time() . '_' . $request->attachment->getClientOriginalName();
+                $fileName = time().'_'.$request->attachment->getClientOriginalName();
                 $request->attachment->move($dir, $fileName);
                 $ticket->attachment = $fileName;
             }
@@ -152,9 +158,11 @@ class SupportController extends Controller
             if (Auth::user()->hasRole('Admin')) {
                 return redirect()->route('support.index')->with('success', 'Ticket updated successfully');
             }
+
             return redirect()->route('support.myIndex')->with('success', 'Ticket updated successfully');
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, request()->fullUrl());
+
             return view('servererror');
         }
     }
@@ -162,14 +170,16 @@ class SupportController extends Controller
     public function delete($id)
     {
         try {
-            if (!Auth::user()->hasRole('Admin')) {
+            if (! Auth::user()->hasRole('Admin')) {
                 return redirect()->route('support.create');
             }
             $ticket = SupportTicket::findOrFail($id);
             $ticket->delete();
+
             return redirect()->route('support.index')->with('success', 'Ticket deleted successfully');
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, request()->fullUrl());
+
             return view('servererror');
         }
     }
@@ -177,7 +187,7 @@ class SupportController extends Controller
     public function adminUpdateStatus(Request $request)
     {
         try {
-            if (!Auth::user()->hasRole('Admin')) {
+            if (! Auth::user()->hasRole('Admin')) {
                 return redirect()->route('support.create');
             }
             $request->validate([
@@ -190,12 +200,14 @@ class SupportController extends Controller
             if ($request->wantsJson() || $request->ajax()) {
                 return response()->json(['success' => true, 'status' => $ticket->status]);
             }
+
             return redirect()->route('support.index')->with('success', 'Status updated');
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, request()->fullUrl());
             if ($request->wantsJson() || $request->ajax()) {
                 return response()->json(['success' => false], 500);
             }
+
             return view('servererror');
         }
     }
@@ -203,7 +215,7 @@ class SupportController extends Controller
     public function adminUpdatePriority(Request $request)
     {
         try {
-            if (!Auth::user()->hasRole('Admin')) {
+            if (! Auth::user()->hasRole('Admin')) {
                 return redirect()->route('support.create');
             }
             $request->validate([
@@ -216,12 +228,14 @@ class SupportController extends Controller
             if ($request->wantsJson() || $request->ajax()) {
                 return response()->json(['success' => true, 'priority' => $ticket->priority]);
             }
+
             return redirect()->route('support.index')->with('success', 'Priority updated');
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, request()->fullUrl());
             if ($request->wantsJson() || $request->ajax()) {
                 return response()->json(['success' => false], 500);
             }
+
             return view('servererror');
         }
     }

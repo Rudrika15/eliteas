@@ -8,8 +8,11 @@ use Maatwebsite\Excel\Concerns\FromView;
 class AttendanceReportExport implements FromView
 {
     protected $reportData;
+
     protected $startDate;
+
     protected $endDate;
+
     protected $circleName;
 
     public function __construct($reportData, $startDate, $endDate, $circleName)
@@ -26,7 +29,7 @@ class AttendanceReportExport implements FromView
             'reportData' => $this->reportData,
             'startDate' => $this->startDate,
             'endDate' => $this->endDate,
-            'circleName' => $this->circleName
+            'circleName' => $this->circleName,
         ]);
     }
 }

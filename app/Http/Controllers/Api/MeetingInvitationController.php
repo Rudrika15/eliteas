@@ -2,17 +2,16 @@
 
 namespace App\Http\Controllers\Api;
 
-use Carbon\Carbon;
-use App\Models\User;
-use App\Models\Schedule;
-use Illuminate\Http\Request;
-use App\Models\MeetingInvitation;
-use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
+use App\Mail\MeetingInvitation as MailMeetingInvitation;
+use App\Models\MeetingInvitation;
+use App\Models\Schedule;
+use App\Utils\Utils;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
-use App\Mail\MeetingInvitation as MailMeetingInvitation;
-use App\Utils\Utils; // Assuming you have a Utils class for response handling
+use Illuminate\Support\Facades\URL; // Assuming you have a Utils class for response handling
 
 class MeetingInvitationController extends Controller
 {
@@ -27,7 +26,7 @@ class MeetingInvitationController extends Controller
                 'meetingId' => 'required|exists:schedules,id',
             ]);
 
-            $invitation = new MeetingInvitation();
+            $invitation = new MeetingInvitation;
             $invitation->meetingId = $request->meetingId;
             $invitation->invitedMemberId = Auth::id();
             $invitation->personName = $request->personName;
@@ -43,7 +42,7 @@ class MeetingInvitationController extends Controller
                 'personEmail' => $request->personEmail,
                 'invitedPersonFirstName' => $invitedPerson->firstName,
                 'invitedPersonLastName' => $invitedPerson->lastName,
-                'amount' => $fees->circle->city->amount
+                'amount' => $fees->circle->city->amount,
             ];
 
             Mail::to($request->personEmail)->send(new MailMeetingInvitation($data));
@@ -59,12 +58,12 @@ class MeetingInvitationController extends Controller
         try {
             $authId = $request->user()->id;
             $meetingsInvitation = MeetingInvitation::where('invitedMemberId', $authId)->get();
+
             return Utils::sendResponse(['meetingsInvitation' => $meetingsInvitation], 'Meetings Invitations retrieved successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
-
 
     public function getMeetingForCircle(Request $request)
     {
@@ -88,7 +87,7 @@ class MeetingInvitationController extends Controller
                 $signedUrl = URL::signedRoute('visitor.form', [
                     'slug' => $meeting->cm_slug,
                     'meetingId' => $meeting->id,
-                    'ref' => auth()->user()->member->id
+                    'ref' => auth()->user()->member->id,
                 ], now()->addMinutes(60));
 
                 // Prepare meeting data
@@ -100,7 +99,7 @@ class MeetingInvitationController extends Controller
                 foreach ($meeting->circle->members as $member) {
                     $members[] = [
                         'id' => $member->id,
-                        'name' => $member->firstName . ' ' . $member->lastName,
+                        'name' => $member->firstName.' '.$member->lastName,
                         'email' => $member->email,
                         'contact' => $member->contactNo,
                     ];

@@ -14,9 +14,11 @@ class HelpController extends Controller
     {
         try {
             $help = Help::where('status', 'Active')->get();
+
             return Utils::sendResponse(['help' => $help], 'Help Data retrieved successfully', 200);
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, request()->fullUrl());
+
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }

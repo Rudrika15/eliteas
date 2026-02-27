@@ -15,6 +15,7 @@ class RenewSubscriptionController extends Controller
             return response()->json(RenewSubscription::orderByDesc('created_at')->paginate(15));
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, request()->fullUrl());
+
             return response()->json(['error' => 'Server error'], 500);
         }
     }
@@ -32,9 +33,11 @@ class RenewSubscriptionController extends Controller
             ]);
 
             $record = RenewSubscription::create($data);
+
             return response()->json($record, 201);
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, request()->fullUrl());
+
             return response()->json(['error' => 'Server error'], 500);
         }
     }
@@ -43,9 +46,11 @@ class RenewSubscriptionController extends Controller
     {
         try {
             $record = RenewSubscription::findOrFail($id);
+
             return response()->json($record);
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, request()->fullUrl());
+
             return response()->json(['error' => 'Not found'], 404);
         }
     }
@@ -65,9 +70,11 @@ class RenewSubscriptionController extends Controller
             ]);
 
             $record->update($data);
+
             return response()->json($record);
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, request()->fullUrl());
+
             return response()->json(['error' => 'Server error'], 500);
         }
     }
@@ -77,11 +84,12 @@ class RenewSubscriptionController extends Controller
         try {
             $record = RenewSubscription::findOrFail($id);
             $record->delete();
+
             return response()->json(null, 204);
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, request()->fullUrl());
+
             return response()->json(['error' => 'Server error'], 500);
         }
     }
 }
-

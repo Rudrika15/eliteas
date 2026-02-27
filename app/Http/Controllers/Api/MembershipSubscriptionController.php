@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers\Api;
 
-use Illuminate\Http\Request;
-use App\Models\membershipType;
 use App\Http\Controllers\Controller;
 use App\Models\MemberSubscriptions;
+use Illuminate\Http\Request;
 
 class MembershipSubscriptionController extends Controller
 {
@@ -21,9 +20,9 @@ class MembershipSubscriptionController extends Controller
                 'success' => true,
                 'data' => [
                     'subscriptions' => $subscriptions,
-                    'userId' => $userId
+                    'userId' => $userId,
                 ],
-                'message' => 'Subscriptions retrieved successfully'
+                'message' => 'Subscriptions retrieved successfully',
             ], 200);
         } catch (\Throwable $th) {
             // Log the error for debugging
@@ -31,12 +30,8 @@ class MembershipSubscriptionController extends Controller
 
             return response()->json([
                 'success' => false,
-                'message' => 'Server error. Please try again later.'
+                'message' => 'Server error. Please try again later.',
             ], 500);
         }
     }
-
-
-
 }
-

@@ -2,17 +2,16 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
+use App\Models\TrainingCategory;
 use App\Utils\ErrorLogger;
 use Illuminate\Http\Request;
-use App\Models\TrainingCategory;
-use App\Http\Controllers\Controller;
 
 class TrainingCategoryController extends Controller
 {
-
     public function __construct()
     {
-        
+
         // Apply middleware for event-related permissions
         $this->middleware('permission:training-category-index', ['only' => ['index', 'view']]);
         $this->middleware('permission:training-category-create', ['only' => ['create', 'store']]);
@@ -25,10 +24,12 @@ class TrainingCategoryController extends Controller
     {
         try {
             $trainingCategory = TrainingCategory::where('status', 'Active')->paginate(10);
+
             return view('admin.trainingcategory.index', compact('trainingCategory'));
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError($th, request()->fullUrl());
+
             return view('servererror');
         }
     }
@@ -37,12 +38,14 @@ class TrainingCategoryController extends Controller
     {
         try {
             $trainingCategory = TrainingCategory::all();
+
             return view('admin.trainingcategory.create', compact('trainingCategory'));
         } catch (\Throwable $th) {
-            //throe $th;
+            // throe $th;
             ErrorLogger::logError($th,
                 request()->fullUrl()
             );
+
             return view('servererror');
         }
     }
@@ -54,7 +57,7 @@ class TrainingCategoryController extends Controller
         ]);
 
         try {
-            $trainingCategory = new TrainingCategory();
+            $trainingCategory = new TrainingCategory;
             $trainingCategory->categoryName = $request->categoryName;
 
             $trainingCategory->status = 'Active';
@@ -64,19 +67,21 @@ class TrainingCategoryController extends Controller
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError($th, request()->fullUrl());
+
             return view('servererror');
         }
     }
-
 
     public function edit(Request $request, $id)
     {
         try {
             $trainingCategory = TrainingCategory::find($id);
+
             return view('admin.trainingcategory.edit', compact('trainingCategory'));
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError($th, request()->fullUrl());
+
             return view('servererror');
         }
     }
@@ -93,7 +98,6 @@ class TrainingCategoryController extends Controller
 
             $trainingCategory->categoryName = $request->categoryName;
 
-
             // $trainingCategory->categoryIcon = $request->categoryIcon;
 
             $trainingCategory->status = 'Active';
@@ -103,17 +107,17 @@ class TrainingCategoryController extends Controller
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError($th, request()->fullUrl());
+
             return redirect()->route('tCategory.index')->with('error', 'Failed to update Training Category details.');
         }
     }
-
 
     public function delete($id)
     {
         try {
             $trainingCategory = TrainingCategory::find($id);
 
-            if (!$trainingCategory) {
+            if (! $trainingCategory) {
                 return redirect()->route('bCategory.index')->with('error', 'training Category not found.');
             }
 
@@ -122,10 +126,11 @@ class TrainingCategoryController extends Controller
 
             return redirect()->route('tCategory.index')->with('success', 'Training Category deleted successfully.');
         } catch (\Throwable $th) {
-            //throw $th;
+            // throw $th;
             ErrorLogger::logError($th,
                 request()->fullUrl()
             );
+
             return redirect()->route('tCategory.index')->with('error', 'Failed to delete Training Category.');
         }
     }

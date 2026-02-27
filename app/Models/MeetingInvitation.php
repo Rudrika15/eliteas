@@ -9,7 +9,6 @@ class MeetingInvitation extends Model
 {
     use HasFactory;
 
-
     public function member()
     {
         return $this->hasOne(Member::class, 'id', 'invitedMemberId');

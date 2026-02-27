@@ -58,11 +58,11 @@
                                     <div class="form-floating">
                                         <select class="form-select @error('title') is-invalid @enderror" id="title" name="title">
                                             <option value="" disabled selected>Select Title</option>
-                                            <option value="Mr" {{ $member->title == 'Mr' ? 'selected' : '' }}>Mr
+                                            <option value="Mr" {{ old('title', $member->title) == 'Mr' ? 'selected' : '' }}>Mr
                                             </option>
-                                            <option value="Ms" {{ $member->title == 'Ms' ? 'selected' : '' }}>Ms
+                                            <option value="Ms" {{ old('title', $member->title) == 'Ms' ? 'selected' : '' }}>Ms
                                             </option>
-                                            <option value="Mrs" {{ $member->title == 'Mrs' ? 'selected' : '' }}>Mrs
+                                            <option value="Mrs" {{ old('title', $member->title) == 'Mrs' ? 'selected' : '' }}>Mrs
                                             </option>
                                             <!-- Add more options as needed -->
                                         </select>

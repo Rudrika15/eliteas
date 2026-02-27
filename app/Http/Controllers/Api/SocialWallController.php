@@ -3,14 +3,14 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Comment;
+use App\Models\Connection;
+use App\Models\Like;
+use App\Models\Post;
+use App\Utils\Utils;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
-use App\Utils\Utils;
-use App\Models\Post;
-use App\Models\Like;
-use App\Models\Comment;
-use App\Models\Connection;
 
 class SocialWallController extends Controller
 {
@@ -21,19 +21,19 @@ class SocialWallController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'caption' => 'nullable|string',
-                'attachment' => 'nullable|file|mimes:jpeg,png,jpg,gif,mp4,mov,avi|max:10240', // Max 10MB
+                'attachment' => 'nullable|file|image|mimes:jpeg,png,jpg,gif,webp|max:10240', // Max 10MB
             ]);
 
             if ($validator->fails()) {
                 return Utils::errorResponse($validator->errors(), 'Validation Error', 422);
             }
 
-            if (!$request->has('caption') && !$request->hasFile('attachment')) {
+            if (! $request->has('caption') && ! $request->hasFile('attachment')) {
                 return Utils::errorResponse(['error' => 'Post must have a caption or attachment.'], 'Validation Error', 422);
             }
 
             $userId = Auth::id();
-            $post = new Post();
+            $post = new Post;
             $post->userId = $userId;
             $post->caption = $request->caption;
             $post->status = 'Active';
@@ -41,26 +41,26 @@ class SocialWallController extends Controller
             if ($request->hasFile('attachment')) {
                 $file = $request->file('attachment');
                 $extension = $file->getClientOriginalExtension();
-                $filename = time() . '.' . $extension;
+                $filename = time().'.'.$extension;
 
                 // If image, convert to WebP
                 if (in_array(strtolower($extension), ['jpg', 'jpeg', 'png', 'gif'])) {
                     $image = imagecreatefromstring(file_get_contents($file));
-                    $filename = time() . '.webp';
-                    $path = public_path('posts/' . $filename);
+                    $filename = time().'.webp';
+                    $path = public_path('posts/'.$filename);
 
                     // Ensure directory exists
-                    if (!file_exists(public_path('posts'))) {
+                    if (! file_exists(public_path('posts'))) {
                         mkdir(public_path('posts'), 0777, true);
                     }
 
                     imagewebp($image, $path, 80); // 80% quality
                     imagedestroy($image);
-                    $post->attachment = 'posts/' . $filename;
-                } else {
-                    // Video or other allowed types
+                    $post->attachment = 'posts/'.$filename;
+                } elseif (in_array(strtolower($extension), ['webp'])) {
+                    $filename = time().'.webp';
                     $file->move(public_path('posts'), $filename);
-                    $post->attachment = 'posts/' . $filename;
+                    $post->attachment = 'posts/'.$filename;
                 }
             }
 
@@ -94,8 +94,13 @@ class SocialWallController extends Controller
             $allowedUserIds = array_unique(array_merge($connectedUserIds1, $connectedUserIds2));
             $allowedUserIds[] = $userId; // Add self
 
-            $posts = Post::whereIn('userId', $allowedUserIds)
-                ->where('status', 'Active')
+            $posts = Post::where('status', 'Active')
+                ->where(function ($q) use ($allowedUserIds) {
+                    $q->whereIn('userId', $allowedUserIds)
+                        ->orWhereHas('user.roles', function ($rq) {
+                            $rq->where('name', 'Admin');
+                        });
+                })
                 ->with(['user:id,firstName,lastName', 'likes' => function ($q) {
                     $q->where('status', 'Active');
                 }, 'comments' => function ($q) {
@@ -166,7 +171,7 @@ class SocialWallController extends Controller
                 }
                 $like->save();
             } else {
-                $like = new Like();
+                $like = new Like;
                 $like->postId = $postId;
                 $like->userId = $userId;
                 $like->status = 'Active';
@@ -193,7 +198,7 @@ class SocialWallController extends Controller
                 return Utils::errorResponse($validator->errors(), 'Validation Error', 422);
             }
 
-            $comment = new Comment();
+            $comment = new Comment;
             $comment->postId = $request->postId;
             $comment->userId = Auth::id();
             $comment->comment = $request->comment;
@@ -229,21 +234,21 @@ class SocialWallController extends Controller
             $validator = Validator::make($request->all(), [
                 'postId' => 'required|exists:posts,id',
                 'caption' => 'nullable|string',
-                'attachment' => 'nullable|file|mimes:jpeg,png,jpg,gif,mp4,mov,avi|max:10240', // Max 10MB
+                'attachment' => 'nullable|file|image|mimes:jpeg,png,jpg,gif,webp|max:10240', // Max 10MB
             ]);
 
             if ($validator->fails()) {
                 return Utils::errorResponse($validator->errors(), 'Validation Error', 422);
             }
 
-            if (!$request->has('caption') && !$request->hasFile('attachment')) {
+            if (! $request->has('caption') && ! $request->hasFile('attachment')) {
                 return Utils::errorResponse(['error' => 'Post must have a caption or attachment.'], 'Validation Error', 422);
             }
 
             $userId = Auth::id();
             $post = Post::where('id', $request->postId)->where('userId', $userId)->first();
 
-            if (!$post) {
+            if (! $post) {
                 return Utils::errorResponse(['error' => 'Post not found or unauthorized.'], 'Authorization Error', 403);
             }
 
@@ -252,26 +257,26 @@ class SocialWallController extends Controller
             if ($request->hasFile('attachment')) {
                 $file = $request->file('attachment');
                 $extension = $file->getClientOriginalExtension();
-                $filename = time() . '.' . $extension;
+                $filename = time().'.'.$extension;
 
                 // If image, convert to WebP
                 if (in_array(strtolower($extension), ['jpg', 'jpeg', 'png', 'gif'])) {
                     $image = imagecreatefromstring(file_get_contents($file));
-                    $filename = time() . '.webp';
-                    $path = public_path('posts/' . $filename);
+                    $filename = time().'.webp';
+                    $path = public_path('posts/'.$filename);
 
                     // Ensure directory exists
-                    if (!file_exists(public_path('posts'))) {
+                    if (! file_exists(public_path('posts'))) {
                         mkdir(public_path('posts'), 0777, true);
                     }
 
                     imagewebp($image, $path, 80); // 80% quality
                     imagedestroy($image);
-                    $post->attachment = 'posts/' . $filename;
-                } else {
-                    // Video or other allowed types
+                    $post->attachment = 'posts/'.$filename;
+                } elseif (in_array(strtolower($extension), ['webp'])) {
+                    $filename = time().'.webp';
                     $file->move(public_path('posts'), $filename);
-                    $post->attachment = 'posts/' . $filename;
+                    $post->attachment = 'posts/'.$filename;
                 }
             }
 
@@ -297,7 +302,7 @@ class SocialWallController extends Controller
             $userId = Auth::id();
             $post = Post::where('id', $request->postId)->where('userId', $userId)->first();
 
-            if (!$post) {
+            if (! $post) {
                 return Utils::errorResponse(['error' => 'Post not found or unauthorized.'], 'Authorization Error', 403);
             }
 
@@ -325,7 +330,7 @@ class SocialWallController extends Controller
             $userId = Auth::id();
             $comment = Comment::where('id', $request->commentId)->where('userId', $userId)->first();
 
-            if (!$comment) {
+            if (! $comment) {
                 return Utils::errorResponse(['error' => 'Comment not found or unauthorized.'], 'Authorization Error', 403);
             }
 
@@ -352,7 +357,7 @@ class SocialWallController extends Controller
             $userId = Auth::id();
             $comment = Comment::where('id', $request->commentId)->where('userId', $userId)->first();
 
-            if (!$comment) {
+            if (! $comment) {
                 return Utils::errorResponse(['error' => 'Comment not found or unauthorized.'], 'Authorization Error', 403);
             }
 

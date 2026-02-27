@@ -13,5 +13,4 @@ class Coupons extends Model
     {
         return $this->belongsTo(Event::class, 'eventId', 'id');
     }
-
 }

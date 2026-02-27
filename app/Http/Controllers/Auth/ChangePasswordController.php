@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Http\Controllers\Controller;
 use App\Utils\ErrorLogger;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
@@ -22,6 +22,7 @@ class ChangePasswordController extends Controller
                 $th,
                 request()->fullUrl()
             );
+
             return view('servererror');
         }
     }
@@ -35,7 +36,7 @@ class ChangePasswordController extends Controller
             ]);
 
             // Check if current password matches
-            if (!Hash::check($request->current_password, Auth::user()->password)) {
+            if (! Hash::check($request->current_password, Auth::user()->password)) {
                 throw ValidationException::withMessages([
                     'current_password' => 'The current password is not matched with our records.',
                 ]);
@@ -60,6 +61,7 @@ class ChangePasswordController extends Controller
                 $th,
                 request()->fullUrl()
             );
+
             return redirect()->back()->with('error', $th->getMessage());
         }
     }

@@ -16,17 +16,16 @@ class TrainerMaster extends Model
 
     public function training()
     {
-        return $this->belongsTo(Training::class, 'trainerId' , 'id');
+        return $this->belongsTo(Training::class, 'trainerId', 'id');
     }
 
     public function users()
     {
-        return $this->belongsTo(User::class, 'userId' , 'id');
+        return $this->belongsTo(User::class, 'userId', 'id');
     }
 
     public function members()
     {
-        return $this->hasMany(Member::class, 'userId' , 'id');
+        return $this->hasMany(Member::class, 'userId', 'id');
     }
-
 }

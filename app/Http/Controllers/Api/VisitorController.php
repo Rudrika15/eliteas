@@ -2,26 +2,21 @@
 
 namespace App\Http\Controllers\Api;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\SpecificAsk;
-use Illuminate\Support\Facades\Validator;
-use App\Utils\Utils;
-use Illuminate\Support\Facades\Auth;
-use App\Models\CircleMeetingMembersBusiness;
-use App\Models\CircleMeetingMembersReference;
-use App\Models\Member;
-use App\Models\CircleCall;
 use App\Models\Event;
 use App\Models\EventRegister;
+use App\Models\Member;
 use App\Models\Slot;
 use App\Models\SlotBooking;
 use App\Models\User;
 use App\Models\Visitor;
 use App\Models\VisitorEventRegister;
 use App\Utils\ErrorLogger;
-use Carbon\Carbon;
+use App\Utils\Utils;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
 class VisitorController extends Controller
 {
@@ -40,10 +35,12 @@ class VisitorController extends Controller
 
         if ($visitor && Hash::check($request->password, $visitor->password)) {
             unset($visitor->password); // Remove the password from the visitor object
+
             return Utils::sendResponse([
-                'visitor' => $visitor
+                'visitor' => $visitor,
             ], 'Success');
         }
+
         return Utils::sendResponse(['error' => 'Unauthorized'], 401);
     }
 
@@ -69,7 +66,7 @@ class VisitorController extends Controller
         if ($request->type === 'user' && $request->has('userId')) {
             $userId = $request->userId;
             $member = Member::where('userId', $userId)->first();
-            if (!$member) {
+            if (! $member) {
                 return Utils::sendResponse(['error' => 'User not found'], 404);
             }
 
@@ -121,7 +118,6 @@ class VisitorController extends Controller
         return Utils::sendResponse([], 'Invalid type specified', 400);
     }
 
-
     public function eventIndex(Request $request)
     {
 
@@ -129,17 +125,15 @@ class VisitorController extends Controller
 
         // $visitorId = $request->visitorId;
 
-
         // Get the authenticated user based on the Bearer token
         $authUser = auth()->user();
 
         // Check if the user exists and get their member ID from the members table
         $visitorId = User::where('id', $authUser->id)->value('id');
 
-
-        if (!$visitorId) {
+        if (! $visitorId) {
             return Utils::errorResponse([
-                'error' => 'Please provide visitorId.'
+                'error' => 'Please provide visitorId.',
             ], 'Bad Request', 400);
         }
 
@@ -148,11 +142,11 @@ class VisitorController extends Controller
         if (count($events) > 0) {
             return Utils::sendResponse([
                 'events' => $events,
-                'eventRegisterList' => $eventRegisterList
+                'eventRegisterList' => $eventRegisterList,
             ], 'Success');
         } else {
             return Utils::errorResponse([
-                'error' => 'No events found for the visitor.'
+                'error' => 'No events found for the visitor.',
             ], 'Not Found', 404);
         }
     }
@@ -162,7 +156,7 @@ class VisitorController extends Controller
         try {
             $event = Event::find($id);
 
-            if (!$event) {
+            if (! $event) {
                 return Utils::errorResponse(
                     ['error' => 'Event not found.'],
                     'Not Found',
@@ -184,6 +178,7 @@ class VisitorController extends Controller
                         'companyName' => $member ? $member->companyName : null,
                         'profilePhoto' => $member ? $member->profilePhoto : null,
                     ];
+
                     return $user;
                 });
 
@@ -202,6 +197,7 @@ class VisitorController extends Controller
                         'lastName' => $visitorDetails ? $visitorDetails->lastName : null,
                         'profilePhoto' => $visitorDetails ? $visitorDetails->profilePhoto : null,
                     ];
+
                     return $visitor;
                 });
 
@@ -221,7 +217,7 @@ class VisitorController extends Controller
                 // 'users' => $users,
                 'allUsers' => $mergeredUsers,
                 'slotBooking' => $slotBooking,
-                'slots' => $slots
+                'slots' => $slots,
             ], 'Success');
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, $request->fullUrl());
@@ -234,13 +230,12 @@ class VisitorController extends Controller
         }
     }
 
-
     public function getUserListForMembers(Request $request, $id)
     {
         try {
             $event = Event::find($id);
 
-            if (!$event) {
+            if (! $event) {
                 return Utils::errorResponse(
                     ['error' => 'Event not found.'],
                     'Not Found',
@@ -274,6 +269,7 @@ class VisitorController extends Controller
                         'companyName' => $member?->companyName,
                         'profilePhoto' => $member?->profilePhoto,
                     ];
+
                     return $user;
                 });
 
@@ -290,6 +286,7 @@ class VisitorController extends Controller
                         'lastName' => $visitorDetails?->lastName,
                         'profilePhoto' => $visitorDetails?->profilePhoto,
                     ];
+
                     return $visitor;
                 });
 
@@ -305,7 +302,7 @@ class VisitorController extends Controller
                 'event' => $event,
                 'allUsers' => $mergeredUsers,
                 'slots' => $slots,
-                'slotBooking' => $slotBooking
+                'slotBooking' => $slotBooking,
             ], 'Success');
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, $request->fullUrl());

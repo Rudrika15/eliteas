@@ -2,32 +2,34 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\User;
-use App\Utils\Utils;
-use App\Models\Circle;
-use App\Models\Member;
-use App\Models\Training;
-use App\Models\CircleCall;
-use App\Models\TopsProfile;
-use Illuminate\Http\Request;
-use App\Models\BillingAddress;
-use App\Models\ContactDetails;
-use Illuminate\Support\Carbon;
-use App\Models\BusinessCategory;
 use App\Http\Controllers\Controller;
+use App\Models\BillingAddress;
+use App\Models\BusinessCategory;
+use App\Models\Circle;
+use App\Models\CircleCall;
+use App\Models\CircleMeetingMembersBusiness;
+use App\Models\CircleMeetingMembersReference;
+use App\Models\City;
+use App\Models\Connection;
+use App\Models\ContactDetails;
+use App\Models\Help;
+use App\Models\MeetingInvitation;
+use App\Models\Member;
+use App\Models\ResourceCategory;
+use App\Models\Schedule;
+use App\Models\TopsProfile;
+use App\Models\Training;
+use App\Models\User;
+use App\Models\VisitorsDetails;
+use App\Utils\Utils;
+use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use App\Models\CircleMeetingMembersBusiness;
-use App\Models\CircleMeetingMembersReference;
-use App\Models\Connection;
-use App\Models\City;
-use App\Models\MeetingInvitation;
-use App\Models\VisitorsDetails;
 
 class ApiController extends Controller
 {
-
     // public function login(Request $request)
     // {
     //     try {
@@ -59,7 +61,6 @@ class ApiController extends Controller
     //     }
     // }
 
-
     public function login(Request $request)
     {
         try {
@@ -74,7 +75,7 @@ class ApiController extends Controller
 
             $user = User::where('email', $request->email)->first();
 
-            if (!$user || $user->status === 'deleted') {
+            if (! $user || $user->status === 'deleted') {
                 return Utils::errorResponses(['error' => 'Account Disabled'], 'Your account has been deleted. Please contact support for assistance.', 403);
             }
 
@@ -82,8 +83,6 @@ class ApiController extends Controller
                 $user = Auth::user();
                 $roles = Auth::user()->getRoleNames();
                 $token = $user->createToken('authToken')->plainTextToken;
-
-
 
                 return Utils::sendResponse(['token' => $token, 'user' => $user, 'roles' => $roles], 'Success', 200);
             }
@@ -99,15 +98,15 @@ class ApiController extends Controller
         try {
 
             $memberInduction = Member::where('sponsoredBy', $id)->count();
-            if (!$memberInduction) {
+            if (! $memberInduction) {
                 return Utils::errorResponses(['error' => 'Member not found'], 'Not Found', 404);
             }
+
             return Utils::sendResponse(['count' => $memberInduction], 'Success', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponses(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
-
 
     // public function homeCounts()
     // {
@@ -125,12 +124,11 @@ class ApiController extends Controller
     //     }
     // }
 
-
     public function homeCounts()
     {
         try {
             $membersCount = Member::where('status', 'Active')->count();
-            $circleCount  = Circle::where('status', 'Active')->count();
+            $circleCount = Circle::where('status', 'Active')->count();
 
             // ✅ Same city count logic (Members + Circles)
             $memberCities = Member::where('status', 'Active')
@@ -149,8 +147,8 @@ class ApiController extends Controller
 
             return Utils::sendResponse([
                 'membersCount' => $membersCount,
-                'circleCount'  => $circleCount,
-                'cityCount'    => $cityCount,
+                'circleCount' => $circleCount,
+                'cityCount' => $cityCount,
             ], 'Success', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponses(
@@ -161,13 +159,12 @@ class ApiController extends Controller
         }
     }
 
-
     public function membersActivityCount(Request $request, $id)
     {
         try {
             $member = Member::where('userId', $id)->get();
 
-            if (!$member) {
+            if (! $member) {
                 return Utils::errorResponses(['error' => 'Member not found'], 'Not Found', 404);
             }
 
@@ -179,10 +176,9 @@ class ApiController extends Controller
             // $busTakenCount = $busTaken->count();
             $busTakenAmount = $busTaken->sum('amount');
 
-            //get the another count (viceVersa)
+            // get the another count (viceVersa)
             $busGiverCount = CircleMeetingMembersBusiness::where('businessGiverId', $id)->where('status', 'Active')->count();
             $refGiverCount = CircleMeetingMembersReference::where('referenceGiverId', $id)->where('status', 'Active')->count();
-
 
             return Utils::sendResponse([
                 'totalMeetingCount' => $totalMeetingCount,
@@ -190,15 +186,14 @@ class ApiController extends Controller
                 'busTakenCount' => $busTakenCount,
                 'businessAmount' => $busTakenAmount,
                 'busGiverCount' => $busGiverCount,
-                'refGiverCount' => $refGiverCount
+                'refGiverCount' => $refGiverCount,
             ], 'Success', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponses(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
 
-
-    //lead board
+    // lead board
     // public function maxMeetings(Request $request)
     // {
     //     try {
@@ -269,7 +264,6 @@ class ApiController extends Controller
     //     }
     // }
 
-
     public function maxMeetings(Request $request)
     {
         try {
@@ -278,13 +272,13 @@ class ApiController extends Controller
 
             // Get authenticated member
             $authMember = Member::where('userId', $authUserId)->first();
-            if (!$authMember) {
+            if (! $authMember) {
                 return response()->json(['message' => 'Member not found'], 404);
             }
 
             // Get cityId from circle
             $cityId = Circle::where('id', $authMember->circleId)->value('cityId');
-            if (!$cityId) {
+            if (! $cityId) {
                 return response()->json(['message' => 'City not found'], 404);
             }
 
@@ -301,7 +295,7 @@ class ApiController extends Controller
                     $query->select('id', 'userId', 'firstname', 'lastname', 'businessCategoryId', 'circleId', 'profilephoto')
                         ->with(['bCategory:id,categoryName', 'circle:id,circleName']);
                 },
-                'meetingPerson'
+                'meetingPerson',
             ])
                 ->whereHas('member', function ($query) use ($circleIdsInCity) {
                     $query->whereIn('circleId', $circleIdsInCity);
@@ -343,7 +337,7 @@ class ApiController extends Controller
                         'induction_count' => $inductionCount,
                         'connectionStatus' => $connectionStatus,
                     ],
-                    'count' => $group->count()
+                    'count' => $group->count(),
                 ];
             })->sortByDesc('count')->values();
 
@@ -356,11 +350,6 @@ class ApiController extends Controller
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
-
-
-
-
-
 
     // public function maxBusiness(Request $request)
     // {
@@ -449,7 +438,6 @@ class ApiController extends Controller
     //     }
     // }
 
-
     public function maxBusiness(Request $request)
     {
         try {
@@ -459,13 +447,13 @@ class ApiController extends Controller
 
             $authMember = Member::where('userId', $authUserId)->first();
 
-            if (!$authMember) {
+            if (! $authMember) {
                 return response()->json(['message' => 'Authenticated member not found'], 404);
             }
 
             // Get cityId from circle
             $cityId = Circle::where('id', $authMember->circleId)->value('cityId');
-            if (!$cityId) {
+            if (! $cityId) {
                 return response()->json(['message' => 'City not found'], 404);
             }
 
@@ -481,13 +469,13 @@ class ApiController extends Controller
             $busGiver = $busGiver->groupBy('businessGiverId')->map(function ($group) use ($authUserId, $authMember, $circleIdsInCity) {
                 $user = $group->first()->users;
 
-                if (!$user) {
+                if (! $user) {
                     return null;
                 }
 
                 $member = $user->member()->select('id', 'circleId', 'businessCategoryId', 'profilePhoto', 'userId')->first();
 
-                if (!$member || !in_array($member->circleId, $circleIdsInCity)) {
+                if (! $member || ! in_array($member->circleId, $circleIdsInCity)) {
                     return null; // Skip if member not in same city
                 }
 
@@ -526,12 +514,12 @@ class ApiController extends Controller
                     'count' => $group->count(),
                     'circle' => $circle ? [
                         'id' => $circle->id,
-                        'circleName' => $circle->circleName
+                        'circleName' => $circle->circleName,
                     ] : null,
                     'businessCategory' => $businessCategory ? [
                         'id' => $businessCategory->id,
-                        'categoryName' => $businessCategory->categoryName
-                    ] : null
+                        'categoryName' => $businessCategory->categoryName,
+                    ] : null,
                 ];
             })
                 ->filter()
@@ -547,11 +535,6 @@ class ApiController extends Controller
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
-
-
-
-
-
 
     // public function maxBusiness(Request $request)
     // {
@@ -687,7 +670,6 @@ class ApiController extends Controller
     //     }
     // }
 
-
     public function maxReference(Request $request)
     {
         try {
@@ -697,13 +679,13 @@ class ApiController extends Controller
 
             $authMember = Member::where('userId', $authUserId)->first();
 
-            if (!$authMember) {
+            if (! $authMember) {
                 return response()->json(['message' => 'Authenticated member not found'], 404);
             }
 
             // Get cityId from the user's circle
             $cityId = Circle::where('id', $authMember->circleId)->value('cityId');
-            if (!$cityId) {
+            if (! $cityId) {
                 return response()->json(['message' => 'City not found'], 404);
             }
 
@@ -718,7 +700,9 @@ class ApiController extends Controller
                 ->map(function ($group) use ($authUserId, $authMember, $circleIdsInCity) {
                     $referenceGiverId = $group->first()->referenceGiverId ?? null;
 
-                    if (!$referenceGiverId) return null;
+                    if (! $referenceGiverId) {
+                        return null;
+                    }
 
                     $user = User::find($referenceGiverId);
 
@@ -727,7 +711,7 @@ class ApiController extends Controller
                             ->where('status', 'Active')
                             ->first();
 
-                        if (!$member || !in_array($member->circleId, $circleIdsInCity)) {
+                        if (! $member || ! in_array($member->circleId, $circleIdsInCity)) {
                             return null; // Skip if member not in same city
                         }
 
@@ -772,7 +756,7 @@ class ApiController extends Controller
                 ->sortByDesc('count')
                 ->first(); // only the top one as per your current logic
 
-            if (!$refGiver) {
+            if (! $refGiver) {
                 return Utils::sendResponse(
                     null,
                     'No Reference Lead Board to show for now.',
@@ -789,11 +773,6 @@ class ApiController extends Controller
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
-
-
-
-
-
 
     public function maxRefferal(Request $request)
     {
@@ -849,8 +828,7 @@ class ApiController extends Controller
         }
     }
 
-
-    //Max data for particular auth user
+    // Max data for particular auth user
 
     public function maxMeetingsUser(Request $request)
     {
@@ -858,7 +836,7 @@ class ApiController extends Controller
             $authUser = Auth::user();
 
             $member = Member::where('userId', $authUser->id)->first();
-            if (!$member) {
+            if (! $member) {
                 return Utils::sendResponse([], 'Member not found', 404);
             }
 
@@ -872,7 +850,7 @@ class ApiController extends Controller
             $circlecalls = $circlecalls->groupBy('memberId')->map(function ($group) {
                 return [
                     'member' => $group->first()->member,
-                    'count' => $group->count()
+                    'count' => $group->count(),
                 ];
             })->sortByDesc('count')->values();
 
@@ -886,18 +864,15 @@ class ApiController extends Controller
         }
     }
 
-
-
     public function maxBusinessUser(Request $request)
     {
         try {
             $authUser = Auth::user();
 
             $member = Member::where('userId', $authUser->id)->first();
-            if (!$member) {
+            if (! $member) {
                 return Utils::sendResponse([], 'Member not found', 404);
             }
-
 
             $busGiver = CircleMeetingMembersBusiness::where('businessGiverId', $authUser->id)->get();
 
@@ -923,16 +898,13 @@ class ApiController extends Controller
         }
     }
 
-
-
-
     public function maxReferenceUser(Request $request)
     {
         try {
             $authUser = Auth::user();
 
             $member = Member::where('userId', $authUser->id)->first();
-            if (!$member) {
+            if (! $member) {
                 return Utils::sendResponse([], 'Member not found', 404);
             }
             $refGiver = CircleMeetingMembersReference::where('status', 'Active')
@@ -960,20 +932,15 @@ class ApiController extends Controller
         }
     }
 
-
-
-
-
     public function maxRefferalUser(Request $request)
     {
         try {
             $authUser = Auth::user();
 
             $member = Member::where('userId', $authUser->id)->first();
-            if (!$member) {
+            if (! $member) {
                 return Utils::sendResponse([], 'Member not found', 404);
             }
-
 
             return Utils::sendResponse(
                 [],
@@ -991,7 +958,7 @@ class ApiController extends Controller
             $authUser = Auth::user();
 
             $member = Member::where('userId', $authUser->id)->first();
-            if (!$member) {
+            if (! $member) {
                 return Utils::sendResponse([], 'Member not found', 404);
             }
 
@@ -1004,7 +971,6 @@ class ApiController extends Controller
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
-
 
     public function getMaxDataUser(Request $request)
     {
@@ -1034,10 +1000,7 @@ class ApiController extends Controller
         }
     }
 
-
-
-
-    //Upcoming Workshop
+    // Upcoming Workshop
     public function index(Request $request)
     {
         try {
@@ -1053,7 +1016,7 @@ class ApiController extends Controller
         }
     }
 
-    //Personal Details
+    // Personal Details
 
     // public function profile(Request $request)
     // {
@@ -1090,14 +1053,13 @@ class ApiController extends Controller
     //     }
     // }
 
-
     public function profile(Request $request)
     {
         $user = Auth::user();
 
         $member = Member::where('userId', $user->id)->first();
 
-        if (!$member) {
+        if (! $member) {
             return response()->json(['error' => 'Member not found'], 404);
         }
 
@@ -1130,8 +1092,6 @@ class ApiController extends Controller
         ]);
     }
 
-
-
     public function billingAddressUpdate(Request $request)
     {
         $validator = Validator::make($request->all(), []);
@@ -1144,17 +1104,14 @@ class ApiController extends Controller
         $member = $user->member;
         $billingAddress = BillingAddress::where('memberId', $member->id)->first();
 
-
-
         if ($billingAddress) {
             $billingAddress->update($request->all());
+
             return Utils::sendResponse([$billingAddress, 'message' => 'Billing Address data updated successfully'], 200);
         } else {
             return Utils::errorResponse(['error' => 'Billing Address not found'], 404);
         }
     }
-
-
 
     public function contactDetailsUpdate(Request $request)
     {
@@ -1167,16 +1124,17 @@ class ApiController extends Controller
         $user = Auth::user();
         $member = $user->member;
 
-
         $contactDetails = ContactDetails::where('memberId', $member->id)->first();
 
         if ($contactDetails) {
             $contactDetails->update($request->all());
+
             return Utils::sendResponse([$contactDetails, 'message' => 'Contact Details data updated successfully'], 200);
         } else {
             return Utils::errorResponse(['error' => 'Contact Details not found'], 404);
         }
     }
+
     public function topsProfileUpdate(Request $request)
     {
         $validator = Validator::make($request->all(), []);
@@ -1192,6 +1150,7 @@ class ApiController extends Controller
 
         if ($topsProfile) {
             $topsProfile->update($request->all());
+
             return Utils::sendResponse([$topsProfile, 'message' => 'Tops Profile data updated successfully'], 200);
         } else {
             return Utils::errorResponse(['error' => 'Tops Profile not found'], 404);
@@ -1201,13 +1160,11 @@ class ApiController extends Controller
     public function memberUpdate(Request $request)
     {
 
-
         $user = Auth::user();
-
 
         $member = Member::where('userId', $user->id)->first();
 
-        if (!$member) {
+        if (! $member) {
             return Utils::errorResponse(['error' => 'Member not found'], 404);
         }
         $member->title = $request->input('title', $member->title);
@@ -1238,7 +1195,7 @@ class ApiController extends Controller
                     unlink($filePath);
                 }
             }
-            $file->move(public_path('ProfilePhoto'),  $filename);
+            $file->move(public_path('ProfilePhoto'), $filename);
             $member->profilePhoto = $filename;
         }
 
@@ -1251,7 +1208,7 @@ class ApiController extends Controller
                     unlink($filePath);
                 }
             }
-            $file->move(public_path('CompanyLogo'),  $filename);
+            $file->move(public_path('CompanyLogo'), $filename);
             $member->companyLogo = $filename;
         }
 
@@ -1268,14 +1225,12 @@ class ApiController extends Controller
         $member->receiveUpdates = $request->input('receiveUpdates', $member->receiveUpdates);
         $member->shareRevenue = $request->input('shareRevenue', $member->shareRevenue);
 
-
         $member->save();
-
 
         return Utils::sendResponse([$member, 'message' => 'Member Profile data updated successfully'], 200);
     }
 
-    //memberList
+    // memberList
 
     public function circleWiseMember(Request $request)
     {
@@ -1318,7 +1273,7 @@ class ApiController extends Controller
         } catch (\Throwable $th) {
             // Handle exceptions and return error response
             return Utils::errorResponse([
-                'error' => $th->getMessage()
+                'error' => $th->getMessage(),
             ], 'Internal Server Error', 500);
         }
     }
@@ -1337,7 +1292,7 @@ class ApiController extends Controller
     //     }
     // }
 
-    //suggested members
+    // suggested members
     // public function categoryWiseMember(Request $request)
     // {
     //     try {
@@ -1403,14 +1358,13 @@ class ApiController extends Controller
     //     }
     // }
 
-
     public function categoryWiseMember(Request $request)
     {
         try {
             $categoryData = []; // Initialize the array to hold business category data
 
             // Check if the user is authenticated
-            if (!auth()->check()) {
+            if (! auth()->check()) {
                 return Utils::errorResponse([], 'Unauthorized', 401);
             }
 
@@ -1462,11 +1416,10 @@ class ApiController extends Controller
             return Utils::sendResponse($categoryData, 'Data retrieved successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse([
-                'error' => $th->getMessage()
+                'error' => $th->getMessage(),
             ], 'Internal Server Error', 500);
         }
     }
-
 
     // public function allMembers(Request $request)
     // {
@@ -1485,7 +1438,6 @@ class ApiController extends Controller
     //         return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
     //     }
     // }
-
 
     // public function allMembers(Request $request)
     // {
@@ -1514,7 +1466,6 @@ class ApiController extends Controller
     //         return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
     //     }
     // }
-
 
     // public function allMembers(Request $request)
     // {
@@ -1596,7 +1547,6 @@ class ApiController extends Controller
     //     }
     // }
 
-
     // public function allMembers(Request $request)
     // {
     //     try {
@@ -1660,7 +1610,7 @@ class ApiController extends Controller
     public function allMembers(Request $request)
     {
         try {
-            if (!auth()->check()) {
+            if (! auth()->check()) {
                 return Utils::errorResponse([], 'Unauthorized', 401);
             }
 
@@ -1718,8 +1668,6 @@ class ApiController extends Controller
         }
     }
 
-
-
     // public function allMembers(Request $request)
     // {
     //     try {
@@ -1751,11 +1699,7 @@ class ApiController extends Controller
     //     }
     // }
 
-
-
-
-
-    //member by userId
+    // member by userId
     public function getUserDetails(Request $request, $userId)
     {
         try {
@@ -1765,7 +1709,7 @@ class ApiController extends Controller
                 ->first();
 
             // If member is not found, return a not found response
-            if (!$member) {
+            if (! $member) {
                 return Utils::errorResponse(['error' => 'Member not found'], 'Not Found', 404);
             }
 
@@ -1801,7 +1745,7 @@ class ApiController extends Controller
             ]);
 
             // Check if the current password matches the stored password
-            if (!Hash::check($request->current_password, Auth::user()->password)) {
+            if (! Hash::check($request->current_password, Auth::user()->password)) {
                 return Utils::errorResponse(
                     ['current_password' => 'The current password does not match our records.'],
                     'Validation Error',
@@ -1854,12 +1798,11 @@ class ApiController extends Controller
 
             $request->validate([
                 'firstName' => 'required|string',
-                'mobileNo'  => 'required',
+                'mobileNo' => 'required',
                 'meetingId' => 'required',
             ]);
 
-
-            $visitor = new VisitorsDetails();
+            $visitor = new VisitorsDetails;
             $visitor->firstName = $request->firstName;
             $visitor->lastName = $request->lastName;
             $visitor->mobileNo = $request->mobileNo;
@@ -1869,8 +1812,8 @@ class ApiController extends Controller
             if ($request->businessCategory == 'other') {
                 $business = BusinessCategory::where('categoryName', $request->otherCategory)->first();
 
-                if (!$business) {
-                    $business = new BusinessCategory();
+                if (! $business) {
+                    $business = new BusinessCategory;
                     $business->categoryName = $request->otherCategory;
                     $business->save();
                 }
@@ -1890,7 +1833,7 @@ class ApiController extends Controller
             $visitor->save();
 
             // Invitation
-            $invitation = new MeetingInvitation();
+            $invitation = new MeetingInvitation;
             $invitation->meetingId = $visitor->meetingId;
             $invitation->invitedMemberId = $visitor->invitedBy;
             $invitation->personName = $visitor->firstName . ' ' . $visitor->lastName;
@@ -1908,7 +1851,6 @@ class ApiController extends Controller
             return Utils::errorResponse($th->getMessage(), 'Failed to submit information', 500);
         }
     }
-
 
     public function myStats()
     {
@@ -1947,6 +1889,63 @@ class ApiController extends Controller
                 'received_business' => $myReceivedBusiness,
                 'ibm_count' => $myIbmCount,
             ], 'My stats fetched successfully', 200);
+        } catch (\Throwable $th) {
+            return Utils::errorResponse($th->getMessage(), 'Internal Server Error', 500);
+        }
+    }
+
+    //active meeting schedule by circle 
+    public function activeMeetingSchedules()
+    {
+        try {
+            $user = Auth::user();
+
+            if (!$user) {
+                return Utils::sendResponse([], 'User not found', 404);
+            }
+
+            $member = Member::where('userId', $user->id)->first();
+
+            if (!$member) {
+                return Utils::sendResponse([], 'Member profile not found', 404);
+            }
+
+            $circleId = $member->circleId;
+
+            if (!$circleId) {
+                return Utils::sendResponse([], 'Circle not found for this member', 404);
+            }
+
+            $schedules = Schedule::where('circleId', $circleId)
+                ->where('status', 'Active')
+                ->orderBy('date', 'desc')
+                ->get();
+
+            return Utils::sendResponse($schedules, 'Meeting schedules fetched successfully', 200);
+        } catch (\Throwable $th) {
+            return Utils::errorResponse($th->getMessage(), 'Internal Server Error', 500);
+        }
+    }
+
+    //resoucrse index api 
+    public function resourceIndex(Request $request)
+    {
+        try {
+            $categories = ResourceCategory::where('status', 'Active')->orderBy('categoryName', 'asc')->get();
+            $selectedCategoryId = $request->resourceCatId;
+
+            $query = Help::where('status', 'Active');
+            if ($selectedCategoryId) {
+                $query->where('resourceCatId', $selectedCategoryId);
+            }
+
+            $help = $query->paginate(10);
+
+            return Utils::sendResponse([
+                'categories' => $categories,
+                'help' => $help,
+                'selectedCategoryId' => $selectedCategoryId
+            ], 'Resources fetched successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse($th->getMessage(), 'Internal Server Error', 500);
         }

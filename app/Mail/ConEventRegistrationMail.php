@@ -11,6 +11,7 @@ class ConEventRegistrationMail extends Mailable
     use Queueable, SerializesModels;
 
     public $user;
+
     public $eventDetails;
 
     /**

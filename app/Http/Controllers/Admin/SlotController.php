@@ -17,7 +17,6 @@ use Illuminate\Support\Facades\Auth;
 
 class SlotController extends Controller
 {
-
     public function __construct()
     {
         // Apply middleware for circle type-related permissions
@@ -31,6 +30,7 @@ class SlotController extends Controller
     {
         try {
             $slot = Slot::where('status', 'Active')->paginate(10);
+
             return view('admin.slot.index', compact('slot'));
         } catch (\Throwable $th) {
             // throw $th;
@@ -38,6 +38,7 @@ class SlotController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
@@ -54,6 +55,7 @@ class SlotController extends Controller
                 ->get()
                 ->map(function ($user) {
                     $user->type = 'member'; // Add a type key
+
                     return $user;
                 });
 
@@ -62,6 +64,7 @@ class SlotController extends Controller
                 ->get()
                 ->map(function ($visitor) {
                     $visitor->type = 'visitor'; // Add a type key
+
                     return $visitor;
                 });
 
@@ -76,6 +79,7 @@ class SlotController extends Controller
             return view('admin.slot.viewMembers', compact('users', 'event', 'slots', 'visitorsUsers', 'slotBooking'));
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, $request->fullUrl());
+
             return view('servererror');
         }
     }
@@ -91,6 +95,7 @@ class SlotController extends Controller
                 ->get()
                 ->map(function ($user) {
                     $user->type = 'member';
+
                     return $user;
                 });
 
@@ -100,6 +105,7 @@ class SlotController extends Controller
                 ->get()
                 ->map(function ($visitor) {
                     $visitor->type = 'visitor';
+
                     return $visitor;
                 });
 
@@ -114,10 +120,10 @@ class SlotController extends Controller
             return view('admin.slot.viewMembersForVisitors', compact('users', 'event', 'slots', 'slotBooking', 'visitorsUsers'));
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, $request->fullUrl());
+
             return view('servererror');
         }
     }
-
 
     // public function profileViewMember(Request $request)
     // {
@@ -136,12 +142,12 @@ class SlotController extends Controller
     //     }
     // }
 
-
     public function profileViewMember(Request $request)
     {
         try {
             $id = $request->id;
             $member = Member::find($id);
+
             return view('visitor.profileView', compact('member'));
         } catch (\Throwable $th) {
             // Log error and return a server error view
@@ -149,6 +155,7 @@ class SlotController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
@@ -158,6 +165,7 @@ class SlotController extends Controller
         try {
             $id = $request->id;
             $visitor = VisitorsDetails::where('userId', $id)->first();
+
             return view('visitor.userProfileView', compact('visitor'));
         } catch (\Throwable $th) {
             // Log error and return a server error view
@@ -165,19 +173,17 @@ class SlotController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
-
-
-
 
     public function create(Request $request)
     {
         try {
             return view('admin.slot.create');
         } catch (\Throwable $th) {
-            //throe $th;
+            // throe $th;
             ErrorLogger::logError($th, $request->fullUrl());
 
             return view('servererror');
@@ -192,7 +198,7 @@ class SlotController extends Controller
         ]);
 
         try {
-            $slot = new Slot();
+            $slot = new Slot;
             $slot->start_time = $request->start_time;
             $slot->end_time = $request->end_time;
             $slot->save();
@@ -204,15 +210,16 @@ class SlotController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
-
 
     public function edit(Request $request, $id)
     {
         try {
             $slot = Slot::find($id);
+
             return view('admin.slot.edit', compact('slot'));
         } catch (\Throwable $th) {
             // throw $th;
@@ -220,6 +227,7 @@ class SlotController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
@@ -235,7 +243,7 @@ class SlotController extends Controller
         try {
             $slot = Slot::find($request->id);
 
-            if (!$slot) {
+            if (! $slot) {
                 return redirect()->route('slot.index')->with('error', 'Slot not found.');
             }
 
@@ -246,19 +254,19 @@ class SlotController extends Controller
 
             return redirect()->route('slot.index')->with('success', 'Slot updated successfully.');
         } catch (\Throwable $th) {
-            //throw $th;
+            // throw $th;
             ErrorLogger::logError($th, $request->fullUrl());
+
             return redirect()->route('slot.index')->with('error', 'Failed to update Slot details.');
         }
     }
-
 
     public function delete(Request $request, $id)
     {
         try {
             $slot = Slot::find($id);
 
-            if (!$slot) {
+            if (! $slot) {
                 return redirect()->route('slot.index')->with('error', 'Slot not found.');
             }
 
@@ -267,8 +275,9 @@ class SlotController extends Controller
 
             return redirect()->route('slot.index')->with('success', 'Slot deleted successfully.');
         } catch (\Throwable $th) {
-            //throw $th;
+            // throw $th;
             ErrorLogger::logError($th, $request->fullUrl());
+
             return redirect()->route('slot.index')->with('error', 'Failed to delete Slot.');
         }
     }
@@ -282,7 +291,7 @@ class SlotController extends Controller
         ]);
 
         try {
-            $slot = new SlotBooking();
+            $slot = new SlotBooking;
             $slot->eventId = $request->eventId;
             $slot->slotId = $request->slotId;
             $slot->visitorId = $request->visitorId;
@@ -299,6 +308,7 @@ class SlotController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
@@ -320,6 +330,7 @@ class SlotController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
@@ -341,13 +352,10 @@ class SlotController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
-
-
-
-
 
     public function memberSlotBookingRequests(Request $request, $id)
     {
@@ -366,10 +374,10 @@ class SlotController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
-
 
     public function slotBookingMember(Request $request)
     {
@@ -382,7 +390,7 @@ class SlotController extends Controller
         ]);
 
         try {
-            $slot = new SlotBooking();
+            $slot = new SlotBooking;
             $slot->eventId = $request->eventId;
             $slot->slotId = $request->slotId;
             $slot->userId = $user;
@@ -399,6 +407,7 @@ class SlotController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }

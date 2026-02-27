@@ -2,20 +2,18 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Carbon\Carbon;
-use App\Models\Circle;
-use App\Models\Member;
-use App\Models\Country;
-use App\Models\CircleCall;
-use App\Utils\ErrorLogger;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Circle;
+use App\Models\CircleCall;
 use App\Models\CircleMeetingMembersBusiness;
 use App\Models\CircleMeetingMembersReference;
+use App\Models\Member;
+use App\Utils\ErrorLogger;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 
 class LeaderBoardController extends Controller
 {
-
     public function __construct()
     {
         // Apply middleware for event-related permissions
@@ -26,8 +24,6 @@ class LeaderBoardController extends Controller
         $this->middleware('permission:max-visitor', ['only' => ['maxVisitor']]);
         $this->middleware('permission:circle-wise-leaderboard', ['only' => ['circleWiseLeaderboard']]);
     }
-
-
 
     public function maxMeetings(Request $request)
     {
@@ -44,7 +40,7 @@ class LeaderBoardController extends Controller
             $circlecalls = $circlecalls->groupBy('memberId')->map(function ($group) {
                 return [
                     'member' => $group->first()->member,
-                    'count' => $group->count()
+                    'count' => $group->count(),
                 ];
             })->sortByDesc('count');
 
@@ -52,6 +48,7 @@ class LeaderBoardController extends Controller
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError($th, request()->fullUrl());
+
             return view('servererror');
         }
     }
@@ -71,7 +68,7 @@ class LeaderBoardController extends Controller
                 return [
                     'user' => $group->first()->users,
                     'amount' => $group->sum('amount'),
-                    'count' => $group->count()
+                    'count' => $group->count(),
                 ];
             })->sortByDesc('amount');
 
@@ -79,6 +76,7 @@ class LeaderBoardController extends Controller
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError($th, request()->fullUrl());
+
             return view('servererror');
         }
     }
@@ -108,7 +106,6 @@ class LeaderBoardController extends Controller
     //     }
     // }
 
-
     public function maxReference(Request $request)
     {
         try {
@@ -123,7 +120,7 @@ class LeaderBoardController extends Controller
             $refGiver = $refGiver->groupBy('referenceGiverId')->map(function ($group) {
                 return [
                     'user' => $group->first()->refGiverName,
-                    'count' => $group->count()
+                    'count' => $group->count(),
                 ];
             })->sortByDesc('count');
 
@@ -131,10 +128,10 @@ class LeaderBoardController extends Controller
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError($th, request()->fullUrl());
+
             return view('servererror');
         }
     }
-
 
     public function maxRefferal(Request $request)
     {
@@ -158,6 +155,7 @@ class LeaderBoardController extends Controller
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError($th, request()->fullUrl());
+
             return view('servererror');
         }
     }
@@ -184,13 +182,12 @@ class LeaderBoardController extends Controller
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError($th, request()->fullUrl());
+
             return view('servererror');
         }
     }
 
-    //circle wise leaderboard
-
-
+    // circle wise leaderboard
 
     // public function circleWiseLeaderboard(Request $request)
     // {
@@ -231,7 +228,6 @@ class LeaderBoardController extends Controller
     //         return view('servererror');
     //     }
     // }
-
 
     // public function circleWiseLeaderboard(Request $request)
     // {
@@ -304,7 +300,6 @@ class LeaderBoardController extends Controller
     //         return view('servererror');
     //     }
     // }
-
 
     // public function circleWiseLeaderboard(Request $request)
     // {
@@ -462,9 +457,10 @@ class LeaderBoardController extends Controller
                             'user' => $user,
                             'amount' => $group->max('amount'),  // Get highest amount for this business giver
                             'count' => $group->count(),
-                            'circle' => $member->circle // Assuming you have a circle relationship in the Member model
+                            'circle' => $member->circle, // Assuming you have a circle relationship in the Member model
                         ];
                     }
+
                     return null;
                 })->filter()->sortByDesc('amount')->take(1); // Get the highest record per user and filter nulls
 
@@ -488,9 +484,10 @@ class LeaderBoardController extends Controller
                         return [
                             'user' => $user,
                             'count' => $group->max('count'),  // Get highest count for this reference giver
-                            'circle' => $member->circle // Assuming you have a circle relationship in the Member model
+                            'circle' => $member->circle, // Assuming you have a circle relationship in the Member model
                         ];
                     }
+
                     return null;
                 })->filter()->sortByDesc('count')->take(1);  // Get the highest reference record per user
             }
@@ -500,6 +497,7 @@ class LeaderBoardController extends Controller
         } catch (\Throwable $th) {
             // Log error and return error view
             ErrorLogger::logError($th, request()->fullUrl());
+
             return view('servererror');
         }
     }

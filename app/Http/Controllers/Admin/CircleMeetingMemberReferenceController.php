@@ -2,25 +2,21 @@
 
 namespace App\Http\Controllers\Admin;
 
-
-use Carbon\Carbon;
-use App\Models\Circle;
-use App\Models\Member;
-use App\Utils\ErrorLogger;
-use Illuminate\Http\Request;
-use App\Models\CircleMeeting;
-use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Circle;
+use App\Models\CircleMeeting;
 use App\Models\CircleMeetingMembersBusiness;
 use App\Models\CircleMeetingMembersReference;
 use App\Models\City;
-use App\Models\BusinessAmount;
+use App\Models\Member;
 use App\Models\Schedule;
+use App\Utils\ErrorLogger;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CircleMeetingMemberReferenceController extends Controller
 {
-
     public function __construct()
     {
         // Apply middleware for circle call-related permissions
@@ -30,7 +26,6 @@ class CircleMeetingMemberReferenceController extends Controller
         $this->middleware('permission:circle-meeting-member-reference-delete', ['only' => ['delete']]);
         $this->middleware('permission:get-member-details', ['only' => ['getMemberDetails']]);
     }
-
 
     // public function index(Request $request)
     // {
@@ -57,14 +52,12 @@ class CircleMeetingMemberReferenceController extends Controller
     //             ->orderBy('id', 'DESC')
     //             ->paginate(10);
 
-
     //         $busGiven->transform(function ($item) {
     //             if ($item->member) {
     //                 $item->member->induction_count = Member::where('sponsoredBy', $item->member->id)->count() ?? 0;
     //             }
     //             return $item;
     //         });
-
 
     //         return view('admin.refGiver.index', compact('refGiver', 'busGiver'));
     //     } catch (\Throwable $th) {
@@ -76,7 +69,6 @@ class CircleMeetingMemberReferenceController extends Controller
     //         return view('servererror');
     //     }
     // }
-
 
     // public function index(Request $request)
     // {
@@ -122,7 +114,6 @@ class CircleMeetingMemberReferenceController extends Controller
     //                 ->orderBy('firstName', 'ASC')
     //                 ->get(); // Ensure 'circleId' is included
 
-
     //             $circlemeeting = CircleMeeting::where('status', 'Active')->get();
     //         }
 
@@ -135,9 +126,6 @@ class CircleMeetingMemberReferenceController extends Controller
     //         return view('servererror');
     //     }
     // }
-
-
-
 
     public function index(Request $request)
     {
@@ -157,6 +145,7 @@ class CircleMeetingMemberReferenceController extends Controller
                     if ($item->members) {
                         $item->members->induction_count = Member::where('sponsoredBy', $item->members->id)->count() ?? 0;
                     }
+
                     return $item;
                 });
 
@@ -171,6 +160,7 @@ class CircleMeetingMemberReferenceController extends Controller
                     if ($item->refGiver) {
                         $item->refGiver->induction_count = Member::where('sponsoredBy', $item->refGiver->id)->count() ?? 0;
                     }
+
                     return $item;
                 });
 
@@ -213,10 +203,10 @@ class CircleMeetingMemberReferenceController extends Controller
             }
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, $request->fullUrl());
+
             return view('servererror');
         }
     }
-
 
     // public function index(Request $request)
     // {
@@ -314,14 +304,12 @@ class CircleMeetingMemberReferenceController extends Controller
     //     }
     // }
 
-
-
     public function addBusinessAmount(Request $request, $id)
     {
         try {
             $reference = CircleMeetingMembersReference::where('status', 'Active')->findOrFail($id);
 
-            $busGiver = new CircleMeetingMembersBusiness();
+            $busGiver = new CircleMeetingMembersBusiness;
             $busGiver->businessGiverId = $reference->referenceGiverId;
             $busGiver->loginMemberId = Auth::user()->id;
             $busGiver->setRelation('loginMember', Auth::user());
@@ -329,17 +317,17 @@ class CircleMeetingMemberReferenceController extends Controller
             return view('admin.circlebusiness.create', compact('busGiver', 'reference'));
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, $request->fullUrl());
+
             return view('servererror');
         }
     }
 
-
-
-    //For show single data
+    // For show single data
     public function view(Request $request, $id)
     {
         try {
             $refGiver = CircleMeetingMembersReference::findOrFail($id);
+
             return response()->json($refGiver);
         } catch (\Throwable $th) {
             // throw $th;
@@ -347,9 +335,11 @@ class CircleMeetingMemberReferenceController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
+
     public function create(Request $request)
     {
         try {
@@ -361,8 +351,8 @@ class CircleMeetingMemberReferenceController extends Controller
                 ->orderBy('firstName', 'asc')
                 ->get(); // Ensure 'circleId' is included
 
-
             $circlemeeting = CircleMeeting::where('status', 'Active')->get();
+
             // $members = Member::where('status', 'Active')->get();
             return view('admin.refGiver.create', compact('circlemeeting', 'circles', 'circleMember'));
         } catch (\Throwable $th) {
@@ -371,6 +361,7 @@ class CircleMeetingMemberReferenceController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
@@ -386,8 +377,8 @@ class CircleMeetingMemberReferenceController extends Controller
                 ->orderBy('firstName', 'asc')
                 ->get();
 
-
             $circlemeeting = CircleMeeting::where('status', 'Active')->get();
+
             // $members = Member::where('status', 'Active')->get();
             return view('admin.refGiver.refByOther', compact('circlemeeting', 'circles', 'circleMember'));
         } catch (\Throwable $th) {
@@ -396,6 +387,7 @@ class CircleMeetingMemberReferenceController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
@@ -433,18 +425,18 @@ class CircleMeetingMemberReferenceController extends Controller
             ]);
         }
 
-
         // return $request;
         try {
-            $refGiver = new CircleMeetingMembersReference();
+            $refGiver = new CircleMeetingMembersReference;
 
             $refGiver->referenceGiverId = Auth::user()->id;
             $refGiver->memberId = $request->memberId;
 
-            if ($request->group == 'internal')
+            if ($request->group == 'internal') {
                 $refGiver->contactName = $request->contactNameInternal;
-            else
+            } else {
                 $refGiver->contactName = $request->contactNameExternal;
+            }
 
             $refGiver->contactNo = $request->contactNo;
             $refGiver->email = $request->email;
@@ -453,7 +445,6 @@ class CircleMeetingMemberReferenceController extends Controller
             $refGiver->status = 'Active';
 
             $refGiver->save();
-
 
             // $busGiver = new CircleMeetingMembersBusiness();
             // // $busGiver->memberId = $request->memberId;
@@ -472,6 +463,7 @@ class CircleMeetingMemberReferenceController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
@@ -485,11 +477,10 @@ class CircleMeetingMemberReferenceController extends Controller
             ]);
         }
 
-
         // return $request;
         try {
 
-            $busGiver = new CircleMeetingMembersBusiness();
+            $busGiver = new CircleMeetingMembersBusiness;
             $busGiver->businessGiverId = $request->memberId;
             $busGiver->loginMemberId = Auth::user()->id;
             $busGiver->amount = $request->amount;
@@ -499,15 +490,16 @@ class CircleMeetingMemberReferenceController extends Controller
             $busGiver->save();
 
             if ($request->create_reference == 1) {
-                $refGiver = new CircleMeetingMembersReference();
+                $refGiver = new CircleMeetingMembersReference;
 
                 $refGiver->referenceGiverId = $request->memberId;
                 $refGiver->memberId = Auth::user()->id;
 
-                if ($request->group == 'internal')
+                if ($request->group == 'internal') {
                     $refGiver->contactName = $request->contactNameInternal;
-                else
+                } else {
                     $refGiver->contactName = $request->contactNameExternal;
+                }
 
                 $refGiver->contactNo = $request->contactNo;
                 $refGiver->email = $request->email;
@@ -528,6 +520,7 @@ class CircleMeetingMemberReferenceController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
@@ -563,7 +556,6 @@ class CircleMeetingMemberReferenceController extends Controller
     //     }
     // }
 
-
     public function edit(Request $request, $id)
     {
         try {
@@ -595,10 +587,10 @@ class CircleMeetingMemberReferenceController extends Controller
             return view('admin.refGiver.edit', compact('refGiver', 'member', 'circles', 'cities'));
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, $request->fullUrl());
+
             return view('servererror');
         }
     }
-
 
     public function update(Request $request)
     {
@@ -617,7 +609,6 @@ class CircleMeetingMemberReferenceController extends Controller
             $id = $request->id;
             $refGiver = CircleMeetingMembersReference::find($id);
 
-
             $refGiver->memberId = $request->memberId;
 
             // $refGiver->referenceGiver = $request->referenceGiver;
@@ -629,6 +620,7 @@ class CircleMeetingMemberReferenceController extends Controller
             $refGiver->status = 'Active';
 
             $refGiver->save();
+
             return redirect()->route('refGiver.index')->with('success', ' Updated Successfully!');
         } catch (\Throwable $th) {
             // throw $th;
@@ -636,15 +628,16 @@ class CircleMeetingMemberReferenceController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
 
-    function delete(Request $request, $id)
+    public function delete(Request $request, $id)
     {
         try {
             $refGiver = CircleMeetingMembersReference::find($id);
-            $refGiver->status = "Deleted";
+            $refGiver->status = 'Deleted';
             $refGiver->save();
 
             return redirect()->route('refGiver.index')->with('success', ' Deleted Successfully!');
@@ -654,6 +647,7 @@ class CircleMeetingMemberReferenceController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }

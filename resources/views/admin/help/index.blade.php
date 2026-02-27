@@ -8,9 +8,9 @@
         <div class="card">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h4 class="card-title">Help</h4>
+                    <h4 class="card-title">Resources</h4>
                     <a href="{{ route('help.create') }}" class="btn btn-bg-orange btn-sm mt-3 btn-tooltip"><i class="bi bi-plus-circle"></i>
-                        <span class="btn-text">Add Help</span></a>
+                        <span class="btn-text">Add Resources</span></a>
                 </div>
 
                 <!-- Table with stripped rows -->
@@ -19,12 +19,13 @@
                         <thead>
                             <tr>
                                 <th>S.No</th>
+                                <th>Resource Category</th>
                                 <th>Title</th>
                                 <th>Photo</th>
                                 <th>PDF</th>
                                 <th>Video</th>
                                 <th>Description</th>
-                                <th>Status</th>
+                                {{-- <th>Status</th> --}}
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -32,6 +33,7 @@
                             @foreach ($help as $helpData)
                                 <tr>
                                     <th>{{ ($help->currentPage() - 1) * $help->perPage() + $loop->index + 1 }}</th>
+                                    <td>{{ $helpData->resourceCategory->categoryName ?? '' }}</td>
                                     <td>{{ $helpData->title ?? '' }}</td>
                                     <td>
                                         @if ($helpData->photo)
@@ -58,7 +60,7 @@
                                         @endif
                                     </td>
                                     <td>{{ $helpData->description ?? '' }}</td>
-                                    <td>{{ $helpData->status }}</td>
+                                    {{-- <td>{{ $helpData->status }}</td> --}}
                                     <td>
                                         <a href="{{ route('help.edit', $helpData->id) }}" class="btn btn-bg-blue btn-sm btn-tooltip">
                                             <i class="bi bi-pen"></i>

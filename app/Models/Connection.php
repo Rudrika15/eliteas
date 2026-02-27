@@ -3,11 +3,9 @@
 namespace App\Models;
 
 // use App\Models\Connection;
-use App\Models\User;
-use App\Models\Member;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class Connection extends Model
 {
@@ -17,14 +15,17 @@ class Connection extends Model
     {
         return $this->belongsTo(User::class, 'userId', 'id');
     }
+
     public function member()
     {
         return $this->belongsTo(Member::class, 'memberId', 'userId');
     }
+
     public function members()
     {
         return $this->belongsTo(Member::class, 'userId', 'userId');
     }
+
     public function memberProfile()
     {
         return $this->belongsTo(Member::class, 'memberId', 'userId');
@@ -36,6 +37,7 @@ class Connection extends Model
         if ($this->userId == $userId) {
             return $this->receiver;
         }
+
         return $this->user;
     }
 
@@ -55,6 +57,7 @@ class Connection extends Model
         if ($this->userId == $userId) {
             return $this->member;
         }
+
         return $this->members;
     }
 }

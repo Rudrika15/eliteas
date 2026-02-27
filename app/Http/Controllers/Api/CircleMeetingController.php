@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Api;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\CircleMeeting;
-use Illuminate\Support\Facades\Validator;
 use App\Utils\Utils;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class CircleMeetingController extends Controller
 {
@@ -16,6 +16,7 @@ class CircleMeetingController extends Controller
             $circleMeetings = CircleMeeting::where('status', 'Active')
                 ->orderBy('id', 'DESC')
                 ->get();
+
             return Utils::sendResponse(['circleMeetings' => $circleMeetings], 'Circle meetings retrieved successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
@@ -26,6 +27,7 @@ class CircleMeetingController extends Controller
     {
         try {
             $circleMeeting = CircleMeeting::findOrFail($id);
+
             return Utils::sendResponse(['circleMeeting' => $circleMeeting], 'Circle meeting retrieved successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
@@ -49,7 +51,7 @@ class CircleMeetingController extends Controller
         }
 
         try {
-            $circleMeeting = new CircleMeeting();
+            $circleMeeting = new CircleMeeting;
             $circleMeeting->dateTime = $request->dateTime;
             $circleMeeting->totalMeeting = $request->totalMeeting;
             $circleMeeting->refGiven = $request->refGiven;
@@ -86,7 +88,7 @@ class CircleMeetingController extends Controller
         try {
             $circleMeeting = CircleMeeting::find($id);
 
-            if (!$circleMeeting) {
+            if (! $circleMeeting) {
                 return Utils::errorResponse(['error' => 'Circle Meeting not found.'], 'Not Found', 404);
             }
 
@@ -111,7 +113,7 @@ class CircleMeetingController extends Controller
         try {
             $circleMeeting = CircleMeeting::find($id);
 
-            if (!$circleMeeting) {
+            if (! $circleMeeting) {
                 return Utils::errorResponse(['error' => 'Circle Meeting not found.'], 'Not Found', 404);
             }
 

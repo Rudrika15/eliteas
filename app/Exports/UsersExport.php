@@ -21,7 +21,7 @@ class UsersExport implements FromCollection
             'First Name',
             'Last Name',
             'Email',
-            'Contact No'
+            'Contact No',
         ];
     }
 }

@@ -2,20 +2,19 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exports\CircleAttendanceExport;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use App\Models\Member;
 use App\Models\Circle;
 use App\Models\CircleCall;
-use App\Models\CircleMeetingMembersReference;
 use App\Models\CircleMeetingMembersBusiness;
-use App\Models\TrainingRegister;
-use App\Models\Testimonial;
+use App\Models\CircleMeetingMembersReference;
 use App\Models\CircleMeetingsAttendances;
+use App\Models\Member;
+use App\Models\Testimonial;
+use App\Models\TrainingRegister;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\CircleAttendanceCombinedExport;
-use App\Exports\CircleAttendanceExport;
 
 class CombinedReportController extends Controller
 {
@@ -51,73 +50,73 @@ class CombinedReportController extends Controller
                         $q->where('memberId', $uid)
                             ->orWhere('meetingPersonId', $uid);
                     })
-                    ->when($startDate, fn($q) => $q->whereDate('created_at', '>=', $startDate))
-                    ->when($endDate, fn($q) => $q->whereDate('created_at', '<=', $endDate))
+                    ->when($startDate, fn ($q) => $q->whereDate('created_at', '>=', $startDate))
+                    ->when($endDate, fn ($q) => $q->whereDate('created_at', '<=', $endDate))
                     ->count();
 
                 $refGivenInside = CircleMeetingMembersReference::where('status', 'Active')
                     ->where('referenceGiverId', $uid)
                     ->whereIn('memberId', $circleUserIds)
-                    ->when($startDate, fn($q) => $q->whereDate('created_at', '>=', $startDate))
-                    ->when($endDate, fn($q) => $q->whereDate('created_at', '<=', $endDate))
+                    ->when($startDate, fn ($q) => $q->whereDate('created_at', '>=', $startDate))
+                    ->when($endDate, fn ($q) => $q->whereDate('created_at', '<=', $endDate))
                     ->count();
 
                 $refGivenOutside = CircleMeetingMembersReference::where('status', 'Active')
                     ->where('referenceGiverId', $uid)
                     ->whereNotIn('memberId', $circleUserIds)
-                    ->when($startDate, fn($q) => $q->whereDate('created_at', '>=', $startDate))
-                    ->when($endDate, fn($q) => $q->whereDate('created_at', '<=', $endDate))
+                    ->when($startDate, fn ($q) => $q->whereDate('created_at', '>=', $startDate))
+                    ->when($endDate, fn ($q) => $q->whereDate('created_at', '<=', $endDate))
                     ->count();
 
                 $refReceivedInside = CircleMeetingMembersReference::where('status', 'Active')
                     ->where('memberId', $uid)
                     ->whereIn('referenceGiverId', $circleUserIds)
-                    ->when($startDate, fn($q) => $q->whereDate('created_at', '>=', $startDate))
-                    ->when($endDate, fn($q) => $q->whereDate('created_at', '<=', $endDate))
+                    ->when($startDate, fn ($q) => $q->whereDate('created_at', '>=', $startDate))
+                    ->when($endDate, fn ($q) => $q->whereDate('created_at', '<=', $endDate))
                     ->count();
 
                 $refReceivedOutside = CircleMeetingMembersReference::where('status', 'Active')
                     ->where('memberId', $uid)
                     ->whereNotIn('referenceGiverId', $circleUserIds)
-                    ->when($startDate, fn($q) => $q->whereDate('created_at', '>=', $startDate))
-                    ->when($endDate, fn($q) => $q->whereDate('created_at', '<=', $endDate))
+                    ->when($startDate, fn ($q) => $q->whereDate('created_at', '>=', $startDate))
+                    ->when($endDate, fn ($q) => $q->whereDate('created_at', '<=', $endDate))
                     ->count();
 
                 $businessGiven = CircleMeetingMembersBusiness::where('status', 'Active')
                     ->where('businessGiverId', $uid)
-                    ->when($startDate, fn($q) => $q->whereDate('created_at', '>=', $startDate))
-                    ->when($endDate, fn($q) => $q->whereDate('created_at', '<=', $endDate))
+                    ->when($startDate, fn ($q) => $q->whereDate('created_at', '>=', $startDate))
+                    ->when($endDate, fn ($q) => $q->whereDate('created_at', '<=', $endDate))
                     ->sum('amount');
 
                 $businessReceived = CircleMeetingMembersBusiness::where('status', 'Active')
                     ->where('loginMemberId', $uid)
-                    ->when($startDate, fn($q) => $q->whereDate('created_at', '>=', $startDate))
-                    ->when($endDate, fn($q) => $q->whereDate('created_at', '<=', $endDate))
+                    ->when($startDate, fn ($q) => $q->whereDate('created_at', '>=', $startDate))
+                    ->when($endDate, fn ($q) => $q->whereDate('created_at', '<=', $endDate))
                     ->sum('amount');
 
                 $trainingCount = TrainingRegister::where('userId', $uid)
                     ->where('status', 'Active')
-                    ->when($startDate, fn($q) => $q->whereDate('created_at', '>=', $startDate))
-                    ->when($endDate, fn($q) => $q->whereDate('created_at', '<=', $endDate))
+                    ->when($startDate, fn ($q) => $q->whereDate('created_at', '>=', $startDate))
+                    ->when($endDate, fn ($q) => $q->whereDate('created_at', '<=', $endDate))
                     ->count();
 
                 $testimonialGiven = Testimonial::where('userId', $uid)
                     ->where('status', 'Active')
-                    ->when($startDate, fn($q) => $q->whereDate('created_at', '>=', $startDate))
-                    ->when($endDate, fn($q) => $q->whereDate('created_at', '<=', $endDate))
+                    ->when($startDate, fn ($q) => $q->whereDate('created_at', '>=', $startDate))
+                    ->when($endDate, fn ($q) => $q->whereDate('created_at', '<=', $endDate))
                     ->count();
 
                 $testimonialReceived = Testimonial::where('memberId', $uid)
                     ->where('status', 'Active')
-                    ->when($startDate, fn($q) => $q->whereDate('created_at', '>=', $startDate))
-                    ->when($endDate, fn($q) => $q->whereDate('created_at', '<=', $endDate))
+                    ->when($startDate, fn ($q) => $q->whereDate('created_at', '>=', $startDate))
+                    ->when($endDate, fn ($q) => $q->whereDate('created_at', '<=', $endDate))
                     ->count();
 
                 $stats = CircleMeetingsAttendances::where('userId', $member->userId)
                     ->where('circle_meetings_attendances.circleId', $circleId)
                     ->join('schedules', 'circle_meetings_attendances.meetingId', '=', 'schedules.id')
-                    ->when($startDate, fn($q) => $q->whereDate('schedules.date', '>=', $startDate))
-                    ->when($endDate, fn($q) => $q->whereDate('schedules.date', '<=', $endDate))
+                    ->when($startDate, fn ($q) => $q->whereDate('schedules.date', '>=', $startDate))
+                    ->when($endDate, fn ($q) => $q->whereDate('schedules.date', '<=', $endDate))
                     ->selectRaw("
                         SUM(CASE WHEN circle_meetings_attendances.status = 'Present' THEN 1 ELSE 0 END) as present_count,
                         SUM(CASE WHEN circle_meetings_attendances.status = 'Absent' THEN 1 ELSE 0 END) as absent_count,
@@ -128,7 +127,7 @@ class CombinedReportController extends Controller
                     ->first();
 
                 $reportData->push([
-                    'member_name' => $member->firstName . ' ' . $member->lastName,
+                    'member_name' => $member->firstName.' '.$member->lastName,
                     'ibm' => $ibmCount,
                     'ref_given_inside' => $refGivenInside,
                     'ref_given_outside' => $refGivenOutside,

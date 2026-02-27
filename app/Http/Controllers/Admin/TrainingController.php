@@ -2,19 +2,16 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\User;
+use App\Http\Controllers\Controller;
 use App\Models\Member;
+use App\Models\Notifications;
+use App\Models\TrainerMaster;
 use App\Models\Training;
+use App\Models\TrainingMaster;
+use App\Models\User;
 use App\Utils\ErrorLogger;
 use Illuminate\Http\Request;
-use App\Models\TrainerMaster;
-use App\Models\TrainingTrainers;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\URL;
-use App\Http\Controllers\Controller;
-use App\Models\Notifications;
-use App\Models\TrainingMaster;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Kreait\Firebase\Factory;
 use Kreait\Firebase\Messaging\CloudMessage;
@@ -22,7 +19,6 @@ use Kreait\Firebase\Messaging\Notification;
 
 class TrainingController extends Controller
 {
-
     public function __construct()
     {
 
@@ -52,14 +48,17 @@ class TrainingController extends Controller
                 $th,
                 request()->fullUrl()
             );
+
             return view('servererror');
         }
     }
-    //For show single data
+
+    // For show single data
     public function view(Request $request, $id)
     {
         try {
             $training = Training::with('trainer')->findOrFail($id);
+
             return response()->json($training);
         } catch (\Throwable $th) {
             // throw $th;
@@ -67,9 +66,11 @@ class TrainingController extends Controller
                 $th,
                 request()->fullUrl()
             );
+
             return view('servererror');
         }
     }
+
     public function create()
     {
         try {
@@ -78,6 +79,7 @@ class TrainingController extends Controller
             $trainer = Member::with('circle')->where('status', 'Active')->get();
             $training = Training::with('trainer')
                 ->get();
+
             return view('admin.training.create', compact('trainer', 'training', 'trainingMaster'));
         } catch (\Throwable $th) {
             // throw $th;
@@ -85,6 +87,7 @@ class TrainingController extends Controller
                 $th,
                 request()->fullUrl()
             );
+
             return view('servererror');
         }
     }
@@ -93,7 +96,6 @@ class TrainingController extends Controller
     // {
 
     //     // return $request;
-
 
     //     try {
     //         // Validate the incoming request
@@ -140,7 +142,6 @@ class TrainingController extends Controller
     //     }
     // }
 
-
     public function store(Request $request)
     {
         try {
@@ -160,7 +161,7 @@ class TrainingController extends Controller
             ]);
 
             // Create Training record
-            $training = new Training();
+            $training = new Training;
             $training->trainingMasterId = $request->trainingMasterId;
             $training->title = $request->title;
             $training->fees = $request->fees;
@@ -171,12 +172,12 @@ class TrainingController extends Controller
             $uniqueId = time();
 
             if ($request->hasFile('training_thumb')) {
-                $training->training_thumb = $uniqueId . '_thumb.' . $request->training_thumb->extension();
+                $training->training_thumb = $uniqueId.'_thumb.'.$request->training_thumb->extension();
                 $request->training_thumb->move(public_path('Training'), $training->training_thumb);
             }
 
             if ($request->hasFile('training_banner')) {
-                $training->training_banner = $uniqueId . '_banner.' . $request->training_banner->extension();
+                $training->training_banner = $uniqueId.'_banner.'.$request->training_banner->extension();
                 $request->training_banner->move(public_path('Training'), $training->training_banner);
             }
 
@@ -198,7 +199,7 @@ class TrainingController extends Controller
             ];
 
             foreach ($trainers as $key => $value) {
-                if (!is_null($value)) {
+                if (! is_null($value)) {
                     DB::table('trainings_trainers')->insert([
                         ['trainingId' => $training->id, 'userId' => $value, 'status' => 'Active', 'created_at' => now(), 'updated_at' => now()],
                     ]);
@@ -208,11 +209,11 @@ class TrainingController extends Controller
             // Check if the training type is "Published" to trigger notifications
             if ($training->trainingStatus === 'Publish') {
 
-                $title = "New Training Published";
+                $title = 'New Training Published';
                 $body = "The training '{$training->title}' is now available. Don't miss out!";
 
                 // Store notification in the database
-                $notification = new Notifications();
+                $notification = new Notifications;
                 $notification->title = $title;
                 $notification->body = $body;
                 $notification->data = json_encode([
@@ -227,19 +228,19 @@ class TrainingController extends Controller
                 $messaging = $factory->createMessaging();
 
                 foreach ($users as $user) {
-                    if (!empty($user->fcm_token)) {
+                    if (! empty($user->fcm_token)) {
                         $message = CloudMessage::withTarget('token', $user->fcm_token)
                             ->withNotification(Notification::create($title, $body));
 
                         try {
                             $messaging->send($message);
-                            Log::info('Notification sent to token: ' . $user->fcm_token);
+                            Log::info('Notification sent to token: '.$user->fcm_token);
                         } catch (\Kreait\Firebase\Exception\Messaging\NotFound $e) {
-                            Log::error('Token not found: ' . $user->fcm_token);
+                            Log::error('Token not found: '.$user->fcm_token);
                         } catch (\Kreait\Firebase\Exception\Messaging\InvalidArgument $e) {
-                            Log::error('Invalid argument error with token: ' . $user->fcm_token);
+                            Log::error('Invalid argument error with token: '.$user->fcm_token);
                         } catch (\Exception $e) {
-                            Log::error('General error sending to token: ' . $user->fcm_token . '. Error: ' . $e->getMessage());
+                            Log::error('General error sending to token: '.$user->fcm_token.'. Error: '.$e->getMessage());
                         }
                     }
                 }
@@ -250,13 +251,10 @@ class TrainingController extends Controller
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError($th, request()->fullUrl());
+
             return view('servererror');
         }
     }
-
-
-
-
 
     public function edit($id)
     {
@@ -273,10 +271,10 @@ class TrainingController extends Controller
                 $th,
                 request()->fullUrl()
             );
+
             return view('servererror');
         }
     }
-
 
     public function update(Request $request, $id)
     {
@@ -297,16 +295,14 @@ class TrainingController extends Controller
             $uniqueId = time();
 
             if ($request->hasFile('training_thumb')) {
-                $training->training_thumb = $uniqueId . '_thumb.' . $request->training_thumb->extension();
+                $training->training_thumb = $uniqueId.'_thumb.'.$request->training_thumb->extension();
                 $request->training_thumb->move(public_path('Training'), $training->training_thumb);
             }
 
             if ($request->hasFile('training_banner')) {
-                $training->training_banner = $uniqueId . '_banner.' . $request->training_banner->extension();
+                $training->training_banner = $uniqueId.'_banner.'.$request->training_banner->extension();
                 $request->training_banner->move(public_path('Training'), $training->training_banner);
             }
-
-
 
             $training->date = $request->start_date;
             $training->end_date = $request->end_date;
@@ -328,7 +324,7 @@ class TrainingController extends Controller
             DB::table('trainings_trainers')->where('trainingId', $training->id)->delete();
 
             foreach ($trainers as $key => $value) {
-                if (!is_null($value)) {
+                if (! is_null($value)) {
                     // Insert the trainer into the table
                     DB::table('trainings_trainers')->insert([
                         ['trainingId' => $training->id, 'userId' => $value, 'status' => 'Active', 'created_at' => now(), 'updated_at' => now()],
@@ -344,10 +340,10 @@ class TrainingController extends Controller
                 $th,
                 request()->fullUrl()
             );
+
             return view('servererror');
         }
     }
-
 
     public function updateStatus(Request $request, $id)
     {
@@ -360,13 +356,11 @@ class TrainingController extends Controller
         }
     }
 
-
-
-    function delete($id)
+    public function delete($id)
     {
         try {
             $training = Training::find($id);
-            $training->status = "Deleted";
+            $training->status = 'Deleted';
             $training->save();
 
             return redirect()->route('training.index')->with('success', 'Training Deleted Successfully!');
@@ -376,10 +370,10 @@ class TrainingController extends Controller
                 $th,
                 request()->fullUrl()
             );
+
             return view('servererror');
         }
     }
-
 
     // public function getExternalTrainer(Request $request)
     // {
@@ -388,7 +382,6 @@ class TrainingController extends Controller
 
     //     return response()->json($exTrainer);
     // }
-
 
     public function getTrainerDetails(Request $request)
     {
@@ -409,6 +402,7 @@ class TrainingController extends Controller
                 $th,
                 request()->fullUrl()
             );
+
             return view('servererror');
         }
     }
@@ -433,6 +427,7 @@ class TrainingController extends Controller
                 $th,
                 request()->fullUrl()
             );
+
             return view('servererror');
         }
     }

@@ -18,5 +18,4 @@ class MemberSubscriptions extends Model
     {
         return $this->belongsTo(User::class, 'userId', 'id');
     }
-
 }

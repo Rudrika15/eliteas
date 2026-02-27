@@ -2,45 +2,32 @@
 
 namespace App\Http\Controllers;
 
-use Carbon\Carbon;
-use App\Models\City;
-use App\Models\User;
-use App\Utils\Utils;
-use App\Models\Event;
-use App\Models\State;
-use App\Models\Circle;
-use App\Models\Member;
-use App\Models\Country;
-use App\Models\Message;
-use App\Models\Location;
-use App\Models\Schedule;
-use App\Models\Training;
-use App\Models\CircleCall;
-use App\Models\Connection;
-use App\Utils\ErrorLogger;
-use App\Models\Testimonial;
-use App\Models\TopsProfile;
-use Illuminate\Http\Request;
-use App\Models\EventRegister;
-use App\Models\BillingAddress;
-use App\Models\ContactDetails;
-use App\Models\MonthlyPayment;
+use App\Mail\MeetingInvitation as MailMeetingInvitation;
 use App\Models\BusinessCategory;
-use App\Models\TrainingRegister;
-use App\Models\MeetingInvitation;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\URL;
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Contracts\Session\Session;
-use Illuminate\Support\Facades\Validator;
+use App\Models\Circle;
+use App\Models\CircleCall;
 use App\Models\CircleMeetingMembersBusiness;
 use App\Models\CircleMeetingMembersReference;
-use App\Mail\MeetingInvitation as MailMeetingInvitation;
+use App\Models\Connection;
+use App\Models\Event;
+use App\Models\EventRegister;
+use App\Models\MeetingInvitation;
+use App\Models\Member;
+use App\Models\Message;
+use App\Models\MonthlyPayment;
+use App\Models\Schedule;
 use App\Models\TemplateMaster;
+use App\Models\Testimonial;
+use App\Models\Training;
+use App\Models\TrainingRegister;
+use App\Models\User;
 use App\Models\VisitorEventRegister;
-use SebastianBergmann\Template\Template;
+use App\Utils\ErrorLogger;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\URL;
 
 class HomeController extends Controller
 {
@@ -77,7 +64,6 @@ class HomeController extends Controller
      * @return \Illuminate\Contracts\Support\Renderable
      */
 
-
     // public function index()
     // {
     //     $count = Schedule::where('status', 'Active')->count();
@@ -95,13 +81,9 @@ class HomeController extends Controller
     //         ->orderBy('date', 'asc')
     //         ->first();
 
-
-
     //     $businessCategory = BusinessCategory::where('status', 'Active')->get();
 
-
     //     $myInvites = MeetingInvitation::where('invitedMemberId', Auth::user()->id)->get();
-
 
     //     if ($nearestTraining) {
     //         $findRegister = TrainingRegister::where('userId', Auth::user()->id)
@@ -111,9 +93,6 @@ class HomeController extends Controller
     //     } else {
     //         $findRegister = [];
     //     }
-
-
-
 
     //     if (!Auth::user()->hasRole('Admin')) {
     //         // business category
@@ -136,7 +115,6 @@ class HomeController extends Controller
     //         $myInvites = MeetingInvitation::where('invitedMemberId', Auth::user()->id)
     //             ->where('meetingId', $meeting->id)
     //             ->get();
-
 
     //         // Determine the table name based on the slug
 
@@ -233,7 +211,6 @@ class HomeController extends Controller
     //         //     ->orWhere('receiverId', Auth::user()->id)
     //         //     ->get();
 
-
     //         return view('home', compact('count', 'circlecalls', 'busGiver', 'refGiver', 'nearestTraining', 'findRegister', 'testimonials', 'meeting', 'businessCategory', 'myInvites'));
     //     }
     //     return view('home', compact('count', 'nearestTraining',  'businessCategory', 'myInvites', 'findRegister'));
@@ -247,15 +224,12 @@ class HomeController extends Controller
         return view('layouts.master', compact('membersCount', 'circleCount'));
     }
 
-
-
     public function index()
     {
         try {
 
             $membersCount = Member::where('status', 'Active')->count();
             $circleCount = Circle::where('status', 'Active')->count();
-
 
             $count = Schedule::where('status', 'Active')->count();
             $currentDate = Carbon::now()->format('Y-m-d');
@@ -283,7 +257,6 @@ class HomeController extends Controller
 
             $myInvites = MeetingInvitation::where('invitedMemberId', Auth::user()->id)->get();
 
-
             if ($nearestTraining) {
                 $findRegister = TrainingRegister::where('userId', Auth::user()->id)
                     ->where('trainingId', $nearestTraining->id)
@@ -292,7 +265,7 @@ class HomeController extends Controller
             } else {
                 $findRegister = [];
             }
-            if (!Auth::user()->hasRole('Admin')) {
+            if (! Auth::user()->hasRole('Admin')) {
                 $testimonials = Testimonial::where('memberId', Auth::user()->member->id)
                     ->where('status', 'Active')
                     ->with('sender')
@@ -303,7 +276,6 @@ class HomeController extends Controller
                 $birthdaysToday = Member::whereMonth('birthDate', Carbon::today()->month)
                     ->whereDay('birthDate', Carbon::today()->day)
                     ->get();
-
 
                 $templates = TemplateMaster::with('TemplateDetail')->where('status', 'Active')->first();
 
@@ -337,7 +309,7 @@ class HomeController extends Controller
                 $circlecalls = $circlecalls->groupBy('memberId')->map(function ($group) {
                     return [
                         'member' => $group->first()->member,
-                        'count' => $group->count()
+                        'count' => $group->count(),
                     ];
                 })->sortByDesc('count')->first();
 
@@ -423,7 +395,6 @@ class HomeController extends Controller
                 $totalRegisterCount = isset($nearestEvents->id) ? VisitorEventRegister::where('eventId', $nearestEvents->id)->count() + EventRegister::where('eventId', $nearestEvents->id)->count() : 0;
                 // $totalRegisterCount = VisitorEventRegister::where('eventId', $nearestEvents->id)->count() + EventRegister::where('eventId', $nearestEvents->id)->count();
 
-
                 if ($nearestEvents) {
                     $findEventRegister = EventRegister::where('memberId', Auth::user()->member->id)
                         ->where('eventId', $nearestEvents->id)
@@ -435,7 +406,7 @@ class HomeController extends Controller
                 $signedUrl = URL::signedRoute('visitor.form', [
                     'slug' => $meeting->cm_slug,
                     'meetingId' => $meeting->id,
-                    'ref' => auth()->user()->member->id
+                    'ref' => auth()->user()->member->id,
                 ]);
 
                 // $registeredMembers = EventRegister::where('eventId', $nearestEvents->id)
@@ -454,7 +425,6 @@ class HomeController extends Controller
                     $this->generateBirthdayWishImage($user);
                 }
 
-
                 $membersCount = Member::where('status', 'Active')->count();
                 $circleCount = Circle::where('status', 'Active')->count();
 
@@ -462,7 +432,6 @@ class HomeController extends Controller
                 // $circleId = Member::where('userId', $authUserId)->value('circleId');
                 // $businessCategoryId = Circle::where('id', $circleId)->value('businessCategoryId');
                 // // $categoryName = BusinessCategory::where('id', $businessCategoryId)->value('categoryName');
-
 
                 // $authUserId = Auth::user()->member->userId;
                 // $circleId = Member::where('userId', $authUserId)->value('circleId');
@@ -474,7 +443,6 @@ class HomeController extends Controller
 
                 // $categoryNames = $businessCategories->pluck('categoryName');
 
-
                 $authUserId = Auth::user()->member->userId;
                 $circleId = Member::where('userId', $authUserId)->value('circleId');
 
@@ -485,7 +453,7 @@ class HomeController extends Controller
 
                 $businessCategories = collect(); // Default empty collection
 
-                if (!empty($businessCategoryIdArray)) {
+                if (! empty($businessCategoryIdArray)) {
                     $businessCategories = BusinessCategory::whereIn('id', $businessCategoryIdArray)->get();
                 }
 
@@ -498,9 +466,6 @@ class HomeController extends Controller
 
                 $categoryNames = $businessCategories->pluck('categoryName');
 
-
-
-
                 return view('home', compact('circleCount', 'categoryNames', 'membersCount', 'totalRegisterCount', 'birthdaysToday', 'templates', 'signedUrl', 'count', 'monthlyPayments', 'totalAmountDue', 'nearestEvents', 'findEventRegister', 'circlecalls', 'busGiver', 'refGiver', 'nearestTraining', 'findRegister', 'testimonials', 'meeting', 'businessCategory', 'myInvites', 'todaysBirthdays'));
             }
 
@@ -509,6 +474,7 @@ class HomeController extends Controller
             // Log the error
             throw $th;
             ErrorLogger::logError($th, request()->fullUrl());
+
             // Return a generic error view or message
             return view('servererror')->with('error', 'Failed to load the dashboard');
         }
@@ -516,12 +482,12 @@ class HomeController extends Controller
 
     public function birthday($id)
     {
-        $person  = Member::where('userId', $id)->first();
+        $person = Member::where('userId', $id)->first();
         $templates = TemplateMaster::all();
+
         // $template = TemplateMaster::with('TemplateDetail')->get();
         return view('admin.birthday.index', compact('person', 'templates'));
     }
-
 
     private function generateBirthdayWishImage($member)
     {
@@ -554,7 +520,7 @@ class HomeController extends Controller
         $directoryPath = public_path('birthday_images');
 
         // Check if the directory exists; if not, create it
-        if (!is_dir($directoryPath)) {
+        if (! is_dir($directoryPath)) {
             mkdir($directoryPath, 0777, true);
         }
 
@@ -566,11 +532,10 @@ class HomeController extends Controller
         imagedestroy($image);
     }
 
-
     public function trainingRegister($trainingId, $trainerId)
     {
         try {
-            $register = new TrainingRegister();
+            $register = new TrainingRegister;
             $register->userId = Auth::user()->id;
             $register->trainingId = $trainingId;
             $register->trainerId = $trainerId;
@@ -587,11 +552,10 @@ class HomeController extends Controller
         }
     }
 
-
     public function eventRegister($eventId, Request $request)
     {
         try {
-            $eventregister = new EventRegister();
+            $eventregister = new EventRegister;
             $eventregister->userId = Auth::user()->id;
             $eventregister->eventId = $eventId;
             $eventregister->personName = $request->personName;
@@ -610,8 +574,6 @@ class HomeController extends Controller
         }
     }
 
-
-
     public function invitation(Request $request)
     {
         try {
@@ -623,7 +585,7 @@ class HomeController extends Controller
             ]);
 
             if (strlen($request->personContact) <= 10) {
-                $invitation = new MeetingInvitation();
+                $invitation = new MeetingInvitation;
                 $invitation->meetingId = $request->meetingId;
                 $invitation->invitedMemberId = Auth::user()->id;
                 $invitation->personName = $request->personName;
@@ -645,21 +607,23 @@ class HomeController extends Controller
                 'personEmail' => $personEmail,
                 'invitedPersonFirstName' => $invitedPersonFirstName,
                 'invitedPersonLastName' => $invitedPersonLastName,
-                'amount' => $amount
+                'amount' => $amount,
             ];
 
             if (isset($invitation)) {
                 Mail::to($request->personEmail)->send(new MailMeetingInvitation($data));
+
                 return redirect()->back()->with('success', 'Invitation Sent Successfully');
             }
+
             return redirect()->back()->with('error', 'Please Enter Correct Number');
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError($th, request()->fullUrl());
+
             return redirect()->back()->with('error', 'An error occurred while sending the invitation. Please try again.');
         }
     }
-
 
     public function invitationPay($firstName, $lastName, $amount)
     {
@@ -668,11 +632,12 @@ class HomeController extends Controller
             $data = [
                 'firstName' => $firstName,
                 'lastName' => $lastName,
-                'amount' => $amount
+                'amount' => $amount,
             ];
-            if (!session()->has("data")) {
-                session(["data" => $data]);
+            if (! session()->has('data')) {
+                session(['data' => $data]);
             }
+
             return view('invitationPay', compact('data'));
         } catch (\Throwable $th) {
             // Log the error
@@ -715,11 +680,9 @@ class HomeController extends Controller
     //             ->with('user', 'circle', 'bCategory')
     //             ->get();
 
-
     //         // $members = Member::where('keyWords', 'like', '%' . $query . '%')->get();
 
     //         $message = "Search results for '$query'";
-
 
     //         return response()->json([
     //             'message' => $message,
@@ -735,40 +698,38 @@ class HomeController extends Controller
     //     }
     // }
 
+    public function search(Request $request)
+    {
+        try {
+            $query = $request->input('query');
 
-   public function search(Request $request)
-{
-    try {
-        $query = $request->input('query');
+            $members = Member::query()
+                ->where('userId', '!=', Auth::user()->id)
+                ->where('status', 'Active') // ✅ only active members
+                ->where(function ($q) use ($query) {
+                    $q->where('firstName', 'like', '%'.$query.'%')
+                        ->orWhere('lastName', 'like', '%'.$query.'%')
+                        ->orWhere('keyWords', 'like', '%'.$query.'%');
+                })
+                ->with([
+                    'user',
+                    'circle' => function ($q) {
+                        $q->select('id', 'circleName'); // ✅ load circle if it exists
+                    },
+                    'bCategory',
+                ])
+                ->get();
 
-        $members = Member::query()
-            ->where('userId', '!=', Auth::user()->id)
-            ->where('status', 'Active') // ✅ only active members
-            ->where(function ($q) use ($query) {
-                $q->where('firstName', 'like', '%' . $query . '%')
-                    ->orWhere('lastName', 'like', '%' . $query . '%')
-                    ->orWhere('keyWords', 'like', '%' . $query . '%');
-            })
-            ->with([
-                'user',
-                'circle' => function ($q) {
-                    $q->select('id', 'circleName'); // ✅ load circle if it exists
-                },
-                'bCategory'
-            ])
-            ->get();
+            return response()->json([
+                'message' => "Search results for '$query'",
+                'members' => $members,
+            ]);
+        } catch (\Throwable $th) {
+            ErrorLogger::logError($th, request()->fullUrl());
 
-        return response()->json([
-            'message' => "Search results for '$query'",
-            'members' => $members,
-        ]);
-    } catch (\Throwable $th) {
-        ErrorLogger::logError($th, request()->fullUrl());
-        return response()->json(['error' => 'Failed to perform search. Please try again.'], 500);
+            return response()->json(['error' => 'Failed to perform search. Please try again.'], 500);
+        }
     }
-}
-
-
 
     public function digitalMemberSearch(Request $request)
     {
@@ -780,9 +741,9 @@ class HomeController extends Controller
                 ->whereNotNull('cityId')
                 ->where('status', 'Active')
                 ->where(function ($q) use ($query) {
-                    $q->where('firstName', 'like', '%' . $query . '%')
-                        ->orWhere('lastName', 'like', '%' . $query . '%')
-                        ->orWhere('keyWords', 'like', '%' . $query . '%');
+                    $q->where('firstName', 'like', '%'.$query.'%')
+                        ->orWhere('lastName', 'like', '%'.$query.'%')
+                        ->orWhere('keyWords', 'like', '%'.$query.'%');
                 })
                 ->with('user', 'city', 'bCategory')
                 ->get();
@@ -795,21 +756,16 @@ class HomeController extends Controller
             ]);
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, request()->fullUrl());
+
             return response()->json(['error' => 'Failed to perform search. Please try again.'], 500);
         }
     }
-
-
-
-
-
 
     public function foundPersonDetails($id)
     {
         try {
             $aid = Auth::id(); // Get the ID of the authenticated user
             $member = Member::find($id);
-
 
             // Find connection based on the authenticated user's ID and member ID
             $connection = Connection::where('userId', $aid)
@@ -829,6 +785,7 @@ class HomeController extends Controller
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError($th, request()->fullUrl());
+
             // In case of an error, redirect to servererror view
             return view('servererror');
         }
@@ -875,6 +832,7 @@ class HomeController extends Controller
         try {
             $ip = request()->ip(); // Dynamic IP address get
             $ipData = \Location::get($ip);
+
             return view('location', compact('ipData'));
         } catch (\Throwable $th) {
             // throw $th;

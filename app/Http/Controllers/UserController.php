@@ -2,19 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\UsersExport;
+use App\Models\Member;
+use App\Models\User;
 use DB;
 use Hash;
-use App\Models\User;
-use App\Models\Member;
-use Illuminate\View\View;
-use Illuminate\Support\Arr;
-use App\Exports\UsersExport;
-use Illuminate\Http\Request;
-use Spatie\Permission\Models\Role;
-use App\Http\Controllers\Controller;
-use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Hash as FacadesHash;
+use Illuminate\View\View;
+use Maatwebsite\Excel\Facades\Excel;
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
@@ -36,6 +35,7 @@ class UserController extends Controller
     public function userList(Request $request): View
     {
         $data = User::where('status', 'Active')->orderBy('firstName', 'ASC')->paginate(10);
+
         return view('users.userList', compact('data'))
             ->with('i', ($request->input('page', 1) - 1) * 5);
     }
@@ -49,13 +49,13 @@ class UserController extends Controller
     {
         // $userId = User::first()->id;
         $roles = Role::pluck('name', 'name')->all();
+
         return view('users.create', compact('roles'));
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request): RedirectResponse
@@ -65,14 +65,14 @@ class UserController extends Controller
             'lastName' => 'required',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|same:confirm-password',
-            'roles' => 'required'
+            'roles' => 'required',
         ]);
 
         $input = $request->except('_token');
         $input['password'] = FacadesHash::make($input['password']);
 
         // $user = User::create($input);
-        $user = new User();
+        $user = new User;
         $user->firstName = $request->input('firstName'); // Corrected accessing input
         $user->lastName = $request->input('lastName'); // Corrected accessing input
         $user->email = $request->input('email'); // Corrected accessing input
@@ -82,11 +82,11 @@ class UserController extends Controller
 
         // Check if the selected role is 'member'
         if ($request->input('roles') === 'Member') {
-            $member = new Member();
+            $member = new Member;
             $member->userId = $user->id; // Assuming user_id column in members table
             $member->firstName = $request->input('firstName'); // Corrected accessing input
             $member->lastName = $request->input('lastName'); // Corrected accessing input
-            $member->status = "Active";
+            $member->status = 'Active';
             $member->save();
         }
 
@@ -94,7 +94,7 @@ class UserController extends Controller
             ->with('success', 'User created successfully');
     }
 
-// bas tu aatlu yaad rakhje.... je tara thi chhe bija koi thi nai... 
+    // bas tu aatlu yaad rakhje.... je tara thi chhe bija koi thi nai...
 
     /**
      * Display the specified resource.
@@ -105,6 +105,7 @@ class UserController extends Controller
     public function show($id): View
     {
         $user = User::find($id);
+
         return view('users.show', compact('user'));
     }
 
@@ -126,7 +127,6 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
@@ -134,16 +134,16 @@ class UserController extends Controller
     {
         $this->validate($request, [
             // 'name' => 'required',
-            'email' => 'required|email|unique:users,email,' . $id,
+            'email' => 'required|email|unique:users,email,'.$id,
             // 'password' => 'same:confirm-password',
-            'roles' => 'required'
+            'roles' => 'required',
         ]);
 
         $input = $request->all();
-        if (!empty($input['password'])) {
+        if (! empty($input['password'])) {
             $input['password'] = Hash::make($input['password']);
         } else {
-            $input = Arr::except($input, array('password'));
+            $input = Arr::except($input, ['password']);
         }
 
         $user = User::find($id);
@@ -165,17 +165,17 @@ class UserController extends Controller
     public function destroy($id): RedirectResponse
     {
         User::find($id)->delete();
+
         return redirect()->route('users.index')
             ->with('success', 'User deleted successfully');
     }
-
 
     public function getUserRoles($userId)
     {
         // Fetch user roles based on $userId
         $user = User::find($userId);
 
-        if (!$user) {
+        if (! $user) {
             return response()->json(['error' => 'User not found'], 404);
         }
 

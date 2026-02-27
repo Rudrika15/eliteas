@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Api;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\CircleMeetingMember;
-use Illuminate\Support\Facades\Validator;
 use App\Utils\Utils;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class CircleMeetingMembersController extends Controller
 {
@@ -17,6 +17,7 @@ class CircleMeetingMembersController extends Controller
                 ->where('status', 'Active')
                 ->orderBy('id', 'DESC')
                 ->get();
+
             return Utils::sendResponse(['meetingMembers' => $meetingMembers], 'Circle Meeting Members retrieved successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
@@ -27,6 +28,7 @@ class CircleMeetingMembersController extends Controller
     {
         try {
             $meetingMember = CircleMeetingMember::findOrFail($id);
+
             return Utils::sendResponse(['meetingMember' => $meetingMember], 'Circle Meeting Member retrieved successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
@@ -45,7 +47,7 @@ class CircleMeetingMembersController extends Controller
         }
 
         try {
-            $meetingMember = new CircleMeetingMember();
+            $meetingMember = new CircleMeetingMember;
             $meetingMember->memberId = $request->memberId;
             $meetingMember->attandance = $request->attandance;
             $meetingMember->status = 'Active';
@@ -72,7 +74,7 @@ class CircleMeetingMembersController extends Controller
         try {
             $meetingMember = CircleMeetingMember::find($id);
 
-            if (!$meetingMember) {
+            if (! $meetingMember) {
                 return Utils::errorResponse(['error' => 'Circle Meeting Member not found.'], 'Not Found', 404);
             }
 
@@ -92,7 +94,7 @@ class CircleMeetingMembersController extends Controller
         try {
             $meetingMember = CircleMeetingMember::find($id);
 
-            if (!$meetingMember) {
+            if (! $meetingMember) {
                 return Utils::errorResponse(['error' => 'Circle Meeting Member not found.'], 'Not Found', 404);
             }
 

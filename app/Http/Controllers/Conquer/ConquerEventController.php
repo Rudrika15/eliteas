@@ -12,7 +12,6 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class ConquerEventController extends Controller
 {
-
     // public function __construct()
     // {
     //     // Apply middleware for city-related permissions
@@ -22,11 +21,11 @@ class ConquerEventController extends Controller
     //     $this->middleware('permission:con-event-delete', ['only' => ['delete']]);
     // }
 
-
     public function index(Request $request)
     {
         try {
             $event = ConquerEvent::where('status', 'Active')->orderBy('id', 'DESC')->paginate(10);
+
             return view('conquer.events.index', compact('event'));
         } catch (\Throwable $th) {
             // throw $th;
@@ -34,6 +33,7 @@ class ConquerEventController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
@@ -43,6 +43,7 @@ class ConquerEventController extends Controller
         try {
             $event = ConquerEvent::find($id);
             $registerList = ConquerEventRegister::where('eventId', $id)->where('status', 'Active')->paginate(10);
+
             return view('conquer.events.registerList', compact('event', 'registerList'));
         } catch (\Throwable $th) {
             // throw $th;
@@ -50,6 +51,7 @@ class ConquerEventController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
@@ -64,6 +66,7 @@ class ConquerEventController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
@@ -71,11 +74,11 @@ class ConquerEventController extends Controller
     public function store(Request $request)
     {
         try {
-            $event = new Event();
+            $event = new Event;
             $event->title = $request->title;
 
             if ($request->eventImage) {
-                $event->eventImage = time() . '.' . $request->eventImage->extension();
+                $event->eventImage = time().'.'.$request->eventImage->extension();
                 $request->eventImage->move(public_path('conEventImage'), $event->eventImage);
             }
 
@@ -98,12 +101,12 @@ class ConquerEventController extends Controller
 
             // Define the directory and ensure it exists
             $qrCodeDir = public_path('eventQR');
-            if (!file_exists($qrCodeDir)) {
+            if (! file_exists($qrCodeDir)) {
                 mkdir($qrCodeDir, 0755, true); // Create directory if it doesn't exist
             }
 
             // Define the path to save the SVG file
-            $qrCodePath = 'eventQR/' . $event->id . '.svg';
+            $qrCodePath = 'eventQR/'.$event->id.'.svg';
 
             // Generate the SVG content and save it to a file
             $qrSvg = QrCode::format('svg')->size(300)->generate($qrData);
@@ -116,16 +119,16 @@ class ConquerEventController extends Controller
             return redirect()->route('conquer.events.index')->with('success', 'Event Created Successfully!');
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, $request->fullUrl());
+
             return view('servererror');
         }
     }
-
-
 
     public function edit(Request $request, $id)
     {
         try {
             $event = ConquerEvent::find($id);
+
             return view('conquer.events.edit', compact('event'));
         } catch (\Throwable $th) {
             // throw $th;
@@ -133,6 +136,7 @@ class ConquerEventController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
@@ -148,10 +152,9 @@ class ConquerEventController extends Controller
                 $event->title = $request->title;
 
                 if ($request->eventImage) {
-                    $event->eventImage = time() . '.' . $request->eventImage->extension();
+                    $event->eventImage = time().'.'.$request->eventImage->extension();
                     $request->eventImage->move(public_path('conEventImage'), $event->eventImage);
                 }
-
 
                 $event->event_date = $request->event_date;
                 $event->event_details = $request->event_details;
@@ -172,16 +175,18 @@ class ConquerEventController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
 
-    function delete(Request $request, $id)
+    public function delete(Request $request, $id)
     {
         try {
             $event = ConquerEvent::find($id);
-            $event->status = "Deleted";
+            $event->status = 'Deleted';
             $event->save();
+
             return redirect()->route('conquer.events.index')->with('success', 'Event Deleted Successfully!');
         } catch (\Throwable $th) {
             // throw $th;
@@ -189,6 +194,7 @@ class ConquerEventController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }

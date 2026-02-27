@@ -2,24 +2,21 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\City;
-use App\Models\User;
-use App\Models\State;
-use App\Models\Member;
-use App\Models\Country;
-use App\Utils\ErrorLogger;
-use App\Models\TopsProfile;
-use Illuminate\Http\Request;
-use App\Models\BillingAddress;
-use App\Models\ContactDetails;
-use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
+use App\Models\BillingAddress;
+use App\Models\City;
+use App\Models\ContactDetails;
+use App\Models\Country;
+use App\Models\Member;
+use App\Models\State;
+use App\Models\TopsProfile;
+use App\Models\User;
+use App\Utils\ErrorLogger;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class MemberController extends Controller
 {
-
-
     public function __construct()
     {
         // Apply middleware for event-related permissions
@@ -29,12 +26,11 @@ class MemberController extends Controller
         $this->middleware('permission:member-show', ['only' => ['show']]);
     }
 
-
-
     public function index(Request $request)
     {
         try {
             $member = Member::where('status', 'Active')->get(); // show only 10 record per page
+
             return view('userrs.member.index', compact('member'));
         } catch (\Throwable $th) {
             // throw $th;
@@ -42,10 +38,12 @@ class MemberController extends Controller
                 $th,
                 request()->fullUrl()
             );
+
             return view('servererror');
         }
     }
-    //For show single data
+
+    // For show single data
     public function view(Request $request, $id)
     {
         try {
@@ -59,12 +57,14 @@ class MemberController extends Controller
             return view('servererror');
         }
     }
+
     public function create()
     {
         try {
             $countries = Country::where('status', 'Active')->orderBy('countryName', 'ASC')->get();
             $states = State::where('status', 'Active')->orderBy('stateName', 'ASC')->get();
             $cities = City::where('status', 'Active')->orderBy('cityName', 'ASC')->get();
+
             return view('userrs.member.create', compact('countries', 'states', 'cities'));
         } catch (\Throwable $th) {
             // throw $th;
@@ -79,7 +79,6 @@ class MemberController extends Controller
 
     public function store(Request $request)
     {
-
 
         $this->validate($request, [
             'title' => 'required',
@@ -105,9 +104,9 @@ class MemberController extends Controller
             $user->email = $request->email;
             $user->password = Hash::make($request->password);
             $user->assignRole('Member');
-            $user->save(); // 
+            $user->save(); //
 
-            $member = new Member();
+            $member = new Member;
             $member->userId = $user->id; // Access user ID after saving
             $member->title = $request->title;
             $member->firstName = $request->firstName;
@@ -124,22 +123,18 @@ class MemberController extends Controller
             $member->timeZone = $request->timeZone;
 
             if ($request->profilePhoto) {
-                $member->profilePhoto = time() . '.' . $request->profilePhoto->extension();
-                $request->profilePhoto->move(public_path('ProfilePhoto'),  $member->profilePhoto);
+                $member->profilePhoto = time().'.'.$request->profilePhoto->extension();
+                $request->profilePhoto->move(public_path('ProfilePhoto'), $member->profilePhoto);
             }
-
 
             // $member->profilePhoto = $request->profilePhoto;
 
-
             if ($request->companyLogo) {
-                $member->companyLogo = time() . '.' . $request->companyLogo->extension();
-                $request->companyLogo->move(public_path('CompanyLogo'),  $member->companyLogo);
+                $member->companyLogo = time().'.'.$request->companyLogo->extension();
+                $request->companyLogo->move(public_path('CompanyLogo'), $member->companyLogo);
             }
 
             // $member->companyLogo = $request->companyLogo;
-
-
 
             $member->goals = $request->goals;
             $member->chapter = $request->chapter;
@@ -162,8 +157,7 @@ class MemberController extends Controller
 
             $member->save();
 
-
-            $tops = new TopsProfile();
+            $tops = new TopsProfile;
             $tops->memberId = $member->id;
             $tops->idealRef = $request->idealRef;
             $tops->topProduct = $request->topProduct;
@@ -187,8 +181,7 @@ class MemberController extends Controller
 
             $tops->save();
 
-
-            $contact = new ContactDetails();
+            $contact = new ContactDetails;
             $contact->memberId = $member->id;
             $contact->showMeOnPublicWeb = $request->showMeOnPublicWeb;
             $contact->billingAddress = $request->billingAddress;
@@ -218,8 +211,7 @@ class MemberController extends Controller
 
             $contact->save();
 
-
-            $billing = new BillingAddress();
+            $billing = new BillingAddress;
             $billing->memberId = $member->id;
             $billing->bAddressLine1 = $request->bAddressLine1;
             $billing->bAddressLine2 = $request->bAddressLine2;
@@ -238,6 +230,7 @@ class MemberController extends Controller
                 $th,
                 request()->fullUrl()
             );
+
             return view('servererror');
         }
     }
@@ -252,6 +245,7 @@ class MemberController extends Controller
             $contactDetails = ContactDetails::where('memberId', $id)->first();
             $billing = BillingAddress::where('memberId', $id)->first();
             $tops = TopsProfile::where('memberId', $id)->first();
+
             return view('userrs.member.edit', compact('countries', 'states', 'cities', 'member', 'contactDetails', 'billing', 'tops'));
         } catch (\Throwable $th) {
             // throw $th;
@@ -264,8 +258,6 @@ class MemberController extends Controller
         }
     }
 
-
-
     public function show($id)
     {
         try {
@@ -276,6 +268,7 @@ class MemberController extends Controller
             $contactDetails = ContactDetails::where('memberId', $id)->first();
             $billing = BillingAddress::where('memberId', $id)->first();
             $tops = TopsProfile::where('memberId', $id)->first();
+
             return view('userrs.member.show', compact('country', 'state', 'city', 'member', 'contactDetails', 'billing', 'tops'));
         } catch (\Throwable $th) {
             // throw $th;
@@ -287,8 +280,6 @@ class MemberController extends Controller
             return view('servererror');
         }
     }
-
-
 
     public function update(Request $request, $id)
     {
@@ -316,22 +307,18 @@ class MemberController extends Controller
             $member->timeZone = $request->input('timeZone', $member->timeZone);
 
             if ($request->profilePhoto) {
-                $member->profilePhoto = time() . '.' . $request->profilePhoto->extension();
-                $request->profilePhoto->move(public_path('ProfilePhoto'),  $member->profilePhoto);
+                $member->profilePhoto = time().'.'.$request->profilePhoto->extension();
+                $request->profilePhoto->move(public_path('ProfilePhoto'), $member->profilePhoto);
             }
-
 
             // $member->profilePhoto = $request->input('profilePhoto', $member->profilePhoto);
 
             if ($request->companyLogo) {
-                $member->companyLogo = time() . '.' . $request->companyLogo->extension();
-                $request->companyLogo->move(public_path('CompanyLogo'),  $member->companyLogo);
+                $member->companyLogo = time().'.'.$request->companyLogo->extension();
+                $request->companyLogo->move(public_path('CompanyLogo'), $member->companyLogo);
             }
 
-
-
             // $member->companyLogo = $request->input('companyLogo', $member->companyLogo);
-
 
             $member->goals = $request->input('goals', $member->goals);
             $member->accomplishment = $request->input('accomplishment', $member->accomplishment);
@@ -407,7 +394,6 @@ class MemberController extends Controller
             $billing->bPinCode = $request->input('bPinCode', $billing->bPinCode);
             $billing->save();
 
-
             return redirect()->route('members.index')->with('success', 'Member Updated Successfully!');
         } catch (\Throwable $th) {
             // throw $th;
@@ -415,6 +401,7 @@ class MemberController extends Controller
                 $th,
                 request()->fullUrl()
             );
+
             return view('servererror');
         }
     }

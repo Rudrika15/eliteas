@@ -2,15 +2,14 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
+use App\Models\BusinessCategory;
 use App\Utils\ErrorLogger;
 use Illuminate\Http\Request;
-use App\Models\BusinessCategory;
-use App\Http\Controllers\Controller;
 
 class BusinessCategoryController extends Controller
 {
-
-    function __construct()
+    public function __construct()
     {
         // Applying middleware for managing business categories with specific permissions
         $this->middleware('permission:business-category-list', ['only' => ['index', 'show']]);
@@ -18,7 +17,6 @@ class BusinessCategoryController extends Controller
         $this->middleware('permission:business-category-edit', ['only' => ['edit', 'update']]);
         $this->middleware('permission:business-category-delete', ['only' => ['delete']]);
     }
-
 
     // public function index(Request $request)
     // {
@@ -38,10 +36,12 @@ class BusinessCategoryController extends Controller
                 ->withCount('members')
                 ->orderBy('categoryName', 'asc')
                 ->paginate(25);
+
             return view('admin.businesscategory.index', compact('businessCategory'));
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError($th, $request->fullUrl());
+
             return view('servererror');
         }
     }
@@ -63,9 +63,10 @@ class BusinessCategoryController extends Controller
     {
         try {
             $businessCategory = BusinessCategory::findOrFail($id);
+
             return response()->json($businessCategory);
         } catch (\Throwable $th) {
-            //throw $th;
+            // throw $th;
             ErrorLogger::logError(
                 $th,
                 $request->fullUrl()
@@ -79,6 +80,7 @@ class BusinessCategoryController extends Controller
     {
         try {
             $businessCategory = BusinessCategory::all();
+
             return view('admin.businesscategory.create', compact('businessCategory'));
         } catch (\Throwable $th) {
             // Log the error using the ErrorLogger utility
@@ -89,7 +91,6 @@ class BusinessCategoryController extends Controller
         }
     }
 
-
     public function store(Request $request)
     {
         $this->validate($request, [
@@ -98,14 +99,13 @@ class BusinessCategoryController extends Controller
         ]);
 
         try {
-            $businessCategory = new BusinessCategory();
+            $businessCategory = new BusinessCategory;
             $businessCategory->categoryName = $request->categoryName;
 
             if ($request->categoryIcon) {
-                $businessCategory->categoryIcon = time() . '.' . $request->categoryIcon->extension();
-                $request->categoryIcon->move(public_path('BusinessCategory'),  $businessCategory->categoryIcon);
+                $businessCategory->categoryIcon = time().'.'.$request->categoryIcon->extension();
+                $request->categoryIcon->move(public_path('BusinessCategory'), $businessCategory->categoryIcon);
             }
-
 
             // $businessCategory->categoryIcon = $request->categoryIcon;
 
@@ -116,19 +116,21 @@ class BusinessCategoryController extends Controller
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError($th, $request->fullUrl());
+
             return view('servererror');
         }
     }
-
 
     public function edit(Request $request, $id)
     {
         try {
             $businessCategory = BusinessCategory::find($id);
+
             return view('admin.businesscategory.edit', compact('businessCategory'));
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError($th, $request->fullUrl());
+
             return view('servererror');
         }
     }
@@ -137,25 +139,23 @@ class BusinessCategoryController extends Controller
     {
         $this->validate($request, [
             'id' => 'required|exists:business_categories,id',
-            'categoryName' => 'required|unique:business_categories,categoryName,' . $request->id, // Ensure the current record is excluded from the uniqueness check
+            'categoryName' => 'required|unique:business_categories,categoryName,'.$request->id, // Ensure the current record is excluded from the uniqueness check
             'categoryIcon' => 'nullable|file|image|max:2048',
         ]);
 
         try {
             $businessCategory = BusinessCategory::find($request->id);
 
-            if (!$businessCategory) {
+            if (! $businessCategory) {
                 return redirect()->route('bCategory.index')->with('error', 'Business Category not found.');
             }
 
             $businessCategory->categoryName = $request->categoryName;
 
-
             if ($request->categoryIcon) {
-                $businessCategory->categoryIcon = time() . '.' . $request->categoryIcon->extension();
-                $request->categoryIcon->move(public_path('BusinessCategory'),  $businessCategory->categoryIcon);
+                $businessCategory->categoryIcon = time().'.'.$request->categoryIcon->extension();
+                $request->categoryIcon->move(public_path('BusinessCategory'), $businessCategory->categoryIcon);
             }
-
 
             // $businessCategory->categoryIcon = $request->categoryIcon;
 
@@ -166,17 +166,17 @@ class BusinessCategoryController extends Controller
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError($th, $request->fullUrl());
+
             return redirect()->route('bCategory.index')->with('error', 'Failed to update Business Category details.');
         }
     }
-
 
     public function delete(Request $request, $id)
     {
         try {
             $businessCategory = BusinessCategory::find($id);
 
-            if (!$businessCategory) {
+            if (! $businessCategory) {
                 return redirect()->route('bCategory.index')->with('error', 'Business Category not found.');
             }
 

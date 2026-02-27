@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers\Api;
 
-use Carbon\Carbon;
-use App\Utils\Utils;
+use App\Http\Controllers\Controller;
 use App\Models\Razorpay;
 use App\Models\Training;
-use Illuminate\Http\Request;
-use App\Models\TrainerMaster;
 use App\Models\TrainingRegister;
-use App\Http\Controllers\Controller;
+use App\Utils\Utils;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
@@ -29,7 +28,6 @@ class TrainingController extends Controller
     //         return Utils::errorResponse($th->getMessage(), 'Internal Server Error', 500);
     //     }
     // }
-
 
     // public function index(Request $request)
     // {
@@ -55,7 +53,6 @@ class TrainingController extends Controller
     //     }
     // }
 
-
     public function index(Request $request)
     {
         try {
@@ -68,7 +65,7 @@ class TrainingController extends Controller
                     ->where('id', $id)
                     ->first();
 
-                if (!$training) {
+                if (! $training) {
                     return Utils::errorResponse('Training not found', 'Not Found', 404);
                 }
 
@@ -90,6 +87,7 @@ class TrainingController extends Controller
                         ->where('userId', $userId) // Adjust if needed
                         ->exists();
                     $training->setAttribute('is_registered', $isRegistered);
+
                     return $training;
                 });
 
@@ -99,12 +97,11 @@ class TrainingController extends Controller
         }
     }
 
-
-
     public function show(Request $request, $id)
     {
         try {
             $training = Training::with('trainer')->findOrFail($id);
+
             return Utils::sendResponse(['training' => $training], 'Training retrieved successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
@@ -123,7 +120,7 @@ class TrainingController extends Controller
         }
 
         try {
-            $training = new Training();
+            $training = new Training;
             $training->trainerId = $request->trainerId;
             $training->topic = $request->topic;
             $training->status = 'Active';
@@ -149,7 +146,7 @@ class TrainingController extends Controller
         try {
             $training = Training::find($id);
 
-            if (!$training) {
+            if (! $training) {
                 return Utils::errorResponse(['error' => 'Training not found.'], 'Not Found', 404);
             }
 
@@ -169,7 +166,7 @@ class TrainingController extends Controller
         try {
             $training = Training::find($id);
 
-            if (!$training) {
+            if (! $training) {
                 return Utils::errorResponse(['error' => 'Training not found.'], 'Not Found', 404);
             }
 
@@ -197,20 +194,19 @@ class TrainingController extends Controller
     //     }
     // }
 
-
     public function trainingRegister(Request $request)
     {
         try {
             $trainingId = $request->trainingId;
             $trainerId = $request->trainerId;
 
-            $register = new TrainingRegister();
+            $register = new TrainingRegister;
             $register->userId = Auth::user()->id;
             $register->trainingId = $trainingId;
             // $register->trainerId = $trainerId;
             $register->save();
 
-            $payment = new Razorpay();
+            $payment = new Razorpay;
             $payment->r_payment_id = $request->paymentId;
             $payment->user_email = Auth::user()->email;
             $payment->amount = $request->amount;
@@ -219,6 +215,7 @@ class TrainingController extends Controller
             return Utils::sendResponse([], 'Training Registered Successfully', 200);
         } catch (\Throwable $th) {
             throw $th;
+
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }

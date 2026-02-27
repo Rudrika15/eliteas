@@ -5,12 +5,12 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Mail\SupportTicketNotification;
 use App\Models\SupportTicket;
+use App\Utils\ErrorLogger;
 use App\Utils\Utils;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
-use App\Utils\ErrorLogger;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Validator;
 
 class SupportTicketController extends Controller
 {
@@ -24,6 +24,7 @@ class SupportTicketController extends Controller
             return Utils::sendResponse($tickets, 'Support tickets retrieved successfully.');
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, request()->fullUrl());
+
             return Utils::errorResponses($th->getMessage(), 'Internal Server Error', 500);
         }
     }
@@ -42,19 +43,19 @@ class SupportTicketController extends Controller
         }
 
         try {
-            $ticket = new SupportTicket();
+            $ticket = new SupportTicket;
             $ticket->userId = Auth::id();
             $ticket->subject = $request->subject;
             $ticket->description = $request->description;
-            $ticket->priority =  'Low';
+            $ticket->priority = 'Low';
             $ticket->status = 'Open';
 
             if ($request->hasFile('attachment')) {
                 $dir = public_path('support_attachments');
-                if (!is_dir($dir)) {
+                if (! is_dir($dir)) {
                     @mkdir($dir, 0775, true);
                 }
-                $fileName = time() . '_' . $request->attachment->getClientOriginalName();
+                $fileName = time().'_'.$request->attachment->getClientOriginalName();
                 $request->attachment->move($dir, $fileName);
                 $ticket->attachment = $fileName;
             }
@@ -70,16 +71,15 @@ class SupportTicketController extends Controller
             //     Mail::to($adminEmails)->queue(new SupportTicketNotification($ticket));
             // }
 
-
             // Send email to specific email ID
-        $adminEmail = 'care.ubncommunity@gmail.com';
+            $adminEmail = 'care.ubncommunity@gmail.com';
 
-        Mail::to($adminEmail)->queue(new SupportTicketNotification($ticket));
-
+            Mail::to($adminEmail)->queue(new SupportTicketNotification($ticket));
 
             return Utils::sendResponse($ticket, 'Ticket created successfully.');
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, request()->fullUrl());
+
             return Utils::errorResponses($th->getMessage(), 'Internal Server Error', 500);
         }
     }
@@ -89,13 +89,14 @@ class SupportTicketController extends Controller
         try {
             $ticket = SupportTicket::where('id', $id)->where('userId', Auth::id())->first();
 
-            if (!$ticket) {
+            if (! $ticket) {
                 return Utils::errorResponses('Ticket not found or unauthorized access', 'Ticket not found', 404);
             }
 
             return Utils::sendResponse($ticket, 'Ticket retrieved successfully.');
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, request()->fullUrl());
+
             return Utils::errorResponses($th->getMessage(), 'Internal Server Error', 500);
         }
     }
@@ -117,21 +118,21 @@ class SupportTicketController extends Controller
         try {
             $ticket = SupportTicket::where('id', $id)->where('userId', Auth::id())->first();
 
-            if (!$ticket) {
+            if (! $ticket) {
                 return Utils::errorResponses('Ticket not found or unauthorized access', 'Ticket not found', 404);
             }
 
             $ticket->subject = $request->subject;
             $ticket->description = $request->description;
-            $ticket->priority =  'Low';
+            $ticket->priority = 'Low';
             $ticket->status = 'Open';
 
             if ($request->hasFile('attachment')) {
                 $dir = public_path('support_attachments');
-                if (!is_dir($dir)) {
+                if (! is_dir($dir)) {
                     @mkdir($dir, 0775, true);
                 }
-                $fileName = time() . '_' . $request->attachment->getClientOriginalName();
+                $fileName = time().'_'.$request->attachment->getClientOriginalName();
                 $request->attachment->move($dir, $fileName);
                 $ticket->attachment = $fileName;
             }
@@ -141,6 +142,7 @@ class SupportTicketController extends Controller
             return Utils::sendResponse($ticket, 'Ticket updated successfully.');
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, request()->fullUrl());
+
             return Utils::errorResponses($th->getMessage(), 'Internal Server Error', 500);
         }
     }

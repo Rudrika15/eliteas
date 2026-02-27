@@ -2,18 +2,14 @@
 
 namespace App\Http\Controllers\Admin;
 
-
-use App\Utils\ErrorLogger;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use App\Models\CircleMeeting;
 use App\Models\MeetingInvitation;
-use Illuminate\Support\Facades\URL;
-use App\Http\Controllers\Controller;
+use App\Utils\ErrorLogger;
+use Illuminate\Http\Request;
 
 class CircleMeetingController extends Controller
 {
-
-
     public function __construct()
     {
         // Apply middleware for circle call-related permissions
@@ -24,13 +20,13 @@ class CircleMeetingController extends Controller
         $this->middleware('permission:invited-person-list', ['only' => ['invitedPersonList']]);
     }
 
-
     public function index(Request $request)
     {
         try {
             $circlemeeting = CircleMeeting::where('status', 'Active')
                 ->orderBy('id', 'DESC')
                 ->get();
+
             return view('admin.circlemeeting.index', compact('circlemeeting'));
         } catch (\Throwable $th) {
             // throw $th;
@@ -38,14 +34,17 @@ class CircleMeetingController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
-    //For show single data
+
+    // For show single data
     public function view(Request $request, $id)
     {
         try {
             $circlemeeting = CircleMeeting::findOrFail($id);
+
             return response()->json($circlemeeting);
         } catch (\Throwable $th) {
             // throw $th;
@@ -53,13 +52,16 @@ class CircleMeetingController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
+
     public function create(Request $request)
     {
         try {
             $circlemeeting = CircleMeeting::where('status', 'Active')->get();
+
             return view('admin.circlemeeting.create', compact('circlemeeting'));
         } catch (\Throwable $th) {
             // throw $th;
@@ -84,7 +86,7 @@ class CircleMeetingController extends Controller
             'hotelName' => 'required',
         ]);
         try {
-            $circlemeeting = new CircleMeeting();
+            $circlemeeting = new CircleMeeting;
             $circlemeeting->dateTime = $request->dateTime;
             $circlemeeting->totalMeeting = $request->totalMeeting;
             $circlemeeting->refGiven = $request->refGiven;
@@ -112,6 +114,7 @@ class CircleMeetingController extends Controller
     {
         try {
             $circlemeeting = CircleMeeting::find($id);
+
             return view('admin.circlemeeting.edit', compact('circlemeeting'));
         } catch (\Throwable $th) {
             // throw $th;
@@ -150,7 +153,6 @@ class CircleMeetingController extends Controller
 
             $circlemeeting->save();
 
-
             return redirect()->route('circlemeeting.index')->with('success', 'Circle Meeting Updated Successfully!');
         } catch (\Throwable $th) {
             // throw $th;
@@ -158,15 +160,16 @@ class CircleMeetingController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
 
-    function delete(Request $request, $id)
+    public function delete(Request $request, $id)
     {
         try {
             $circlemeeting = CircleMeeting::find($id);
-            $circlemeeting->status = "Deleted";
+            $circlemeeting->status = 'Deleted';
             $circlemeeting->save();
 
             return redirect()->route('circlemeeting.index')->with('success', 'Circle Meeting Deleted Successfully!');
@@ -176,6 +179,7 @@ class CircleMeetingController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
@@ -184,10 +188,12 @@ class CircleMeetingController extends Controller
     {
         try {
             $invitedPersonList = MeetingInvitation::all();
+
             return view('admin.circleMeeting.invitedPersonList', compact('invitedPersonList'));
         } catch (\Throwable $th) {
             throw $th;
             ErrorLogger::logError($th, $request->fullUrl());
+
             return view('servererror');
         }
     }

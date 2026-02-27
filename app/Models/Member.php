@@ -2,13 +2,8 @@
 
 namespace App\Models;
 
-use App\Models\User;
-use App\Models\TopsProfile;
-use App\Models\BillingAddress;
-use App\Models\ContactDetails;
-use App\Models\CircleCall;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Spatie\Permission\Models\Role;
 
 class Member extends Model

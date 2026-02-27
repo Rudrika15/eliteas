@@ -7,7 +7,6 @@ use Spatie\Permission\Models\Permission;
 
 class PermissionController extends Controller
 {
-
     public function __construct()
     {
         $this->middleware('permission:permission-index', ['only' => ['index', 'view']]);
@@ -22,6 +21,7 @@ class PermissionController extends Controller
     public function index()
     {
         $permissions = Permission::where('status', 'Active')->paginate(10);
+
         return view('admin.permission.index', compact('permissions'));
     }
 
@@ -38,7 +38,7 @@ class PermissionController extends Controller
      */
     public function store(Request $request)
     {
-        $permission = new Permission();
+        $permission = new Permission;
         $permission->name = $request->name;
         $permission->heading = $request->heading;
         $permission->status = 'Active';
@@ -62,6 +62,7 @@ class PermissionController extends Controller
     public function edit(string $id)
     {
         $permission = Permission::find($id);
+
         return view('admin.permission.edit', compact('permission'));
     }
 
@@ -77,6 +78,7 @@ class PermissionController extends Controller
         $permission->name = $request->name;
         $permission->heading = $request->heading;
         $permission->save();
+
         return redirect()->route('permission.index')->with('success', 'Permission updated successfully');
     }
 
@@ -89,6 +91,7 @@ class PermissionController extends Controller
         $permission->delete();
         $permission->status = 'Deleted';
         $permission->save();
+
         return redirect()->route('permission.index')->with('success', 'Permission deleted successfully');
     }
 }

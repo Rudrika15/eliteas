@@ -2,14 +2,11 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\City;
-use App\Models\Franchise;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Circle;
-use App\Models\CircleType;
-use Illuminate\Support\Facades\Validator;
 use App\Utils\Utils;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class CircleController extends Controller
 {
@@ -22,6 +19,7 @@ class CircleController extends Controller
                 ->where('status', 'Active')
                 ->orderBy('id', 'DESC')
                 ->get();
+
             return Utils::sendResponse(['circles' => $circles], 'Circles retrieved successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
@@ -32,6 +30,7 @@ class CircleController extends Controller
     {
         try {
             $circle = Circle::findOrFail($id);
+
             return Utils::sendResponse(['circle' => $circle], 'Circle retrieved successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
@@ -50,7 +49,7 @@ class CircleController extends Controller
             'numberOfMeetings' => 'required',
             // 'weekNo' => 'required|array', // Ensure weekNo is an array
             'start_date' => 'required',
-            'end_date' => 'required'
+            'end_date' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -58,7 +57,7 @@ class CircleController extends Controller
         }
 
         try {
-            $circle = new Circle();
+            $circle = new Circle;
             $circle->circleName = $request->circleName;
             $circle->franchiseId = $request->franchiseId;
             $circle->cityId = $request->cityId;
@@ -100,7 +99,7 @@ class CircleController extends Controller
         try {
             $circle = Circle::find($id);
 
-            if (!$circle) {
+            if (! $circle) {
                 return Utils::errorResponse(['error' => 'Circle not found.'], 'Not Found', 404);
             }
 
@@ -127,7 +126,7 @@ class CircleController extends Controller
         try {
             $circle = Circle::find($id);
 
-            if (!$circle) {
+            if (! $circle) {
                 return Utils::errorResponse(['error' => 'Circle not found.'], 'Not Found', 404);
             }
 

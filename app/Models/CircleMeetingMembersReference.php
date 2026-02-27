@@ -17,7 +17,7 @@ class CircleMeetingMembersReference extends Model
         'contactNo',
         'email',
         'scale',
-        'description'
+        'description',
     ];
 
     public function members()
@@ -29,7 +29,6 @@ class CircleMeetingMembersReference extends Model
     {
         return $this->belongsTo(User::class, 'referenceGiverId', 'id');
     }
-
 
     public function refGiver()
     {

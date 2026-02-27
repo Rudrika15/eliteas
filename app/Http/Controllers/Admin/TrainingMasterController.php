@@ -9,7 +9,6 @@ use Illuminate\Http\Request;
 
 class TrainingMasterController extends Controller
 {
-
     public function __construct()
     {
         // Apply middleware for circle type-related permissions
@@ -23,6 +22,7 @@ class TrainingMasterController extends Controller
     {
         try {
             $trainingMaster = TrainingMaster::where('status', 'Active')->paginate(10);
+
             return view('admin.trainingMaster.index', compact('trainingMaster'));
         } catch (\Throwable $th) {
             // throw $th;
@@ -30,6 +30,7 @@ class TrainingMasterController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
@@ -39,7 +40,7 @@ class TrainingMasterController extends Controller
         try {
             return view('admin.trainingMaster.create');
         } catch (\Throwable $th) {
-            //throe $th;
+            // throe $th;
             ErrorLogger::logError($th, $request->fullUrl());
 
             return view('servererror');
@@ -53,7 +54,7 @@ class TrainingMasterController extends Controller
         ]);
 
         try {
-            $trainingMaster = new TrainingMaster();
+            $trainingMaster = new TrainingMaster;
             $trainingMaster->trainingName = $request->trainingName;
             $trainingMaster->status = 'Active';
             $trainingMaster->save();
@@ -65,15 +66,16 @@ class TrainingMasterController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
-
 
     public function edit(Request $request, $id)
     {
         try {
             $trainingMaster = TrainingMaster::find($id);
+
             return view('admin.trainingMaster.edit', compact('trainingMaster'));
         } catch (\Throwable $th) {
             // throw $th;
@@ -81,6 +83,7 @@ class TrainingMasterController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
@@ -95,7 +98,7 @@ class TrainingMasterController extends Controller
         try {
             $trainingMaster = TrainingMaster::find($request->id);
 
-            if (!$trainingMaster) {
+            if (! $trainingMaster) {
                 return redirect()->route('trainingMaster.index')->with('error', 'Training not found.');
             }
 
@@ -105,19 +108,19 @@ class TrainingMasterController extends Controller
 
             return redirect()->route('trainingMaster.index')->with('success', 'Training updated successfully.');
         } catch (\Throwable $th) {
-            //throw $th;
+            // throw $th;
             ErrorLogger::logError($th, $request->fullUrl());
+
             return redirect()->route('trainingMaster.index')->with('error', 'Failed to update Training details.');
         }
     }
-
 
     public function delete(Request $request, $id)
     {
         try {
             $trainingMaster = TrainingMaster::find($id);
 
-            if (!$trainingMaster) {
+            if (! $trainingMaster) {
                 return redirect()->route('trainingMaster.index')->with('error', 'Training not found.');
             }
 
@@ -126,8 +129,9 @@ class TrainingMasterController extends Controller
 
             return redirect()->route('trainingMaster.index')->with('success', 'Training deleted successfully.');
         } catch (\Throwable $th) {
-            //throw $th;
+            // throw $th;
             ErrorLogger::logError($th, $request->fullUrl());
+
             return redirect()->route('trainingMaster.index')->with('error', 'Failed to delete Training.');
         }
     }

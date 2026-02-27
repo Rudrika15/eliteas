@@ -3,7 +3,6 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
@@ -18,13 +17,13 @@ class MeetingInvitation extends Mailable
     // public $invitedPersonLastName;
     // public $amount;
 
-
     /**
      * Create a new message instance.
      *
      * @return void
      */
     public $amount;
+
     public function __construct($data)
     {
         $this->data = $data;
@@ -45,7 +44,7 @@ class MeetingInvitation extends Mailable
 
         return $this
             ->subject('Meeting Invitation')
-            ->view('emails.invitation',['amount'=>$this->data['amount']]);
+            ->view('emails.invitation', ['amount' => $this->data['amount']]);
 
     }
 }

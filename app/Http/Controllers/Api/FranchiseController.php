@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Api;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Franchise;
-use Illuminate\Support\Facades\Validator;
 use App\Utils\Utils;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class FranchiseController extends Controller
 {
@@ -14,6 +14,7 @@ class FranchiseController extends Controller
     {
         try {
             $franchises = Franchise::where('status', 'Active')->get();
+
             return Utils::sendResponse(['franchises' => $franchises], 'Franchises retrieved successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
@@ -24,6 +25,7 @@ class FranchiseController extends Controller
     {
         try {
             $franchise = Franchise::findOrFail($id);
+
             return Utils::sendResponse(['franchise' => $franchise], 'Franchise retrieved successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => 'Franchise not found'], 'Not Found', 404);
@@ -42,7 +44,7 @@ class FranchiseController extends Controller
         }
 
         try {
-            $franchise = new Franchise();
+            $franchise = new Franchise;
             $franchise->franchiseName = $request->franchiseName;
             $franchise->franchiseContactDetails = $request->franchiseContactDetails;
             $franchise->status = 'Active';
@@ -68,7 +70,7 @@ class FranchiseController extends Controller
         try {
             $franchise = Franchise::find($id);
 
-            if (!$franchise) {
+            if (! $franchise) {
                 return Utils::errorResponse(['error' => 'Franchise not found.'], 'Not Found', 404);
             }
 
@@ -88,7 +90,7 @@ class FranchiseController extends Controller
         try {
             $franchise = Franchise::find($id);
 
-            if (!$franchise) {
+            if (! $franchise) {
                 return Utils::errorResponse(['error' => 'Franchise not found.'], 'Not Found', 404);
             }
 

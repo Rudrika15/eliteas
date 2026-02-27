@@ -5,16 +5,13 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Training;
 use App\Models\TrainingFeedback;
-use App\Models\TrainingMaster;
 use App\Models\TrainingRegister;
 use App\Utils\ErrorLogger;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class TrainingFeedbackController extends Controller
 {
-
     public function __construct()
     {
         // Apply middleware for circle type-related permissions
@@ -25,7 +22,6 @@ class TrainingFeedbackController extends Controller
         $this->middleware('permission:training-feedback-delete', ['only' => ['delete']]);
     }
 
-
     public function adminIndex(Request $request, $id)
     {
         try {
@@ -33,13 +29,14 @@ class TrainingFeedbackController extends Controller
             if ($trainingFeedback->isEmpty()) {
                 return redirect()->route('training.index')->with('error', 'No feedback found for this training.');
             }
+
             return view('admin.trainingFeedback.adminIndex', compact('trainingFeedback'));
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, $request->fullUrl());
+
             return view('servererror');
         }
     }
-
 
     public function index(Request $request)
     {
@@ -47,6 +44,7 @@ class TrainingFeedbackController extends Controller
 
             $user = auth()->user();
             $trainingFeedback = TrainingFeedback::where('status', 'Active')->where('userId', $user->id)->orderBy('id', 'desc')->paginate(10);
+
             return view('admin.trainingFeedback.adminIndex', compact('trainingFeedback'));
         } catch (\Throwable $th) {
             // throw $th;
@@ -54,6 +52,7 @@ class TrainingFeedbackController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
@@ -62,10 +61,12 @@ class TrainingFeedbackController extends Controller
     {
         try {
             $trainingFeedback = TrainingFeedback::where('trainingId', $id)->where('userId', Auth::user()->id)->where('status', 'Active')->get();
+
             return view('admin.trainingFeedback.create', compact('id', 'trainingFeedback'));
         } catch (\Throwable $th) {
-            //throe $th;
+            // throe $th;
             ErrorLogger::logError($th, $request->fullUrl());
+
             return view('servererror');
         }
     }
@@ -77,12 +78,13 @@ class TrainingFeedbackController extends Controller
         // ]);
 
         try {
-            $trainingFeedback = new TrainingFeedback();
+            $trainingFeedback = new TrainingFeedback;
             $trainingFeedback->trainingId = $request->trainingId;
             $trainingFeedback->userId = Auth::user()->id;
             $trainingFeedback->feedback = $request->feedback;
             $trainingFeedback->status = 'Active';
             $trainingFeedback->save();
+
             return redirect()->route('trainingFeedback.memberIndex')->with('success', 'Training Feedback Created Successfully!');
         } catch (\Throwable $th) {
             // throw $th;
@@ -90,15 +92,16 @@ class TrainingFeedbackController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
-
 
     public function edit(Request $request, $id)
     {
         try {
             $trainingFeedback = TrainingFeedback::find($id);
+
             return view('admin.trainingFeedback.edit', compact('trainingFeedback'));
         } catch (\Throwable $th) {
             // throw $th;
@@ -106,6 +109,7 @@ class TrainingFeedbackController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
@@ -136,13 +140,12 @@ class TrainingFeedbackController extends Controller
     //     }
     // }
 
-
     public function delete(Request $request, $id)
     {
         try {
             $trainingFeedback = TrainingFeedback::find($id);
 
-            if (!$trainingFeedback) {
+            if (! $trainingFeedback) {
                 return redirect()->route('trainingFeedback.index')->with('error', 'Training Feedback not found.');
             }
 
@@ -151,8 +154,9 @@ class TrainingFeedbackController extends Controller
 
             return redirect()->route('trainingFeedback.memberIndex')->with('success', 'Training Feedback deleted successfully.');
         } catch (\Throwable $th) {
-            //throw $th;
+            // throw $th;
             ErrorLogger::logError($th, $request->fullUrl());
+
             return redirect()->route('trainingFeedback.index')->with('error', 'Failed to delete Training Feedback.');
         }
     }
@@ -164,15 +168,12 @@ class TrainingFeedbackController extends Controller
     //         //     ->where('status', 'Active')
     //         //     ->get();
 
-
     //         $trainings = Training::where('trainingStatus', 'Publish')
     //             ->get();
 
     //         $findRegister = TrainingRegister::where('userId', Auth::user()->id)
     //             ->where('trainingId', $trainings->id)
     //             ->get();
-
-
 
     //         // $trainingIds = $trainingRegisters->pluck('trainingId');
 
@@ -188,8 +189,6 @@ class TrainingFeedbackController extends Controller
     //         return view('servererror');
     //     }
     // }
-
-
 
     public function memberIndex()
     {
@@ -209,11 +208,10 @@ class TrainingFeedbackController extends Controller
 
             $registeredTrainingIds = $findRegister->pluck('trainingId')->toArray();
 
-
             return view('admin.trainingFeedback.index', compact('trainings', 'findRegister', 'registeredTrainingIds'));
         } catch (\Throwable $th) {
             // Optional: log or rethrow the error
-            return back()->with('error', 'Something went wrong: ' . $th->getMessage());
+            return back()->with('error', 'Something went wrong: '.$th->getMessage());
         }
     }
 }

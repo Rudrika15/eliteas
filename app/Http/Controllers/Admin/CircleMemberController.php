@@ -2,47 +2,41 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Carbon\Carbon;
-use App\Models\City;
-use App\Models\User;
-use App\Models\State;
-use App\Models\Circle;
-use App\Models\Member;
-use App\Models\Country;
-use App\Models\Razorpay;
-use App\Models\CircleCall;
-use App\Models\Connection;
-use App\Utils\ErrorLogger;
-use App\Models\AllPayments;
-use App\Models\TopsProfile;
-use Illuminate\Support\Str;
-use App\Models\CircleMember;
-use Illuminate\Http\Request;
-use App\Models\BillingAddress;
-use App\Models\ContactDetails;
-use App\Models\MembershipType;
-use App\Mail\MemberSubscription;
-use App\Mail\WelcomeMemberEmail;
-use App\Models\BusinessCategory;
-use Illuminate\Support\Facades\DB;
-use Spatie\Permission\Models\Role;
-use App\Models\MemberSubscriptions;
-use Illuminate\Support\Facades\URL;
 use App\Exports\CircleMembersExport;
 use App\Http\Controllers\Controller;
+use App\Mail\MemberSubscription;
+use App\Mail\MemberSubscriptionDiscount;
+use App\Models\AllPayments;
+use App\Models\BillingAddress;
+use App\Models\BusinessCategory;
+use App\Models\Circle;
+use App\Models\circleAdmin;
+use App\Models\CircleCall;
+use App\Models\CircleMeetingMembersBusiness;
+use App\Models\CircleMeetingMembersReference;
+use App\Models\CircleMember;
+use App\Models\City;
+use App\Models\Connection;
+use App\Models\ContactDetails;
+use App\Models\Country;
+use App\Models\Member;
+use App\Models\MembershipType;
+use App\Models\MemberSubscriptions;
+use App\Models\Razorpay;
+use App\Models\State;
+use App\Models\TopsProfile;
+use App\Models\User;
+use App\Utils\ErrorLogger;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
-use Illuminate\Support\Facades\Crypt;
-use App\Mail\MemberSubscriptionDiscount;
-use App\Models\circleAdmin;
-use App\Models\CircleMeetingMembersBusiness;
-use App\Models\CircleMeetingMembersReference;
-use Illuminate\Support\Facades\Auth;
+use Spatie\Permission\Models\Role;
 
 class CircleMemberController extends Controller
 {
-
     public function __construct()
     {
         // Apply middleware for circle member-related permissions
@@ -87,9 +81,6 @@ class CircleMemberController extends Controller
 
         return response()->json(['data' => $data, 'roles' => $roles]);
     }
-
-
-
 
     // public function index(Request $request)
     // {
@@ -149,7 +140,6 @@ class CircleMemberController extends Controller
                 $memberQuery->where('membershipType', $request->membershipType);
             }
 
-
             // ✅ Global Search Filter
             if ($request->filled('search')) {
                 $search = $request->search;
@@ -178,10 +168,10 @@ class CircleMemberController extends Controller
             return view('admin.circlemember.index', compact('member', 'roles', 'circle', 'bCategory', 'membershipType'));
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, $request->fullUrl());
+
             return view('servererror');
         }
     }
-
 
     // public function deletedMemberList(Request $request)
     // {
@@ -206,7 +196,6 @@ class CircleMemberController extends Controller
     //         return view('servererror');
     //     }
     // }
-
 
     public function deletedMemberList(Request $request)
     {
@@ -236,11 +225,10 @@ class CircleMemberController extends Controller
             return view('admin.circlemember.restoreIndex', compact('member', 'circle', 'bCategory', 'membershipType'));
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, $request->fullUrl());
+
             return view('servererror');
         }
     }
-
-
 
     public function induction($id)
     {
@@ -248,10 +236,10 @@ class CircleMemberController extends Controller
             return view('admin.circlemember.index', compact('memberInduction'));
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, request()->fullUrl());
+
             return view('servererror');
         }
     }
-
 
     public function assignCircle(Request $request)
     {
@@ -259,7 +247,7 @@ class CircleMemberController extends Controller
         try {
             $member = Member::where('id', $request->memberId)->first();
 
-            $circleAdmin = new circleAdmin();
+            $circleAdmin = new circleAdmin;
             $circleAdmin->memberId = $member->id;
             $circleAdmin->circleId = $request->circleId;
             $circleAdmin->save();
@@ -309,8 +297,7 @@ class CircleMemberController extends Controller
     //     }
     // }
 
-
-    //filter data
+    // filter data
     public function filter(Request $request)
     {
         $circleId = $request->get('circleId');
@@ -336,13 +323,12 @@ class CircleMemberController extends Controller
         return response()->json($members);
     }
 
-
-
-    //For show single data
+    // For show single data
     public function view(Request $request, $id)
     {
         try {
             $circlemember = Member::findOrFail($id);
+
             return response()->json($circlemember);
         } catch (\Throwable $th) {
             // throw $th;
@@ -350,6 +336,7 @@ class CircleMemberController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
@@ -358,20 +345,19 @@ class CircleMemberController extends Controller
     {
         $memberId = $request->input('memberId');
 
-        if (!$memberId) {
+        if (! $memberId) {
             return response()->json(['error' => 'Member ID is required'], 400);
         }
 
         // Fetch the member and associated circle
         $member = Member::with('circle')->find($memberId);
 
-        if (!$member || !$member->circle) {
+        if (! $member || ! $member->circle) {
             return response()->json(['error' => 'Circle not found'], 404);
         }
 
         return response()->json(['circleName' => $member->circle->circleName]);
     }
-
 
     public function create(Request $request)
     {
@@ -400,6 +386,7 @@ class CircleMemberController extends Controller
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError($th, $request->fullUrl());
+
             return view('servererror');
         }
     }
@@ -457,13 +444,12 @@ class CircleMemberController extends Controller
                     'lastName' => $user->lastName,
                     'email' => $user->email,
                     'contactNo' => $user->contactNo,
-                    'password' => $rowPassword
+                    'password' => $rowPassword,
                 ]),
                 CURLOPT_HTTPHEADER => [
-                    'Content-Type: application/x-www-form-urlencoded'
+                    'Content-Type: application/x-www-form-urlencoded',
                 ],
             ]);
-
 
             // Execute and handle response
             $response = curl_exec($curl);
@@ -478,11 +464,15 @@ class CircleMemberController extends Controller
             // Close cURL session
             curl_close($curl);
 
-
             // Create and save the member
-            $member = new Member();
+            $member = new Member;
             $member->createdBy = Auth::user()->id;
             $member->circleId = $request->circleIds;
+
+            // Fetch cityId from the selected circle
+            $circle = Circle::find($request->circleIds);
+            $member->cityId = $circle ? $circle->cityId : null;
+
             $member->sponsoredBy = $request->memberId;
             $member->userId = $user->id;
             $member->title = $request->title;
@@ -510,7 +500,6 @@ class CircleMemberController extends Controller
             //     ->where('userId', '!=', $member->userId) // Exclude the current member
             //     ->get();
 
-
             // foreach ($matchedMembers as $matchedMember) {
             //     // Create new connection entries
             //     $connection = new Connection;
@@ -528,20 +517,20 @@ class CircleMemberController extends Controller
             // }
 
             // Create and save TopsProfile
-            $tops = new TopsProfile();
+            $tops = new TopsProfile;
             $tops->memberId = $member->id;
             $tops->status = 'Active';
             $tops->save();
 
             // Create and save ContactDetails
-            $contact = new ContactDetails();
+            $contact = new ContactDetails;
             $contact->memberId = $member->id;
             $contact->mobileNo = $request->mobileNo;
             $contact->status = 'Active';
             $contact->save();
 
             // Create and save BillingAddress
-            $billing = new BillingAddress();
+            $billing = new BillingAddress;
             $billing->memberId = $member->id;
             $billing->status = 'Active';
             $billing->save();
@@ -551,7 +540,7 @@ class CircleMemberController extends Controller
 
             // return $member->membershipType;
             // Create and save MemberSubscriptions
-            $payment = new MemberSubscriptions();
+            $payment = new MemberSubscriptions;
             $payment->userId = $user->id;
             $payment->paymentId = $paymentId;
             $payment->membershipType = $member->membershipType;
@@ -571,8 +560,7 @@ class CircleMemberController extends Controller
             $payment->status = 'Active';
             $payment->save();
 
-
-            $allPayments = new AllPayments();
+            $allPayments = new AllPayments;
             $allPayments->memberId = $member->userId;
             $allPayments->amount = $member->membershipAmount;
             $allPayments->paymentType = 'Offline'; // Assume RazorPay for this example
@@ -580,7 +568,6 @@ class CircleMemberController extends Controller
             $allPayments->paymentMode = 'Membership Subscription';
             $allPayments->remarks = 'Payment Mode is Offline';
             $allPayments->save();
-
 
             $amount = $member->membershipAmount;
 
@@ -609,10 +596,10 @@ class CircleMemberController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
-
 
     public function memberPayment($paymentData)
     {
@@ -622,13 +609,12 @@ class CircleMemberController extends Controller
             abort(404);
         }
 
-        if (!$data) {
+        if (! $data) {
             abort(404);
         }
 
         return view('admin.memberPayment', compact('data'));
     }
-
 
     public function getMembershipAmount(Request $request)
     {
@@ -641,9 +627,6 @@ class CircleMemberController extends Controller
             return response()->json(['amount' => '']);
         }
     }
-
-
-
 
     public function edit(Request $request, $id)
     {
@@ -674,10 +657,10 @@ class CircleMemberController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
-
 
     public function update(Request $request)
     {
@@ -722,7 +705,7 @@ class CircleMemberController extends Controller
 
             if ($request->hasFile('profilePhoto')) {
                 $profilePhoto = $request->file('profilePhoto');
-                $profilePhotoName = time() . '.' . $profilePhoto->extension();
+                $profilePhotoName = time().'.'.$profilePhoto->extension();
                 $profilePhoto->move(public_path('ProfilePhoto'), $profilePhotoName);
                 $member->profilePhoto = $profilePhotoName;
             }
@@ -730,12 +713,12 @@ class CircleMemberController extends Controller
             // CompanyLogo upload
             if ($request->hasFile('companyLogo')) {
                 $companyLogo = $request->file('companyLogo');
-                $companyLogoName = time() . '.' . $companyLogo->extension();
+                $companyLogoName = time().'.'.$companyLogo->extension();
                 $companyLogo->move(public_path('CompanyLogo'), $companyLogoName);
                 $member->companyLogo = $companyLogoName;
             }
 
-            $member->goals =  $request->has('goals') ? $request->goals : $member->goals;
+            $member->goals = $request->has('goals') ? $request->goals : $member->goals;
             $member->chapter = $request->has('chapter') ? $request->chapter : $member->chapter;
             $member->renewalDueDate = $request->has('renewalDueDate') ? $request->renewalDueDate : $member->renewalDueDate;
             $member->accomplishment = $request->has('accomplishment') ? $request->accomplishment : $member->accomplishment;
@@ -830,7 +813,6 @@ class CircleMemberController extends Controller
             $user->contactNo = $request->has('contactNo') ? $request->contactNo : $user->contactNo;
             $user->save();
 
-
             return redirect()->route('circlemember.index')->with('success', 'Member Updated Successfully!');
         } catch (\Throwable $th) {
             // throw $th;
@@ -838,10 +820,10 @@ class CircleMemberController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
-
 
     public function delete(Request $request, $id)
     {
@@ -849,42 +831,42 @@ class CircleMemberController extends Controller
         try {
             $circlemember = Member::find($id);
             $user = User::find($circlemember->userId);
-            $circlemember->status = "Deleted";
-            $user->status = "Deleted";
+            $circlemember->status = 'Deleted';
+            $user->status = 'Deleted';
             $circlemember->save();
             $user->save();
 
             // Update other tables also
             $contact = ContactDetails::where('memberId', $id)->first();
-            $contact->status = "Deleted";
+            $contact->status = 'Deleted';
             $contact->save();
 
             $billing = BillingAddress::where('memberId', $id)->first();
-            $billing->status = "Deleted";
+            $billing->status = 'Deleted';
             $billing->save();
 
             $tops = TopsProfile::where('memberId', $id)->first();
-            $tops->status = "Deleted";
+            $tops->status = 'Deleted';
             $tops->save();
 
             // Fetch and update CircleCall records
             $circleCalls = CircleCall::where('memberId', $circlemember->userId)->get();
             foreach ($circleCalls as $circleCall) {
-                $circleCall->status = "Deleted";
+                $circleCall->status = 'Deleted';
                 $circleCall->save();
             }
 
             // Fetch and update CircleMeetingMembersBusiness records
             $businessSlips = CircleMeetingMembersBusiness::where('businessGiverId', $circlemember->userId)->get();
             foreach ($businessSlips as $businessSlip) {
-                $businessSlip->status = "Deleted";
+                $businessSlip->status = 'Deleted';
                 $businessSlip->save();
             }
 
             // Fetch and update CircleMeetingMembersReference records
             $businessReferences = CircleMeetingMembersReference::where('memberId', $circlemember->userId)->get();
             foreach ($businessReferences as $businessReference) {
-                $businessReference->status = "Deleted";
+                $businessReference->status = 'Deleted';
                 $businessReference->save();
             }
 
@@ -892,7 +874,7 @@ class CircleMemberController extends Controller
                 ->orWhere('userId', $circlemember->userId)
                 ->get();
             foreach ($connection as $conn) {
-                $conn->recordStatus = "Deleted";
+                $conn->recordStatus = 'Deleted';
                 $conn->save();
             }
 
@@ -903,6 +885,7 @@ class CircleMemberController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
@@ -913,42 +896,42 @@ class CircleMemberController extends Controller
         try {
             $circlemember = Member::find($id);
             $user = User::find($circlemember->userId);
-            $circlemember->status = "Active";
-            $user->status = "Active";
+            $circlemember->status = 'Active';
+            $user->status = 'Active';
             $circlemember->save();
             $user->save();
 
             // Update other tables also
             $contact = ContactDetails::where('memberId', $id)->first();
-            $contact->status = "Active";
+            $contact->status = 'Active';
             $contact->save();
 
             $billing = BillingAddress::where('memberId', $id)->first();
-            $billing->status = "Active";
+            $billing->status = 'Active';
             $billing->save();
 
             $tops = TopsProfile::where('memberId', $id)->first();
-            $tops->status = "Active";
+            $tops->status = 'Active';
             $tops->save();
 
             // Fetch and update CircleCall records
             $circleCalls = CircleCall::where('memberId', $circlemember->userId)->get();
             foreach ($circleCalls as $circleCall) {
-                $circleCall->status = "Active";
+                $circleCall->status = 'Active';
                 $circleCall->save();
             }
 
             // Fetch and update CircleMeetingMembersBusiness records
             $businessSlips = CircleMeetingMembersBusiness::where('businessGiverId', $circlemember->userId)->get();
             foreach ($businessSlips as $businessSlip) {
-                $businessSlip->status = "Active";
+                $businessSlip->status = 'Active';
                 $businessSlip->save();
             }
 
             // Fetch and update CircleMeetingMembersReference records
             $businessReferences = CircleMeetingMembersReference::where('memberId', $circlemember->userId)->get();
             foreach ($businessReferences as $businessReference) {
-                $businessReference->status = "Active";
+                $businessReference->status = 'Active';
                 $businessReference->save();
             }
 
@@ -956,7 +939,7 @@ class CircleMemberController extends Controller
                 ->orWhere('userId', $circlemember->userId)
                 ->get();
             foreach ($connection as $conn) {
-                $conn->recordStatus = "Active";
+                $conn->recordStatus = 'Active';
                 $conn->save();
             }
 
@@ -967,6 +950,7 @@ class CircleMemberController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
@@ -977,6 +961,7 @@ class CircleMemberController extends Controller
             $circlecall = CircleCall::where('status', 'Active')
                 ->where('memberId', 'userId')
                 ->paginate(10);
+
             return view('admin.circlemember.activity', compact('circlecall'));
         } catch (\Throwable $th) {
             // throw $th;
@@ -984,6 +969,7 @@ class CircleMemberController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
@@ -1050,7 +1036,6 @@ class CircleMemberController extends Controller
             return redirect()->back()->with('error', 'Failed to remove role.');
         }
     }
-
 
     public function export(Request $request)
     {

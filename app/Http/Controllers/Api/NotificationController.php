@@ -14,9 +14,11 @@ class NotificationController extends Controller
     {
         try {
             $notification = Notifications::get();
+
             return Utils::sendResponse(['notification' => $notification], 'Notification Data retrieved successfully', 200);
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, request()->fullUrl());
+
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }

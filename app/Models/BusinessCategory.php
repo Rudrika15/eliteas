@@ -11,7 +11,7 @@ class BusinessCategory extends Model
 
     protected $fillable = [
         'categoryName',
-        'categoryIcon'
+        'categoryIcon',
     ];
 
     public function member()
@@ -23,5 +23,4 @@ class BusinessCategory extends Model
     {
         return $this->hasMany(Member::class, 'businessCategoryId', 'id');
     }
-    
 }

@@ -36,7 +36,6 @@ class DigitalMemberController extends Controller
         }
     }
 
-
     public function digitalMemberSearch(Request $request)
     {
         try {
@@ -54,10 +53,10 @@ class DigitalMemberController extends Controller
                         ->whereNull('circleId')
                         ->whereNotNull('cityId')
                         ->where(function ($q) use ($find) {
-                            $q->where('firstName', 'like', '%' . $find . '%')
-                                ->orWhere('lastName', 'like', '%' . $find . '%')
+                            $q->where('firstName', 'like', '%'.$find.'%')
+                                ->orWhere('lastName', 'like', '%'.$find.'%')
                                 ->orWhereHas('city', function ($cityQuery) use ($find) {
-                                    $cityQuery->where('cityName', 'like', '%' . $find . '%');
+                                    $cityQuery->where('cityName', 'like', '%'.$find.'%');
                                 });
                         });
                 })
@@ -70,7 +69,7 @@ class DigitalMemberController extends Controller
                     'member.bCategory:id,categoryName',
                     'member.connections' => function ($q) use ($authUserId) {
                         $q->where('userId', $authUserId);
-                    }
+                    },
                 ])
                 ->get();
 
@@ -78,9 +77,10 @@ class DigitalMemberController extends Controller
             foreach ($members as $user) {
                 $member = $user->member;
 
-                if (!$member) {
+                if (! $member) {
                     $user->connection_status = 'Not Connected';
                     $user->induction_count = 0;
+
                     continue;
                 }
 
@@ -106,11 +106,11 @@ class DigitalMemberController extends Controller
 
             return Utils::sendResponse([
                 'message' => $message,
-                'members' => $members
+                'members' => $members,
             ], 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse([
-                'error' => $th->getMessage()
+                'error' => $th->getMessage(),
             ], 'Internal Server Error', 500);
         }
     }
@@ -229,7 +229,7 @@ class DigitalMemberController extends Controller
                 ->pluck('total_amount', 'members.cityId');
 
             // Case 1: No City ID -> Return all Cities (Without Member Data)
-            if (!$cityId) {
+            if (! $cityId) {
                 $cities = City::where('status', 'Active')
                     ->withCount(['members' => function ($query) {
                         $query->where('status', 'Active');
@@ -247,7 +247,7 @@ class DigitalMemberController extends Controller
             }
 
             // Case 2: City ID provided -> Check for Landmark
-            if (!$landmarkName) {
+            if (! $landmarkName) {
                 $city = City::findOrFail($cityId);
                 $landmarks = Landmark::where('cityId', $cityId)
                     ->where('status', 'Active')
@@ -258,7 +258,7 @@ class DigitalMemberController extends Controller
                 return response()->json([
                     'success' => true,
                     'city' => $city,
-                    'landmarks' => $landmarks
+                    'landmarks' => $landmarks,
                 ]);
             }
 
@@ -280,13 +280,13 @@ class DigitalMemberController extends Controller
                         ->where('landmark', $landmarkName)
                         ->with([
                             'bCategory:id,categoryName',
-                            'user:id,email,contactNo'
+                            'user:id,email,contactNo',
                         ])
                         ->withCount('sponsees as induction_count')
                         ->withSum(['businessReceived as businessAmount' => function ($q) {
                             $q->where('status', 'Active');
                         }], 'amount');
-                }
+                },
             ])->findOrFail($cityId);
 
             $city->totalBusinessAmount = (float) ($cityBusinessTotals[$cityId] ?? 0);
@@ -309,7 +309,7 @@ class DigitalMemberController extends Controller
             ErrorLogger::logError($th, request()->fullUrl());
             Log::error('Error in getCityLandmarkMembers', [
                 'message' => $th->getMessage(),
-                'trace' => $th->getTraceAsString()
+                'trace' => $th->getTraceAsString(),
             ]);
 
             return response()->json([
@@ -336,14 +336,14 @@ class DigitalMemberController extends Controller
                         $query->where('status', 'Active')
                             ->with([
                                 'bCategory:id,categoryName',
-                                'user:id,email,contactNo'
+                                'user:id,email,contactNo',
                             ]);
 
                         // Apply landmark filter if provided
-                        if (!empty($landmark)) {
+                        if (! empty($landmark)) {
                             $query->where('landmark', $landmark);
                         }
-                    }
+                    },
                 ])->findOrFail($id);
 
                 // Fetch available landmarks for this city
@@ -395,9 +395,9 @@ class DigitalMemberController extends Controller
                         $query->where('status', 'Active')
                             ->with([
                                 'bCategory:id,categoryName',
-                                'user:id,email,contactNo'
+                                'user:id,email,contactNo',
                             ]);
-                    }
+                    },
                 ])
                 ->withCount(['members' => function ($query) {
                     $query->where('status', 'Active');
@@ -445,7 +445,7 @@ class DigitalMemberController extends Controller
             ErrorLogger::logError($th, request()->fullUrl());
             Log::error('Error in getCityMembers', [
                 'message' => $th->getMessage(),
-                'trace' => $th->getTraceAsString()
+                'trace' => $th->getTraceAsString(),
             ]);
 
             return response()->json([
@@ -455,14 +455,13 @@ class DigitalMemberController extends Controller
         }
     }
 
-
     public function getCityMemberCount()
     {
         try {
             $cities = City::withCount([
                 'members as member_count' => function ($query) {
                     $query->where('status', 'Active');
-                }
+                },
             ])
                 ->whereHas('members', function ($q) {
                     $q->where('status', 'Active');
@@ -471,21 +470,19 @@ class DigitalMemberController extends Controller
 
             return response()->json([
                 'success' => true,
-                'data' => $cities
+                'data' => $cities,
             ]);
         } catch (\Throwable $th) {
             Log::error('City Member Count Error', [
-                'message' => $th->getMessage()
+                'message' => $th->getMessage(),
             ]);
 
             return response()->json([
                 'success' => false,
-                'error' => 'Something went wrong'
+                'error' => 'Something went wrong',
             ], 500);
         }
     }
-
-
 
     // ibm module apis
 
@@ -496,24 +493,24 @@ class DigitalMemberController extends Controller
 
             $member = Member::where('userId', $userId)->first();
 
-            if (!$member) {
+            if (! $member) {
                 return Utils::errorResponse(['error' => 'Member not found for the authenticated user'], 'Not Found', 404);
             }
 
             $circleCalls = CircleCall::with([
-                'meetingPerson' // 👈 only this — removed 'meetingPerson.circle'
+                'meetingPerson', // 👈 only this — removed 'meetingPerson.circle'
             ])
                 ->where('memberId', $userId)
                 ->where('status', 'Active')
                 ->orderBy('id', 'DESC')
                 ->get();
 
-
             // Add induction count to each meetingPerson
             $circleCalls->transform(function ($call) {
                 if ($call->meetingPerson) {
                     $call->meetingPerson->induction_count = Member::where('sponsoredBy', $call->meetingPerson->id)->count() ?? 0;
                 }
+
                 return $call;
             });
 
@@ -543,17 +540,17 @@ class DigitalMemberController extends Controller
             $memberId = Auth::user()->id;
             $member = Member::where('userId', $memberId)->first();
 
-            if (!$member) {
+            if (! $member) {
                 return Utils::errorResponse(['error' => 'Member not found for the authenticated user'], 'Not Found', 404);
             }
 
-            $circleCall = new CircleCall();
+            $circleCall = new CircleCall;
             $circleCall->memberId = $memberId;
             $circleCall->meetingPersonId = $request->input('meetingPersonId');
             $circleCall->meetingPlace = $request->input('meetingPlace');
 
             if ($request->meetingImage) {
-                $circleCall->meetingImage = time() . '.' . $request->meetingImage->extension();
+                $circleCall->meetingImage = time().'.'.$request->meetingImage->extension();
                 $request->meetingImage->move(public_path('meetingImage'), $circleCall->meetingImage);
             }
 
@@ -569,7 +566,7 @@ class DigitalMemberController extends Controller
             if ($user && $user->fcm_token) {
                 $title = 'IBM';
                 $sender = Auth::user();
-                $body = $sender->firstName . ' ' . $sender->lastName . ' has Created IBM with you.';
+                $body = $sender->firstName.' '.$sender->lastName.' has Created IBM with you.';
 
                 $serviceAccountPath = storage_path('app/public/ubn_notification.json');
                 $factory = (new Factory)->withServiceAccount($serviceAccountPath);
@@ -580,16 +577,16 @@ class DigitalMemberController extends Controller
 
                 try {
                     $messaging->send($message);
-                    Log::info('Notification sent to token: ' . $user->fcm_token);
+                    Log::info('Notification sent to token: '.$user->fcm_token);
                 } catch (\Kreait\Firebase\Exception\Messaging\NotFound $e) {
-                    Log::error('Token not found: ' . $user->fcm_token);
+                    Log::error('Token not found: '.$user->fcm_token);
                 } catch (\Kreait\Firebase\Exception\Messaging\InvalidArgument $e) {
-                    Log::error('Invalid argument error with token: ' . $user->fcm_token);
+                    Log::error('Invalid argument error with token: '.$user->fcm_token);
                 } catch (\Exception $e) {
-                    Log::error('General error sending to token: ' . $user->fcm_token . '. Error: ' . $e->getMessage());
+                    Log::error('General error sending to token: '.$user->fcm_token.'. Error: '.$e->getMessage());
                 }
             } else {
-                Log::error('No FCM token found for user ID: ' . $meetingPersonId);
+                Log::error('No FCM token found for user ID: '.$meetingPersonId);
             }
 
             return Utils::sendResponse(['circleCall' => $circleCall], 'City Call Created Successfully!', 201);
@@ -619,13 +616,13 @@ class DigitalMemberController extends Controller
             $memberId = Auth::user()->id;
             $member = Member::where('userId', $memberId)->with('circle')->first();
 
-            if (!$member) {
+            if (! $member) {
                 return Utils::errorResponse(['error' => 'Member not found for the authenticated user'], 'Not Found', 404);
             }
 
             $circleCall = CircleCall::find($id);
 
-            if (!$circleCall) {
+            if (! $circleCall) {
                 return Utils::errorResponse(['error' => 'Circle Call not found'], 'Not Found', 404);
             }
 
@@ -637,7 +634,7 @@ class DigitalMemberController extends Controller
             $circleCall->meetingPlace = $request->input('meetingPlace');
 
             if ($request->meetingImage) {
-                $circleCall->meetingImage = time() . '.' . $request->meetingImage->extension();
+                $circleCall->meetingImage = time().'.'.$request->meetingImage->extension();
                 $request->meetingImage->move(public_path('meetingImage'), $circleCall->meetingImage);
             }
 
@@ -657,13 +654,13 @@ class DigitalMemberController extends Controller
             $memberId = Auth::user()->id;
             $member = Member::where('userId', $memberId)->first();
 
-            if (!$member) {
+            if (! $member) {
                 return Utils::errorResponse(['error' => 'Member not found for the authenticated user'], 'Not Found', 404);
             }
 
             $circleCall = CircleCall::find($id);
 
-            if (!$circleCall) {
+            if (! $circleCall) {
                 return Utils::errorResponse(['error' => 'IBM not found'], 'Not Found', 404);
             }
 
@@ -671,7 +668,7 @@ class DigitalMemberController extends Controller
                 return Utils::errorResponse(['error' => 'Unauthorized'], 'Unauthorized', 403);
             }
 
-            $circleCall->status = "Deleted";
+            $circleCall->status = 'Deleted';
             $circleCall->save();
 
             return Utils::sendResponse([], 'IBM Deleted Successfully!', 200);
@@ -680,7 +677,6 @@ class DigitalMemberController extends Controller
         }
     }
 
-
     public function recievedDigitalBusinessMeet(Request $request)
     {
         try {
@@ -688,14 +684,14 @@ class DigitalMemberController extends Controller
 
             $member = Member::where('userId', $userId)->first();
 
-            if (!$member) {
+            if (! $member) {
                 return Utils::errorResponse(['error' => 'Member not found for the authenticated user'], 'Not Found', 404);
             }
 
             $callWith = CircleCall::with([
                 'member.city' => function ($query) {
                     $query->select('id', 'cityName');
-                }
+                },
             ])
                 ->where('meetingPersonId', $userId)
                 ->where('status', 'Active')
@@ -707,6 +703,7 @@ class DigitalMemberController extends Controller
                 if ($call->member) {
                     $call->member->induction_count = Member::where('sponsoredBy', $call->member->id)->count() ?? 0;
                 }
+
                 return $call;
             });
 
@@ -715,7 +712,6 @@ class DigitalMemberController extends Controller
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
-
 
     public function recievedBusDigital(Request $request)
     {
@@ -726,7 +722,7 @@ class DigitalMemberController extends Controller
                     $q->select('id', 'userId', 'sponsoredBy', 'profilePhoto', 'cityId');
                 },
                 'loginMember.member.city:id,cityName', // city instead of circle
-                'businessAmounts'
+                'businessAmounts',
             ])
                 ->where('businessGiverId', Auth::user()->id)
                 ->where('status', 'Active')
@@ -739,6 +735,7 @@ class DigitalMemberController extends Controller
                     $member = $item->loginMember->member;
                     $member->induction_count = Member::where('sponsoredBy', $member->id)->count() ?? 0;
                 }
+
                 return $item;
             });
 
@@ -748,14 +745,13 @@ class DigitalMemberController extends Controller
         }
     }
 
-
     public function refBusCreateDigital(Request $request)
     {
         $this->validate($request, []);
 
         try {
             // Save reference giver
-            $refGiver = new CircleMeetingMembersReference();
+            $refGiver = new CircleMeetingMembersReference;
             $refGiver->referenceGiverId = Auth::user()->id;
             $refGiver->memberId = $request->memberId;
             $refGiver->contactName = $request->contactNameExternal;
@@ -767,7 +763,7 @@ class DigitalMemberController extends Controller
             $refGiver->save();
 
             // Save business giver
-            $busGiver = new CircleMeetingMembersBusiness();
+            $busGiver = new CircleMeetingMembersBusiness;
             $busGiver->businessGiverId = Auth::user()->id;
             $busGiver->loginMemberId = $refGiver->memberId;
             $busGiver->amount = $request->amount;
@@ -782,7 +778,7 @@ class DigitalMemberController extends Controller
 
             if ($user && $user->fcm_token) {
                 $title = 'Reference';
-                $body = 'A new reference has been created for you by ' . Auth::user()->firstName . ' ' . Auth::user()->lastName . '.';
+                $body = 'A new reference has been created for you by '.Auth::user()->firstName.' '.Auth::user()->lastName.'.';
 
                 $serviceAccountPath = storage_path('app/public/ubn_notification.json');
                 $factory = (new Factory)->withServiceAccount($serviceAccountPath);
@@ -793,16 +789,16 @@ class DigitalMemberController extends Controller
 
                 try {
                     $messaging->send($message);
-                    Log::info('Notification sent to token: ' . $user->fcm_token);
+                    Log::info('Notification sent to token: '.$user->fcm_token);
                 } catch (\Kreait\Firebase\Exception\Messaging\NotFound $e) {
-                    Log::error('Token not found: ' . $user->fcm_token);
+                    Log::error('Token not found: '.$user->fcm_token);
                 } catch (\Kreait\Firebase\Exception\Messaging\InvalidArgument $e) {
-                    Log::error('Invalid argument error with token: ' . $user->fcm_token);
+                    Log::error('Invalid argument error with token: '.$user->fcm_token);
                 } catch (\Exception $e) {
-                    Log::error('General error sending to token: ' . $user->fcm_token . '. Error: ' . $e->getMessage());
+                    Log::error('General error sending to token: '.$user->fcm_token.'. Error: '.$e->getMessage());
                 }
             } else {
-                Log::error('No FCM token found for user ID: ' . $memberId);
+                Log::error('No FCM token found for user ID: '.$memberId);
             }
 
             return Utils::sendResponse([], 'Member Reference created successfully', 200);
@@ -810,7 +806,6 @@ class DigitalMemberController extends Controller
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
-
 
     public function digitalBusinessindex(Request $request)
     {
@@ -821,7 +816,7 @@ class DigitalMemberController extends Controller
                     $q->select('id', 'userId', 'cityId', 'sponsoredBy', 'profilePhoto', 'companyName');
                 },
                 'member.city:id,cityName',
-                'businessAmounts'
+                'businessAmounts',
             ])
                 ->where('loginMemberId', Auth::user()->id)
                 ->where('status', 'Active')
@@ -833,6 +828,7 @@ class DigitalMemberController extends Controller
                 if ($item->member) {
                     $item->member->induction_count = Member::where('sponsoredBy', $item->member->id)->count() ?? 0;
                 }
+
                 return $item;
             });
 
@@ -842,7 +838,7 @@ class DigitalMemberController extends Controller
         }
     }
 
-    //reference
+    // reference
     public function digitalMemberReferenceUpdate(Request $request)
     {
         $this->validate($request, []);
@@ -860,12 +856,12 @@ class DigitalMemberController extends Controller
             $refGiver->status = 'Active';
 
             $refGiver->save();
+
             return Utils::sendResponse([], ' Reference updated successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
-
 
     public function digitalMemberReferenceIndex(Request $request)
     {
@@ -884,6 +880,7 @@ class DigitalMemberController extends Controller
                 } else {
                     $item->induction_count = 0;
                 }
+
                 return $item;
             });
 
@@ -911,7 +908,7 @@ class DigitalMemberController extends Controller
                 // 'hotelName' => 'required',
             ]);
 
-            $refGiver = new CircleMeetingMembersReference();
+            $refGiver = new CircleMeetingMembersReference;
             $refGiver->referenceGiverId = $request->referenceGiverId;
             $refGiver->memberId = Auth::user()->id;
 
@@ -928,7 +925,7 @@ class DigitalMemberController extends Controller
             $refGiver->status = 'Active';
             $refGiver->save();
 
-            $busGiver = new CircleMeetingMembersBusiness();
+            $busGiver = new CircleMeetingMembersBusiness;
             $busGiver->businessGiverId = $refGiver->referenceGiverId;
             $busGiver->loginMemberId = Auth::user()->id;
             $busGiver->amount = $request->amount;
@@ -946,6 +943,7 @@ class DigitalMemberController extends Controller
             );
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, $request->fullUrl());
+
             return Utils::errorResponse(
                 ['error' => $th->getMessage()],
                 'Internal Server Error',
@@ -954,12 +952,11 @@ class DigitalMemberController extends Controller
         }
     }
 
-
     public function deleteDigitalMemberReference($id)
     {
         try {
             $refGiver = CircleMeetingMembersReference::find($id);
-            $refGiver->status = "Deleted";
+            $refGiver->status = 'Deleted';
             $refGiver->save();
 
             return Utils::sendResponse([], 'Reference deleted successfully', 200);
@@ -967,7 +964,6 @@ class DigitalMemberController extends Controller
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
-
 
     // public function cityWiseDigitalMember(Request $request)
     // {
@@ -1004,7 +1000,6 @@ class DigitalMemberController extends Controller
     //         ], 'Internal Server Error', 500);
     //     }
     // }
-
 
     public function cityWiseDigitalMember(Request $request)
     {
@@ -1065,7 +1060,7 @@ class DigitalMemberController extends Controller
             $response = [
                 'cityData' => [
                     'total_cities' => $cityCount,
-                ]
+                ],
             ];
 
             return Utils::sendResponse($response, 'City count retrieved successfully', 200);

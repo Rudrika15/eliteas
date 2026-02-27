@@ -2,12 +2,11 @@
 
 namespace App\Exceptions;
 
-use Throwable;
 use App\Utils\ErrorLogger;
-use Illuminate\Http\Exceptions\PostTooLargeException;
-use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Database\QueryException;
-
+use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\Exceptions\PostTooLargeException;
+use Throwable;
 
 class Handler extends ExceptionHandler
 {
@@ -41,7 +40,6 @@ class Handler extends ExceptionHandler
         parent::report($exception);
     }
 
-
     public function render($request, Throwable $exception)
     {
 
@@ -60,7 +58,6 @@ class Handler extends ExceptionHandler
         if ($exception instanceof PostTooLargeException) {
             return redirect()->back()->withErrors(['file' => 'Please select a file with a maximum size of 2MB.']);
         }
-
 
         if ($exception instanceof \Illuminate\Routing\Exceptions\InvalidSignatureException) {
             return redirect()->back()->withErrors('message', 'The link is invalid or has been tampered with.');

@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers\Api;
 
-use Carbon\Carbon;
-use App\Models\User;
-use App\Utils\Utils;
-use App\Models\Member;
-use Illuminate\Http\Request;
-use App\Models\BusinessAmount;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
+use App\Models\BusinessAmount;
 use App\Models\CircleMeetingMembersBusiness;
 use App\Models\CircleMeetingMembersReference;
+use App\Models\Member;
+use App\Models\User;
 use App\Utils\ErrorLogger;
+use App\Utils\Utils;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class CircleMeetingMemberBusinessController extends Controller
 {
@@ -28,8 +28,6 @@ class CircleMeetingMemberBusinessController extends Controller
     //             ->where('status', 'Active')
     //             ->orderByDesc('id')
     //             ->get();
-
-
 
     //         return Utils::sendResponse(['busGivers' => $busGivers], 'Circle Meeting Members Business retrieved successfully', 200);
     //     } catch (\Throwable $th) {
@@ -65,7 +63,7 @@ class CircleMeetingMemberBusinessController extends Controller
                     $q->select('id', 'userId', 'circleId', 'sponsoredBy', 'profilePhoto', 'companyName');
                 },
                 'member.circle:id,circleName',
-                'businessAmounts'
+                'businessAmounts',
             ])
                 ->where('loginMemberId', Auth::user()->id)
                 ->where('status', 'Active')
@@ -77,6 +75,7 @@ class CircleMeetingMemberBusinessController extends Controller
                 if ($item->member) {
                     $item->member->induction_count = Member::where('sponsoredBy', $item->member->id)->count() ?? 0;
                 }
+
                 return $item;
             });
 
@@ -85,7 +84,6 @@ class CircleMeetingMemberBusinessController extends Controller
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
-
 
     // public function recievedBus(Request $request)
     // {
@@ -121,7 +119,6 @@ class CircleMeetingMemberBusinessController extends Controller
     //     }
     // }
 
-
     public function recievedBus(Request $request)
     {
         try {
@@ -131,7 +128,7 @@ class CircleMeetingMemberBusinessController extends Controller
                     $q->select('id', 'userId', 'circleId', 'sponsoredBy', 'profilePhoto');
                 },
                 'loginMember.member.circle:id,circleName',
-                'businessAmounts'
+                'businessAmounts',
             ])
                 ->where('businessGiverId', Auth::user()->id)
                 ->where('status', 'Active')
@@ -144,6 +141,7 @@ class CircleMeetingMemberBusinessController extends Controller
                     $member = $item->loginMember->member;
                     $member->induction_count = Member::where('sponsoredBy', $member->id)->count() ?? 0;
                 }
+
                 return $item;
             });
 
@@ -153,12 +151,11 @@ class CircleMeetingMemberBusinessController extends Controller
         }
     }
 
-
     public function businessReceived(Request $request)
     {
         try {
 
-            if (!auth()->user()->hasRole('Member')) {
+            if (! auth()->user()->hasRole('Member')) {
                 return Utils::errorResponse(['error' => 'Unauthorized'], 'Unauthorized access', 403);
             }
 
@@ -175,9 +172,9 @@ class CircleMeetingMemberBusinessController extends Controller
 
             $busReceived->transform(function ($item) {
                 $item->amount = isset($item->amount) ? number_format($item->amount, 2) : '-';
+
                 return $item;
             });
-
 
             return Utils::sendResponse(
                 ['business_received' => $busReceived],
@@ -194,12 +191,11 @@ class CircleMeetingMemberBusinessController extends Controller
         }
     }
 
-
     public function businessGiven(Request $request)
     {
         try {
 
-            if (!auth()->user()->hasRole('Member')) {
+            if (! auth()->user()->hasRole('Member')) {
                 return Utils::errorResponse(['error' => 'Unauthorized'], 'Unauthorized access', 403);
             }
 
@@ -216,9 +212,9 @@ class CircleMeetingMemberBusinessController extends Controller
 
             $busGiven->transform(function ($item) {
                 $item->amount = isset($item->amount) ? number_format($item->amount, 2) : '-';
+
                 return $item;
             });
-
 
             return Utils::sendResponse(
                 ['business_given' => $busGiven],
@@ -235,10 +231,6 @@ class CircleMeetingMemberBusinessController extends Controller
         }
     }
 
-
-
-
-
     public function busGiven(Request $request)
     {
         try {
@@ -246,14 +238,12 @@ class CircleMeetingMemberBusinessController extends Controller
                 ->where('status', 'Active')
                 ->orderBy('id', 'DESC')
                 ->get();
+
             return Utils::sendResponse(['busGiven' => $busGiven], 'Circle Meeting Members Business retrieved successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
-
-
-
 
     public function paymentHistory(Request $request)
     {
@@ -262,17 +252,18 @@ class CircleMeetingMemberBusinessController extends Controller
                 ->where('circleMeetingMemberBusinessId')
                 ->orderBy('id', 'DESC')
                 ->get();
+
             return Utils::sendResponse(['paymentHistory' => $paymentHistory], 'Circle Meeting Members Business Payment History retrieved successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
 
-
     public function view(Request $request, $id)
     {
         try {
             $busGiver = CircleMeetingMembersBusiness::findOrFail($id);
+
             return Utils::sendResponse(['busGiver' => $busGiver], 'Circle Meeting Member Business retrieved successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
@@ -304,7 +295,6 @@ class CircleMeetingMemberBusinessController extends Controller
     //         return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
     //     }
     // }
-
 
     // public function create(Request $request)
     // {
@@ -353,7 +343,6 @@ class CircleMeetingMemberBusinessController extends Controller
     //     }
     // }
 
-
     public function create(Request $request)
     {
 
@@ -370,7 +359,7 @@ class CircleMeetingMemberBusinessController extends Controller
                 // 'hotelName' => 'required',
             ]);
 
-            $busGiver = new CircleMeetingMembersBusiness();
+            $busGiver = new CircleMeetingMembersBusiness;
             $busGiver->businessGiverId = $request->businessGiverId;
             $busGiver->loginMemberId = Auth::user()->id;
             $busGiver->amount = $request->amount;
@@ -383,7 +372,7 @@ class CircleMeetingMemberBusinessController extends Controller
 
             if ($request->create_reference == 1) {
 
-                $refGiver = new CircleMeetingMembersReference();
+                $refGiver = new CircleMeetingMembersReference;
                 $refGiver->referenceGiverId = $busGiver->businessGiverId;
                 $refGiver->memberId = Auth::user()->id;
 
@@ -400,7 +389,6 @@ class CircleMeetingMemberBusinessController extends Controller
                 $refGiver->status = 'Active';
                 $refGiver->save();
 
-
                 $busGiver->referenceId = $refGiver->id;
                 $busGiver->save();
             }
@@ -415,6 +403,7 @@ class CircleMeetingMemberBusinessController extends Controller
             );
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, $request->fullUrl());
+
             return Utils::errorResponse(
                 ['error' => $th->getMessage()],
                 'Internal Server Error',
@@ -423,14 +412,13 @@ class CircleMeetingMemberBusinessController extends Controller
         }
     }
 
-
     public function addBusinessAmountApi(Request $request, $id)
     {
         try {
             $reference = CircleMeetingMembersReference::where('status', 'Active')
                 ->findOrFail($id);
 
-            $busGiver = new CircleMeetingMembersBusiness();
+            $busGiver = new CircleMeetingMembersBusiness;
             $busGiver->referenceId = $reference->id;
             $busGiver->businessGiverId = $reference->referenceGiverId;
             $busGiver->loginMemberId = Auth::id();
@@ -444,7 +432,7 @@ class CircleMeetingMemberBusinessController extends Controller
             return Utils::sendResponse(
                 [
                     'busGiver' => $busGiver,
-                    'reference' => $reference
+                    'reference' => $reference,
                 ],
                 'Business Amount Added Successfully!',
                 201
@@ -459,9 +447,6 @@ class CircleMeetingMemberBusinessController extends Controller
         }
     }
 
-
-
-
     public function update(Request $request, $id)
     {
         try {
@@ -469,7 +454,7 @@ class CircleMeetingMemberBusinessController extends Controller
             $busGiver = CircleMeetingMembersBusiness::find($id);
 
             // Check if the business giver exists
-            if (!$busGiver) {
+            if (! $busGiver) {
                 return Utils::errorResponse([], 'Circle Meeting Member Business not found', 404);
             }
 
@@ -478,7 +463,7 @@ class CircleMeetingMemberBusinessController extends Controller
             $member = Member::where('userId', $userId)->first();
 
             // Check if the member exists
-            if (!$member) {
+            if (! $member) {
                 return Utils::errorResponse([], 'Member not found', 404);
             }
 
@@ -486,7 +471,7 @@ class CircleMeetingMemberBusinessController extends Controller
             $user = User::find($userId);
 
             // Check if the user exists
-            if (!$user) {
+            if (! $user) {
                 return Utils::errorResponse([], 'User not found', 404);
             }
 
@@ -509,21 +494,18 @@ class CircleMeetingMemberBusinessController extends Controller
                 'profilePhoto' => $member->profilePhoto,
                 'firstName' => $user->firstName,
                 'lastName' => $user->lastName,
-                'email' => $user->email
+                'email' => $user->email,
             ], 'Circle Meeting Member Business Updated Successfully!', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
 
-
-
-
     public function delete(Request $request, $id)
     {
         try {
             $busGiver = CircleMeetingMembersBusiness::findOrFail($id);
-            $busGiver->status = "Deleted";
+            $busGiver->status = 'Deleted';
             $busGiver->save();
 
             return Utils::sendResponse([], 'Circle Meeting Member Business Deleted Successfully!', 200);

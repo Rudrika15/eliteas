@@ -1,51 +1,48 @@
 <?php
 
-use App\Http\Controllers\Api\DigitalMemberController;
-use App\Models\CircleMember;
-use Illuminate\Http\Request;
-use App\Mail\MeetingInvitation;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\ApiController;
-use App\Http\Controllers\Api\ChatController;
-use App\Http\Controllers\Api\EventController;
-use App\Http\Controllers\Api\LoginController;
-use App\Http\Controllers\Api\CircleController;
 use App\Http\Controllers\Admin\MemberController;
 use App\Http\Controllers\Api\AllActivityController;
-use App\Http\Controllers\Api\MonthlyPaymentController;
-use App\Http\Controllers\Api\LocationController;
-use App\Http\Controllers\Api\OTPLoginController;
-use App\Http\Controllers\Api\TrainingController;
-use App\Http\Controllers\Api\FranchiseController;
-use App\Http\Controllers\Api\MyPaymentController;
+use App\Http\Controllers\Api\ApiController;
 use App\Http\Controllers\Api\AttendanceController;
-use App\Http\Controllers\Api\CircleCallController;
-use App\Http\Controllers\Api\CircleTypeController;
-use App\Http\Controllers\Api\ConnectionController;
-use App\Http\Controllers\Api\LeaderBoardController;
-use App\Http\Controllers\Api\TestimonialController;
-use App\Http\Controllers\Api\CircleMemberController;
-use App\Http\Controllers\Api\CircleMeetingController;
-use App\Http\Controllers\Api\TrainerMasterController;
-use App\Http\Controllers\Api\ChangePasswordController;
-use App\Http\Controllers\Api\SupportTicketController;
-use App\Http\Controllers\Api\ForgetPasswordController;
 use App\Http\Controllers\Api\BusinessCategoryController;
-use App\Http\Controllers\Api\MeetingInvitationController;
-use App\Http\Controllers\Api\CircleMeetingMembersController;
-use App\Http\Controllers\Api\MembershipSubscriptionController;
+use App\Http\Controllers\Api\ChangePasswordController;
+use App\Http\Controllers\Api\ChatController;
+use App\Http\Controllers\Api\CircleCallController;
+use App\Http\Controllers\Api\CircleController;
+use App\Http\Controllers\Api\CircleMeetingController;
 use App\Http\Controllers\Api\CircleMeetingMemberBusinessController;
 use App\Http\Controllers\Api\CircleMeetingMemberReferenceController;
+use App\Http\Controllers\Api\CircleMeetingMembersController;
+use App\Http\Controllers\Api\CircleMemberController;
+use App\Http\Controllers\Api\CircleTypeController;
+use App\Http\Controllers\Api\ConnectionController;
+use App\Http\Controllers\Api\DigitalMemberController;
+use App\Http\Controllers\Api\EventController;
+use App\Http\Controllers\Api\ForgetPasswordController;
+use App\Http\Controllers\Api\FranchiseController;
 use App\Http\Controllers\Api\HelpController;
+use App\Http\Controllers\Api\LeaderBoardController;
+use App\Http\Controllers\Api\LocationController;
+use App\Http\Controllers\Api\LoginController;
+use App\Http\Controllers\Api\MeetingInvitationController;
+use App\Http\Controllers\Api\MembershipSubscriptionController;
+use App\Http\Controllers\Api\MonthlyPaymentController;
+use App\Http\Controllers\Api\MyPaymentController;
 use App\Http\Controllers\Api\NotificationController;
+use App\Http\Controllers\Api\OTPLoginController;
 use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\PermissionController;
 use App\Http\Controllers\Api\SlotController;
+use App\Http\Controllers\Api\SocialWallController;
 use App\Http\Controllers\Api\SpecificAskController;
+use App\Http\Controllers\Api\SupportTicketController;
+use App\Http\Controllers\Api\TestimonialController;
+use App\Http\Controllers\Api\TrainerMasterController;
+use App\Http\Controllers\Api\TrainingController;
 use App\Http\Controllers\Api\UpdateAppController;
 use App\Http\Controllers\Api\VisitorController;
-use App\Http\Controllers\Api\CityCountController;
-use App\Http\Controllers\Api\SocialWallController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 // use App\Http\Controllers\Api\CircleMeetingMemberBusinessController;
 
@@ -64,8 +61,7 @@ use App\Http\Controllers\Api\SocialWallController;
 //     return $request->user();
 // });
 
-/* ---------------------------------- Common Login  ----------------------------------  */
-
+/* ---------------------------------- Common Login  ---------------------------------- */
 
 // login
 Route::post('/login', [LoginController::class, 'login']);
@@ -82,17 +78,14 @@ Route::post('/slot-booking/visitor', [SlotController::class, 'slotBookingVisitor
 
 Route::post('/payment/visitor', [EventController::class, 'eventPaymentVisitor']);
 
-
 Route::get('/slot/index', [SlotController::class, 'slotIndex']);
 
-
-//forgot password
+// forgot password
 Route::post('/forgot-password', [ForgetPasswordController::class, 'forgotPassword']);
 // Route::post('/reset-password', [ForgetPasswordController::class, 'resetPassword']);
 
-
 // Route::post('circle-meeting-member-references-create', [CircleMeetingMemberReferenceController::class, 'create']);
-//Login with otp
+// Login with otp
 
 Route::post('/send-otp', [OTPLoginController::class, 'sendOTP'])->name('send_otp');
 
@@ -100,10 +93,6 @@ Route::post('/send-otp', [OTPLoginController::class, 'sendOTP'])->name('send_otp
 Route::post('/verify-otp', [OTPLoginController::class, 'verifyOTP'])->name('verify_otp');
 
 Route::get('role-permissions', [LoginController::class, 'getRolePermissions']);
-
-
-
-
 
 Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/user/profile', [LoginController::class, 'profile']);
@@ -113,24 +102,20 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('/user/member/updateContactDetails', [LoginController::class, 'contactDetailsUpdate']);
     Route::post('/user/member/updateTopsProfile', [LoginController::class, 'topsProfileUpdate']);
 
-
-
-
-
     Route::get('/home-counts', [ApiController::class, 'homeCounts']);
     Route::get('/my-stats', [ApiController::class, 'myStats']);
+    Route::get('/active-meeting-schedule', [ApiController::class, 'activeMeetingSchedules']);
+    Route::get('/resource-index', [ApiController::class, 'resourceIndex']);
     Route::get('/members-activity-counts/{id?}', [ApiController::class, 'membersActivityCount']);
-
 
     // Admin side profile change
     Route::post('/members/{id}', [LoginController::class, 'memberUpdateAdmin']);
     // Route::put('/members/{id}', [MemberController::class, 'update']);
 
-    //permissions
+    // permissions
     Route::get('/permissions-index', [PermissionController::class, 'index']);
     Route::get('/role-permissions-index', [PermissionController::class, 'rolePermission']);
     Route::get('/role-index', [PermissionController::class, 'getRole']);
-
 
     // Circl 1:1 Call
     Route::get('circlecalls-index', [CircleCallController::class, 'index']);
@@ -140,8 +125,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('circlecalls-update/{id}', [CircleCallController::class, 'update']);
     Route::get('circlecalls-delete/{id}', [CircleCallController::class, 'delete']);
 
-
-    //Member Indution Count
+    // Member Indution Count
 
     Route::get('member-induction-count/{id?}', [ApiController::class, 'induction']);
 
@@ -155,14 +139,12 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     Route::get('circle-meeting-member-businesses/paymentHistory/{id}', [CircleMeetingMemberBusinessController::class, 'paymentHistory']);
 
-    //new api for bus given and recieved
+    // new api for bus given and recieved
     Route::get('/business/received', [CircleMeetingMemberBusinessController::class, 'businessReceived']);
     Route::get('/business/given', [CircleMeetingMemberBusinessController::class, 'businessGiven']);
 
-    //add amount 
+    // add amount
     Route::post('/add-business-amount/{id}', [CircleMeetingMemberBusinessController::class, 'addBusinessAmountApi']);
-
-
 
     // Reference Giver
 
@@ -173,7 +155,6 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('circle-meeting-member-references-refByOtherStore', [CircleMeetingMemberReferenceController::class, 'refByOtherStore']);
     Route::post('circle-meeting-member-references-update/{id}', [CircleMeetingMemberReferenceController::class, 'update']);
     Route::get('circle-meeting-member-references-delete/{id}', [CircleMeetingMemberReferenceController::class, 'delete']);
-
 
     // Trainer master
     Route::get('trainers-index', [TrainerMasterController::class, 'index']);
@@ -189,7 +170,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::put('trainings-update/{id}', [TrainingController::class, 'update']);
     Route::delete('trainings-delete/{id}', [TrainingController::class, 'delete']);
 
-    //Training Register
+    // Training Register
 
     // Route::post('/training-register/{trainingId}/{trainerId}', [TrainingController::class, 'trainingRegister']);
 
@@ -201,7 +182,6 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('circle-type-create', [CircleTypeController::class, 'create']);
     Route::put('circle-type-update/{id}', [CircleTypeController::class, 'update']);
     Route::delete('circle-type-delete/{id}', [CircleTypeController::class, 'delete']);
-
 
     // Circle
     Route::get('circle-index', [CircleController::class, 'index']);
@@ -238,24 +218,23 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::put('franchise-update/{id}', [FranchiseController::class, 'update']);
     Route::delete('franchise-delete/{id}', [FranchiseController::class, 'delete']);
 
-    //search member
+    // search member
     Route::post('search-member-index', [CircleCallController::class, 'searchmember']);
 
-    //circle wise mmeber
+    // circle wise mmeber
     Route::get('circle-wise-member-index', [CircleMemberController::class, 'circleWiseMember']);
 
-    //Meeting Invitation
+    // Meeting Invitation
     Route::get('meeting-invitations-index', [MeetingInvitationController::class, 'index']);
     Route::post('meetings-invitation', [MeetingInvitationController::class, 'invitation']);
 
-    //Circle Meeting View
+    // Circle Meeting View
     Route::get('circle-meeting-view', [MeetingInvitationController::class, 'getMeetingForCircle']);
 
-    //Business Category View
+    // Business Category View
     Route::get('business-category-index', [BusinessCategoryController::class, 'index']);
 
-
-    //Testimonial
+    // Testimonial
 
     Route::get('/testimonials/index', [TestimonialController::class, 'index']);
     Route::get('/testimonials/myTestimonials', [TestimonialController::class, 'myTestimonials']);
@@ -279,32 +258,29 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     // Route::get('/connections/myConnection', [ConnectionController::class, 'myConnection']);
 
-    //Membership History
+    // Membership History
 
     Route::get('/membership-history', [MembershipSubscriptionController::class, 'MembershipHistory']);
 
     // My Payment History
     Route::get('/my-payment-history', [MyPaymentController::class, 'myPaymentHistory']);
 
-    //Event
+    // Event
     Route::post('/register/{eventId}', [EventController::class, 'eventRegister']);
     // Store user details for an event
     Route::post('/store-details', [EventController::class, 'storeUserDetails']);
     // get member list of event
     Route::get('/events/user-list/{id?}', [VisitorController::class, 'getUserListForMembers']);
-    //slot booking for event
+    // slot booking for event
     Route::post('/slot-booking/member', [SlotController::class, 'slotBookingMemberAPI']);
-
-
 
     // Retrieve all active events
     Route::get('/event/index', [EventController::class, 'index']);
     Route::get('event/visitorIndex', [VisitorController::class, 'eventIndex']);
 
-    //get event by id
+    // get event by id
     // For listing all events and getting event by ID
     Route::get('/eventDetails/{id?}', [EventController::class, 'eventDetails']);
-
 
     Route::post('/event/registerPayLater', [EventController::class, 'handleEventRegistration']);
 
@@ -321,7 +297,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     // Payment for event registration (for users)
     Route::post('/payment/user', [EventController::class, 'userEventPayment']);
 
-    //Monthly Payment APi
+    // Monthly Payment APi
     Route::post('/monthly-payment/store', [MonthlyPaymentController::class, 'monthlyPaymentStore']);
     Route::get('/monthlyPayment/index', [MonthlyPaymentController::class, 'monthlyPaymentIndex']);
     Route::post('/monthly-payment/update-payment-status', [MonthlyPaymentController::class, 'updatePaymentStatus']);
@@ -336,7 +312,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('/attendance/attendance-store', [AttendanceController::class, 'attendanceStore']);
     Route::post('/attendance/invited-store', [AttendanceController::class, 'invitedAttendanceStore']);
 
-    //dashboard leaderboard apis
+    // dashboard leaderboard apis
 
     Route::get('/leaderboards/max-meetings', [LeaderBoardController::class, 'maxMeetings']);
     Route::get('/leaderboards/max-business', [LeaderBoardController::class, 'maxBusiness']);
@@ -346,11 +322,9 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     Route::get('/leaderboard/circle-wise', [LeaderBoardController::class, 'circleWiseLeaderboardAPI']);
 
-
-    //location
+    // location
     Route::get('/userLocation/index', [LocationController::class, 'index']);
     Route::get('/user/userLocation', [LocationController::class, 'userLocation']);
-
 
     // old chat
     // //chat
@@ -360,61 +334,56 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     // Route::get('/chat/getList', [ChatController::class, 'getList']);
 
     // new chat module
-    //chat
+    // chat
     Route::post('/chat/sendMessage', [ChatController::class, 'sendMessage']);
     // Route::get('/chat/getMessages', [ChatController::class, 'getMessages']);
     Route::post('/get-messages', [ChatController::class, 'getMessages']);
     // Route::get('/chat/getList', [ChatController::class, 'getList']);
     Route::get('/chat/listOfUsers', [ChatController::class, 'listOfUsers']);
 
-
-
-    //suggested members
+    // suggested members
     Route::get('/category-wise-member-index', [CircleMemberController::class, 'categoryWiseMember']);
 
-    //change password
+    // change password
     Route::post('/change-password', [ChangePasswordController::class, 'changePassword']);
 
-    //My Subscriptions
+    // My Subscriptions
     Route::get('/member/my-subscription', [PaymentController::class, 'mySubscription']);
 
-
-
-    //new api v1
-    //lead board
+    // new api v1
+    // lead board
     Route::get('v1/leaderboards/max-meetings', [ApiController::class, 'maxMeetings']);
     Route::get('v1/leaderboards/max-business', [ApiController::class, 'maxBusiness']);
     Route::get('v1/leaderboards/max-reference', [ApiController::class, 'maxReference']);
     Route::get('v1/leaderboards/max-referral', [ApiController::class, 'maxRefferal']);
     Route::get('v1/leaderboards/max-visitor', [ApiController::class, 'maxVisitor']);
 
-
     Route::get('v1/leaderboards/get-max-data', [ApiController::class, 'getMaxData']);
 
-    //Upcoming Workshop
+    // Upcoming Workshop
     Route::get('v1/trainings-index', [ApiController::class, 'index']);
 
-    //Personal Details update
+    // Personal Details update
     Route::get('v1/user/profile', [ApiController::class, 'profile']);
     Route::post('v1/user/member/update', [ApiController::class, 'meberUpdate']);
     Route::post('v1/user/member/updateBillingAddress', [ApiController::class, 'billingAddressUpdate']);
     Route::post('v1/user/member/updateContactDetails', [ApiController::class, 'contactDetailsUpdate']);
     Route::post('v1/user/member/updateTopsProfile', [ApiController::class, 'topsProfileUpdate']);
 
-    //Circle Member List
+    // Circle Member List
     Route::get('v1/circle-wise-member-index', [ApiController::class, 'circleWiseMember']);
     // Route::get('v1/circle-member-index', [ApiController::class, 'iindex']);
 
-    //Category Wise Member
+    // Category Wise Member
     Route::get('v1/category-wise-member-index', [ApiController::class, 'categoryWiseMember']);
 
-    //allMembers
+    // allMembers
     Route::get('v1/member-index', [ApiController::class, 'allMembers']);
 
-    //getMaxdata
+    // getMaxdata
     Route::get('v1/get-max-data', [ApiController::class, 'getMaxData']);
 
-    //getMaxdata of User
+    // getMaxdata of User
     Route::get('v1/get-max-data-user', [ApiController::class, 'getMaxDataUser']);
 
     Route::get('v1/max-meetings-user', [ApiController::class, 'maxMeetingsUser']);
@@ -423,10 +392,10 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('v1/max-referral-user', [ApiController::class, 'maxRefferalUser']);
     Route::get('v1/max-visitor-user', [ApiController::class, 'maxVisitorUser']);
 
-    //userdata by id
+    // userdata by id
     Route::get('v1/user-details/{userId}', [ApiController::class, 'getUserDetails']);
 
-    //connection
+    // connection
 
     Route::get('v1/connections/receivedConnectionsRequests', [ConnectionController::class, 'receivedConnectionsRequests']);
     Route::get('v1/connections/myConnections', [ConnectionController::class, 'myConnections']);
@@ -444,15 +413,14 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     Route::get('/chat-connection-search', [ConnectionController::class, 'chatConnectionSearch']);
 
-    //change password
+    // change password
     Route::post('v1/change-password', [ApiController::class, 'changePassword']);
 
-    //busGiven
+    // busGiven
     Route::get('busGiven-index', [CircleMeetingMemberBusinessController::class, 'busGiven']);
 
-    //app
+    // app
     // Route::get('/app-version', [ApiController::class, 'getAppVersion']);
-
 
     // specific Ask
 
@@ -462,13 +430,13 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('specific-ask/update/{id}', [SpecificAskController::class, 'updateApi']);
     Route::get('specific-ask/delete/{id}', [SpecificAskController::class, 'deleteApi']);
 
-    //all activity for vp
+    // all activity for vp
 
     Route::get('/ibm-vp', [AllActivityController::class, 'ibmVp']);
     Route::get('/reference-vp', [AllActivityController::class, 'refrenceVp']);
     Route::get('/business-vp', [AllActivityController::class, 'businessVp']);
 
-    //circle admin payment history
+    // circle admin payment history
 
     Route::get('circleAdminPaymentHistory', [PaymentController::class, 'circleAdminPaymentHistory']);
     Route::get('myPaymentHistory', [PaymentController::class, 'getAllPayments']);
@@ -478,18 +446,15 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('member-slot-bookings/{id}', [EventController::class, 'memberSlotBookingRequests']);
     Route::post('slot-bookings/update-status/{id}', [EventController::class, 'slotBookingUpdateStatus']);
 
-    //help
+    // help
     Route::get('help-index', [HelpController::class, 'index']);
 
-    //fcmToken
+    // fcmToken
     Route::post('fcm-token', [LoginController::class, 'saveToken']);
     Route::get('call-Notify', [CircleCallController::class, 'callNotify']);
 
-    //notification
+    // notification
     Route::get('notification-index', [NotificationController::class, 'notificationIndex']);
-
-
-
 
     // ________________________________________________________________________________________________________________
 
@@ -504,7 +469,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('ibm-delete/{id}', [DigitalMemberController::class, 'ibmDelete']);
     Route::get('recieved-ibm-index', [DigitalMemberController::class, 'recievedDigitalBusinessMeet']);
 
-    //reference-business apis
+    // reference-business apis
     Route::get('digital-member-businesses-index', [DigitalMemberController::class, 'digitalBusinessindex']);
     Route::get('digital-member-business-received-index', [DigitalMemberController::class, 'recievedBusDigital']);
     Route::post('digital-member-references-create', [DigitalMemberController::class, 'refBusCreateDigital']);
@@ -514,8 +479,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('digital-member-references-refByOtherStore', [DigitalMemberController::class, 'digitalMemberRefByOtherStore']);
     Route::get('digital-member-references-delete/{id}', [DigitalMemberController::class, 'deleteDigitalMemberReference']);
 
-
-    //city wise digital member
+    // city wise digital member
 
     Route::get('city-member-count', [DigitalMemberController::class, 'getCityMemberCount']);
     Route::get('/city-members', [DigitalMemberController::class, 'getCityMembers']);
@@ -528,12 +492,9 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/city-landmark-members/{cityId}/{landmarkName}', [DigitalMemberController::class, 'getCityLandmarkMembers']); // List members for landmark
     Route::get('/city-count', [DigitalMemberController::class, 'getCityCount']);
 
-
     Route::get('/total-counts', [ApiController::class, 'totalCounts']);
 
-
     Route::post('/visitors/store', [ApiController::class, 'storeVisitorApi']);
-
 
     Route::get('city-wise-digital-member-index', [DigitalMemberController::class, 'cityWiseDigitalMember']);
 
@@ -555,6 +516,6 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('social-wall/comment/delete', [SocialWallController::class, 'deleteComment']);
 });
 
-//get app version
+// get app version
 Route::get('app-version', [UpdateAppController::class, 'getAppVersion']);
 Route::post('update-app-version', [UpdateAppController::class, 'updateAppVersion']);

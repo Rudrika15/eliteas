@@ -12,7 +12,9 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 class CircleMemberAggregateExport implements FromCollection, WithHeadings
 {
     protected $circleId;
+
     protected $startDate;
+
     protected $endDate;
 
     public function __construct($circleId, $startDate = null, $endDate = null)
@@ -24,7 +26,7 @@ class CircleMemberAggregateExport implements FromCollection, WithHeadings
 
     public function collection()
     {
-        if (!$this->circleId) {
+        if (! $this->circleId) {
             return collect();
         }
 
@@ -66,7 +68,7 @@ class CircleMemberAggregateExport implements FromCollection, WithHeadings
 
             return [
                 'Circle' => $m->circle->circleName ?? '-',
-                'Member Name' => $m->firstName . ' ' . $m->lastName,
+                'Member Name' => $m->firstName.' '.$m->lastName,
                 // 'Member User ID' => $uid,
                 'IBM Count' => $ibmCount,
                 'Reference Count' => $refCount,
@@ -89,4 +91,3 @@ class CircleMemberAggregateExport implements FromCollection, WithHeadings
         ];
     }
 }
-

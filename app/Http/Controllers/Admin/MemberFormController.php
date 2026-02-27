@@ -2,24 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\City;
-use App\Models\User;
-use App\Models\State;
-use App\Models\Member;
-use App\Models\Country;
-use App\Utils\ErrorLogger;
-use App\Models\TopsProfile;
-use Illuminate\Http\Request;
-use App\Models\BillingAddress;
-use App\Models\ContactDetails;
-use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
 use App\Models\BusinessCategory;
 use App\Models\Circle;
 use App\Models\MembersFormDetails;
 use Illuminate\Contracts\Encryption\DecryptException;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
-use Illuminate\Support\Facades\Hash;
 
 class MemberFormController extends Controller
 {
@@ -49,7 +38,7 @@ class MemberFormController extends Controller
 
         return response()->json([
             'id' => Crypt::encryptString($id),
-            'name' => $name
+            'name' => $name,
         ]);
     }
 
@@ -75,7 +64,7 @@ class MemberFormController extends Controller
             'companyLogo' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
-        $memberDetails = new MembersFormDetails();
+        $memberDetails = new MembersFormDetails;
         $memberDetails->circleId = $request->circleId;
         $memberDetails->name = $request->name;
         $memberDetails->email = $request->email;
@@ -90,10 +79,10 @@ class MemberFormController extends Controller
         $memberDetails->website = $request->website;
         $memberDetails->birthdate = $request->birthdate;
         $memberDetails->anniversaryDate = $request->anniversaryDate;
-        
+
         if ($request->hasFile('companyLogo')) {
             $companyLogo = $request->file('companyLogo');
-            $filename = time() . '.' . $companyLogo->getClientOriginalExtension();
+            $filename = time().'.'.$companyLogo->getClientOriginalExtension();
             $location = public_path('CompanyLogo');
             $companyLogo->move($location, $filename);
             $memberDetails->companyLogo = $filename;
@@ -101,7 +90,7 @@ class MemberFormController extends Controller
 
         if ($request->hasFile('photo')) {
             $photo = $request->file('photo');
-            $filename = time() . '.' . $photo->getClientOriginalExtension();
+            $filename = time().'.'.$photo->getClientOriginalExtension();
             $location = public_path('ProfilePhoto');
             $photo->move($location, $filename);
             $memberDetails->photo = $filename;

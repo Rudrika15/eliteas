@@ -2,17 +2,14 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\State;
+use App\Http\Controllers\Controller;
 use App\Models\Country;
+use App\Models\State;
 use App\Utils\ErrorLogger;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\URL;
-use App\Http\Controllers\Controller;
 
 class StateController extends Controller
 {
-
-
     public function __construct()
     {
         // Apply middleware for event-related permissions
@@ -21,7 +18,6 @@ class StateController extends Controller
         $this->middleware('permission:state-edit', ['only' => ['edit', 'update']]);
         $this->middleware('permission:state-delete', ['only' => ['delete']]);
     }
-
 
     public function index(Request $request)
     {
@@ -39,14 +35,17 @@ class StateController extends Controller
                 $th,
                 request()->fullUrl()
             );
+
             return view('servererror');
         }
     }
-    //For show single data
+
+    // For show single data
     public function view(Request $request, $id)
     {
         try {
             $state = State::with('country')->findOrFail($id);
+
             return response()->json($state);
         } catch (\Throwable $th) {
             // throw $th;
@@ -54,16 +53,19 @@ class StateController extends Controller
                 $th,
                 request()->fullUrl()
             );
+
             return view('servererror');
         }
     }
+
     public function create()
     {
         try {
             $country = Country::where('status', '!=', 'Deleted')->orderBy('countryName', 'ASC')->get();
             $state = State::with('country')
-            ->orderBy('stateName', 'ASC')
+                ->orderBy('stateName', 'ASC')
                 ->get();
+
             return view('admin.state.create', compact('country', 'state'));
         } catch (\Throwable $th) {
             // throw $th;
@@ -71,6 +73,7 @@ class StateController extends Controller
                 $th,
                 request()->fullUrl()
             );
+
             return view('servererror');
         }
     }
@@ -81,7 +84,7 @@ class StateController extends Controller
             'stateName' => 'required',
         ]);
         try {
-            $state = new State();
+            $state = new State;
             $state->countryId = $request->countryId;
             $state->stateName = $request->stateName;
             $state->status = 'Active';
@@ -95,6 +98,7 @@ class StateController extends Controller
                 $th,
                 request()->fullUrl()
             );
+
             return view('servererror');
         }
     }
@@ -104,6 +108,7 @@ class StateController extends Controller
         try {
             $state = State::find($id);
             $country = Country::where('status', '!=', 'Deleted')->orderBy('countryName', 'ASC')->get();
+
             return view('admin.state.edit', compact('country', 'state'));
         } catch (\Throwable $th) {
             // throw $th;
@@ -111,6 +116,7 @@ class StateController extends Controller
                 $th,
                 request()->fullUrl()
             );
+
             return view('servererror');
         }
     }
@@ -130,7 +136,6 @@ class StateController extends Controller
 
             $state->save();
 
-
             return redirect()->route('state.index')->with('success', 'State Created Successfully!');
         } catch (\Throwable $th) {
             // throw $th;
@@ -138,6 +143,7 @@ class StateController extends Controller
                 $th,
                 request()->fullUrl()
             );
+
             return view('servererror');
         }
     }
@@ -152,8 +158,9 @@ class StateController extends Controller
 
             return redirect()->route('state.index')->with('success', 'Business Category deleted successfully.');
         } catch (\Throwable $th) {
-            //throw $th;
+            // throw $th;
             ErrorLogger::logError($th, request()->fullUrl());
+
             return redirect()->route('state.index')->with('error', 'Failed to delete Business Category.');
         }
     }

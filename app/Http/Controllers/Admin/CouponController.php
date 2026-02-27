@@ -10,7 +10,6 @@ use Illuminate\Http\Request;
 
 class CouponController extends Controller
 {
-
     // public function __construct()
     // {
     //     // Apply middleware for coupon-related permissions
@@ -20,15 +19,16 @@ class CouponController extends Controller
     //     $this->middleware('permission:coupon-delete', ['only' => ['delete']]);
     // }
 
-
     public function index(Request $request)
     {
         try {
             $coupon = Coupons::where('status', 'Active')->paginate(10);
+
             return view('admin.coupon.index', compact('coupon'));
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError($th, request()->fullUrl());
+
             return view('servererror');
         }
     }
@@ -38,10 +38,12 @@ class CouponController extends Controller
         try {
             $events = Event::where('status', 'Active')->get();
             $coupon = Coupons::where('status', 'Active')->get();
-            return view('admin.coupon.create', compact('coupon','events'));
+
+            return view('admin.coupon.create', compact('coupon', 'events'));
         } catch (\Throwable $th) {
-            //throe $th;
+            // throe $th;
             ErrorLogger::logError($th, request()->fullUrl());
+
             return view('servererror');
         }
     }
@@ -54,7 +56,7 @@ class CouponController extends Controller
         ]);
 
         try {
-            $coupon = new Coupons();
+            $coupon = new Coupons;
             $coupon->eventId = $request->eventId;
             $coupon->couponName = $request->couponName;
             $coupon->couponCode = $request->couponCode;
@@ -64,22 +66,24 @@ class CouponController extends Controller
 
             return redirect()->route('coupon.index')->with('success', 'Coupon Created Successfully!');
         } catch (\Throwable $th) {
-            //throw $th;
+            // throw $th;
             ErrorLogger::logError($th, request()->fullUrl());
+
             return view('servererror');
         }
     }
-
 
     public function edit(Request $request, $id)
     {
         try {
             $events = Event::where('status', 'active')->get();
             $coupon = Coupons::find($id);
+
             return view('admin.coupon.edit', compact('coupon', 'events'));
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError($th, request()->fullUrl());
+
             return view('servererror');
         }
     }
@@ -93,7 +97,7 @@ class CouponController extends Controller
         try {
             $coupon = Coupons::find($request->id);
 
-            if (!$coupon) {
+            if (! $coupon) {
                 return redirect()->route('coupon.index')->with('error', 'coupon not found.');
             }
 
@@ -108,17 +112,17 @@ class CouponController extends Controller
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError($th, request()->fullUrl());
+
             return redirect()->route('coupon.index')->with('error', 'Failed to update coupon details.');
         }
     }
-
 
     public function delete($id)
     {
         try {
             $coupon = Coupons::find($id);
 
-            if (!$coupon) {
+            if (! $coupon) {
                 return redirect()->route('coupon.index')->with('error', 'coupon not found.');
             }
 
@@ -127,28 +131,28 @@ class CouponController extends Controller
 
             return redirect()->route('coupon.index')->with('success', 'coupon deleted successfully.');
         } catch (\Throwable $th) {
-            //throw $th;
+            // throw $th;
             ErrorLogger::logError($th, request()->fullUrl());
+
             return redirect()->route('coupon.index')->with('error', 'Failed to delete coupon.');
         }
     }
 
     public function validateCouponCode(Request $request)
-{
-    $couponCode = $request->input('couponCode');
-    $eventId = $request->input('eventId');
+    {
+        $couponCode = $request->input('couponCode');
+        $eventId = $request->input('eventId');
 
-    // Find the coupon from the database
-    $coupon = Coupons::where('couponCode', $couponCode)->where('eventId', $eventId)->where('status', 'Active')->first();
+        // Find the coupon from the database
+        $coupon = Coupons::where('couponCode', $couponCode)->where('eventId', $eventId)->where('status', 'Active')->first();
 
-    if ($coupon) {
-        return response()->json([
-            'success' => true,
-            'discount' => $coupon->amount // Assuming discount is in INR
-        ]);
-    } else {
-        return response()->json(['success' => false]);
+        if ($coupon) {
+            return response()->json([
+                'success' => true,
+                'discount' => $coupon->amount, // Assuming discount is in INR
+            ]);
+        } else {
+            return response()->json(['success' => false]);
+        }
     }
-}
-
 }

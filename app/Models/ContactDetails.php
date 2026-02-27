@@ -9,7 +9,6 @@ class ContactDetails extends Model
 {
     use HasFactory;
 
-
     protected $fillable = [
         'showMeOnPublicWeb',
         'billingAddress',
@@ -39,8 +38,6 @@ class ContactDetails extends Model
         'created_at',
         'updated_at',
     ];
-
-
 
     public function member()
     {

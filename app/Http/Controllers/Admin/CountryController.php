@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use App\Models\Country;
 use App\Utils\ErrorLogger;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 
 class CountryController extends Controller
 {
-
     public function __construct()
     {
         // Apply middleware for country-related permissions
@@ -19,15 +18,16 @@ class CountryController extends Controller
         $this->middleware('permission:country-delete', ['only' => ['delete']]);
     }
 
-
     public function index(Request $request)
     {
         try {
             $country = Country::where('status', 'Active')->orderBy('countryName', 'ASC')->paginate(10);
+
             return view('admin.country.index', compact('country'));
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError($th, request()->fullUrl());
+
             return view('servererror');
         }
     }
@@ -36,10 +36,12 @@ class CountryController extends Controller
     {
         try {
             $country = Country::findOrFail($id);
+
             return response()->json($country);
         } catch (\Throwable $th) {
-            //throw $th;
+            // throw $th;
             ErrorLogger::logError($th, request()->fullUrl());
+
             return view('servererror');
         }
     }
@@ -48,10 +50,12 @@ class CountryController extends Controller
     {
         try {
             $country = Country::all();
+
             return view('admin.country.create', compact('country'));
         } catch (\Throwable $th) {
-            //throe $th;
+            // throe $th;
             ErrorLogger::logError($th, request()->fullUrl());
+
             return view('servererror');
         }
     }
@@ -63,28 +67,30 @@ class CountryController extends Controller
         ]);
 
         try {
-            $country = new Country();
+            $country = new Country;
             $country->countryName = $request->countryName;
             $country->status = 'Active';
             $country->save();
 
             return redirect()->route('country.create')->with('success', 'Country Created Successfully!');
         } catch (\Throwable $th) {
-            //throw $th;
+            // throw $th;
             ErrorLogger::logError($th, request()->fullUrl());
+
             return view('servererror');
         }
     }
-
 
     public function edit(Request $request, $id)
     {
         try {
             $country = Country::find($id);
+
             return view('admin.country.edit', compact('country'));
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError($th, request()->fullUrl());
+
             return view('servererror');
         }
     }
@@ -99,7 +105,7 @@ class CountryController extends Controller
         try {
             $country = Country::find($request->id);
 
-            if (!$country) {
+            if (! $country) {
                 return redirect()->route('country.index')->with('error', 'Country not found.');
             }
 
@@ -111,17 +117,17 @@ class CountryController extends Controller
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError($th, request()->fullUrl());
+
             return redirect()->route('country.index')->with('error', 'Failed to update country details.');
         }
     }
-
 
     public function delete($id)
     {
         try {
             $country = Country::find($id);
 
-            if (!$country) {
+            if (! $country) {
                 return redirect()->route('country.index')->with('error', 'Country not found.');
             }
 
@@ -130,8 +136,9 @@ class CountryController extends Controller
 
             return redirect()->route('country.index')->with('success', 'Country deleted successfully.');
         } catch (\Throwable $th) {
-            //throw $th;
+            // throw $th;
             ErrorLogger::logError($th, request()->fullUrl());
+
             return redirect()->route('country.index')->with('error', 'Failed to delete country.');
         }
     }

@@ -2,29 +2,28 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\Event;
+use App\Http\Controllers\Controller;
 use App\Models\Circle;
+use App\Models\Event;
+use App\Models\EventRegister;
+use App\Models\EventType;
 use App\Models\Member;
 use App\Models\Notifications;
-use App\Utils\ErrorLogger;
-use Illuminate\Http\Request;
-use App\Models\EventRegister;
-use App\Http\Controllers\Controller;
-use App\Models\EventType;
 use App\Models\SlotBooking;
 use App\Models\User;
 use App\Models\VisitorEventRegister;
+use App\Utils\ErrorLogger;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Support\Facades\Log;
 use Kreait\Firebase\Factory;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\Notification;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class EventController extends Controller
 {
-
     public function __construct()
     {
         // Apply middleware for event-related permissions
@@ -37,7 +36,6 @@ class EventController extends Controller
         // $this->middleware('permission:event-link', ['only' => ['eventLink']]);
     }
 
-
     public function index(Request $request)
     {
         try {
@@ -45,6 +43,7 @@ class EventController extends Controller
                 ->where('status', 'Active')
                 ->orderBy('id', 'DESC')
                 ->paginate(10);
+
             return view('admin.event.index', compact('event'));
         } catch (\Throwable $th) {
             // throw $th;
@@ -52,9 +51,11 @@ class EventController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
+
     public function eventIndex(Request $request)
     {
         try {
@@ -62,6 +63,7 @@ class EventController extends Controller
                 ->where('status', 'Active')
                 ->orderBy('id', 'DESC')
                 ->paginate(10);
+
             return view('visitor.visitorEventIndex', compact('event'));
         } catch (\Throwable $th) {
             // throw $th;
@@ -69,6 +71,7 @@ class EventController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
@@ -86,7 +89,6 @@ class EventController extends Controller
 
         return view('admin.event.eventDetails', compact('event', 'totalRegisterCount', 'findEventRegister'));
     }
-
 
     // public function memberEventIndex(Request $request)
     // {
@@ -118,7 +120,6 @@ class EventController extends Controller
     //     }
     // }
 
-
     public function memberEventIndex(Request $request)
     {
         try {
@@ -148,17 +149,17 @@ class EventController extends Controller
             return view('admin.event.memberEventIndex', compact('events'));
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, $request->fullUrl());
+
             return view('servererror');
         }
     }
-
-
 
     public function create(Request $request)
     {
         try {
             $circle = Circle::where('status', 'Active')->orderBy('circleName', 'asc')->get();
             $eventType = EventType::where('status', 'Active')->get();
+
             return view('admin.event.create', compact('circle', 'eventType'));
         } catch (\Throwable $th) {
             // throw $th;
@@ -166,6 +167,7 @@ class EventController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
@@ -181,7 +183,7 @@ class EventController extends Controller
             'end_time' => 'required',
         ]);
         try {
-            $event = new Event();
+            $event = new Event;
             $event->title = $request->title;
             $event->circleId = $request->circleId;
             $event->venue = $request->venue;
@@ -192,12 +194,12 @@ class EventController extends Controller
             $uniqueId = time();
 
             if ($request->hasFile('event_thumb')) {
-                $event->event_thumb = $uniqueId . '_thumb.' . $request->event_thumb->extension();
+                $event->event_thumb = $uniqueId.'_thumb.'.$request->event_thumb->extension();
                 $request->event_thumb->move(public_path('Event'), $event->event_thumb);
             }
 
             if ($request->hasFile('event_banner')) {
-                $event->event_banner = $uniqueId . '_banner.' . $request->event_banner->extension();
+                $event->event_banner = $uniqueId.'_banner.'.$request->event_banner->extension();
                 $request->event_banner->move(public_path('Event'), $event->event_banner);
             }
 
@@ -220,18 +222,16 @@ class EventController extends Controller
 
             // Define the directory and ensure it exists
             $qrCodeDir = public_path('eventQR');
-            if (!file_exists($qrCodeDir)) {
+            if (! file_exists($qrCodeDir)) {
                 mkdir($qrCodeDir, 0755, true); // Create directory if it doesn't exist
             }
 
             // Define the path to save the SVG file
-            $qrCodePath = 'eventQR/' . $event->id . '.svg';
+            $qrCodePath = 'eventQR/'.$event->id.'.svg';
 
             // Generate the SVG content and save it to a file
             $qrSvg = QrCode::format('svg')->size(300)->generate($qrData);
             file_put_contents(public_path($qrCodePath), $qrSvg);
-
-
 
             $event->qr_code = $qrCodePath;
             $event->eventStatus = 'Draft';
@@ -245,6 +245,7 @@ class EventController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
@@ -255,6 +256,7 @@ class EventController extends Controller
             $event = Event::find($id);
             $circle = Circle::where('status', 'Active')->orderBy('circleName', 'asc')->get();
             $eventType = EventType::where('status', 'Active')->get();
+
             return view('admin.event.edit', compact('event', 'circle', 'eventType'));
         } catch (\Throwable $th) {
             // throw $th;
@@ -262,6 +264,7 @@ class EventController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
@@ -295,22 +298,22 @@ class EventController extends Controller
             // Check and update the event thumbnail if a new file is uploaded
             if ($request->hasFile('event_thumb')) {
                 // Delete old thumbnail if it exists
-                if ($event->event_thumb && file_exists(public_path('Event/' . $event->event_thumb))) {
-                    unlink(public_path('Event/' . $event->event_thumb));
+                if ($event->event_thumb && file_exists(public_path('Event/'.$event->event_thumb))) {
+                    unlink(public_path('Event/'.$event->event_thumb));
                 }
 
-                $event->event_thumb = $uniqueId . '_thumb.' . $request->event_thumb->extension();
+                $event->event_thumb = $uniqueId.'_thumb.'.$request->event_thumb->extension();
                 $request->event_thumb->move(public_path('Event'), $event->event_thumb);
             }
 
             // Check and update the event banner if a new file is uploaded
             if ($request->hasFile('event_banner')) {
                 // Delete old banner if it exists
-                if ($event->event_banner && file_exists(public_path('Event/' . $event->event_banner))) {
-                    unlink(public_path('Event/' . $event->event_banner));
+                if ($event->event_banner && file_exists(public_path('Event/'.$event->event_banner))) {
+                    unlink(public_path('Event/'.$event->event_banner));
                 }
 
-                $event->event_banner = $uniqueId . '_banner.' . $request->event_banner->extension();
+                $event->event_banner = $uniqueId.'_banner.'.$request->event_banner->extension();
                 $request->event_banner->move(public_path('Event'), $event->event_banner);
             }
 
@@ -336,12 +339,12 @@ class EventController extends Controller
 
             // Define the directory and ensure it exists
             $qrCodeDir = public_path('eventQR');
-            if (!file_exists($qrCodeDir)) {
+            if (! file_exists($qrCodeDir)) {
                 mkdir($qrCodeDir, 0755, true); // Create directory if it doesn't exist
             }
 
             // Define the path to save the new SVG file
-            $qrCodePath = 'eventQR/' . $event->id . '.svg';
+            $qrCodePath = 'eventQR/'.$event->id.'.svg';
 
             // Generate the SVG content and save it to a file
             $qrSvg = QrCode::format('svg')->size(300)->generate($qrData);
@@ -360,10 +363,10 @@ class EventController extends Controller
         } catch (\Throwable $th) {
             // Log any errors and show a server error page
             ErrorLogger::logError($th, request()->fullUrl());
+
             return view('servererror');
         }
     }
-
 
     //     public function updateStatus(Request $request, $id)
     // {
@@ -390,11 +393,11 @@ class EventController extends Controller
             // Check if eventStatus is changed to "Publish"
             if ($request->eventStatus === 'Publish') {
                 // Prepare notification details
-                $title = "New Event Published";
+                $title = 'New Event Published';
                 $body = "The event '{$event->title}' has been published. Don't miss it!";
 
                 // Store notification in the database
-                $notification = new Notifications();
+                $notification = new Notifications;
                 $notification->title = $title;
                 $notification->body = $body;
                 $notification->data = json_encode([
@@ -410,19 +413,19 @@ class EventController extends Controller
                 $messaging = $factory->createMessaging();
 
                 foreach ($users as $user) {
-                    if (!empty($user->fcm_token)) {
+                    if (! empty($user->fcm_token)) {
                         $message = CloudMessage::withTarget('token', $user->fcm_token)
                             ->withNotification(Notification::create($title, $body));
 
                         try {
                             $messaging->send($message);
-                            Log::info('Notification sent to token: ' . $user->fcm_token);
+                            Log::info('Notification sent to token: '.$user->fcm_token);
                         } catch (\Kreait\Firebase\Exception\Messaging\NotFound $e) {
-                            Log::error('Token not found: ' . $user->fcm_token);
+                            Log::error('Token not found: '.$user->fcm_token);
                         } catch (\Kreait\Firebase\Exception\Messaging\InvalidArgument $e) {
-                            Log::error('Invalid argument error with token: ' . $user->fcm_token);
+                            Log::error('Invalid argument error with token: '.$user->fcm_token);
                         } catch (\Exception $e) {
-                            Log::error('General error sending to token: ' . $user->fcm_token . '. Error: ' . $e->getMessage());
+                            Log::error('General error sending to token: '.$user->fcm_token.'. Error: '.$e->getMessage());
                         }
                     }
                 }
@@ -433,9 +436,6 @@ class EventController extends Controller
 
         return response()->json(['success' => false]);
     }
-
-
-
 
     // public function delete($id)
     // {
@@ -455,14 +455,13 @@ class EventController extends Controller
     //     }
     // }
 
-
-
     public function delete(Request $request, $id)
     {
         try {
             $event = Event::find($id);
-            $event->status = "Deleted";
+            $event->status = 'Deleted';
             $event->save();
+
             return redirect()->route('event.index')->with('success', 'Event Deleted Successfully!');
         } catch (\Throwable $th) {
             // throw $th;
@@ -470,6 +469,7 @@ class EventController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
@@ -478,6 +478,7 @@ class EventController extends Controller
     {
         try {
             $event = Event::where('event_slug', $slug)->firstOrFail();
+
             return view('admin.event.eventLink', compact('event'));
         } catch (\Throwable $th) {
             throw $th;
@@ -485,11 +486,11 @@ class EventController extends Controller
                 $th,
                 request()->fullUrl()
             );
+
             return view('servererror');
             // return "error found";
         }
     }
-
 
     // public function eventRegistrationListMembers()
     // {
@@ -504,12 +505,10 @@ class EventController extends Controller
     //     }
     // }
 
-
-
     public function storeUserDetails(Request $request)
     {
         try {
-            $eventReg = new EventRegister();
+            $eventReg = new EventRegister;
             $eventReg->eventId = $request->eventId;
             $eventReg->personName = $request->personName;
             $eventReg->personEmail = $request->personEmail;
@@ -523,16 +522,18 @@ class EventController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
+
     public function eventRegister(Request $request)
     {
         try {
-            $eventRegister = new EventRegister();
+            $eventRegister = new EventRegister;
             $eventRegister->eventId = $request->eventId;
             $eventRegister->memberId = Auth::user()->member->id;
-            $eventRegister->PaymentStatus = "Event Is Free";
+            $eventRegister->PaymentStatus = 'Event Is Free';
             $eventRegister->save();
 
             return redirect()->back()->with('success', 'You are registered successfully for this event.');
@@ -541,6 +542,7 @@ class EventController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
@@ -578,33 +580,32 @@ class EventController extends Controller
     //     }
     // }
 
-
     public function checkRegistration(Request $request)
     {
         try {
             // Validate the input data
             $request->validate([
                 'email' => 'required|email',
-                'eventId' => 'required|integer'
+                'eventId' => 'required|integer',
             ]);
 
             // Fetch the user by email
             $user = User::where('email', $request->email)->first();
 
-            if (!$user) {
+            if (! $user) {
                 return response()->json(['isRegistered' => false]);
             }
 
             // Fetch the active event
             $event = Event::find($request->eventId);
 
-            if (!$event) {
+            if (! $event) {
                 return response()->json(['isRegistered' => false]);
             }
 
             // Check if the user is already registered for the event
             $member = Member::where('userId', $user->id)->first();
-            if (!$member) {
+            if (! $member) {
                 return response()->json(['isRegistered' => false]);
             }
 
@@ -619,8 +620,6 @@ class EventController extends Controller
             return response()->json(['isRegistered' => false]);
         }
     }
-
-
 
     public function eventRegisterList(Request $request, $id)
     {
@@ -639,6 +638,7 @@ class EventController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
@@ -660,16 +660,17 @@ class EventController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
-
 
     public function slotBookingList(Request $request, $id)
     {
         try {
             $event = Event::find($id);
             $slotBooking = SlotBooking::where('eventId', $id)->paginate(10);
+
             return view('admin.event.slotBookingList', compact('event', 'slotBooking'));
         } catch (\Throwable $th) {
             // throw $th;
@@ -677,6 +678,7 @@ class EventController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
@@ -692,6 +694,7 @@ class EventController extends Controller
         if ($request->bookingStatus === 'Rejected') {
             $slotBooking->status = 'Deleted';
             $slotBooking->save();
+
             return back()->with('success', 'Slot Booking status updated successfully.');
         }
 
@@ -701,12 +704,10 @@ class EventController extends Controller
         return back()->with('success', 'Booking status updated successfully.');
     }
 
-
-
     public function storeaddEventMember(Request $request)
     {
         try {
-            $eventReg = new EventRegister();
+            $eventReg = new EventRegister;
             $eventReg->eventId = $request->eventId;
             $eventReg->memberId = $request->memberId;
             $eventReg->personName = $request->personName;
@@ -729,10 +730,10 @@ class EventController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
-
 
     public function createAddEventMember(Request $request)
     {
@@ -743,7 +744,6 @@ class EventController extends Controller
                 ->where('status', 'Active')
                 ->get(); // Ensure 'circleId' is included
 
-
             return view('admin.event.addMember', compact('circles', 'circleMember'));
         } catch (\Throwable $th) {
             throw $th;
@@ -751,17 +751,17 @@ class EventController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
 
-
     public function getMembers($circleId)
     {
         $members = Member::where('circleId', $circleId)->where('status', 'Active')->get(); // Adjust column names as per your database
+
         return response()->json($members);
     }
-
 
     public function updateEventPaymentStatus(Request $request)
     {

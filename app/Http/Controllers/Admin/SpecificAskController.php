@@ -12,6 +12,7 @@ class SpecificAskController extends Controller
     public function index()
     {
         $specificasks = SpecificAsk::where('askBy', Auth::user()->id)->where('status', 'Active')->paginate(10);
+
         // $specificasks = SpecificAsk::paginate(10);
         return view('admin.specificask.index', compact('specificasks'));
     }
@@ -19,6 +20,7 @@ class SpecificAskController extends Controller
     public function allIndex()
     {
         $specificasks = SpecificAsk::where('status', 'Active')->orderBy('id', 'desc')->get();
+
         return view('admin.specificask.allIndex', compact('specificasks'));
     }
 
@@ -29,10 +31,10 @@ class SpecificAskController extends Controller
 
     public function store(Request $request)
     {
-        $specificasks = new SpecificAsk();
+        $specificasks = new SpecificAsk;
         $specificasks->askBy = Auth::user()->id;
         $specificasks->ask = $request->ask;
-        $specificasks->status = "Active";
+        $specificasks->status = 'Active';
         $specificasks->save();
 
         return redirect()->route('specificask.index')->with('success', 'Specific Ask Created Successfully!');
@@ -41,6 +43,7 @@ class SpecificAskController extends Controller
     public function edit($id)
     {
         $specificasks = SpecificAsk::find($id);
+
         return view('admin.specificask.edit', compact('specificasks'));
     }
 
@@ -58,8 +61,9 @@ class SpecificAskController extends Controller
     public function delete($id)
     {
         $specificasks = SpecificAsk::find($id);
-        $specificasks->status = "Deleted";
+        $specificasks->status = 'Deleted';
         $specificasks->save();
+
         return redirect()->route('specificask.index')->with('success', 'Specific Ask Deleted Successfully!');
     }
 }

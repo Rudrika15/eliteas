@@ -352,6 +352,15 @@
 
     <ul id="master-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
         <li class="nav-item">
+            <a class="nav-link" href="{{ route('resourceCategory.index') }}">
+                <i class="bi bi-person-vcard" style="color: #e76a35"></i>
+                <span style="color: #1d2856">Resource Categories</span>
+            </a>
+        </li>
+    </ul>
+
+    <ul id="master-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+        <li class="nav-item">
             <a class="nav-link" href="{{ route('support.index') }}">
                 <i class="bi bi-life-preserver" style="color: #e76a35"></i>
                 <span style="color: #1d2856">Support</span>

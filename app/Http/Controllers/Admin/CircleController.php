@@ -2,32 +2,28 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Carbon\Carbon;
-use App\Models\City;
-use App\Models\State;
-use App\Models\Circle;
-use App\Models\Member;
-use App\Models\Country;
-use App\Models\Schedule;
-use App\Models\Franchise;
-use App\Models\CircleCall;
-use App\Models\CircleType;
-use App\Models\BusinessCategory;
-use App\Utils\ErrorLogger;
-use Illuminate\Support\Str;
-use App\Models\CircleMember;
-use Illuminate\Http\Request;
-use App\Mail\MeetingInvitation;
-use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
+use App\Models\BusinessCategory;
+use App\Models\Circle;
+use App\Models\CircleCall;
 use App\Models\CircleMeetingMembersBusiness;
 use App\Models\CircleMeetingMembersReference;
+use App\Models\CircleType;
+use App\Models\City;
+use App\Models\Country;
+use App\Models\Franchise;
+use App\Models\Member;
+use App\Models\Schedule;
+use App\Models\State;
+use App\Utils\ErrorLogger;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class CircleController extends Controller
 {
-
     public function __construct()
     {
         // Apply middleware for circle call-related permissions
@@ -39,7 +35,6 @@ class CircleController extends Controller
         $this->middleware('permission:member-list', ['only' => ['memberList']]);
         $this->middleware('permission:generate-meetings', ['only' => ['generateMeetings']]);
     }
-
 
     // public function report(Request $request, $id)
     // {
@@ -84,7 +79,6 @@ class CircleController extends Controller
     //         return view('servererror');
     //     }
     // }
-
 
     // public function report(Request $request, $id)
     // {
@@ -162,7 +156,6 @@ class CircleController extends Controller
     //             ];
     //         })->sortKeysDesc();
 
-
     //         // Return the view with the filtered data
     //         return view('admin.circle.report', compact('circle', 'circleCallsGrouped', 'businessMeetingsGrouped', 'referencesGrouped'));
     //     } catch (\Throwable $th) {
@@ -172,7 +165,6 @@ class CircleController extends Controller
     //         return view('servererror');
     //     }
     // }
-
 
     // public function report(Request $request, $id)
     // {
@@ -400,6 +392,7 @@ class CircleController extends Controller
             // Filter circle calls by circle ID
             $filteredCircleCalls = $circleCalls->filter(function ($call) use ($circle) {
                 $memberCircleId = Member::where('userId', $call->memberId)->value('circleId');
+
                 return $memberCircleId == $circle->id;
             });
 
@@ -417,9 +410,9 @@ class CircleController extends Controller
             // Filter business meetings by circle ID
             $filteredBusinessMeetings = $businessMeetings->filter(function ($meeting) use ($circle) {
                 $businessGiverCircleId = Member::where('userId', $meeting->businessGiverId)->value('circleId');
+
                 return $businessGiverCircleId == $circle->id;
             });
-
 
             // $filteredBusinessMeetings = $businessMeetings->filter(function ($meeting) use ($circle) {
             //     $businessGiverCircleId = Member::where('userId', $meeting->businessGiverId)
@@ -427,7 +420,6 @@ class CircleController extends Controller
             //         ->value('circleId');
             //     return $businessGiverCircleId == $circle->id;
             // });
-
 
             // Total Business Amount
             $totalBusinessAmount = $filteredBusinessMeetings->sum('amount');
@@ -443,6 +435,7 @@ class CircleController extends Controller
             // Filter references by circle ID
             $filteredReferences = $references->filter(function ($reference) use ($circle) {
                 $referenceGiverCircleId = Member::where('userId', $reference->referenceGiverId)->value('circleId');
+
                 return $referenceGiverCircleId == $circle->id;
             });
 
@@ -461,13 +454,10 @@ class CircleController extends Controller
         } catch (\Throwable $th) {
             // Log the error and show the error view
             ErrorLogger::logError($th, $request->fullUrl());
+
             return view('servererror');
         }
     }
-
-
-
-
 
     public function index(Request $request)
     {
@@ -502,15 +492,17 @@ class CircleController extends Controller
         } catch (\Throwable $th) {
             // Log the error and return the server error page
             ErrorLogger::logError($th, $request->fullUrl());
+
             return view('servererror');
         }
     }
 
-    //For show single data
+    // For show single data
     public function view(Request $request, $id)
     {
         try {
             $circle = Circle::findOrFail($id);
+
             return response()->json($circle);
         } catch (\Throwable $th) {
             // throw $th;
@@ -523,7 +515,6 @@ class CircleController extends Controller
         }
     }
 
-
     public function create(Request $request)
     {
         try {
@@ -535,6 +526,7 @@ class CircleController extends Controller
             $franchise = Franchise::where('status', 'Active')->orderBy('franchiseName', 'ASC')->get();
             $circletype = CircleType::where('status', 'Active')->orderBy('circleTypeName', 'ASC')->get();
             $bCategory = BusinessCategory::where('status', 'Active')->orderBy('categoryName', 'ASC')->get();
+
             return view('admin.circle.create', compact('circle', 'bCategory', 'franchise', 'city', 'circletype', 'countries', 'states', 'cities'));
         } catch (\Throwable $th) {
             // throw $th;
@@ -548,7 +540,6 @@ class CircleController extends Controller
     }
 
     public function store(Request $request)
-
     {
         $this->validate($request, [
             'circleName' => 'required|unique:circles',
@@ -564,7 +555,7 @@ class CircleController extends Controller
 
             $userId = Auth::id();
 
-            $circle = new Circle();
+            $circle = new Circle;
             $circle->createdBy = $userId;
             $circle->circleName = $request->circleName;
             $circle->businessCategoryId = json_encode($request->businessCategoryId);
@@ -613,16 +604,16 @@ class CircleController extends Controller
                             $futureMeetingFound = true; // Future meeting found
 
                             // Create a basic slug using the circle name and meeting date
-                            $slug = Str::slug($circle->circleName . '-' . $meetingDate->format('Y-m-d'));
+                            $slug = Str::slug($circle->circleName.'-'.$meetingDate->format('Y-m-d'));
 
                             // Check if the slug already exists
                             if (Schedule::where('cm_slug', $slug)->exists()) {
                                 // If it exists, append a unique identifier
-                                $slug = $slug . '-' . uniqid();
+                                $slug = $slug.'-'.uniqid();
                             }
 
                             // Create and save the new schedule
-                            $schedule = new Schedule();
+                            $schedule = new Schedule;
                             $schedule->circleId = $circle->id;
                             $schedule->day = $meetingDate->dayOfWeek; // Store the day of the week
                             $schedule->date = $meetingDate->format('Y-m-d');
@@ -639,7 +630,7 @@ class CircleController extends Controller
             $futureMeetingsScheduled = $scheduleMeetingsForMonth($currentDate);
 
             // If no future meetings were scheduled for the current month, schedule for the next month
-            if (!$futureMeetingsScheduled) {
+            if (! $futureMeetingsScheduled) {
                 $nextMonth = $currentDate->copy()->addMonth();
                 $scheduleMeetingsForMonth($nextMonth);
             } else {
@@ -658,12 +649,10 @@ class CircleController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
-
-
-
 
     public function edit(Request $request, $id)
     {
@@ -679,6 +668,7 @@ class CircleController extends Controller
 
             // Decode the saved businessCategoryId so it becomes an array
             $circle->businessCategoryId = json_decode($circle->businessCategoryId ?? '[]', true);
+
             return view('admin.circle.edit', compact('franchise', 'bCategory', 'circletype', 'city', 'circle', 'countries', 'states', 'cities'));
         } catch (\Throwable $th) {
             // throw $th;
@@ -686,10 +676,10 @@ class CircleController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
-
 
     public function update(Request $request)
     {
@@ -724,6 +714,7 @@ class CircleController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
@@ -737,7 +728,7 @@ class CircleController extends Controller
             // Check if the circle exists
             if ($circle) {
                 // Set the circle status to "Deleted"
-                $circle->status = "Deleted";
+                $circle->status = 'Deleted';
                 $circle->save();
 
                 // Update the status of related schedules to "Deleted"
@@ -752,18 +743,18 @@ class CircleController extends Controller
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError($th, $request->fullUrl());
+
             // Handle any exceptions and show the server error page
             return view('servererror');
         }
     }
-
-
 
     public function showByCircle(Request $request, $id)
     {
         try {
             $circle = Circle::findOrFail($id);
             $schedules = Schedule::where('circleId', $circle->id)->where('status', 'Active')->orderByDesc('id')->paginate(10);
+
             return view('admin.circle.show', compact('circle', 'schedules'));
         } catch (\Throwable $th) {
             // throw $th;
@@ -787,20 +778,21 @@ class CircleController extends Controller
 
             return response()->json([
                 'success' => true,
-                'lockUnlock' => $schedule->lockUnlock
+                'lockUnlock' => $schedule->lockUnlock,
             ]);
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, $request->fullUrl());
+
             return response()->json(['success' => false], 500);
         }
     }
-
 
     public function memberList(Request $request, $id)
     {
         try {
             $circle = Circle::findOrFail($id);
             $members = Member::where('circleId', $circle->id)->orderByDesc('memberName', 'ASC')->paginate(10);
+
             return view('admin.circle.memberList', compact('circle', 'members'));
         } catch (\Throwable $th) {
             // throw $th;
@@ -813,7 +805,7 @@ class CircleController extends Controller
         }
     }
 
-    ///generate new meetings
+    // /generate new meetings
 
     public function generateMeetings(Request $request, $circleId)
     {
@@ -859,18 +851,18 @@ class CircleController extends Controller
                             ->whereDate('date', $meetingDate->format('Y-m-d'))
                             ->first();
 
-                        if (!$existingMeeting) {
+                        if (! $existingMeeting) {
                             // Create a basic slug using the circle name and meeting date
-                            $slug = Str::slug($circle->circleName . '-' . $meetingDate->format('Y-m-d'));
+                            $slug = Str::slug($circle->circleName.'-'.$meetingDate->format('Y-m-d'));
 
                             // Check if the slug already exists
                             if (Schedule::where('cm_slug', $slug)->exists()) {
                                 // If it exists, append a unique identifier
-                                $slug = $slug . '-' . uniqid();
+                                $slug = $slug.'-'.uniqid();
                             }
 
                             // Create and save the new schedule
-                            $schedule = new Schedule();
+                            $schedule = new Schedule;
                             $schedule->circleId = $circle->id;
                             $schedule->day = $meetingDate->dayOfWeek; // Store the day of the week
                             $schedule->date = $meetingDate->format('Y-m-d');
@@ -885,6 +877,7 @@ class CircleController extends Controller
                         }
                     }
                 }
+
                 return $futureMeetingFound;
             };
 
@@ -895,7 +888,7 @@ class CircleController extends Controller
             $startDate = Carbon::createFromDate($currentYear, $currentMonth, 1)->startOfMonth()->addMonth();
             $endDate = Carbon::createFromDate($currentYear, $currentMonth, $currentDate->daysInMonth)->endOfMonth();
 
-            while (!$futureMeetingsFound) {
+            while (! $futureMeetingsFound) {
                 $futureMeetingsFound = $scheduleMeetingsForMonth($startDate);
                 $startDate->addMonth();
             }
@@ -911,6 +904,7 @@ class CircleController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }

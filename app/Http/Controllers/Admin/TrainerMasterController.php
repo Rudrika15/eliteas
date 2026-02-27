@@ -2,24 +2,21 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\User;
+use App\Exports\TrainersListExport;
+use App\Http\Controllers\Controller;
 use App\Models\Circle;
 use App\Models\Member;
-use App\Models\Franchise;
-use App\Utils\ErrorLogger;
-use Illuminate\Http\Request;
 use App\Models\TrainerMaster;
 use App\Models\TrainingRegister;
 use App\Models\TrainingTrainers;
-use App\Exports\TrainersListExport;
-use App\Http\Controllers\Controller;
+use App\Models\User;
+use App\Utils\ErrorLogger;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Facades\Excel;
 
 class TrainerMasterController extends Controller
 {
-
-
     public function __construct()
     {
         // $this->middleware('permission:trainer-master-list|trainer-master-create|trainer-master-edit|trainer-master-delete');
@@ -31,7 +28,6 @@ class TrainerMasterController extends Controller
         $this->middleware('permission:trainer-master-training-wise-trainer-list', ['only' => ['trainingWiseTrainerlist']]);
         $this->middleware('permission:trainer-master-training-register-view', ['only' => ['trainingRegisterView']]);
     }
-
 
     public function getMemberDetails($id)
     {
@@ -47,22 +43,21 @@ class TrainerMasterController extends Controller
                 'success' => true,
                 'member' => $member,
                 'contactNo' => $user->contactNo ?? null,
-                'email' => $user->email ?? null
+                'email' => $user->email ?? null,
             ]);
         } else {
             return response()->json([
                 'success' => false,
-                'message' => 'Member not found'
+                'message' => 'Member not found',
             ]);
         }
     }
-
-
 
     public function index(Request $request)
     {
         try {
             $trainer = TrainerMaster::where('status', 'Active')->paginate(10);
+
             return view('admin.trainerMaster.index', compact('trainer'));
         } catch (\Throwable $th) {
             // throw $th;
@@ -70,6 +65,7 @@ class TrainerMasterController extends Controller
                 $th,
                 request()->fullUrl()
             );
+
             return view('servererror');
         }
     }
@@ -78,10 +74,12 @@ class TrainerMasterController extends Controller
     {
         try {
             $trainer = TrainerMaster::findOrFail($id);
+
             return response()->json($trainer);
         } catch (\Throwable $th) {
-            //throw $th;
+            // throw $th;
             ErrorLogger::logError($th, request()->fullUrl());
+
             return view('servererror');
         }
     }
@@ -97,10 +95,12 @@ class TrainerMasterController extends Controller
                 ->get(); // Ensure 'circleId' is included
 
             $trainer = TrainerMaster::all();
+
             return view('admin.trainerMaster.create', compact('trainer', 'circles', 'circleMember'));
         } catch (\Throwable $th) {
-            //throe $th;
+            // throe $th;
             ErrorLogger::logError($th, request()->fullUrl());
+
             return view('servererror');
         }
     }
@@ -125,7 +125,7 @@ class TrainerMasterController extends Controller
         try {
             if ($request->type == 'externalMember') { // Change from 'group' to 'type'
                 // Create a new user
-                $user = new User();
+                $user = new User;
                 $user->firstName = $request->firstName;
                 $user->lastName = $request->lastName;
                 $user->email = $request->email;
@@ -141,24 +141,24 @@ class TrainerMasterController extends Controller
                 $user->assignRole('Trainer'); // Assign role to the user
 
                 // Create a new TrainerMaster
-                $trainer = new TrainerMaster();
+                $trainer = new TrainerMaster;
                 $trainer->userId = $user->id;
                 $trainer->type = $request->type; // Change from 'group' to 'type'
                 $trainer->externalMemberContact = $request->contactNo;
                 $trainer->externalMemberBio = $request->bio;
 
                 if ($request->hasFile('trainerImage')) {
-                    $imageName = time() . '.' . $request->trainerImage->extension();
+                    $imageName = time().'.'.$request->trainerImage->extension();
                     $request->trainerImage->move(public_path('img/trainerImages'), $imageName);
                     $trainer->trainerImage = $imageName;
                 }
 
                 $trainer->status = 'Active';
                 $trainer->save();
-            } else if ($request->type == 'internalMember') {
+            } elseif ($request->type == 'internalMember') {
                 // Find the user by ID
                 $user = User::find($request->trainerId);
-                if (!$user) {
+                if (! $user) {
                     return redirect()->back()->with('error', 'User not found.');
                 }
                 if (TrainerMaster::where('userId', $user->id)->exists()) {
@@ -167,7 +167,7 @@ class TrainerMasterController extends Controller
                 $user->assignRole('Trainer'); // Assign role to the user
                 $user->save();
 
-                $trainer = new TrainerMaster();
+                $trainer = new TrainerMaster;
                 $trainer->userId = $user->id;
                 $trainer->type = $request->type; // Change from 'group' to 'type'
                 $trainer->status = 'Active';
@@ -181,17 +181,17 @@ class TrainerMasterController extends Controller
                 $th,
                 request()->fullUrl()
             );
+
             // Log the error or handle it gracefully
             return view('servererror');
         }
     }
 
-
-
     public function edit(Request $request, $id)
     {
         try {
             $trainer = TrainerMaster::find($id);
+
             return view('admin.trainerMaster.edit', compact('trainer'));
         } catch (\Throwable $th) {
             // throw $th;
@@ -199,6 +199,7 @@ class TrainerMasterController extends Controller
                 $th,
                 request()->fullUrl()
             );
+
             return view('servererror');
         }
     }
@@ -214,13 +215,13 @@ class TrainerMasterController extends Controller
 
             // Find the user by ID
             $user = User::find($request->trainerId);
-            if (!$user) {
+            if (! $user) {
                 return redirect()->back()->with('error', 'User not found.');
             }
 
             // Find the TrainerMaster by user ID
             $trainer = TrainerMaster::where('userId', $user->id)->first();
-            if (!$trainer) {
+            if (! $trainer) {
                 return redirect()->back()->with('error', 'Trainer details not found.');
             }
 
@@ -236,18 +237,17 @@ class TrainerMasterController extends Controller
                 $th,
                 request()->fullUrl()
             );
+
             // Log the error or handle it gracefully
             return view('servererror');
         }
     }
 
-
-
-    function delete($id)
+    public function delete($id)
     {
         try {
             $trainer = TrainerMaster::find($id);
-            $trainer->status = "Deleted";
+            $trainer->status = 'Deleted';
             $trainer->save();
 
             return redirect()->route('trainer.index')->with('success', 'Trainer deleted Successfully!');
@@ -257,6 +257,7 @@ class TrainerMasterController extends Controller
                 $th,
                 request()->fullUrl()
             );
+
             return view('servererror');
         }
     }
@@ -265,6 +266,7 @@ class TrainerMasterController extends Controller
     {
         try {
             $trainers = TrainingTrainers::where('status', 'Active')->paginate(10);
+
             return view('admin.trainerMaster.trainingWiseTrainerList', compact('trainers'));
         } catch (\Throwable $th) {
             // throw $th;
@@ -272,6 +274,7 @@ class TrainerMasterController extends Controller
                 $th,
                 request()->fullUrl()
             );
+
             return view('servererror');
         }
     }
@@ -284,6 +287,7 @@ class TrainerMasterController extends Controller
     public function trainingRegisterView()
     {
         $trainingRegister = TrainingRegister::where('status', 'Active')->paginate(10);
+
         return view('admin.trainerMaster.trainingRegisterView', compact('trainingRegister'));
     }
 }

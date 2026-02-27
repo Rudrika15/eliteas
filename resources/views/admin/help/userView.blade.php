@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('header', 'User Help')
+@section('header', 'Resources')
 @section('content')
 
     {{-- Message --}}
@@ -8,8 +8,23 @@
         <div class="card">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h4 class="card-title">Help</h4>
+                    <h4 class="card-title">Resources</h4>
                 </div>
+
+                <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link {{ empty($selectedCategoryId) ? 'active' : '' }}" href="{{ route('help.userView') }}" style="{{ empty($selectedCategoryId) ? 'background-color: #e76a35; color: white;' : 'color: #1d2856;' }}">
+                            Show All
+                        </a>
+                    </li>
+                    @foreach ($categories ?? [] as $category)
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link {{ (string) ($selectedCategoryId ?? '') === (string) $category->id ? 'active' : '' }}" href="{{ route('help.userView', ['resourceCatId' => $category->id]) }}" style="{{ (string) ($selectedCategoryId ?? '') === (string) $category->id ? 'background-color: #e76a35; color: white;' : 'color: #1d2856;' }}">
+                                {{ $category->categoryName }}
+                            </a>
+                        </li>
+                    @endforeach
+                </ul>
 
                 <!-- Table with stripped rows -->
                 <div class="table-responsive">
@@ -60,7 +75,7 @@
                                 @endforeach
                             @else
                                 <tr>
-                                    <td colspan="5" class="text-center">Coming soon</td>
+                                    <td colspan="6" class="text-center">Coming soon</td>
                                 </tr>
                             @endif
                         </tbody>

@@ -28,15 +28,13 @@
 //     }
 // }
 
-
 namespace App\Http\Controllers;
 
-use App\Models\Message;
 use App\Events\MessageSent;
-
+use App\Models\Message;
+use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
-use Illuminate\Contracts\Encryption\DecryptException;
 
 class MessageController extends Controller
 {
@@ -54,6 +52,7 @@ class MessageController extends Controller
             } catch (DecryptException $e) {
                 $message->message = '[Message corrupted]';  // Handle corrupted message case
             }
+
             return $message;
         });
 

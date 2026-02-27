@@ -9,7 +9,7 @@ class TemplateDetail extends Model
 {
     use HasFactory;
 
-    function Template()
+    public function Template()
     {
         return $this->hasOne(Templatemaster::class, 'id', 'templateId');
     }

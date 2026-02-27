@@ -2,17 +2,15 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use App\Models\City;
-use App\Models\State;
 use App\Models\Country;
+use App\Models\State;
 use App\Utils\ErrorLogger;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\URL;
-use App\Http\Controllers\Controller;
 
 class CityController extends Controller
 {
-
     public function __construct()
     {
         // Apply middleware for city-related permissions
@@ -22,7 +20,6 @@ class CityController extends Controller
         $this->middleware('permission:city-delete', ['only' => ['delete']]);
     }
 
-
     public function index(Request $request)
     {
         try {
@@ -31,6 +28,7 @@ class CityController extends Controller
                 ->where('status', 'Active')
                 ->orderBy('id', 'DESC')
                 ->paginate(10);
+
             return view('admin.city.index', compact('city'));
         } catch (\Throwable $th) {
             // throw $th;
@@ -38,15 +36,18 @@ class CityController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
-    //For show single data
+
+    // For show single data
     public function view(Request $request, $id)
     {
         try {
 
             $city = City::findOrFail($id);
+
             return response()->json($city);
         } catch (\Throwable $th) {
             // throw $th;
@@ -54,6 +55,7 @@ class CityController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
@@ -66,6 +68,7 @@ class CityController extends Controller
             $city = City::with('country')
                 ->with('state')
                 ->get();
+
             return view('admin.city.create', compact('countries', 'states', 'city'));
         } catch (\Throwable $th) {
             // throw $th;
@@ -73,6 +76,7 @@ class CityController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
@@ -83,7 +87,7 @@ class CityController extends Controller
             'cityName' => 'required',
         ]);
         try {
-            $city = new City();
+            $city = new City;
             $city->countryId = $request->countryId;
             $city->stateId = $request->stateId;
             $city->cityName = $request->cityName;
@@ -100,6 +104,7 @@ class CityController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
@@ -110,6 +115,7 @@ class CityController extends Controller
             $city = City::find($id);
             $states = State::where('status', '!=', 'Deleted')->get();
             $countries = Country::where('status', '!=', 'Deleted')->get();
+
             return view('admin.city.edit', compact('countries', 'states', 'city'));
         } catch (\Throwable $th) {
             // throw $th;
@@ -117,6 +123,7 @@ class CityController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
@@ -139,7 +146,6 @@ class CityController extends Controller
 
             $city->save();
 
-
             return redirect()->route('city.index')->with('success', 'City Updated Successfully!');
         } catch (\Throwable $th) {
             // throw $th;
@@ -147,16 +153,18 @@ class CityController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
 
-    function delete(Request $request, $id)
+    public function delete(Request $request, $id)
     {
         try {
             $city = City::find($id);
-            $city->status = "Deleted";
+            $city->status = 'Deleted';
             $city->save();
+
             return redirect()->route('city.index')->with('success', 'City Deleted Successfully!');
         } catch (\Throwable $th) {
             // throw $th;
@@ -164,6 +172,7 @@ class CityController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }

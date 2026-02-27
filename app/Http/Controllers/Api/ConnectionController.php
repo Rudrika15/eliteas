@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\User;
-use App\Utils\Utils;
-use App\Models\Member;
-use App\Models\Connection;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\BusinessCategory;
 use App\Models\Circle;
 use App\Models\CircleMeetingMembersBusiness;
+use App\Models\Connection;
+use App\Models\Member;
 use App\Models\Testimonial;
+use App\Models\User;
 use App\Utils\ErrorLogger;
+use App\Utils\Utils;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Kreait\Firebase\Factory;
@@ -36,9 +36,9 @@ class ConnectionController extends Controller
                         $query->select('userId', 'id', 'profilePhoto', 'companyName', 'circleId', 'businessCategoryId')
                             ->with([
                                 'circle:id,circleName',
-                                'bCategory:id,categoryName'
+                                'bCategory:id,categoryName',
                             ]);
-                    }
+                    },
                 ])
                 ->get();
 
@@ -50,6 +50,7 @@ class ConnectionController extends Controller
             $connections->transform(function ($connection) {
                 $sponsorMemberId = optional($connection->members)->id;
                 $connection->induction_count = Member::where('sponsoredBy', $sponsorMemberId)->count();
+
                 return $connection;
             });
 
@@ -74,9 +75,9 @@ class ConnectionController extends Controller
                         $query->select('userId', 'id', 'profilePhoto', 'companyName', 'circleId', 'businessCategoryId')
                             ->with([
                                 'circle:id,circleName',
-                                'bCategory:id,categoryName'
+                                'bCategory:id,categoryName',
                             ]);
-                    }
+                    },
                 ])
                 ->get();
 
@@ -88,6 +89,7 @@ class ConnectionController extends Controller
             $connections->transform(function ($connection) {
                 $receiverMemberId = optional($connection->receiverMember)->id;
                 $connection->induction_count = Member::where('sponsoredBy', $receiverMemberId)->count();
+
                 return $connection;
             });
 
@@ -96,10 +98,6 @@ class ConnectionController extends Controller
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
-
-
-
-
 
     public function ConnectionsRequests(Request $request)
     {
@@ -116,9 +114,9 @@ class ConnectionController extends Controller
                         $query->select('userId', 'id', 'profilePhoto', 'companyName', 'circleId', 'businessCategoryId')
                             ->with([
                                 'circle:id,circleName',
-                                'bCategory:id,categoryName'
+                                'bCategory:id,categoryName',
                             ]);
-                    }
+                    },
                 ])
                 ->get();
 
@@ -130,6 +128,7 @@ class ConnectionController extends Controller
             $connections->transform(function ($connection) {
                 $memberId = optional($connection->members)->id;
                 $connection->induction_count = Member::where('sponsoredBy', $memberId)->count();
+
                 return $connection;
             });
 
@@ -138,7 +137,6 @@ class ConnectionController extends Controller
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
-
 
     public function myConnections(Request $request)
     {
@@ -155,7 +153,7 @@ class ConnectionController extends Controller
                         ->with([
                             'user:id,email,firstName,lastName,contactNo',
                             'circle:id,circleName',
-                            'bCategory:id,categoryName'
+                            'bCategory:id,categoryName',
                         ]);
                 }])
                 ->get();
@@ -167,6 +165,7 @@ class ConnectionController extends Controller
             $connections->transform(function ($connection) {
                 $memberId = optional($connection->member)->id;
                 $connection->induction_count = Member::where('sponsoredBy', $memberId)->count();
+
                 return $connection;
             });
 
@@ -175,8 +174,6 @@ class ConnectionController extends Controller
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
-
-
 
     public function sendRequest(Request $request)
     {
@@ -187,7 +184,7 @@ class ConnectionController extends Controller
             if ($isExist) {
                 return Utils::sendResponse(['message' => 'You have already sent the request'], 200);
             }
-            $connections = new Connection();
+            $connections = new Connection;
             $connections->memberId = $memberId;
             $connections->userId = $userId;
             $connections->status = 'Pending';
@@ -195,15 +192,15 @@ class ConnectionController extends Controller
 
             // Fetch the name of the user with the provided memberId
             $member = User::find($memberId);
-            if (!$member) {
+            if (! $member) {
                 return Utils::errorResponse(['message' => 'Member not found'], 'Not Found', 404);
             }
-            $memberName = $member->firstName . ' ' . $member->lastName;
+            $memberName = $member->firstName.' '.$member->lastName;
 
             // Send notification to only one user
             $users = User::where('id', $memberId)->whereNotNull('fcm_token')->get();
             $title = 'Network';
-            $body = 'A new connection request has been received by ' . $memberName;
+            $body = 'A new connection request has been received by '.$memberName;
 
             $serviceAccountPath = storage_path('app/public/ubn_notification.json');
             $factory = (new Factory)->withServiceAccount($serviceAccountPath);
@@ -215,13 +212,13 @@ class ConnectionController extends Controller
 
                 try {
                     $messaging->send($message);
-                    Log::info('Notification sent to token: ' . $user->fcm_token);
+                    Log::info('Notification sent to token: '.$user->fcm_token);
                 } catch (\Kreait\Firebase\Exception\Messaging\NotFound $e) {
-                    Log::error('Token not found: ' . $user->fcm_token);
+                    Log::error('Token not found: '.$user->fcm_token);
                 } catch (\Kreait\Firebase\Exception\Messaging\InvalidArgument $e) {
-                    Log::error('Invalid argument error with token: ' . $user->fcm_token);
+                    Log::error('Invalid argument error with token: '.$user->fcm_token);
                 } catch (\Exception $e) {
-                    Log::error('General error sending to token: ' . $user->fcm_token . '. Error: ' . $e->getMessage());
+                    Log::error('General error sending to token: '.$user->fcm_token.'. Error: '.$e->getMessage());
                 }
             }
 
@@ -230,8 +227,6 @@ class ConnectionController extends Controller
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
-
-
 
     // public function search(Request $request)
     // {
@@ -268,7 +263,6 @@ class ConnectionController extends Controller
     //         ], 'Internal Server Error', 500);
     //     }
     // }
-
 
     // public function search(Request $request)
     // {
@@ -320,8 +314,6 @@ class ConnectionController extends Controller
     //     }
     // }
 
-
-
     public function search(Request $request)
     {
         try {
@@ -337,10 +329,10 @@ class ConnectionController extends Controller
                     $q->where('status', 'Active')
                         ->where('userId', '!=', $authUserId)
                         ->where(function ($q) use ($find) {
-                            $q->where('firstName', 'like', '%' . $find . '%')
-                                ->orWhere('lastName', 'like', '%' . $find . '%')
+                            $q->where('firstName', 'like', '%'.$find.'%')
+                                ->orWhere('lastName', 'like', '%'.$find.'%')
                                 ->orWhereHas('circle', function ($q) use ($find) {
-                                    $q->where('circleName', 'like', '%' . $find . '%');
+                                    $q->where('circleName', 'like', '%'.$find.'%');
                                 });
                         });
                 })
@@ -352,7 +344,7 @@ class ConnectionController extends Controller
                     'member.bCategory:id,categoryName',
                     'member.connections' => function ($q) use ($authUserId) {
                         $q->where('userId', $authUserId);
-                    }
+                    },
                 ])
                 ->get();
 
@@ -360,9 +352,10 @@ class ConnectionController extends Controller
             foreach ($members as $user) {
                 $member = $user->member;
 
-                if (!$member) {
+                if (! $member) {
                     $user->connection_status = 'Not Connected';
                     $user->induction_count = 0;
+
                     continue;
                 }
 
@@ -391,18 +384,14 @@ class ConnectionController extends Controller
 
             return Utils::sendResponse([
                 'message' => $message,
-                'members' => $members
+                'members' => $members,
             ], 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse([
-                'error' => $th->getMessage()
+                'error' => $th->getMessage(),
             ], 'Internal Server Error', 500);
         }
     }
-
-
-
-
 
     public function chatConnectionSearch(Request $request)
     {
@@ -413,7 +402,7 @@ class ConnectionController extends Controller
             // Get the authenticated user's Member record
             $member = Member::where('userId', $userId)->first();
 
-            if (!$member || !$member->circleId) {
+            if (! $member || ! $member->circleId) {
                 return Utils::errorResponse(['error' => 'User does not belong to any circle.'], 'No Circle Found', 404);
             }
 
@@ -435,8 +424,8 @@ class ConnectionController extends Controller
                                 ->where('id', '!=', $userId) // Exclude auth user again for safety
                                 ->when($keyword, function ($q) use ($keyword) {
                                     $q->where(function ($subQuery) use ($keyword) {
-                                        $subQuery->where('firstName', 'like', '%' . $keyword . '%')
-                                            ->orWhere('lastName', 'like', '%' . $keyword . '%');
+                                        $subQuery->where('firstName', 'like', '%'.$keyword.'%')
+                                            ->orWhere('lastName', 'like', '%'.$keyword.'%');
                                     });
                                 });
                         }]);
@@ -453,12 +442,12 @@ class ConnectionController extends Controller
                         ->with(['user:id,firstName,lastName,email', 'bCategory:id,categoryName'])
                         ->when($keyword, function ($q) use ($keyword) {
                             $q->whereHas('user', function ($userQuery) use ($keyword) {
-                                $userQuery->where('firstName', 'like', '%' . $keyword . '%')
-                                    ->orWhere('lastName', 'like', '%' . $keyword . '%');
+                                $userQuery->where('firstName', 'like', '%'.$keyword.'%')
+                                    ->orWhere('lastName', 'like', '%'.$keyword.'%');
                             });
                         });
                 },
-                'city:id,cityName'
+                'city:id,cityName',
             ])->findOrFail($circleId);
 
             return Utils::sendResponse([
@@ -472,18 +461,18 @@ class ConnectionController extends Controller
         }
     }
 
-
     public function requestAction(Request $request)
     {
         try {
             $connection = Connection::find($request->input('connectionId'));
 
-            if (!$connection) {
+            if (! $connection) {
                 return Utils::errorResponse(['error' => 'Connection not found.'], 'Not Found', 404);
             }
 
             if ($request->input('action') === 'Rejected') {
                 $connection->delete();
+
                 return Utils::sendResponse(['message' => 'Connection request rejected and deleted successfully.'], 200);
             }
 
@@ -496,13 +485,12 @@ class ConnectionController extends Controller
         }
     }
 
-
     public function removeConnection(Request $request)
     {
         try {
             $connection = Connection::find($request->input('connectionId'));
 
-            if (!$connection) {
+            if (! $connection) {
                 return Utils::errorResponse(['error' => 'Connection not found.'], 'Not Found', 404);
             }
 
@@ -513,7 +501,6 @@ class ConnectionController extends Controller
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
-
 
     // public function viewMemberProfile(Request $request)
     // {
@@ -547,7 +534,6 @@ class ConnectionController extends Controller
     //         ], 'Internal Server Error', 500);
     //     }
     // }
-
 
     // public function viewMemberProfile(Request $request)
     // {
@@ -640,7 +626,6 @@ class ConnectionController extends Controller
     //             ->with('user:id,firstName,lastName')
     //             ->get() ?? [];
 
-
     //         return Utils::sendResponse([
     //             'message' => 'Member Profile',
     //             'member' => $member
@@ -651,8 +636,6 @@ class ConnectionController extends Controller
     //         ], 'Internal Server Error', 500);
     //     }
     // }
-
-
 
     public function viewMemberProfile(Request $request)
     {
@@ -671,10 +654,10 @@ class ConnectionController extends Controller
                 )
                 ->first();
 
-            if (!$member) {
+            if (! $member) {
                 return Utils::sendResponse([
                     'message' => 'Member not found',
-                    'member'  => null
+                    'member' => null,
                 ], 404);
             }
 
@@ -706,18 +689,14 @@ class ConnectionController extends Controller
 
             return Utils::sendResponse([
                 'message' => 'Member Profile',
-                'member'  => $member
+                'member' => $member,
             ], 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse([
-                'error' => $th->getMessage()
+                'error' => $th->getMessage(),
             ], 'Internal Server Error', 500);
         }
     }
-
-
-
-
 
     // public function getCircleMembers(Request $request, $id = null)
     // {
@@ -761,7 +740,6 @@ class ConnectionController extends Controller
     //         ], 500);
     //     }
     // }
-
 
     // public function getCircleMembers(Request $request, $id = null)
     // {
@@ -819,7 +797,6 @@ class ConnectionController extends Controller
     //         ], 500);
     //     }
     // }
-
 
     // public function getCircleMembers(Request $request, $id = null)
     // {
@@ -974,8 +951,6 @@ class ConnectionController extends Controller
     //     }
     // }
 
-
-
     public function getCircleMembers(Request $request, $id = null)
     {
         try {
@@ -989,12 +964,11 @@ class ConnectionController extends Controller
                         $query->where('status', 'Active')
                             ->with([
                                 'bCategory:id,categoryName',
-                                'user:id,email,contactNo'
+                                'user:id,email,contactNo',
                             ]);
                     },
-                    'city:id,cityName'
+                    'city:id,cityName',
                 ])->findOrFail($id);
-
 
                 $circle->totalBusinessAmount = 0;
 
@@ -1022,23 +996,21 @@ class ConnectionController extends Controller
                 ]);
             }
 
-
             $circles = Circle::where('status', 'Active')
                 ->with([
                     'members' => function ($query) {
                         $query->where('status', 'Active')
                             ->with([
                                 'bCategory:id,categoryName',
-                                'user:id,email,contactNo'
+                                'user:id,email,contactNo',
                             ]);
                     },
-                    'city:id,cityName'
+                    'city:id,cityName',
                 ])
                 ->withCount(['members' => function ($query) {
                     $query->where('status', 'Active');
                 }])
                 ->get();
-
 
             foreach ($circles as $circle) {
                 $circle->totalBusinessAmount = 0;
@@ -1069,13 +1041,13 @@ class ConnectionController extends Controller
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, request()->fullUrl());
             Log::error('Error in getCircleMembers', ['message' => $th->getMessage(), 'trace' => $th->getTraceAsString()]);
+
             return response()->json([
                 'success' => false,
                 'error' => 'An error occurred. Please try again later.',
             ], 500);
         }
     }
-
 
     // public function getCircleMembers(Request $request, $id = null)
     // {
@@ -1183,9 +1155,6 @@ class ConnectionController extends Controller
     //     }
     // }
 
-
-
-
     // public function getCategoryMembers($id = null)
     // {
     //     try {
@@ -1239,7 +1208,6 @@ class ConnectionController extends Controller
     //         ], 500);
     //     }
     // }
-
 
     public function getCategoryMembers($id = null)
     {
@@ -1317,7 +1285,7 @@ class ConnectionController extends Controller
                     $query->where('status', 'Active')
                         ->with([
                             'circle:id,circleName',
-                            'user:id,email,contactNo,firstName,lastName'
+                            'user:id,email,contactNo,firstName,lastName',
                         ]);
                 }])
                 ->get();
@@ -1360,6 +1328,7 @@ class ConnectionController extends Controller
             ]);
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, request()->fullUrl());
+
             return response()->json([
                 'success' => false,
                 'error' => 'An error occurred. Please try again later.',

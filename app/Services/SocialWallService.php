@@ -2,16 +2,15 @@
 
 namespace App\Services;
 
-use App\Models\Post;
-use App\Models\PostMedia;
-use App\Models\Like;
 use App\Models\Comment;
 use App\Models\Connection;
+use App\Models\Like;
+use App\Models\Post;
+use App\Models\PostMedia;
+use App\Utils\Utils;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
-use App\Utils\Utils; // Assuming Utils exists based on previous context
+use Illuminate\Support\Facades\Schema; // Assuming Utils exists based on previous context
 
 class SocialWallService
 {
@@ -53,8 +52,13 @@ class SocialWallService
         $allowedUserIds[] = $userId;
 
         // 2. Fetch Posts
-        $posts = Post::whereIn('userId', $allowedUserIds)
-            ->where('status', 'Active')
+        $posts = Post::where('status', 'Active')
+            ->where(function ($q) use ($allowedUserIds) {
+                $q->whereIn('userId', $allowedUserIds)
+                    ->orWhereHas('user.roles', function ($rq) {
+                        $rq->where('name', 'Admin');
+                    });
+            })
             ->with([
                 'user' => function ($q) {
                     $q->select('id', 'firstName', 'lastName');
@@ -92,6 +96,7 @@ class SocialWallService
             $post->isLikedByCurrentUser = $post->likes->contains(function ($like) use ($userId) {
                 return $like->userId == $userId && $like->status == 'Active';
             });
+
             return $post;
         });
 
@@ -105,16 +110,16 @@ class SocialWallService
     {
         DB::beginTransaction();
         try {
-            $post = new Post();
+            $post = new Post;
             $post->userId = Auth::id();
-            if (!$post->userId) {
+            if (! $post->userId) {
                 throw new \Exception('User ID not found');
             }
             $post->caption = $data['caption'] ?? null;
             $post->status = 'Active';
 
             // Legacy single attachment support (optional, can be removed if fully migrated)
-            if (isset($data['attachment']) && !is_array($data['attachment'])) {
+            if (isset($data['attachment']) && ! is_array($data['attachment'])) {
                 $post->attachment = $data['attachment'];
             }
 
@@ -127,12 +132,13 @@ class SocialWallService
                         'postId' => $post->id,
                         'file_path' => $fileData['path'],
                         'file_type' => $fileData['type'], // image or video
-                        'status' => 'Active'
+                        'status' => 'Active',
                     ]);
                 }
             }
 
             DB::commit();
+
             return $post;
         } catch (\Exception $e) {
             DB::rollBack();
@@ -159,14 +165,16 @@ class SocialWallService
                 $like->status = 'Active'; // Like again
             }
             $like->save();
+
             return $like;
         } else {
             // If record does NOT exist
-            $newLike = new Like();
+            $newLike = new Like;
             $newLike->postId = $postId;
             $newLike->userId = $userId;
             $newLike->status = 'Active';
             $newLike->save();
+
             return $newLike;
         }
     }
@@ -176,7 +184,7 @@ class SocialWallService
      */
     public function addComment($postId, $commentText)
     {
-        $comment = new Comment();
+        $comment = new Comment;
         $comment->postId = $postId;
         $comment->userId = Auth::id();
         $comment->comment = $commentText;
@@ -232,8 +240,10 @@ class SocialWallService
         if ($post) {
             $post->status = 'Deleted';
             $post->save();
+
             return true;
         }
+
         return false;
     }
 
@@ -259,7 +269,7 @@ class SocialWallService
                 ->where('userId', $userId)
                 ->first();
 
-            if (!$post) {
+            if (! $post) {
                 throw new \Exception('Post not found or unauthorized');
             }
 
@@ -282,16 +292,88 @@ class SocialWallService
                         'postId' => $post->id,
                         'file_path' => $fileData['path'],
                         'file_type' => $fileData['type'], // image or video
-                        'status' => 'Active'
+                        'status' => 'Active',
                     ]);
                 }
             }
 
             DB::commit();
+
             return $post;
         } catch (\Exception $e) {
             DB::rollBack();
             throw $e;
         }
+    }
+
+    /**
+     * Get recent notifications (likes and comments) on the authenticated user's posts.
+     */
+    public function getNotifications($limit = 10)
+    {
+        $userId = Auth::id();
+        if (! $userId) {
+            return collect([]);
+        }
+
+        $postIds = Post::where('userId', $userId)
+            ->where('status', 'Active')
+            ->pluck('id');
+
+        if ($postIds->isEmpty()) {
+            return collect([]);
+        }
+
+        $likes = Like::whereIn('postId', $postIds)
+            ->where('status', 'Active')
+            ->with([
+                'user' => function ($q) {
+                    $q->select('id', 'firstName', 'lastName');
+                },
+                'user.member' => function ($q) {
+                    $q->select('id', 'userId', 'profilePhoto');
+                },
+            ])
+            ->orderBy('created_at', 'desc')
+            ->take($limit)
+            ->get()
+            ->map(function ($like) {
+                return [
+                    'id' => 'like-'.$like->id,
+                    'type' => 'like',
+                    'postId' => $like->postId,
+                    'actor' => $like->user,
+                    'created_at' => $like->created_at,
+                ];
+            });
+
+        $comments = Comment::whereIn('postId', $postIds)
+            ->where('status', 'Active')
+            ->with([
+                'user' => function ($q) {
+                    $q->select('id', 'firstName', 'lastName');
+                },
+                'user.member' => function ($q) {
+                    $q->select('id', 'userId', 'profilePhoto');
+                },
+            ])
+            ->orderBy('created_at', 'desc')
+            ->take($limit)
+            ->get()
+            ->map(function ($comment) {
+                return [
+                    'id' => 'comment-'.$comment->id,
+                    'type' => 'comment',
+                    'postId' => $comment->postId,
+                    'actor' => $comment->user,
+                    'comment' => $comment->comment,
+                    'created_at' => $comment->created_at,
+                ];
+            });
+
+        return $likes->concat($comments)
+            ->sortByDesc('created_at')
+            ->take($limit)
+            ->values();
     }
 }

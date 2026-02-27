@@ -2,16 +2,14 @@
 
 namespace App\Http\Controllers\Admin;
 
-use view;
+use App\Http\Controllers\Controller;
+use App\Models\MembershipType;
 use App\Utils\ErrorLogger;
 use Illuminate\Http\Request;
-use App\Models\MembershipType;
-use App\Http\Controllers\Controller;
+use view;
 
 class MembershipTypeController extends Controller
 {
-
-
     public function __construct()
     {
         // Apply middleware for event-related permissions
@@ -21,16 +19,16 @@ class MembershipTypeController extends Controller
         $this->middleware('permission:membership-type-delete', ['only' => ['delete']]);
     }
 
-
-
     public function index(Request $request)
     {
         try {
             $membershipType = MembershipType::where('status', 'Active')->orderBy('membershipType', 'asc')->paginate(10);
+
             return view('admin.membershiptype.index', compact('membershipType'));
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError($th, request()->fullUrl());
+
             return view('servererror');
         }
     }
@@ -50,13 +48,15 @@ class MembershipTypeController extends Controller
     {
         try {
             $membershipType = MembershipType::all();
+
             return view('admin.membershiptype.create', compact('membershipType'));
         } catch (\Throwable $th) {
-            //throe $th;
+            // throe $th;
             ErrorLogger::logError(
                 $th,
                 request()->fullUrl()
             );
+
             return view('servererror');
         }
     }
@@ -68,10 +68,9 @@ class MembershipTypeController extends Controller
         ]);
 
         try {
-            $membershipType = new MembershipType();
+            $membershipType = new MembershipType;
             $membershipType->membershipType = $request->membershipType;
             $membershipType->amount = $request->amount;
-
 
             // $businessCategory->categoryIcon = $request->categoryIcon;
 
@@ -82,19 +81,21 @@ class MembershipTypeController extends Controller
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError($th, request()->fullUrl());
+
             return view('servererror');
         }
     }
-
 
     public function edit(Request $request, $id)
     {
         try {
             $membershipType = MembershipType::find($id);
+
             return view('admin.membershiptype.edit', compact('membershipType'));
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError($th, request()->fullUrl());
+
             return view('servererror');
         }
     }
@@ -120,10 +121,10 @@ class MembershipTypeController extends Controller
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError($th, request()->fullUrl());
+
             return redirect()->route('membershipType.index')->with('error', 'Failed to update Membership Type details.');
         }
     }
-
 
     public function delete($id)
     {
@@ -139,8 +140,9 @@ class MembershipTypeController extends Controller
 
             return redirect()->route('membershipType.index')->with('success', 'Membership Type deleted successfully.');
         } catch (\Throwable $th) {
-            //throw $th;
+            // throw $th;
             ErrorLogger::logError($th, request()->fullUrl());
+
             return redirect()->route('membershipType.index')->with('error', 'Failed to delete Membership Type.');
         }
     }

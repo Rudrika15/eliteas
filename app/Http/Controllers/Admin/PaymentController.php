@@ -2,38 +2,34 @@
 
 namespace App\Http\Controllers\admin;
 
-use Carbon\Carbon;
-use App\Models\User;
-use Razorpay\Api\Api;
-use App\Models\Circle;
-use App\Models\Member;
-use App\Models\Razorpay;
-use App\Utils\ErrorLogger;
-use App\Models\AllPayments;
-use Illuminate\Http\Request;
-use App\Models\EventRegister;
-use App\Models\MembershipType;
-use App\Models\MonthlyPayment;
-use App\Mail\MembershipRenewed;
-use App\Models\VisitorsDetails;
-use App\Mail\WelcomeMemberEmail;
-use App\Models\BusinessCategory;
-use App\Models\TrainingRegister;
-use App\Models\MeetingInvitation;
-use Illuminate\Support\Facades\DB;
-use App\Models\MemberSubscriptions;
-use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use App\Mail\MembershipRenewed;
+use App\Mail\WelcomeMemberEmail;
+use App\Models\AllPayments;
+use App\Models\BusinessCategory;
+use App\Models\Circle;
+use App\Models\EventRegister;
+use App\Models\MeetingInvitation;
+use App\Models\Member;
+use App\Models\MembershipType;
+use App\Models\MemberSubscriptions;
+use App\Models\MonthlyPayment;
+use App\Models\Razorpay;
 use App\Models\RenewSubscriptionHistory;
+use App\Models\TrainingRegister;
+use App\Models\User;
 use App\Models\VisitorEventRegister;
+use App\Models\VisitorsDetails;
+use App\Utils\ErrorLogger;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Crypt;
 
 class PaymentController extends Controller
 {
-
-
     public function __construct()
     {
         // Apply middleware for event-related permissions
@@ -56,8 +52,6 @@ class PaymentController extends Controller
         $this->middleware('permission:payment-monthly-payment-index', ['only' => ['monthlyPaymentIndex']]);
     }
 
-
-
     public function store(Request $request)
     {
         try {
@@ -71,20 +65,20 @@ class PaymentController extends Controller
             ]);
 
             // Store the payment ID in the table
-            $payment = new Razorpay();
+            $payment = new Razorpay;
             $payment->r_payment_id = $request->input('paymentId');
             $payment->user_email = Auth::user()->email;
             $payment->amount = $request->input('amount') / 100;
             $payment->save();
 
             // Register for the training
-            $register = new TrainingRegister();
+            $register = new TrainingRegister;
             $register->userId = Auth::user()->id;
             $register->trainingId = $request->input('trainingId');
             $register->save();
 
             // Store the payment details
-            $allPayments = new AllPayments();
+            $allPayments = new AllPayments;
             $allPayments->memberId = $register->userId;
             $allPayments->amount = $payment->amount;
             $allPayments->paymentType = 'RazorPay'; // Hardcoded for RazorPay
@@ -104,7 +98,6 @@ class PaymentController extends Controller
         }
     }
 
-
     public function invitePayment(Request $request)
     {
         try {
@@ -116,7 +109,7 @@ class PaymentController extends Controller
             ]);
 
             // Store the payment information
-            $payment = new Razorpay();
+            $payment = new Razorpay;
             $payment->r_payment_id = $request->input('paymentId');
             $payment->user_email = $request->input('email');
             $payment->amount = $request->input('amount') / 100;
@@ -128,14 +121,14 @@ class PaymentController extends Controller
                 $invitation->paymentStatus = 'Accepted';
                 $invitation->save();
             } else {
-                return redirect("/")->with("error", "Invitation not found for the provided email");
+                return redirect('/')->with('error', 'Invitation not found for the provided email');
             }
 
             // Clear session data
             session()->forget('data');
 
             // Redirect with success message
-            return redirect("/")->with("success", "Payment done");
+            return redirect('/')->with('success', 'Payment done');
 
             // Optionally, return JSON response
             // return response()->json(['message' => 'Payment done'], 200);
@@ -146,7 +139,7 @@ class PaymentController extends Controller
             ErrorLogger::logError($th, $request->fullUrl());
 
             // Redirect with error message
-            return redirect("/")->with("error", "Failed to complete payment");
+            return redirect('/')->with('error', 'Failed to complete payment');
         }
     }
 
@@ -154,18 +147,17 @@ class PaymentController extends Controller
     {
         try {
 
-            $visitor = new VisitorsDetails();
+            $visitor = new VisitorsDetails;
             $visitor->firstName = $request->firstName;
             $visitor->lastName = $request->lastName;
             $visitor->mobileNo = $request->mobileNo;
             $visitor->businessName = $request->businessName;
 
-
             if ($request->businessCategory == 'other') {
 
                 $business = BusinessCategory::where('categoryName', $request->otherCategory)->first();
-                if (!$business) {
-                    $business = new BusinessCategory();
+                if (! $business) {
+                    $business = new BusinessCategory;
                     $business->categoryName = $request->otherCategory;
                     $business->save();
                 }
@@ -173,7 +165,6 @@ class PaymentController extends Controller
             } else {
                 $visitor->businessCategory = $request->businessCategory;
             }
-
 
             $visitor->product = $request->product;
             $visitor->networkingGroup = $request->networkingGroup;
@@ -186,17 +177,17 @@ class PaymentController extends Controller
             // Save the visitor information
             $visitor->save();
 
-            $invitation = new MeetingInvitation();
+            $invitation = new MeetingInvitation;
             $invitation->meetingId = $request->meetingId;
             $invitation->invitedMemberId = $visitor->invitedBy;
-            $invitation->personName = $request->firstName . ' ' . $request->lastName;
+            $invitation->personName = $request->firstName.' '.$request->lastName;
             $invitation->personEmail = null;
             $invitation->personContact = $visitor->mobileNo;
             $invitation->businessCategoryId = $visitor->businessCategory;
             $invitation->paymentStatus = 'paid';
             $invitation->save();
 
-            $razorpay = new RazorPay();
+            $razorpay = new RazorPay;
             $razorpay->r_payment_id = $request->paymentId;
             $razorpay->user_email = null;
             $razorpay->amount = $request->amount / 100;
@@ -205,10 +196,10 @@ class PaymentController extends Controller
             return response()->json(['success' => 'Payment details stored successfully'], 200);
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, $request->fullUrl());
-            return response()->json(['error' => 'Failed to store payment details: ' . $th->getMessage()], 500);
+
+            return response()->json(['error' => 'Failed to store payment details: '.$th->getMessage()], 500);
         }
     }
-
 
     public function membershipPayment(Request $request)
     {
@@ -224,7 +215,7 @@ class PaymentController extends Controller
             ]);
 
             // Store Razorpay payment
-            $payment = new Razorpay();
+            $payment = new Razorpay;
             $payment->r_payment_id = $request->input('paymentId');
             $payment->user_email = $request->input('email');
             $payment->amount = $request->input('amount') / 100;
@@ -235,8 +226,9 @@ class PaymentController extends Controller
 
             // Find the user
             $user = User::where('email', $request->input('email'))->first();
-            if (!$user) {
+            if (! $user) {
                 Log::error('User not found for email:', ['email' => $request->input('email')]);
+
                 return response()->json(['error' => 'User not found'], 404);
             }
 
@@ -262,11 +254,12 @@ class PaymentController extends Controller
                 Log::info('Member subscription saved:', $subscription->toArray());
             } else {
                 Log::error('Member not found for user ID:', ['userId' => $user->id]);
+
                 return response()->json(['error' => 'Member not found'], 404);
             }
 
             // Store AllPayments
-            $allPayments = new AllPayments();
+            $allPayments = new AllPayments;
             $allPayments->memberId = $subscription->userId;
             $allPayments->amount = $payment->amount;
             $allPayments->paymentType = 'RazorPay'; // Assume RazorPay for this example
@@ -294,8 +287,6 @@ class PaymentController extends Controller
         }
     }
 
-
-
     public function allPayments()
     {
         try {
@@ -306,6 +297,7 @@ class PaymentController extends Controller
             // Transform amounts after pagination
             $payments->getCollection()->transform(function ($payment) {
                 $payment->amount = isset($payment->amount) ? number_format($payment->amount, 2) : '-';
+
                 return $payment;
             });
 
@@ -320,8 +312,6 @@ class PaymentController extends Controller
             return view('servererror');
         }
     }
-
-
 
     public function circleAdminPaymentHistory()
     {
@@ -344,10 +334,10 @@ class PaymentController extends Controller
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError($th, request()->fullUrl());
+
             return view('servererror');
         }
     }
-
 
     public function myAllPayments()
     {
@@ -370,11 +360,10 @@ class PaymentController extends Controller
                 $th,
                 request()->fullUrl()
             );
+
             return view('servererror');
         }
     }
-
-
 
     public function pendingPayments()
     {
@@ -392,8 +381,6 @@ class PaymentController extends Controller
             return view('servererror');
         }
     }
-
-
 
     // public function renewMembership($userId)
     // {
@@ -435,7 +422,6 @@ class PaymentController extends Controller
     //         return response()->json(['message' => 'Failed to renew membership!'], 500);
     //     }
     // }
-
 
     // public function renewMembership($userId)
     // {
@@ -483,7 +469,6 @@ class PaymentController extends Controller
     //         return response()->json(['message' => 'Failed to renew membership!'], 500);
     //     }
     // }
-
 
     // public function renewMembership($userId)
     // {
@@ -546,25 +531,24 @@ class PaymentController extends Controller
     //     }
     // }
 
-
     public function renewMembership($userId)
     {
         try {
             // 1. Find user
             $user = User::find($userId);
-            if (!$user) {
+            if (! $user) {
                 return response()->json([
-                    'status'  => 'error',
-                    'message' => 'User not found!'
+                    'status' => 'error',
+                    'message' => 'User not found!',
                 ], 404);
             }
 
             // 2. Find subscription
             $subscription = MemberSubscriptions::where('userId', $userId)->first();
-            if (!$subscription) {
+            if (! $subscription) {
                 return response()->json([
-                    'status'  => 'error',
-                    'message' => 'Subscription not found!'
+                    'status' => 'error',
+                    'message' => 'Subscription not found!',
                 ], 404);
             }
 
@@ -597,31 +581,29 @@ class PaymentController extends Controller
             )->first();
 
             // 7. Save renewal history
-            $renewal = new RenewSubscriptionHistory();
-            $renewal->userId            = $userId;
-            $renewal->renewedBy         = Auth::id();
-            $renewal->subscriptionId    = $subscription->id; // Use ID instead of Type string
-            $renewal->renewalDate      = $newValidity->format('Y-m-d');
-            $renewal->amount           = $membership->amount ?? 0;
+            $renewal = new RenewSubscriptionHistory;
+            $renewal->userId = $userId;
+            $renewal->renewedBy = Auth::id();
+            $renewal->subscriptionId = $subscription->id; // Use ID instead of Type string
+            $renewal->renewalDate = $newValidity->format('Y-m-d');
+            $renewal->amount = $membership->amount ?? 0;
             $renewal->save();
 
             // 8. Success JSON (SweetAlert)
             return response()->json([
-                'status'  => 'success',
-                'message' => 'Membership renewed successfully!'
+                'status' => 'success',
+                'message' => 'Membership renewed successfully!',
             ]);
         } catch (\Throwable $th) {
 
             ErrorLogger::logError($th, request()->fullUrl());
 
             return response()->json([
-                'status'  => 'error',
-                'message' => 'Failed to renew membership!'
+                'status' => 'error',
+                'message' => 'Failed to renew membership!',
             ], 500);
         }
     }
-
-
 
     // public function monthlyPayments(Request $request)
     // {
@@ -636,10 +618,8 @@ class PaymentController extends Controller
     //         $monthlyPayments = MonthlyPayment::paginate(10);
     //     }
 
-
     //     return view('admin.paymentHistory.monthlyPayments', compact('monthlyPayments', 'status', 'circles'));
     // }
-
 
     public function monthlyPayments(Request $request)
     {
@@ -652,12 +632,11 @@ class PaymentController extends Controller
         return view('admin.paymentHistory.monthlyPayments', compact('monthlyPayments', 'status', 'circles'));
     }
 
-
     public function monthlyPaymentsByRole(Request $request)
     {
         try {
             // Authenticate the user
-            if (!auth()->check()) {
+            if (! auth()->check()) {
                 return redirect()->route('login')->with('error', 'Unauthorized access. Please log in.');
             }
 
@@ -667,7 +646,7 @@ class PaymentController extends Controller
             // Fetch the circleId from the members table based on the authenticated user
             $member = Member::where('userId', $userId)->first();
 
-            if (!$member) {
+            if (! $member) {
                 return redirect()->back()->with('error', 'Member not found.');
             }
 
@@ -690,7 +669,7 @@ class PaymentController extends Controller
 
                 if ($memberDetails) {
                     $user = User::find($memberDetails->userId);
-                    $payment->memberName = $user ? $user->firstName . ' ' . $user->lastName : 'Unknown User';
+                    $payment->memberName = $user ? $user->firstName.' '.$user->lastName : 'Unknown User';
                 } else {
                     $payment->memberName = 'Unknown Member';
                 }
@@ -701,11 +680,10 @@ class PaymentController extends Controller
         } catch (\Throwable $th) {
             // Log the error and return an error view
             ErrorLogger::logError($th, $request->fullUrl());
+
             return redirect()->back()->with('error', 'An error occurred while fetching monthly payments.');
         }
     }
-
-
 
     // public function generateMonthlyPayment(Request $request)
     // {
@@ -740,7 +718,6 @@ class PaymentController extends Controller
     //     return redirect()->back()->with('success', 'Monthly payments generated successfully!');
     // }
 
-
     public function generateMonthlyPayment(Request $request)
     {
         $request->validate([
@@ -748,7 +725,7 @@ class PaymentController extends Controller
             'circleId' => 'required|integer|exists:circles,id',
         ]);
 
-        $currentMonth = $request->month . " - " . now()->format('Y');
+        $currentMonth = $request->month.' - '.now()->format('Y');
         $circleId = $request->circleId;
 
         // Check if payments for the current month and circle already exist
@@ -760,7 +737,7 @@ class PaymentController extends Controller
             ->exists();
 
         if ($existingPayments) {
-            return redirect()->back()->with('warning', "Payments for the selected circle and month are already generated.");
+            return redirect()->back()->with('warning', 'Payments for the selected circle and month are already generated.');
         }
 
         // Get all active members in the selected circle
@@ -782,8 +759,6 @@ class PaymentController extends Controller
         return redirect()->back()->with('success', 'Monthly payments generated successfully for the selected circle!');
     }
 
-
-
     public function updatePaymentStatus(Request $request)
     {
         // Validate the request data
@@ -802,7 +777,7 @@ class PaymentController extends Controller
             $monthlyPayment->updated_at = now();
             $monthlyPayment->save();
 
-            $allMonthly = new AllPayments();
+            $allMonthly = new AllPayments;
             $allMonthly->memberId = $payment->memberId;
             $allMonthly->paymentType = 'Offline';
             $allMonthly->date = now()->format('Y-m-d');
@@ -814,13 +789,11 @@ class PaymentController extends Controller
             $allMonthly->created_at = now();
             $allMonthly->save();
 
-
             return response()->json(['success' => true]);
         }
 
         return response()->json(['success' => false]);
     }
-
 
     // public function handlePayment(Request $request)
     // {
@@ -837,7 +810,6 @@ class PaymentController extends Controller
     //     $monthly->updated_at = now();
     //     $monthly->save();
 
-
     //     $allPayments = new AllPayments();
     //     $allPayments->memberId = $request->memberId;
     //     $allPayments->paymentType = $request->RazorPay;
@@ -845,7 +817,6 @@ class PaymentController extends Controller
     //     $allPayments->paymentMode = 'Monthly Meeting Payment';
     //     $allPayments->amount = $request->amount;
     //     $allPayments->remarks = $request->payment_id;
-
 
     //     return response()->json(['success' => true]);
     // }
@@ -856,7 +827,7 @@ class PaymentController extends Controller
             // Validate the request
 
             // Store the payment ID in the table
-            $payment = new Razorpay();
+            $payment = new Razorpay;
             $payment->r_payment_id = $request->input('paymentId');
             $payment->user_email = Auth::user()->email;
             $payment->amount = $request->input('amount') / 100;
@@ -877,9 +848,8 @@ class PaymentController extends Controller
                     'updated_at' => now(),
                 ]);
 
-
             // Store the payment details
-            $allPayments = new AllPayments();
+            $allPayments = new AllPayments;
             $allPayments->memberId = Auth::user()->member->id;
             $allPayments->amount = $payment->amount;
             $allPayments->paymentType = 'RazorPay'; // Hardcoded for RazorPay
@@ -899,11 +869,10 @@ class PaymentController extends Controller
         }
     }
 
-
     public function handleEventRegistration(Request $request)
     {
         try {
-            $eventPayment = new EventRegister();
+            $eventPayment = new EventRegister;
             $eventPayment->eventId = $request->eventId;
             $eventPayment->memberId = Auth::user()->member->id;
             $eventPayment->paymentStatus = 'unpaid';
@@ -914,11 +883,11 @@ class PaymentController extends Controller
             // throw $th;
             // Log the error using the ErrorLogger utility
             ErrorLogger::logError($th, $request->fullUrl());
+
             // Return an error response
             return response()->json(['message' => 'Failed to register for the event, please try again'], 500);
         }
     }
-
 
     public function eventPayment(Request $request)
     {
@@ -926,14 +895,14 @@ class PaymentController extends Controller
             // Validate the request
 
             // Store the payment ID in the table
-            $payment = new Razorpay();
+            $payment = new Razorpay;
             $payment->r_payment_id = $request->input('paymentId');
             $payment->user_email = Auth::user()->email;
             $payment->amount = $request->input('amount') / 100;
             $payment->save();
 
             // Register for the training
-            $eventPayment = new EventRegister();
+            $eventPayment = new EventRegister;
             $eventPayment->eventId = $request->eventId;
             $eventPayment->memberId = Auth::user()->member->id;
             $eventPayment->personName = $request->personName;
@@ -942,9 +911,8 @@ class PaymentController extends Controller
             $eventPayment->paymentStatus = 'paid';
             $eventPayment->save();
 
-
             // Store the payment details
-            $allPayments = new AllPayments();
+            $allPayments = new AllPayments;
             $allPayments->memberId = $eventPayment->memberId;
             $allPayments->amount = $payment->amount;
             $allPayments->paymentType = 'RazorPay'; // Hardcoded for RazorPay
@@ -959,6 +927,7 @@ class PaymentController extends Controller
             // throw $th;
             // Log the error using the ErrorLogger utility
             ErrorLogger::logError($th, $request->fullUrl());
+
             // Return an error response
             return response()->json(['message' => 'Failed to store payment ID'], 500);
         }
@@ -979,14 +948,14 @@ class PaymentController extends Controller
             ]);
 
             // Store the payment ID in the Razorpay payments table
-            $payment = new Razorpay();
+            $payment = new Razorpay;
             $payment->r_payment_id = $request->input('paymentId');
             $payment->user_email = $request->personEmail ?? null;
             $payment->amount = $request->input('amount') / 100; // Convert paise to rupees
             $payment->save();
 
             // Register for the event
-            $eventPayment = new EventRegister();
+            $eventPayment = new EventRegister;
             $eventPayment->eventId = $request->eventId;
             $eventPayment->personName = $request->personName;
             $eventPayment->personEmail = $request->personEmail;
@@ -996,7 +965,7 @@ class PaymentController extends Controller
             $eventPayment->save();
 
             // Store the payment details in the AllPayments table
-            $allPayments = new AllPayments();
+            $allPayments = new AllPayments;
             // Add memberId if relevant, but handle this carefully based on your logic
             // $allPayments->memberId = $eventPayment->memberId ?? null;
             $allPayments->amount = $payment->amount;
@@ -1014,6 +983,7 @@ class PaymentController extends Controller
             // Return an error response
 
         }
+
         return response()->json(['message' => 'Failed to store payment ID'], 500);
     }
 
@@ -1032,20 +1002,20 @@ class PaymentController extends Controller
             ]);
 
             // Store the payment ID in the Razorpay payments table
-            $payment = new Razorpay();
+            $payment = new Razorpay;
             $payment->r_payment_id = $request->input('paymentId');
             $payment->amount = $request->input('amount') / 100; // Convert paise to rupees
             $payment->save();
 
             // Register for the event
-            $eventPayment = new VisitorEventRegister();
+            $eventPayment = new VisitorEventRegister;
             $eventPayment->eventId = $request->eventId; // Handle null if not provided
             $eventPayment->visitorId = $request->visitorId;
             $eventPayment->paymentStatus = 'paid';
             $eventPayment->save();
 
             // Store the payment details in the AllPayments table
-            $allPayments = new AllPayments();
+            $allPayments = new AllPayments;
             // Add memberId if relevant, but handle this carefully based on your logic
             // $allPayments->memberId = $eventPayment->memberId ?? null;
             $allPayments->amount = $payment->amount;
@@ -1063,6 +1033,7 @@ class PaymentController extends Controller
             // Return an error response
 
         }
+
         return response()->json(['message' => 'Failed to store payment ID'], 500);
     }
 
@@ -1073,14 +1044,14 @@ class PaymentController extends Controller
             $request->validate([]);
 
             // Store the payment ID in the Razorpay payments table
-            $payment = new Razorpay();
+            $payment = new Razorpay;
             $payment->r_payment_id = 'Offline';
             $payment->user_email = $request->personEmail ?? null;
             $payment->amount = $request->input('amount') / 100; // Convert paise to rupees
             $payment->save();
 
             // Register for the event
-            $eventPayment = new EventRegister();
+            $eventPayment = new EventRegister;
             $eventPayment->eventId = $request->eventId;
             $eventPayment->personName = $request->personName;
             $eventPayment->personEmail = $request->personEmail;
@@ -1090,7 +1061,7 @@ class PaymentController extends Controller
             $eventPayment->save();
 
             // Store the payment details in the AllPayments table
-            $allPayments = new AllPayments();
+            $allPayments = new AllPayments;
             $allPayments->amount = $payment->amount;
             $allPayments->paymentType = 'Offline'; // Payment type
             $allPayments->date = now()->format('Y-m-d');
@@ -1106,6 +1077,7 @@ class PaymentController extends Controller
             // Return an error response
 
         }
+
         return response()->json(['message' => 'Failed to Register for Event, Please try after sometime'], 500);
     }
 

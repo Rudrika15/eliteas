@@ -68,5 +68,4 @@ class Circle extends Model
     {
         return $this->hasMany(BusinessCategory::class, 'id', 'businessCategoryId');
     }
-    
 }

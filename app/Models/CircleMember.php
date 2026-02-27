@@ -2,10 +2,8 @@
 
 namespace App\Models;
 
-use App\Models\Circle;
-use App\Models\Member;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class CircleMember extends Model
 {
@@ -51,7 +49,4 @@ class CircleMember extends Model
     {
         return $this->hasOne(User::class, 'id', 'memberId');
     }
-
-    
-
 }

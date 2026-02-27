@@ -11,7 +11,7 @@ class TemplateMaster extends Model
 
     protected $table = 'templatemasters';
 
-    function TemplateDetail()
+    public function TemplateDetail()
     {
         return $this->hasOne(TemplateDetail::class, 'templateId', 'id');
     }

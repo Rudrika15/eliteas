@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\CircleType;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Validator;
+use App\Models\CircleType;
 use App\Utils\Utils;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class CircleTypeController extends Controller
 {
@@ -14,6 +14,7 @@ class CircleTypeController extends Controller
     {
         try {
             $circleTypes = CircleType::where('status', 'Active')->get();
+
             return Utils::sendResponse(['circleTypes' => $circleTypes], 'Circle Types retrieved successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
@@ -24,6 +25,7 @@ class CircleTypeController extends Controller
     {
         try {
             $circleType = CircleType::findOrFail($id);
+
             return Utils::sendResponse(['circleType' => $circleType], 'Circle Type retrieved successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
@@ -41,7 +43,7 @@ class CircleTypeController extends Controller
         }
 
         try {
-            $circleType = new CircleType();
+            $circleType = new CircleType;
             $circleType->circleTypeName = $request->circleTypeName;
             $circleType->status = 'Active';
             $circleType->save();
@@ -65,7 +67,7 @@ class CircleTypeController extends Controller
         try {
             $circleType = CircleType::find($id);
 
-            if (!$circleType) {
+            if (! $circleType) {
                 return Utils::errorResponse(['error' => 'Circle Type not found.'], 'Not Found', 404);
             }
 
@@ -84,7 +86,7 @@ class CircleTypeController extends Controller
         try {
             $circleType = CircleType::find($id);
 
-            if (!$circleType) {
+            if (! $circleType) {
                 return Utils::errorResponse(['error' => 'Circle Type not found.'], 'Not Found', 404);
             }
 

@@ -9,7 +9,6 @@ use Illuminate\Http\Request;
 
 class EventTypeController extends Controller
 {
-
     public function __construct()
     {
         // Apply middleware for circle type-related permissions
@@ -23,6 +22,7 @@ class EventTypeController extends Controller
     {
         try {
             $eventType = EventType::where('status', 'Active')->paginate(10);
+
             return view('admin.eventType.index', compact('eventType'));
         } catch (\Throwable $th) {
             // throw $th;
@@ -30,6 +30,7 @@ class EventTypeController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
@@ -38,9 +39,10 @@ class EventTypeController extends Controller
     {
         try {
             $eventType = EventType::all();
+
             return view('admin.eventType.create', compact('eventType'));
         } catch (\Throwable $th) {
-            //throe $th;
+            // throe $th;
             ErrorLogger::logError($th, $request->fullUrl());
 
             return view('servererror');
@@ -54,7 +56,7 @@ class EventTypeController extends Controller
         ]);
 
         try {
-            $eventType = new EventType();
+            $eventType = new EventType;
             $eventType->eventTypeName = $request->eventTypeName;
             $eventType->status = 'Active';
             $eventType->save();
@@ -66,15 +68,16 @@ class EventTypeController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
-
 
     public function edit(Request $request, $id)
     {
         try {
             $eventType = EventType::find($id);
+
             return view('admin.eventType.edit', compact('eventType'));
         } catch (\Throwable $th) {
             // throw $th;
@@ -82,6 +85,7 @@ class EventTypeController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
@@ -96,7 +100,7 @@ class EventTypeController extends Controller
         try {
             $eventType = EventType::find($request->id);
 
-            if (!$eventType) {
+            if (! $eventType) {
                 return redirect()->route('eventType.index')->with('error', 'Circle Type not found.');
             }
 
@@ -106,19 +110,19 @@ class EventTypeController extends Controller
 
             return redirect()->route('eventType.index')->with('success', 'Event Type updated successfully.');
         } catch (\Throwable $th) {
-            //throw $th;
+            // throw $th;
             ErrorLogger::logError($th, $request->fullUrl());
+
             return redirect()->route('eventType.index')->with('error', 'Failed to update Event Type details.');
         }
     }
-
 
     public function delete(Request $request, $id)
     {
         try {
             $eventType = EventType::find($id);
 
-            if (!$eventType) {
+            if (! $eventType) {
                 return redirect()->route('eventType.index')->with('error', 'Event Type not found.');
             }
 
@@ -127,8 +131,9 @@ class EventTypeController extends Controller
 
             return redirect()->route('eventType.index')->with('success', 'Event Type deleted successfully.');
         } catch (\Throwable $th) {
-            //throw $th;
+            // throw $th;
             ErrorLogger::logError($th, $request->fullUrl());
+
             return redirect()->route('eventType.index')->with('error', 'Failed to delete Event Type.');
         }
     }

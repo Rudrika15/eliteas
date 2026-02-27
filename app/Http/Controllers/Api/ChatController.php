@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Events\MessageSent;
+use App\Http\Controllers\Controller;
+use App\Models\Conversation;
+use App\Models\Message;
 use App\Models\User;
 use App\Utils\Utils;
-use App\Models\Message;
-use App\Events\MessageSent;
-use App\Models\Conversation;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Log;
@@ -117,7 +117,6 @@ class ChatController extends Controller
     //     }
     // }
 
-
     public function sendMessage(Request $request)
     {
         $authId = Auth::id();
@@ -142,7 +141,7 @@ class ChatController extends Controller
             })->first();
 
             // If no conversation exists, create a new one
-            if (!$conversation) {
+            if (! $conversation) {
                 $conversation = Conversation::create([
                     'user_one_id' => $authId,
                     'user_two_id' => $request->userId,
@@ -169,17 +168,17 @@ class ChatController extends Controller
             $receiver = User::find($request->userId);
             $sender = Auth::user();
 
-            if (!$receiver) {
+            if (! $receiver) {
                 return Utils::errorResponse(['message' => 'Receiver not found'], 'Not Found', 404);
             }
 
             // Prepare notification details
-            $userName = $sender->firstName . ' ' . $sender->lastName;
+            $userName = $sender->firstName.' '.$sender->lastName;
             $title = 'New Message';
-            $body = 'You received a new message from ' . $userName;
+            $body = 'You received a new message from '.$userName;
 
             // Send notification to the specific receiver
-            if (!empty($receiver->fcm_token)) {
+            if (! empty($receiver->fcm_token)) {
                 $serviceAccountPath = storage_path('app/public/ubn_notification.json');
                 $factory = (new Factory)->withServiceAccount($serviceAccountPath);
                 $messaging = $factory->createMessaging();
@@ -189,13 +188,13 @@ class ChatController extends Controller
 
                 try {
                     $messaging->send($notificationMessage);
-                    Log::info('Notification sent to token: ' . $receiver->fcm_token);
+                    Log::info('Notification sent to token: '.$receiver->fcm_token);
                 } catch (\Kreait\Firebase\Exception\Messaging\NotFound $e) {
-                    Log::error('Token not found: ' . $receiver->fcm_token);
+                    Log::error('Token not found: '.$receiver->fcm_token);
                 } catch (\Kreait\Firebase\Exception\Messaging\InvalidArgument $e) {
-                    Log::error('Invalid argument error with token: ' . $receiver->fcm_token);
+                    Log::error('Invalid argument error with token: '.$receiver->fcm_token);
                 } catch (\Exception $e) {
-                    Log::error('General error sending to token: ' . $receiver->fcm_token . '. Error: ' . $e->getMessage());
+                    Log::error('General error sending to token: '.$receiver->fcm_token.'. Error: '.$e->getMessage());
                 }
             }
 
@@ -208,9 +207,6 @@ class ChatController extends Controller
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
-
-
-
 
     public function getMessages(Request $request)
     {
@@ -227,7 +223,7 @@ class ChatController extends Controller
                     ->where('user_two_id', $userId);
             })->first();
 
-            if (!$conversation) {
+            if (! $conversation) {
                 return Utils::sendResponse(['messages' => []], 'No conversation found', 200);
             }
 
@@ -272,7 +268,6 @@ class ChatController extends Controller
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
-
 
     public function listOfUsers(Request $request)
     {

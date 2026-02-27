@@ -2,12 +2,9 @@
 
 namespace App\Utils;
 
-use Auth;
-
 class Utils
 {
-    
-    public static function  sendResponse($data, $message)
+    public static function sendResponse($data, $message)
     {
         $response = [
             'success' => true,
@@ -25,9 +22,10 @@ class Utils
             'message' => $error,
         ];
 
-        if (!empty($errorMessages)) {
+        if (! empty($errorMessages)) {
             $response['data'] = $errorMessages;
         }
+
         return response()->json($response, $statusCode);
     }
 

@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\Location;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-use App\Utils\Utils; // Assuming you have a Utils class for response handling
-
+use App\Models\Location;
+use App\Utils\Utils;
+use Illuminate\Support\Facades\Auth; // Assuming you have a Utils class for response handling
 
 class LocationController extends Controller
 {

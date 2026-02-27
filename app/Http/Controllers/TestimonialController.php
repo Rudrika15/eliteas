@@ -4,10 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Circle;
 use App\Models\City;
-use Carbon\Carbon;
 use App\Models\Member;
-use App\Utils\ErrorLogger;
 use App\Models\Testimonial;
+use App\Utils\ErrorLogger;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -16,7 +16,6 @@ class TestimonialController extends Controller
     /**
      * Display a listing of the resource.
      */
-
     public function __construct()
     {
         $this->middleware('permission:testimonial-index', ['only' => ['index', 'view']]);
@@ -28,7 +27,6 @@ class TestimonialController extends Controller
         $this->middleware('permission:testimonial-archived', ['only' => ['archived']]);
         $this->middleware('permission:testimonial-archives', ['only' => ['archives']]);
     }
-
 
     public function index()
     {
@@ -45,7 +43,7 @@ class TestimonialController extends Controller
 
             return view('testimonial.index', [
                 'testimonials' => $testimonials,
-                'myTestimonials' => $myTestimonials
+                'myTestimonials' => $myTestimonials,
             ]);
         } catch (\Throwable $th) {
             // Log the error
@@ -77,15 +75,12 @@ class TestimonialController extends Controller
     // public function create()
     // {
 
-
     //     $members = Member::where('status', 'Active')
     //         ->where('id', '!=', Auth::user()->member->id)
     //         ->get();
 
-
     //     return view('testimonial.create');
     // }
-
 
     public function create(Request $request)
     {
@@ -104,6 +99,7 @@ class TestimonialController extends Controller
 
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, $request->fullUrl());
+
             return view('servererror');
         }
     }
@@ -116,10 +112,10 @@ class TestimonialController extends Controller
         try {
             $request->validate([
                 'circlePersonId' => 'required',
-                'message' => 'required'
+                'message' => 'required',
             ]);
 
-            $testimonial = new Testimonial();
+            $testimonial = new Testimonial;
             $testimonial->userId = Auth::user()->id;
             $testimonial->memberId = $request->circlePersonId;
             $testimonial->message = $request->message;
@@ -127,7 +123,7 @@ class TestimonialController extends Controller
             $testimonial->uploadedDate = Carbon::now()->toDateString();
             $testimonial->save();
 
-            return redirect()->route('testimonial.index')->with("success", "Testimonial uploaded successfully.");
+            return redirect()->route('testimonial.index')->with('success', 'Testimonial uploaded successfully.');
         } catch (\Throwable $th) {
             // Log the error
             ErrorLogger::logError($th, request()->fullUrl());
@@ -190,7 +186,7 @@ class TestimonialController extends Controller
         try {
             $request->validate([
                 'circlePersonId' => 'required',
-                'message' => 'required'
+                'message' => 'required',
             ]);
 
             $id = $request->id;
@@ -201,7 +197,7 @@ class TestimonialController extends Controller
             $testimonial->status = 'Active';
             $testimonial->save();
 
-            return redirect()->route('testimonial.index')->with("success", "Testimonial updated successfully.");
+            return redirect()->route('testimonial.index')->with('success', 'Testimonial updated successfully.');
         } catch (\Throwable $th) {
             // Log the error
             ErrorLogger::logError($th, request()->fullUrl());
@@ -222,7 +218,7 @@ class TestimonialController extends Controller
             $testimonial->status = 'Archived';
             $testimonial->save();
 
-            return redirect()->back()->with("success", "Testimonial deleted successfully.");
+            return redirect()->back()->with('success', 'Testimonial deleted successfully.');
         } catch (\Throwable $th) {
             // Log the error
             ErrorLogger::logError($th, request()->fullUrl());

@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers\Api;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\SpecificAsk;
 use App\Models\User;
-use Illuminate\Support\Facades\Validator;
 use App\Utils\Utils;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 use Kreait\Firebase\Factory;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\Notification;
@@ -20,6 +20,7 @@ class SpecificAskController extends Controller
     {
         try {
             $specificasks = SpecificAsk::with('users:id,firstName,lastName')->where('status', 'Active')->get();
+
             return Utils::sendResponse(['specificasks' => $specificasks], 'Specific Ask retrieved successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
@@ -30,14 +31,12 @@ class SpecificAskController extends Controller
     {
         try {
             $specificasks = SpecificAsk::where('askBy', Auth::user()->id)->with('users:id,firstName,lastName')->where('status', 'Active')->get();
+
             return Utils::sendResponse(['specificasks' => $specificasks], 'Specific Ask retrieved successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
-
-
-
 
     // public function createApi(Request $request)
     // {
@@ -62,7 +61,6 @@ class SpecificAskController extends Controller
     //     }
     // }
 
-
     public function createApi(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -74,16 +72,16 @@ class SpecificAskController extends Controller
         }
 
         try {
-            $specificAsk = new SpecificAsk();
+            $specificAsk = new SpecificAsk;
             $specificAsk->askBy = Auth::id();
             $specificAsk->ask = $request->ask;
-            $specificAsk->status = "Active";
+            $specificAsk->status = 'Active';
             $specificAsk->save();
 
             // Send notification to all users
             $users = User::whereNotNull('fcm_token')->get();
             $title = 'Specific Ask';
-            $body = 'A new specific ask has been Posted by ' . Auth::user()->firstName . ' ' . Auth::user()->lastName;
+            $body = 'A new specific ask has been Posted by '.Auth::user()->firstName.' '.Auth::user()->lastName;
 
             $serviceAccountPath = storage_path('app/public/ubn_notification.json');
             $factory = (new Factory)->withServiceAccount($serviceAccountPath);
@@ -95,13 +93,13 @@ class SpecificAskController extends Controller
 
                 try {
                     $messaging->send($message);
-                    Log::info('Notification sent to token: ' . $user->fcm_token);
+                    Log::info('Notification sent to token: '.$user->fcm_token);
                 } catch (\Kreait\Firebase\Exception\Messaging\NotFound $e) {
-                    Log::error('Token not found: ' . $user->fcm_token);
+                    Log::error('Token not found: '.$user->fcm_token);
                 } catch (\Kreait\Firebase\Exception\Messaging\InvalidArgument $e) {
-                    Log::error('Invalid argument error with token: ' . $user->fcm_token);
+                    Log::error('Invalid argument error with token: '.$user->fcm_token);
                 } catch (\Exception $e) {
-                    Log::error('General error sending to token: ' . $user->fcm_token . '. Error: ' . $e->getMessage());
+                    Log::error('General error sending to token: '.$user->fcm_token.'. Error: '.$e->getMessage());
                 }
             }
 
@@ -110,10 +108,6 @@ class SpecificAskController extends Controller
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
-
-
-
-
 
     public function updateApi(Request $request, $id)
     {
@@ -128,7 +122,7 @@ class SpecificAskController extends Controller
         try {
             $specificasks = SpecificAsk::find($id);
 
-            if (!$specificasks) {
+            if (! $specificasks) {
                 return Utils::errorResponse(['error' => 'Ask not found.'], 'Not Found', 404);
             }
 
@@ -148,7 +142,7 @@ class SpecificAskController extends Controller
         try {
             $specificasks = SpecificAsk::find($id);
 
-            if (!$specificasks) {
+            if (! $specificasks) {
                 return Utils::errorResponse(['error' => 'ask not found.'], 'Not Found', 404);
             }
 

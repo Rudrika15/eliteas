@@ -2,24 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use Throwable;
+use App\Models\BillingAddress;
 use App\Models\City;
-use App\Models\User;
-use App\Models\State;
-use App\Models\Member;
+use App\Models\ContactDetails;
 use App\Models\Country;
 use App\Models\Landmark;
-use App\Utils\ErrorLogger;
+use App\Models\Member;
+use App\Models\State;
 use App\Models\TopsProfile;
+use App\Models\User;
+use App\Utils\ErrorLogger;
 use Illuminate\Http\Request;
-use App\Models\BillingAddress;
-use App\Models\ContactDetails;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Throwable;
 
 class ProfileController extends Controller
 {
-
     public function __construct()
     {
         $this->middleware('permission:profile-member', ['only' => ['member']]);
@@ -39,11 +37,10 @@ class ProfileController extends Controller
                 $th,
                 request()->fullUrl()
             );
+
             return response()->json(['error' => 'Something went wrong'], 500);
         }
     }
-
-
 
     public function member($id = 0)
     {
@@ -77,11 +74,11 @@ class ProfileController extends Controller
                 $th,
                 request()->fullUrl()
             );
+
             // In case of an error, redirect to servererror view
             return view('servererror');
         }
     }
-
 
     public function memberUpdate(Request $request)
     {
@@ -112,12 +109,12 @@ class ProfileController extends Controller
             // $member->timeZone = $request->timeZone;
 
             if ($request->profilePhoto) {
-                $member->profilePhoto = time() . '.' . $request->profilePhoto->extension();
+                $member->profilePhoto = time().'.'.$request->profilePhoto->extension();
                 $request->profilePhoto->move(public_path('ProfilePhoto'), $member->profilePhoto);
             }
 
             if ($request->companyLogo) {
-                $member->companyLogo = time() . '.' . $request->companyLogo->extension();
+                $member->companyLogo = time().'.'.$request->companyLogo->extension();
                 $request->companyLogo->move(public_path('CompanyLogo'), $member->companyLogo);
             }
 
@@ -153,11 +150,11 @@ class ProfileController extends Controller
                         ->where('name', $landmarkName)
                         ->first();
 
-                    if (!$existingLandmark) {
+                    if (! $existingLandmark) {
                         Landmark::create([
                             'cityId' => $request->city,
                             'name' => $landmarkName,
-                            'status' => 'Active'
+                            'status' => 'Active',
                         ]);
                     }
                 }
@@ -167,7 +164,6 @@ class ProfileController extends Controller
             $member->status = 'Active';
             $member->save();
 
-
             $user = User::find(Auth::id());
 
             $user->firstName = $request->firstName;
@@ -175,7 +171,6 @@ class ProfileController extends Controller
             $user->email = $request->email;
             $user->contactNo = $request->contactNo;
             $user->save();
-
 
             $tops = TopsProfile::where('memberId', $member->id)->first();
             // $tops->idealRef = $request->idealRef;
@@ -240,8 +235,6 @@ class ProfileController extends Controller
 
             $billing->save();
 
-
-
             return redirect()->route('home')->with('success', 'Profile Updated Successfully!');
         } catch (Throwable $th) {
             // throw $th;
@@ -249,6 +242,7 @@ class ProfileController extends Controller
                 $th,
                 request()->fullUrl()
             );
+
             return view('servererror');
         }
     }

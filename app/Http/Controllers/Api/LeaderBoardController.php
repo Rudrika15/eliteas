@@ -2,17 +2,16 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
+use App\Models\Circle;
 use App\Models\CircleCall;
 use App\Models\CircleMeetingMembersBusiness;
 use App\Models\CircleMeetingMembersReference;
-use Carbon\Carbon;
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-use App\Models\Circle;
 use App\Models\Member;
 use App\Utils\ErrorLogger;
 use App\Utils\Utils;
-
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 
 class LeaderBoardController extends Controller
 {
@@ -31,7 +30,7 @@ class LeaderBoardController extends Controller
             $circlecalls = $circlecalls->groupBy('memberId')->map(function ($group) {
                 return [
                     'member' => $group->first()->member,
-                    'count' => $group->count()
+                    'count' => $group->count(),
                 ];
             })->sortByDesc('count')->values();
 
@@ -57,19 +56,18 @@ class LeaderBoardController extends Controller
                 ->get();
 
             $busGiver = $busGiver->groupBy('businessGiverId')->map(function ($group) {
-    $user = $group->first()->users;
+                $user = $group->first()->users;
 
-    return [
-        'user' => $user ? [
-            'id' => $user->id,
-            'name' => $user->name,
-            'city' => optional($user->city)->name, // safe access
-        ] : null,
-        'amount' => $group->sum('amount'),
-        'count' => $group->count(),
-    ];
-})->sortByDesc('amount')->values();
-
+                return [
+                    'user' => $user ? [
+                        'id' => $user->id,
+                        'name' => $user->name,
+                        'city' => optional($user->city)->name, // safe access
+                    ] : null,
+                    'amount' => $group->sum('amount'),
+                    'count' => $group->count(),
+                ];
+            })->sortByDesc('amount')->values();
 
             return Utils::sendResponse(
                 ['busGiver' => $busGiver],
@@ -95,7 +93,7 @@ class LeaderBoardController extends Controller
             $refGiver = $refGiver->groupBy('referenceGiverId')->map(function ($group) {
                 return [
                     'user' => $group->first()->refGiverName,
-                    'count' => $group->count()
+                    'count' => $group->count(),
                 ];
             })->sortByDesc('count')->values();
 
@@ -134,7 +132,6 @@ class LeaderBoardController extends Controller
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
-
 
     // public function circleWiseLeaderboardAPI(Request $request)
     // {
@@ -235,8 +232,6 @@ class LeaderBoardController extends Controller
     //     }
     // }
 
-
-
     public function circleWiseLeaderboardApi(Request $request)
     {
         try {
@@ -255,7 +250,7 @@ class LeaderBoardController extends Controller
                     ->whereYear('date', $previousYear)
                     ->whereMonth('date', $previousMonth)
                     ->get()
-                    ->filter(fn($call) => $call->member && $call->member->circleId == $selectedCircleId)
+                    ->filter(fn ($call) => $call->member && $call->member->circleId == $selectedCircleId)
                     ->groupBy('memberId')
                     ->map(function ($group) {
                         $member = $group->first()->member;
@@ -267,7 +262,7 @@ class LeaderBoardController extends Controller
                                 'firstName' => $user->firstName ?? null,
                                 'lastName' => $user->lastName ?? null,
                                 'email' => $user->email ?? null,
-                                'contactNo' => $user->contactNo ?? null
+                                'contactNo' => $user->contactNo ?? null,
                             ],
                             'member' => [
                                 'id' => $member->id,
@@ -277,12 +272,11 @@ class LeaderBoardController extends Controller
                                 'circleName' => $member->circle->circleName,
                                 'companyName' => $member->companyName,
                                 'categoryName' => $member->bCategory->categoryName,
-                                'induction_count' => Member::where('sponsoredBy', $member->id)->count()
+                                'induction_count' => Member::where('sponsoredBy', $member->id)->count(),
                             ],
-                            'count' => $group->count()
+                            'count' => $group->count(),
                         ];
                     })->sortByDesc('count')->take(1)->values();
-
 
                 // Business Givers
                 $busGiver = CircleMeetingMembersBusiness::where('status', 'Active')
@@ -301,7 +295,7 @@ class LeaderBoardController extends Controller
                                     'firstName' => $user->firstName ?? null,
                                     'lastName' => $user->lastName ?? null,
                                     'email' => $user->email ?? null,
-                                    'contactNo' => $user->contactNo ?? null
+                                    'contactNo' => $user->contactNo ?? null,
                                 ],
                                 'member' => [
                                     'id' => $member->id,
@@ -311,7 +305,7 @@ class LeaderBoardController extends Controller
                                     'circleName' => $member->circle->circleName,
                                     'companyName' => $member->companyName,
                                     'categoryName' => $member->bCategory->categoryName,
-                                    'induction_count' => Member::where('sponsoredBy', $member->id)->count()
+                                    'induction_count' => Member::where('sponsoredBy', $member->id)->count(),
                                 ],
                                 'amount' => $group->max('amount'),
                                 'count' => $group->count(),
@@ -338,7 +332,7 @@ class LeaderBoardController extends Controller
                                     'firstName' => $user->firstName ?? null,
                                     'lastName' => $user->lastName ?? null,
                                     'email' => $user->email ?? null,
-                                    'contactNo' => $user->contactNo ?? null
+                                    'contactNo' => $user->contactNo ?? null,
                                 ],
                                 'member' => [
                                     'id' => $member->id,
@@ -348,9 +342,9 @@ class LeaderBoardController extends Controller
                                     'circleName' => $member->circle->circleName,
                                     'companyName' => $member->companyName,
                                     'categoryName' => $member->bCategory->categoryName,
-                                    'induction_count' => Member::where('sponsoredBy', $member->id)->count()
+                                    'induction_count' => Member::where('sponsoredBy', $member->id)->count(),
                                 ],
-                                'count' => $group->count()
+                                'count' => $group->count(),
                             ];
                         }
 
@@ -365,10 +359,11 @@ class LeaderBoardController extends Controller
                     'circlecalls' => $circlecalls,
                     'businessGivers' => $busGiver,
                     'referenceGivers' => $refGiver,
-                ]
+                ],
             ]);
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, request()->fullUrl());
+
             return response()->json([
                 'status' => false,
                 'message' => 'Server Error',

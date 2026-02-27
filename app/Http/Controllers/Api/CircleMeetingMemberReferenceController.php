@@ -2,18 +2,17 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\Member;
-use Illuminate\Http\Request;
-use App\Models\CircleMeeting;
-use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
+use App\Models\CircleMeeting;
 use App\Models\CircleMeetingMembersBusiness;
 use App\Models\CircleMeetingMembersReference;
+use App\Models\Member;
 use App\Models\User;
 use App\Utils\ErrorLogger;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Auth;
 use App\Utils\Utils;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Kreait\Firebase\Factory;
 use Kreait\Firebase\Messaging\CloudMessage;
@@ -38,6 +37,7 @@ class CircleMeetingMemberReferenceController extends Controller
                 } else {
                     $item->induction_count = 0;
                 }
+
                 return $item;
             });
 
@@ -47,7 +47,6 @@ class CircleMeetingMemberReferenceController extends Controller
         }
     }
 
-
     public function receivedRef(Request $request)
     {
         try {
@@ -55,7 +54,6 @@ class CircleMeetingMemberReferenceController extends Controller
             //     ->where('status', 'Active')
             //     ->orderBy('id', 'DESC')
             //     ->get();
-
 
             $refReceiver = CircleMeetingMembersReference::where('status', 'Active')
                 ->orderBy('id', 'DESC')
@@ -68,9 +66,9 @@ class CircleMeetingMemberReferenceController extends Controller
                 if ($item->refGiver) {
                     $item->refGiver->induction_count = Member::where('sponsoredBy', $item->refGiver->id)->count() ?? 0;
                 }
+
                 return $item;
             });
-
 
             return Utils::sendResponse(['refReceiver' => $refReceiver], 'Circle Meeting Member References retrieved successfully', 200);
         } catch (\Throwable $th) {
@@ -78,13 +76,12 @@ class CircleMeetingMemberReferenceController extends Controller
         }
     }
 
-
-
     // For showing a single data
     public function view(Request $request, $id)
     {
         try {
             $refGiver = CircleMeetingMembersReference::findOrFail($id);
+
             return Utils::sendResponse(['refGiver' => $refGiver], 'Circle Meeting Member Reference retrieved successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
@@ -145,7 +142,7 @@ class CircleMeetingMemberReferenceController extends Controller
         $this->validate($request, []);
 
         try {
-            $refGiver = new CircleMeetingMembersReference();
+            $refGiver = new CircleMeetingMembersReference;
 
             $refGiver->referenceGiverId = Auth::user()->id;
             $refGiver->memberId = $request->memberId;
@@ -174,7 +171,7 @@ class CircleMeetingMemberReferenceController extends Controller
 
             if ($user && $user->fcm_token) {
                 $title = 'Reference';
-                $body = 'A new reference has been created for you by ' . $user->firstName . ' ' . $user->lastName . '.';
+                $body = 'A new reference has been created for you by '.$user->firstName.' '.$user->lastName.'.';
 
                 $serviceAccountPath = storage_path('app/public/ubn_notification.json');
                 $factory = (new Factory)->withServiceAccount($serviceAccountPath);
@@ -185,16 +182,16 @@ class CircleMeetingMemberReferenceController extends Controller
 
                 try {
                     $messaging->send($message);
-                    Log::info('Notification sent to token: ' . $user->fcm_token);
+                    Log::info('Notification sent to token: '.$user->fcm_token);
                 } catch (\Kreait\Firebase\Exception\Messaging\NotFound $e) {
-                    Log::error('Token not found: ' . $user->fcm_token);
+                    Log::error('Token not found: '.$user->fcm_token);
                 } catch (\Kreait\Firebase\Exception\Messaging\InvalidArgument $e) {
-                    Log::error('Invalid argument error with token: ' . $user->fcm_token);
+                    Log::error('Invalid argument error with token: '.$user->fcm_token);
                 } catch (\Exception $e) {
-                    Log::error('General error sending to token: ' . $user->fcm_token . '. Error: ' . $e->getMessage());
+                    Log::error('General error sending to token: '.$user->fcm_token.'. Error: '.$e->getMessage());
                 }
             } else {
-                Log::error('No FCM token found for user ID: ' . $memberId);
+                Log::error('No FCM token found for user ID: '.$memberId);
             }
 
             return Utils::sendResponse([], 'Circle Meeting Member Reference created successfully', 200);
@@ -202,8 +199,6 @@ class CircleMeetingMemberReferenceController extends Controller
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
-
-
 
     public function refByOtherStore(Request $request)
     {
@@ -221,7 +216,7 @@ class CircleMeetingMemberReferenceController extends Controller
                 // 'hotelName' => 'required',
             ]);
 
-            $busGiver = new CircleMeetingMembersBusiness();
+            $busGiver = new CircleMeetingMembersBusiness;
             $busGiver->businessGiverId = $request->memberId;
             $busGiver->loginMemberId = Auth::user()->id;
             $busGiver->amount = $request->amount;
@@ -230,11 +225,9 @@ class CircleMeetingMemberReferenceController extends Controller
             $busGiver->status = 'Active';
             $busGiver->save();
 
-
-
             if ($request->create_reference == 1) {
 
-                $refGiver = new CircleMeetingMembersReference();
+                $refGiver = new CircleMeetingMembersReference;
                 $refGiver->referenceGiverId = $request->memberId;
                 $refGiver->memberId = Auth::user()->id;
 
@@ -251,7 +244,6 @@ class CircleMeetingMemberReferenceController extends Controller
                 $refGiver->status = 'Active';
                 $refGiver->save();
 
-
                 $busGiver->referenceId = $refGiver->id;
                 $busGiver->save();
             }
@@ -266,6 +258,7 @@ class CircleMeetingMemberReferenceController extends Controller
             );
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, $request->fullUrl());
+
             return Utils::errorResponse(
                 ['error' => $th->getMessage()],
                 'Internal Server Error',
@@ -273,7 +266,6 @@ class CircleMeetingMemberReferenceController extends Controller
             );
         }
     }
-
 
     // public function edit($id)
     // {
@@ -303,6 +295,7 @@ class CircleMeetingMemberReferenceController extends Controller
             $refGiver->status = 'Active';
 
             $refGiver->save();
+
             return Utils::sendResponse([], 'Circle Meeting Member Reference updated successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
@@ -313,7 +306,7 @@ class CircleMeetingMemberReferenceController extends Controller
     {
         try {
             $refGiver = CircleMeetingMembersReference::find($id);
-            $refGiver->status = "Deleted";
+            $refGiver->status = 'Deleted';
             $refGiver->save();
 
             return Utils::sendResponse([], 'Circle Meeting Member Reference deleted successfully', 200);

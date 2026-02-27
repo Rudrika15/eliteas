@@ -9,8 +9,8 @@ use App\Models\CircleMeetingMembersReference;
 use App\Models\CircleMeetingsAttendances;
 use App\Models\MeetingInvitation;
 use App\Models\Schedule;
-use App\Models\TrainingRegister;
 use App\Models\Testimonial;
+use App\Models\TrainingRegister;
 use App\Utils\ErrorLogger;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -32,11 +32,13 @@ class AttendanceController extends Controller
     {
         try {
             $schedule = Schedule::findOrFail($request->id);
-            $schedule->is_locked = !$schedule->is_locked;
+            $schedule->is_locked = ! $schedule->is_locked;
             $schedule->save();
+
             return redirect()->back()->with('success', 'Meeting lock status updated.');
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, $request->fullUrl());
+
             return redirect()->back()->with('error', 'Something went wrong.');
         }
     }
@@ -178,7 +180,7 @@ class AttendanceController extends Controller
                     'late' => $currentStatus === 'Late' ? 'Y' : '-',
                     'medical' => $currentStatus === 'Medical' ? 'Y' : '-',
                     'substitute' => $currentStatus === 'Sub' ? 'Y' : '-',
-                    'last_att' => $lastStatus
+                    'last_att' => $lastStatus,
                 ];
             }
 
@@ -189,6 +191,7 @@ class AttendanceController extends Controller
         } catch (\Throwable $th) {
             // Log the error using the utility class
             ErrorLogger::logError($th, $request->fullUrl());
+
             // Return a custom error view
             return view('servererror'); // Ensure this view exists
         }
@@ -238,6 +241,7 @@ class AttendanceController extends Controller
                 $th,
                 $request->fullUrl()
             );
+
             return view('servererror');
         }
     }
@@ -264,7 +268,6 @@ class AttendanceController extends Controller
             return view('servererror');
         }
     }
-
 
     public function attendanceStore(Request $request)
     {
@@ -307,7 +310,6 @@ class AttendanceController extends Controller
         }
     }
 
-
     public function updateStatus(Request $request, $id)
     {
         try {
@@ -335,7 +337,6 @@ class AttendanceController extends Controller
             return view('servererror');
         }
     }
-
 
     public function invitedAttendanceStore(Request $request)
     {
@@ -381,7 +382,6 @@ class AttendanceController extends Controller
             return view('servererror');
         }
     }
-
 
     public function updateInvitedStatus(Request $request, $id)
     {
