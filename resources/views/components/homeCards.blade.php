@@ -492,13 +492,13 @@
     }
 
     .leaderboard .profile-card {
-        width: 400px;
+        width: 100%;
         /* slightly reduced to fit 3 in a row nicely */
         border-radius: 20px;
         overflow: hidden;
         box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
         background-color: #fff;
-        margin: 20px;
+        margin: 0;
         /* changed from centered to spaced for flexbox */
         transition: all 0.3s ease;
     }
@@ -958,9 +958,9 @@
         margin-bottom: 10px;
     }
 
-    .leaderboard .col-lg-4 {
+    /*.leaderboard .col-lg-4 {
         width: 31.33333333% !important;
-    }
+    }*/
 </style>
 
 
@@ -1270,7 +1270,7 @@
     <div class="container mt-4">
         <div class="row">
             <!-- Left Section (7 Columns) -->
-            <div class="col-lg-8 col-md-12">
+            <div class="col-12">
                 <style>
                     .compact-stats .stat-card {
                         padding: 8px;
@@ -1525,7 +1525,7 @@
                     <div class="row g-4">
                         {{-- Card 1: Top IBM Member --}}
                         @if ($circlecalls)
-                            <div class="col-sm-6 col-lg-4">
+                            <div class="col-sm-6 col-lg-3">
                                 <div class="fb-card shadow-sm">
                                     <div class="fb-card-img-wrapper">
                                         <span class="fb-badge">Top IBM Member</span>
@@ -1586,7 +1586,7 @@
 
                         {{-- Card 2: Top Business Leader --}}
                         @if ($busGiver)
-                            <div class="col-sm-6 col-lg-4">
+                            <div class="col-sm-6 col-lg-3">
                                 <div class="fb-card shadow-sm">
                                     <div class="fb-card-img-wrapper">
                                         <span class="fb-badge">Top Business Leader</span>
@@ -1648,7 +1648,7 @@
 
                         {{-- Card 3: Top Reference Giver --}}
                         @if ($refGiver)
-                            <div class="col-sm-6 col-lg-4">
+                            <div class="col-sm-6 col-lg-3">
                                 <div class="fb-card shadow-sm">
                                     <div class="fb-card-img-wrapper">
                                         <span class="fb-badge">Top Reference Giver</span>
@@ -1708,7 +1708,7 @@
 
                         {{-- Card 4: Top Induction --}}
                         @if (isset($induction) && $induction)
-                            <div class="col-sm-6 col-lg-4">
+                            <div class="col-sm-6 col-lg-3">
                                 <div class="fb-card shadow-sm">
                                     <div class="fb-card-img-wrapper">
                                         <span class="fb-badge">Top Induction</span>
@@ -1886,8 +1886,8 @@
 
     </div>
 
-    <!-- Right Section (5 Columns) -->
-    <div class="col-lg-4 col-md-12">
+    <!-- Right Section (Moved to Bottom) -->
+    <div class="col-12">
         <div class="row">
             @php
                 $authUserId = Auth::id();
@@ -1913,7 +1913,7 @@
                     <div class="card-body p-3">
                         <div class="row g-3">
                             <!-- Received References -->
-                            <div class="col-6">
+                            <div class="col-sm-6 col-lg-3">
                                 <div class="d-flex align-items-center p-2 border rounded h-100" style="border-left: 5px solid #28a745 !important; background-color: #fff;">
                                     <div class="rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 35px; height: 35px; background-color: rgba(40, 167, 69, 0.1); color: #28a745; flex-shrink: 0;">
                                         <i class="bi bi-arrow-down-left-circle fs-5"></i>
@@ -1926,7 +1926,7 @@
                             </div>
 
                             <!-- Given References -->
-                            <div class="col-6">
+                            <div class="col-sm-6 col-lg-3">
                                 <div class="d-flex align-items-center p-2 border rounded h-100" style="border-left: 5px solid #17a2b8 !important; background-color: #fff;">
                                     <div class="rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 35px; height: 35px; background-color: rgba(23, 162, 184, 0.1); color: #17a2b8; flex-shrink: 0;">
                                         <i class="bi bi-arrow-up-right-circle fs-5"></i>
@@ -1939,7 +1939,7 @@
                             </div>
 
                             <!-- Received Business -->
-                            <div class="col-6">
+                            <div class="col-sm-6 col-lg-3">
                                 <div class="d-flex align-items-center p-2 border rounded h-100" style="border-left: 5px solid #dc3545 !important; background-color: #fff;">
                                     <div class="rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 35px; height: 35px; background-color: rgba(220, 53, 69, 0.1); color: #dc3545; flex-shrink: 0;">
                                         <i class="bi bi-cash-coin fs-5"></i>
@@ -1952,7 +1952,7 @@
                             </div>
 
                             <!-- Given Business -->
-                            <div class="col-6">
+                            <div class="col-sm-6 col-lg-3">
                                 <div class="d-flex align-items-center p-2 border rounded h-100" style="border-left: 5px solid #ffc107 !important; background-color: #fff;">
                                     <div class="rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 35px; height: 35px; background-color: rgba(255, 193, 7, 0.1); color: #ffc107; flex-shrink: 0;">
                                         <i class="bi bi-currency-exchange fs-5"></i>
@@ -1969,16 +1969,18 @@
             </div>
 
             @if ($categoryNames->isNotEmpty())
-                <div class="card shadow-sm p-4 text-center">
-                    <h4 class="mb-4 fw-bold">Vacant Categories</h4>
-                    <div class="row">
-                        @foreach ($categoryNames as $categoryName)
-                            <div class="col-md-6 mb-3">
-                                <div class="card bottom-card border rounded p-2 pt-2" width="100%">
-                                    <h5 class="m-0 card-text fw-bold">{{ $categoryName }}</h5>
+                <div class="col-12 mb-4">
+                    <div class="card shadow-sm p-4 text-center">
+                        <h4 class="mb-4 fw-bold">Vacant Categories</h4>
+                        <div class="row">
+                            @foreach ($categoryNames as $categoryName)
+                                <div class="col-sm-6 col-lg-3 mb-3">
+                                    <div class="card bottom-card border rounded p-2 pt-2" width="100%">
+                                        <h5 class="m-0 card-text fw-bold">{{ $categoryName }}</h5>
+                                    </div>
                                 </div>
-                            </div>
-                        @endforeach
+                            @endforeach
+                        </div>
                     </div>
                 </div>
             @endif

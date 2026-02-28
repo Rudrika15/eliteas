@@ -103,6 +103,8 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('/user/member/updateTopsProfile', [LoginController::class, 'topsProfileUpdate']);
 
     Route::get('/home-counts', [ApiController::class, 'homeCounts']);
+    Route::get('/top-networkers', [ApiController::class, 'topNetworkers']);
+    Route::get('/max-induction', [ApiController::class, 'maxInduction']);
     Route::get('/my-stats', [ApiController::class, 'myStats']);
     Route::get('/active-meeting-schedule', [ApiController::class, 'activeMeetingSchedules']);
     Route::get('/resource-index', [ApiController::class, 'resourceIndex']);

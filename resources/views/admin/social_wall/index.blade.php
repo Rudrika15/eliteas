@@ -798,7 +798,7 @@
                         <div class="sidebar-card-header">
                             <div class="sidebar-title"><i class="bi bi-newspaper"></i> Network Feed</div>
                         </div>
-                        <div class="text-muted small">Share photos, like posts, and comment to connect with your circle.</div>
+                        <div class="text-muted small">Like posts, and comment to connect with your circle.</div>
                         <div class="text-muted small mt-2">Tip: Use a clear caption and upload a high-quality photo.</div>
                     </div>
 

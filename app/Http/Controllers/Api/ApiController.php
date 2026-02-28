@@ -25,6 +25,7 @@ use App\Utils\Utils;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
@@ -1000,6 +1001,117 @@ class ApiController extends Controller
         }
     }
 
+    //max indution member api 
+    public function maxInduction(Request $request)
+    {
+        try {
+            $authUserId = auth()->id(); // Get the authenticated user ID
+            $previousMonth = Carbon::now()->subMonth()->month;
+            $previousYear = Carbon::now()->subMonth()->year;
+
+            $authMember = Member::where('userId', $authUserId)->first();
+
+            if (! $authMember) {
+                return response()->json(['message' => 'Authenticated member not found'], 404);
+            }
+
+            // Get cityId from the user's circle
+            $cityId = Circle::where('id', $authMember->circleId)->value('cityId');
+            if (! $cityId) {
+                return response()->json(['message' => 'City not found'], 404);
+            }
+
+            // All circle IDs in the same city
+            $circleIdsInCity = Circle::where('cityId', $cityId)->pluck('id')->toArray();
+
+            // Get Highest Induction
+            $induction = Member::where('status', 'Active')
+                ->whereYear('created_at', $previousYear)
+                ->whereMonth('created_at', $previousMonth)
+                ->whereNotNull('sponsoredBy')
+                ->get()
+                ->groupBy('sponsoredBy')
+                ->map(function ($group) use ($authUserId, $authMember, $circleIdsInCity) {
+                    $sponsorId = $group->first()->sponsoredBy;
+
+                    if (! $sponsorId) {
+                        return null;
+                    }
+
+                    // sponsorId is member ID, we need to find the member and then user
+                    $member = Member::with(['circle', 'bCategory'])
+                        ->where('id', $sponsorId)
+                        ->where('status', 'Active')
+                        ->first();
+
+                    if (! $member || ! in_array($member->circleId, $circleIdsInCity)) {
+                        return null; // Skip if member not in same city
+                    }
+
+                    $user = User::find($member->userId);
+
+                    if ($user && $user->status === 'Active') {
+                        $inductionCount = Member::where('sponsoredBy', $member->id)->count();
+
+                        // Determine connection status
+                        $connectionStatus = 'Not Connected';
+
+                        if ($authMember && $member->circleId === $authMember->circleId) {
+                            $connectionStatus = 'Connected';
+                        } else {
+                            $connection = Connection::where('memberId', $member->userId)
+                                ->where('userId', $authUserId)
+                                ->first();
+
+                            if ($connection) {
+                                $connectionStatus = $connection->status;
+                            }
+                        }
+
+                        return [
+                            'user' => [
+                                'id' => $user->id,
+                                'firstName' => $user->firstName,
+                                'lastName' => $user->lastName,
+                                'email' => $user->email,
+                            ],
+                            'count' => $group->count(),
+                            'induction_count' => $inductionCount,
+                            'connectionStatus' => $connectionStatus,
+                            'businessCategoryId' => $member->businessCategoryId,
+                            'businessCategory' => $member->bcategory->categoryName ?? null,
+                            'circleId' => $member->circleId,
+                            'circle' => $member->circle->circleName ?? null,
+                            'profilePhoto' => $member->profilePhoto,
+                        ];
+                    }
+
+                    return null;
+                })
+                ->filter()
+                ->sortByDesc('count')
+                ->first();
+
+            if (! $induction) {
+                return Utils::sendResponse(
+                    null,
+                    'No Induction Lead Board to show for now.',
+                    404
+                );
+            }
+
+            return Utils::sendResponse(
+                ['induction' => $induction],
+                'Max induction member retrieved successfully',
+                200
+            );
+        } catch (\Throwable $th) {
+            return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
+        }
+    }
+
+
+
     // Upcoming Workshop
     public function index(Request $request)
     {
@@ -1939,13 +2051,50 @@ class ApiController extends Controller
                 $query->where('resourceCatId', $selectedCategoryId);
             }
 
-            $help = $query->paginate(10);
+            $help = $query->get();
 
             return Utils::sendResponse([
                 'categories' => $categories,
                 'help' => $help,
                 'selectedCategoryId' => $selectedCategoryId
             ], 'Resources fetched successfully', 200);
+        } catch (\Throwable $th) {
+            return Utils::errorResponse($th->getMessage(), 'Internal Server Error', 500);
+        }
+    }
+
+    //top networkers
+    public function topNetworkers()
+    {
+        try {
+            // Top Influencers (Inductions > 8)
+            $topInfluencers = Member::withCount('sponsees')
+                ->having('sponsees_count', '>', 8)
+                ->orderByDesc('sponsees_count')
+                ->with(['circle', 'bCategory']) // Load related data for display
+                ->get();
+
+            // Crorepati Givers (Business Given > 1 Crore)
+            $crorepatiGiversRaw = CircleMeetingMembersBusiness::select('businessGiverId', DB::raw('SUM(amount) as total_amount'))
+                ->where('status', 'Active')
+                ->groupBy('businessGiverId')
+                ->having('total_amount', '>', 10000000)
+                ->orderByDesc('total_amount')
+                ->with(['businessGiverMember' => function ($query) {
+                    $query->select('id', 'userId', 'firstName', 'lastName', 'profilePhoto', 'companyName', 'circleId', 'businessCategoryId');
+                    $query->with('circle:id,circleName', 'bCategory:id,categoryName');
+                }])
+                ->get();
+
+            // Filter out if member is null (e.g. user deleted but business record exists)
+            $crorepatiGivers = $crorepatiGiversRaw->filter(function ($item) {
+                return $item->businessGiverMember != null;
+            })->values(); // Re-index the collection
+
+            return Utils::sendResponse([
+                'topInfluencers' => $topInfluencers,
+                'crorepatiGivers' => $crorepatiGivers
+            ], 'Top Networkers fetched successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse($th->getMessage(), 'Internal Server Error', 500);
         }
