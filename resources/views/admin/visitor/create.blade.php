@@ -22,6 +22,9 @@
                             @foreach ($meetingList as $meeting)
                                 <option value="{{ $meeting->id }}" {{ (int) $meeting->id === (int) request('meetingId') ? 'selected' : '' }}>
                                     {{ \Carbon\Carbon::parse($meeting->date)->format('d-m-Y') }}
+                                    @if (!isset($member) || !$member)
+                                        - {{ $meeting->circle->circleName ?? 'Unknown Circle' }}
+                                    @endif
                                 </option>
                             @endforeach
                         </select>
@@ -221,9 +224,9 @@
                 <div class="col-md-6">
                     <div class="form-floating">
                         <!-- Display City Name -->
-                        <input type="text" name="city" class="form-control" placeholder="City" value="{{ auth()->user()->member->circle->city->cityName ?? '' }}" readonly>
+                        <input type="text" name="city" class="form-control" placeholder="City" value="{{ $member?->circle?->city?->cityName ?? '' }}" {{ $member ? 'readonly' : '' }}>
                         <!-- Store City ID -->
-                        <input type="hidden" name="cityId" value="{{ auth()->user()->member->circle->cityId ?? '' }}">
+                        <input type="hidden" name="cityId" value="{{ $member?->circle?->cityId ?? '' }}">
                         <label>City</label>
                     </div>
                 </div>
@@ -260,15 +263,15 @@
             <div class="row mb-3 d-none" id="memberBox">
                 <div class="col-md-6">
                     <div class="form-floating">
-                        <select class="form-select" id="circleId" disabled>
+                        <select class="form-select" id="circleId" {{ $member ? 'disabled' : '' }}>
                             @foreach ($circles as $circle)
-                                <option value="{{ $circle->id }}" {{ auth()->user()->member->circleId == $circle->id ? 'selected' : '' }}>
+                                <option value="{{ $circle->id }}" {{ $member?->circleId == $circle->id ? 'selected' : '' }}>
                                     {{ $circle->circleName }}
                                 </option>
                             @endforeach
                         </select>
                         <!-- Hidden field to submit value -->
-                        <input type="hidden" name="circleId" value="{{ auth()->user()->member->circleId }}">
+                        <input type="hidden" name="circleId" value="{{ $member?->circleId }}">
                         <label>Circle</label>
                     </div>
                 </div>
@@ -345,7 +348,19 @@
             });
 
             /* ===============================
-               LOAD MEMBERS BY CIRCLE
+               DEFAULT CIRCLE LOAD
+            =============================== */
+            let defaultCircleId = '{{ $member?->circleId ?? '' }}';
+            if (defaultCircleId) {
+                loadMembers(defaultCircleId);
+            }
+
+            $('#circleId').on('change', function() {
+                loadMembers($(this).val());
+            });
+
+            /* ===============================
+               MEMBER CHANGE
             =============================== */
             function loadMembers(circleId) {
                 $('#memberId').empty().append('<option value="">Select Member</option>');
@@ -371,8 +386,8 @@
                                     );
                                 });
 
-                                let defaultMemberId = '{{ auth()->user()->member->id }}';
-                                if (defaultMemberId) {
+                                let defaultMemberId = '{{ $member?->id ?? '' }}';
+                                if (defaultMemberId && circleId == '{{ $member?->circleId ?? '' }}') {
                                     $('#memberId').val(defaultMemberId).trigger('change');
                                 }
                             } else {
@@ -385,22 +400,6 @@
                     });
                 }
             }
-
-            /* ===============================
-               DEFAULT CIRCLE LOAD
-            =============================== */
-            let defaultCircleId = '{{ auth()->user()->member->circleId }}';
-            if (defaultCircleId) {
-                loadMembers(defaultCircleId);
-            }
-
-            $('#circleId').on('change', function() {
-                loadMembers($(this).val());
-            });
-
-            /* ===============================
-               MEMBER CHANGE
-            =============================== */
             $('#memberId').on('change', function() {
                 let opt = $(this).find('option:selected');
 

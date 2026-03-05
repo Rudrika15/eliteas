@@ -165,8 +165,8 @@ class VisitorController extends Controller
         // Filters
         if ($request->filled('name')) {
             $query->where(function ($q) use ($request) {
-                $q->where('firstName', 'like', '%'.$request->name.'%')
-                    ->orWhere('lastName', 'like', '%'.$request->name.'%');
+                $q->where('firstName', 'like', '%' . $request->name . '%')
+                    ->orWhere('lastName', 'like', '%' . $request->name . '%');
             });
         }
 
@@ -269,14 +269,14 @@ class VisitorController extends Controller
         // Optional filters (e.g., name and business category)
         if ($request->filled('name')) {
             $query->where(function ($q) use ($request) {
-                $q->where('firstName', 'like', '%'.$request->name.'%')
-                    ->orWhere('lastName', 'like', '%'.$request->name.'%');
+                $q->where('firstName', 'like', '%' . $request->name . '%')
+                    ->orWhere('lastName', 'like', '%' . $request->name . '%');
             });
         }
 
         if ($request->filled('business_category')) {
             $query->whereHas('bCategory', function ($q) use ($request) {
-                $q->where('categoryName', 'like', '%'.$request->business_category.'%');
+                $q->where('categoryName', 'like', '%' . $request->business_category . '%');
             });
         }
 
@@ -323,26 +323,37 @@ class VisitorController extends Controller
                 ->orderBy('categoryName', 'asc')
                 ->get();
 
-            // Get circleId from members table
-            $circleId = Member::where('userId', auth()->id())->value('circleId');
+            // Get member record for authenticated user
+            $member = Member::where('userId', auth()->id())->first();
+            $circleId = $member ? $member->circleId : null;
 
             // Meetings list
-            $meetingList = Schedule::where('circleId', $circleId)
-                ->where(function ($q) {
-                    $q->whereDate('date', '>=', Carbon::today()) // upcoming
-                        ->orWhereBetween('date', [
-                            Carbon::now()->subMonth()->startOfMonth(), // last month
-                            Carbon::now()->endOfMonth(),                 // current month
-                        ]);
-                })
+            $meetingList = Schedule::query();
+
+            if ($circleId) {
+                $meetingList->where('circleId', $circleId);
+            }
+
+            $meetingList = $meetingList->where(function ($q) {
+                $q->whereDate('date', '>=', Carbon::today()) // upcoming
+                    ->orWhereBetween('date', [
+                        Carbon::now()->subMonth()->startOfMonth(), // last month
+                        Carbon::now()->endOfMonth(),                 // current month
+                    ]);
+            })
                 ->orderBy('date', 'asc')
                 ->get();
+
+            // If no circleId, we might want to load circle name with meeting date
+            if (!$circleId) {
+                $meetingList->load('circle');
+            }
 
             $circles = Circle::where('status', 'Active')
                 ->orderBy('circleName', 'asc')
                 ->get();
 
-            return view('admin.visitor.create', compact('businessCategories', 'meetingList', 'circles'));
+            return view('admin.visitor.create', compact('businessCategories', 'meetingList', 'circles', 'member'));
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, $request->fullUrl());
 
