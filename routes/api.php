@@ -106,6 +106,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/top-networkers', [ApiController::class, 'topNetworkers']);
     Route::get('/max-induction', [ApiController::class, 'maxInduction']);
     Route::get('/my-stats', [ApiController::class, 'myStats']);
+    Route::get('/vacant-categories', [ApiController::class, 'vacantCategories']);
     Route::get('/active-meeting-schedule', [ApiController::class, 'activeMeetingSchedules']);
     Route::get('/resource-index', [ApiController::class, 'resourceIndex']);
     Route::get('/members-activity-counts/{id?}', [ApiController::class, 'membersActivityCount']);

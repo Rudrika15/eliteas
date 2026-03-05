@@ -2099,4 +2099,44 @@ class ApiController extends Controller
             return Utils::errorResponse($th->getMessage(), 'Internal Server Error', 500);
         }
     }
+
+    public function vacantCategories(Request $request)
+    {
+        try {
+            $user = Auth::user();
+
+            if (!$user) {
+                return Utils::sendResponse([], 'User not found', 404);
+            }
+
+            $member = Member::where('userId', $user->id)->first();
+
+            if (!$member) {
+                return Utils::sendResponse([], 'Member profile not found', 404);
+            }
+
+            $circleId = $member->circleId;
+
+            if (!$circleId) {
+                return Utils::sendResponse([], 'Circle not found for this member', 404);
+            }
+
+            $businessCategoryId = Circle::where('id', $circleId)->value('businessCategoryId');
+
+            // Decode JSON properly instead of explode
+            $businessCategoryIdArray = $businessCategoryId ? json_decode($businessCategoryId, true) : [];
+
+            $businessCategories = collect(); // Default empty collection
+
+            if (!empty($businessCategoryIdArray)) {
+                $businessCategories = BusinessCategory::whereIn('id', $businessCategoryIdArray)->get();
+            }
+
+            $categoryNames = $businessCategories->pluck('categoryName');
+
+            return Utils::sendResponse($categoryNames, 'Vacant categories fetched successfully', 200);
+        } catch (\Throwable $th) {
+            return Utils::errorResponse($th->getMessage(), 'Internal Server Error', 500);
+        }
+    }
 }
