@@ -106,6 +106,19 @@
                 </div>
             </div>
 
+            <div class="col-md-12">
+                <div class="form-floating mt-3">
+                    <input type="date" id="date" name="date" class="form-control @error('date') is-invalid @enderror" placeholder="Enter Date" style="height: 60px" value="{{ old('date', isset($myTestimonial->uploadedDate) ? \Carbon\Carbon::parse($myTestimonial->uploadedDate)->format('Y-m-d') : '') }}" required>
+
+                    <label for="date">
+                        <span style="color:red">*</span> Date
+                    </label>
+
+                    @error('date')
+                        <div class="invalid-tooltip">This field is required.</div>
+                    @enderror
+                </div>
+            </div>
             {{-- MESSAGE --}}
             <div class="col-md-12">
                 <div class="form-floating mt-3">

@@ -259,6 +259,7 @@ class CircleMeetingMemberBusinessController extends Controller
         }
     }
 
+
     public function view(Request $request, $id)
     {
         try {
@@ -364,7 +365,7 @@ class CircleMeetingMemberBusinessController extends Controller
             $busGiver->loginMemberId = Auth::user()->id;
             $busGiver->amount = $request->amount;
             $busGiver->remarks = $request->remarks;
-            $busGiver->date = Carbon::now()->toDateString();
+            $busGiver->date = $request->date;
             $busGiver->status = 'Active';
             $busGiver->save();
 
@@ -500,17 +501,59 @@ class CircleMeetingMemberBusinessController extends Controller
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
-
-    public function delete(Request $request, $id)
+    public function updateBusinessSlip(Request $request, $id)
     {
         try {
-            $busGiver = CircleMeetingMembersBusiness::findOrFail($id);
-            $busGiver->status = 'Deleted';
+
+            // ✅ Find existing Business record
+            $busGiver = CircleMeetingMembersBusiness::find($id);
+
+            if (!$busGiver) {
+                return Utils::errorResponse(
+                    ['error' => 'Record not found'],
+                    'Not Found',
+                    404
+                );
+            }
+
+            // ✅ Update Business Data
+            $busGiver->businessGiverId = $request->businessGiverId;
+            $busGiver->amount = $request->amount;
+            $busGiver->remarks = $request->remarks;
+            $busGiver->date = $request->date;
             $busGiver->save();
 
-            return Utils::sendResponse([], 'Circle Meeting Member Business Deleted Successfully!', 200);
+
+            return Utils::sendResponse(
+                [
+                    'busGiver' => $busGiver,
+                ],
+                'Circle Meeting Member Reference and Business updated successfully',
+                200
+            );
         } catch (\Throwable $th) {
-            return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
+
+            ErrorLogger::logError($th, $request->fullUrl());
+
+            return Utils::errorResponse(
+                ['error' => $th->getMessage()],
+                'Internal Server Error',
+                500
+            );
         }
+    }
+
+    public function delete($id)
+    {
+        // try {
+        $busGiver = CircleMeetingMembersBusiness::find($id);
+        $busGiver->status = 'Deleted';
+        $busGiver->save();
+
+
+        return Utils::sendResponse([], 'Circle Meeting Member Business Deleted Successfully!', 200);
+        // } catch (\Throwable $th) {
+        //     return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
+        // }
     }
 }

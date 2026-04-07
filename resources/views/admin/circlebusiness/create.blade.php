@@ -102,7 +102,7 @@
                 </div>
                 <div class="">
                     <div class="form-floating mt-3">
-                        <input type="text" class="form-control @error('remarks') is-invalid @enderror" id="remarks" name="remarks" placeholder="remarks" >
+                        <input type="text" class="form-control @error('remarks') is-invalid @enderror" id="remarks" name="remarks" placeholder="remarks">
                         <label for="remarks">Remarks</label>
                         @error('remarks')
                             <div class="invalid-tooltip">

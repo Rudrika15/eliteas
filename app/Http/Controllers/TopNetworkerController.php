@@ -14,9 +14,10 @@ class TopNetworkerController extends Controller
         // Top Influencers (Inductions > 8)
         // Using 'sponsees' relationship which counts members sponsored by this member
         $topInfluencers = Member::withCount('sponsees')
-            ->having('sponsees_count', '>', 8)
+            ->having('sponsees_count', '>', 4)
             ->orderByDesc('sponsees_count')
-            ->with(['circle', 'bCategory']) // Load related data for display
+            ->with(['circle', 'bCategory'])
+            ->where('status', 'Active')
             ->get();
 
         // Crorepati Givers (Business Given > 1 Crore)

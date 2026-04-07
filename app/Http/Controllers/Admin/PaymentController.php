@@ -27,6 +27,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use App\Mail\MembershipSubcriptionRenewed;
 
 class PaymentController extends Controller
 {
@@ -180,7 +181,7 @@ class PaymentController extends Controller
             $invitation = new MeetingInvitation;
             $invitation->meetingId = $request->meetingId;
             $invitation->invitedMemberId = $visitor->invitedBy;
-            $invitation->personName = $request->firstName.' '.$request->lastName;
+            $invitation->personName = $request->firstName . ' ' . $request->lastName;
             $invitation->personEmail = null;
             $invitation->personContact = $visitor->mobileNo;
             $invitation->businessCategoryId = $visitor->businessCategory;
@@ -197,7 +198,7 @@ class PaymentController extends Controller
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, $request->fullUrl());
 
-            return response()->json(['error' => 'Failed to store payment details: '.$th->getMessage()], 500);
+            return response()->json(['error' => 'Failed to store payment details: ' . $th->getMessage()], 500);
         }
     }
 
@@ -534,7 +535,7 @@ class PaymentController extends Controller
     public function renewMembership($userId)
     {
         try {
-            // 1. Find user
+
             $user = User::find($userId);
             if (! $user) {
                 return response()->json([
@@ -543,7 +544,7 @@ class PaymentController extends Controller
                 ], 404);
             }
 
-            // 2. Find subscription
+
             $subscription = MemberSubscriptions::where('userId', $userId)->first();
             if (! $subscription) {
                 return response()->json([
@@ -552,7 +553,8 @@ class PaymentController extends Controller
                 ], 404);
             }
 
-            // 3. Decide base date (future validity OR today)
+
+
             $currentValidity = $subscription->validity
                 ? \Carbon\Carbon::parse($subscription->validity)
                 : now();
@@ -561,35 +563,44 @@ class PaymentController extends Controller
                 ? $currentValidity
                 : now();
 
-            // 4. Extend validity
+
+            // if ($subscription->membershipType == 'Supreme - Yearly') {
+            //     $newValidity = $baseDate->addYear();
+            // } elseif ($subscription->membershipType == 'Prestige Lifetime') {
+            //     $newValidity = $baseDate->addYears(5);
+            // } else {
+            //     $newValidity = $baseDate->addYear();
+            // }
             if ($subscription->membershipType == 'Supreme - Yearly') {
-                $newValidity = $baseDate->addYear();
+                $newValidity = $baseDate->copy()->addYear();
             } elseif ($subscription->membershipType == 'Prestige Lifetime') {
-                $newValidity = $baseDate->addYears(5);
+                $newValidity = $baseDate->copy()->addYears(5);
             } else {
-                $newValidity = $baseDate->addYear();
+                $newValidity = $baseDate->copy()->addYear();
             }
 
-            // 5. Update subscription
+
             $subscription->validity = $newValidity->format('Y-m-d');
             $subscription->save();
 
-            // 6. Get amount from membership type table
+
             $membership = MembershipType::where(
                 'membershipType',
                 $subscription->membershipType
             )->first();
 
-            // 7. Save renewal history
+
             $renewal = new RenewSubscriptionHistory;
             $renewal->userId = $userId;
             $renewal->renewedBy = Auth::id();
-            $renewal->subscriptionId = $subscription->id; // Use ID instead of Type string
+            $renewal->subscriptionId = $subscription->id;
             $renewal->renewalDate = $newValidity->format('Y-m-d');
-            $renewal->amount = $membership->amount ?? 0;
+            $renewal->amount = $membership ? $membership->amount : 0;
+            $renewal->status = 'Active';
             $renewal->save();
 
-            // 8. Success JSON (SweetAlert)
+            Mail::to($user->email)->send(new MembershipSubcriptionRenewed($user, $subscription));
+
             return response()->json([
                 'status' => 'success',
                 'message' => 'Membership renewed successfully!',
@@ -669,7 +680,7 @@ class PaymentController extends Controller
 
                 if ($memberDetails) {
                     $user = User::find($memberDetails->userId);
-                    $payment->memberName = $user ? $user->firstName.' '.$user->lastName : 'Unknown User';
+                    $payment->memberName = $user ? $user->firstName . ' ' . $user->lastName : 'Unknown User';
                 } else {
                     $payment->memberName = 'Unknown Member';
                 }
@@ -725,7 +736,7 @@ class PaymentController extends Controller
             'circleId' => 'required|integer|exists:circles,id',
         ]);
 
-        $currentMonth = $request->month.' - '.now()->format('Y');
+        $currentMonth = $request->month . ' - ' . now()->format('Y');
         $circleId = $request->circleId;
 
         // Check if payments for the current month and circle already exist

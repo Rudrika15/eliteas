@@ -55,9 +55,7 @@
                             <td>{{ $testimonialData->status }}</td>
                             <td class="text-center">
 
-                                <a href="{{ route('testimonial.restore', $testimonialData->id) }}"
-                                    class="btn btn-success btn-sm justify-content-center align-items-center"
-                                    onclick="event.preventDefault();restoreTestimonial(this);">Restore</a>
+                                <a href="{{ route('testimonial.restore', $testimonialData->id) }}" class="btn btn-success btn-sm justify-content-center align-items-center" onclick="event.preventDefault();restoreTestimonial(this);">Restore</a>
                                 <script>
                                     function restoreTestimonial(element) {
                                         Swal.fire({
@@ -81,9 +79,7 @@
                                     }
                                 </script>
 
-                                <a href="{{ route('testimonial.delete', $testimonialData->id) }}"
-                                    class="btn btn-danger btn-sm  justify-content-center align-items-center"
-                                    onclick="event.preventDefault();deleteTestimonial(this);">Delete</a>
+                                <a href="{{ route('testimonial.delete', $testimonialData->id) }}" class="btn btn-danger btn-sm  justify-content-center align-items-center" onclick="event.preventDefault();deleteTestimonial(this);">Delete</a>
                                 <script>
                                     function deleteTestimonial(element) {
                                         Swal.fire({

@@ -283,14 +283,14 @@ class LoginController extends Controller
             // $member->profilePhoto = $request->input('profilePhoto', $member->profilePhoto);
 
             if ($request->profilePhoto) {
-                $member->profilePhoto = time().'.'.$request->profilePhoto->extension();
+                $member->profilePhoto = time() . '.' . $request->profilePhoto->extension();
                 $request->profilePhoto->move(public_path('ProfilePhoto'), $member->profilePhoto);
             }
 
             // $member->companyLogo = $request->input('companyLogo', $member->companyLogo);
 
             if ($request->companyLogo) {
-                $member->companyLogo = time().'.'.$request->companyLogo->extension();
+                $member->companyLogo = time() . '.' . $request->companyLogo->extension();
                 $request->companyLogo->move(public_path('ProfilePhoto'), $member->companyLogo);
             }
 
@@ -420,7 +420,6 @@ class LoginController extends Controller
         $member->chapter = $request->input('chapter', $member->chapter);
         $member->renewalDueDate = $request->input('renewalDueDate', $member->renewalDueDate);
         $member->membershipStatus = $request->input('membershipStatus', $member->membershipStatus);
-
         // $member->keyWords = $request->input('keyWords', $member->keyWords);
 
         $keyWords = [];
@@ -441,9 +440,9 @@ class LoginController extends Controller
 
         if ($request->hasFile('profilePhoto')) {
             $file = $request->file('profilePhoto');
-            $filename = time().'.'.$file->getClientOriginalExtension();
+            $filename = time() . '.' . $file->getClientOriginalExtension();
             if ($member->profilePhoto) {
-                $filePath = public_path('ProfilePhoto/').$member->profilePhoto;
+                $filePath = public_path('ProfilePhoto/') . $member->profilePhoto;
                 if (file_exists($filePath)) {
                     unlink($filePath);
                 }
@@ -454,9 +453,9 @@ class LoginController extends Controller
 
         if ($request->hasFile('companyLogo')) {
             $file = $request->file('companyLogo');
-            $filename = time().'.'.$file->getClientOriginalExtension();
+            $filename = time() . '.' . $file->getClientOriginalExtension();
             if ($member->companyLogo) {
-                $filePath = public_path('CompanyLogo/').$member->companyLogo;
+                $filePath = public_path('CompanyLogo/') . $member->companyLogo;
                 if (file_exists($filePath)) {
                     unlink($filePath);
                 }
@@ -477,6 +476,12 @@ class LoginController extends Controller
         $member->showSocialLinks = $request->input('showSocialLinks', $member->showSocialLinks);
         $member->receiveUpdates = $request->input('receiveUpdates', $member->receiveUpdates);
         $member->shareRevenue = $request->input('shareRevenue', $member->shareRevenue);
+        $contactDetails = ContactDetails::where('memberId', $member->id)->first();
+        if ($contactDetails) {
+            $contactDetails->addressLine1 = $request->input('addressLine1', $contactDetails->addressLine1);
+            $contactDetails->addressLine2 = $request->input('addressLine2', $contactDetails->addressLine2);
+            $contactDetails->save();
+        }
 
         $member->save();
 

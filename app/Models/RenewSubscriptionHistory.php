@@ -9,7 +9,7 @@ class RenewSubscriptionHistory extends Model
 {
     use HasFactory;
 
-    protected $table = 'renewSubscription';
+    protected $table = 'renew_Subscription';
 
     protected $fillable = [
         'userId',

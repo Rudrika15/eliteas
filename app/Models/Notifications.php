@@ -18,6 +18,7 @@ class Notifications extends Model
         'title',
         'body',
         'data',
+        'is_read'
     ];
 
     /**

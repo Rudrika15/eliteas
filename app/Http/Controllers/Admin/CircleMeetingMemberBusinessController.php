@@ -114,13 +114,14 @@ class CircleMeetingMemberBusinessController extends Controller
                     ->where('date', '<', now())
                     ->orderBy('date', 'desc')
                     ->first();
-
+                $lastDate = $lastSchedule ? $lastSchedule->date : null;
                 $isLocked = $lastSchedule ? $lastSchedule->is_locked : false;
                 $lockedStartDate = null;
                 $lockedEndDate = null;
 
                 // Default rolling window for Not Locked state
-                $allowedStartDate = Carbon::now()->subDays(15)->format('Y-m-d');
+                // $allowedStartDate = Carbon::now()->subDays(15)->format('Y-m-d');
+                $allowedStartDate = $lastDate ? Carbon::parse($lastDate)->format('Y-m-d') : null;
                 $allowedEndDate = Carbon::now()->format('Y-m-d');
 
                 if ($isLocked) {
@@ -184,6 +185,7 @@ class CircleMeetingMemberBusinessController extends Controller
 
     public function store(Request $request)
     {
+        // dd($request->all());
         $this->validate($request, [
             // 'dateTime' => 'required',
             // 'totalMeeting' => 'required',
@@ -196,12 +198,13 @@ class CircleMeetingMemberBusinessController extends Controller
         try {
             $busGiver = new CircleMeetingMembersBusiness;
             // $busGiver->memberId = $request->memberId;
-            $busGiver->businessGiverId = $request->businessGiverId;
-            $busGiver->loginMemberId = $request->loginMemberId;
+            $busGiver->businessGiverId = $request->memberId;
+            $busGiver->loginMemberId = Auth::user()->id;
             $busGiver->amount = $request->amount;
-            $busGiver->date = $request->date;
             $busGiver->remarks = $request->remarks;
+            $busGiver->date = $request->date;
             $busGiver->status = 'Active';
+            $busGiver->save();
 
             if ($request->filled('referenceId')) {
                 $busGiver->referenceId = $request->referenceId;
@@ -253,13 +256,15 @@ class CircleMeetingMemberBusinessController extends Controller
             $busGiver->loginMemberId = $request->loginMemberId;
             $busGiver->amount += $request->amount;
             $busGiver->date = $request->date;
+            $busGiver->remarks = $request->remarks;
             $busGiver->status = 'Active';
             $busGiver->update();
 
             $businessAmount = new BusinessAmount;
             $businessAmount->circleMeetingMemberBusinessId = $id;
             $businessAmount->amount = $request->amount;
-            $businessAmount->date = Carbon::now()->toDateString();
+            $businessAmount->date = $request->date;
+            $busGiver->remarks = $request->remarks;
             $businessAmount->status = 'Active';
             $businessAmount->save();
 
@@ -339,7 +344,7 @@ class CircleMeetingMemberBusinessController extends Controller
             $busGiver->status = 'Deleted';
             $busGiver->save();
 
-            return redirect()->route('busGiver.index')->with('success', ' Deleted Successfully!');
+            return redirect()->back()->with('success', ' Deleted Successfully!');
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError(

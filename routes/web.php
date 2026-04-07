@@ -39,6 +39,7 @@ use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\ResourceCategoryController;
 use App\Http\Controllers\Admin\ScheduleController;
 use App\Http\Controllers\Admin\SlotController;
+use App\Http\Controllers\Admin\SocialWallController;
 use App\Http\Controllers\Admin\SpecificAskController;
 use App\Http\Controllers\Admin\StateController;
 use App\Http\Controllers\Admin\SupportController;
@@ -467,7 +468,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('testimonial/store', [TestimonialController::class, 'store'])->name('testimonial.store');
     Route::get('testimonial/edit/{id?}', [TestimonialController::class, 'edit'])->name('testimonial.edit');
     Route::post('testimonial/update', [TestimonialController::class, 'update'])->name('testimonial.update');
-    // Route::post('testimonial/delete{id?}', [TestimonialController::class, 'delete'])->name('testimonial.delete');
+    Route::get('testimonial/delete/{id?}', [TestimonialController::class, 'delete'])->name('testimonial.delete');
 
     // Testimonial View Admin Side
     Route::get('testimonials/indexAdmin', [TestimonialController::class, 'indexAdmin'])->name('testimonials.indexAdmin');
@@ -500,6 +501,13 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/search', [HomeController::class, 'findMember'])->name('search');
     Route::get('/searchQuery', [HomeController::class, 'search'])->name('searchQuery');
     Route::get('/foundPersonDetails/{id}', [HomeController::class, 'foundPersonDetails'])->name('foundPersonDetails');
+
+    //Dashboard Connection Notifications
+    Route::get('/notifications', [HomeController::class, 'notifications'])->name('notifications');
+    Route::get('/notification/read/{id}', [HomeController::class, 'markAsRead'])->name('notification.read');
+
+    //Network Feed Notifications
+    Route::post('/networkfeed-notification/read/{id}', [SocialWallController::class, 'markNotificationRead']);
 
     // connections
     // Route::get('/connection/search', [ConnectionController::class, 'searchConnection'])->name('connection.search');
@@ -540,6 +548,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/admin/reports/reference', [ReportController::class, 'reference'])->name('admin.report.reference');
     Route::get('/admin/reports/business', [ReportController::class, 'business'])->name('admin.report.business');
     Route::get('/admin/reports/circle-member', [ReportController::class, 'circleMemberReport'])->name('admin.report.circleMember');
+    Route::get('/admin/reports/vp/circle-member', [ReportController::class, 'circleMemberReportForVP'])->name('admin.report.vpcircleMember');
     Route::get('/admin/reports/circle-member/export', [ReportController::class, 'exportCircleMemberReport'])->name('admin.report.circleMember.export');
     Route::get('/admin/report/joining-members', [ReportController::class, 'getJoiningMembers'])->name('admin.report.joining');
     Route::get('/admin/report/renewal-members', [ReportController::class, 'getJoiningMembersRenewalDate'])->name('admin.report.renewal');
@@ -549,9 +558,11 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/vp/report', [ReportController::class, 'vpReport'])->name('vp.report');
     Route::get('/vp/report/export', [ReportController::class, 'exportVpReport'])->name('vp.report.export');
 
+
     Route::get('/admin/reports/circle-activity', [ReportController::class, 'circleActivityReport'])->name('admin.report.circleActivity');
     Route::get('/admin/reports/attendance', [ReportController::class, 'attendanceReport'])->name('admin.report.attendance');
     Route::get('/admin/reports/circle-attendance-combined', [CombinedReportController::class, 'index'])->name('admin.report.circleAttendanceCombined');
+
 
     // excel report
     Route::get('admin/report/member-report', [ReportController::class, 'memberWiseReport'])->name('admin.memberWiseReport');
@@ -633,7 +644,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/visitor/update-remark', [VisitorFormController::class, 'updateRemark'])->name('visitor.updateRemark');
 
     // Visitors Crud
-    Route::get('visitors/index', [VisitorController::class, 'index'])->name('visitors.index');
+    Route::match(['get', 'post'], 'visitors/index', [VisitorController::class, 'index'])->name('visitors.index');
     Route::get('visitors/RoleWiseIndex', [VisitorController::class, 'RoleWiseIndex'])->name('visitors.RoleWiseIndex');
     Route::get('visitors/create', [VisitorController::class, 'create'])->name('visitors.create');
     Route::post('visitors/store', [VisitorController::class, 'store'])->name('visitors.store');
@@ -736,6 +747,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/activity/ibm/vp', [AllActivityController::class, 'ibmVp'])->name('activity.ibmVp');
     Route::get('/activity/refrence/vp', [AllActivityController::class, 'refrenceVp'])->name('activity.refrenceVp');
     Route::get('/activity/businesses/vp', [AllActivityController::class, 'businessVp'])->name('activity.businessesVp');
+
 
     Route::get('/circle/{id}/report', [CircleController::class, 'report'])->name('circle.report');
 

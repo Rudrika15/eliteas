@@ -232,6 +232,7 @@ class AttendanceController extends Controller
             $schedules = Schedule::where('circleId', auth()->user()->member->circle->id)
                 ->orderBy('date', 'desc')
                 ->where('date', '<', now())
+                ->where('status', 'Active')
                 ->paginate(10);
 
             return view('admin.attendance.meetingSchedule', compact('schedules'));
@@ -298,7 +299,7 @@ class AttendanceController extends Controller
                 }
             }
 
-            return redirect()->route('attendance.attendanceList')->with('success', 'Attendance recorded successfully.');
+            return redirect()->route('attendance.takeAttendance', ['id' => $meetingId])->with('success', 'Attendance recorded successfully.');
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError(

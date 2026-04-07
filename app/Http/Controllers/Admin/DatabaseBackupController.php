@@ -58,7 +58,7 @@ class DatabaseBackupController extends Controller
             foreach ($tables as $table) {
                 // Export table structure (CREATE TABLE statement)
                 $createStmt = $pdo->query("SHOW CREATE TABLE `$table`")->fetch(PDO::FETCH_ASSOC);
-                $backupContent .= $createStmt['Create Table'].";\n\n";
+                $backupContent .= $createStmt['Create Table'] . ";\n\n";
 
                 // Export table data (INSERT INTO statements)
                 $rows = $pdo->query("SELECT * FROM `$table`")->fetchAll(PDO::FETCH_ASSOC);
@@ -67,14 +67,14 @@ class DatabaseBackupController extends Controller
                     $values = [];
 
                     foreach ($rows as $row) {
-                        $values[] = '('.implode(',', array_map([$pdo, 'quote'], $row)).')';
+                        $values[] = '(' . implode(',', array_map([$pdo, 'quote'], $row)) . ')';
                     }
-                    $backupContent .= implode(",\n", $values).";\n\n";
+                    $backupContent .= implode(",\n", $values) . ";\n\n";
                 }
             }
 
             // Stream the file to the browser
-            $fileName = 'backup_'.date('Y_m_d_H_i_s').'.sql';
+            $fileName = 'backup_' . date('Y_m_d_H_i_s') . '.sql';
 
             return response($backupContent)
                 ->header('Content-Type', 'application/sql')
@@ -90,8 +90,8 @@ class DatabaseBackupController extends Controller
     public function download($file)
     {
         try {
-            if (Storage::exists($this->backupPath.'/'.$file)) {
-                return Storage::download($this->backupPath.'/'.$file);
+            if (Storage::exists($this->backupPath . '/' . $file)) {
+                return Storage::download($this->backupPath . '/' . $file);
             }
 
             return back()->with('error', 'File not found.');
@@ -106,8 +106,8 @@ class DatabaseBackupController extends Controller
     public function delete($file)
     {
         try {
-            if (Storage::exists($this->backupPath.'/'.$file)) {
-                Storage::delete($this->backupPath.'/'.$file);
+            if (Storage::exists($this->backupPath . '/' . $file)) {
+                Storage::delete($this->backupPath . '/' . $file);
 
                 return back()->with('success', 'Backup deleted successfully.');
             }

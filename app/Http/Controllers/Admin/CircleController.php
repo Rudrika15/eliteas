@@ -604,12 +604,12 @@ class CircleController extends Controller
                             $futureMeetingFound = true; // Future meeting found
 
                             // Create a basic slug using the circle name and meeting date
-                            $slug = Str::slug($circle->circleName.'-'.$meetingDate->format('Y-m-d'));
+                            $slug = Str::slug($circle->circleName . '-' . $meetingDate->format('Y-m-d'));
 
                             // Check if the slug already exists
                             if (Schedule::where('cm_slug', $slug)->exists()) {
                                 // If it exists, append a unique identifier
-                                $slug = $slug.'-'.uniqid();
+                                $slug = $slug . '-' . uniqid();
                             }
 
                             // Create and save the new schedule
@@ -791,7 +791,7 @@ class CircleController extends Controller
     {
         try {
             $circle = Circle::findOrFail($id);
-            $members = Member::where('circleId', $circle->id)->orderByDesc('memberName', 'ASC')->paginate(10);
+            $members = Member::where('circleId', $circle->id)->orderByDesc('firstName', 'ASC')->paginate(10);
 
             return view('admin.circle.memberList', compact('circle', 'members'));
         } catch (\Throwable $th) {
@@ -853,12 +853,12 @@ class CircleController extends Controller
 
                         if (! $existingMeeting) {
                             // Create a basic slug using the circle name and meeting date
-                            $slug = Str::slug($circle->circleName.'-'.$meetingDate->format('Y-m-d'));
+                            $slug = Str::slug($circle->circleName . '-' . $meetingDate->format('Y-m-d'));
 
                             // Check if the slug already exists
                             if (Schedule::where('cm_slug', $slug)->exists()) {
                                 // If it exists, append a unique identifier
-                                $slug = $slug.'-'.uniqid();
+                                $slug = $slug . '-' . uniqid();
                             }
 
                             // Create and save the new schedule

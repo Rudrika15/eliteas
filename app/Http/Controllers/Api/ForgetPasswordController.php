@@ -5,9 +5,12 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\User;
+use App\Utils\Utils;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Validator;
 
 class ForgetPasswordController extends Controller
 {
@@ -18,25 +21,49 @@ class ForgetPasswordController extends Controller
      */
     public function forgotPassword(Request $request)
     {
-        $request->validate([
-            'email' => 'required|email|exists:users,email',
-        ]);
+        try {
 
-        $token = Str::random(64);
+            $validator = Validator::make($request->all(), [
+                'email' => 'required|email|exists:users,email',
+            ]);
 
-        DB::table('password_resets')->insert([
-            'email' => $request->email,
-            'token' => $token,
-            'created_at' => now(),
-        ]);
+            if ($validator->errors()->has('email')) {
+                return Utils::errorResponse('Invalid email address. Please enter the correct email', 422);
+            }
 
-        Mail::send('email.forgetPassword', ['token' => $token], function ($message) use ($request) {
-            $message->to($request->email);
-            $message->subject('Reset Password');
-        });
+            $user = User::where('email', $request->email)->first();
 
-        return response()->json(['message' => 'We have e-mailed your password reset link!']);
+            if (!$user) {
+                return Utils::errorResponses(['error' => 'Account Not Found'], 'Invalid email address. Please enter the correct email');
+            }
+
+            $token = Str::random(64);
+
+            DB::table('password_resets')->insert([
+                'email' => $request->email,
+                'token' => $token,
+                'created_at' => now(),
+            ]);
+
+            Mail::send('email.forgetPassword', ['token' => $token], function ($message) use ($request) {
+                $message->to($request->email);
+                $message->subject('Reset Password');
+            });
+
+            return response()->json([
+                'message' => 'We have e-mailed your password reset link!'
+            ]);
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'status' => false,
+                'message' => $e->getMessage(),
+                'line' => $e->getLine(),
+                'file' => $e->getFile()
+            ], 404);
+        }
     }
+
 
     /**
      * Reset password.

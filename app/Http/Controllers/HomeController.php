@@ -9,6 +9,7 @@ use App\Models\CircleCall;
 use App\Models\CircleMeetingMembersBusiness;
 use App\Models\CircleMeetingMembersReference;
 use App\Models\City;
+use App\Models\Post;
 use App\Models\Connection;
 use App\Models\Event;
 use App\Models\EventRegister;
@@ -16,6 +17,7 @@ use App\Models\MeetingInvitation;
 use App\Models\Member;
 use App\Models\Message;
 use App\Models\MonthlyPayment;
+use App\Models\Notifications;
 use App\Models\Schedule;
 use App\Models\TemplateMaster;
 use App\Models\Testimonial;
@@ -56,6 +58,7 @@ class HomeController extends Controller
         $this->middleware('permission:home-found-person-details', ['only' => ['foundPersonDetails']]);
         $this->middleware('permission:home-accepted', ['only' => ['accepted']]);
         $this->middleware('permission:home-rejected', ['only' => ['rejected']]);
+        // $this->middleware('permission:connection-request-received', ['only' => ['connectionRequests']]);
         $this->middleware('permission:home-userDetails', ['only' => ['userDetails']]);
     }
 
@@ -219,6 +222,8 @@ class HomeController extends Controller
 
     public function count()
     {
+        $authUser = auth()->user();
+        $authId = $authUser->id;
         $membersCount = Member::where('status', 'Active')->count();
         $circleCount = Circle::where('status', 'Active')->count();
         $cityCount = Member::where('status', 'Active')
@@ -226,14 +231,65 @@ class HomeController extends Controller
             ->distinct('cityId')
             ->count('cityId');
 
+        $pendingCount = Connection::where('memberId', Auth::id())
+            ->where('recordStatus', 'Active')
+            ->where('status', 'Pending')
+            ->count();
+        $receivedRequests = Connection::whereHas('member', function ($query) use ($authUser) {
+            $query->where('memberId', $authUser->id);
+        })
+            ->with('member')
+            ->where('recordStatus', 'Active')
+            ->where('status', 'Pending')
+            ->paginate(4);
+
+        $notifications = Notifications::latest()->get()->filter(function ($notification) use ($authUser) {
+            $data = json_decode($notification->data, true);
+            $type = $data['type'] ?? null;
+            // Connection Request -> Show to Receiver
+            if ($type == 'connection_request') {
+                return isset($data['memberId']) && $data['memberId'] == $authUser->id;
+            }
+            // Accept or Reject -> Show to Original Sender
+            if ($type == 'connection_accept' || $type == 'connection_reject') {
+                return isset($data['memberId']) && $data['memberId'] == $authUser->id;
+            }
+            return false;
+        })->map(function ($notification) {
+            $data = json_decode($notification->data, true);
+            $notification->type = $data['type'] ?? null;
+            $notification->connection_id = $data['connection_id'] ?? null;
+            // sender = who performed action
+            $notification->sender = User::find($data['userId'] ?? null);
+            // receiver = who receives notification
+            $notification->receiver = User::find($data['memberId'] ?? null);
+            return $notification;
+        });
+
+        $notificationCount = $notifications->where('is_read', false)->count();
+        // $posts = Post::with([
+        //     'user.member',
+        //     'media'
+        // ])
+        //     ->withCount(['likes', 'comments'])
+        //     ->latest()
+        //     ->take(8)
+        //     ->get();
+        $posts = Post::where('status', 'Active')
+            ->whereNotNull('attachment')
+            ->where('attachment', '!=', '')
+            ->with(['user.member', 'media'])
+            ->withCount(['likes', 'comments'])
+            ->latest()
+            ->take(8)
+            ->get();
         // $cityCount = Circle::where('status', 'Active')
         //     ->select('cityId')
         //     ->distinct()
         //     ->count('cityId');
 
-        return view('layouts.master', compact('membersCount', 'circleCount', 'cityCount'));
+        return view('layouts.master', compact('membersCount', 'circleCount', 'cityCount', 'pendingCount', 'notificationCount', 'notifications', 'authId', 'receivedRequests', 'posts'));
     }
-
     public function index()
     {
         try {
@@ -245,6 +301,10 @@ class HomeController extends Controller
 
             $membersCount = Member::where('status', 'Active')->count();
             $circleCount = Circle::where('status', 'Active')->count();
+            $pendingCount = Connection::where('memberId', Auth::id())
+                ->where('recordStatus', 'Active')
+                ->where('status', 'Pending')
+                ->count();
             // $cityCount = Circle::where('status', 'Active')
             //     ->select('cityId')
             //     ->distinct()
@@ -275,6 +335,7 @@ class HomeController extends Controller
             $templates = TemplateMaster::with('TemplateDetail')->get();
 
             $myInvites = MeetingInvitation::where('invitedMemberId', Auth::user()->id)->get();
+
 
             // if ($nearestTraining) {
             //     $findRegister = TrainingRegister::where('userId', Auth::user()->id)
@@ -743,7 +804,58 @@ class HomeController extends Controller
 
                 $membersCount = Member::where('status', 'Active')->count();
                 $circleCount = Circle::where('status', 'Active')->count();
+                $pendingCount = Connection::where('memberId', Auth::id())
+                    ->where('recordStatus', 'Active')
+                    ->where('status', 'Pending')
+                    ->count();
+                $receivedRequests = Connection::whereHas('member', function ($query) use ($authUser) {
+                    $query->where('memberId', $authUser->id);
+                })
+                    ->with('member')
+                    ->where('recordStatus', 'Active')
+                    ->where('status', 'Pending')
+                    ->paginate(10);
+                $notifications = Notifications::latest()->get()->filter(function ($notification) use ($authUser) {
+                    $data = json_decode($notification->data, true);
+                    $type = $data['type'] ?? null;
+                    // Connection Request -> Show to Receiver
+                    if ($type == 'connection_request') {
+                        return isset($data['memberId']) && $data['memberId'] == $authUser->id;
+                    }
+                    // Accept or Reject -> Show to Original Sender
+                    if ($type == 'connection_accept' || $type == 'connection_reject') {
+                        return isset($data['memberId']) && $data['memberId'] == $authUser->id;
+                    }
+                    return false;
+                })->map(function ($notification) {
+                    $data = json_decode($notification->data, true);
+                    $notification->type = $data['type'] ?? null;
+                    $notification->connection_id = $data['connection_id'] ?? null;
+                    // sender = who performed action
+                    $notification->sender = User::find($data['userId'] ?? null);
+                    // receiver = who receives notification
+                    $notification->receiver = User::find($data['memberId'] ?? null);
+                    return $notification;
+                });
 
+                $notificationCount = $notifications->where('is_read', false)->count();
+                // $posts = Post::with([
+                //     'user.member',
+                //     'media'
+                // ])
+                //     ->withCount(['likes', 'comments'])
+                //     ->latest()
+                //     ->take(8) // show 8 posts on dashboard
+                //     ->get();
+                $posts = Post::where('status', 'Active')
+                    ->whereNotNull('attachment')
+                    ->where('attachment', '!=', '')
+                    ->with(['user.member', 'media'])
+                    ->withCount(['likes', 'comments'])
+                    ->latest()
+                    ->take(8)
+                    ->get();
+                // dd($receivedRequests);
                 // $authUserId = Auth::user()->member->userId;
                 // $circleId = Member::where('userId', $authUserId)->value('circleId');
                 // $businessCategoryId = Circle::where('id', $circleId)->value('businessCategoryId');
@@ -782,10 +894,10 @@ class HomeController extends Controller
 
                 $categoryNames = $businessCategories->pluck('categoryName');
 
-                return view('home', compact('circleCount', 'authCircleId', 'categoryNames', 'membersCount', 'signedUrl', 'birthdaysToday', 'templates', 'count', 'monthlyPayments', 'totalAmountDue', 'nearestEvents', 'circlecalls', 'busGiver', 'refGiver', 'induction', 'nearestTraining', 'testimonials', 'meeting', 'businessCategory', 'myInvites', 'todaysBirthdays'));
+                return view('home', compact('circleCount', 'authCircleId', 'categoryNames', 'membersCount', 'signedUrl', 'birthdaysToday', 'templates', 'count', 'monthlyPayments', 'totalAmountDue', 'nearestEvents', 'circlecalls', 'busGiver', 'refGiver', 'induction', 'nearestTraining', 'testimonials', 'meeting', 'businessCategory', 'myInvites', 'todaysBirthdays', 'pendingCount', 'receivedRequests', 'notifications', 'notificationCount', 'posts'));
             }
 
-            return view('home', compact('circleCount', 'membersCount', 'count', 'nearestTraining', 'businessCategory', 'myInvites', 'birthdaysToday', 'templates'));
+            return view('home', compact('circleCount', 'membersCount', 'count', 'nearestTraining', 'businessCategory', 'myInvites', 'birthdaysToday', 'templates', 'pendingCount'));
         } catch (\Throwable $th) {
             // Log the error
             throw $th;
@@ -1144,9 +1256,9 @@ class HomeController extends Controller
                 $members = Member::where('userId', '!=', $authId)
                     ->where('status', 'Active')
                     ->where(function ($q) use ($query) {
-                        $q->where('firstName', 'like', '%'.$query.'%')
-                            ->orWhere('lastName', 'like', '%'.$query.'%')
-                            ->orWhere('keyWords', 'like', '%'.$query.'%');
+                        $q->where('firstName', 'like', '%' . $query . '%')
+                            ->orWhere('lastName', 'like', '%' . $query . '%')
+                            ->orWhere('keyWords', 'like', '%' . $query . '%');
                     })
                     ->with(['user', 'circle', 'bCategory'])
                     ->get();
@@ -1155,6 +1267,7 @@ class HomeController extends Controller
             // ✅ Add connection status and induction count
             $members->map(function ($member) use ($authId, $authCircleId) {
                 // Connection by same circle
+                $connection = null;
                 if ($authCircleId !== null && $member->circleId == $authCircleId) {
                     $member->connection_status = 'Connected';
                 } else {
@@ -1174,7 +1287,12 @@ class HomeController extends Controller
                 if ($member->connection_status !== 'Connected' && isset($connection) && $connection->status === 'Accepted') {
                     $member->connection_status = 'Connected';
                 }
-
+                if ($member->connection_status !== 'Connected') {
+                    if ($member->user) {
+                        $member->user->email = null;
+                        $member->user->contactNo = null;
+                    }
+                }
                 // Count inductions sponsored by this member
                 $member->induction_count = Member::where('sponsoredBy', $member->id)->count() ?? 0;
             });
@@ -1207,9 +1325,9 @@ class HomeController extends Controller
                 ->whereNotNull('cityId')      // cityId is NOT NULL
                 ->where('status', 'Active')
                 ->where(function ($q) use ($query) {
-                    $q->where('firstName', 'like', '%'.$query.'%')
-                        ->orWhere('lastName', 'like', '%'.$query.'%')
-                        ->orWhere('keyWords', 'like', '%'.$query.'%');
+                    $q->where('firstName', 'like', '%' . $query . '%')
+                        ->orWhere('lastName', 'like', '%' . $query . '%')
+                        ->orWhere('keyWords', 'like', '%' . $query . '%');
                 })
                 ->with(['user', 'city', 'bCategory'])
                 ->get();
@@ -1435,6 +1553,115 @@ class HomeController extends Controller
             // Return with an error message
             return redirect()->back()->with('error', 'Failed to reject connection request. Please try again.');
         }
+    }
+
+
+    // public function notifications()
+    // {
+    //     try {
+    //         // Get the authenticated user's ID
+    //         $userId = Auth::user()->id;
+
+    //         // Query to get connection requests
+    //         $receivedRequests = Connection::whereHas('member', function ($query) use ($userId) {
+    //             $query->where('memberId', $userId);
+    //         })
+    //             ->with('member')
+    //             ->where('status', 'Pending')
+    //             ->paginate(10);
+    //         $pendingCount = Connection::where('memberId', $userId)
+    //             ->where('recordStatus', 'Active')
+    //             ->where('status', 'Pending')
+    //             ->count();
+    //         // return $receivedRequests;
+    //         // Return the view with the connections data
+    //         return view('layouts.connectionRequests', compact('receivedRequests', 'pendingCount'));
+    //     } catch (\Throwable $th) {
+    //         // Log the error using the ErrorLogger utility
+    //         ErrorLogger::logError($th, request()->fullUrl());
+
+    //         // Return a custom error view or redirect with an error message
+    //         return view('servererror');
+    //     }
+    // }
+    public function notifications()
+    {
+        try {
+
+            $userId = Auth::id();
+
+            $notifications = Notifications::latest()->get()->filter(function ($notification) use ($userId) {
+
+                $data = json_decode($notification->data, true);
+                $type = $data['type'] ?? null;
+
+                // Connection Request -> Show to Receiver
+                if ($type == 'connection_request') {
+                    return isset($data['memberId']) && $data['memberId'] == $userId;
+                }
+
+                // Accept or Reject -> Show to Original Sender
+                if ($type == 'connection_accept' || $type == 'connection_reject') {
+                    return isset($data['memberId']) && $data['memberId'] == $userId;
+                }
+
+                return false;
+            })->map(function ($notification) {
+
+                $data = json_decode($notification->data, true);
+
+                $notification->type = $data['type'] ?? null;
+                $notification->connection_id = $data['connection_id'] ?? null;
+
+                // sender = who performed action
+                $notification->sender = User::find($data['userId'] ?? null);
+
+                // receiver = who receives notification
+                $notification->receiver = User::find($data['memberId'] ?? null);
+
+                return $notification;
+            });
+
+            $notificationCount = $notifications->where('is_read', false)->count();
+
+            return view('layouts.connectionRequests', compact('notifications', 'notificationCount'));
+        } catch (\Throwable $th) {
+
+            ErrorLogger::logError($th, request()->fullUrl());
+
+            return view('servererror');
+        }
+    }
+    public function markAsRead($id)
+    {
+
+        $notification = Notifications::find($id);
+
+        if (!$notification) {
+            return redirect()->back();
+        }
+
+        // ✅ Mark as read
+        if (!$notification->is_read) {
+            $notification->is_read = 1;
+            $notification->save();
+        }
+
+        $data = json_decode($notification->data, true);
+        $type = $data['type'] ?? null;
+
+        if ($type === 'connection_request') {
+            return redirect()->route('connection.myConnections', [
+                'tab' => 'received'
+            ]);
+        }
+
+        if ($type === 'connection_accept' || $type === 'connection_reject') {
+            return redirect()->route('connection.myConnections', [
+                'tab' => 'connections'
+            ]);
+        }
+        return redirect()->back();
     }
 
     public function userDetails()

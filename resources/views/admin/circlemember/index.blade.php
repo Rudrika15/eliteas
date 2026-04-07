@@ -222,12 +222,11 @@
                                     <td>{{ $circlememberData->bCategory->categoryName ?? '-' }}</td>
                                     <td>{{ $circlememberData->membershipType ?? '-' }} </td>
                                     <td>
-                                        {{-- @foreach ($circlememberData->user->roles as $role)
-                                <span class="badge rounded-pill bg-success">{{ $role->name ?? '' }}</span>
-                                @if (!$loop->last)
-                                ,
-                                @endif
-                                @endforeach --}}
+                                        @foreach ($circlememberData->user->roles as $role)
+                                            <span class="badge rounded-pill bg-success">{{ $role->name ?? '' }}</span>
+                                            @if (!$loop->last)
+                                            @endif
+                                        @endforeach
                                     </td>
 
                                     <td>

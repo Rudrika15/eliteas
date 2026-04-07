@@ -6,6 +6,7 @@ use App\Exports\CircleMembersExport;
 use App\Http\Controllers\Controller;
 use App\Mail\MemberSubscription;
 use App\Mail\MemberSubscriptionDiscount;
+use App\Mail\WelcomeMemberEmail;
 use App\Models\AllPayments;
 use App\Models\BillingAddress;
 use App\Models\BusinessCategory;
@@ -589,6 +590,8 @@ class CircleMemberController extends Controller
                 Mail::to($user->email)->send(new MemberSubscription($data));
             }
 
+            Mail::to($user->email)->send(new WelcomeMemberEmail($user, $contact->mobileNo, $rowPassword));
+
             return redirect()->route('circlemember.index')->with('success', 'Circle Member Created Successfully!');
         } catch (\Throwable $th) {
             // throw $th;
@@ -705,7 +708,7 @@ class CircleMemberController extends Controller
 
             if ($request->hasFile('profilePhoto')) {
                 $profilePhoto = $request->file('profilePhoto');
-                $profilePhotoName = time().'.'.$profilePhoto->extension();
+                $profilePhotoName = time() . '.' . $profilePhoto->extension();
                 $profilePhoto->move(public_path('ProfilePhoto'), $profilePhotoName);
                 $member->profilePhoto = $profilePhotoName;
             }
@@ -713,7 +716,7 @@ class CircleMemberController extends Controller
             // CompanyLogo upload
             if ($request->hasFile('companyLogo')) {
                 $companyLogo = $request->file('companyLogo');
-                $companyLogoName = time().'.'.$companyLogo->extension();
+                $companyLogoName = time() . '.' . $companyLogo->extension();
                 $companyLogo->move(public_path('CompanyLogo'), $companyLogoName);
                 $member->companyLogo = $companyLogoName;
             }

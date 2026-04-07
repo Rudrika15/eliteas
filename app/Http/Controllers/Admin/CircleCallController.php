@@ -124,28 +124,72 @@ class CircleCallController extends Controller
                     ->orderBy('date', 'desc')
                     ->first();
 
+
                 $lastDate = $lastSchedule ? $lastSchedule->date : null;
                 $isLocked = $lastSchedule ? $lastSchedule->is_locked : false;
 
                 $lockedStartDate = null;
                 $lockedEndDate = null;
 
-                // Default rolling window for Not Locked state
-                $allowedStartDate = Carbon::now()->subDays(15)->format('Y-m-d');
+                // $allowedStartDate = Carbon::now()->subDays(15)->format('Y-m-d');
+                //$allowedStartDate = $lastDate ? Carbon::parse($lastDate)->format('Y-m-d') : null;
+                $allowedStartDate =  null;
                 $allowedEndDate = Carbon::now()->format('Y-m-d');
+                if ($lastSchedule) {
 
-                if ($isLocked) {
-                    $previousSchedule = Schedule::where('circleId', Auth::user()->member->circle->id)
-                        ->where('date', '<', $lastDate)
-                        ->orderBy('date', 'desc')
-                        ->first();
+                    $lastDateCarbon = Carbon::parse($lastSchedule->date);
 
-                    $lockedEndDate = Carbon::parse($lastDate)->endOfDay();
-                    $lockedStartDate = $previousSchedule
-                        ? Carbon::parse($previousSchedule->date)->startOfDay()
-                        : Carbon::parse($lastDate)->subDays(15)->startOfDay();
+                    if ($lastDateCarbon->isToday()) {
+
+                        // ✅ Fetch previous meeting
+                        $previousSchedule = Schedule::where('circleId', Auth::user()->member->circle->id)
+                            ->where('status', 'Active')
+                            ->where('date', '<', $lastSchedule->date)
+                            ->orderBy('date', 'desc')
+                            ->first();
+
+                        // ✅ MAIN FIX
+                        $allowedStartDate = $previousSchedule
+                            ? Carbon::parse($previousSchedule->date)->format('Y-m-d')
+                            : $lastDateCarbon->format('Y-m-d'); // fallback if no previous
+
+                    } else {
+
+                        // Normal case
+                        $allowedStartDate = $lastDateCarbon->format('Y-m-d');
+                    }
                 }
 
+                // if ($isLocked) {
+                // $previousSchedule = Schedule::where('circleId', Auth::user()->member->circle->id)
+                //     ->where('date', '<', $lastDate)
+                //     ->orderBy('date', 'desc')
+                //     ->first();
+
+
+                // $lockedEndDate = $lastDate ? Carbon::parse($lastDate)->endOfDay() : null;
+                // $lockedStartDate = $previousSchedule
+                //     ? Carbon::parse($previousSchedule->date)->startOfDay()
+                //     : Carbon::parse($lastDate)->subDays(15)->startOfDay();
+                // // }
+
+                $previousSchedule = null;
+
+                if ($lastSchedule) {
+                    $previousSchedule = Schedule::where('circleId', Auth::user()->member->circle->id)
+                        ->where('status', 'Active')
+                        ->where('date', '<', $lastSchedule->date)
+                        ->orderBy('date', 'desc')
+                        ->first();
+                }
+
+                $lockedEndDate = $lastSchedule
+                    ? Carbon::parse($lastSchedule->date)->endOfDay()
+                    : null;
+
+                $lockedStartDate = $previousSchedule
+                    ? Carbon::parse($previousSchedule->date)->startOfDay()
+                    : ($lastSchedule ? Carbon::parse($lastSchedule->date)->startOfDay() : null);
                 return view('admin.circlecall.index', compact(
                     'circlecall',
                     'callWith',
@@ -300,7 +344,7 @@ class CircleCallController extends Controller
     {
         $query = $request->input('q');
 
-        $circles = Circle::where('circleName', 'LIKE', '%'.$query.'%')
+        $circles = Circle::where('circleName', 'LIKE', '%' . $query . '%')
             ->where('status', 'Active') // Add condition to get only active circles
             ->get();
 
@@ -369,7 +413,7 @@ class CircleCallController extends Controller
             $data = User::whereHas('roles', function ($q) {
                 $q->where('name', 'Member');
             })
-                ->where('firstName', 'LIKE', '%'.$query.'%')
+                ->where('firstName', 'LIKE', '%' . $query . '%')
                 ->where('id', '!=', Auth::user()->id)
                 ->with('member.circle') // Include circle information
                 ->get();
@@ -380,7 +424,7 @@ class CircleCallController extends Controller
                 ->whereHas('member', function ($q) use ($myCircle) {
                     $q->where('circleId', $myCircle->circle->id);
                 })
-                ->where('firstName', 'LIKE', '%'.$query.'%')
+                ->where('firstName', 'LIKE', '%' . $query . '%')
                 ->where('id', '!=', Auth::user()->id)
                 ->with('member.circle') // Include circle information
                 ->get();
@@ -398,7 +442,7 @@ class CircleCallController extends Controller
         $data = User::whereHas('roles', function ($q) {
             $q->where('name', 'Member');
         })
-            ->where('firstName', 'LIKE', '%'.$query.'%')
+            ->where('firstName', 'LIKE', '%' . $query . '%')
             ->where('id', '!=', Auth::user()->id)
             ->with('member.circle') // Include circle information
             ->get();
@@ -415,7 +459,7 @@ class CircleCallController extends Controller
         $data = User::whereHas('roles', function ($q) {
             $q->where('name', 'Member');
         })
-            ->where('firstName', 'LIKE', '%'.$query.'%')
+            ->where('firstName', 'LIKE', '%' . $query . '%')
             ->where('id', '!=', Auth::user()->id)
             ->with('member.circle')
             ->get();
@@ -852,13 +896,13 @@ class CircleCallController extends Controller
                     ->withNotification(Notification::create($title, $body));
                 try {
                     $messaging->send($message);
-                    Log::info('Notification sent to token: '.$user->fcm_token);
+                    Log::info('Notification sent to token: ' . $user->fcm_token);
                 } catch (\Kreait\Firebase\Exception\Messaging\NotFound $e) {
-                    Log::error('Token not found: '.$user->fcm_token);
+                    Log::error('Token not found: ' . $user->fcm_token);
                 } catch (\Kreait\Firebase\Exception\Messaging\InvalidArgument $e) {
-                    Log::error('Invalid argument error with token: '.$user->fcm_token);
+                    Log::error('Invalid argument error with token: ' . $user->fcm_token);
                 } catch (\Exception $e) {
-                    Log::error('General error sending to token: '.$user->fcm_token.'. Error: '.$e->getMessage());
+                    Log::error('General error sending to token: ' . $user->fcm_token . '. Error: ' . $e->getMessage());
                 }
             }
         }
@@ -883,8 +927,8 @@ class CircleCallController extends Controller
 
     private function processAndCompressImage($image)
     {
-        $imageName = time().'.jpg';
-        $destinationPath = public_path('meetingImage/'.$imageName);
+        $imageName = time() . '.jpg';
+        $destinationPath = public_path('meetingImage/' . $imageName);
 
         // Get image info
         $imageInfo = getimagesize($image->getPathname());

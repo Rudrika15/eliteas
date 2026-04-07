@@ -71,6 +71,7 @@
                             <tr>
                                 <th width="5%" class="text-center">No</th>
                                 <th>Name</th>
+                                <th width="15%">Fill the Status</th>
                                 <th class="text-center">P</th>
                                 <th class="text-center">A</th>
                                 <th class="text-center">L</th>
@@ -88,7 +89,7 @@
                                 <th class="text-center">Testi Rec</th>
 
                                 <th class="text-center">Last Meeting</th>
-                                <th width="15%">Fill the Status</th>
+
                                 {{-- <th width="5%"><input type="checkbox" id="checkAll"> Select All </th> --}}
                             </tr>
                         </thead>
@@ -97,7 +98,22 @@
                                 <tr>
                                     <td class="text-center">{{ $loop->iteration }}</td>
                                     <td>{{ $member->firstName }} {{ $member->lastName }}</td>
+                                    <td>
+                                        @php
+                                            $attendance = App\Models\CircleMeetingsAttendances::where('circleId', $circleId)->where('meetingId', $meetingId)->where('userId', $member->userId)->first();
+                                        @endphp
 
+                                        <select name="attendance[{{ $member->userId }}]" class="form-select attendance-select status-select {{ strtolower($attendance?->status ?? 'none') }}" {{ $currentSchedule->is_locked ? 'disabled' : '' }}>
+                                            <option value="">Select Status</option>
+                                            <option value="Present" {{ ($attendance?->status ?? 'Present') == 'Present' ? 'selected' : '' }}>Present</option>
+                                            <option value="Absent" {{ $attendance?->status == 'Absent' ? 'selected' : '' }}>Absent</option>
+                                            <option value="Late" {{ $attendance?->status == 'Late' ? 'selected' : '' }}>Late
+                                            </option>
+                                            <option value="Medical" {{ $attendance?->status == 'Medical' ? 'selected' : '' }}>Medical</option>
+                                            <option value="Sub" {{ $attendance?->status == 'Sub' ? 'selected' : '' }}>Sub
+                                            </option>
+                                        </select>
+                                    </td>
                                     @php
                                         $stats = $memberStats[$member->userId] ?? [
                                             'ibm' => 0,
@@ -149,22 +165,7 @@
                                         </span>
                                     </td>
 
-                                    <td>
-                                        @php
-                                            $attendance = App\Models\CircleMeetingsAttendances::where('circleId', $circleId)->where('meetingId', $meetingId)->where('userId', $member->userId)->first();
-                                        @endphp
 
-                                        <select name="attendance[{{ $member->userId }}]" class="form-select attendance-select status-select {{ strtolower($attendance?->status ?? 'none') }}" {{ $currentSchedule->is_locked ? 'disabled' : '' }}>
-                                            <option value="">Select Status</option>
-                                            <option value="Present" {{ ($attendance?->status ?? 'Present') == 'Present' ? 'selected' : '' }}>Present</option>
-                                            <option value="Absent" {{ $attendance?->status == 'Absent' ? 'selected' : '' }}>Absent</option>
-                                            <option value="Late" {{ $attendance?->status == 'Late' ? 'selected' : '' }}>Late
-                                            </option>
-                                            <option value="Medical" {{ $attendance?->status == 'Medical' ? 'selected' : '' }}>Medical</option>
-                                            <option value="Sub" {{ $attendance?->status == 'Sub' ? 'selected' : '' }}>Sub
-                                            </option>
-                                        </select>
-                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>

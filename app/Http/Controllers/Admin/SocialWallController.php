@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Notifications;
 use App\Services\SocialWallService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -21,9 +22,47 @@ class SocialWallController extends Controller
     public function index()
     {
         $posts = $this->socialWallService->getFeed(10);
-        $notifications = $this->socialWallService->getNotifications(8);
+        // $notifications = $this->socialWallService->getNotifications(8);
+        $NetworfeedkNotifications = Notifications::latest()
+            ->get()
+            ->filter(function ($n) {
+                $data = json_decode($n->data, true);
+                // ✅ Only like & comment
+                if (!in_array($data['type'] ?? '', ['like', 'comment'])) {
+                    return false;
+                }
+                // ❌ No postId → skip
+                if (empty($data['postId'])) {
+                    return false;
+                }
+                // 🔥 Get post owner
+                $post = \App\Models\Post::select('id', 'userId')
+                    ->find($data['postId']);
+                // ❌ If post not found → skip
+                if (!$post) {
+                    return false;
+                }
+                // ✅ Only show if current user is post owner
+                return $post->userId == Auth::id();
+            })
+            ->take(10)
+            ->map(function ($n) {
 
-        return view('admin.social_wall.index', compact('posts', 'notifications'));
+                $data = json_decode($n->data, true);
+
+                return [
+                    'id' => $n->id,
+                    'type' => $data['type'] ?? null,
+                    'postId' => $data['postId'] ?? null,
+                    'actor' => \App\Models\User::with('member')
+                        ->find($data['actorId'] ?? null),
+                    'comment' => $n->body,
+                    'created_at' => $n->created_at,
+                ];
+            });
+        // dd($notifications);
+
+        return view('admin.social_wall.index', compact('posts', 'NetworfeedkNotifications'));
     }
 
     public function store(Request $request)
@@ -76,27 +115,27 @@ class SocialWallController extends Controller
                     try {
                         $image = imagecreatefromstring(file_get_contents($file));
                         if ($image) {
-                            $filename = uniqid().'_'.time().'.webp';
-                            $path = public_path('posts/'.$filename);
+                            $filename = uniqid() . '_' . time() . '.webp';
+                            $path = public_path('posts/' . $filename);
                             imagewebp($image, $path, 80); // 80% quality
                             imagedestroy($image);
-                            $finalPath = 'posts/'.$filename;
+                            $finalPath = 'posts/' . $filename;
                         } else {
                             // Fallback if image creation fails
-                            $filename = uniqid().'_'.time().'.'.$extension;
+                            $filename = uniqid() . '_' . time() . '.' . $extension;
                             $file->move(public_path('posts'), $filename);
-                            $finalPath = 'posts/'.$filename;
+                            $finalPath = 'posts/' . $filename;
                         }
                     } catch (\Exception $e) {
                         // Fallback on error
-                        $filename = uniqid().'_'.time().'.'.$extension;
+                        $filename = uniqid() . '_' . time() . '.' . $extension;
                         $file->move(public_path('posts'), $filename);
-                        $finalPath = 'posts/'.$filename;
+                        $finalPath = 'posts/' . $filename;
                     }
                 } elseif (in_array(strtolower($extension), ['webp'])) {
-                    $filename = uniqid().'_'.time().'.webp';
+                    $filename = uniqid() . '_' . time() . '.webp';
                     $file->move(public_path('posts'), $filename);
-                    $finalPath = 'posts/'.$filename;
+                    $finalPath = 'posts/' . $filename;
                 } else {
                     continue;
                 }
@@ -127,6 +166,7 @@ class SocialWallController extends Controller
 
     public function toggleLike(Request $request)
     {
+
         try {
             $postId = $request->input('postId');
             $like = $this->socialWallService->toggleLike($postId);
@@ -134,10 +174,10 @@ class SocialWallController extends Controller
             // Return JSON for AJAX
             return response()->json([
                 'status' => $like->status == 'Active' ? 'liked' : 'unliked',
-                'count' => \App\Models\Like::where('postId', $postId)->where('status', 'Active')->count(),
+                'count' => \App\Models\Like::where('postId', $postId)->count(),
             ]);
         } catch (\Exception $e) {
-            \Log::error('Social Wall Like Error: '.$e->getMessage());
+            \Log::error('Social Wall Like Error: ' . $e->getMessage());
 
             return response()->json(['error' => 'Failed to like post', 'message' => $e->getMessage()], 500);
         }
@@ -308,25 +348,25 @@ class SocialWallController extends Controller
                         try {
                             $image = imagecreatefromstring(file_get_contents($file));
                             if ($image) {
-                                $filename = uniqid().'_'.time().'.webp';
-                                $path = public_path('posts/'.$filename);
+                                $filename = uniqid() . '_' . time() . '.webp';
+                                $path = public_path('posts/' . $filename);
                                 imagewebp($image, $path, 80);
                                 imagedestroy($image);
-                                $finalPath = 'posts/'.$filename;
+                                $finalPath = 'posts/' . $filename;
                             } else {
-                                $filename = uniqid().'_'.time().'.'.$extension;
+                                $filename = uniqid() . '_' . time() . '.' . $extension;
                                 $file->move(public_path('posts'), $filename);
-                                $finalPath = 'posts/'.$filename;
+                                $finalPath = 'posts/' . $filename;
                             }
                         } catch (\Exception $e) {
-                            $filename = uniqid().'_'.time().'.'.$extension;
+                            $filename = uniqid() . '_' . time() . '.' . $extension;
                             $file->move(public_path('posts'), $filename);
-                            $finalPath = 'posts/'.$filename;
+                            $finalPath = 'posts/' . $filename;
                         }
                     } elseif (in_array(strtolower($extension), ['webp'])) {
-                        $filename = uniqid().'_'.time().'.webp';
+                        $filename = uniqid() . '_' . time() . '.webp';
                         $file->move(public_path('posts'), $filename);
-                        $finalPath = 'posts/'.$filename;
+                        $finalPath = 'posts/' . $filename;
                     }
 
                     if ($finalPath) {
@@ -340,7 +380,18 @@ class SocialWallController extends Controller
 
             return response()->json(['success' => true, 'message' => 'Post updated successfully.', 'post' => $post]);
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => 'Error updating post: '.$e->getMessage()], 500);
+            return response()->json(['success' => false, 'message' => 'Error updating post: ' . $e->getMessage()], 500);
         }
+    }
+    public function markNotificationRead($id)
+    {
+        $notification = \App\Models\Notifications::find($id);
+
+        if ($notification) {
+            $notification->is_read = true;
+            $notification->save();
+        }
+
+        return response()->json(['success' => true]);
     }
 }

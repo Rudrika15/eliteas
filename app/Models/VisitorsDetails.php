@@ -9,9 +9,28 @@ class VisitorsDetails extends Model
 {
     use HasFactory;
 
+    protected $table = 'visitors_details';
+
+    protected $fillable = [
+        'city',
+        'firstName',
+        'lastName',
+        'email',
+        'mobileNo',
+        'businessName',
+        'businessCategory',
+        'invitedBy',
+        'circleId',
+        'meetingId',
+        'otherDetails',
+        'status',
+        'createdBy',
+        'isUser',
+    ];
+
     public function member()
     {
-        return $this->belongsTo(Member::class, 'invitedBy', 'id'); // Correct foreign key relationship
+        return $this->belongsTo(Member::class, 'invitedBy', 'id');
     }
 
     public function bCategory()

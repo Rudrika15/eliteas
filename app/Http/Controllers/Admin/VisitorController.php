@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Exports\VisitorsExport;
 use App\Http\Controllers\Controller;
+use App\Imports\VisitorsImport;
 use App\Models\BusinessCategory;
 use App\Models\Circle;
 use App\Models\Member;
@@ -186,6 +187,17 @@ class VisitorController extends Controller
 
         if ($request->has('export') && $request->export == 'excel') {
             return Excel::download(new VisitorsExport($query->get()), 'visitors.xlsx');
+        }
+        if ($request->hasFile('file')) {
+
+            $request->validate([
+                'file' => 'required|mimes:xlsx,csv'
+            ]);
+
+            Excel::import(new VisitorsImport, $request->file('file'));
+            // dd('Import successful');
+            return redirect()->route('visitors.index')
+                ->with('success', 'Visitors imported successfully!');
         }
 
         $visitors = $query->paginate(10)->appends($request->query());

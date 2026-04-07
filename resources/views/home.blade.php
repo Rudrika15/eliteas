@@ -3,55 +3,53 @@
 @section('title', 'UBN - Dashboard')
 @section('content')
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
 
 
-{{-- <div class="container"> --}}
+    {{-- <div class="container"> --}}
 
 
     @role('Digital Member')
-
-    @include('components.homeCards')
-
+        @include('components.homeCards')
     @endrole
 
     @role('Member')
-    {{-- Upcoming Circle Meeting start --}}
-    {{-- @include('components.birthdayWishes') --}}
-    {{-- Upcoming Circle Meeting end --}}
+        {{-- Upcoming Circle Meeting start --}}
+        {{-- @include('components.birthdayWishes') --}}
+        {{-- Upcoming Circle Meeting end --}}
 
 
-    {{-- Home Card Count start --}}
-    @include('components.homeCards')
-    {{-- Home Card Count end --}}
+        {{-- Home Card Count start --}}
+        @include('components.homeCards')
+        {{-- Home Card Count end --}}
 
-    {{-- Upcoming Circle Meeting start --}}
-    {{-- @include('components.circleMeetings') --}}
-    {{-- Upcoming Circle Meeting end --}}
-
-
-    {{-- leaderboard start --}}
-    {{-- @include('components.leaderboard') --}}
-    {{-- leaderboard end --}}
+        {{-- Upcoming Circle Meeting start --}}
+        {{-- @include('components.circleMeetings') --}}
+        {{-- Upcoming Circle Meeting end --}}
 
 
-    {{-- Upcoming Training start --}}
-    {{-- @include('components.trainingSection') --}}
-    {{-- Upcoming Training end --}}
+        {{-- leaderboard start --}}
+        {{-- @include('components.leaderboard') --}}
+        {{-- leaderboard end --}}
 
 
-    {{-- Upcoming Event start --}}
-    {{-- @include('components.upcomingEvent') --}}
-    {{-- Upcoming Event end --}}
-
-</div>
+        {{-- Upcoming Training start --}}
+        {{-- @include('components.trainingSection') --}}
+        {{-- Upcoming Training end --}}
 
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
-<script>
-    function copyLink() {
+        {{-- Upcoming Event start --}}
+        {{-- @include('components.upcomingEvent') --}}
+        {{-- Upcoming Event end --}}
+
+        </div>
+
+
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+        <script>
+            function copyLink() {
                 var copyText = document.getElementById("shareableLink").value;
                 navigator.clipboard.writeText(copyText).then(function() {
                     alert("Link copied to clipboard");
@@ -59,9 +57,9 @@
                     alert("Could not copy link");
                 });
             }
-</script>
-<script>
-    function copyLink() {
+        </script>
+        <script>
+            function copyLink() {
                 var copyText = document.getElementById("shareableLink").value;
                 navigator.clipboard.writeText(copyText).then(function() {
                     Swal.fire({
@@ -79,37 +77,37 @@
                     });
                 });
             }
-</script>
+        </script>
 
 
 
 
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 
 
 
-{{-- monthly payment reminder and view code start --}}
-{{-- @include('components.monthlyPaymentReminder') --}}
-{{-- monthly payment reminder and view code end --}}
-@endrole
+        {{-- monthly payment reminder and view code start --}}
+        {{-- @include('components.monthlyPaymentReminder') --}}
+        {{-- monthly payment reminder and view code end --}}
+    @endrole
 
 
 
 
-@role('Admin')
-@include('components.adminDash')
-@endrole
+    @role('Admin')
+        @include('components.adminDash')
+    @endrole
 
 
 
 
-{{-- Invited People Admin Side Start --}}
+    {{-- Invited People Admin Side Start --}}
 
-@role('Admin')
-{{-- <div class="col-md-3">
+    @role('Admin')
+        {{-- <div class="col-md-3">
     <div class="col-md-12">
         <div class="card-title"><b>Invited People List</b></div>
     </div>
@@ -142,8 +140,8 @@
     </div>
 </div> --}}
 
-<!-- Bootstrap Modal -->
-{{-- <div class="modal fade" id="allInvitesModal" tabindex="-1" aria-labelledby="allInvitesModalLabel"
+        <!-- Bootstrap Modal -->
+        {{-- <div class="modal fade" id="allInvitesModal" tabindex="-1" aria-labelledby="allInvitesModalLabel"
     aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
@@ -192,23 +190,23 @@
         </div>
     </div>
 </div> --}}
-@endrole
+    @endrole
 
 
 
-{{-- Invited People Admin Side End --}}
+    {{-- Invited People Admin Side End --}}
 
 
 
 
-{{-- Testimonial --}}
+    {{-- Testimonial --}}
 
-{{-- @include('components.testimonialSection') --}}
+    {{-- @include('components.testimonialSection') --}}
 
-{{-- Testimonial End --}}
+    {{-- Testimonial End --}}
 
 
-{{-- @include('components.trainingSection') --}}
+    {{-- @include('components.trainingSection') --}}
 
-<!-- sweetalert -->
+    <!-- sweetalert -->
 @endsection

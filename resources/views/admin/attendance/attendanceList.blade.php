@@ -30,7 +30,6 @@
                                         <span class="badge bg-success ms-2">Visitor</span>
                                     @endif
                                 </td>
-
                                 {{-- <td> {{ $attendanceListData->name ?? null }} </td> --}}
                             </tr>
                         @endforeach

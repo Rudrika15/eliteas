@@ -20,7 +20,7 @@
                 <div class="d-flex align-items-center mb-3">
                     <small class="text-muted me-1"><strong>Filter By:</strong></small>
                     <div class="d-flex align-items-center">
-                        <select name="membershipType" id="filterembershipType" class="form-select form-select-sm">
+                        <select name="membershipType" id="filterMembershipType" class="form-select form-select-sm">
                             <option value="" selected>Select Membership</option>
                             @foreach ($membershipType as $membershipTypeData)
                                 <option value="{{ $membershipTypeData->id }}">{{ $membershipTypeData->membershipType }}
@@ -91,7 +91,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const membershipTypeSelect = document.getElementById('membershipType');
+            const membershipTypeSelect = document.getElementById('filterMembershipType');
             const table = document.getElementById('subscriptionsTable');
             const rows = table.getElementsByTagName('tr');
             const exportForm = document.getElementById('exportForm');
@@ -140,19 +140,40 @@
                                         'Accept': 'application/json'
                                     }
                                 })
-                                .then(res => res.json())
-                                .then(data => {
+                                .then(async res => {
 
-                                    if (data.status === 'success') {
-                                        Swal.fire('Success', data.message, 'success')
-                                            .then(() => location.reload());
-                                    } else {
-                                        Swal.fire('Error', data.message, 'error');
+                                    let text = await res.text();
+                                    console.log("RAW RESPONSE:", text);
+
+                                    let data;
+
+                                    try {
+                                        data = JSON.parse(text);
+                                    } catch (e) {
+                                        throw new Error("Invalid JSON: " + text);
                                     }
 
+                                    if (!res.ok) {
+                                        throw new Error(data.message || "Server error");
+                                    }
+
+                                    return data;
                                 })
-                                .catch(() => {
-                                    Swal.fire('Error', 'Something went wrong!', 'error');
+                                .then(data => {
+
+                                    console.log("SUCCESS DATA:", data); // 👈 NOW IT WILL PRINT
+
+                                    Swal.fire('Success', data.message, 'success')
+                                        .then(() => location.reload());
+
+                                })
+                                .catch((error) => {
+
+                                    console.error("ERROR:", error); // 👈 VERY IMPORTANT
+
+                                    Swal.fire('Warning', 'Updated but response failed', 'warning')
+                                        .then(() => location.reload());
+
                                 });
                         }
                     });

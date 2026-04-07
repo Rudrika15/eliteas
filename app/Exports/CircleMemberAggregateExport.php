@@ -30,11 +30,18 @@ class CircleMemberAggregateExport implements FromCollection, WithHeadings
             return collect();
         }
 
-        $members = Member::where('status', 'Active')
-            ->where('circleId', $this->circleId)
-            ->select('id', 'userId', 'firstName', 'lastName', 'circleId')
-            ->with('circle:id,circleName')
+        $members = Member::where('members.status', 'Active')
+            ->where('members.circleId', $this->circleId)
+            ->whereHas('user', function ($q) {
+                $q->where('status', 'Active');
+            })
+            ->select('members.id', 'members.userId', 'members.firstName', 'members.lastName', 'members.circleId')
+            ->with([
+                'circle:id,circleName',
+                'user:id,status'
+            ])
             ->get();
+
 
         return $members->map(function ($m) {
             $uid = $m->userId;
@@ -68,7 +75,7 @@ class CircleMemberAggregateExport implements FromCollection, WithHeadings
 
             return [
                 'Circle' => $m->circle->circleName ?? '-',
-                'Member Name' => $m->firstName.' '.$m->lastName,
+                'Member Name' => $m->firstName . ' ' . $m->lastName,
                 // 'Member User ID' => $uid,
                 'IBM Count' => $ibmCount,
                 'Reference Count' => $refCount,

@@ -172,12 +172,26 @@
             align-items: center;
         }
 
+        /* .post-avatar {
+                                                                                                                                                                                                                                        width: 40px;
+                                                                                                                                                                                                                                        height: 40px;
+                                                                                                                                                                                                                                        border-radius: 50%;
+                                                                                                                                                                                                                                        margin-right: 10px;
+                                                                                                                                                                                                                                        object-fit: cover;
+                                                                                                                                                                                                                                    } */
         .post-avatar {
             width: 40px;
             height: 40px;
+            min-width: 40px;
+            /* ✅ prevents shrinking */
             border-radius: 50%;
-            margin-right: 10px;
             object-fit: cover;
+            /* ✅ fills circle properly */
+            object-position: center;
+            /* ✅ center focus */
+            margin-right: 10px;
+            background: #eee;
+            /* fallback bg */
         }
 
         .post-user-info h6 {
@@ -211,7 +225,7 @@
 
         .post-media-grid.grid-1 {
             grid-template-columns: 1fr;
-            height: clamp(260px, 45vw, 420px);
+            height: clamp(260px, 45vw, 580px);
         }
 
         .post-media-grid.grid-2 {
@@ -615,9 +629,13 @@
                                     $postUserMember = optional($post->user->member);
                                     $postUserPhoto = $postUserMember->profilePhoto ?? null;
                                 @endphp
-                                <img src="{{ $postUserPhoto ? asset($postUserPhoto) : asset('profile.png') }}" alt="User" class="post-avatar" onerror="this.src='{{ asset('profile.png') }}'">
+                                <img src="{{ !empty($postUserPhoto) ? asset('ProfilePhoto/' . $postUserPhoto) : asset('profile.png') }}" alt="User" class="post-avatar" onerror="this.onerror=null;this.src='{{ asset('profile.png') }}';">
                                 <div class="post-user-info">
-                                    <h6>{{ $post->user->firstName }} {{ $post->user->lastName }}</h6>
+                                    <h6>
+                                        <a href="{{ route('foundPersonDetails', $post->user->member->id) }}" class="text-black font-bold">
+                                            {{ $post->user->firstName }} {{ $post->user->lastName }}
+                                        </a>
+                                    </h6>
                                     <span>{{ $post->created_at->diffForHumans() }}</span>
                                 </div>
 
@@ -761,7 +779,7 @@
                         <div class="sidebar-card-header">
                             <div class="sidebar-title"><i class="bi bi-bell"></i> Notifications</div>
                             @php
-                                $items = isset($notifications) ? $notifications : collect();
+                                $items = isset($NetworfeedkNotifications) ? $NetworfeedkNotifications : collect();
                             @endphp
                             <div class="sidebar-badge">{{ $items->count() }}</div>
                         </div>
@@ -770,22 +788,51 @@
                                 @php
                                     $actor = $n['actor'] ?? null;
                                     $actorMember = optional($actor?->member);
-                                    $actorPhoto = $actorMember->profilePhoto ?? null;
-                                    $name = 'Someone';
+
+                                    // ✅ Profile Photo Fix
+                                    $actorPhoto = !empty($actorMember->profilePhoto) ? asset('ProfilePhoto/' . $actorMember->profilePhoto) : asset('profile.png');
                                     if ($actor) {
-                                        $name = $actor->id === Auth::id() ? 'You' : $actor->firstName . ' ' . $actor->lastName;
+                                        if ($actor->id === Auth::id()) {
+                                            $name = 'You';
+                                        } else {
+                                            $name = trim(($actor->firstName ?? '') . ' ' . ($actor->lastName ?? ''));
+                                            if (empty($name)) {
+                                                $name = 'Unknown User';
+                                            }
+                                        }
+                                    } else {
+                                        $name = 'Unknown User';
                                     }
-                                    $message = $n['type'] === 'comment' ? 'commented on your post' : 'liked your post';
+
+                                    // ✅ Message Fix
+                                    $message = match ($n['type'] ?? '') {
+                                        'comment' => 'commented on your post',
+                                        'like' => 'liked your post',
+                                        default => 'interacted with your post',
+                                    };
+
                                     $time = \Carbon\Carbon::parse($n['created_at'])->diffForHumans();
                                 @endphp
+
                                 <a class="recent-post-item mb-2" href="#post-{{ $n['postId'] }}" onclick="openPostFromSidebar({{ $n['postId'] }}, '{{ $n['type'] }}')">
-                                    <img src="{{ $actorPhoto ? asset($actorPhoto) : asset('profile.png') }}" alt="User" class="sidebar-avatar" onerror="this.src='{{ asset('profile.png') }}'">
+
+                                    <img src="{{ asset($actorPhoto) }}" alt="User" class="sidebar-avatar" onerror="this.src='{{ asset('profile.png') }}'">
+
                                     <div class="flex-grow-1" style="min-width: 0;">
-                                        <div class="small"><span class="fw-semibold">{{ $name }}</span> {{ $message }}</div>
-                                        @if (($n['type'] ?? '') === 'comment' && !empty($n['comment'] ?? ''))
-                                            <div class="text-muted small recent-post-snippet">"{{ \Illuminate\Support\Str::limit($n['comment'], 80) }}"</div>
+                                        <div class="small">
+                                            <span class="fw-semibold">{{ $name }}</span> {{ $message }}
+                                        </div>
+
+                                        {{-- ✅ Comment Preview --}}
+                                        @if (($n['type'] ?? '') === 'comment' && !empty($n['comment']))
+                                            <div class="text-muted small recent-post-snippet">
+                                                "{{ \Illuminate\Support\Str::limit($n['comment'], 80) }}"
+                                            </div>
                                         @endif
-                                        <div class="text-muted" style="font-size: 11px;">{{ $time }}</div>
+
+                                        <div class="text-muted" style="font-size: 11px;">
+                                            {{ $time }}
+                                        </div>
                                     </div>
                                 </a>
                             @empty
@@ -1148,17 +1195,26 @@
                 likeCountSpan.innerText = (currentCount + 1) + ' Likes';
             }
 
-            fetch('{{ route('social-wall.like') }}', {
+            fetch('/social-wall/like', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                     },
                     body: JSON.stringify({
                         postId: postId
                     })
                 })
-                .then(response => response.json())
+                .then(async response => {
+                    let text = await response.text();
+
+                    try {
+                        return JSON.parse(text); // try parsing JSON
+                    } catch (e) {
+                        console.error('Non-JSON Response:', text);
+                        throw new Error('Server did not return JSON');
+                    }
+                })
                 .then(data => {
                     // Sync with server response to be sure
                     if (data.status === 'liked') {

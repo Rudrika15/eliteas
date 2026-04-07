@@ -28,6 +28,9 @@ class ConnectionController extends Controller
 
             $connections = Connection::where('memberId', $userId)
                 ->where('status', 'Pending')
+                ->whereHas('members.user', function ($q) {
+                    $q->where('status', 'Active');
+                })
                 ->with([
                     'user' => function ($query) {
                         $query->select('id', 'email', 'firstName', 'lastName', 'contactNo');
@@ -49,13 +52,18 @@ class ConnectionController extends Controller
             // Loop through connections and calculate induction count based on members->id == sponsoredBy
             $connections->transform(function ($connection) {
                 $sponsorMemberId = optional($connection->members)->id;
-                $connection->induction_count = Member::where('sponsoredBy', $sponsorMemberId)->count();
+
+                $connection->induction_count = Member::where('sponsoredBy', $sponsorMemberId)
+                    ->whereHas('user', function ($q) {
+                        $q->where('status', 'Active');
+                    })
+                    ->count();
 
                 return $connection;
             });
-
             return Utils::sendResponse(['connections' => $connections], 'My Connections Requests retrieved successfully', 200);
         } catch (\Throwable $th) {
+
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
@@ -67,6 +75,9 @@ class ConnectionController extends Controller
 
             $connections = Connection::where('userId', $userId)
                 ->where('status', 'Pending')
+                ->whereHas('receiverMember.user', function ($q) {
+                    $q->where('status', 'Active');
+                })
                 ->with([
                     'receiver' => function ($query) {
                         $query->select('id', 'email', 'firstName', 'lastName', 'contactNo');
@@ -88,8 +99,16 @@ class ConnectionController extends Controller
             // Calculate induction count based on receiverMember->id == sponsoredBy
             $connections->transform(function ($connection) {
                 $receiverMemberId = optional($connection->receiverMember)->id;
-                $connection->induction_count = Member::where('sponsoredBy', $receiverMemberId)->count();
-
+                if ($receiverMemberId) {
+                    $connection->induction_count = Member::where('sponsoredBy', $receiverMemberId)
+                        ->where('status', 'Active')
+                        ->whereHas('user', function ($q) {
+                            $q->where('status', 'Active');
+                        })
+                        ->count();
+                } else {
+                    $connection->induction_count = 0;
+                }
                 return $connection;
             });
 
@@ -106,6 +125,9 @@ class ConnectionController extends Controller
 
             $connections = Connection::where('memberId', $userId)
                 ->where('status', 'Pending')
+                ->whereHas('members.user', function ($q) {
+                    $q->where('status', 'Active');
+                })
                 ->with([
                     'user' => function ($query) {
                         $query->select('id', 'email', 'firstName', 'lastName', 'contactNo');
@@ -127,8 +149,16 @@ class ConnectionController extends Controller
             // Add induction_count for each connection
             $connections->transform(function ($connection) {
                 $memberId = optional($connection->members)->id;
-                $connection->induction_count = Member::where('sponsoredBy', $memberId)->count();
-
+                if ($memberId) {
+                    $connection->induction_count = Member::where('sponsoredBy', $memberId)
+                        ->where('status', 'Active')
+                        ->whereHas('user', function ($q) {
+                            $q->where('status', 'Active');
+                        })
+                        ->count();
+                } else {
+                    $connection->induction_count = 0;
+                }
                 return $connection;
             });
 
@@ -138,49 +168,187 @@ class ConnectionController extends Controller
         }
     }
 
+    // public function myConnections(Request $request)
+    // {
+    //     try {
+    //         $userId = Auth::user()->id;
+
+    //         $connections = Connection::where(function ($query) use ($userId) {
+    //             $query->where('userId', $userId)
+    //                 ->orWhere('memberId', $userId);
+    //         })
+    //             ->where('status', 'Accepted')
+    //             ->with(['member' => function ($query) {
+    //                 $query->select('id', 'userId', 'profilePhoto', 'circleId', 'businessCategoryId')
+    //                     ->with([
+    //                         'user:id,email,firstName,lastName,contactNo',
+    //                         'circle:id,circleName',
+    //                         'bCategory:id,categoryName',
+    //                     ]);
+    //             }])
+    //             ->get();
+
+    //         if ($connections->isEmpty()) {
+    //             return Utils::sendResponse(null, 'No Connections Found', 200);
+    //         }
+
+    //         $connections->transform(function ($connection) {
+    //             $memberId = optional($connection->member)->id;
+    //             $connection->induction_count = Member::where('sponsoredBy', $memberId)->count();
+
+    //             return $connection;
+    //         });
+
+    //         return Utils::sendResponse(['connections' => $connections], 'My Connections retrieved successfully', 200);
+    //     } catch (\Throwable $th) {
+    //         return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
+    //     }
+    // }
     public function myConnections(Request $request)
     {
         try {
+
             $userId = Auth::user()->id;
 
             $connections = Connection::where(function ($query) use ($userId) {
                 $query->where('userId', $userId)
                     ->orWhere('memberId', $userId);
             })
+                ->where('recordStatus', 'Active')
                 ->where('status', 'Accepted')
-                ->with(['member' => function ($query) {
-                    $query->select('id', 'userId', 'profilePhoto', 'circleId', 'businessCategoryId')
-                        ->with([
-                            'user:id,email,firstName,lastName,contactNo',
-                            'circle:id,circleName',
-                            'bCategory:id,categoryName',
-                        ]);
-                }])
+                ->with([
+                    'member' => function ($query) {
+                        $query->select('id', 'userId', 'profilePhoto', 'circleId', 'businessCategoryId')
+                            ->with([
+                                'user:id,email,firstName,lastName,contactNo',
+                                'circle:id,circleName',
+                                'bCategory:id,categoryName',
+                            ]);
+                    },
+                    'userMember' => function ($query) {
+                        $query->select('id', 'userId', 'profilePhoto', 'circleId', 'businessCategoryId')
+                            ->with([
+                                'user:id,email,firstName,lastName,contactNo',
+                                'circle:id,circleName',
+                                'bCategory:id,categoryName',
+                            ]);
+                    }
+                ])
                 ->get();
 
-            if ($connections->isEmpty()) {
-                return Utils::sendResponse(null, 'No Connections Found', 200);
-            }
+            $connections->transform(function ($connection) use ($userId) {
 
-            $connections->transform(function ($connection) {
-                $memberId = optional($connection->member)->id;
+                // Get opposite member
+                $oppositeMember = $connection->userId == $userId
+                    ? $connection->member
+                    : $connection->userMember;
+
+                // Assign to new key
+                $connection->myconnection = $oppositeMember;
+
+                // Remove unwanted keys
+                unset($connection->member);
+                unset($connection->userMember);
+
+                $memberId = optional($oppositeMember)->id;
                 $connection->induction_count = Member::where('sponsoredBy', $memberId)->count();
 
                 return $connection;
             });
 
-            return Utils::sendResponse(['connections' => $connections], 'My Connections retrieved successfully', 200);
+            if ($connections->isEmpty()) {
+                return Utils::sendResponse(null, 'No Connections Found', 200);
+            }
+
+            return Utils::sendResponse(
+                ['connections' => $connections],
+                'My Connections retrieved successfully',
+                200
+            );
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
+    // public function sendRequest(Request $request)
+    // {
+    //     try {
+    //         $userId = Auth::user()->id;
+    //         $memberId = $request->input('memberId');
+    //         $isExist = Connection::where('memberId', $memberId)->where('userId', $userId)->first();
+    //         if ($isExist) {
+    //             return Utils::sendResponse(['message' => 'You have already sent the request'], 200);
+    //         }
+    //         $connections = new Connection;
+    //         $connections->memberId = $memberId;
+    //         $connections->userId = $userId;
+    //         $connections->status = 'Pending';
+    //         $connections->save();
 
+    //         // Fetch the name of the user with the provided memberId
+    //         $member = User::find($memberId);
+    //         if (! $member) {
+    //             return Utils::errorResponse(['message' => 'Member not found'], 'Not Found', 404);
+    //         }
+    //         $memberName = $member->firstName . ' ' . $member->lastName;
+
+    //         // Send notification to only one user
+    //         $users = User::where('id', $memberId)->whereNotNull('fcm_token')->get();
+    //         $title = 'Network';
+    //         $body = 'A new connection request has been received by ' . $memberName;
+
+    //         $serviceAccountPath = storage_path('app/public/ubn_notification.json');
+    //         $factory = (new Factory)->withServiceAccount($serviceAccountPath);
+    //         $messaging = $factory->createMessaging();
+
+    //         foreach ($users as $user) {
+    //             $message = CloudMessage::withTarget('token', $user->fcm_token)
+    //                 ->withNotification(Notification::create($title, $body));
+
+    //             try {
+    //                 $messaging->send($message);
+    //                 Log::info('Notification sent to token: ' . $user->fcm_token);
+    //             } catch (\Kreait\Firebase\Exception\Messaging\NotFound $e) {
+    //                 Log::error('Token not found: ' . $user->fcm_token);
+    //             } catch (\Kreait\Firebase\Exception\Messaging\InvalidArgument $e) {
+    //                 Log::error('Invalid argument error with token: ' . $user->fcm_token);
+    //             } catch (\Exception $e) {
+    //                 Log::error('General error sending to token: ' . $user->fcm_token . '. Error: ' . $e->getMessage());
+    //             }
+    //         }
+
+    //         return Utils::sendResponse([$memberId => $connections, 'message' => 'Connection Request sent Successfully'], 200);
+    //     } catch (\Throwable $th) {
+    //         return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
+    //     }
+    // }
     public function sendRequest(Request $request)
     {
         try {
             $userId = Auth::user()->id;
             $memberId = $request->input('memberId');
-            $isExist = Connection::where('memberId', $memberId)->where('userId', $userId)->first();
+
+            if ($userId == $memberId) {
+                return Utils::errorResponse(['message' => 'You cannot send request to yourself'], 400);
+            }
+
+            // $isExist = Connection::where(function ($q) use ($userId, $memberId) {
+            //     $q->where('memberId', $memberId)
+            //         ->where('userId', $userId);
+            // })->orWhere(function ($q) use ($userId, $memberId) {
+            //     $q->where('memberId', $userId)
+            //         ->where('userId', $memberId);
+            // })->first();
+            $isExist = Connection::where(function ($q) use ($userId, $memberId) {
+                $q->where('memberId', $memberId)
+                    ->where('userId', $userId);
+            })
+                ->orWhere(function ($q) use ($userId, $memberId) {
+                    $q->where('memberId', $userId)
+                        ->where('userId', $memberId);
+                })
+                ->whereIn('status', ['Pending', 'Accepted'])
+                ->first();
+
             if ($isExist) {
                 return Utils::sendResponse(['message' => 'You have already sent the request'], 200);
             }
@@ -191,16 +359,17 @@ class ConnectionController extends Controller
             $connections->save();
 
             // Fetch the name of the user with the provided memberId
-            $member = User::find($memberId);
+            $member = User::where('id', $memberId)->where('status', 'Active')->first();
             if (! $member) {
                 return Utils::errorResponse(['message' => 'Member not found'], 'Not Found', 404);
             }
-            $memberName = $member->firstName.' '.$member->lastName;
+            $memberName = $member->firstName . ' ' . $member->lastName;
+            $senderName = Auth::user()->firstName . ' ' . Auth::user()->lastName;
 
             // Send notification to only one user
             $users = User::where('id', $memberId)->whereNotNull('fcm_token')->get();
             $title = 'Network';
-            $body = 'A new connection request has been received by '.$memberName;
+            $body = $senderName . ' sent you a connection request';
 
             $serviceAccountPath = storage_path('app/public/ubn_notification.json');
             $factory = (new Factory)->withServiceAccount($serviceAccountPath);
@@ -212,17 +381,17 @@ class ConnectionController extends Controller
 
                 try {
                     $messaging->send($message);
-                    Log::info('Notification sent to token: '.$user->fcm_token);
+                    Log::info('Notification sent to token: ' . $user->fcm_token);
                 } catch (\Kreait\Firebase\Exception\Messaging\NotFound $e) {
-                    Log::error('Token not found: '.$user->fcm_token);
+                    Log::error('Token not found: ' . $user->fcm_token);
                 } catch (\Kreait\Firebase\Exception\Messaging\InvalidArgument $e) {
-                    Log::error('Invalid argument error with token: '.$user->fcm_token);
+                    Log::error('Invalid argument error with token: ' . $user->fcm_token);
                 } catch (\Exception $e) {
-                    Log::error('General error sending to token: '.$user->fcm_token.'. Error: '.$e->getMessage());
+                    Log::error('General error sending to token: ' . $user->fcm_token . '. Error: ' . $e->getMessage());
                 }
             }
 
-            return Utils::sendResponse([$memberId => $connections, 'message' => 'Connection Request sent Successfully'], 200);
+            return Utils::sendResponse(['connection' => $connections, 'message' => 'Connection Request sent Successfully'], 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
@@ -329,10 +498,10 @@ class ConnectionController extends Controller
                     $q->where('status', 'Active')
                         ->where('userId', '!=', $authUserId)
                         ->where(function ($q) use ($find) {
-                            $q->where('firstName', 'like', '%'.$find.'%')
-                                ->orWhere('lastName', 'like', '%'.$find.'%')
+                            $q->where('firstName', 'like', '%' . $find . '%')
+                                ->orWhere('lastName', 'like', '%' . $find . '%')
                                 ->orWhereHas('circle', function ($q) use ($find) {
-                                    $q->where('circleName', 'like', '%'.$find.'%');
+                                    $q->where('circleName', 'like', '%' . $find . '%');
                                 });
                         });
                 })
@@ -359,24 +528,26 @@ class ConnectionController extends Controller
                     continue;
                 }
 
-                // Count of members sponsored by this member
-                $user->induction_count = Member::where('sponsoredBy', $member->id)->count();
+                // Count only Active members with Active users
+                $user->induction_count = Member::where('sponsoredBy', $member->id)
+                    ->where('status', 'Active')
+                    ->whereHas('user', function ($q) {
+                        $q->where('status', 'Active');
+                    })
+                    ->count();
 
-                if ($authCircleId !== null && $member->circleId == $authCircleId) {
+
+                $connection = Connection::where(function ($query) use ($authUserId, $member) {
+                    $query->where('userId', $authUserId)->where('memberId', $member->userId)
+                        ->orWhere(function ($query) use ($authUserId, $member) {
+                            $query->where('userId', $member->userId)->where('memberId', $authUserId);
+                        });
+                })->first();
+
+                if ($connection && $connection->status === 'Accepted') {
                     $user->connection_status = 'Connected';
                 } else {
-                    $connection = Connection::where(function ($query) use ($authUserId, $member) {
-                        $query->where('userId', $authUserId)->where('memberId', $member->userId)
-                            ->orWhere(function ($query) use ($authUserId, $member) {
-                                $query->where('userId', $member->userId)->where('memberId', $authUserId);
-                            });
-                    })->first();
-
-                    if ($connection && $connection->status === 'Accepted') {
-                        $user->connection_status = 'Connected';
-                    } else {
-                        $user->connection_status = $connection ? $connection->status : 'Not Connected';
-                    }
+                    $user->connection_status = $connection ? $connection->status : 'Not Connected';
                 }
             }
 
@@ -424,8 +595,8 @@ class ConnectionController extends Controller
                                 ->where('id', '!=', $userId) // Exclude auth user again for safety
                                 ->when($keyword, function ($q) use ($keyword) {
                                     $q->where(function ($subQuery) use ($keyword) {
-                                        $subQuery->where('firstName', 'like', '%'.$keyword.'%')
-                                            ->orWhere('lastName', 'like', '%'.$keyword.'%');
+                                        $subQuery->where('firstName', 'like', '%' . $keyword . '%')
+                                            ->orWhere('lastName', 'like', '%' . $keyword . '%');
                                     });
                                 });
                         }]);
@@ -442,8 +613,8 @@ class ConnectionController extends Controller
                         ->with(['user:id,firstName,lastName,email', 'bCategory:id,categoryName'])
                         ->when($keyword, function ($q) use ($keyword) {
                             $q->whereHas('user', function ($userQuery) use ($keyword) {
-                                $userQuery->where('firstName', 'like', '%'.$keyword.'%')
-                                    ->orWhere('lastName', 'like', '%'.$keyword.'%');
+                                $userQuery->where('firstName', 'like', '%' . $keyword . '%')
+                                    ->orWhere('lastName', 'like', '%' . $keyword . '%');
                             });
                         });
                 },
@@ -461,6 +632,31 @@ class ConnectionController extends Controller
         }
     }
 
+    // public function requestAction(Request $request)
+    // {
+    //     try {
+    //         $connection = Connection::find($request->input('connectionId'));
+
+    //         if (! $connection) {
+    //             return Utils::errorResponse(['error' => 'Connection not found.'], 'Not Found', 404);
+    //         }
+
+    //         if ($request->input('action') === 'Rejected') {
+    //             $connection->delete();
+
+    //             return Utils::sendResponse(['message' => 'Connection request rejected and deleted successfully.'], 200);
+    //         }
+
+    //         $connection->status = $request->input('action');
+    //         $connection->save();
+
+    //         return Utils::sendResponse(['message' => 'Connection request action completed successfully.'], 200);
+    //     } catch (\Throwable $th) {
+    //         return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
+    //     }
+    // }
+
+
     public function requestAction(Request $request)
     {
         try {
@@ -470,18 +666,82 @@ class ConnectionController extends Controller
                 return Utils::errorResponse(['error' => 'Connection not found.'], 'Not Found', 404);
             }
 
-            if ($request->input('action') === 'Rejected') {
+            $action = $request->input('action'); // Accepted / Rejected
+
+            // ✅ Sender (who sent request)
+            $sender = User::where('id', $connection->userId)
+                ->whereNotNull('fcm_token')
+                ->first();
+
+            // ✅ Current logged-in user (who is accepting/rejecting)
+            $currentUser = Auth::user();
+            $currentUserName = $currentUser->firstName . ' ' . $currentUser->lastName;
+
+            // ✅ Firebase setup
+            $serviceAccountPath = storage_path('app/public/ubn_notification.json');
+            $factory = (new Factory)->withServiceAccount($serviceAccountPath);
+            $messaging = $factory->createMessaging();
+
+            if ($action === 'Rejected') {
+
+                // 🔴 Reject → Delete or update status (your choice)
                 $connection->delete();
 
-                return Utils::sendResponse(['message' => 'Connection request rejected and deleted successfully.'], 200);
+                // 🔔 Notify sender
+                if ($sender) {
+                    $title = 'Connection Update';
+                    $body = $currentUserName . ' rejected your connection request';
+
+                    $message = CloudMessage::withTarget('token', $sender->fcm_token)
+                        ->withNotification(Notification::create($title, $body));
+
+                    try {
+                        $messaging->send($message);
+                        Log::info('Reject notification sent to: ' . $sender->fcm_token);
+                    } catch (\Exception $e) {
+                        Log::error('FCM Error: ' . $e->getMessage());
+                    }
+                }
+
+                return Utils::sendResponse([
+                    'message' => 'Connection request rejected successfully.'
+                ], 200);
             }
 
-            $connection->status = $request->input('action');
-            $connection->save();
+            // 🟢 Accept case
+            if ($action === 'Accepted') {
 
-            return Utils::sendResponse(['message' => 'Connection request action completed successfully.'], 200);
+                $connection->status = 'Accepted';
+                $connection->save();
+
+                // 🔔 Notify sender
+                if ($sender) {
+                    $title = 'Connection Update';
+                    $body = $currentUserName . ' accepted your connection request';
+
+                    $message = CloudMessage::withTarget('token', $sender->fcm_token)
+                        ->withNotification(Notification::create($title, $body));
+
+                    try {
+                        $messaging->send($message);
+                        Log::info('Accept notification sent to: ' . $sender->fcm_token);
+                    } catch (\Exception $e) {
+                        Log::error('FCM Error: ' . $e->getMessage());
+                    }
+                }
+
+                return Utils::sendResponse([
+                    'message' => 'Connection request accepted successfully.'
+                ], 200);
+            }
+
+            return Utils::errorResponse([
+                'error' => 'Invalid action'
+            ], 'Bad Request', 400);
         } catch (\Throwable $th) {
-            return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
+            return Utils::errorResponse([
+                'error' => $th->getMessage()
+            ], 'Internal Server Error', 500);
         }
     }
 
@@ -637,6 +897,7 @@ class ConnectionController extends Controller
     //     }
     // }
 
+
     public function viewMemberProfile(Request $request)
     {
         try {
@@ -670,10 +931,29 @@ class ConnectionController extends Controller
                     ->where('memberId', $authUserId);
             })->first();
 
+            // if ($connection) {
+            //     $member->status = $connection->status; // Accepted / Pending / Rejected
+            // } else {
+            //     $member->status = null;
+            // }
             if ($connection) {
-                $member->status = $connection->status; // Accepted / Pending / Rejected
+                $member->connection_id = $connection->id;
+                if ($connection->status == 'Accepted') {
+                    $member->connection_status = 'connected';
+                } elseif ($connection->status == 'Pending') {
+
+                    if ($connection->userId == $authUserId) {
+                        // YOU sent request
+                        $member->connection_status = 'request_sent';
+                    } else {
+                        // YOU received request
+                        $member->connection_status = 'request_received';
+                    }
+                } elseif ($connection->status == 'Rejected') {
+                    $member->connection_status = 'not_connected';
+                }
             } else {
-                $member->status = null;
+                $member->connection_status = 'not_connected';
             }
 
             // 🔹 Business category name

@@ -3,7 +3,7 @@
 @section('header', 'Visitor')
 @section('content')
 
-{{-- <style>
+    {{-- <style>
     .status-dropdown {
         border: none;
         background: transparent;
@@ -13,164 +13,169 @@
     }
 </style> --}}
 
-<style>
-    .truncated-text {
-        display: inline-block;
-        max-width: 120px;
-        /* Adjust this width as needed */
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        vertical-align: middle;
-    }
-</style>
+    <style>
+        .truncated-text {
+            display: inline-block;
+            max-width: 120px;
+            /* Adjust this width as needed */
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            vertical-align: middle;
+        }
+    </style>
 
 
-<div class="container">
-    <div class="card">
-        <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h4 class="card-title">Visitor List</h4>
-                <a href="{{ route('visitors.create') }}" class="btn btn-bg-orange btn-sm mt-2 btn-tooltip">
-                    <i class="bi bi-plus-circle"></i>
-                    <span class="btn-text">Add New Visitor</span>
-                </a>
-            </div>
+    <div class="container">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4 class="card-title">Visitor List</h4>
 
-            <div class="mb-4">
-                <form action="{{ route('visitors.index') }}" method="GET" class="d-flex align-items-end gap-2">
-                    <div class="form-group">
-                        <label for="name"><b>Name</b></label>
-                        <input type="text" id="name" name="name" class="form-control" value="{{ request('name') }}"
-                            placeholder="Search by name">
+                    <div class="d-flex gap-2">
+                        <!-- Import Button -->
+                        <form action="{{ route('visitors.index') }}" method="POST" enctype="multipart/form-data" class="d-inline">
+                            @csrf
+
+                            <input type="file" name="file" onchange="this.form.submit()" hidden required>
+
+                            <button type="button" onclick="this.previousElementSibling.click()" class="btn btn-primary">
+                                Import
+                            </button>
+                        </form>
+
+                        <!-- Add Visitor -->
+                        <a href="{{ route('visitors.create') }}" class="btn btn-bg-orange btn-sm btn-tooltip">
+                            <i class="bi bi-plus-circle"></i>
+                            <span class="btn-text">Add New Visitor</span>
+                        </a>
                     </div>
-                    <div class="form-group">
-                        <label for="business_category"><b>Business Category</b></label>
-                        <select id="business_category" name="business_category" class="form-select">
-                            <option value="">Select Category</option>
-                            @foreach ($categories as $id => $categoryName)
-                            <option value="{{ $categoryName }}" {{ request('business_category')==$categoryName
-                                ? 'selected' : '' }}>
-                                {{ $categoryName }}
-                            </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="city"><b>City</b></label>
-                        <select id="city" name="city" class="form-select">
-                            <option value="" selected>Select City</option>
-                            @foreach ($cities as $city)
-                            <option value="{{ $city }}" {{ request('city')==$city ? 'selected' : '' }}>
-                                {{ $city }}
-                            </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="status"><b>Status</b></label>
-                        <select id="status" name="status" class="form-select">
-                            <option value="" selected>Select Status</option>
-                            <option value="Active" {{ request('status')=='Active' ? 'selected' : '' }}>Active</option>
-                            <option value="InActive" {{ request('status')=='InActive' ? 'selected' : '' }}>InActive
-                            </option>
-                            <option value="Hold" {{ request('status')=='Hold' ? 'selected' : '' }}>Hold</option>
-                            <option value="Converted" {{ request('status')=='Converted' ? 'selected' : '' }}>Converted
-                            </option>
-                            <option value="Interested" {{ request('status')=='Interested' ? 'selected' : '' }}>
-                                Interested</option>
-                        </select>
-                    </div>
-                    <button type="submit" class="btn btn-bg-blue">Filter</button>
-                    <a href="{{ route('visitors.index') }}" class="btn btn-bg-orange">Reset</a>
+                </div>
+                <div class="mb-4">
+                    <form action="{{ route('visitors.index') }}" method="GET" class="d-flex align-items-end gap-2">
+                        <div class="form-group">
+                            <label for="name"><b>Name</b></label>
+                            <input type="text" id="name" name="name" class="form-control" value="{{ request('name') }}" placeholder="Search by name">
+                        </div>
+                        <div class="form-group">
+                            <label for="business_category"><b>Business Category</b></label>
+                            <select id="business_category" name="business_category" class="form-select">
+                                <option value="">Select Category</option>
+                                @foreach ($categories as $id => $categoryName)
+                                    <option value="{{ $categoryName }}" {{ request('business_category') == $categoryName ? 'selected' : '' }}>
+                                        {{ $categoryName }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="city"><b>City</b></label>
+                            <select id="city" name="city" class="form-select">
+                                <option value="" selected>Select City</option>
+                                @foreach ($cities as $city)
+                                    <option value="{{ $city }}" {{ request('city') == $city ? 'selected' : '' }}>
+                                        {{ $city }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="status"><b>Status</b></label>
+                            <select id="status" name="status" class="form-select">
+                                <option value="" selected>Select Status</option>
+                                <option value="Active" {{ request('status') == 'Active' ? 'selected' : '' }}>Active</option>
+                                <option value="InActive" {{ request('status') == 'InActive' ? 'selected' : '' }}>InActive
+                                </option>
+                                <option value="Hold" {{ request('status') == 'Hold' ? 'selected' : '' }}>Hold</option>
+                                <option value="Converted" {{ request('status') == 'Converted' ? 'selected' : '' }}>Converted
+                                </option>
+                                <option value="Interested" {{ request('status') == 'Interested' ? 'selected' : '' }}>
+                                    Interested</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-bg-blue">Filter</button>
+                        <a href="{{ route('visitors.index') }}" class="btn btn-bg-orange">Reset</a>
 
-                    <!-- Export Button -->
-                    <button type="submit" name="export" value="excel" class="btn btn-success">Export to Excel</button>
+                        <!-- Export Button -->
+                        <button type="submit" name="export" value="excel" class="btn btn-success">Export to Excel</button>
 
-                    {{-- <button type="submit" name="export" value="export"
+                        {{-- <button type="submit" name="export" value="export"
                         class="btn btnsuccess btn-sm mt-2 btn-tooltip">
                         <i class="bi bi-excel"></i>
                         <span class="btn-text">Export Excel</span>
                     </button> --}}
 
-                </form>
-            </div>
+                    </form>
+                </div>
 
 
-            <!-- Table with stripped rows -->
-            <div class="table-responsive">
-                <table class="table table-bordered table-striped table-hover">
-                    <thead>
-                        <tr>
-                            <th>S.No</th>
-                            <th>Name</th>
-                            <th>Mobile No</th>
-                            <th>Email</th>
-                            <th>Business Name</th>
-                            <th>City</th>
-                            <th>Business Category</th>
-                            <th>Reffered By</th>
-                            <th>Other Details</th>
-                            @role('Admin')
-                            <th>Status</th>
-                            <th>Action</th>
-                            @endrole
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($visitors as $visitorsData)
-                        <tr>
-                            <th>{{ ($visitors->currentPage() - 1) * $visitors->perPage() + $loop->index + 1 }}
-                            <td>{{ $visitorsData->firstName ?? '' }} {{ $visitorsData->lastName ?? '' }}</td>
-                            <td>{{ $visitorsData->mobileNo ?? '' }}</td>
-                            <td>
-                                <span class="truncated-text" data-bs-toggle="tooltip" data-bs-placement="top"
-                                    title="{{ $visitorsData->email ?? '' }}">
-                                    {{ Str::limit($visitorsData->email ?? '', 12) }}
-                                </span>
-                            </td>
-                            <td>
-                                <span class="truncated-text" data-bs-toggle="tooltip" data-bs-placement="top"
-                                    title="{{ $visitorsData->businessName ?? '' }}">
-                                    {{ Str::limit($visitorsData->businessName ?? '', 12) }}
-                                </span>
-                            </td>
-                            <td>{{ $visitorsData->city ?? '' }}</td>
-                            {{-- <td>{{ $visitorsData->bCategory->categoryName ?? '' }}</td> --}}
-                            <td>
-                                <span class="truncated-text" data-bs-toggle="tooltip" data-bs-placement="top"
-                                    title="{{ $visitorsData->bCategory->categoryName ?? '' }}">
-                                    {{ Str::limit($visitorsData->bCategory->categoryName ?? '', 12) }}
-                                </span>
-                            </td>
+                <!-- Table with stripped rows -->
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>S.No</th>
+                                <th>Name</th>
+                                <th>Mobile No</th>
+                                <th>Email</th>
+                                <th>Business Name</th>
+                                <th>City</th>
+                                <th>Business Category</th>
+                                <th>Referred By</th>
+                                <th>Other Details</th>
+                                @role('Admin')
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                @endrole
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($visitors as $visitorsData)
+                                <tr>
+                                    <th>{{ ($visitors->currentPage() - 1) * $visitors->perPage() + $loop->index + 1 }}
+                                    <td>{{ $visitorsData->firstName ?? '' }} {{ $visitorsData->lastName ?? '' }}</td>
+                                    <td>{{ $visitorsData->mobileNo ?? '' }}</td>
+                                    <td>
+                                        <span class="truncated-text" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $visitorsData->email ?? '' }}">
+                                            {{ Str::limit($visitorsData->email ?? '', 12) }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="truncated-text" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $visitorsData->businessName ?? '' }}">
+                                            {{ Str::limit($visitorsData->businessName ?? '', 12) }}
+                                        </span>
+                                    </td>
+                                    <td>{{ $visitorsData->city ?? '' }}</td>
+                                    {{-- <td>{{ $visitorsData->bCategory->categoryName ?? '' }}</td> --}}
+                                    <td>
+                                        <span class="truncated-text" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $visitorsData->bCategory->categoryName ?? '' }}">
+                                            {{ Str::limit($visitorsData->bCategory->categoryName ?? '', 12) }}
+                                        </span>
+                                    </td>
 
-                            <td>
-                                @if (is_numeric($visitorsData->invitedBy))
-                                <span class="truncated-text" data-bs-toggle="tooltip" data-bs-placement="top"
-                                    title="{{ optional($visitorsData->member)->firstName ?? '' }} {{ optional($visitorsData->member)->lastName ?? '' }}">
-                                    {{ Str::limit(optional($visitorsData->member)->firstName . ' ' .
-                                    optional($visitorsData->member)->lastName, 12) }}
-                                </span>
-                                @else
-                                <span class="truncated-text" data-bs-toggle="tooltip" data-bs-placement="top"
-                                    title="{{ $visitorsData->invitedBy }}">
-                                    {{ Str::limit($visitorsData->invitedBy, 12) }}
-                                </span>
-                                @endif
-                            </td>
+                                    <td>
+                                        @if (is_numeric($visitorsData->invitedBy))
+                                            <span class="truncated-text" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ optional($visitorsData->member)->firstName ?? '' }} {{ optional($visitorsData->member)->lastName ?? '' }}">
+                                                {{ Str::limit(optional($visitorsData->member)->firstName . ' ' . optional($visitorsData->member)->lastName, 12) }}
+                                            </span>
+                                        @else
+                                            <span class="truncated-text" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $visitorsData->invitedBy }}">
+                                                {{ Str::limit($visitorsData->invitedBy, 12) }}
+                                            </span>
+                                        @endif
+                                    </td>
 
-                            <td>
-                                <span class="truncated-text" data-bs-toggle="tooltip" data-bs-placement="top"
-                                    title="{{ $visitorsData->otherDetails ?? '' }}">
-                                    {{ Str::limit($visitorsData->otherDetails ?? '', 12) }}
-                                </span>
-                            </td>
-                            @role('Admin')
-                            {{-- <td>{{ $visitorsData->invitedBy }}</td> --}}
-                            {{-- <td>{{ $visitorsData->remarks ?? '' }}</td> --}}
-                            {{-- <td>{{ $visitorsData->status ?? '' }}</td> --}}
-                            <td>
-                                <select class="form-select status-dropdown" data-id="{{ $visitorsData->id }}" style="
+                                    <td>
+                                        <span class="truncated-text" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $visitorsData->otherDetails ?? '' }}">
+                                            {{ Str::limit($visitorsData->otherDetails ?? '', 12) }}
+                                        </span>
+                                    </td>
+                                    @role('Admin')
+                                        {{-- <td>{{ $visitorsData->invitedBy }}</td> --}}
+                                        {{-- <td>{{ $visitorsData->remarks ?? '' }}</td> --}}
+                                        {{-- <td>{{ $visitorsData->status ?? '' }}</td> --}}
+                                        <td>
+                                            <select class="form-select status-dropdown" data-id="{{ $visitorsData->id }}" style="
             background-color:
             {{ $visitorsData->status == 'Active'
                 ? '#28a745' // Green for Active
@@ -185,64 +190,56 @@
                                 : '')))) }};
             color: #fff; /* White text for better readability */
         ">
-                                    <option value="Active" {{ $visitorsData->status == 'Active' ? 'selected' : '' }}
-                                        style="background-color: #28a745; color: #fff;">Active</option>
-                                    <option value="Inactive" {{ $visitorsData->status == 'Inactive' ? 'selected' : '' }}
-                                        style="background-color: #dc3545; color: #fff;">Inactive</option>
-                                    <option value="Hold" {{ $visitorsData->status == 'Hold' ? 'selected' : '' }}
-                                        style="background-color: #ff8c00; color: #fff;">Hold</option>
-                                    <option value="Converted" {{ $visitorsData->status == 'Converted' ? 'selected' : ''
-                                        }} style="background-color: #007bff; color: #fff;">Converted</option>
-                                    <option value="Interested" {{ $visitorsData->status == 'Interested' ? 'selected' :
-                                        '' }} style="background-color: #6f42c1; color: #fff;">Interested</option>
-                                </select>
-                            </td>
+                                                <option value="Active" {{ $visitorsData->status == 'Active' ? 'selected' : '' }} style="background-color: #28a745; color: #fff;">Active</option>
+                                                <option value="Inactive" {{ $visitorsData->status == 'Inactive' ? 'selected' : '' }} style="background-color: #dc3545; color: #fff;">Inactive</option>
+                                                <option value="Hold" {{ $visitorsData->status == 'Hold' ? 'selected' : '' }} style="background-color: #ff8c00; color: #fff;">Hold</option>
+                                                <option value="Converted" {{ $visitorsData->status == 'Converted' ? 'selected' : '' }} style="background-color: #007bff; color: #fff;">Converted</option>
+                                                <option value="Interested" {{ $visitorsData->status == 'Interested' ? 'selected' : '' }} style="background-color: #6f42c1; color: #fff;">Interested</option>
+                                            </select>
+                                        </td>
 
 
-                            <td>
-                                <a href="{{ route('visitors.remarksView', $visitorsData->id) }}"
-                                    class="btn btn-bg-orange btn-sm btn-tooltip">
-                                    <i class="bi bi-chat-square"></i>
-                                    <span class="btn-text">Remarks</span>
-                                </a>
+                                        <td>
+                                            <a href="{{ route('visitors.remarksView', $visitorsData->id) }}" class="btn btn-bg-orange btn-sm btn-tooltip">
+                                                <i class="bi bi-chat-square"></i>
+                                                <span class="btn-text">Remarks</span>
+                                            </a>
 
-                                <a href="{{ route('visitors.edit', $visitorsData->id) }}"
-                                    class="btn btn-bg-blue btn-sm btn-tooltip">
-                                    <i class="bi bi-pen"></i>
-                                    <span class="btn-text">Edit</span>
-                                </a>
+                                            <a href="{{ route('visitors.edit', $visitorsData->id) }}" class="btn btn-bg-blue btn-sm btn-tooltip">
+                                                <i class="bi bi-pen"></i>
+                                                <span class="btn-text">Edit</span>
+                                            </a>
 
-                                <a href="{{ route('visitors.delete', $visitorsData->id) }}"
-                                    class="btn btn-danger btn-sm btn-tooltip">
-                                    <i class="bi bi-trash"></i>
-                                    <span class="btn-text">Delete</span>
-                                </a>
-                            </td>
-                            @endrole
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-                <div class="d-flex justify-content-end custom-pagination">
+                                            <a href="{{ route('visitors.delete', $visitorsData->id) }}" class="btn btn-danger btn-sm btn-tooltip">
+                                                <i class="bi bi-trash"></i>
+                                                <span class="btn-text">Delete</span>
+                                            </a>
+                                        </td>
+                                    @endrole
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
                     <div class="d-flex justify-content-end custom-pagination">
-                        {!! $visitors->withQueryString()->links() !!}
-                    </div>
+                        <div class="d-flex justify-content-end custom-pagination">
+                            {!! $visitors->withQueryString()->links() !!}
+                        </div>
 
+                    </div>
+                    <!-- End Table with stripped rows -->
                 </div>
-                <!-- End Table with stripped rows -->
             </div>
         </div>
     </div>
-</div>
 
-<script>
-    $(function() {
+    <script>
+        $(function() {
             $('[data-bs-toggle="tooltip"]').tooltip();
         });
-</script>
+    </script>
 
-<script>
-    $(document).on('change', '.status-dropdown', function() {
+    <script>
+        $(document).on('change', '.status-dropdown', function() {
             const visitorId = $(this).data('id');
             const newStatus = $(this).val();
 
@@ -286,7 +283,7 @@
                 }
             });
         });
-</script>
+    </script>
 
 
 @endsection

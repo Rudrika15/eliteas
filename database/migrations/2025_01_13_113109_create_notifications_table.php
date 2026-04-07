@@ -18,6 +18,7 @@ class CreateNotificationsTable extends Migration
             $table->string('title'); // Notification title
             $table->text('body'); // Notification body
             $table->json('data')->nullable(); // Additional data in JSON format
+            $table->boolean('is_read')->default(false); // Read status  
             $table->timestamps(); // Created at and updated at timestamps
         });
     }

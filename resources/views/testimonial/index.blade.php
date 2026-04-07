@@ -98,10 +98,13 @@
                                             <td>{{ $myTestimonial->message ?? '' }}</td>
                                             <td>{{ \Carbon\Carbon::parse($myTestimonial->uploadedDate)->format('d-m-Y') ?? '' }}
                                             <td>
-                                                <a href="{{ route('testimonial.edit', $myTestimonial->id) }}"
-                                                    class="btn btn-bg-blue btn-sm btn-tooltip">
+                                                <a href="{{ route('testimonial.edit', $myTestimonial->id) }}" class="btn btn-bg-blue btn-sm btn-tooltip">
                                                     <i class="bi bi-pen"></i>
                                                     <span class="btn-text">Edit Testimonial</span>
+                                                </a>
+                                                <a href="{{ route('testimonial.delete', $myTestimonial->id) }}" class="btn btn-danger btn-sm btn-tooltip" onclick="return confirm('Are you sure you want to delete this testimonial?')">
+                                                    <i class="bi bi-trash"></i>
+                                                    <span class="btn-text">Delete Testimonial</span>
                                                 </a>
                                             </td>
                                         </tr>

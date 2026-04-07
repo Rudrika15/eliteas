@@ -53,10 +53,10 @@ class DigitalMemberController extends Controller
                         ->whereNull('circleId')
                         ->whereNotNull('cityId')
                         ->where(function ($q) use ($find) {
-                            $q->where('firstName', 'like', '%'.$find.'%')
-                                ->orWhere('lastName', 'like', '%'.$find.'%')
+                            $q->where('firstName', 'like', '%' . $find . '%')
+                                ->orWhere('lastName', 'like', '%' . $find . '%')
                                 ->orWhereHas('city', function ($cityQuery) use ($find) {
-                                    $cityQuery->where('cityName', 'like', '%'.$find.'%');
+                                    $cityQuery->where('cityName', 'like', '%' . $find . '%');
                                 });
                         });
                 })
@@ -334,6 +334,9 @@ class DigitalMemberController extends Controller
                 $city = City::with([
                     'members' => function ($query) use ($landmark) {
                         $query->where('status', 'Active')
+                            ->whereHas('user', function ($q) {
+                                $q->where('status', 'Active');
+                            })
                             ->with([
                                 'bCategory:id,categoryName',
                                 'user:id,email,contactNo',
@@ -550,7 +553,7 @@ class DigitalMemberController extends Controller
             $circleCall->meetingPlace = $request->input('meetingPlace');
 
             if ($request->meetingImage) {
-                $circleCall->meetingImage = time().'.'.$request->meetingImage->extension();
+                $circleCall->meetingImage = time() . '.' . $request->meetingImage->extension();
                 $request->meetingImage->move(public_path('meetingImage'), $circleCall->meetingImage);
             }
 
@@ -566,7 +569,7 @@ class DigitalMemberController extends Controller
             if ($user && $user->fcm_token) {
                 $title = 'IBM';
                 $sender = Auth::user();
-                $body = $sender->firstName.' '.$sender->lastName.' has Created IBM with you.';
+                $body = $sender->firstName . ' ' . $sender->lastName . ' has Created IBM with you.';
 
                 $serviceAccountPath = storage_path('app/public/ubn_notification.json');
                 $factory = (new Factory)->withServiceAccount($serviceAccountPath);
@@ -577,16 +580,16 @@ class DigitalMemberController extends Controller
 
                 try {
                     $messaging->send($message);
-                    Log::info('Notification sent to token: '.$user->fcm_token);
+                    Log::info('Notification sent to token: ' . $user->fcm_token);
                 } catch (\Kreait\Firebase\Exception\Messaging\NotFound $e) {
-                    Log::error('Token not found: '.$user->fcm_token);
+                    Log::error('Token not found: ' . $user->fcm_token);
                 } catch (\Kreait\Firebase\Exception\Messaging\InvalidArgument $e) {
-                    Log::error('Invalid argument error with token: '.$user->fcm_token);
+                    Log::error('Invalid argument error with token: ' . $user->fcm_token);
                 } catch (\Exception $e) {
-                    Log::error('General error sending to token: '.$user->fcm_token.'. Error: '.$e->getMessage());
+                    Log::error('General error sending to token: ' . $user->fcm_token . '. Error: ' . $e->getMessage());
                 }
             } else {
-                Log::error('No FCM token found for user ID: '.$meetingPersonId);
+                Log::error('No FCM token found for user ID: ' . $meetingPersonId);
             }
 
             return Utils::sendResponse(['circleCall' => $circleCall], 'City Call Created Successfully!', 201);
@@ -634,7 +637,7 @@ class DigitalMemberController extends Controller
             $circleCall->meetingPlace = $request->input('meetingPlace');
 
             if ($request->meetingImage) {
-                $circleCall->meetingImage = time().'.'.$request->meetingImage->extension();
+                $circleCall->meetingImage = time() . '.' . $request->meetingImage->extension();
                 $request->meetingImage->move(public_path('meetingImage'), $circleCall->meetingImage);
             }
 
@@ -778,7 +781,7 @@ class DigitalMemberController extends Controller
 
             if ($user && $user->fcm_token) {
                 $title = 'Reference';
-                $body = 'A new reference has been created for you by '.Auth::user()->firstName.' '.Auth::user()->lastName.'.';
+                $body = 'A new reference has been created for you by ' . Auth::user()->firstName . ' ' . Auth::user()->lastName . '.';
 
                 $serviceAccountPath = storage_path('app/public/ubn_notification.json');
                 $factory = (new Factory)->withServiceAccount($serviceAccountPath);
@@ -789,16 +792,16 @@ class DigitalMemberController extends Controller
 
                 try {
                     $messaging->send($message);
-                    Log::info('Notification sent to token: '.$user->fcm_token);
+                    Log::info('Notification sent to token: ' . $user->fcm_token);
                 } catch (\Kreait\Firebase\Exception\Messaging\NotFound $e) {
-                    Log::error('Token not found: '.$user->fcm_token);
+                    Log::error('Token not found: ' . $user->fcm_token);
                 } catch (\Kreait\Firebase\Exception\Messaging\InvalidArgument $e) {
-                    Log::error('Invalid argument error with token: '.$user->fcm_token);
+                    Log::error('Invalid argument error with token: ' . $user->fcm_token);
                 } catch (\Exception $e) {
-                    Log::error('General error sending to token: '.$user->fcm_token.'. Error: '.$e->getMessage());
+                    Log::error('General error sending to token: ' . $user->fcm_token . '. Error: ' . $e->getMessage());
                 }
             } else {
-                Log::error('No FCM token found for user ID: '.$memberId);
+                Log::error('No FCM token found for user ID: ' . $memberId);
             }
 
             return Utils::sendResponse([], 'Member Reference created successfully', 200);

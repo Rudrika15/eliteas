@@ -22,6 +22,7 @@ use App\Models\Training;
 use App\Models\User;
 use App\Models\VisitorsDetails;
 use App\Utils\Utils;
+use App\Models\Notifications;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -76,9 +77,19 @@ class ApiController extends Controller
 
             $user = User::where('email', $request->email)->first();
 
-            if (! $user || $user->status === 'deleted') {
-                return Utils::errorResponses(['error' => 'Account Disabled'], 'Your account has been deleted. Please contact support for assistance.', 403);
+            if (!$user) {
+                return Utils::errorResponses(['error' => 'Account Not Found'], 'Invalid email address. Please enter the correct email');
             }
+
+            if ($user->status === 'deleted') {
+                return Utils::errorResponses(['error' => 'Account Deleted'], 'Your account has been deleted.');
+            }
+
+            $userPassword = $user->password;
+            if (! Hash::check($request->password, $userPassword)) {
+                return Utils::errorResponses(['error' => 'Unauthorized Access'], 'Incorrect password. Please try again.');
+            }
+
 
             if (Auth::attempt($request->only('email', 'password'))) {
                 $user = Auth::user();
@@ -311,15 +322,29 @@ class ApiController extends Controller
                 $member = $group->first()->member;
                 $inductionCount = Member::where('sponsoredBy', $member->id)->count();
 
-                $connectionStatus = 'Not Connected';
-                if ($authMember && $member && $authMember->circleId === $member->circleId) {
-                    $connectionStatus = 'Connected';
-                } else {
-                    $connection = Connection::where('memberId', $member->userId)
-                        ->where('userId', $authUserId)
-                        ->first();
-                    if ($connection) {
-                        $connectionStatus = $connection->status;
+                $connectionStatus = 'not_connected';
+
+                $connection = Connection::where(function ($query) use ($authUserId, $member) {
+                    $query->where('userId', $authUserId)
+                        ->where('memberId', $member->userId);
+                })->orWhere(function ($query) use ($authUserId, $member) {
+                    $query->where('userId', $member->userId)
+                        ->where('memberId', $authUserId);
+                })->first();
+
+                if ($connection) {
+
+                    if ($connection->status == 'Accepted') {
+                        $connectionStatus = 'connected';
+                    } elseif ($connection->status == 'Pending') {
+
+                        if ($connection->userId == $authUserId) {
+                            $connectionStatus = 'request_sent';
+                        } else {
+                            $connectionStatus = 'request_received';
+                        }
+                    } elseif ($connection->status == 'Rejected') {
+                        $connectionStatus = 'not_connected';
                     }
                 }
 
@@ -484,17 +509,29 @@ class ApiController extends Controller
                 $businessCategory = BusinessCategory::find($member->businessCategoryId);
                 $inductionCount = Member::where('sponsoredBy', $member->id)->count();
 
-                $connectionStatus = 'Not Connected';
+                $connectionStatus = 'not_connected';
 
-                if ($authMember && $authMember->circleId === $member->circleId) {
-                    $connectionStatus = 'Connected';
-                } else {
-                    $connection = Connection::where('memberId', $member->userId)
-                        ->where('userId', $authUserId)
-                        ->first();
+                $connection = Connection::where(function ($query) use ($authUserId, $member) {
+                    $query->where('userId', $authUserId)
+                        ->where('memberId', $member->userId);
+                })->orWhere(function ($query) use ($authUserId, $member) {
+                    $query->where('userId', $member->userId)
+                        ->where('memberId', $authUserId);
+                })->first();
 
-                    if ($connection) {
-                        $connectionStatus = $connection->status;
+                if ($connection) {
+
+                    if ($connection->status == 'Accepted') {
+                        $connectionStatus = 'connected';
+                    } elseif ($connection->status == 'Pending') {
+
+                        if ($connection->userId == $authUserId) {
+                            $connectionStatus = 'request_sent';
+                        } else {
+                            $connectionStatus = 'request_received';
+                        }
+                    } elseif ($connection->status == 'Rejected') {
+                        $connectionStatus = 'not_connected';
                     }
                 }
 
@@ -719,18 +756,48 @@ class ApiController extends Controller
                         $inductionCount = Member::where('sponsoredBy', $member->id)->count();
 
                         // Determine connection status
-                        $connectionStatus = 'Not Connected';
+                        $connectionStatus = 'not_connected';
 
-                        if ($authMember && $member->circleId === $authMember->circleId) {
-                            $connectionStatus = 'Connected';
-                        } else {
-                            $connection = Connection::where('memberId', $member->userId)
-                                ->where('userId', $authUserId)
-                                ->first();
+                        $connection = Connection::where(function ($query) use ($authUserId, $member) {
+                            $query->where('userId', $authUserId)
+                                ->where('memberId', $member->userId);
+                        })->orWhere(function ($query) use ($authUserId, $member) {
+                            $query->where('userId', $member->userId)
+                                ->where('memberId', $authUserId);
+                        })->first();
 
-                            if ($connection) {
-                                $connectionStatus = $connection->status;
+                        // if ($connection) {
+
+                        //     if ($connection->status == 'Accepted') {
+                        //         $connectionStatus = 'connected';
+                        //     } elseif ($connection->status == 'Pending') {
+
+                        //         if ($connection->userId == $authUserId) {
+                        //             $connectionStatus = 'request_sent';
+                        //         } else {
+                        //             $connectionStatus = 'request_received';
+                        //         }
+                        //     } elseif ($connection->status == 'Rejected') {
+                        //         $connectionStatus = 'not_connected';
+                        //     }
+                        // }
+                        if ($connection) {
+                            if ($connection->status == 'Accepted') {
+                                $connectionStatus = 'connected';
+                            } elseif ($connection->status == 'Pending') {
+
+                                if ($connection->userId == $authUserId) {
+                                    // YOU sent request
+                                    $connectionStatus = 'request_sent';
+                                } else {
+                                    // YOU received request
+                                    $connectionStatus = 'request_received';
+                                }
+                            } elseif ($connection->status == 'Rejected') {
+                                $connectionStatus = 'not_connected';
                             }
+                        } else {
+                            $connectionStatus = 'not_connected';
                         }
 
                         return [
@@ -1005,7 +1072,7 @@ class ApiController extends Controller
     public function maxInduction(Request $request)
     {
         try {
-            $authUserId = auth()->id(); // Get the authenticated user ID
+            $authUserId = auth()->id();
             $previousMonth = Carbon::now()->subMonth()->month;
             $previousYear = Carbon::now()->subMonth()->year;
 
@@ -1054,17 +1121,29 @@ class ApiController extends Controller
                         $inductionCount = Member::where('sponsoredBy', $member->id)->count();
 
                         // Determine connection status
-                        $connectionStatus = 'Not Connected';
+                        $connectionStatus = 'not_connected';
 
-                        if ($authMember && $member->circleId === $authMember->circleId) {
-                            $connectionStatus = 'Connected';
-                        } else {
-                            $connection = Connection::where('memberId', $member->userId)
-                                ->where('userId', $authUserId)
-                                ->first();
+                        $connection = Connection::where(function ($query) use ($authUserId, $member) {
+                            $query->where('userId', $authUserId)
+                                ->where('memberId', $member->userId);
+                        })->orWhere(function ($query) use ($authUserId, $member) {
+                            $query->where('userId', $member->userId)
+                                ->where('memberId', $authUserId);
+                        })->first();
 
-                            if ($connection) {
-                                $connectionStatus = $connection->status;
+                        if ($connection) {
+
+                            if ($connection->status == 'Accepted') {
+                                $connectionStatus = 'connected';
+                            } elseif ($connection->status == 'Pending') {
+
+                                if ($connection->userId == $authUserId) {
+                                    $connectionStatus = 'request_sent';
+                                } else {
+                                    $connectionStatus = 'request_received';
+                                }
+                            } elseif ($connection->status == 'Rejected') {
+                                $connectionStatus = 'not_connected';
                             }
                         }
 
@@ -1111,8 +1190,6 @@ class ApiController extends Controller
     }
 
 
-
-    // Upcoming Workshop
     public function index(Request $request)
     {
         try {
@@ -1269,77 +1346,205 @@ class ApiController extends Controller
         }
     }
 
+    // public function memberUpdate(Request $request)
+    // {
+
+    //     $user = Auth::user();
+
+    //     $member = Member::where('userId', $user->id)->first();
+
+    //     if (! $member) {
+    //         return Utils::errorResponse(['error' => 'Member not found'], 404);
+    //     }
+    //     $member->title = $request->input('title', $member->title);
+    //     $member->firstName = $request->input('firstName', $member->firstName);
+    //     $member->lastName = $request->input('lastName', $member->lastName);
+    //     // $member->username = $request->input('username', $member->username);
+    //     $member->suffix = $request->input('suffix', $member->suffix);
+    //     $member->displayName = $request->input('displayName', $member->displayName);
+    //     $member->gender = $request->input('gender', $member->gender);
+    //     $member->companyName = $request->input('companyName', $member->companyName);
+    //     $member->gstRegiState = $request->input('gstRegiState', $member->gstRegiState);
+    //     $member->gstinPan = $request->input('gstinPan', $member->gstinPan);
+    //     $member->industry = $request->input('industry', $member->industry);
+    //     $member->classification = $request->input('classification', $member->classification);
+    //     $member->chapter = $request->input('chapter', $member->chapter);
+    //     $member->renewalDueDate = $request->input('renewalDueDate', $member->renewalDueDate);
+    //     $member->membershipStatus = $request->input('membershipStatus', $member->membershipStatus);
+    //     $member->keyWords = $request->input('keyWords', $member->keyWords);
+    //     $member->language = $request->input('language', $member->language);
+    //     $member->timeZone = $request->input('timeZone', $member->timeZone);
+    //     // $member->webSite = $request->input('web Site', $member->webSite);
+    //     // $member->addressLine1 = $request->input('addressLine1', $member->addressLine1);
+    //     // $member->addressLine2 = $request->input('addressLine2', $member->addressLine2);
+
+
+    //     if ($request->hasFile('profilePhoto')) {
+    //         $file = $request->file('profilePhoto');
+    //         $filename = time() . '.' . $file->getClientOriginalExtension();
+    //         if ($member->profilePhoto) {
+    //             $filePath = public_path('ProfilePhoto/') . $member->profilePhoto;
+    //             if (file_exists($filePath)) {
+    //                 unlink($filePath);
+    //             }
+    //         }
+    //         $file->move(public_path('ProfilePhoto'), $filename);
+    //         $member->profilePhoto = $filename;
+    //     }
+
+    //     if ($request->hasFile('companyLogo')) {
+    //         $file = $request->file('companyLogo');
+    //         $filename = time() . '.' . $file->getClientOriginalExtension();
+    //         if ($member->companyLogo) {
+    //             $filePath = public_path('CompanyLogo/') . $member->companyLogo;
+    //             if (file_exists($filePath)) {
+    //                 unlink($filePath);
+    //             }
+    //         }
+    //         $file->move(public_path('CompanyLogo'), $filename);
+    //         $member->companyLogo = $filename;
+    //     }
+
+    //     $member->goals = $request->input('goals', $member->goals);
+    //     $member->accomplishment = $request->input('accomplishment', $member->accomplishment);
+    //     $member->interests = $request->input('interests', $member->interests);
+    //     $member->networks = $request->input('networks', $member->networks);
+    //     $member->skills = $request->input('skills', $member->skills);
+    //     $member->myBusiness = $request->input('myBusiness', $member->myBusiness);
+    //     $member->webSite = $request->input('web Site', $member->webSite);
+    //     $member->showWebsite = $request->input('showWebsite', $member->showWebsite);
+    //     $member->socialLinks = $request->input('socialLinks', $member->socialLinks);
+    //     $member->showSocialLinks = $request->input('showSocialLinks', $member->showSocialLinks);
+    //     $member->receiveUpdates = $request->input('receiveUpdates', $member->receiveUpdates);
+    //     $member->shareRevenue = $request->input('shareRevenue', $member->shareRevenue);
+
+    //     // $contactDetails = ContactDetails::where('userId', $member->userId)->first();
+    //      $contactDetails = ContactDetails::where('memberId', $member->id)->first();
+
+    //     if ($contactDetails) {
+    //         $contactDetails->addressLine1 = $request->input('addressLine1', $contactDetails->addressLine1);
+    //         $contactDetails->addressLine2 = $request->input('addressLine2', $contactDetails->addressLine2);
+    //         $contactDetails->save();
+    //     }
+
+    //     $member->save();
+
+    //     return Utils::sendResponse([$member, 'message' => 'Member Profile data updated successfully'], 200);
+    // }
     public function memberUpdate(Request $request)
     {
+        try {
 
-        $user = Auth::user();
 
-        $member = Member::where('userId', $user->id)->first();
+            $user = Auth::user();
 
-        if (! $member) {
-            return Utils::errorResponse(['error' => 'Member not found'], 404);
-        }
-        $member->title = $request->input('title', $member->title);
-        $member->firstName = $request->input('firstName', $member->firstName);
-        $member->lastName = $request->input('lastName', $member->lastName);
-        // $member->username = $request->input('username', $member->username);
-        $member->suffix = $request->input('suffix', $member->suffix);
-        $member->displayName = $request->input('displayName', $member->displayName);
-        $member->gender = $request->input('gender', $member->gender);
-        $member->companyName = $request->input('companyName', $member->companyName);
-        $member->gstRegiState = $request->input('gstRegiState', $member->gstRegiState);
-        $member->gstinPan = $request->input('gstinPan', $member->gstinPan);
-        $member->industry = $request->input('industry', $member->industry);
-        $member->classification = $request->input('classification', $member->classification);
-        $member->chapter = $request->input('chapter', $member->chapter);
-        $member->renewalDueDate = $request->input('renewalDueDate', $member->renewalDueDate);
-        $member->membershipStatus = $request->input('membershipStatus', $member->membershipStatus);
-        $member->keyWords = $request->input('keyWords', $member->keyWords);
-        $member->language = $request->input('language', $member->language);
-        $member->timeZone = $request->input('timeZone', $member->timeZone);
+            $member = Member::where('userId', $user->id)->first();
 
-        if ($request->hasFile('profilePhoto')) {
-            $file = $request->file('profilePhoto');
-            $filename = time() . '.' . $file->getClientOriginalExtension();
-            if ($member->profilePhoto) {
-                $filePath = public_path('ProfilePhoto/') . $member->profilePhoto;
-                if (file_exists($filePath)) {
-                    unlink($filePath);
-                }
+            if (!$member) {
+                return Utils::errorResponse(['error' => 'Member not found'], 404);
             }
-            $file->move(public_path('ProfilePhoto'), $filename);
-            $member->profilePhoto = $filename;
-        }
 
-        if ($request->hasFile('companyLogo')) {
-            $file = $request->file('companyLogo');
-            $filename = time() . '.' . $file->getClientOriginalExtension();
-            if ($member->companyLogo) {
-                $filePath = public_path('CompanyLogo/') . $member->companyLogo;
-                if (file_exists($filePath)) {
-                    unlink($filePath);
+            /* ================= MEMBER DATA UPDATE ================= */
+
+            $member->title = $request->input('title', $member->title);
+            $member->firstName = $request->input('firstName', $member->firstName);
+            $member->lastName = $request->input('lastName', $member->lastName);
+            $member->suffix = $request->input('suffix', $member->suffix);
+            $member->displayName = $request->input('displayName', $member->displayName);
+            $member->gender = $request->input('gender', $member->gender);
+            $member->companyName = $request->input('companyName', $member->companyName);
+            $member->gstRegiState = $request->input('gstRegiState', $member->gstRegiState);
+            $member->gstinPan = $request->input('gstinPan', $member->gstinPan);
+            $member->industry = $request->input('industry', $member->industry);
+            $member->classification = $request->input('classification', $member->classification);
+            $member->chapter = $request->input('chapter', $member->chapter);
+            $member->renewalDueDate = $request->input('renewalDueDate', $member->renewalDueDate);
+            $member->membershipStatus = $request->input('membershipStatus', $member->membershipStatus);
+            $member->keyWords = $request->input('keyWords', $member->keyWords);
+            $member->language = $request->input('language', $member->language);
+            $member->timeZone = $request->input('timeZone', $member->timeZone);
+
+            /* ================= PROFILE PHOTO ================= */
+
+            if ($request->hasFile('profilePhoto')) {
+
+                $file = $request->file('profilePhoto');
+                $filename = time() . '_' . $file->getClientOriginalName();
+
+                if ($member->profilePhoto) {
+                    $oldPath = public_path('ProfilePhoto/' . $member->profilePhoto);
+                    if (file_exists($oldPath)) {
+                        unlink($oldPath);
+                    }
                 }
+
+                $file->move(public_path('ProfilePhoto'), $filename);
+                $member->profilePhoto = $filename;
             }
-            $file->move(public_path('CompanyLogo'), $filename);
-            $member->companyLogo = $filename;
+
+            /* ================= COMPANY LOGO ================= */
+
+            if ($request->hasFile('companyLogo')) {
+
+                $file = $request->file('companyLogo');
+                $filename = time() . '_' . $file->getClientOriginalName();
+
+                if ($member->companyLogo) {
+                    $oldPath = public_path('CompanyLogo/' . $member->companyLogo);
+                    if (file_exists($oldPath)) {
+                        unlink($oldPath);
+                    }
+                }
+
+                $file->move(public_path('CompanyLogo'), $filename);
+                $member->companyLogo = $filename;
+            }
+
+            /* ================= OTHER MEMBER FIELDS ================= */
+
+            $member->goals = $request->input('goals', $member->goals);
+            $member->accomplishment = $request->input('accomplishment', $member->accomplishment);
+            $member->interests = $request->input('interests', $member->interests);
+            $member->networks = $request->input('networks', $member->networks);
+            $member->skills = $request->input('skills', $member->skills);
+            $member->myBusiness = $request->input('myBusiness', $member->myBusiness);
+            $member->webSite = $request->input('webSite', $member->webSite);
+            $member->showWebsite = $request->input('showWebsite', $member->showWebsite);
+            $member->socialLinks = $request->input('socialLinks', $member->socialLinks);
+            $member->showSocialLinks = $request->input('showSocialLinks', $member->showSocialLinks);
+            $member->receiveUpdates = $request->input('receiveUpdates', $member->receiveUpdates);
+            $member->shareRevenue = $request->input('shareRevenue', $member->shareRevenue);
+
+            /* ================= CONTACT DETAILS UPDATE ================= */
+
+            $contactDetails = ContactDetails::where('memberId', $member->id)->first();
+            if ($contactDetails) {
+
+                // $contactDetails->addressLine1 = $request->input('addressLine1', $contactDetails->addressLine1);
+                // $contactDetails->addressLine2 = $request->input('addressLine2', $contactDetails->addressLine2);
+                $contactDetails->addressLine1 = $request->addressLine1;
+                $contactDetails->addressLine2 = $request->addressLine2;
+                $contactDetails->save();
+            }
+
+            /* ================= SAVE MEMBER ================= */
+
+            $member->save();
+
+            return Utils::sendResponse([
+                'member' => $member,
+                'message' => 'Member profile updated successfully'
+            ], 200);
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'status' => false,
+                'message' => 'Something went wrong',
+                'error' => $e->getMessage(),
+                'line' => $e->getLine(),
+                'file' => $e->getFile()
+            ], 500);
         }
-
-        $member->goals = $request->input('goals', $member->goals);
-        $member->accomplishment = $request->input('accomplishment', $member->accomplishment);
-        $member->interests = $request->input('interests', $member->interests);
-        $member->networks = $request->input('networks', $member->networks);
-        $member->skills = $request->input('skills', $member->skills);
-        $member->myBusiness = $request->input('myBusiness', $member->myBusiness);
-        $member->webSite = $request->input('webSite', $member->webSite);
-        $member->showWebsite = $request->input('showWebsite', $member->showWebsite);
-        $member->socialLinks = $request->input('socialLinks', $member->socialLinks);
-        $member->showSocialLinks = $request->input('showSocialLinks', $member->showSocialLinks);
-        $member->receiveUpdates = $request->input('receiveUpdates', $member->receiveUpdates);
-        $member->shareRevenue = $request->input('shareRevenue', $member->shareRevenue);
-
-        $member->save();
-
-        return Utils::sendResponse([$member, 'message' => 'Member Profile data updated successfully'], 200);
     }
 
     // memberList
@@ -2062,7 +2267,37 @@ class ApiController extends Controller
             return Utils::errorResponse($th->getMessage(), 'Internal Server Error', 500);
         }
     }
+    public function markAsRead(Request $request, $id)
+    {
+        try {
+            $notification = Notifications::find($id);
 
+            if (!$notification) {
+                return Utils::errorResponse(
+                    ['error' => 'Notification not found'],
+                    'Notification not found',
+                    404
+                );
+            }
+
+            // ✅ Mark as read
+            if (!$notification->is_read) {
+                $notification->is_read = 1;
+                $notification->save();
+            }
+
+            return Utils::sendResponse([
+                'notification_id' => $notification->id,
+                'is_read' => $notification->is_read,
+            ], 'Notification marked as read successfully', 200);
+        } catch (\Throwable $th) {
+            return Utils::errorResponse(
+                $th->getMessage(),
+                'Internal Server Error',
+                500
+            );
+        }
+    }
     //top networkers
     public function topNetworkers()
     {

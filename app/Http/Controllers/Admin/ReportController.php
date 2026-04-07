@@ -17,6 +17,7 @@ use App\Models\TrainingRegister;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -162,7 +163,7 @@ class ReportController extends Controller
 
                     return [
                         'memberId' => $member->id,
-                        'memberName' => $member->firstName.' '.$member->lastName,
+                        'memberName' => $member->firstName . ' ' . $member->lastName,
                         'circleName' => $member->circle->circleName ?? '',
                         'member_count' => $group->count(),
                     ];
@@ -249,7 +250,7 @@ class ReportController extends Controller
 
                     return [
                         'referenceGiverId' => $giver->userId,
-                        'referenceGiverName' => $giver->firstName.' '.$giver->lastName,
+                        'referenceGiverName' => $giver->firstName . ' ' . $giver->lastName,
                         'reference_count' => $group->count(),
                     ];
                 })
@@ -331,7 +332,7 @@ class ReportController extends Controller
 
                     return [
                         'businessGiverId' => $giver->userId,
-                        'member' => $giver->firstName.' '.$giver->lastName,
+                        'member' => $giver->firstName . ' ' . $giver->lastName,
                         'business_count' => $group->count(),
                         'total_amount' => $group->sum('amount'),
                     ];
@@ -463,7 +464,7 @@ class ReportController extends Controller
                     'member_count' => $group->count(),
                     'member_list' => $group->map(function ($member) {
                         return [
-                            'full_name' => $member->firstName.' '.$member->lastName,
+                            'full_name' => $member->firstName . ' ' . $member->lastName,
                             'joined_date' => $member->created_at->format('d-m-Y'),
                         ];
                     })->toArray(),
@@ -534,7 +535,7 @@ class ReportController extends Controller
                         }
 
                         return [
-                            'full_name' => $member->firstName.' '.$member->lastName,
+                            'full_name' => $member->firstName . ' ' . $member->lastName,
                             'joined_date' => $member->created_at->format('d-m-Y'),
                             'renewal_date' => $validityDate ? $validityDate->format('d-m-Y') : '-',
                         ];
@@ -778,7 +779,7 @@ class ReportController extends Controller
 
         /* ------------------ 1. Circle Calls ------------------ */
         $circleCalls = CircleCall::where('status', 'Active')
-            ->when($start, fn ($q) => $q->whereBetween('date', [$start, $end]))
+            ->when($start, fn($q) => $q->whereBetween('date', [$start, $end]))
             ->where(function ($q) use ($circleId) {
                 $q->whereHas('member', function ($sq) use ($circleId) {
                     $sq->where('circleId', $circleId);
@@ -792,7 +793,7 @@ class ReportController extends Controller
 
         /* ------------------ 2. IBM ------------------ */
         $ibms = CircleCall::where('status', 'Active')
-            ->when($start, fn ($q) => $q->whereBetween('created_at', [$start, $end]))
+            ->when($start, fn($q) => $q->whereBetween('created_at', [$start, $end]))
             ->where(function ($q) use ($circleId) {
                 $q->whereHas('member', function ($sq) use ($circleId) {
                     $sq->where('circleId', $circleId);
@@ -821,7 +822,7 @@ class ReportController extends Controller
 
                 return [
                     'memberId' => $member->id,
-                    'memberName' => $member->firstName.' '.$member->lastName,
+                    'memberName' => $member->firstName . ' ' . $member->lastName,
                     'circleName' => $member->circle->circleName ?? '',
                     'member_count' => $group->count(),
                 ];
@@ -832,7 +833,7 @@ class ReportController extends Controller
             ->values();
 
         $totalIbmParticipations = CircleCall::where('status', 'Active')
-            ->when($start, fn ($q) => $q->whereBetween('created_at', [$start, $end]))
+            ->when($start, fn($q) => $q->whereBetween('created_at', [$start, $end]))
             ->where(function ($q) use ($circleId) {
                 $q->whereHas('member', function ($sq) use ($circleId) {
                     $sq->where('circleId', $circleId);
@@ -862,7 +863,7 @@ class ReportController extends Controller
         /* ------------------ 3. References ------------------ */
         $references = CircleMeetingMembersReference::with('refGiver')
             ->where('status', 'Active')
-            ->when($start, fn ($q) => $q->whereBetween('created_at', [$start, $end]))
+            ->when($start, fn($q) => $q->whereBetween('created_at', [$start, $end]))
             ->whereHas('refGiver', function ($q) use ($circleId) {
                 $q->where('circleId', $circleId);
             })
@@ -876,7 +877,7 @@ class ReportController extends Controller
 
                 return [
                     'referenceGiverId' => $giver->userId,
-                    'referenceGiverName' => $giver->firstName.' '.$giver->lastName,
+                    'referenceGiverName' => $giver->firstName . ' ' . $giver->lastName,
                     'reference_count' => $group->count(),
                 ];
             })
@@ -887,7 +888,7 @@ class ReportController extends Controller
         /* ------------------ 4. Business ------------------ */
         $businessMeetings = CircleMeetingMembersBusiness::with('member')
             ->where('status', 'Active')
-            ->when($start, fn ($q) => $q->whereBetween('created_at', [$start, $end]))
+            ->when($start, fn($q) => $q->whereBetween('created_at', [$start, $end]))
             ->whereHas('member', function ($q) use ($circleId) {
                 $q->where('circleId', $circleId);
             })
@@ -901,7 +902,7 @@ class ReportController extends Controller
 
                 return [
                     'businessGiverId' => $giver->userId,
-                    'member' => $giver->firstName.' '.$giver->lastName,
+                    'member' => $giver->firstName . ' ' . $giver->lastName,
                     'business_count' => $group->count(),
                     'total_amount' => $group->sum('amount'),
                 ];
@@ -942,10 +943,16 @@ class ReportController extends Controller
         $details = [];
 
         if ($circleId) {
-            $members = Member::where('status', 'Active')
-                ->where('circleId', $circleId)
+            $members = Member::where('members.status', 'Active')
+                ->where('members.circleId', $circleId)
+                ->whereHas('user', function ($q) {
+                    $q->where('status', 'Active');
+                })
+                ->with([
+                    'circle:id,circleName',
+                    'user:id,status'
+                ])
                 ->select('id', 'userId', 'firstName', 'lastName', 'circleId')
-                ->with('circle:id,circleName')
                 ->get();
 
             $report = $members->map(function ($m) use ($startDate, $endDate, &$details) {
@@ -987,14 +994,14 @@ class ReportController extends Controller
                     'ibms' => $ibmRows->map(function ($r) {
                         return [
                             'id' => $r->id,
-                            'with_name' => ($r->meetingPersonReport->firstName ?? '').' '.($r->meetingPersonReport->lastName ?? ''),
+                            'with_name' => ($r->meetingPersonReport->firstName ?? '') . ' ' . ($r->meetingPersonReport->lastName ?? ''),
                             'date' => optional($r->created_at)->format('Y-m-d'),
                         ];
                     })->values(),
                     'references' => $refRows->map(function ($r) {
                         return [
                             'id' => $r->id,
-                            'to_name' => ($r->refReceiver->firstName ?? '').' '.($r->refReceiver->lastName ?? ''),
+                            'to_name' => ($r->refReceiver->firstName ?? '') . ' ' . ($r->refReceiver->lastName ?? ''),
                             'contact_name' => $r->contactName ?? '',
                             'date' => optional($r->created_at)->format('Y-m-d'),
                         ];
@@ -1002,7 +1009,7 @@ class ReportController extends Controller
                     'businesses' => $busRows->map(function ($r) {
                         return [
                             'id' => $r->id,
-                            'to_name' => ($r->loginMember->firstName ?? '').' '.($r->loginMember->lastName ?? ''),
+                            'to_name' => ($r->loginMember->firstName ?? '') . ' ' . ($r->loginMember->lastName ?? ''),
                             'amount' => $r->amount,
                             'date' => optional($r->created_at)->format('Y-m-d'),
                         ];
@@ -1012,7 +1019,7 @@ class ReportController extends Controller
                 return [
                     'circleName' => $m->circle->circleName ?? '-',
                     'memberUserId' => $uid,
-                    'memberName' => $m->firstName.' '.$m->lastName,
+                    'memberName' => $m->firstName . ' ' . $m->lastName,
                     'ibm_count' => $ibmCount,
                     'reference_count' => $refCount,
                     'business_count' => $busRows->count(),
@@ -1031,6 +1038,40 @@ class ReportController extends Controller
 
         return view('admin.report.circleMemberReport', compact('circles', 'report', 'details', 'circleId', 'startDate', 'endDate'));
     }
+    public function circleMemberReportForVP(Request $request)
+    {
+
+        $authUserId = Auth::id();
+
+        $authMember = Member::where('userId', $authUserId)->first();
+
+        $circleId = $authMember->circleId;
+
+        $members = Member::where('members.status', 'Active')
+            ->where('members.circleId', $circleId)
+            ->join('users', 'users.id', '=', 'members.userId')
+            ->join('circles', 'circles.id', '=', 'members.circleId')
+            ->join('business_categories', 'business_categories.id', '=', 'members.businessCategoryId')
+            ->where('users.status', 'Active')
+            ->select(
+                'circles.circleName as circleName',
+                DB::raw("CONCAT(members.firstName,' ',members.lastName) as memberName"),
+                'members.companyName as companyName',
+                'business_categories.categoryName as categoryName',
+                'users.email as email',
+                'users.contactNo as phone'
+            )
+            ->paginate(10);
+
+        // Export condition
+        if ($request->has('export') && $circleId) {
+
+            return Excel::download(new \App\Exports\CircleMembersForVPExport($circleId), 'circle_members_vp_report.xlsx');
+        }
+
+        return view('admin.report.circleMemberReportForVP', compact('members'));
+    }
+
 
     public function exportCircleMemberReport(Request $request)
     {
@@ -1084,8 +1125,8 @@ class ReportController extends Controller
                         $q->where('memberId', $uid)
                             ->orWhere('meetingPersonId', $uid);
                     })
-                    ->when($startDate, fn ($q) => $q->whereDate('created_at', '>=', $startDate))
-                    ->when($endDate, fn ($q) => $q->whereDate('created_at', '<=', $endDate))
+                    ->when($startDate, fn($q) => $q->whereDate('created_at', '>=', $startDate))
+                    ->when($endDate, fn($q) => $q->whereDate('created_at', '<=', $endDate))
                     ->count();
 
                 // 2. References
@@ -1093,73 +1134,73 @@ class ReportController extends Controller
                 $refGivenInside = CircleMeetingMembersReference::where('status', 'Active')
                     ->where('referenceGiverId', $uid)
                     ->whereIn('memberId', $circleUserIds)
-                    ->when($startDate, fn ($q) => $q->whereDate('created_at', '>=', $startDate))
-                    ->when($endDate, fn ($q) => $q->whereDate('created_at', '<=', $endDate))
+                    ->when($startDate, fn($q) => $q->whereDate('created_at', '>=', $startDate))
+                    ->when($endDate, fn($q) => $q->whereDate('created_at', '<=', $endDate))
                     ->count();
 
                 // Given Outside
                 $refGivenOutside = CircleMeetingMembersReference::where('status', 'Active')
                     ->where('referenceGiverId', $uid)
                     ->whereNotIn('memberId', $circleUserIds)
-                    ->when($startDate, fn ($q) => $q->whereDate('created_at', '>=', $startDate))
-                    ->when($endDate, fn ($q) => $q->whereDate('created_at', '<=', $endDate))
+                    ->when($startDate, fn($q) => $q->whereDate('created_at', '>=', $startDate))
+                    ->when($endDate, fn($q) => $q->whereDate('created_at', '<=', $endDate))
                     ->count();
 
                 // Received Inside
                 $refReceivedInside = CircleMeetingMembersReference::where('status', 'Active')
                     ->where('memberId', $uid)
                     ->whereIn('referenceGiverId', $circleUserIds)
-                    ->when($startDate, fn ($q) => $q->whereDate('created_at', '>=', $startDate))
-                    ->when($endDate, fn ($q) => $q->whereDate('created_at', '<=', $endDate))
+                    ->when($startDate, fn($q) => $q->whereDate('created_at', '>=', $startDate))
+                    ->when($endDate, fn($q) => $q->whereDate('created_at', '<=', $endDate))
                     ->count();
 
                 // Received Outside
                 $refReceivedOutside = CircleMeetingMembersReference::where('status', 'Active')
                     ->where('memberId', $uid)
                     ->whereNotIn('referenceGiverId', $circleUserIds)
-                    ->when($startDate, fn ($q) => $q->whereDate('created_at', '>=', $startDate))
-                    ->when($endDate, fn ($q) => $q->whereDate('created_at', '<=', $endDate))
+                    ->when($startDate, fn($q) => $q->whereDate('created_at', '>=', $startDate))
+                    ->when($endDate, fn($q) => $q->whereDate('created_at', '<=', $endDate))
                     ->count();
 
                 // 3. Business (Sum)
                 // Given
                 $businessGiven = CircleMeetingMembersBusiness::where('status', 'Active')
                     ->where('businessGiverId', $uid)
-                    ->when($startDate, fn ($q) => $q->whereDate('created_at', '>=', $startDate))
-                    ->when($endDate, fn ($q) => $q->whereDate('created_at', '<=', $endDate))
+                    ->when($startDate, fn($q) => $q->whereDate('created_at', '>=', $startDate))
+                    ->when($endDate, fn($q) => $q->whereDate('created_at', '<=', $endDate))
                     ->sum('amount');
 
                 // Received
                 $businessReceived = CircleMeetingMembersBusiness::where('status', 'Active')
                     ->where('loginMemberId', $uid)
-                    ->when($startDate, fn ($q) => $q->whereDate('created_at', '>=', $startDate))
-                    ->when($endDate, fn ($q) => $q->whereDate('created_at', '<=', $endDate))
+                    ->when($startDate, fn($q) => $q->whereDate('created_at', '>=', $startDate))
+                    ->when($endDate, fn($q) => $q->whereDate('created_at', '<=', $endDate))
                     ->sum('amount');
 
                 // 4. Training (Count)
                 $trainingCount = TrainingRegister::where('userId', $uid)
                     ->where('status', 'Active')
-                    ->when($startDate, fn ($q) => $q->whereDate('created_at', '>=', $startDate))
-                    ->when($endDate, fn ($q) => $q->whereDate('created_at', '<=', $endDate))
+                    ->when($startDate, fn($q) => $q->whereDate('created_at', '>=', $startDate))
+                    ->when($endDate, fn($q) => $q->whereDate('created_at', '<=', $endDate))
                     ->count();
 
                 // 5. Testimonials (Count)
                 // Given
                 $testimonialGiven = Testimonial::where('userId', $uid)
                     ->where('status', 'Active')
-                    ->when($startDate, fn ($q) => $q->whereDate('created_at', '>=', $startDate))
-                    ->when($endDate, fn ($q) => $q->whereDate('created_at', '<=', $endDate))
+                    ->when($startDate, fn($q) => $q->whereDate('created_at', '>=', $startDate))
+                    ->when($endDate, fn($q) => $q->whereDate('created_at', '<=', $endDate))
                     ->count();
 
                 // Received
                 $testimonialReceived = Testimonial::where('memberId', $uid)
                     ->where('status', 'Active')
-                    ->when($startDate, fn ($q) => $q->whereDate('created_at', '>=', $startDate))
-                    ->when($endDate, fn ($q) => $q->whereDate('created_at', '<=', $endDate))
+                    ->when($startDate, fn($q) => $q->whereDate('created_at', '>=', $startDate))
+                    ->when($endDate, fn($q) => $q->whereDate('created_at', '<=', $endDate))
                     ->count();
 
                 $reportData->push([
-                    'member_name' => $member->firstName.' '.$member->lastName,
+                    'member_name' => $member->firstName . ' ' . $member->lastName,
                     'ibm' => $ibmCount,
                     'ref_given_inside' => $refGivenInside,
                     'ref_given_outside' => $refGivenOutside,
@@ -1208,8 +1249,8 @@ class ReportController extends Controller
                 $stats = CircleMeetingsAttendances::where('userId', $member->userId)
                     ->where('circle_meetings_attendances.circleId', $circleId)
                     ->join('schedules', 'circle_meetings_attendances.meetingId', '=', 'schedules.id')
-                    ->when($startDate, fn ($q) => $q->whereDate('schedules.date', '>=', $startDate))
-                    ->when($endDate, fn ($q) => $q->whereDate('schedules.date', '<=', $endDate))
+                    ->when($startDate, fn($q) => $q->whereDate('schedules.date', '>=', $startDate))
+                    ->when($endDate, fn($q) => $q->whereDate('schedules.date', '<=', $endDate))
                     ->selectRaw("
                         SUM(CASE WHEN circle_meetings_attendances.status = 'Present' THEN 1 ELSE 0 END) as present_count,
                         SUM(CASE WHEN circle_meetings_attendances.status = 'Absent' THEN 1 ELSE 0 END) as absent_count,
@@ -1221,7 +1262,7 @@ class ReportController extends Controller
 
                 $reportData->push([
                     'circle_name' => $circleName,
-                    'member_name' => $member->firstName.' '.$member->lastName,
+                    'member_name' => $member->firstName . ' ' . $member->lastName,
                     'present' => $stats->present_count ?? 0,
                     'absent' => $stats->absent_count ?? 0,
                     'late' => $stats->late_count ?? 0,

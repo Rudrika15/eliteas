@@ -36,11 +36,14 @@ use App\Http\Controllers\Api\SlotController;
 use App\Http\Controllers\Api\SocialWallController;
 use App\Http\Controllers\Api\SpecificAskController;
 use App\Http\Controllers\Api\SupportTicketController;
-use App\Http\Controllers\Api\TestimonialController;
+// use App\Http\Controllers\Api\TestimonialController;
+// use App\Http\Controllers\Api\TestimonialController;
+
 use App\Http\Controllers\Api\TrainerMasterController;
 use App\Http\Controllers\Api\TrainingController;
 use App\Http\Controllers\Api\UpdateAppController;
 use App\Http\Controllers\Api\VisitorController;
+use App\Http\Controllers\Api\TestimonialController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -109,6 +112,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/vacant-categories', [ApiController::class, 'vacantCategories']);
     Route::get('/active-meeting-schedule', [ApiController::class, 'activeMeetingSchedules']);
     Route::get('/resource-index', [ApiController::class, 'resourceIndex']);
+    Route::get('/notification/read/{id}', [ApiController::class, 'markAsRead']);
     Route::get('/members-activity-counts/{id?}', [ApiController::class, 'membersActivityCount']);
 
     // Admin side profile change
@@ -138,7 +142,8 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('circle-meeting-member-businesses/{id}', [CircleMeetingMemberBusinessController::class, 'view']);
     Route::post('circle-meeting-member-businesses/create', [CircleMeetingMemberBusinessController::class, 'create']);
     Route::post('circle-meeting-member-businesses/{id}', [CircleMeetingMemberBusinessController::class, 'update']);
-    Route::delete('circle-meeting-member-businesses/{id}', [CircleMeetingMemberBusinessController::class, 'delete']);
+    Route::post('circle-meeting-member-businesses/update/{id}', [CircleMeetingMemberBusinessController::class, 'updateBusinessSlip']);
+    Route::get('circle-meeting-member-businesses/delete/{id}', [CircleMeetingMemberBusinessController::class, 'delete']);
 
     Route::get('circle-meeting-member-businesses/paymentHistory/{id}', [CircleMeetingMemberBusinessController::class, 'paymentHistory']);
 
@@ -242,6 +247,10 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/testimonials/index', [TestimonialController::class, 'index']);
     Route::get('/testimonials/myTestimonials', [TestimonialController::class, 'myTestimonials']);
     Route::post('/testimonials/create', [TestimonialController::class, 'create']);
+    // Route::post('/testimonials/update/{id}', [TestimonialController::class, 'update']);
+    // Route::get('/testimonials/delete/{id}', [TestimonialController::class, 'delete']);
+    Route::post('/testimonials/update/{id}', [TestimonialController::class, 'updateTestimonial']);
+    Route::get('/testimonials/delete/{id}', [TestimonialController::class, 'deleteTestimonial']);
     // Route::get('/testimonials/admin', [TestimonialController::class, 'indexAdmin']);
     // Route::delete('/testimonials/{id}', [TestimonialController::class, 'destroy']);
     // Route::get('/testimonials/archives', [TestimonialController::class, 'archives']);
@@ -258,6 +267,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('/connections/removeConnection', [ConnectionController::class, 'removeConnection']);
     Route::post('/connections/viewMemberProfile', [ConnectionController::class, 'viewMemberProfile']);
     Route::get('/connections/ConnectionsRequests', [ConnectionController::class, 'ConnectionsRequests']);
+
 
     // Route::get('/connections/myConnection', [ConnectionController::class, 'myConnection']);
 
@@ -368,7 +378,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     // Personal Details update
     Route::get('v1/user/profile', [ApiController::class, 'profile']);
-    Route::post('v1/user/member/update', [ApiController::class, 'meberUpdate']);
+    Route::post('v1/user/member/update', [ApiController::class, 'memberUpdate']);
     Route::post('v1/user/member/updateBillingAddress', [ApiController::class, 'billingAddressUpdate']);
     Route::post('v1/user/member/updateContactDetails', [ApiController::class, 'contactDetailsUpdate']);
     Route::post('v1/user/member/updateTopsProfile', [ApiController::class, 'topsProfileUpdate']);
@@ -459,6 +469,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     // notification
     Route::get('notification-index', [NotificationController::class, 'notificationIndex']);
 
+
     // ________________________________________________________________________________________________________________
 
     // Digital Member Api
@@ -511,6 +522,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('social-wall/post', [SocialWallController::class, 'createPost']);
     Route::get('social-wall/feed', [SocialWallController::class, 'getFeed']);
     Route::post('social-wall/like', [SocialWallController::class, 'toggleLike']);
+    Route::get('social-wall/like/{postId}', [SocialWallController::class, 'getPostLikes']);
     Route::post('social-wall/comment', [SocialWallController::class, 'addComment']);
     Route::get('social-wall/comments/{postId}', [SocialWallController::class, 'getComments']);
     Route::post('social-wall/post/edit', [SocialWallController::class, 'editPost']);

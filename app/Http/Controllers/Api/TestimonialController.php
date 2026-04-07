@@ -65,6 +65,7 @@ class TestimonialController extends Controller
             $request->validate([
                 'circlePersonId' => 'required',
                 'message' => 'required',
+                'date' => 'required|date'
             ]);
 
             $testimonial = new Testimonial;
@@ -72,7 +73,8 @@ class TestimonialController extends Controller
             $testimonial->memberId = $request->circlePersonId;
             $testimonial->message = $request->message;
             $testimonial->status = 'Active';
-            $testimonial->uploadedDate = Carbon::now()->toDateString();
+            // $testimonial->uploadedDate = Carbon::now()->toDateString();
+            $testimonial->uploadedDate = $request->date;
             $testimonial->save();
 
             // Send notification to the specified user
@@ -81,7 +83,7 @@ class TestimonialController extends Controller
 
             if ($user && $user->fcm_token) {
                 $title = 'Testimonial';
-                $body = $user->firstName.' '.$user->lastName.' has Created Testimonial about you.';
+                $body = $user->firstName . ' ' . $user->lastName . ' has Created Testimonial about you.';
 
                 $serviceAccountPath = storage_path('app/public/ubn_notification.json');
                 $factory = (new Factory)->withServiceAccount($serviceAccountPath);
@@ -92,17 +94,17 @@ class TestimonialController extends Controller
 
                 try {
                     $messaging->send($message);
-                    Log::info('Notification sent to token: '.$user->fcm_token);
+                    Log::info('Notification sent to token: ' . $user->fcm_token);
                     // $notificationSent = true;
                 } catch (\Kreait\Firebase\Exception\Messaging\NotFound $e) {
-                    Log::error('Token not found: '.$user->fcm_token);
+                    Log::error('Token not found: ' . $user->fcm_token);
                 } catch (\Kreait\Firebase\Exception\Messaging\InvalidArgument $e) {
-                    Log::error('Invalid argument error with token: '.$user->fcm_token);
+                    Log::error('Invalid argument error with token: ' . $user->fcm_token);
                 } catch (\Exception $e) {
-                    Log::error('General error sending to token: '.$user->fcm_token.'. Error: '.$e->getMessage());
+                    Log::error('General error sending to token: ' . $user->fcm_token . '. Error: ' . $e->getMessage());
                 }
             } else {
-                Log::error('No FCM token found for user ID: '.$circlePersonId);
+                Log::error('No FCM token found for user ID: ' . $circlePersonId);
             }
 
             return Utils::sendResponse($testimonial, 'Testimonial created successfully', 201);
@@ -147,6 +149,69 @@ class TestimonialController extends Controller
             $testimonial->restore();
 
             return Utils::sendResponse(null, 'Testimonial restored successfully', 200);
+        } catch (\Throwable $th) {
+            return Utils::errorResponse($th->getMessage(), 'Internal Server Error', 500);
+        }
+    }
+
+    public function updateTestimonial(Request $request, $id)
+    {
+        try {
+            $authUser = Auth::user();
+            if (! $authUser) {
+                return Utils::errorResponse('Unauthorized', 'Unauthorized', 401);
+            }
+
+            $request->validate([
+                'circlePersonId' => 'required',
+                'message' => 'required',
+                'date' => 'required|date'
+            ]);
+
+            $testimonial = Testimonial::find($id);
+
+            if (! $testimonial) {
+                return Utils::errorResponse('Testimonial not found', 'Not Found', 404);
+            }
+
+            // Optional: ensure user owns testimonial
+            if ($testimonial->userId !== $authUser->id) {
+                return Utils::errorResponse('Forbidden', 'You cannot update this testimonial', 403);
+            }
+
+            $testimonial->userId = $authUser->id;
+            $testimonial->memberId = $request->circlePersonId;
+            $testimonial->message = $request->message;
+            $testimonial->uploadedDate = $request->date;
+            $testimonial->status = 'Active';
+            $testimonial->save();
+
+            return Utils::sendResponse($testimonial, 'Testimonial updated successfully', 200);
+        } catch (\Throwable $th) {
+            return Utils::errorResponse($th->getMessage(), 'Internal Server Error', 500);
+        }
+    }
+
+    public function deleteTestimonial($id)
+    {
+        try {
+            // $authUser = Auth::user();
+            // if (! $authUser) {
+            //     return Utils::errorResponse('Unauthorized', 'Unauthorized', 401);
+            // }
+
+            $testimonial = Testimonial::where('id', $id)
+                // ->where('status', 'Archived')
+                ->first();
+
+            if (! $testimonial) {
+                return Utils::errorResponse('Testimonial not found or not archived', 'Not Found', 404);
+            }
+
+            $testimonial->status = 'Deleted';
+            $testimonial->save();
+
+            return Utils::sendResponse(null, 'Testimonial deleted successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse($th->getMessage(), 'Internal Server Error', 500);
         }

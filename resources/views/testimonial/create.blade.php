@@ -77,7 +77,17 @@
                             @enderror
                         </div>
                     </div>
-
+                    <div class="col-md-12">
+                        <div class="form-floating mt-3">
+                            <input class="form-control @error('date') is-invalid @enderror" type="date" id="Date" name="date" placeholder="Enter date" required></input>
+                            <label for="date"><span style="color:red">*</span> Date</label>
+                            @error('date')
+                                <div class="invalid-tooltip">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+                    </div>
                     <div class="col-md-12">
                         <div class="form-floating mt-3">
                             <textarea class="form-control @error('message') is-invalid @enderror" id="message" name="message" placeholder="Enter Message" required></textarea>

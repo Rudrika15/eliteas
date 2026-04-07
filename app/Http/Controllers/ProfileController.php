@@ -109,12 +109,12 @@ class ProfileController extends Controller
             // $member->timeZone = $request->timeZone;
 
             if ($request->profilePhoto) {
-                $member->profilePhoto = time().'.'.$request->profilePhoto->extension();
+                $member->profilePhoto = time() . '.' . $request->profilePhoto->extension();
                 $request->profilePhoto->move(public_path('ProfilePhoto'), $member->profilePhoto);
             }
 
             if ($request->companyLogo) {
-                $member->companyLogo = time().'.'.$request->companyLogo->extension();
+                $member->companyLogo = time() . '.' . $request->companyLogo->extension();
                 $request->companyLogo->move(public_path('CompanyLogo'), $member->companyLogo);
             }
 

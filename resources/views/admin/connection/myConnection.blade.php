@@ -329,4 +329,37 @@
             });
         });
         </script>
-        @endsection
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+
+                const urlParams = new URLSearchParams(window.location.search);
+                const tab = urlParams.get('tab');
+
+                if (tab) {
+                    let targetId = '';
+
+                    if (tab === 'received') {
+                        targetId = 'tab-received-requests';
+                    } else if (tab === 'sent') {
+                        targetId = 'tab-sent-requests';
+                    } else {
+                        targetId = 'tab-my-connections';
+                    }
+
+                    // Remove active from all
+                    document.querySelectorAll('.ubn-tab-nav .nav-link')
+                        .forEach(l => l.classList.remove('active'));
+
+                    document.querySelectorAll('.tab-section')
+                        .forEach(t => t.classList.add('d-none'));
+
+                    // Activate selected
+                    const activeLink = document.querySelector(`[data-target="${targetId}"]`);
+                    const activeTab = document.getElementById(targetId);
+
+                    if (activeLink) activeLink.classList.add('active');
+                    if (activeTab) activeTab.classList.remove('d-none');
+                }
+            });
+        </script>
+@endsection

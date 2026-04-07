@@ -10,6 +10,12 @@ use App\Models\City;
 use App\Models\Connection;
 use App\Models\Member;
 use App\Utils\ErrorLogger;
+use App\Models\Notifications;
+use App\Models\User;
+use Kreait\Firebase\Factory;
+use Kreait\Firebase\Messaging\CloudMessage;
+use Kreait\Firebase\Messaging\Notification;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -60,9 +66,9 @@ class ConnectionController extends Controller
 
             $authCircle = $authCircleId
                 ? Circle::where('status', 'Active')
-                    ->withCount('members')
-                    ->with('city')
-                    ->find($authCircleId)
+                ->withCount('members')
+                ->with('city')
+                ->find($authCircleId)
                 : null;
 
             // $businessMeetings = CircleMeetingMembersBusiness::with('member')
@@ -72,7 +78,7 @@ class ConnectionController extends Controller
             $circles = Circle::where('status', 'Active')
                 ->orderBy('circleName', 'asc')
                 ->with('city:id,cityName')
-                ->withCount(['members' => fn ($q) => $q->where('status', 'Active')])
+                ->withCount(['members' => fn($q) => $q->where('status', 'Active')])
                 ->get();
 
             $businessMeetings = CircleMeetingMembersBusiness::with('member')
@@ -81,7 +87,7 @@ class ConnectionController extends Controller
 
             $circles->each(function ($circle) use ($businessMeetings) {
                 $filtered = $businessMeetings->filter(
-                    fn ($m) => Member::where('userId', $m->businessGiverId)->value('circleId') == $circle->id
+                    fn($m) => Member::where('userId', $m->businessGiverId)->value('circleId') == $circle->id
                 );
                 $circle->totalBusinessAmount = $filtered->sum('amount');
             });
@@ -112,7 +118,7 @@ class ConnectionController extends Controller
         }
     }
 
-    // public function cityList(Request $request)
+    // public function cityList(Request $request) 
     // {
     //     try {
     //         // ✅ Get all city IDs from members and circles
@@ -728,33 +734,92 @@ class ConnectionController extends Controller
         }
     }
 
+    // public function connect(Request $request)
+    // {
+    //     $member = Member::find($request->input('memberId'));
+    //     $userId = Auth::id();
+
+    //     if (! $member) {
+    //         if ($request->expectsJson() || $request->ajax()) {
+    //             return response()->json([
+    //                 'status' => 'error',
+    //                 'message' => 'Member not found.',
+    //             ], 404);
+    //         }
+
+    //         return redirect()->back()->with('error', 'Member not found.');
+    //     }
+
+    //     $memberId = $member->userId;
+
+    //     if ($memberId == $userId) {
+    //         if ($request->expectsJson() || $request->ajax()) {
+    //             return response()->json([
+    //                 'status' => 'error',
+    //                 'message' => 'You cannot connect with yourself.',
+    //             ], 422);
+    //         }
+
+    //         return redirect()->back()->with('error', 'You cannot connect with yourself.');
+    //     }
+
+    //     $existingConnection = Connection::where(function ($query) use ($userId, $memberId) {
+    //         $query->where('userId', $userId)->where('memberId', $memberId)
+    //             ->orWhere(function ($query) use ($userId, $memberId) {
+    //                 $query->where('userId', $memberId)->where('memberId', $userId);
+    //             });
+    //     })->first();
+
+    //     if ($existingConnection) {
+    //         $existingStatus = $existingConnection->status;
+    //         $message = $existingStatus === 'Accepted'
+    //             ? 'You are already connected.'
+    //             : ($existingStatus === 'Pending' || $existingStatus === null || $existingStatus === '' ? 'Connection request already sent.' : 'Connection already exists.');
+
+    //         if ($request->expectsJson() || $request->ajax()) {
+    //             return response()->json([
+    //                 'status' => 'info',
+    //                 'message' => $message,
+    //             ]);
+    //         }
+
+    //         // return redirect()->back()->with('success', $message);
+    //     }
+
+    //     $connection = new Connection;
+    //     $connection->memberId = $memberId;
+    //     $connection->userId = $userId;
+    //     $connection->status = 'Pending';
+    //     $connection->save();
+
+    //     if ($request->expectsJson() || $request->ajax()) {
+    //         return response()->json([
+    //             'status' => 'success',
+    //             'message' => 'Connection request sent successfully!',
+    //         ]);
+    //     }
+
+    //     return redirect()->back()->with('success', 'Connection request sent successfully!');
+    // }
     public function connect(Request $request)
     {
         $member = Member::find($request->input('memberId'));
         $userId = Auth::id();
 
         if (! $member) {
-            if ($request->expectsJson() || $request->ajax()) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'Member not found.',
-                ], 404);
-            }
-
-            return redirect()->back()->with('error', 'Member not found.');
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Member not found.',
+            ], 404);
         }
 
         $memberId = $member->userId;
 
         if ($memberId == $userId) {
-            if ($request->expectsJson() || $request->ajax()) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'You cannot connect with yourself.',
-                ], 422);
-            }
-
-            return redirect()->back()->with('error', 'You cannot connect with yourself.');
+            return response()->json([
+                'status' => 'error',
+                'message' => 'You cannot connect with yourself.',
+            ], 422);
         }
 
         $existingConnection = Connection::where(function ($query) use ($userId, $memberId) {
@@ -765,20 +830,24 @@ class ConnectionController extends Controller
         })->first();
 
         if ($existingConnection) {
+
             $existingStatus = $existingConnection->status;
+
             $message = $existingStatus === 'Accepted'
                 ? 'You are already connected.'
-                : ($existingStatus === 'Pending' || $existingStatus === null || $existingStatus === '' ? 'Connection request already sent.' : 'Connection already exists.');
+                : 'Connection request already sent.';
 
-            if ($request->expectsJson() || $request->ajax()) {
-                return response()->json([
-                    'status' => 'info',
-                    'message' => $message,
-                ]);
-            }
-
-            return redirect()->back()->with('success', $message);
+            return response()->json([
+                'status' => 'info',
+                'message' => $message,
+            ]);
         }
+
+        /*
+    |------------------------------------------
+    | Create Connection
+    |------------------------------------------
+    */
 
         $connection = new Connection;
         $connection->memberId = $memberId;
@@ -786,10 +855,60 @@ class ConnectionController extends Controller
         $connection->status = 'Pending';
         $connection->save();
 
+        /*            
+    |------------------------------------------
+    | Create Notification (DB)
+    |------------------------------------------
+    */
+
+        $title = "New Connection Request";
+        $body = Auth::user()->firstName . " sent you a connection request";
+
+        Notifications::create([
+            'title' => $title,
+            'body' => $body,
+            'data' => json_encode([
+                'type' => 'connection_request',
+                'userId' => $userId,
+                'memberId' => $memberId,
+                'connection_id' => $connection->id
+            ]),
+            'is_read' => false,
+        ]);
+
+        /*
+    |------------------------------------------
+    | Send Firebase Notification
+    |------------------------------------------
+    */
+
+        $receiver = User::find($memberId);
+
+        if (!empty($receiver->fcm_token)) {
+
+            $serviceAccountPath = storage_path('app/public/ubn_notification.json');
+
+            $factory = (new Factory)->withServiceAccount($serviceAccountPath);
+            $messaging = $factory->createMessaging();
+
+            $notificationMessage = CloudMessage::withTarget('token', $receiver->fcm_token)
+                ->withNotification(Notification::create($title, $body));
+
+            try {
+
+                $messaging->send($notificationMessage);
+
+                Log::info('Connection notification sent to token: ' . $receiver->fcm_token);
+            } catch (\Exception $e) {
+
+                Log::error('Error sending notification: ' . $e->getMessage());
+            }
+        }
+
         if ($request->expectsJson() || $request->ajax()) {
             return response()->json([
                 'status' => 'success',
-                'message' => 'Connection request sent successfully!',
+                'message' => 'Connection request sent successfully!'
             ]);
         }
 
@@ -803,15 +922,39 @@ class ConnectionController extends Controller
             $userId = Auth::user()->id;
 
             // Query to get connection requests
-            $connections = Connection::whereHas('member', function ($query) use ($userId) {
-                $query->where('memberId', $userId);
-            })
-                ->with('member')
+            // $connections = Connection::whereHas('member', function ($query) use ($userId) {
+            //     $query->where('memberId', $userId);
+            // })
+            //     ->with('member')
+            //     ->where('status', 'Pending')
+            //     ->whereHas('user', function ($query) {
+            //         $query->where('status', 'Active');
+            //     })
+            //     ->paginate(10);
+            $connections = Connection::where('memberId', $userId)
                 ->where('status', 'Pending')
+                ->whereHas('user', function ($query) {
+                    $query->where('recordStatus', 'Active');
+                })
+                ->with([
+                    'user' => function ($query) {
+                        $query->select('id', 'firstName', 'lastName', 'email', 'contactNo');
+                    },
+                    'members' => function ($query) {
+                        $query->select('id', 'userId', 'profilePhoto');
+                    }
+                ])
                 ->paginate(10);
+            $notifications = Notifications::latest()->get()->filter(function ($notification) use ($userId) {
 
+                $data = json_decode($notification->data, true);
+
+                return isset($data['type']) &&
+                    $data['type'] === 'connection_request' &&
+                    $data['memberId'] == $userId;
+            });
             // Return the view with the connections data
-            return view('admin.connection.connections', compact('connections'));
+            return view('admin.connection.connections', compact('connections', 'notifications'));
         } catch (\Throwable $th) {
             // Log the error using the ErrorLogger utility
             ErrorLogger::logError($th, request()->fullUrl());
@@ -829,18 +972,29 @@ class ConnectionController extends Controller
 
             $connections = Connection::where('userId', $userId)
                 ->where('status', 'Pending')
+                ->whereHas('receiver', function ($query) {
+                    $query->where('status', 'Active');
+                })
                 ->with([
                     'receiver' => function ($query) {
                         $query->select('id', 'email', 'firstName', 'lastName');
                     },
                     'receiverMember' => function ($query) {
                         $query->select('userId', 'id', 'profilePhoto');
-                    },
+                    }
                 ])
                 ->paginate(10);
+            $notifications = Notifications::latest()->get()->filter(function ($notification) use ($userId) {
+
+                $data = json_decode($notification->data, true);
+
+                return isset($data['type']) &&
+                    $data['type'] === 'connection_request' &&
+                    $data['memberId'] == $userId;
+            });
 
             // Return the view with the connections data
-            return view('admin.connection.sentConnectionRequests', compact('connections'));
+            return view('admin.connection.sentConnectionRequests', compact('connections', 'notifications'));
         } catch (\Throwable $th) {
             // Log the error using the ErrorLogger utility
             ErrorLogger::logError($th, request()->fullUrl());
@@ -950,6 +1104,12 @@ class ConnectionController extends Controller
                 $query->where('userId', $userId)->orWhere('memberId', $userId);
             })->where('recordStatus', 'Active')
                 ->where('status', 'Accepted')
+                ->whereHas('user', function ($q) {
+                    $q->where('status', 'Active');
+                })
+                ->whereHas('receiver', function ($q) {
+                    $q->where('status', 'Active');
+                })
                 ->with([
                     'user:id,firstName,lastName,email,contactNo',
                     'receiver:id,firstName,lastName,email,contactNo',
@@ -967,6 +1127,10 @@ class ConnectionController extends Controller
             $sentRequests = Connection::where('userId', $userId)
                 ->where('recordStatus', 'Active')
                 ->where('status', 'Pending')
+                ->whereHas('receiver', function ($q) {
+                    $q->where('status', 'Active');
+                })
+
                 ->with([
                     'receiver' => function ($query) {
                         $query->select('id', 'email', 'firstName', 'lastName', 'contactNo');
@@ -981,6 +1145,10 @@ class ConnectionController extends Controller
             $receivedRequests = Connection::where('memberId', $userId)
                 ->where('recordStatus', 'Active')
                 ->where('status', 'Pending')
+                ->whereHas('receiver', function ($q) {
+                    $q->where('status', 'Active');
+                })
+
                 ->with([
                     'user' => function ($query) {
                         $query->select('id', 'email', 'firstName', 'lastName', 'contactNo');
@@ -1034,12 +1202,31 @@ class ConnectionController extends Controller
     public function accept($id)
     {
         try {
-            $connection = Connection::findOrFail($id);
+            $connection = Connection::where('id', $id)
+                ->whereHas('user', function ($q) {
+                    $q->where('status', 'Active');
+                })
+                ->firstOrFail();
+
 
             $connection->status = 'Accepted';
             $connection->save();
+            $title = "Connection Accepted";
 
-            return redirect()->route('connection.myConnections')
+            $body = Auth::user()->firstName . " accepted your connection request";
+
+            Notifications::create([
+                'title' => $title,
+                'body' => $body,
+                'data' => json_encode([
+                    'type' => 'connection_accept',
+                    'userId' => Auth::id(),
+                    'memberId' => $connection->userId,
+                    'connection_id' => $connection->id
+                ])
+            ]);
+
+            return redirect()->route('admin.connection.receivedConnections')
                 ->with('success', 'Accepted Successfully');
         } catch (\Throwable $th) {
             // throw $th;
@@ -1054,18 +1241,36 @@ class ConnectionController extends Controller
     public function reject($id)
     {
         try {
-            $connection = Connection::findOrFail($id);
+            $connection = Connection::where('id', $id)
+                ->whereHas('user', function ($q) {
+                    $q->where('status', 'Active');
+                })
+                ->firstOrFail();
 
             $connection->delete();
+            $title = "Connection Rejected";
 
-            return redirect()->route('connection.myConnections')
+            $body = Auth::user()->firstName . " rejected your connection request";
+
+            Notifications::create([
+                'title' => $title,
+                'body' => $body,
+                'data' => json_encode([
+                    'type' => 'connection_reject',
+                    'userId' => Auth::id(),
+                    'memberId' => $connection->userId,
+                    'connection_id' => $connection->id
+                ])
+            ]);
+
+            return redirect()->route('admin.connection.receivedConnections')
                 ->with('success', 'Rejected Successfully');
         } catch (\Throwable $th) {
             // throw $th;
 
             ErrorLogger::logError($th, request()->fullUrl());
 
-            return redirect()->route('connection.myConnections')
+            return redirect()->route('admin.connection.receivedConnections')
                 ->with('error', 'Failed to reject connection.');
         }
     }

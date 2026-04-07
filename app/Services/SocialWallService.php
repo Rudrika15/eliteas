@@ -7,6 +7,7 @@ use App\Models\Connection;
 use App\Models\Like;
 use App\Models\Post;
 use App\Models\PostMedia;
+use App\Models\Notifications;
 use App\Utils\Utils;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -33,32 +34,32 @@ class SocialWallService
         // We need to find all userIds that are connected to the current user.
 
         // Get connections where current user is sender (userId)
-        $connectedUserIds1 = Connection::where('userId', $userId)
-            ->where('status', 'Accepted')
-            ->where('recordStatus', 'Active')
-            ->pluck('memberId')
-            ->toArray();
+        // $connectedUserIds1 = Connection::where('userId', $userId)
+        //     ->where('status', 'Accepted')
+        //     ->where('recordStatus', 'Active')
+        //     ->pluck('memberId')
+        //     ->toArray();
 
         // Get connections where current user is receiver (memberId)
-        $connectedUserIds2 = Connection::where('memberId', $userId)
-            ->where('status', 'Accepted')
-            ->where('recordStatus', 'Active')
-            ->pluck('userId')
-            ->toArray();
+        // $connectedUserIds2 = Connection::where('memberId', $userId)
+        //     ->where('status', 'Accepted')
+        //     ->where('recordStatus', 'Active')
+        //     ->pluck('userId')
+        //     ->toArray();
 
-        $allowedUserIds = array_unique(array_merge($connectedUserIds1, $connectedUserIds2));
+        // $allowedUserIds = array_unique(array_merge($connectedUserIds1, $connectedUserIds2));
 
         // Add current user to allowed list (can see own posts)
-        $allowedUserIds[] = $userId;
+        // $allowedUserIds[] = $userId;
 
         // 2. Fetch Posts
         $posts = Post::where('status', 'Active')
-            ->where(function ($q) use ($allowedUserIds) {
-                $q->whereIn('userId', $allowedUserIds)
-                    ->orWhereHas('user.roles', function ($rq) {
-                        $rq->where('name', 'Admin');
-                    });
-            })
+            // ->where(function ($q) use ($allowedUserIds) {
+            //     $q->whereIn('userId', $allowedUserIds)
+            //         ->orWhereHas('user.roles', function ($rq) {
+            //             $rq->where('name', 'Admin');
+            //         });
+            // })
             ->with([
                 'user' => function ($q) {
                     $q->select('id', 'firstName', 'lastName');
@@ -149,36 +150,73 @@ class SocialWallService
     /**
      * Toggle Like status.
      */
+    // public function toggleLike($postId)
+    // {
+    //     $userId = Auth::id();
+
+    //     if (!$userId) {
+    //         throw new \Exception('User not authenticated');
+    //     }
+
+    //     $like = Like::where('postId', $postId)
+    //         ->where('userId', $userId)
+    //         ->first();
+
+    //     if ($like) {
+    //         // If record exists
+    //         if ($like->status == 'Active') {
+    //             $like->status = 'Deleted'; // Unlike
+    //         } else {
+    //             $like->status = 'Active'; // Like again
+    //             $this->storeLikeNotification($postId, $userId); // ✅
+    //         }
+    //         $like->save();
+
+    //         return $like;
+    //     } else {
+    //         // If record does NOT exist
+    //         $Like = new Like;
+    //         $Like->postId = $postId;
+    //         $Like->userId = $userId;
+    //         $Like->status = 'Active';
+    //         $Like->save();
+
+    //         $this->storeLikeNotification($postId, $userId);
+    //     }
+
+    //     return $Like;
+    // }
     public function toggleLike($postId)
     {
         $userId = Auth::id();
+
+        if (!$userId) {
+            throw new \Exception('User not authenticated');
+        }
 
         $like = Like::where('postId', $postId)
             ->where('userId', $userId)
             ->first();
 
         if ($like) {
-            // If record exists
-            if ($like->status == 'Active') {
-                $like->status = 'Deleted'; // Unlike
-            } else {
-                $like->status = 'Active'; // Like again
-            }
-            $like->save();
-
-            return $like;
+            $like->delete();
+            return (object)[
+                'status' => 'unliked'
+            ];
         } else {
-            // If record does NOT exist
-            $newLike = new Like;
-            $newLike->postId = $postId;
-            $newLike->userId = $userId;
-            $newLike->status = 'Active';
-            $newLike->save();
+            // Like → create
+            $like = Like::create([
+                'postId' => $postId,
+                'userId' => $userId
+            ]);
 
-            return $newLike;
+            $this->storeLikeNotification($postId, $userId);
+
+            return (object)[
+                'status' => 'liked'
+            ];
         }
     }
-
     /**
      * Add a comment.
      */
@@ -190,6 +228,8 @@ class SocialWallService
         $comment->comment = $commentText;
         $comment->status = 'Active';
         $comment->save();
+
+        $this->storeCommentNotification($postId, $comment);
 
         return $comment->load([
             'user' => function ($q) {
@@ -339,7 +379,7 @@ class SocialWallService
             ->get()
             ->map(function ($like) {
                 return [
-                    'id' => 'like-'.$like->id,
+                    'id' => 'like-' . $like->id,
                     'type' => 'like',
                     'postId' => $like->postId,
                     'actor' => $like->user,
@@ -362,7 +402,7 @@ class SocialWallService
             ->get()
             ->map(function ($comment) {
                 return [
-                    'id' => 'comment-'.$comment->id,
+                    'id' => 'comment-' . $comment->id,
                     'type' => 'comment',
                     'postId' => $comment->postId,
                     'actor' => $comment->user,
@@ -375,5 +415,50 @@ class SocialWallService
             ->sortByDesc('created_at')
             ->take($limit)
             ->values();
+    }
+    /**
+     * Store Like Notification
+     */
+    private function storeLikeNotification($postId, $userId)
+    {
+        $post = Post::find($postId);
+
+
+
+        if (!$post || $post->userId == $userId) return;
+
+
+        Notifications::create([
+            'title' => 'New Like',
+            'body' => 'Someone liked your post',
+            'data' => json_encode([
+                'type' => 'like',
+                'postId' => $postId,
+                'actorId' => $userId,
+            ]),
+            'is_read' => false,
+        ]);
+    }
+
+    /**
+     * Store Comment Notification
+     */
+    private function storeCommentNotification($postId, $comment)
+    {
+        $post = Post::find($postId);
+
+        if (!$post || $post->userId == $comment->userId) return;
+
+        Notifications::create([
+            'title' => 'New Comment',
+            'body' => $comment->comment,
+            'data' => json_encode([
+                'type' => 'comment',
+                'postId' => $postId,
+                'actorId' => $comment->userId,
+                'commentId' => $comment->id,
+            ]),
+            'is_read' => false,
+        ]);
     }
 }

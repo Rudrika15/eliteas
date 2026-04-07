@@ -96,7 +96,6 @@ class TestimonialController extends Controller
                 ->get();
 
             return view('testimonial.create', compact('circles', 'circleMember'));
-
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, $request->fullUrl());
 
@@ -120,7 +119,7 @@ class TestimonialController extends Controller
             $testimonial->memberId = $request->circlePersonId;
             $testimonial->message = $request->message;
             $testimonial->status = 'Active';
-            $testimonial->uploadedDate = Carbon::now()->toDateString();
+            $testimonial->uploadedDate = $request->date;
             $testimonial->save();
 
             return redirect()->route('testimonial.index')->with('success', 'Testimonial uploaded successfully.');
@@ -194,6 +193,7 @@ class TestimonialController extends Controller
             $testimonial->userId = Auth::user()->id;
             $testimonial->memberId = $request->circlePersonId;
             $testimonial->message = $request->message;
+            $testimonial->uploadedDate = $request->date;
             $testimonial->status = 'Active';
             $testimonial->save();
 
@@ -263,16 +263,18 @@ class TestimonialController extends Controller
     public function delete($id)
     {
         try {
-            $testimonial = Testimonial::where('status', 'Archived')->findOrFail($id);
+            $testimonial = Testimonial::where('id', $id)
+                // ->where('status', 'Archived')
+                ->firstOrFail();
+
             $testimonial->status = 'Deleted';
             $testimonial->save();
 
-            return redirect()->route('testimonials.indexAdmin');
+            return redirect()->route('testimonial.index')
+                ->with('success', 'Testimonial deleted successfully');
         } catch (\Throwable $th) {
-            // Log the error
             ErrorLogger::logError($th, request()->fullUrl());
 
-            // Return a generic error view
             return response()->view('servererror');
         }
     }

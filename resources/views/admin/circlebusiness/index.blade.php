@@ -194,21 +194,21 @@
         <div>
             @php
                 $isCreationLocked = false;
-                if(isset($isLocked) && $isLocked && isset($lockedEndDate)) {
-                     if(now()->lte(\Carbon\Carbon::parse($lockedEndDate))) {
-                          $isCreationLocked = true;
-                     }
+                if (isset($isLocked) && $isLocked && isset($lockedEndDate)) {
+                    if (now()->lte(\Carbon\Carbon::parse($lockedEndDate))) {
+                        $isCreationLocked = true;
+                    }
                 }
             @endphp
 
-            @if(!$isCreationLocked)
-            <a href="javascript:void(0);" class="btn btn-sm btn-bg-orange" data-bs-toggle="modal" data-bs-target="#businessSlipModal">
-                <i class="bi bi-plus-circle"></i> Create Business Slip
-            </a>
+            @if (!$isCreationLocked)
+                <a href="javascript:void(0);" class="btn btn-sm btn-bg-orange" data-bs-toggle="modal" data-bs-target="#businessSlipModal">
+                    <i class="bi bi-plus-circle"></i> Create Business Slip
+                </a>
             @else
-            <button class="btn btn-sm btn-secondary" disabled>
-                <i class="fas fa-lock"></i> Locked
-            </button>
+                <button class="btn btn-sm btn-secondary" disabled>
+                    <i class="fas fa-lock"></i> Locked
+                </button>
             @endif
         </div>
     </div>
@@ -233,6 +233,7 @@
                                     <th>Date</th>
                                     <th>Amount</th>
                                     <th>Remarks</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -247,7 +248,16 @@
                                         <td>{{ \Carbon\Carbon::parse($busGiverData->date)->format('d-m-Y') ?? '-' }}</td>
                                         <td>₹ {{ $busGiverData->amount ?? '-' }}</td>
                                         <td>{{ $busGiverData->remarks ?? '-' }}</td>
-
+                                        <td>
+                                            <a href="{{ route('busGiver.edit', $busGiverData->id) }}" class="btn btn-bg-blue btn-sm btn-tooltip">
+                                                <i class="bi bi-pen"></i>
+                                                <span class="btn-text">Edit</span>
+                                            </a>
+                                            <a href="{{ route('busGiver.delete', $busGiverData->id) }}" class="btn btn-danger btn-sm btn-tooltip">
+                                                <i class="bi bi-trash"></i>
+                                                <span class="btn-text">Delete</span>
+                                            </a>
+                                        </td>
                                     </tr>
                                 @empty
                                     <tr>
@@ -325,7 +335,8 @@
                 </div>
 
                 <div class="modal-body">
-                    <form class="needs-validation" id="meetingMemberRefForm" enctype="multipart/form-data" method="post" action="{{ route('refGiver.refByOtherStore') }}" novalidate>
+                    <form class="needs-validation" id="meetingMemberRefForm" enctype="multipart/form-data" method="post" action="{{ route('busGiver.store') }}" novalidate>
+                        {{-- action="{{ route('refGiver.refByOtherStore') }}" --}}
                         @csrf
                         <!-- Circle and Member Selection -->
                         <div class="card p-3 shadow-sm border-0 rounded">
@@ -400,6 +411,31 @@
                                 @error('amount')
                                     <div class="invalid-tooltip">{{ $message }}</div>
                                 @enderror
+                            </div>
+
+
+                            <!-- Date -->
+                            <div class="mb-3">
+                                <label for="date" class="form-label fw-bold color-blue required">
+                                    Date <span class="text-danger">*</span>
+                                </label>
+                                <?php
+                                // Calculate allowed range
+                                $today = \Illuminate\Support\Carbon::today()->format('Y-m-d');
+                                // $pastLimit = \Illuminate\Support\Carbon::today()->format('Y-m-d');
+                                
+                                if (isset($isLocked) && $isLocked && isset($lockedEndDate)) {
+                                    $lockedEnd = \Illuminate\Support\Carbon::parse($lockedEndDate);
+                                    // If locked, start from the day AFTER the lock ends
+                                    $minDate = $lockedEnd->addDay()->format('Y-m-d');
+                                    // Ensure we don't go back further than 15 days anyway (though lock usually covers it)
+                                    $pastLimit = $minDate > $pastLimit ? $minDate : $pastLimit;
+                                }
+                                
+                                // Default selected date
+                                $selectedDate = old('date', request()->input('date') ?? $today);
+                                ?>
+                                <input type="date" class="form-control" id="date" name="date" min="{{ $allowedStartDate }}" max="{{ $today }}" value="{{ $selectedDate }}" required>
                             </div>
 
                             <!-- Contact Person Section (Hidden initially) -->

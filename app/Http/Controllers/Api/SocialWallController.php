@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Comment;
 use App\Models\Connection;
 use App\Models\Like;
+use App\Models\Member;
 use App\Models\Post;
 use App\Utils\Utils;
 use Illuminate\Http\Request;
@@ -41,13 +42,13 @@ class SocialWallController extends Controller
             if ($request->hasFile('attachment')) {
                 $file = $request->file('attachment');
                 $extension = $file->getClientOriginalExtension();
-                $filename = time().'.'.$extension;
+                $filename = time() . '.' . $extension;
 
                 // If image, convert to WebP
                 if (in_array(strtolower($extension), ['jpg', 'jpeg', 'png', 'gif'])) {
                     $image = imagecreatefromstring(file_get_contents($file));
-                    $filename = time().'.webp';
-                    $path = public_path('posts/'.$filename);
+                    $filename = time() . '.webp';
+                    $path = public_path('posts/' . $filename);
 
                     // Ensure directory exists
                     if (! file_exists(public_path('posts'))) {
@@ -56,11 +57,11 @@ class SocialWallController extends Controller
 
                     imagewebp($image, $path, 80); // 80% quality
                     imagedestroy($image);
-                    $post->attachment = 'posts/'.$filename;
+                    $post->attachment = 'posts/' . $filename;
                 } elseif (in_array(strtolower($extension), ['webp'])) {
-                    $filename = time().'.webp';
+                    $filename = time() . '.webp';
                     $file->move(public_path('posts'), $filename);
-                    $post->attachment = 'posts/'.$filename;
+                    $post->attachment = 'posts/' . $filename;
                 }
             }
 
@@ -81,26 +82,26 @@ class SocialWallController extends Controller
             // Logic: (userId = authId AND memberId = postUserId) OR (userId = postUserId AND memberId = authId)
             // status = 'Accepted'
 
-            $connectedUserIds1 = Connection::where('userId', $userId)
-                ->where('status', 'Accepted')
-                ->pluck('memberId')
-                ->toArray();
+            // $connectedUserIds1 = Connection::where('userId', $userId)
+            //     ->where('status', 'Accepted')
+            //     ->pluck('memberId')
+            //     ->toArray();
 
-            $connectedUserIds2 = Connection::where('memberId', $userId)
-                ->where('status', 'Accepted')
-                ->pluck('userId')
-                ->toArray();
+            // $connectedUserIds2 = Connection::where('memberId', $userId)
+            //     ->where('status', 'Accepted')
+            //     ->pluck('userId')
+            //     ->toArray();
 
-            $allowedUserIds = array_unique(array_merge($connectedUserIds1, $connectedUserIds2));
-            $allowedUserIds[] = $userId; // Add self
+            // $allowedUserIds = array_unique(array_merge($connectedUserIds1, $connectedUserIds2));
+            // $allowedUserIds[] = $userId; // Add self
 
             $posts = Post::where('status', 'Active')
-                ->where(function ($q) use ($allowedUserIds) {
-                    $q->whereIn('userId', $allowedUserIds)
-                        ->orWhereHas('user.roles', function ($rq) {
-                            $rq->where('name', 'Admin');
-                        });
-                })
+                // ->where(function ($q) use ($allowedUserIds) {
+                //     $q->whereIn('userId', $allowedUserIds)
+                //         ->orWhereHas('user.roles', function ($rq) {
+                //             $rq->where('name', 'Admin');
+                //         });
+                // })
                 ->with(['user:id,firstName,lastName', 'likes' => function ($q) {
                     $q->where('status', 'Active');
                 }, 'comments' => function ($q) {
@@ -113,7 +114,7 @@ class SocialWallController extends Controller
                     $query->where('status', 'Active');
                 }])
                 ->orderBy('created_at', 'desc')
-                ->paginate(10);
+                ->get();
 
             // Add isLikedByCurrentUser flag
             $posts->getCollection()->transform(function ($post) use ($userId) {
@@ -161,7 +162,7 @@ class SocialWallController extends Controller
 
             if ($like) {
                 if ($like->status == 'Active') {
-                    $like->status = 'Deleted';
+                    $like->delete();
                     $message = 'Post unliked';
                     $status = 'unliked';
                 } else {
@@ -181,6 +182,44 @@ class SocialWallController extends Controller
             }
 
             return Utils::sendResponse(['status' => $status], $message, 200);
+        } catch (\Throwable $th) {
+            return Utils::errorResponse($th->getMessage(), 'Internal Server Error', 500);
+        }
+    }
+
+    public function getPostLikes(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'postId' => 'required|exists:posts,id',
+            ]);
+
+            $postId = $request->postId;
+
+            // Get all active likes with user data
+            $likes = Like::where('postId', $postId)
+                ->where('status', 'Active')
+                ->with(['user:id,firstName,lastName'])
+                ->get();
+
+            // Format response
+            $likedUsers = $likes->map(function ($like) {
+
+                $member = Member::where('userId', $like->user->id)->first();
+
+                return [
+                    'userId' => $like->user->id,
+                    'name' => $like->user->firstName . ' ' . $like->user->lastName,
+                    'profilePhoto' => (!empty($member->profilePhoto) && file_exists(public_path('ProfilePhoto/' . $member->profilePhoto)))
+                        ? asset('ProfilePhoto/' . $member->profilePhoto)
+                        : asset('ProfilePhoto/profile.png'),
+                ];
+            });
+
+            return Utils::sendResponse([
+                'totalLikes' => $likedUsers->count(),
+                'users' => $likedUsers
+            ], 'Post likes fetched successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse($th->getMessage(), 'Internal Server Error', 500);
         }
@@ -212,6 +251,7 @@ class SocialWallController extends Controller
             return Utils::errorResponse($th->getMessage(), 'Internal Server Error', 500);
         }
     }
+
 
     public function getComments(Request $request, $postId)
     {
@@ -257,13 +297,13 @@ class SocialWallController extends Controller
             if ($request->hasFile('attachment')) {
                 $file = $request->file('attachment');
                 $extension = $file->getClientOriginalExtension();
-                $filename = time().'.'.$extension;
+                $filename = time() . '.' . $extension;
 
                 // If image, convert to WebP
                 if (in_array(strtolower($extension), ['jpg', 'jpeg', 'png', 'gif'])) {
                     $image = imagecreatefromstring(file_get_contents($file));
-                    $filename = time().'.webp';
-                    $path = public_path('posts/'.$filename);
+                    $filename = time() . '.webp';
+                    $path = public_path('posts/' . $filename);
 
                     // Ensure directory exists
                     if (! file_exists(public_path('posts'))) {
@@ -272,11 +312,11 @@ class SocialWallController extends Controller
 
                     imagewebp($image, $path, 80); // 80% quality
                     imagedestroy($image);
-                    $post->attachment = 'posts/'.$filename;
+                    $post->attachment = 'posts/' . $filename;
                 } elseif (in_array(strtolower($extension), ['webp'])) {
-                    $filename = time().'.webp';
+                    $filename = time() . '.webp';
                     $file->move(public_path('posts'), $filename);
-                    $post->attachment = 'posts/'.$filename;
+                    $post->attachment = 'posts/' . $filename;
                 }
             }
 
