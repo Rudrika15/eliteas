@@ -2335,7 +2335,11 @@ class ApiController extends Controller
         }
     }
 
+<<<<<<< HEAD
     public function vacantCategories(Request $request)
+=======
+public function vacantCategories(Request $request)
+>>>>>>> 822757d9f93a84366513e8717afea468b32b5eb1
     {
         try {
             $user = Auth::user();
