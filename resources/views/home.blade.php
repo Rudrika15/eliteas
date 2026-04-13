@@ -102,6 +102,11 @@
     @endrole
 
 
+    @role('Franchise Admin')
+        @include('components.adminDash')
+    @endrole
+
+
 
 
     {{-- Invited People Admin Side Start --}}

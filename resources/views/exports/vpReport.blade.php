@@ -61,3 +61,67 @@
         </tr>
     @endforeach
 </table>
+<br><br>
+<h4>IBM Report Details</h4>
+<table>
+    <tr>
+        <th>Member By</th>
+        <th>Circle</th>
+        <th>IBM Counts</th>
+        <th>Member with</th>
+    </tr>
+    @foreach ($ibms as $row)
+        @foreach ($row['with_members'] as $name => $count)
+            <tr>
+                <td>{{ $row['memberName'] }}</td>
+                <td>{{ $row['circleName'] }}</td>
+                <td>{{ $count }}</td>
+                <td>{{ $name }}</td>
+            </tr>
+        @endforeach
+    @endforeach
+</table>
+<br><br>
+<h4>Reference Details</h4>
+<table>
+    <tr>
+        <th>Reference Giver</th>
+        <th>Circle</th>
+        <th>Count</th>
+        <th>Reference To</th>
+    </tr>
+
+    @foreach ($referenceDetails as $row)
+        @foreach ($row['with_members'] as $name => $count)
+            <tr>
+                <td>{{ $row['referenceGiverName'] }}</td>
+                <td>{{ $row['circleName'] }}</td>
+                <td>{{ $count }}</td>
+                <td>{{ $name }}</td>
+            </tr>
+        @endforeach
+    @endforeach
+</table>
+<br><br>
+<h4>Business Details</h4>
+<table>
+    <tr>
+        <th>Business Giver</th>
+        <th>Circle</th>
+        <th>Count</th>
+        <th>Total Amount</th>
+        <th>Business To</th>
+    </tr>
+
+    @foreach ($businessDetails as $row)
+        @foreach ($row['with_members'] as $name => $data)
+            <tr>
+                <td>{{ $row['businessGiverName'] }}</td>
+                <td>{{ $row['circleName'] }}</td>
+                <td>{{ $data['count'] }}</td>
+                <td>{{ $data['amount'] }}</td>
+                <td>{{ $name }}</td>
+            </tr>
+        @endforeach
+    @endforeach
+</table>

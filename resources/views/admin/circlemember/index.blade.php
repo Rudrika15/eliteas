@@ -286,7 +286,7 @@
                                                             <select name="roleId" class="form-select">
                                                                 <option value="">Select Role</option>
                                                                 @foreach ($roles as $role)
-                                                                    @if (!in_array($role->name, ['Franchise Admin', 'Member', 'Admin', 'Trainer']) && !$circlememberData->user->roles->contains($role->id))
+                                                                    @if (!in_array($role->name, ['Member', 'Admin', 'Trainer']) && !$circlememberData->user->roles->contains($role->id))
                                                                         <option value="{{ $role->id }}">
                                                                             {{ $role->name }}</option>
                                                                     @endif

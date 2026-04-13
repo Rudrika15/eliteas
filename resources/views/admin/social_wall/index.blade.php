@@ -573,6 +573,11 @@
             border-radius: 8px;
             object-fit: cover;
         }
+        .fixed-textarea {
+    resize: none;        /* ❌ Disable manual resize */
+    height: 60px;        /* ✅ Fixed height */
+    overflow-y: auto;    /* ✅ Scroll if text is more */
+}
     </style>
 
     <div class="social-wall-layout">
@@ -583,7 +588,7 @@
                     <div class="create-post-card">
                         <form id="create-post-form" onsubmit="uploadPost(event)" enctype="multipart/form-data">
                             <div class="mb-3">
-                                <textarea name="caption" class="form-control border-0" rows="2" placeholder="What's on your mind?"></textarea>
+                                <textarea name="caption" class="form-control border-0 fixed-textarea" rows="2" placeholder="What's on your mind?"></textarea>
                             </div>
 
                             {{-- Validation Errors --}}

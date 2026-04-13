@@ -122,7 +122,7 @@ class CircleMemberController extends Controller
                 ->whereHas('contactDetails')
                 ->with(['circle', 'contactDetails', 'user', 'topsProfile', 'billingAddress', 'sponsors']);
 
-            if ($user->hasRole('Circle Admin')) {
+            if ($user->hasRole(['Circle Admin', 'Franchise Admin'])) {
                 $memberQuery->where('createdBy', $user->id);
             }
 
@@ -365,7 +365,7 @@ class CircleMemberController extends Controller
         try {
             $businessCategory = BusinessCategory::where('status', 'Active')->orderBy('categoryName', 'asc')->get();
             $user = Auth::user();
-            if ($user->hasRole('Circle Admin')) {
+            if ($user->hasRole(['Circle Admin', 'Franchise Admin'])) {
                 $circle = Circle::where('status', 'Active')->where('createdBy', $user->id)->orderBy('circleName', 'asc')->get();
             } else {
                 $circle = Circle::where('status', 'Active')->orderBy('circleName', 'asc')->get();
@@ -644,7 +644,7 @@ class CircleMemberController extends Controller
             $billing = BillingAddress::where('memberId', $id)->first();
             $tops = TopsProfile::where('memberId', $id)->first();
             $user = Auth::user();
-            if ($user->hasRole('Circle Admin')) {
+            if ($user->hasRole(['Circle Admin', 'Franchise Admin'])) {
                 $circle = Circle::where('status', 'Active')->where('createdBy', $user->id)->orderBy('circleName', 'asc')->get();
             } else {
                 $circle = Circle::where('status', 'Active')->orderBy('circleName', 'asc')->get();

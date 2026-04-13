@@ -645,6 +645,12 @@ class ReportController extends Controller
             $totalBusinessAmount = $business->sum('amount');
             $totalIbmCount = $circleCall->count();
             $totalReferenceCount = $reference->count();
+            if ($request->has('export') && $selectedMemberId) {
+                return Excel::download(
+                    new MemberReportExport($selectedMemberId, $startDate, $endDate),
+                    'member_report.xlsx'
+                );
+            }
         }
 
         return view('admin.report.memberReport', compact(
@@ -792,6 +798,14 @@ class ReportController extends Controller
         $totalCircleCalls = $circleCalls->count();
 
         /* ------------------ 2. IBM ------------------ */
+        $ibmBaseCalls = CircleCall::with(['member', 'meetingPerson'])
+            ->where('status', 'Active')
+            ->when($start, fn($q) => $q->whereBetween('created_at', [$start, $end]))
+            ->where(function ($q) use ($circleId) {
+                $q->whereHas('member', fn($sq) => $sq->where('circleId', $circleId))
+                    ->orWhereHas('meetingPerson', fn($sq) => $sq->where('circleId', $circleId));
+            })
+            ->get();
         $ibms = CircleCall::where('status', 'Active')
             ->when($start, fn($q) => $q->whereBetween('created_at', [$start, $end]))
             ->where(function ($q) use ($circleId) {
@@ -801,7 +815,7 @@ class ReportController extends Controller
                     $sq->where('circleId', $circleId);
                 });
             })
-            ->get()
+            ->with(['member', 'meetingPerson'])->get()
             ->flatMap(function ($item) {
                 return [
                     ['member_id' => $item->memberId],
@@ -809,15 +823,36 @@ class ReportController extends Controller
                 ];
             })
             ->groupBy('member_id')
-            ->map(function ($group, $memberId) use ($circleId) {
+            ->map(function ($group, $memberId) use ($circleId, $ibmBaseCalls) {
+
                 $member = Member::with('circle')->where('userId', $memberId)->first();
 
-                if (! $member) {
+                if (! $member || $member->circleId != $circleId) {
                     return null;
                 }
 
-                if ($member->circleId != $circleId) {
-                    return null;
+                // ✅ Find "with whom" and count
+                $withCounts = [];
+
+                foreach ($ibmBaseCalls as $call) {
+
+                    if ($call->memberId == $memberId || $call->meetingPersonId == $memberId) {
+
+                        $other = $call->memberId == $memberId
+                            ? $call->meetingPerson
+                            : $call->member;
+
+                        if ($other && $other->circleId == $circleId) {
+
+                            $name = $other->firstName . ' ' . $other->lastName;
+
+                            if (!isset($withCounts[$name])) {
+                                $withCounts[$name] = 0;
+                            }
+
+                            $withCounts[$name]++;
+                        }
+                    }
                 }
 
                 return [
@@ -825,6 +860,7 @@ class ReportController extends Controller
                     'memberName' => $member->firstName . ' ' . $member->lastName,
                     'circleName' => $member->circle->circleName ?? '',
                     'member_count' => $group->count(),
+                    'with_members' => $withCounts, // ✅ NEW
                 ];
             })
             ->filter()
@@ -885,8 +921,43 @@ class ReportController extends Controller
             ->take(10) // ✅ only top 5
             ->values();
 
+        $referenceDetails = $references
+            ->groupBy('referenceGiverId')
+            ->map(function ($group) {
+
+                $giver = $group->first()->refGiver;
+
+                $withCounts = [];
+
+                foreach ($group as $item) {
+
+                    // assuming you have receiver relation or field
+                    $receiver = $item->refReceiver;    // adjust if needed
+
+                    if ($receiver) {
+                        $name = $receiver->firstName . ' ' . $receiver->lastName;
+                        $withCounts[$name] = ($withCounts[$name] ?? 0) + 1;
+                    }
+                }
+
+                return [
+                    'referenceGiverName' => $giver->firstName . ' ' . $giver->lastName,
+                    'circleName' => $giver->circle->circleName ?? '',
+                    'with_members' => $withCounts,
+                ];
+            })
+            ->values();
+        // dd($referenceDetails);
         /* ------------------ 4. Business ------------------ */
-        $businessMeetings = CircleMeetingMembersBusiness::with('member')
+        // $businessMeetings = CircleMeetingMembersBusiness::with('member')
+        //     ->where('status', 'Active')
+        //     ->when($start, fn($q) => $q->whereBetween('created_at', [$start, $end]))
+        //     ->whereHas('member', function ($q) use ($circleId) {
+        //         $q->where('circleId', $circleId);
+        //     })
+        //     ->get();
+
+        $businessMeetings = CircleMeetingMembersBusiness::with(['member.circle', 'businessReceiver'])
             ->where('status', 'Active')
             ->when($start, fn($q) => $q->whereBetween('created_at', [$start, $end]))
             ->whereHas('member', function ($q) use ($circleId) {
@@ -910,6 +981,40 @@ class ReportController extends Controller
             ->sortByDesc('total_amount')
             ->take(10) // ✅ only top 5
             ->values();
+        $businessDetails = $businessMeetings
+            ->groupBy('businessGiverId')
+            ->map(function ($group) {
+
+                $giver = $group->first()->member;
+
+                $withData = [];
+
+                foreach ($group as $item) {
+
+                    $receiver = $item->businessReceiver; // ✅ FIXED
+
+                    if ($receiver) {
+                        $name = $receiver->firstName . ' ' . $receiver->lastName;
+
+                        if (!isset($withData[$name])) {
+                            $withData[$name] = [
+                                'count' => 0,
+                                'amount' => 0,
+                            ];
+                        }
+
+                        $withData[$name]['count'] += 1;
+                        $withData[$name]['amount'] += $item->amount;
+                    }
+                }
+
+                return [
+                    'businessGiverName' => $giver->firstName . ' ' . $giver->lastName,
+                    'circleName' => $giver->circle->circleName ?? '',
+                    'with_members' => $withData,
+                ];
+            })
+            ->values();
 
         return view('admin.report.VPReport', compact(
             'circle',
@@ -921,7 +1026,9 @@ class ReportController extends Controller
             'refReport',
             'totalReferences',
             'businessReport',
-            'totalBusinessAmount'
+            'totalBusinessAmount',
+            'referenceDetails',
+            'businessDetails'
         ));
     }
 

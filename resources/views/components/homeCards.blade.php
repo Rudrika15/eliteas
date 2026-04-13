@@ -1290,43 +1290,43 @@
     </div>
     <style>
         /* .uplfeed-card {
-                                                                            background: #ffffff;
-                                                                            border-radius: 12px;
-                                                                            border: 1px solid #e0e0e0;
-                                                                            overflow: hidden;
-                                                                            height: 450px;
-                                                                            display: flex;
-                                                                            align-items: center;
-                                                                            justify-content: center;
-                                                                           
-                                                                        }
+                                                                                                                    background: #ffffff;
+                                                                                                                    border-radius: 12px;
+                                                                                                                    border: 1px solid #e0e0e0;
+                                                                                                                    overflow: hidden;
+                                                                                                                    height: 450px;
+                                                                                                                    display: flex;
+                                                                                                                    align-items: center;
+                                                                                                                    justify-content: center;
+                                                                                                                   
+                                                                                                                }
 
-                                                                      
-                                                                        .image-only-card {
-                                                                                        padding: 0;
-                                                                                    }
+                                                                                                              
+                                                                                                                .image-only-card {
+                                                                                                                                padding: 0;
+                                                                                                                            }
 
-                                                                       
-                                                                        .uplfeed-img-section {
-                                                                            width: 100%;
-                                                                            height: 100%;
-                                                                        }
+                                                                                                               
+                                                                                                                .uplfeed-img-section {
+                                                                                                                    width: 100%;
+                                                                                                                    height: 100%;
+                                                                                                                }
 
-                                                                        .uplfeed-img-wrapper {
-                                                                            width: 100%;
-                                                                            height: 100%;
-                                                                            display: flex;
-                                                                            align-items: center;
-                                                                            justify-content: center;
-                                                                        }
+                                                                                                                .uplfeed-img-wrapper {
+                                                                                                                    width: 100%;
+                                                                                                                    height: 100%;
+                                                                                                                    display: flex;
+                                                                                                                    align-items: center;
+                                                                                                                    justify-content: center;
+                                                                                                                }
 
-                                                                    
-                                                                        .uplfeed-img {
-                                                                            width: 100%;
-                                                                            height: 100%;
-                                                                            object-fit: contain;
-                                                                            display: block;
-                                                                        } */
+                                                                                                            
+                                                                                                                .uplfeed-img {
+                                                                                                                    width: 100%;
+                                                                                                                    height: 100%;
+                                                                                                                    object-fit: contain;
+                                                                                                                    display: block;
+                                                                                                                } */
         .uplfeed-card {
             background: #f2f2f2;
 
@@ -1495,6 +1495,127 @@
                     <div class="col">
                         <div class="captianfeed-card image-only-card">
                             <img src="{{ asset('uplcricket_images/team6.jpeg') }}" class="captianfeed-img" alt="Team 6 Captain">
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    @endif
+    <style>
+        .sponsorfeed-card {
+            background: #ffffff;
+            border-radius: 12px;
+            border: 1px solid #e0e0e0;
+            overflow: hidden;
+            /* height: 220px; */
+            transition: 0.3s;
+        }
+
+        .sponsorfeed-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+        }
+
+        .image-only-card {
+            padding: 0;
+        }
+
+        .sponsorfeed-img-section,
+        .sponsorfeed-img-wrapper {
+            width: 100%;
+            height: 100%;
+        }
+
+        .sponsorfeed-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            /* 🔥 IMPORTANT FIX */
+            display: block;
+        }
+    </style>
+
+    @php
+        $cityId = \App\Models\Member::where('userId', auth()->id())->value('cityId');
+    @endphp
+    @if ($cityId == 3)
+        <div class="card shadow-sm mt-3" style="border-radius: 12px; overflow: hidden;">
+
+            <!-- Header -->
+            <div class="card-header text-white" style="background:#1d3268;">
+                <h5 class="fw-bold mb-0">🏏 UBN Primer League 2.0 Tournament Essentials Suponsors</h5>
+            </div>
+
+            <div class="card-body p-3">
+
+                <!-- ✅ 6 CARDS GRID -->
+                <div class="row row-cols-1 row-cols-md-5 g-4">
+
+                    <!-- TEAM 1 -->
+                    <div class="col">
+                        <div class="sponsorfeed-card image-only-card">
+                            <img src="{{ asset('uplcricket_images/anchor_sponsor.jpeg') }}" class="sponsorfeed-img" alt="Team 1 Captain">
+                        </div>
+                    </div>
+
+                    <!-- TEAM 2 -->
+                    <div class="col">
+                        <div class="sponsorfeed-card image-only-card">
+                            <img src="{{ asset('uplcricket_images/bat_ball_sponsor.jpeg') }}" class="sponsorfeed-img" alt="Team 2 Captain">
+                        </div>
+                    </div>
+
+                    <!-- TEAM 3 -->
+                    <div class="col">
+                        <div class="sponsorfeed-card image-only-card">
+                            <img src="{{ asset('uplcricket_images/six_sponsor.jpeg') }}" class="sponsorfeed-img" alt="Team 3 Captain">
+                        </div>
+                    </div>
+
+                    <!-- TEAM 4 -->
+                    <div class="col">
+                        <div class="sponsorfeed-card image-only-card">
+                            <img src="{{ asset('uplcricket_images/four_sponsor.jpeg') }}" class="sponsorfeed-img" alt="Team 4 Captain">
+                        </div>
+                    </div>
+
+                    <!-- TEAM 5 -->
+                    <div class="col">
+                        <div class="sponsorfeed-card image-only-card">
+                            <img src="{{ asset('uplcricket_images/noball_sponsor.jpeg') }}" class="sponsorfeed-img" alt="Team 5 Captain">
+                        </div>
+                    </div>
+
+                    <!-- TEAM 6 -->
+                    <div class="col">
+                        <div class="sponsorfeed-card image-only-card">
+                            <img src="{{ asset('uplcricket_images/sound_sponsor.jpeg') }}" class="sponsorfeed-img" alt="Team 6 Captain">
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <div class="sponsorfeed-card image-only-card">
+                            <img src="{{ asset('uplcricket_images/umpire_sponsor.jpeg') }}" class="sponsorfeed-img" alt="Team 6 Captain">
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <div class="sponsorfeed-card image-only-card">
+                            <img src="{{ asset('uplcricket_images/water_sponsor.jpeg') }}" class="sponsorfeed-img" alt="Team 6 Captain">
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <div class="sponsorfeed-card image-only-card">
+                            <img src="{{ asset('uplcricket_images/wicket_sopnsor.jpeg') }}" class="sponsorfeed-img" alt="Team 6 Captain">
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <div class="sponsorfeed-card image-only-card">
+                            <img src="{{ asset('uplcricket_images/wide_sponsor.jpeg') }}" class="sponsorfeed-img" alt="Team 6 Captain">
                         </div>
                     </div>
 
@@ -2360,43 +2481,43 @@
     </div>
     <style>
         /* .uplfeed-card {
-                                background: #ffffff;
-                                border-radius: 12px;
-                                border: 1px solid #e0e0e0;
-                                overflow: hidden;
-                                height: 450px;
-                                display: flex;
-                                align-items: center;
-                                justify-content: center;
-                                
-                            }
+                                                                        background: #ffffff;
+                                                                        border-radius: 12px;
+                                                                        border: 1px solid #e0e0e0;
+                                                                        overflow: hidden;
+                                                                        height: 450px;
+                                                                        display: flex;
+                                                                        align-items: center;
+                                                                        justify-content: center;
+                                                                        
+                                                                    }
 
-                            
-                            .image-only-card {
-                                            padding: 0;
-                                        }
+                                                                    
+                                                                    .image-only-card {
+                                                                                    padding: 0;
+                                                                                }
 
-                            
-                            .uplfeed-img-section {
-                                width: 100%;
-                                height: 100%;
-                            }
+                                                                    
+                                                                    .uplfeed-img-section {
+                                                                        width: 100%;
+                                                                        height: 100%;
+                                                                    }
 
-                            .uplfeed-img-wrapper {
-                                width: 100%;
-                                height: 100%;
-                                display: flex;
-                                align-items: center;
-                                justify-content: center;
-                            }
+                                                                    .uplfeed-img-wrapper {
+                                                                        width: 100%;
+                                                                        height: 100%;
+                                                                        display: flex;
+                                                                        align-items: center;
+                                                                        justify-content: center;
+                                                                    }
 
-                        
-                            .uplfeed-img {
-                                width: 100%;
-                                height: 100%;
-                                object-fit: contain;
-                                display: block;
-                            } */
+                                                                
+                                                                    .uplfeed-img {
+                                                                        width: 100%;
+                                                                        height: 100%;
+                                                                        object-fit: contain;
+                                                                        display: block;
+                                                                    } */
         .uplfeed-card {
             background: #f2f2f2;
 
@@ -2566,6 +2687,139 @@
                     <div class="col">
                         <div class="captianfeed-card image-only-card">
                             <img src="{{ asset('uplcricket_images/team6.jpeg') }}" class="captianfeed-img" alt="Team 6 Captain">
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    @endif
+    <style>
+        .sponsorfeed-card {
+            background: #ffffff;
+            border-radius: 12px;
+            border: 1px solid #e0e0e0;
+            overflow: hidden;
+            /* height: 220px; */
+            transition: 0.3s;
+        }
+
+        .sponsorfeed-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+        }
+
+        .image-only-card {
+            padding: 0;
+        }
+
+        .sponsorfeed-img-section,
+        .sponsorfeed-img-wrapper {
+            width: 100%;
+            height: 100%;
+        }
+
+        .sponsorfeed-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            /* 🔥 IMPORTANT FIX */
+            display: block;
+        }
+    </style>
+
+    @php
+        $cityId = \App\Models\Member::where('userId', auth()->id())->value('cityId');
+    @endphp
+    @if ($cityId == 3)
+        <div class="card shadow-sm mt-3" style="border-radius: 12px; overflow: hidden;">
+
+            <!-- Header -->
+            <div class="card-header text-white" style="background:#1d3268;">
+                <h5 class="fw-bold mb-0">🏏 UBN Primer League 2.0 Tournament Essentials Suponsors</h5>
+            </div>
+
+            <div class="card-body p-3">
+
+                <!-- ✅ 6 CARDS GRID -->
+                <div class="row row-cols-1 row-cols-md-4 g-4">
+
+                    <!-- TEAM 1 -->
+                    <div class="col">
+                        <div class="sponsorfeed-card image-only-card">
+                            <img src="{{ asset('uplcricket_images/anchor_sponsor.jpeg') }}" class="sponsorfeed-img" alt="Team 1 Captain">
+                        </div>
+                    </div>
+
+                    <!-- TEAM 2 -->
+                    <div class="col">
+                        <div class="sponsorfeed-card image-only-card">
+                            <img src="{{ asset('uplcricket_images/bat_ball_sponsor.jpeg') }}" class="sponsorfeed-img" alt="Team 2 Captain">
+                        </div>
+                    </div>
+
+                    <!-- TEAM 3 -->
+                    <div class="col">
+                        <div class="sponsorfeed-card image-only-card">
+                            <img src="{{ asset('uplcricket_images/six_sponsor.jpeg') }}" class="sponsorfeed-img" alt="Team 3 Captain">
+                        </div>
+                    </div>
+
+                    <!-- TEAM 4 -->
+                    <div class="col">
+                        <div class="sponsorfeed-card image-only-card">
+                            <img src="{{ asset('uplcricket_images/four_sponsor.jpeg') }}" class="sponsorfeed-img" alt="Team 4 Captain">
+                        </div>
+                    </div>
+
+                    <!-- TEAM 5 -->
+                    <div class="col">
+                        <div class="sponsorfeed-card image-only-card">
+                            <img src="{{ asset('uplcricket_images/noball_sponsor.jpeg') }}" class="sponsorfeed-img" alt="Team 5 Captain">
+                        </div>
+                    </div>
+
+                    <!-- TEAM 6 -->
+                    <div class="col">
+                        <div class="sponsorfeed-card image-only-card">
+                            <img src="{{ asset('uplcricket_images/sound_sponsor.jpeg') }}" class="sponsorfeed-img" alt="Team 6 Captain">
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <div class="sponsorfeed-card image-only-card">
+                            <img src="{{ asset('uplcricket_images/umpire_sponsor.jpeg') }}" class="sponsorfeed-img" alt="Team 6 Captain">
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <div class="sponsorfeed-card image-only-card">
+                            <img src="{{ asset('uplcricket_images/water_sponsor.jpeg') }}" class="sponsorfeed-img" alt="Team 6 Captain">
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <div class="sponsorfeed-card image-only-card">
+                            <img src="{{ asset('uplcricket_images/wicket_sopnsor.jpeg') }}" class="sponsorfeed-img" alt="Team 6 Captain">
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <div class="sponsorfeed-card image-only-card">
+                            <img src="{{ asset('uplcricket_images/wide_sponsor.jpeg') }}" class="sponsorfeed-img" alt="Team 6 Captain">
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <div class="sponsorfeed-card image-only-card">
+                            <img src="{{ asset('uplcricket_images/t-shirt_sponsor.jpeg') }}" class="sponsorfeed-img" alt="Team 6 Captain">
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <div class="sponsorfeed-card image-only-card">
+                            <img src="{{ asset('uplcricket_images/photographts_sponsor.jpeg') }}" class="sponsorfeed-img" alt="Team 6 Captain">
                         </div>
                     </div>
 

@@ -54,7 +54,8 @@
                         <select class="form-select @error('businessCategory') is-invalid @enderror" id="businessCategory" name="businessCategory" required>
                             <option value="" selected disabled>Select Business Category</option>
                             @foreach ($businessCategory as $businessCategoryData)
-                                <option value="{{ $businessCategoryData->id }}">{{ $businessCategoryData->categoryName }}
+                                <option value="{{ $businessCategoryData->id }}" {{ old('businessCategory') == $businessCategoryData->id ? 'selected' : '' }}>
+                                    {{ $businessCategoryData->categoryName }}
                                 </option>
                             @endforeach
                         </select>
@@ -169,7 +170,7 @@
                             $errors->has('mobileNo') &&
                                 $errors->first('mobileNo') ==
                                     'Please enter a valid 10-digit mobile
-                                                                                            number')
+                                                                                                                                                                                                                                            number')
                             <div class="invalid-tooltip" style="color: red;">
                                 {{ $errors->first('mobileNo') }}
                             </div>
@@ -225,8 +226,8 @@
                         <select class="form-select @error('membershipType') is-invalid @enderror" id="membershipType" name="membershipType" onchange="fetchMembershipAmount(this.value)" required>
                             <option value="" selected disabled>Select Membership Type</option>
                             @foreach ($membershipType as $membershipTypeData)
-                                <option value="{{ $membershipTypeData->id }}">{{ $membershipTypeData->membershipType }}
-                                    {{ old('membershipType') }}
+                                <option value="{{ $membershipTypeData->id }}" {{ old('membershipType') == $membershipTypeData->id ? 'selected' : '' }}>
+                                    {{ $membershipTypeData->membershipType }}
                                 </option>
                             @endforeach
                         </select>
@@ -332,7 +333,7 @@
 
             <div class="text-center mt-3">
                 <button type="submit" class="btn btn-bg-blue">Submit</button>
-                <button type="reset" class="btn btn-bg-orange">Reset</button>
+                <button type="button" class="btn btn-bg-orange" onclick="location.reload()">Reset</button>
             </div>
         </form>
     </div>
@@ -585,6 +586,15 @@
                     $('#bCity').html('<option value="">Select City</option>');
                 }
             });
+
+            let oldMembershipType = "{{ old('membershipType') }}";
+
+            if (oldMembershipType) {
+                $('#membershipType').val(oldMembershipType);
+
+                // fetch amount again
+                fetchMembershipAmount(oldMembershipType);
+            }
         });
     </script>
 

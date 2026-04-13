@@ -16,10 +16,19 @@
             <div class="row mb-3">
                 <div class="col-md-6">
                     <div class="form-floating">
-                        <select class="form-select @error('businessCategory') is-invalid @enderror" id="businessCategory" name="businessCategory" required>
+                        {{-- <select class="form-select @error('businessCategory') is-invalid @enderror" id="businessCategory" name="businessCategory" required>
                             <option value="" selected disabled>Select Business Category</option>
                             @foreach ($businessCategory as $businessCategoryData)
                                 <option value="{{ $businessCategoryData->id }}">{{ $businessCategoryData->categoryName }}
+                                </option>
+                            @endforeach
+                        </select> --}}
+                        <select class="form-select @error('businessCategory') is-invalid @enderror" id="businessCategory" name="businessCategory" required>
+                            <option value="" disabled {{ old('businessCategory') ? '' : 'selected' }}>Select Business Category</option>
+
+                            @foreach ($businessCategory as $businessCategoryData)
+                                <option value="{{ $businessCategoryData->id }}" {{ old('businessCategory') == $businessCategoryData->id ? 'selected' : '' }}>
+                                    {{ $businessCategoryData->categoryName }}
                                 </option>
                             @endforeach
                         </select>
@@ -35,10 +44,19 @@
             <div class="row">
                 <div class="col-md-6 mt-3">
                     <div class="form-floating">
-                        <select class="form-select" id="country" name="country" required>
+                        {{-- <select class="form-select" id="country" name="country" required>
                             <option value="" selected disabled>Select Country</option>
                             @foreach ($countries as $country)
                                 <option value="{{ $country->id }}">{{ $country->countryName }}</option>
+                            @endforeach
+                        </select> --}}
+                        <select class="form-select" id="country" name="country" required>
+                            <option value="" disabled {{ old('country') ? '' : 'selected' }}>Select Country</option>
+
+                            @foreach ($countries as $country)
+                                <option value="{{ $country->id }}" {{ old('country') == $country->id ? 'selected' : '' }}>
+                                    {{ $country->countryName }}
+                                </option>
                             @endforeach
                         </select>
                         <label for="country">Country</label>
@@ -117,7 +135,7 @@
                             $errors->has('mobileNo') &&
                                 $errors->first('mobileNo') ==
                                     'Please enter a valid 10-digit mobile
-                                                                    number')
+                                                                                                                                                                                                                                                                    number')
                             <div class="invalid-tooltip" style="color: red;">
                                 {{ $errors->first('mobileNo') }}
                             </div>
@@ -170,11 +188,12 @@
             <div class="row">
                 <div class="col-md-6 mt-3">
                     <div class="form-floating">
-                        <select class="form-select @error('membershipType') is-invalid @enderror" id="membershipType" name="membershipType" onchange="fetchMembershipAmount(this.value)" required>
-                            <option value="" selected disabled>Select Membership Type</option>
+                        <select class="form-select @error('membershipType') is-invalid @enderror" id="membershipType" name="membershipType" required>
+                            <option value="" disabled {{ old('membershipType') ? '' : 'selected' }}>Select Membership Type</option>
+
                             @foreach ($membershipType as $membershipTypeData)
-                                <option value="{{ $membershipTypeData->id }}">{{ $membershipTypeData->membershipType }}
-                                    {{ old('membershipType') }}
+                                <option value="{{ $membershipTypeData->id }}" {{ old('membershipType') == $membershipTypeData->id ? 'selected' : '' }}>
+                                    {{ $membershipTypeData->membershipType }}
                                 </option>
                             @endforeach
                         </select>
@@ -280,7 +299,7 @@
 
             <div class="text-center mt-3">
                 <button type="submit" class="btn btn-bg-blue">Submit</button>
-                <button type="reset" class="btn btn-bg-orange">Reset</button>
+                <button type="button" class="btn btn-bg-orange" onclick="location.reload()">Reset</button>
             </div>
         </form>
     </div>
@@ -502,6 +521,76 @@
                     $('#city').html('<option value="">Select City</option>');
                 }
             });
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+
+            let oldCountry = "{{ old('country') }}";
+            let oldState = "{{ old('state') }}";
+            let oldCity = "{{ old('cityId') }}";
+
+            if (oldCountry) {
+                $('#country').val(oldCountry).trigger('change');
+
+                setTimeout(function() {
+                    if (oldState) {
+                        $('#state').val(oldState).trigger('change');
+                    }
+                }, 500);
+
+                setTimeout(function() {
+                    if (oldCity) {
+                        $('#city').val(oldCity);
+                    }
+                }, 1000);
+            }
+        });
+        $(document).ready(function() {
+
+            let oldCountry = "{{ old('country') }}";
+            let oldState = "{{ old('state') }}";
+            let oldCity = "{{ old('cityId') }}";
+
+            // STEP 1: Set Country
+            if (oldCountry) {
+                $('#country').val(oldCountry);
+
+                // STEP 2: Fetch States
+                $.ajax({
+                    url: '{{ route('get.states') }}',
+                    type: 'POST',
+                    data: {
+                        countryId: oldCountry,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(statesHtml) {
+                        $('#state').html(statesHtml);
+
+                        if (oldState) {
+                            $('#state').val(oldState);
+
+                            // STEP 3: Fetch Cities
+                            $.ajax({
+                                url: '{{ route('get.cities') }}',
+                                type: 'POST',
+                                data: {
+                                    stateId: oldState,
+                                    _token: '{{ csrf_token() }}'
+                                },
+                                success: function(citiesHtml) {
+                                    $('#city').html(citiesHtml);
+
+                                    if (oldCity) {
+                                        $('#city').val(oldCity);
+                                    }
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+
         });
     </script>
 

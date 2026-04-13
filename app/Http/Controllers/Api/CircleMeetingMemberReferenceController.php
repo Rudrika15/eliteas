@@ -8,6 +8,7 @@ use App\Models\CircleMeetingMembersBusiness;
 use App\Models\CircleMeetingMembersReference;
 use App\Models\Member;
 use App\Models\User;
+use App\Models\Notifications;
 use App\Utils\ErrorLogger;
 use App\Utils\Utils;
 use Carbon\Carbon;
@@ -167,11 +168,26 @@ class CircleMeetingMemberReferenceController extends Controller
 
             // Send notification to the specified member
             $memberId = $request->memberId;
-            $user = User::find($memberId);
+            $user = User::where('id', $memberId)->where('status', 'Active')->first();
+            $sender = Auth::user();
+            $senderName = $sender->firstName . ' ' . $sender->lastName;
+            $title = 'Reference';
+
+            $body = 'A new reference has been created for you by ' . $senderName;
+            Notifications::create([
+                'title' => $title,
+                'body' => $body,
+                'data' => json_encode([
+                    'type' => 'reference_created',
+                    'userId' => $sender->id, // sender
+                    'memberId' => $memberId, // receiver
+                    'reference_id' => $refGiver->id
+                ])
+            ]);
 
             if ($user && $user->fcm_token) {
                 $title = 'Reference';
-                $body = 'A new reference has been created for you by '.$user->firstName.' '.$user->lastName.'.';
+                $body = 'A new reference has been created for you by ' . $user->firstName . ' ' . $user->lastName . '.';
 
                 $serviceAccountPath = storage_path('app/public/ubn_notification.json');
                 $factory = (new Factory)->withServiceAccount($serviceAccountPath);
@@ -182,16 +198,16 @@ class CircleMeetingMemberReferenceController extends Controller
 
                 try {
                     $messaging->send($message);
-                    Log::info('Notification sent to token: '.$user->fcm_token);
+                    Log::info('Notification sent to token: ' . $user->fcm_token);
                 } catch (\Kreait\Firebase\Exception\Messaging\NotFound $e) {
-                    Log::error('Token not found: '.$user->fcm_token);
+                    Log::error('Token not found: ' . $user->fcm_token);
                 } catch (\Kreait\Firebase\Exception\Messaging\InvalidArgument $e) {
-                    Log::error('Invalid argument error with token: '.$user->fcm_token);
+                    Log::error('Invalid argument error with token: ' . $user->fcm_token);
                 } catch (\Exception $e) {
-                    Log::error('General error sending to token: '.$user->fcm_token.'. Error: '.$e->getMessage());
+                    Log::error('General error sending to token: ' . $user->fcm_token . '. Error: ' . $e->getMessage());
                 }
             } else {
-                Log::error('No FCM token found for user ID: '.$memberId);
+                Log::error('No FCM token found for user ID: ' . $memberId);
             }
 
             return Utils::sendResponse([], 'Circle Meeting Member Reference created successfully', 200);

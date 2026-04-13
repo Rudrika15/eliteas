@@ -419,6 +419,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('v1/connections/viewMemberProfile', [ConnectionController::class, 'viewMemberProfile']);
     Route::get('v1/connections/ConnectionsRequests', [ConnectionController::class, 'ConnectionsRequests']);
 
+    Route::get('/connections/getCircleMembers', [ConnectionController::class, 'getAllCircles']);
     Route::get('/connections/getCircleMembers/{id?}', [ConnectionController::class, 'getCircleMembers']);
     Route::get('/connections/getCategoryMembers/{id?}', [ConnectionController::class, 'getCategoryMembers']);
 

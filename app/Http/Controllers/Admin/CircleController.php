@@ -471,7 +471,7 @@ class CircleController extends Controller
                 ->where('status', 'Active'); // Only active circles
 
             // If the user is a 'Circle Admin', get circles created by the user and circles they administer
-            if ($user->hasRole('Circle Admin')) {
+            if ($user->hasRole(['Circle Admin', 'Franchise Admin'])) {
                 $circleQuery->where(function ($query) use ($user) {
                     $query->where('createdBy', $user->id) // Circles created by the user
                         ->orWhereIn('id', function ($subQuery) use ($user) {

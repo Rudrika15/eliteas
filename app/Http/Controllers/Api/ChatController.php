@@ -6,6 +6,7 @@ use App\Events\MessageSent;
 use App\Http\Controllers\Controller;
 use App\Models\Conversation;
 use App\Models\Message;
+use App\Models\Notifications;
 use App\Models\User;
 use App\Utils\Utils;
 use Illuminate\Http\Request;
@@ -155,6 +156,8 @@ class ChatController extends Controller
             $message->message = Crypt::encryptString($request->message); // Encrypt the message
             $message->save();
 
+
+
             // Decrypt the message for the response (decrypted only for displaying)
             $decryptedMessage = Crypt::decryptString($message->message);
             $response = [
@@ -165,7 +168,7 @@ class ChatController extends Controller
             ];
 
             // Fetch the receiver's user details
-            $receiver = User::find($request->userId);
+            $receiver = User::where('id', $request->userId)->where('status', 'Active')->first();
             $sender = Auth::user();
 
             if (! $receiver) {
@@ -173,9 +176,21 @@ class ChatController extends Controller
             }
 
             // Prepare notification details
-            $userName = $sender->firstName.' '.$sender->lastName;
+            $userName = $sender->firstName . ' ' . $sender->lastName;
             $title = 'New Message';
-            $body = 'You received a new message from '.$userName;
+            $body = 'You received a new message from ' . $userName;
+
+            Notifications::create([
+                'title' => $title,
+                'body' => $body,
+                'data' => json_encode([
+                    'type' => 'chat_message',
+                    'userId' => $authId, // sender
+                    'memberId' => $receiver->id, // receiver
+                    'conversation_id' => $conversation->id,
+                    'message_id' => $message->id
+                ])
+            ]);
 
             // Send notification to the specific receiver
             if (! empty($receiver->fcm_token)) {
@@ -188,13 +203,13 @@ class ChatController extends Controller
 
                 try {
                     $messaging->send($notificationMessage);
-                    Log::info('Notification sent to token: '.$receiver->fcm_token);
+                    Log::info('Notification sent to token: ' . $receiver->fcm_token);
                 } catch (\Kreait\Firebase\Exception\Messaging\NotFound $e) {
-                    Log::error('Token not found: '.$receiver->fcm_token);
+                    Log::error('Token not found: ' . $receiver->fcm_token);
                 } catch (\Kreait\Firebase\Exception\Messaging\InvalidArgument $e) {
-                    Log::error('Invalid argument error with token: '.$receiver->fcm_token);
+                    Log::error('Invalid argument error with token: ' . $receiver->fcm_token);
                 } catch (\Exception $e) {
-                    Log::error('General error sending to token: '.$receiver->fcm_token.'. Error: '.$e->getMessage());
+                    Log::error('General error sending to token: ' . $receiver->fcm_token . '. Error: ' . $e->getMessage());
                 }
             }
 

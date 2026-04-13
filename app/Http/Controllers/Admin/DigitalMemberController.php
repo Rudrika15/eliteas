@@ -526,7 +526,7 @@ class DigitalMemberController extends Controller
 
             if ($request->hasFile('profilePhoto')) {
                 $profilePhoto = $request->file('profilePhoto');
-                $profilePhotoName = time().'.'.$profilePhoto->extension();
+                $profilePhotoName = time() . '.' . $profilePhoto->extension();
                 $profilePhoto->move(public_path('ProfilePhoto'), $profilePhotoName);
                 $member->profilePhoto = $profilePhotoName;
             }
@@ -534,7 +534,7 @@ class DigitalMemberController extends Controller
             // CompanyLogo upload
             if ($request->hasFile('companyLogo')) {
                 $companyLogo = $request->file('companyLogo');
-                $companyLogoName = time().'.'.$companyLogo->extension();
+                $companyLogoName = time() . '.' . $companyLogo->extension();
                 $companyLogo->move(public_path('CompanyLogo'), $companyLogoName);
                 $member->companyLogo = $companyLogoName;
             }

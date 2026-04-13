@@ -41,6 +41,7 @@
                             <tr>
                                 <th>S.No</th>
                                 <th>Name</th>
+                                <th>Joining Date</th>
                                 <th>Membership Type</th>
                                 <th>Amount</th>
                                 <th>Validity</th>
@@ -55,6 +56,9 @@
                                     </th>
                                     <td>{{ $subscriptionData->user->firstName ?? '-' }}
                                         {{ $subscriptionData->user->lastName ?? '-' }}
+                                    </td>
+                                    <td>
+                                        {{ optional($subscriptionData->user->member)->created_at?->format('d M Y') }}
                                     </td>
                                     <td>{{ $subscriptionData->membershipType ?? '-' }}</td>
                                     <td>{{ number_format($subscriptionData->allPayments->amount ?? 0, 2) ?? '-' }}</td>
