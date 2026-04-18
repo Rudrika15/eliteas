@@ -200,39 +200,41 @@
 
         <div style="display: flex; gap: 0;">
             @role('Vice President|President')
-                {{-- <button type="button" class="btn btn-bg-blue btn-md" onclick="copyPublicFormLink()">📋 Copy Public Form
-                Link</button> --}}
+                @if (auth()->id() == 4)
+                    <button type="button" class="btn btn-bg-blue btn-md" onclick="copyPublicFormLink()">📋 Copy Public Form
+                        Link</button>
 
-                <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-                <script>
-                    function copyPublicFormLink() {
-                        const circleId = "{{ auth()->user()->member->circle->id }}";
-                        const circleName = "{{ auth()->user()->member->circle->circleName }}";
+                    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+                    <script>
+                        function copyPublicFormLink() {
+                            const circleId = "{{ auth()->user()->member->circle->id }}";
+                            const circleName = "{{ auth()->user()->member->circle->circleName }}";
 
-                        fetch(`{{ url('/encrypt-circle-id') }}?id=${circleId}&name=${encodeURIComponent(circleName)}`)
-                            .then(response => response.json())
-                            .then(data => {
-                                const publicLink = `${window.location.origin}/members/form?cid=${encodeURIComponent(data.id)}&cname=${encodeURIComponent(data.name)}`;
-                                navigator.clipboard.writeText(publicLink)
-                                    .then(() => {
-                                        Swal.fire({
-                                            icon: 'success',
-                                            title: 'Copied!',
-                                            text: '🔗 Public form link copied successfully!',
-                                            timer: 2000,
-                                            showConfirmButton: false
+                            fetch(`{{ url('/encrypt-circle-id') }}?id=${circleId}&name=${encodeURIComponent(circleName)}`)
+                                .then(response => response.json())
+                                .then(data => {
+                                    const publicLink = `${window.location.origin}/members/form?cid=${encodeURIComponent(data.id)}&cname=${encodeURIComponent(data.name)}`;
+                                    navigator.clipboard.writeText(publicLink)
+                                        .then(() => {
+                                            Swal.fire({
+                                                icon: 'success',
+                                                title: 'Copied!',
+                                                text: '🔗 Public form link copied successfully!',
+                                                timer: 2000,
+                                                showConfirmButton: false
+                                            });
+                                        })
+                                        .catch(() => {
+                                            Swal.fire({
+                                                icon: 'error',
+                                                title: 'Oops!',
+                                                text: '❌ Failed to copy link.',
+                                            });
                                         });
-                                    })
-                                    .catch(() => {
-                                        Swal.fire({
-                                            icon: 'error',
-                                            title: 'Oops!',
-                                            text: '❌ Failed to copy link.',
-                                        });
-                                    });
-                            });
-                    }
-                </script>
+                                });
+                        }
+                    </script>
+                @endif
             @endrole
         </div>
         <div class="ms-auto d-flex align-items-center gap-3">

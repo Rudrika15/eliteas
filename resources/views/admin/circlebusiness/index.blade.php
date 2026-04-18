@@ -594,6 +594,14 @@
                         success: function(response) {
                             if (response.members && response.members.length > 0) {
                                 response.members.forEach(function(member) {
+                                    let fullName = '';
+
+                                    if (member.firstName === 'UBN') {
+                                        fullName = 'UBN';
+                                    } else {
+                                        fullName = (member.firstName || '') + ' ' + (member.lastName || '');
+                                        fullName = fullName.trim();
+                                    }
                                     $('#memberId').append('<option value="' + member.userId +
                                         '" data-user-id="' + member.userId +
                                         '" data-first-name="' + member.firstName +

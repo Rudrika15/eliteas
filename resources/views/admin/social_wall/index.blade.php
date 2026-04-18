@@ -173,12 +173,12 @@
         }
 
         /* .post-avatar {
-                                                                                                                                                                                                                                        width: 40px;
-                                                                                                                                                                                                                                        height: 40px;
-                                                                                                                                                                                                                                        border-radius: 50%;
-                                                                                                                                                                                                                                        margin-right: 10px;
-                                                                                                                                                                                                                                        object-fit: cover;
-                                                                                                                                                                                                                                    } */
+                                                                                                                                                                                                                                                                                    width: 40px;
+                                                                                                                                                                                                                                                                                    height: 40px;
+                                                                                                                                                                                                                                                                                    border-radius: 50%;
+                                                                                                                                                                                                                                                                                    margin-right: 10px;
+                                                                                                                                                                                                                                                                                    object-fit: cover;
+                                                                                                                                                                                                                                                                                } */
         .post-avatar {
             width: 40px;
             height: 40px;
@@ -573,11 +573,15 @@
             border-radius: 8px;
             object-fit: cover;
         }
+
         .fixed-textarea {
-    resize: none;        /* ❌ Disable manual resize */
-    height: 60px;        /* ✅ Fixed height */
-    overflow-y: auto;    /* ✅ Scroll if text is more */
-}
+            resize: none;
+            /* ❌ Disable manual resize */
+            height: 60px;
+            /* ✅ Fixed height */
+            overflow-y: auto;
+            /* ✅ Scroll if text is more */
+        }
     </style>
 
     <div class="social-wall-layout">
@@ -596,11 +600,14 @@
 
                             <div class="d-flex justify-content-between align-items-center border-top pt-2">
                                 <div>
-                                    <label class="btn btn-sm btn-light text-primary mb-0" style="cursor: pointer;">
+                                    <label class="btn btn-sm btn-light text-primary mb-0" style="cursor: pointer;" title="Upload 1000x1000 image (1:1 ratio)">
                                         <i class="bi bi-image"></i> Photo
                                         <input type="file" name="attachments[]" accept="image/*" multiple hidden onchange="previewFiles(this)">
                                     </label>
                                     <span id="file-count" class="ms-2 text-muted small"></span>
+                                    <small style="color:gray;">
+                                        (Only 1000×1000 px, 1:1 ratio)
+                                    </small>
                                 </div>
                                 <button type="submit" id="upload-btn" class="btn btn-primary btn-sm px-4">Post</button>
                             </div>

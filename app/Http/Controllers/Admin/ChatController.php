@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Conversation;
 use App\Models\Message;
+use App\Models\Notifications;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -46,8 +47,8 @@ class ChatController extends Controller
             'message' => 'required|string',
         ]);
 
-        $authId = Auth::id(); // Current authenticated user's ID
-        $receiverId = $request->memberId; // Receiver's user ID from the request
+        $authId = Auth::id();
+        $receiverId = $request->memberId;
 
         // Find an existing conversation between the authenticated user and the target user
         $conversation = Conversation::where(function ($query) use ($authId, $receiverId) {
@@ -75,13 +76,24 @@ class ChatController extends Controller
 
         // Assuming you have the proper user models for sender and receiver
         $sender = Auth::user(); // Get the authenticated user
-        $receiver = User::find($receiverId); // Find the receiver by their ID
-
+        $receiver = User::where('id', $receiverId)->where('status', 'Active')->first();
         // Prepare notification details
-        $userName = $sender->firstName.' '.$sender->lastName;
+        $userName = $sender->firstName . ' ' . $sender->lastName;
         $title = 'New Message';
-        $body = 'You received a new message from '.$userName;
+        $body = 'You received a new message from ' . $userName;
 
+        Notifications::create([
+            'title' => $title,
+            'body' => $body,
+            'data' => json_encode([
+                'type' => 'chat_message',
+                'userId' => $authId,
+                'memberId' => $receiver->id,
+                'message_id' => $message->id
+            ])
+        ]);
+
+        // dd("Notification created in database for conversation ID: " . $conversation->id);
         // Send notification to the specific receiver
         if (! empty($receiver->fcm_token)) {
             $serviceAccountPath = storage_path('app/public/ubn_notification.json');
@@ -93,13 +105,13 @@ class ChatController extends Controller
 
             try {
                 $messaging->send($notificationMessage);
-                Log::info('Notification sent to token: '.$receiver->fcm_token);
+                Log::info('Notification sent to token: ' . $receiver->fcm_token);
             } catch (\Kreait\Firebase\Exception\Messaging\NotFound $e) {
-                Log::error('Token not found: '.$receiver->fcm_token);
+                Log::error('Token not found: ' . $receiver->fcm_token);
             } catch (\Kreait\Firebase\Exception\Messaging\InvalidArgument $e) {
-                Log::error('Invalid argument error with token: '.$receiver->fcm_token);
+                Log::error('Invalid argument error with token: ' . $receiver->fcm_token);
             } catch (\Exception $e) {
-                Log::error('General error sending to token: '.$receiver->fcm_token.'. Error: '.$e->getMessage());
+                Log::error('General error sending to token: ' . $receiver->fcm_token . '. Error: ' . $e->getMessage());
             }
         }
 

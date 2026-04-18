@@ -981,3 +981,17 @@ Route::post('/store-user-details', [EventController::class, 'storeUserDetails'])
 Route::post('/check-registration', [EventController::class, 'checkRegistration'])->name('checkRegistration');
 Route::post('/razorpay-payment-userEventPayment', [PaymentController::class, 'userEventPayment'])->name('razorpay.payment.userEventPayment');
 Route::post('/userOfflinePayment', [PaymentController::class, 'userOfflinePayment'])->name('eventPayment.userOfflinePayment');
+Route::get('/clear-cache/{key}', function ($key) {
+
+    if ($key !== 'clearallcache') {
+        abort(403);
+    }
+
+    Artisan::call('config:clear');
+    Artisan::call('cache:clear');
+    Artisan::call('config:cache');
+    Artisan::call('route:clear');
+    Artisan::call('view:clear');
+
+    return "✅ Cache cleared!";
+});

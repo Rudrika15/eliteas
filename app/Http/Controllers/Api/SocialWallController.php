@@ -66,6 +66,15 @@ class SocialWallController extends Controller
             }
 
             $post->save();
+            $post->load(['user:id,firstName,lastName', 'user.member:id,userId,profilePhoto']);
+            if ($post->attachment) {
+                $post->attachmentUrl = url($post->attachment);
+            }
+            if ($post->user && $post->user->member && $post->user->member->profilePhoto) {
+                $post->user->profilePhotoUrl = url('ProfilePhoto/' . $post->user->member->profilePhoto);
+            } else {
+                $post->user->profilePhotoUrl = null;
+            }
 
             return Utils::sendResponse(['post' => $post], 'Post created successfully', 201);
         } catch (\Throwable $th) {
@@ -102,11 +111,11 @@ class SocialWallController extends Controller
                 //             $rq->where('name', 'Admin');
                 //         });
                 // })
-                ->with(['user:id,firstName,lastName', 'likes' => function ($q) {
+                ->with(['user:id,firstName,lastName', 'user.member:id,userId,profilePhoto', 'user.member.city:id,name', 'likes' => function ($q) {
                     $q->where('status', 'Active');
                 }, 'comments' => function ($q) {
                     $q->where('status', 'Active')->orderBy('created_at', 'desc');
-                }, 'comments.user:id,firstName,lastName'])
+                }, 'comments.user:id,firstName,lastName', 'comments.user.member:id,userId,profilePhoto'])
                 ->withCount(['likes' => function ($query) {
                     $query->where('status', 'Active');
                 }])
@@ -125,6 +134,11 @@ class SocialWallController extends Controller
                 // Construct full URL for attachment
                 if ($post->attachment) {
                     $post->attachmentUrl = url($post->attachment);
+                }
+                if ($post->user && $post->user->member && $post->user->member->profilePhoto) {
+                    $post->user->profilePhotoUrl = url('ProfilePhoto/' . $post->user->member->profilePhoto);
+                } else {
+                    $post->user->profilePhotoUrl = null;
                 }
 
                 // Add user profile photo if available (assuming relationship or column exists)

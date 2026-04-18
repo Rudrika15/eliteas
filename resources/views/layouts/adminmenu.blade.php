@@ -222,8 +222,6 @@
             </a>
         </li> --}}
 
-
-
         <li class="nav-item">
             <a class="nav-link " href="{{ route('circle.index') }}">
                 <i class="bi bi-plus-circle-dotted" style="color: #e76a35"></i>
@@ -237,6 +235,7 @@
                 <span>Circle Member</span>
             </a>
         </li>
+
 
         <li class="nav-item">
             <a class="nav-link " href="{{ route('circlemember.deletedMemberList') }}">

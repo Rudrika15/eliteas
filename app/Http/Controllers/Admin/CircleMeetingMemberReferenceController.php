@@ -9,6 +9,7 @@ use App\Models\CircleMeetingMembersBusiness;
 use App\Models\CircleMeetingMembersReference;
 use App\Models\City;
 use App\Models\Member;
+use App\Models\Notifications;
 use App\Models\Schedule;
 use App\Utils\ErrorLogger;
 use Carbon\Carbon;
@@ -445,6 +446,18 @@ class CircleMeetingMemberReferenceController extends Controller
             $refGiver->status = 'Active';
 
             $refGiver->save();
+
+            $body = Auth::user()->name . ' has given you a reference.';
+            Notifications::create([
+                'title' => 'New Reference Received',
+                'body' =>  $body,
+                'data' => json_encode([
+                    'type' => 'reference_created',
+                    'userId' => Auth::user()->id,
+                    'memberId' => $request->memberId,
+                    'reference_id' => $refGiver->id
+                ])
+            ]);
 
             // $busGiver = new CircleMeetingMembersBusiness();
             // // $busGiver->memberId = $request->memberId;

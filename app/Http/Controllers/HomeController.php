@@ -11,8 +11,10 @@ use App\Models\CircleMeetingMembersReference;
 use App\Models\City;
 use App\Models\Post;
 use App\Models\Connection;
+use App\Models\ContactDetails;
 use App\Models\Event;
 use App\Models\EventRegister;
+use App\Models\Landmark;
 use App\Models\MeetingInvitation;
 use App\Models\Member;
 use App\Models\Message;
@@ -254,6 +256,9 @@ class HomeController extends Controller
             if ($type == 'connection_accept' || $type == 'connection_reject') {
                 return isset($data['memberId']) && $data['memberId'] == $authUser->id;
             }
+            if ($type == 'chat_message') {
+                return isset($data['memberId']) && $data['memberId'] == $authUser->id;
+            }
             return false;
         })->map(function ($notification) {
             $data = json_decode($notification->data, true);
@@ -296,7 +301,7 @@ class HomeController extends Controller
 
             if (Auth::user()->hasRole('Digital Member')) {
                 // Digital Member Dashboard View
-                return view('home')->with('message', 'Digital Member Dashboard Coming Soon...');
+                return view('home')->with(['message', 'Digital Member Dashboard Coming Soon...', 'show_profile_popup' => true]);
             }
 
             $membersCount = Member::where('status', 'Active')->count();
@@ -826,6 +831,13 @@ class HomeController extends Controller
                     if ($type == 'connection_accept' || $type == 'connection_reject') {
                         return isset($data['memberId']) && $data['memberId'] == $authUser->id;
                     }
+                    if ($type == 'chat_message') {
+                        return isset($data['memberId']) && $data['memberId'] == $authUser->id;
+                    }
+                    if ($type == 'reference_created') {
+                        return isset($data['memberId']) && $data['memberId'] == $authUser->id;
+                    }
+
                     return false;
                 })->map(function ($notification) {
                     $data = json_decode($notification->data, true);
@@ -884,20 +896,117 @@ class HomeController extends Controller
                 if (! empty($businessCategoryIdArray)) {
                     $businessCategories = BusinessCategory::whereIn('id', $businessCategoryIdArray)->get();
                 }
+                $city = City::where('status', 'Active')->get();
 
-                // Debugging
-                // dd([
-                //     'businessCategoryId' => $businessCategoryId,
-                //     'businessCategoryIdArray' => $businessCategoryIdArray,
-                //     'businessCategories' => $businessCategories
-                // ]);
+
+                $missingFields = [];
+
+                if (Auth::check()) {
+
+                    $member = Member::where('userId', Auth::id())->first();
+                    $user = Auth::user();
+                    $contact = ContactDetails::where('memberId', $member->id ?? 0)->first();
+
+                    // ✅ Helper function (VERY IMPORTANT)
+                    function isEmptyField($value)
+                    {
+                        return empty(trim((string)$value)) || $value == '-' || strtolower($value) == 'null';
+                    }
+
+                    if ($member) {
+
+                        // ================= MEMBER =================
+
+                        if (isEmptyField($member->title)) {
+                            $missingFields[] = 'Title';
+                        }
+
+                        if (isEmptyField($member->firstName)) {
+                            $missingFields[] = 'First Name';
+                        }
+
+                        if (isEmptyField($member->lastName)) {
+                            $missingFields[] = 'Last Name';
+                        }
+
+                        if (isEmptyField($member->gender)) {
+                            $missingFields[] = 'Gender';
+                        }
+
+                        if (isEmptyField($member->birthDate)) {
+                            $missingFields[] = 'Birth Date';
+                        }
+
+                        if (isEmptyField($member->companyName)) {
+                            $missingFields[] = 'Company Name';
+                        }
+
+                        if (isEmptyField($member->webSite)) {
+                            $missingFields[] = 'Website';
+                        }
+
+                        if (isEmptyField($member->gstinPan)) {
+                            $missingFields[] = 'GST/PAN';
+                        }
+
+                        if (empty($member->cityId)) {
+                            $missingFields[] = 'City';
+                        }
+
+                        if (isEmptyField($member->landmark)) {
+                            $missingFields[] = 'Landmark';
+                        }
+
+                        if (isEmptyField($member->profilePhoto)) {
+                            $missingFields[] = 'Profile Photo';
+                        }
+
+                        if (isEmptyField($member->companyLogo)) {
+                            $missingFields[] = 'Company Logo';
+                        }
+
+                        // ================= KEYWORDS =================
+                        $keywords = json_decode($member->keyWords, true);
+
+                        if (empty(array_filter($keywords ?? []))) {
+                            $missingFields[] = 'Keywords';
+                        }
+                    }
+
+                    // ================= USER =================
+
+                    if (isEmptyField($user->email)) {
+                        $missingFields[] = 'Email';
+                    }
+
+                    if (isEmptyField($user->contactNo)) {
+                        $missingFields[] = 'Contact Number';
+                    }
+
+                    // ================= CONTACT =================
+
+                    if ($contact) {
+
+                        if (isEmptyField($contact->addressLine1)) {
+                            $missingFields[] = 'Address Line 1';
+                        }
+
+                        if (isEmptyField($contact->addressLine2)) {
+                            $missingFields[] = 'Address Line 2';
+                        }
+                    } else {
+
+                        $missingFields[] = 'Address Line 1';
+                        $missingFields[] = 'Address Line 2';
+                    }
+                }
 
                 $categoryNames = $businessCategories->pluck('categoryName');
 
-                return view('home', compact('circleCount', 'authCircleId', 'categoryNames', 'membersCount', 'signedUrl', 'birthdaysToday', 'templates', 'count', 'monthlyPayments', 'totalAmountDue', 'nearestEvents', 'circlecalls', 'busGiver', 'refGiver', 'induction', 'nearestTraining', 'testimonials', 'meeting', 'businessCategory', 'myInvites', 'todaysBirthdays', 'pendingCount', 'receivedRequests', 'notifications', 'notificationCount', 'posts'));
+                return view('home', compact('circleCount', 'authCircleId', 'categoryNames', 'membersCount', 'signedUrl', 'birthdaysToday', 'templates', 'count', 'monthlyPayments', 'totalAmountDue', 'nearestEvents', 'circlecalls', 'busGiver', 'refGiver', 'induction', 'nearestTraining', 'testimonials', 'meeting', 'businessCategory', 'myInvites', 'todaysBirthdays', 'pendingCount', 'receivedRequests', 'notifications', 'notificationCount', 'posts', 'missingFields', 'member', 'city'));
             }
 
-            return view('home', compact('circleCount', 'membersCount', 'count', 'nearestTraining', 'businessCategory', 'myInvites', 'birthdaysToday', 'templates', 'pendingCount'));
+            return view('home', compact('circleCount', 'membersCount', 'count', 'nearestTraining', 'businessCategory', 'myInvites', 'birthdaysToday', 'templates', 'pendingCount', 'missingFields', 'member'));
         } catch (\Throwable $th) {
             // Log the error
             throw $th;
@@ -1593,16 +1702,43 @@ class HomeController extends Controller
             $notifications = Notifications::latest()->get()->filter(function ($notification) use ($userId) {
 
                 $data = json_decode($notification->data, true);
-                $type = $data['type'] ?? null;
 
-                // Connection Request -> Show to Receiver
-                if ($type == 'connection_request') {
-                    return isset($data['memberId']) && $data['memberId'] == $userId;
+                if (is_string($data)) {
+                    $data = json_decode($data, true);
                 }
 
-                // Accept or Reject -> Show to Original Sender
-                if ($type == 'connection_accept' || $type == 'connection_reject') {
-                    return isset($data['memberId']) && $data['memberId'] == $userId;
+                if (!$data) return false;
+                $type = $data['type'] ?? null;
+
+                $memberId = isset($data['memberId']) ? (int)$data['memberId'] : null;
+                $senderId = isset($data['userId']) ? (int)$data['userId'] : null;
+
+                // // Connection Request -> Show to Receiver
+                // if ($type == 'connection_request') {
+                //     return $memberId === (int)$userId;
+                // }
+
+                // // Accept or Reject -> Show to Original Sender
+                // if ($type == 'connection_accept' || $type == 'connection_reject') {
+                //     return $memberId === (int)$userId;
+                // }
+                // // 🔥 FIXED CHAT MESSAGE LOGIC
+                // if ($type == 'chat_message') {
+                //     return $memberId === $userId || $senderId === $userId;
+                // }
+                if ($type == 'connection_request') {
+                    return $memberId === $userId;
+                }
+
+                if (in_array($type, ['connection_accept', 'connection_reject'])) {
+                    return $memberId === $userId;
+                }
+
+                if ($type == 'chat_message') {
+                    return $memberId === $userId;
+                }
+                if ($type == 'reference_created') {
+                    return $memberId === $userId;
                 }
 
                 return false;
@@ -1661,6 +1797,17 @@ class HomeController extends Controller
                 'tab' => 'connections'
             ]);
         }
+        if ($type === 'chat_message') {
+            return redirect()->route('chat.index', [
+                'userId' => $data['userId'] ?? null
+            ]);
+        }
+        if ($type === 'reference_created') {
+            return redirect()->route('chat.index', [
+                'userId' => $data['userId'] ?? null
+            ]);
+        }
+
         return redirect()->back();
     }
 

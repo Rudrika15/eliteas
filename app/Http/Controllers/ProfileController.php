@@ -82,7 +82,7 @@ class ProfileController extends Controller
 
     public function memberUpdate(Request $request)
     {
-        // return $request;
+        //return $request;
 
         try {
             $this->validate($request, [
@@ -92,28 +92,41 @@ class ProfileController extends Controller
 
             $id = $request->input('id');
             $member = Member::find($id);
+            if ($request->filled('title')) {
+                $member->title = $request->title;
+            }
+            if ($request->filled('firstName')) {
+                $member->firstName = $request->firstName;
+            }
+            if ($request->filled('lastName')) {
+                $member->lastName = $request->lastName;
+            }
+            if ($request->filled('username')) {
+                $member->username = $request->username;
+            }
 
-            $member->title = $request->title;
-            $member->firstName = $request->firstName;
-            $member->lastName = $request->lastName;
-            $member->username = $request->username;
             // $member->email = $request->email;
             // $member->suffix = $request->suffix;
             // $member->displayName = $request->displayName;
             // $member->gstRegiState = $request->gstRegiState;
-            $member->gStinPan = $request->gStinPan;
+
+            if ($request->filled('gstinPan')) {
+                $member->gStinPan = $request->gStinPan;
+            }
             // $member->industry = $request->industry;
             // $member->classification = $request->classification;
-            $member->gender = $request->gender;
+            if ($request->filled('gender')) {
+                $member->gender = $request->gender;
+            }
             // $member->language = $request->language;
             // $member->timeZone = $request->timeZone;
 
-            if ($request->profilePhoto) {
+            if ($request->hasFile('profilePhoto')) {
                 $member->profilePhoto = time() . '.' . $request->profilePhoto->extension();
                 $request->profilePhoto->move(public_path('ProfilePhoto'), $member->profilePhoto);
             }
 
-            if ($request->companyLogo) {
+            if ($request->hasFile('companyLogo')) {
                 $member->companyLogo = time() . '.' . $request->companyLogo->extension();
                 $request->companyLogo->move(public_path('CompanyLogo'), $member->companyLogo);
             }
@@ -122,13 +135,21 @@ class ProfileController extends Controller
             // $member->chapter = $request->chapter;
             // $member->renewalDueDate = $request->renewalDueDate;
             // $member->accomplishment = $request->accomplishment;
-            $member->companyName = $request->companyName;
-            $member->birthDate = $request->birthDate;
+            if ($request->filled('companyName')) {
+                $member->companyName = $request->companyName;
+            }
+
+            if ($request->filled('birthDate')) {
+                $member->birthDate = $request->birthDate;
+            }
             // $member->interests = $request->interests;
             // $member->networks = $request->networks;
             // $member->skills = $request->skills;
             // $member->myBusiness = $request->myBusiness;
-            $member->webSite = $request->webSite;
+
+            if ($request->filled('webSite')) {
+                $member->webSite = $request->webSite;
+            }
             // $member->showWebsite = $request->showWebsite;
             // $member->socialLinks = $request->socialLinks;
             // $member->showSocialLinks = $request->showSocialLinks;
@@ -136,40 +157,60 @@ class ProfileController extends Controller
             // $member->shareRevenue = $request->shareRevenue;
             // $member->membershipStatus = $request->membershipStatus;
             // $member->keyWords = $request->keyWords;
-            $keywords = array_filter([$request->keyword1, $request->keyword2, $request->keyword3]);
-            $member->keyWords = $keywords;
-            $member->cityId = $request->city;
+            // $keywords = array_filter([$request->keyword1, $request->keyword2, $request->keyword3])
 
-            $landmarkName = $request->landmark;
-            if ($landmarkName == 'Other') {
-                $landmarkName = $request->other_landmark;
-                // Save new landmark to landmarks table if it doesn't exist
-                if ($landmarkName) {
-                    // Check if it already exists (case insensitive check recommended)
-                    $existingLandmark = Landmark::where('cityId', $request->city)
-                        ->where('name', $landmarkName)
-                        ->first();
+            $keywords = array_filter([
+                $request->keyword1,
+                $request->keyword2,
+                $request->keyword3
+            ]);
+            if (!empty($keywords)) {
+                $member->keyWords = $keywords;
+            }
+            if ($request->filled('city')) {
+                $member->cityId = $request->city;
+            }
 
-                    if (! $existingLandmark) {
-                        Landmark::create([
-                            'cityId' => $request->city,
-                            'name' => $landmarkName,
-                            'status' => 'Active',
-                        ]);
+            if ($request->filled('landmark')) {
+                $landmarkName = $request->landmark;
+                if ($landmarkName == 'Other') {
+                    $landmarkName = $request->other_landmark;
+                    // Save new landmark to landmarks table if it doesn't exist
+                    if ($landmarkName) {
+                        // Check if it already exists (case insensitive check recommended)
+                        $existingLandmark = Landmark::where('cityId', $request->city)
+                            ->where('name', $landmarkName)
+                            ->first();
+
+                        if (! $existingLandmark) {
+                            Landmark::create([
+                                'cityId' => $request->city,
+                                'name' => $landmarkName,
+                                'status' => 'Active',
+                            ]);
+                        }
                     }
                 }
+                $member->landmark = $landmarkName;
             }
-            $member->landmark = $landmarkName;
 
             $member->status = 'Active';
             $member->save();
 
             $user = User::find(Auth::id());
 
-            $user->firstName = $request->firstName;
-            $user->lastName = $request->lastName;
-            $user->email = $request->email;
-            $user->contactNo = $request->contactNo;
+            if ($request->filled('firstName')) {
+                $user->firstName = $request->firstName;
+            }
+            if ($request->filled('lastName')) {
+                $user->lastName = $request->lastName;
+            }
+            if ($request->filled('email')) {
+                $user->email = $request->email;
+            }
+            if ($request->filled('contactNo')) {
+                $user->contactNo = $request->contactNo;
+            }
             $user->save();
 
             $tops = TopsProfile::where('memberId', $member->id)->first();
@@ -191,9 +232,10 @@ class ProfileController extends Controller
             // $tops->myBurningDesire = $request->myBurningDesire;
             // $tops->dontKnowAboutMe = $request->dontKnowAboutMe;
             // $tops->mKeyToSuccess = $request->mKeyToSuccess;
-            $tops->status = 'Active';
-
-            $tops->save();
+            if ($tops) {
+                $tops->status = 'Active';
+                $tops->save();
+            }
 
             $contact = ContactDetails::where('memberId', $member->id)->first();
             // $contact->showMeOnPublicWeb = $request->showMeOnPublicWeb;
@@ -211,18 +253,25 @@ class ProfileController extends Controller
             // $contact->showTollFree = $request->showTollFree;
             // $contact->fax = $request->fax;
             // $contact->showFax = $request->showFax;
-            $contact->email = $request->email;
             // $contact->showEmail = $request->showEmail;
-            $contact->addressLine1 = $request->addressLine1;
-            $contact->addressLine2 = $request->addressLine2;
             // $contact->profileAddress = $request->profileAddress;
             // $contact->city = $request->city;
             // $contact->state = $request->state;
             // $contact->country = $request->country;
             // $contact->pinCode = $request->pinCode;
-            $contact->status = 'Active';
+            if ($contact) {
 
-            $contact->save();
+                $contact->email = $request->email;
+
+
+                $contact->addressLine1 = $request->addressLine1;
+
+
+                $contact->addressLine2 = $request->addressLine2;
+
+                $contact->status = 'Active';
+                $contact->save();
+            }
 
             $billing = BillingAddress::where('memberId', $member->id)->first();
             // $billing->bAddressLine1 = $request->bAddressLine1;
@@ -231,11 +280,12 @@ class ProfileController extends Controller
             // $billing->bState = $request->bState;
             // $billing->bCountry = $request->bCountry;
             // $billing->bPinCode = $request->bPinCode;
-            $billing->status = 'Active';
+            if ($billing) {
+                $billing->status = 'Active';
+                $billing->save();
+            }
 
-            $billing->save();
-
-            return redirect()->route('home')->with('success', 'Profile Updated Successfully!');
+            return redirect()->route('home')->with('success', 'Profile Updated Successfully!')->with('profileUpdated', true);
         } catch (Throwable $th) {
             // throw $th;
             ErrorLogger::logError(

@@ -35,6 +35,10 @@ use App\Models\Message;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
+use App\Models\Conversation;
+use App\Models\Notifications;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class MessageController extends Controller
 {
@@ -70,6 +74,30 @@ class MessageController extends Controller
             'sender_id' => $request->input('sender_id'),
             'message' => $encryptedMessage,
         ]);
+
+        $conversation = Conversation::find($request->input('conversation_id'));
+        $senderId = $request->input('sender_id');
+        $receiverId = ($conversation->user_one_id == $senderId)
+            ? $conversation->user_two_id
+            : $conversation->user_one_id;
+
+        $sender = User::find($senderId);
+        $receiver = User::find($receiverId);
+        if ($receiver) {
+            Notifications::create([ // 👈 IMPORTANT
+                'title' => 'New Message',
+                'body' => $sender->firstName . ' ' . $sender->lastName . ' sent you a message',
+                'data' => json_encode([
+                    'type' => 'chat_message',
+                    'userId' => $senderId,       // sender
+                    'memberId' => $receiverId,   // receiver
+                    'conversation_id' => $conversation->id,
+                    'message_id' => $message->id,
+                    'message' => $request->input('message') // optional preview
+                ])
+            ]);
+        }
+
 
         broadcast(new MessageSent($message))->toOthers();
 

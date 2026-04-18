@@ -286,8 +286,10 @@
 
                             @forelse ($notifications as $notification)
                                 @php
+
                                     $data = json_decode($notification->data, true);
                                     $type = $data['type'] ?? '';
+                                    //dd($notification);
                                 @endphp
 
                                 <a href="{{ route('notification.read', $notification->id) }}" class="text-decoration-none">
@@ -319,10 +321,21 @@
                                                         <strong>{{ $notification->sender->firstName ?? 'User' }}</strong>
                                                         rejected your connection request
                                                     </div>
+                                                    {{-- ✅ CHAT MESSAGE --}}
+                                                @elseif ($type == 'chat_message' && ($data['memberId'] == $authId || $data['userId'] == $authId))
+                                                    <div class="notification-message">
+                                                        💬 <strong>{{ $notification->sender->firstName ?? 'User' }}</strong>
+                                                        sent you a message
+                                                    </div>
+                                                @elseif ($type == 'reference_created' && $data['memberId'] == $authId)
+                                                    <div class="notification-message">
+                                                        📌 <strong>{{ $notification->sender->firstName ?? 'User' }}</strong>
+                                                        gave you a reference
+                                                    </div>
                                                 @else
                                                     <div class="notification-message">
                                                         <strong>{{ $notification->body }}</strong>
-                                                        {{-- rejected your connection request --}}
+
                                                     </div>
                                                 @endif
 

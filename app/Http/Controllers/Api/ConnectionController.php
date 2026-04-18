@@ -1316,6 +1316,8 @@ class ConnectionController extends Controller
     }
     public function getCircleMembers($id)
     {
+        $authUserId = auth()->id();
+        $authCircleId = Member::where('userId', $authUserId)->value('circleId');
         // Meetings
         $businessMeetings = CircleMeetingMembersBusiness::where('status', 'Active')
             ->select('businessGiverId', 'loginMemberId', 'amount')
@@ -1338,8 +1340,38 @@ class ConnectionController extends Controller
         $circle->totalBusinessAmount = 0;
 
         foreach ($circle->members as $member) {
+
             $member->businessAmount = 0;
             $member->induction_count = Member::where('sponsoredBy', $member->id)->count();
+
+            // ✅ ADD THIS BLOCK ONLY (no other change)
+            $member->connectionStatus = 'not_connected';
+
+
+            if ($authCircleId && $member->circleId == $authCircleId) {
+
+                $member->connectionStatus = 'connection_accept';
+            } elseif ($authUserId) {
+
+                $connection = Connection::where(function ($query) use ($authUserId, $member) {
+                    $query->where('userId', $authUserId)
+                        ->where('memberId', $member->userId);
+                })->orWhere(function ($query) use ($authUserId, $member) {
+                    $query->where('userId', $member->userId)
+                        ->where('memberId', $authUserId);
+                })->first();
+
+                if ($connection) {
+
+                    if ($connection->status === 'Accepted') {
+                        $member->connectionStatus = 'connection_accept';
+                    } elseif ($connection->status === 'Pending') {
+                        $member->connectionStatus = 'connection_request';
+                    } elseif ($connection->status === 'Rejected') {
+                        $member->connectionStatus = 'connection_rejection';
+                    }
+                }
+            }
         }
 
         foreach ($businessMeetings as $meeting) {

@@ -45,6 +45,12 @@ class AppServiceProvider extends ServiceProvider
                 if ($type == 'connection_accept' || $type == 'connection_reject') {
                     return isset($data['memberId']) && $data['memberId'] == $authUser->id;
                 }
+                if ($type == 'chat_message') {
+                    return isset($data['memberId']) && $data['memberId'] == $authUser->id;
+                }
+                if ($type == 'reference_created') {
+                    return isset($data['memberId']) && $data['memberId'] == $authUser->id;
+                }
                 return false;
             })->map(function ($notification) {
                 $data = json_decode($notification->data, true);
