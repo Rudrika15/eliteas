@@ -39,4 +39,8 @@ class CircleMeetingMembersReference extends Model
     {
         return $this->belongsTo(User::class, 'memberId', 'id');
     }
+    public function circle()
+    {
+        return $this->belongsTo(Circle::class, 'circleId', 'id');
+    }
 }

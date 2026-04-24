@@ -80,7 +80,7 @@
             <div class="row mt-3">
                 <div class="col-md-6">
                     <div class="form-floating">
-                        <select class="form-select @error('circleId') is-invalid @enderror" id="circleId" name="circleId">
+                        {{-- <select class="form-select @error('circleId') is-invalid @enderror" id="circleId" name="circleId">
                             <option value="" selected disabled>Select Circle</option>
                             <option value="{{ old('circleId') }}" selected>
                                 {{ $circles->where('id', old('circleId'))->first()->circleName ?? '' }}
@@ -88,6 +88,19 @@
                             @foreach ($circles as $circle)
                                 <option value="{{ $circle->id }}">{{ $circle->circleName }}</option>
                             @endforeach
+                        </select> --}}
+                        <select class="form-select @error('circleId') is-invalid @enderror" id="circleId" name="circleId">
+
+                            <option value="" disabled {{ old('circleId') ? '' : 'selected' }}>
+                                Select Circle
+                            </option>
+
+                            @foreach ($circles as $circle)
+                                <option value="{{ $circle->id }}" {{ old('circleId') == $circle->id ? 'selected' : '' }}>
+                                    {{ $circle->circleName }}
+                                </option>
+                            @endforeach
+
                         </select>
                         <label for="circleId">Circle</label>
                     </div>
@@ -170,7 +183,7 @@
                             $errors->has('mobileNo') &&
                                 $errors->first('mobileNo') ==
                                     'Please enter a valid 10-digit mobile
-                                                                                                                                                                                                                                            number')
+                                                                                                                                                                                                                                                                                                                                                                    number')
                             <div class="invalid-tooltip" style="color: red;">
                                 {{ $errors->first('mobileNo') }}
                             </div>

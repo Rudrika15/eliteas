@@ -1156,6 +1156,7 @@
             ->where('recordStatus', 'Active')
             ->where('status', 'Pending')
             ->paginate(4);
+        // $latestMembers = Member::with('circle')->where('status', 'Active')->orderBy('created_at', 'desc')->take(4)->get();
 
         // $posts = \App\Models\Post::with(['user.member', 'media'])
         //     ->withCount(['likes', 'comments'])
@@ -1178,6 +1179,7 @@
         $nearestEvents = \App\Models\Event::where('eventStatus', 'Publish')->where('status', 'Active')->whereDate('event_date', '>=', $currentDate)->orderBy('event_date', 'asc')->get();
 
     @endphp
+    
     <div class="modal fade" id="updateProfileModal" tabindex="-1" data-bs-backdrop="true">
         <div class="modal-dialog modal-dialog-top">
             <div class="modal-content border-0" style="
@@ -1932,6 +1934,112 @@
             </div>
         </div>
     @endif
+    @if ($latestMembers && $latestMembers->count() > 0)
+        <div class="card shadow-sm border-0 mt-3" style="border-radius: 12px; overflow: hidden;">
+
+            <!-- Card Header -->
+            <div class="card-header text-white" style="background:#1d3268;">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold mb-0">
+                        <i class="bi bi-people-fill me-2"></i>New Members Sportlights
+                    </h5>
+                    {{-- @if ($posts->count() >= 4)
+                        <a href="{{ route('connection.myConnections') }}" class="view-more-btn">
+                            View All <span>»</span>
+                        </a>
+                    @endif --}}
+                </div>
+            </div>
+
+            <!-- Card Body -->
+            <div class="card-body p-3">
+
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+                    @forelse ($latestMembers->take(4) as $member)
+                        <div class="col">
+                            <div class="fb-card shadow-sm h-100">
+
+                                <div class="fb-card-img-wrapper">
+                                    <span class="fb-badge">Member</span>
+                                    <img src="{{ asset('ProfilePhoto/' . ($member->profilePhoto ?? 'profile.png')) }}" class="fb-card-img" alt="Profile Image">
+                                </div>
+
+                                <div class="fb-card-body">
+
+                                    <h5 class="fb-card-title">
+                                        {{ $member->user->firstName ?? 'N/A' }}
+                                        {{ $member->user->lastName ?? 'N/A' }}
+                                    </h5>
+
+                                    <div class="fb-card-subtitle">
+                                        <i class="bi bi-people-fill"></i>
+                                        {{ $member->circle->circleName ?? 'N/A' }}
+                                    </div>
+
+
+                                    {{-- <div class="fb-card-info">
+                                        <div><i class="bi bi-envelope-fill"></i> *****</div>
+                                        <div><i class="bi bi-telephone-fill"></i> *****</div>
+                                    </div> --}}
+
+                                    @if (!empty($member->companyName) || !empty($member->bCategory->categoryName))
+                                        <div class="fb-card-info">
+
+                                            @if (!empty($member->companyName))
+                                                <div>
+                                                    <i class="bi bi-building"></i>
+                                                    {{ $member->companyName }}
+                                                </div>
+                                            @endif
+
+                                            @if (!empty($member->bCategory->categoryName))
+                                                <div>
+                                                    <i class="bi bi-tag"></i>
+                                                    {{ $member->bCategory->categoryName }}
+                                                </div>
+                                            @endif
+
+                                        </div>
+                                    @endif
+
+                                    <div class="mt-auto">
+                                        <!-- Connect Button -->
+                                        @php
+                                            $connectionStatus = $member->connection_status ?? 'Not Connected';
+                                        @endphp
+                                        @if ($connectionStatus == 'Connected')
+                                            <button type="button" class="fb-btn fb-btn-disabled">Connected</button>
+                                        @elseif ($connectionStatus == 'Accepted')
+                                            <button class="fb-btn fb-btn-primary">Message</button>
+                                        @elseif ($connectionStatus == 'Pending')
+                                            <button type="button" class="fb-btn fb-btn-disabled">Requested</button>
+                                        @else
+                                            <form action="{{ route('connect') }}" method="POST" class="d-block w-100">
+                                                @csrf
+                                                <input type="hidden" value="{{ $member->id }}" name="memberId">
+                                                <button type="submit" class="fb-btn fb-btn-primary">Connect</button>
+                                            </form>
+                                        @endif
+
+                                        <div class="mt-2 text-center fw-bold" style="color: #1d3268;">
+                                            Inductions - {{ $member->sponsored->count() }}
+                                        </div>
+
+                                        <!-- View Profile -->
+                                        <a href="{{ route('foundPersonDetails', $member->id) }}" class="text-decoration-none d-block w-100">
+                                            <button class="fb-btn fb-btn-secondary">View Profile</button>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @empty
+                        <p class="text-center text-muted">No New Members</p>
+                    @endforelse
+                </div>
+            </div>
+        </div>
+    @endif
     <style>
         .feed-card {
             background: #ffffff;
@@ -2295,6 +2403,7 @@
             ->latest()
             ->take(4)
             ->get();
+        // $latestMembers = Member::with('circle')->where('status', 'Active')->orderBy('created_at', 'desc')->take(4)->get();
     @endphp
     <!-- Modal -->
 
@@ -2321,14 +2430,15 @@
 
                         {{-- ================= PERSONAL ================= --}}
                         @php
-                            $personal = collect($missingFields)->intersect(['First Name', 'Last Name', 'Gender', 'Birth Date']);
+                            $personalFields = ['Title', 'First Name', 'Last Name', 'Gender', 'Birth Date'];
+                            $personal = collect($missingFields)->filter(fn($f) => in_array($f, $personalFields));
                             $col = $personal->count() == 1 ? 'col-12' : 'col-6';
-
                         @endphp
 
                         @if ($personal->isNotEmpty())
                             <p class="section-label">Personal</p>
                             <div class="row g-3">
+
                                 @if (in_array('Title', $missingFields))
                                     <div class="{{ $col }}">
                                         <label class="field-label">Title</label>
@@ -2372,21 +2482,18 @@
                                         <input type="date" name="birthDate" class="form-control custom-input">
                                     </div>
                                 @endif
+
                             </div>
                         @endif
 
-                        {{-- ================= KEYWORDS ================= --}}
-                        @php
-                            $keywordsSection = in_array('Keywords', $missingFields);
-                        @endphp
 
-                        @if ($keywordsSection)
+                        {{-- ================= KEYWORDS ================= --}}
+                        @if (in_array('Keywords', $missingFields))
                             <p class="section-label mt-3">Keywords</p>
                             <div class="row g-3">
-
                                 <div class="col-12">
                                     <label class="field-label">Keyword 1</label>
-                                    <input type="text" name="keyword1" class="form-control custom-input" >
+                                    <input type="text" name="keyword1" class="form-control custom-input">
                                 </div>
 
                                 <div class="col-12">
@@ -2398,12 +2505,14 @@
                                     <label class="field-label">Keyword 3</label>
                                     <input type="text" name="keyword3" class="form-control custom-input">
                                 </div>
-
                             </div>
                         @endif
+
+
                         {{-- ================= CONTACT ================= --}}
                         @php
-                            $contact = collect($missingFields)->intersect(['Email', 'Contact Number', 'Address Line 1', 'Address Line 2', 'City', 'Landmark']);
+                            $contactFields = ['Email', 'Contact Number', 'Address Line 1', 'Address Line 2', 'City', 'Landmark'];
+                            $contact = collect($missingFields)->filter(fn($f) => in_array($f, $contactFields));
                             $col = $contact->count() == 1 ? 'col-12' : 'col-6';
                         @endphp
 
@@ -2413,35 +2522,35 @@
 
                                 @if (in_array('Email', $missingFields))
                                     <div class="{{ $col }}">
-                                        <label class="field-label">Email</label>
+                                        <label>Email</label>
                                         <input type="email" name="email" class="form-control custom-input">
                                     </div>
                                 @endif
 
                                 @if (in_array('Contact Number', $missingFields))
                                     <div class="{{ $col }}">
-                                        <label class="field-label">Contact Number</label>
+                                        <label>Contact Number</label>
                                         <input type="text" name="contactNo" class="form-control custom-input">
                                     </div>
                                 @endif
 
                                 @if (in_array('Address Line 1', $missingFields))
                                     <div class="col-12">
-                                        <label class="field-label">Address Line 1</label>
+                                        <label>Address Line 1</label>
                                         <input type="text" name="addressLine1" class="form-control custom-input">
                                     </div>
                                 @endif
 
                                 @if (in_array('Address Line 2', $missingFields))
                                     <div class="col-12">
-                                        <label class="field-label">Address Line 2</label>
+                                        <label>Address Line 2</label>
                                         <input type="text" name="addressLine2" class="form-control custom-input">
                                     </div>
                                 @endif
 
                                 @if (in_array('City', $missingFields))
                                     <div class="{{ $col }}">
-                                        <label class="field-label">City</label>
+                                        <label>City</label>
                                         <select name="city" class="form-control custom-input">
                                             <option value="">Select City</option>
                                             @foreach ($city as $cities)
@@ -2451,10 +2560,9 @@
                                     </div>
                                 @endif
 
-
                                 @if (in_array('Landmark', $missingFields))
                                     <div class="{{ $col }}">
-                                        <label class="field-label">Landmark</label>
+                                        <label>Landmark</label>
                                         <select name="landmark" id="modalLandmark" class="form-control custom-input">
                                             <option value="">Select Landmark</option>
                                             @foreach ($landmarks as $lm)
@@ -2475,9 +2583,8 @@
 
                         {{-- ================= BUSINESS ================= --}}
                         @php
-                            $business = collect($missingFields)
-                                ->values()
-                                ->intersect(['Company Name', 'Website', 'GST/PAN']);
+                            $businessFields = ['Company Name', 'Website', 'GST/PAN'];
+                            $business = collect($missingFields)->filter(fn($f) => in_array($f, $businessFields));
                             $col = $business->count() == 1 ? 'col-12' : 'col-6';
                         @endphp
 
@@ -2487,21 +2594,21 @@
 
                                 @if (in_array('Company Name', $missingFields))
                                     <div class="{{ $col }}">
-                                        <label class="field-label">Company Name</label>
+                                        <label>Company Name</label>
                                         <input type="text" name="companyName" class="form-control custom-input">
                                     </div>
                                 @endif
 
                                 @if (in_array('GST/PAN', $missingFields))
                                     <div class="{{ $col }}">
-                                        <label class="field-label">GST / PAN</label>
-                                        <input type="text" name="gStinPan" class="form-control custom-input">
+                                        <label>GST / PAN</label>
+                                        <input type="text" name="gstinPan" class="form-control custom-input">
                                     </div>
                                 @endif
 
                                 @if (in_array('Website', $missingFields))
                                     <div class="col-12">
-                                        <label class="field-label">Website</label>
+                                        <label>Website</label>
                                         <input type="text" name="webSite" class="form-control custom-input">
                                     </div>
                                 @endif
@@ -2512,8 +2619,10 @@
 
                         {{-- ================= UPLOAD ================= --}}
                         @php
-                            $upload = collect($missingFields)->intersect(['Profile Photo', 'Company Logo']);
+                            $uploadFields = ['Profile Photo', 'Company Logo'];
+                            $upload = collect($missingFields)->filter(fn($f) => in_array($f, $uploadFields));
                             $col = $upload->count() == 1 ? 'col-12' : 'col-6';
+
                         @endphp
 
                         @if ($upload->isNotEmpty())
@@ -2522,14 +2631,14 @@
 
                                 @if (in_array('Profile Photo', $missingFields))
                                     <div class="{{ $col }}">
-                                        <label class="field-label">Profile Photo</label>
+                                        <label>Profile Photo</label>
                                         <input type="file" name="profilePhoto" class="form-control custom-input">
                                     </div>
                                 @endif
 
                                 @if (in_array('Company Logo', $missingFields))
                                     <div class="{{ $col }}">
-                                        <label class="field-label">Company Logo</label>
+                                        <label>Company Logo</label>
                                         <input type="file" name="companyLogo" class="form-control custom-input">
                                     </div>
                                 @endif
@@ -2538,7 +2647,6 @@
                         @endif
 
 
-                        {{-- Buttons --}}
                         <div class="d-flex justify-content-end gap-2 mt-4">
                             <button type="button" class="btn btn-later" data-bs-dismiss="modal">Later</button>
                             <button type="submit" class="btn btn-save">Save Changes</button>
@@ -3648,10 +3756,6 @@
                                         {{ $member->user->lastName ?? 'N/A' }}
                                     </h5>
 
-                                    {{-- <div class="fb-card-subtitle">
-                                        <i class="bi bi-geo-alt-fill"></i> N/A
-                                    </div> --}}
-
                                     {{-- <div class="fb-card-info">
                                         <div><i class="bi bi-envelope-fill"></i> *****</div>
                                         <div><i class="bi bi-telephone-fill"></i> *****</div>
@@ -3706,6 +3810,112 @@
 
                     @empty
                         <p class="text-center text-muted">No Connection Requests</p>
+                    @endforelse
+                </div>
+            </div>
+        </div>
+    @endif
+    @if ($latestMembers && $latestMembers->count() > 0)
+        <div class="card shadow-sm border-0 mt-3" style="border-radius: 12px; overflow: hidden;">
+
+            <!-- Card Header -->
+            <div class="card-header text-white" style="background:#1d3268;">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold mb-0">
+                        <i class="bi bi-people-fill me-2"></i>New Members Sportlights
+                    </h5>
+                    {{-- @if ($posts->count() >= 4)
+                        <a href="{{ route('connection.myConnections') }}" class="view-more-btn">
+                            View All <span>»</span>
+                        </a>
+                    @endif --}}
+                </div>
+            </div>
+
+            <!-- Card Body -->
+            <div class="card-body p-3">
+
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+                    @forelse ($latestMembers->take(4) as $member)
+                        <div class="col">
+                            <div class="fb-card shadow-sm h-100">
+
+                                <div class="fb-card-img-wrapper">
+                                    <span class="fb-badge">Member</span>
+                                    <img src="{{ asset('ProfilePhoto/' . ($member->profilePhoto ?? 'profile.png')) }}" class="fb-card-img" alt="Profile Image">
+                                </div>
+
+                                <div class="fb-card-body">
+
+                                    <h5 class="fb-card-title">
+                                        {{ $member->user->firstName ?? 'N/A' }}
+                                        {{ $member->user->lastName ?? 'N/A' }}
+                                    </h5>
+
+                                    <div class="fb-card-subtitle">
+                                        <i class="bi bi-people-fill"></i>
+                                        {{ $member->circle->circleName ?? 'N/A' }}
+                                    </div>
+
+
+                                    {{-- <div class="fb-card-info">
+                                        <div><i class="bi bi-envelope-fill"></i> *****</div>
+                                        <div><i class="bi bi-telephone-fill"></i> *****</div>
+                                    </div> --}}
+
+                                    @if (!empty($member->companyName) || !empty($member->bCategory->categoryName))
+                                        <div class="fb-card-info">
+
+                                            @if (!empty($member->companyName))
+                                                <div>
+                                                    <i class="bi bi-building"></i>
+                                                    {{ $member->companyName }}
+                                                </div>
+                                            @endif
+
+                                            @if (!empty($member->bCategory->categoryName))
+                                                <div>
+                                                    <i class="bi bi-tag"></i>
+                                                    {{ $member->bCategory->categoryName }}
+                                                </div>
+                                            @endif
+
+                                        </div>
+                                    @endif
+
+                                    <div class="mt-auto">
+                                        <!-- Connect Button -->
+                                        @php
+                                            $connectionStatus = $member->connection_status ?? 'Not Connected';
+                                        @endphp
+                                        @if ($connectionStatus == 'Connected')
+                                            <button type="button" class="fb-btn fb-btn-disabled">Connected</button>
+                                        @elseif ($connectionStatus == 'Accepted')
+                                            <button class="fb-btn fb-btn-primary">Message</button>
+                                        @elseif ($connectionStatus == 'Pending')
+                                            <button type="button" class="fb-btn fb-btn-disabled">Requested</button>
+                                        @else
+                                            <form action="{{ route('connect') }}" method="POST" class="d-block w-100">
+                                                @csrf
+                                                <input type="hidden" value="{{ $member->id }}" name="memberId">
+                                                <button type="submit" class="fb-btn fb-btn-primary">Connect</button>
+                                            </form>
+                                        @endif
+
+                                        <div class="mt-2 text-center fw-bold" style="color: #1d3268;">
+                                            Inductions - {{ $member->sponsored->count() }}
+                                        </div>
+
+                                        <!-- View Profile -->
+                                        <a href="{{ route('foundPersonDetails', $member->id) }}" class="text-decoration-none d-block w-100">
+                                            <button class="fb-btn fb-btn-secondary">View Profile</button>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @empty
+                        <p class="text-center text-muted">No New Members</p>
                     @endforelse
                 </div>
             </div>
@@ -3988,7 +4198,7 @@
                 </div>
             </div>
         </div>
-    @else
+
         <style>
             .upcoming-events {
                 display: none;
@@ -4049,7 +4259,6 @@
             </div>
 
         </div>
-    @else
         <style>
             .upcoming-events .trainings {
                 display: none;

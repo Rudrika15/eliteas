@@ -784,7 +784,8 @@ class ReportController extends Controller
         $end = $endDate ? Carbon::parse($endDate)->endOfDay() : Carbon::now()->endOfDay();
 
         /* ------------------ 1. Circle Calls ------------------ */
-        $circleCalls = CircleCall::where('status', 'Active')
+        $circleCalls = CircleCall::with(['member', 'meetingPerson'])
+            ->where('status', 'Active')
             ->when($start, fn($q) => $q->whereBetween('date', [$start, $end]))
             ->where(function ($q) use ($circleId) {
                 $q->whereHas('member', function ($sq) use ($circleId) {
@@ -798,22 +799,94 @@ class ReportController extends Controller
         $totalCircleCalls = $circleCalls->count();
 
         /* ------------------ 2. IBM ------------------ */
+        // $ibmBaseCalls = CircleCall::with(['member', 'meetingPerson'])
+        //     ->where('status', 'Active')
+        //     ->when($start, fn($q) => $q->whereBetween('created_at', [$start, $end]))
+        //     ->where(function ($q) use ($circleId) {
+        //         $q->whereHas('member', fn($sq) => $sq->where('circleId', $circleId))
+        //             ->orWhereHas('meetingPerson', fn($sq) => $sq->where('circleId', $circleId));
+        //     })
+        //     ->get();
         $ibmBaseCalls = CircleCall::with(['member', 'meetingPerson'])
             ->where('status', 'Active')
             ->when($start, fn($q) => $q->whereBetween('created_at', [$start, $end]))
-            ->where(function ($q) use ($circleId) {
-                $q->whereHas('member', fn($sq) => $sq->where('circleId', $circleId))
-                    ->orWhereHas('meetingPerson', fn($sq) => $sq->where('circleId', $circleId));
-            })
+            // ✅ ONLY MEMBER must belong to circle
+            ->whereHas('member', fn($sq) => $sq->where('circleId', $circleId))
             ->get();
+        // $ibms = CircleCall::where('status', 'Active')
+        //     ->when($start, fn($q) => $q->whereBetween('created_at', [$start, $end]))
+        //     ->where(function ($q) use ($circleId) {
+        //         $q->whereHas('member', function ($sq) use ($circleId) {
+        //             $sq->where('circleId', $circleId);
+        //         })->orWhereHas('meetingPerson', function ($sq) use ($circleId) {
+        //             $sq->where('circleId', $circleId);
+        //         });
+        //     })
+        //     ->with(['member', 'meetingPerson'])->get()
+        //     ->flatMap(function ($item) {
+        //         return [
+        //             ['member_id' => $item->memberId],
+        //             ['member_id' => $item->meetingPersonId],
+        //         ];
+        //     })
+        //     ->groupBy('member_id')
+        //     ->map(function ($group, $memberId) use ($circleId, $ibmBaseCalls) {
+
+        //         $member = Member::with('circle')->where('userId', $memberId)->first();
+
+        //         // if (! $member || $member->circleId != $circleId) {
+        //         //     return null;
+        //         // }
+        //         if (! $member) {
+        //             return null;
+        //         }
+
+        //         // ✅ Find "with whom" and count
+        //         $withCounts = [];
+
+        //         foreach ($ibmBaseCalls as $call) {
+
+        //             if ($call->memberId == $memberId || $call->meetingPersonId == $memberId) {
+
+        //                 $other = $call->memberId == $memberId
+        //                     ? $call->meetingPerson
+        //                     : $call->member;
+
+        //                 // if ($other && $other->circleId == $circleId) {
+        //                 if ($other) {
+        //                     $name = $other->firstName . ' ' . $other->lastName;
+        //                     $circleName = $other->circle->circleName ?? ''; // ✅ important
+
+        //                     if (!isset($withCounts[$name])) {
+        //                         $withCounts[$name] = [
+        //                             'count' => 0,
+        //                             'circleName' => $circleName, // ✅ store here
+        //                         ];
+        //                     }
+
+        //                     $withCounts[$name]['count']++;
+        //                 }
+        //             }
+        //         }
+
+        //         return [
+        //             'memberId' => $member->id,
+        //             'memberName' => $member->firstName . ' ' . $member->lastName,
+        //             'circleName' => $member->circle->circleName ?? '',
+        //             'member_count' => $group->count(),
+        //             'with_members' => $withCounts, // ✅ NEW
+
+        //         ];
+        //     })
+        //     ->filter()
+        //     ->sortByDesc('member_count')
+        //     // ->take(10) // ✅ only top 5 IBM
+        //     ->values();
         $ibms = CircleCall::where('status', 'Active')
             ->when($start, fn($q) => $q->whereBetween('created_at', [$start, $end]))
-            ->where(function ($q) use ($circleId) {
-                $q->whereHas('member', function ($sq) use ($circleId) {
-                    $sq->where('circleId', $circleId);
-                })->orWhereHas('meetingPerson', function ($sq) use ($circleId) {
-                    $sq->where('circleId', $circleId);
-                });
+            // ✅ ONLY MEMBER filter
+            ->whereHas('member', function ($sq) use ($circleId) {
+                $sq->where('circleId', $circleId);
             })
             ->with(['member', 'meetingPerson'])->get()
             ->flatMap(function ($item) {
@@ -827,11 +900,11 @@ class ReportController extends Controller
 
                 $member = Member::with('circle')->where('userId', $memberId)->first();
 
+                // ✅ KEEP only member of this circle
                 if (! $member || $member->circleId != $circleId) {
                     return null;
                 }
 
-                // ✅ Find "with whom" and count
                 $withCounts = [];
 
                 foreach ($ibmBaseCalls as $call) {
@@ -842,15 +915,20 @@ class ReportController extends Controller
                             ? $call->meetingPerson
                             : $call->member;
 
-                        if ($other && $other->circleId == $circleId) {
+                        // ✅ ALLOW ALL circles (IMPORTANT FIX)
+                        if ($other) {
 
                             $name = $other->firstName . ' ' . $other->lastName;
+                            $circleName = $other->circle->circleName ?? '';
 
                             if (!isset($withCounts[$name])) {
-                                $withCounts[$name] = 0;
+                                $withCounts[$name] = [
+                                    'count' => 0,
+                                    'circleName' => $circleName,
+                                ];
                             }
 
-                            $withCounts[$name]++;
+                            $withCounts[$name]['count']++;
                         }
                     }
                 }
@@ -860,22 +938,47 @@ class ReportController extends Controller
                     'memberName' => $member->firstName . ' ' . $member->lastName,
                     'circleName' => $member->circle->circleName ?? '',
                     'member_count' => $group->count(),
-                    'with_members' => $withCounts, // ✅ NEW
+                    'with_members' => $withCounts,
                 ];
             })
             ->filter()
             ->sortByDesc('member_count')
-            ->take(10) // ✅ only top 5 IBM
             ->values();
+        // $totalIbmParticipations = CircleCall::where('status', 'Active')
+        //     ->when($start, fn($q) => $q->whereBetween('created_at', [$start, $end]))
+        //     ->where(function ($q) use ($circleId) {
+        //         $q->whereHas('member', function ($sq) use ($circleId) {
+        //             $sq->where('circleId', $circleId);
+        //         })->orWhereHas('meetingPerson', function ($sq) use ($circleId) {
+        //             $sq->where('circleId', $circleId);
+        //         });
+        //     })
+        //     ->get()
+        //     ->flatMap(function ($item) {
+        //         return [
+        //             ['member_id' => $item->memberId],
+        //             ['member_id' => $item->meetingPersonId],
+        //         ];
+        //     })
+        //     ->groupBy('member_id')
+        //     ->map(function ($group, $memberId) use ($circleId) {
+        //         $member = Member::where('userId', $memberId)->first();
+        //         // if (! $member || $member->circleId != $circleId) {
+        //         //     return null;
+        //         // }
+        //         if (! $member) {
+        //             return null;
+        //         }
 
+        //         return ['member_count' => $group->count()];
+        //     })
+        //     ->filter()
+        //     ->sum('member_count');
         $totalIbmParticipations = CircleCall::where('status', 'Active')
             ->when($start, fn($q) => $q->whereBetween('created_at', [$start, $end]))
-            ->where(function ($q) use ($circleId) {
-                $q->whereHas('member', function ($sq) use ($circleId) {
-                    $sq->where('circleId', $circleId);
-                })->orWhereHas('meetingPerson', function ($sq) use ($circleId) {
-                    $sq->where('circleId', $circleId);
-                });
+            // ✅ ONLY MEMBER filter
+            ->whereHas('member', function ($sq) use ($circleId) {
+                $sq->where('circleId', $circleId);
             })
             ->get()
             ->flatMap(function ($item) {
@@ -886,7 +989,9 @@ class ReportController extends Controller
             })
             ->groupBy('member_id')
             ->map(function ($group, $memberId) use ($circleId) {
+
                 $member = Member::where('userId', $memberId)->first();
+
                 if (! $member || $member->circleId != $circleId) {
                     return null;
                 }
@@ -897,7 +1002,7 @@ class ReportController extends Controller
             ->sum('member_count');
 
         /* ------------------ 3. References ------------------ */
-        $references = CircleMeetingMembersReference::with('refGiver')
+        $references = CircleMeetingMembersReference::with(['refGiver', 'refReceiver'])
             ->where('status', 'Active')
             ->when($start, fn($q) => $q->whereBetween('created_at', [$start, $end]))
             ->whereHas('refGiver', function ($q) use ($circleId) {
@@ -918,7 +1023,7 @@ class ReportController extends Controller
                 ];
             })
             ->sortByDesc('reference_count')
-            ->take(10) // ✅ only top 5
+            // ->take(10) // ✅ only top 5
             ->values();
 
         $referenceDetails = $references
@@ -932,11 +1037,19 @@ class ReportController extends Controller
                 foreach ($group as $item) {
 
                     // assuming you have receiver relation or field
-                    $receiver = $item->refReceiver;    // adjust if needed
+                    $receiverUser = $item->refReceiver;    // adjust if needed
 
-                    if ($receiver) {
+                    if ($receiverUser) {
+                        $receiver = \App\Models\Member::with('circle')->where('userId', $receiverUser->id)->first();
                         $name = $receiver->firstName . ' ' . $receiver->lastName;
-                        $withCounts[$name] = ($withCounts[$name] ?? 0) + 1;
+                        $circleName = $receiver ? ($receiver->circle->circleName ?? '') : '';
+                        if (!isset($withCounts[$name])) {
+                            $withCounts[$name] = [
+                                'count' => 0,
+                                'circleName' => $circleName,
+                            ];
+                        }
+                        $withCounts[$name]['count']++;
                     }
                 }
 
@@ -947,7 +1060,7 @@ class ReportController extends Controller
                 ];
             })
             ->values();
-        // dd($referenceDetails);
+        //dd($referenceDetails);
         /* ------------------ 4. Business ------------------ */
         // $businessMeetings = CircleMeetingMembersBusiness::with('member')
         //     ->where('status', 'Active')
@@ -979,7 +1092,7 @@ class ReportController extends Controller
                 ];
             })
             ->sortByDesc('total_amount')
-            ->take(10) // ✅ only top 5
+            // ->take(10) // ✅ only top 5
             ->values();
         $businessDetails = $businessMeetings
             ->groupBy('businessGiverId')
@@ -991,15 +1104,16 @@ class ReportController extends Controller
 
                 foreach ($group as $item) {
 
-                    $receiver = $item->businessReceiver; // ✅ FIXED
+                    $receiver = $item->businessReceiver;
 
                     if ($receiver) {
                         $name = $receiver->firstName . ' ' . $receiver->lastName;
-
+                        $circleName = $receiver ? ($receiver->circle->circleName ?? '') : '';
                         if (!isset($withData[$name])) {
                             $withData[$name] = [
                                 'count' => 0,
                                 'amount' => 0,
+                                'circleName' => $circleName,
                             ];
                         }
 

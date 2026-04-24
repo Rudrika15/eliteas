@@ -102,4 +102,8 @@ class User extends Authenticatable
     {
         return $this->hasMany(Comment::class, 'userId', 'id');
     }
+    public function circle()
+    {
+        return $this->belongsTo(Circle::class, 'circleId', 'id');
+    }
 }

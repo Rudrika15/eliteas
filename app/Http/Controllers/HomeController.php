@@ -910,9 +910,12 @@ class HomeController extends Controller
                     // ✅ Helper function (VERY IMPORTANT)
                     function isEmptyField($value)
                     {
-                        return empty(trim((string)$value)) || $value == '-' || strtolower($value) == 'null';
-                    }
+                        if (is_null($value)) return true;
 
+                        $value = trim((string)$value);
+
+                        return $value === '' || $value === '-' || strtolower($value) === 'null';
+                    }
                     if ($member) {
 
                         // ================= MEMBER =================
@@ -949,26 +952,34 @@ class HomeController extends Controller
                             $missingFields[] = 'GST/PAN';
                         }
 
-                        if (empty($member->cityId)) {
-                            $missingFields[] = 'City';
+                        $landmarks = collect();
+
+                        if (!empty($member->cityId)) {
+                            $landmarks = Landmark::where('cityId', $member->cityId)->pluck('name');
                         }
 
                         if (isEmptyField($member->landmark)) {
                             $missingFields[] = 'Landmark';
                         }
 
-                        if (isEmptyField($member->profilePhoto)) {
+                        if (empty($member->profilePhoto) || !file_exists(public_path('ProfilePhoto/' . $member->profilePhoto))) {
                             $missingFields[] = 'Profile Photo';
                         }
-
-                        if (isEmptyField($member->companyLogo)) {
+                        if (empty($member->companyLogo) || !file_exists(public_path('CompanyLogo/' . $member->companyLogo))) {
                             $missingFields[] = 'Company Logo';
                         }
 
                         // ================= KEYWORDS =================
-                        $keywords = json_decode($member->keyWords, true);
+                        $keywords = [];
 
-                        if (empty(array_filter($keywords ?? []))) {
+                        if (!empty($member->keyWords)) {
+                            $decoded = json_decode($member->keyWords, true);
+                            if (is_array($decoded)) {
+                                $keywords = array_filter($decoded);
+                            }
+                        }
+
+                        if (empty($keywords)) {
                             $missingFields[] = 'Keywords';
                         }
                     }
@@ -1000,13 +1011,15 @@ class HomeController extends Controller
                         $missingFields[] = 'Address Line 2';
                     }
                 }
+                $latestMembers = Member::with('circle')->where('status', 'Active')->orderBy('created_at', 'desc')->take(4)->get();
 
+                // dd($missingFields);
                 $categoryNames = $businessCategories->pluck('categoryName');
 
-                return view('home', compact('circleCount', 'authCircleId', 'categoryNames', 'membersCount', 'signedUrl', 'birthdaysToday', 'templates', 'count', 'monthlyPayments', 'totalAmountDue', 'nearestEvents', 'circlecalls', 'busGiver', 'refGiver', 'induction', 'nearestTraining', 'testimonials', 'meeting', 'businessCategory', 'myInvites', 'todaysBirthdays', 'pendingCount', 'receivedRequests', 'notifications', 'notificationCount', 'posts', 'missingFields', 'member', 'city'));
+                return view('home', compact('circleCount', 'authCircleId', 'categoryNames', 'membersCount', 'signedUrl', 'birthdaysToday', 'templates', 'count', 'monthlyPayments', 'totalAmountDue', 'nearestEvents', 'circlecalls', 'busGiver', 'refGiver', 'induction', 'nearestTraining', 'testimonials', 'meeting', 'businessCategory', 'myInvites', 'todaysBirthdays', 'pendingCount', 'receivedRequests', 'notifications', 'notificationCount', 'posts', 'missingFields', 'member', 'city', 'landmarks', 'latestMembers'));
             }
 
-            return view('home', compact('circleCount', 'membersCount', 'count', 'nearestTraining', 'businessCategory', 'myInvites', 'birthdaysToday', 'templates', 'pendingCount', 'missingFields', 'member'));
+            return view('home', compact('circleCount', 'membersCount', 'count', 'nearestTraining', 'businessCategory', 'myInvites', 'birthdaysToday', 'templates', 'pendingCount'));
         } catch (\Throwable $th) {
             // Log the error
             throw $th;

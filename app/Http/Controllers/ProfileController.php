@@ -110,7 +110,7 @@ class ProfileController extends Controller
             // $member->displayName = $request->displayName;
             // $member->gstRegiState = $request->gstRegiState;
 
-            if ($request->filled('gstinPan')) {
+            if ($request->filled('gStinPan')) {
                 $member->gStinPan = $request->gStinPan;
             }
             // $member->industry = $request->industry;
@@ -165,7 +165,7 @@ class ProfileController extends Controller
                 $request->keyword3
             ]);
             if (!empty($keywords)) {
-                $member->keyWords = $keywords;
+                $member->keyWords = json_encode($keywords);
             }
             if ($request->filled('city')) {
                 $member->cityId = $request->city;
@@ -260,15 +260,17 @@ class ProfileController extends Controller
             // $contact->country = $request->country;
             // $contact->pinCode = $request->pinCode;
             if ($contact) {
+                if ($request->filled('email')) {
+                    $contact->email = $request->email;
+                }
 
-                $contact->email = $request->email;
+                if ($request->filled('addressLine1')) {
+                    $contact->addressLine1 = $request->addressLine1;
+                }
 
-
-                $contact->addressLine1 = $request->addressLine1;
-
-
-                $contact->addressLine2 = $request->addressLine2;
-
+                if ($request->filled('addressLine2')) {
+                    $contact->addressLine2 = $request->addressLine2;
+                }
                 $contact->status = 'Active';
                 $contact->save();
             }

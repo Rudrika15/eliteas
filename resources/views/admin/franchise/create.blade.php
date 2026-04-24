@@ -29,9 +29,24 @@
             <form class="m-3 needs-validation" id="franchiseForm" enctype="multipart/form-data" method="post" action="{{ route('franchise.store') }}" novalidate>
                 @csrf
 
-                <div class="form-check mb-3">
-                    <input type="checkbox" class="form-check-input" id="managedByUbn" name="managedByUbn" {{ old('managedByUbn') ? 'checked' : '' }}>
-                    <label class="form-check-label" for="managedByUbn">Managed By UBN</label>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="managedByUbn" name="managedByUbn" {{ old('managedByUbn') ? 'checked' : '' }}>
+                            <label class="form-check-label" for="managedByUbn">
+                                Managed By UBN
+                            </label>
+                        </div>
+                    </div>
+
+                    {{-- <div class="col-md-6">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="isMaster" name="isMaster" {{ old('isMaster') ? 'checked' : '' }}>
+                            <label class="form-check-label" for="isMaster">
+                                Is Master Franchise
+                            </label>
+                        </div>
+                    </div> --}}
                 </div>
 
                 <div class="row mb-3">

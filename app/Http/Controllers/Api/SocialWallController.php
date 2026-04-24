@@ -152,6 +152,89 @@ class SocialWallController extends Controller
             return Utils::errorResponse($th->getMessage(), 'Internal Server Error', 500);
         }
     }
+    // public function getFeed(Request $request)
+    // {
+    //     try {
+    //         $userId = Auth::id();
+
+    //         $posts = Post::query()
+    //             // ✅ Fix: case-insensitive status
+    //             ->whereRaw('LOWER(status) = ?', ['active'])
+
+    //             // ✅ Load relationships safely
+    //             ->with([
+    //                 'user:id,firstName,lastName',
+    //                 'user.member:id,userId,profilePhoto,cityId',
+    //                 'user.member.city:id,name',
+
+    //                 'likes' => function ($q) {
+    //                     $q->whereRaw('LOWER(status) = ?', ['active']);
+    //                 },
+
+    //                 'comments' => function ($q) {
+    //                     $q->whereRaw('LOWER(status) = ?', ['active'])
+    //                         ->orderBy('created_at', 'desc');
+    //                 },
+
+    //                 'comments.user:id,firstName,lastName',
+    //                 'comments.user.member:id,userId,profilePhoto'
+    //             ])
+
+    //             // ✅ Counts
+    //             ->withCount([
+    //                 'likes' => function ($q) {
+    //                     $q->whereRaw('LOWER(status) = ?', ['active']);
+    //                 },
+    //                 'comments' => function ($q) {
+    //                     $q->whereRaw('LOWER(status) = ?', ['active']);
+    //                 }
+    //             ])
+
+    //             ->orderBy('created_at', 'desc')
+    //             ->get()
+
+    //             // ✅ Correct transform (NO getCollection())
+    //             ->transform(function ($post) use ($userId) {
+
+    //                 // ✅ Like flag
+    //                 $post->isLikedByCurrentUser = $post->likes
+    //                     ->where('userId', $userId)
+    //                     ->isNotEmpty();
+
+    //                 // ✅ Attachment URL
+    //                 $post->attachmentUrl = $post->attachment
+    //                     ? url($post->attachment)
+    //                     : null;
+
+    //                 // ✅ Safe user/profile handling
+    //                 if ($post->user) {
+
+    //                     $member = $post->user->member ?? null;
+
+    //                     $post->user->profilePhotoUrl = ($member && $member->profilePhoto)
+    //                         ? url('ProfilePhoto/' . $member->profilePhoto)
+    //                         : null;
+
+    //                     // Optional: city name shortcut
+    //                     $post->user->cityName = ($member && $member->city)
+    //                         ? $member->city->name
+    //                         : null;
+    //                 }
+
+    //                 return $post;
+    //             });
+
+    //         return Utils::sendResponse([
+    //             'feed' => $posts
+    //         ], 'Feed retrieved successfully', 200);
+    //     } catch (\Throwable $th) {
+    //         return Utils::errorResponse(
+    //             $th->getMessage(),
+    //             'Internal Server Error',
+    //             500
+    //         );
+    //     }
+    // }
 
     public function toggleLike(Request $request)
     {

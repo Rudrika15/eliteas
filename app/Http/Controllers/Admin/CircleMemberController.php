@@ -31,6 +31,7 @@ use App\Utils\ErrorLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
@@ -116,17 +117,35 @@ class CircleMemberController extends Controller
     {
         try {
             $user = Auth::user();
+            $userMember = Member::where('userId', $user->id)->first();
 
             $memberQuery = Member::where('status', 'Active')
                 ->whereHas('circle')
                 ->whereHas('contactDetails')
                 ->with(['circle', 'contactDetails', 'user', 'topsProfile', 'billingAddress', 'sponsors']);
+            if ($user->hasRole('Circle Admin')) {
 
-            if ($user->hasRole(['Circle Admin', 'Franchise Admin'])) {
-                $memberQuery->where('createdBy', $user->id);
+                if ($userMember) {
+                    $memberQuery->where('circleId', $userMember->circleId);
+                } else {
+                    $memberQuery->whereRaw('1=0');
+                }
+            } elseif ($user->hasRole('Franchise Admin')) {
+
+                if ($userMember && $userMember->circleId) {
+                    $circle = Circle::find($userMember->circleId);
+
+                    if ($circle && $circle->cityId) {
+                        $circleIds = Circle::where('cityId', $circle->cityId)->pluck('id')->toArray();
+                        $memberQuery->whereIn('circleId', $circleIds);
+                    } else {
+                        $memberQuery->whereRaw('1=0');
+                    }
+                } else {
+                    $memberQuery->whereRaw('1=0');
+                }
             }
 
-            // ✅ Apply filters if present
             if ($request->filled('circleId')) {
                 $memberQuery->where('circleId', $request->circleId);
             }
@@ -141,9 +160,9 @@ class CircleMemberController extends Controller
                 $memberQuery->where('membershipType', $request->membershipType);
             }
 
-            // ✅ Global Search Filter
             if ($request->filled('search')) {
                 $search = $request->search;
+
                 $memberQuery->where(function ($q) use ($search) {
                     $q->where(function ($q2) use ($search) {
                         $q2->where('firstName', 'like', "%{$search}%")
@@ -161,19 +180,38 @@ class CircleMemberController extends Controller
             }
 
             $member = $memberQuery->paginate(10)->withQueryString();
-            $circle = Circle::where('status', 'Active')->orderBy('circleName', 'asc')->get();
-            $bCategory = BusinessCategory::where('status', 'Active')->orderBy('categoryName', 'asc')->get();
+            if ($user->hasRole('Circle Admin')) {
+                $circle = $userMember
+                    ? Circle::where('id', $userMember->circleId)->get()
+                    : collect();
+            } elseif ($user->hasRole('Franchise Admin')) {
+
+                if ($userMember && $userMember->circleId) {
+                    $cityId = Circle::where('id', $userMember->circleId)->value('cityId');
+                    $circle = Circle::where('cityId', $cityId)->where('status', 'Active')->orderBy('circleName', 'asc')->get();
+                } else {
+                    $circle = collect();
+                }
+            } else {
+                $circle = Circle::where('status', 'Active')->orderBy('circleName', 'asc')->get();
+            }
+            $bCategory = BusinessCategory::where('status', 'Active')->orderBy('categoryName', 'asc')->get();    
             $roles = Role::all();
+
             $membershipType = MembershipType::where('status', 'Active')->get();
 
-            return view('admin.circlemember.index', compact('member', 'roles', 'circle', 'bCategory', 'membershipType'));
+            return view('admin.circlemember.index', compact(
+                'member',
+                'roles',
+                'circle',
+                'bCategory',
+                'membershipType'
+            ));
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, $request->fullUrl());
-
             return view('servererror');
         }
     }
-
     // public function deletedMemberList(Request $request)
     // {
     //     try {
@@ -365,8 +403,23 @@ class CircleMemberController extends Controller
         try {
             $businessCategory = BusinessCategory::where('status', 'Active')->orderBy('categoryName', 'asc')->get();
             $user = Auth::user();
-            if ($user->hasRole(['Circle Admin', 'Franchise Admin'])) {
-                $circle = Circle::where('status', 'Active')->where('createdBy', $user->id)->orderBy('circleName', 'asc')->get();
+            $userMember = Member::where('userId', $user->id)->first();
+            // if ($user->hasRole(['Circle Admin', 'Franchise Admin'])) {
+            //     $circle = Circle::where('status', 'Active')->where('createdBy', $user->id)->orderBy('circleName', 'asc')->get();
+            // } else {
+            //     $circle = Circle::where('status', 'Active')->orderBy('circleName', 'asc')->get();
+            // }
+            if ($user->hasRole('Circle Admin')) {
+                $circle = $userMember
+                    ? Circle::where('status', 'Active')->where('id', $userMember->circleId)->orderBy('circleName', 'asc')->get()
+                    : collect();
+            } elseif ($user->hasRole('Franchise Admin')) {
+                if ($userMember && $userMember->circleId) {
+                    $cityId = Circle::where('id', $userMember->circleId)->value('cityId');
+                    $circle = Circle::where('status', 'Active')->where('cityId', $cityId)->orderBy('circleName', 'asc')->get();
+                } else {
+                    $circle = collect();
+                }
             } else {
                 $circle = Circle::where('status', 'Active')->orderBy('circleName', 'asc')->get();
             }
@@ -376,13 +429,30 @@ class CircleMemberController extends Controller
             $cities = City::where('status', 'Active')->orderBy('cityName', 'asc')->get();
             $membershipType = MembershipType::where('status', 'Active')->orderBy('membershipType', 'asc')->get();
 
-            $circles = Circle::where('status', 'Active')->orderBy('circleName', 'asc')->get();
-
-            $circleMember = Member::with('circle')
-                ->where('status', 'Active')
-                ->orderBy('firstName', 'asc')
-                ->get(); // Ensure 'circleId' is included
-
+            // $circles = Circle::where('status', 'Active')->orderBy('circleName', 'asc')->get();
+            // $circleMember = Member::with('circle')->where('status', 'Active')->orderBy('firstName', 'asc')->get(); // Ensure 'circleId' is included
+            if ($user->hasRole('Circle Admin')) {
+                if ($userMember) {
+                    $circles = Circle::where('status', 'Active')->where('id', $userMember->circleId)->orderBy('circleName', 'asc')->get();
+                    $circleMember = Member::with('circle')->where('status', 'Active')->where('circleId', $userMember->circleId)->orderBy('firstName', 'asc')->get();
+                } else {
+                    $circles = collect();
+                    $circleMember = collect();
+                }
+            } elseif ($user->hasRole('Franchise Admin')) {
+                if ($userMember && $userMember->circleId) {
+                    $cityId = Circle::where('id', $userMember->circleId)->value('cityId');
+                    $circleIds = Circle::where('cityId', $cityId)->pluck('id')->toArray();
+                    $circles = Circle::where('status', 'Active')->whereIn('id', $circleIds)->orderBy('circleName', 'asc')->get();
+                    $circleMember = Member::with('circle')->where('status', 'Active')->whereIn('circleId', $circleIds)->orderBy('firstName', 'asc')->get();
+                } else {
+                    $circles = collect();
+                    $circleMember = collect();
+                }
+            } else {
+                $circles = Circle::where('status', 'Active')->orderBy('circleName', 'asc')->get();
+                $circleMember = Member::with('circle')->where('status', 'Active')->orderBy('firstName', 'asc')->get();
+            }
             return view('admin.circlemember.create', compact('circle', 'membershipType', 'circles', 'circleMember', 'member', 'countries', 'states', 'cities', 'businessCategory'));
         } catch (\Throwable $th) {
             // throw $th;

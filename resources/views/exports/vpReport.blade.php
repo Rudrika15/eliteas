@@ -69,14 +69,16 @@
         <th>Circle</th>
         <th>IBM Counts</th>
         <th>Member with</th>
+        <th>Circle Name</th>
     </tr>
     @foreach ($ibms as $row)
-        @foreach ($row['with_members'] as $name => $count)
+        @foreach ($row['with_members'] as $name => $data)
             <tr>
                 <td>{{ $row['memberName'] }}</td>
                 <td>{{ $row['circleName'] }}</td>
-                <td>{{ $count }}</td>
+                <td>{{ $data['count'] }}</td>
                 <td>{{ $name }}</td>
+                <td>{{ $data['circleName'] }}</td>
             </tr>
         @endforeach
     @endforeach
@@ -89,15 +91,17 @@
         <th>Circle</th>
         <th>Count</th>
         <th>Reference To</th>
+        <th>Circle Name</th>
     </tr>
 
     @foreach ($referenceDetails as $row)
-        @foreach ($row['with_members'] as $name => $count)
+        @foreach ($row['with_members'] as $name => $data)
             <tr>
                 <td>{{ $row['referenceGiverName'] }}</td>
                 <td>{{ $row['circleName'] }}</td>
-                <td>{{ $count }}</td>
+                <td>{{ $data['count'] }}</td>
                 <td>{{ $name }}</td>
+                <td>{{ $data['circleName'] }}</td>
             </tr>
         @endforeach
     @endforeach
@@ -111,6 +115,7 @@
         <th>Count</th>
         <th>Total Amount</th>
         <th>Business To</th>
+        <th>Circle Name</th>
     </tr>
 
     @foreach ($businessDetails as $row)
@@ -121,6 +126,7 @@
                 <td>{{ $data['count'] }}</td>
                 <td>{{ $data['amount'] }}</td>
                 <td>{{ $name }}</td>
+                <td>{{ $data['circleName'] }}</td>
             </tr>
         @endforeach
     @endforeach

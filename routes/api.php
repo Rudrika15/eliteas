@@ -115,6 +115,9 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/notification/read/{id}', [ApiController::class, 'markAsRead']);
     Route::get('/members-activity-counts/{id?}', [ApiController::class, 'membersActivityCount']);
 
+    //latest Members
+    Route::get('/latestmembers', [ApiController::class, 'latestMembers']);
+
     // Admin side profile change
     Route::post('/members/{id}', [LoginController::class, 'memberUpdateAdmin']);
     // Route::put('/members/{id}', [MemberController::class, 'update']);
@@ -404,6 +407,9 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('v1/max-reference-user', [ApiController::class, 'maxReferenceUser']);
     Route::get('v1/max-referral-user', [ApiController::class, 'maxRefferalUser']);
     Route::get('v1/max-visitor-user', [ApiController::class, 'maxVisitorUser']);
+
+    // latest members
+    Route::get('v1/latestmembers', [ApiController::class, 'latestMembers']);
 
     // userdata by id
     Route::get('v1/user-details/{userId}', [ApiController::class, 'getUserDetails']);

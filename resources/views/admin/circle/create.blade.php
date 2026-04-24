@@ -448,12 +448,12 @@
             @enderror
         </div>
     </div> --}}
-    {{-- </div> --}}
+            {{-- </div> --}}
 
-    <div class="text-center mt-3">
-        <button type="submit" class="btn btn-bg-blue ">Submit</button>
-        <button type="reset" class="btn btn-bg-orange">Reset</button>
-    </div>
+            <div class="text-center mt-3">
+                <button type="submit" class="btn btn-bg-blue ">Submit</button>
+                <button type="reset" class="btn btn-bg-orange">Reset</button>
+            </div>
     </div>
     </div>
     </form><!-- End floating Labels Form -->
@@ -509,8 +509,12 @@
         });
     </script>
 
+
+
     <script>
         $(document).ready(function() {
+            var userRole = "{{ Auth::user()->getRoleNames()->first() }}";
+
             // Initialize state and city dropdowns to be empty on page load
             $('#state').html('<option value="">Select State</option>');
             $('#cityId').html('<option value="">Select City</option>');
@@ -523,6 +527,7 @@
                     $.ajax({
                         url: '{{ route('get.states') }}', // Replace with your route for fetching states
                         type: 'POST',
+                        role: userRole,
                         data: {
                             countryId: countryId,
                             _token: '{{ csrf_token() }}'
@@ -554,6 +559,7 @@
                         type: 'POST',
                         data: {
                             stateId: stateId,
+                            role: userRole,
                             _token: '{{ csrf_token() }}'
                         },
                         success: function(data) {

@@ -31,6 +31,16 @@
     </a>
 </li> --}}
 
+@role('Franchise Admin')
+    <li class="nav-item">
+        <a class="nav-link collapsed" href="{{ route('franchise.index') }}">
+            <i class="bi bi-person-vcard" style="color: #e76a35"></i>
+            <span style="color: #1d2856">Franchise</span>
+        </a>
+    </li>
+@endrole
+
+
 @role('Vice President')
     <li class="nav-item">
         <a class="nav-link collapsed" data-bs-target="#allActivityVp-nav" data-bs-toggle="collapse" href="#">

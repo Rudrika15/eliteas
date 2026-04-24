@@ -459,40 +459,95 @@ class CircleController extends Controller
         }
     }
 
+    // public function index(Request $request)
+    // {
+    //     try {
+    //         // Get the authenticated user
+    //         $user = Auth::user();
+
+    //         // Initialize the Circle query with necessary relationships
+    //         $circleQuery = Circle::with('circleType', 'city', 'franchise')
+    //             ->where('status', '!=', 'Deleted') // Exclude deleted circles
+    //             ->where('status', 'Active'); // Only active circles
+
+    //         // If the user is a 'Circle Admin', get circles created by the user and circles they administer
+    //         if ($user->hasRole('Circle Admin', 'Franchise Admin')) {
+    //             $circleQuery->where(function ($query) use ($user) {
+    //                 $query->where('createdBy', $user->id) // Circles created by the user
+    //                     ->orWhereIn('id', function ($subQuery) use ($user) {
+    //                         $memberId = Member::where('userId', $user->id)->value('id');
+    //                         $subQuery->select('circleId')->from('circle_admins')->where('memberId', $memberId);
+    //                     });
+    //             });
+    //         } else {
+    //             // If the user is not a Circle Admin, get all active circles
+    //             // No additional filtering is done here, so it fetches all circles with 'Active' status
+    //         }
+
+    //         // Order by ID and paginate the results
+    //         $circle = $circleQuery->orderBy('circleName', 'ASC')->paginate(10);
+
+    //         // Return the view with the circles
+    //         return view('admin.circle.index', compact('circle'));
+    //     } catch (\Throwable $th) {
+    //         // Log the error and return the server error page
+    //         ErrorLogger::logError($th, $request->fullUrl());
+
+    //         return view('servererror');
+    //     }
+    // }
     public function index(Request $request)
     {
         try {
-            // Get the authenticated user
             $user = Auth::user();
 
-            // Initialize the Circle query with necessary relationships
             $circleQuery = Circle::with('circleType', 'city', 'franchise')
-                ->where('status', '!=', 'Deleted') // Exclude deleted circles
-                ->where('status', 'Active'); // Only active circles
+                ->where('status', 'Active');
 
-            // If the user is a 'Circle Admin', get circles created by the user and circles they administer
+            // 🔵 Circle Admin Logic
             if ($user->hasRole('Circle Admin')) {
                 $circleQuery->where(function ($query) use ($user) {
-                    $query->where('createdBy', $user->id) // Circles created by the user
-                        ->orWhereIn('id', function ($subQuery) use ($user) {
-                            $memberId = Member::where('userId', $user->id)->value('id');
-                            $subQuery->select('circleId')->from('circle_admins')->where('memberId', $memberId);
+
+                    $memberId = Member::where('userId', $user->id)->value('id');
+
+                    $query->where('createdBy', $user->id)
+                        ->orWhereIn('id', function ($subQuery) use ($memberId) {
+                            $subQuery->select('circleId')
+                                ->from('circle_admins')
+                                ->where('memberId', $memberId);
                         });
                 });
-            } else {
-                // If the user is not a Circle Admin, get all active circles
-                // No additional filtering is done here, so it fetches all circles with 'Active' status
             }
 
-            // Order by ID and paginate the results
+            // 🟢 Franchise Admin Logic (NEW)
+            elseif ($user->hasRole('Franchise Admin')) {
+
+                $member = Member::where('userId', $user->id)->first();
+
+                if ($member) {
+
+                    // OPTION 1: If member has franchiseId directly
+                    if (!empty($member->franchiseId)) {
+                        $circleQuery->where('franchiseId', $member->franchiseId);
+                    }
+
+                    // OPTION 2: If member has circleId → derive franchise
+                    elseif (!empty($member->circleId)) {
+                        $franchiseId = Circle::where('id', $member->circleId)
+                            ->value('franchiseId');
+
+                        $circleQuery->where('franchiseId', $franchiseId);
+                    }
+                }
+            }
+
+            // 🟡 Other users → All active circles (no filter)
+
             $circle = $circleQuery->orderBy('circleName', 'ASC')->paginate(10);
 
-            // Return the view with the circles
             return view('admin.circle.index', compact('circle'));
         } catch (\Throwable $th) {
-            // Log the error and return the server error page
             ErrorLogger::logError($th, $request->fullUrl());
-
             return view('servererror');
         }
     }
@@ -518,6 +573,7 @@ class CircleController extends Controller
     public function create(Request $request)
     {
         try {
+            $user = Auth::user();
             $countries = Country::where('status', 'Active')->orderBy('countryName', 'ASC')->get();
             $states = State::where('status', 'Active')->orderBy('stateName', 'ASC')->get();
             $cities = City::where('status', 'Active')->orderBy('cityName', 'ASC')->get();
@@ -527,6 +583,53 @@ class CircleController extends Controller
             $circletype = CircleType::where('status', 'Active')->orderBy('circleTypeName', 'ASC')->get();
             $bCategory = BusinessCategory::where('status', 'Active')->orderBy('categoryName', 'ASC')->get();
 
+            if ($user->hasRole('Franchise Admin')) {
+
+                $member = Member::where('userId', $user->id)->first();
+
+                if ($member) {
+
+                    // ✅ Get franchiseId
+                    if (!empty($member->franchiseId)) {
+                        $franchiseId = $member->franchiseId;
+                    } else {
+                        // fallback from circle
+                        $franchiseId = Circle::where('id', $member->circleId)
+                            ->value('franchiseId');
+                    }
+
+                    // 👉 Franchise
+                    $franchise = Franchise::where('id', $franchiseId)
+                        ->where('status', 'Active')
+                        ->get();
+
+                    // 👉 Circles under that franchise
+                    $circle = Circle::where('franchiseId', $franchiseId)
+                        ->where('status', 'Active')
+                        ->orderBy('circleName')
+                        ->get();
+
+                    // 👉 Get city IDs from circles
+                    $cityIds = $circle->pluck('cityId')->unique();
+
+                    // 👉 Cities
+                    $cities = City::whereIn('id', $cityIds)
+                        ->where('status', 'Active')
+                        ->orderBy('cityName')
+                        ->get();
+
+                    // 👉 Get state IDs from cities
+                    $stateIds = $cities->pluck('stateId')->unique();
+
+                    // 👉 States
+                    $states = State::whereIn('id', $stateIds)
+                        ->where('status', 'Active')
+                        ->orderBy('stateName')
+                        ->get();
+
+                    // dd($franchise, $circle, $cities, $states);
+                }
+            }
             return view('admin.circle.create', compact('circle', 'bCategory', 'franchise', 'city', 'circletype', 'countries', 'states', 'cities'));
         } catch (\Throwable $th) {
             // throw $th;
@@ -548,7 +651,7 @@ class CircleController extends Controller
             'circletypeId' => 'required',
             'meetingDay' => 'required',
             'numberOfMeetings' => 'required',
-            'weekNo' => 'required|array', 
+            'weekNo' => 'required|array',
         ]);
 
         try {
@@ -752,6 +855,7 @@ class CircleController extends Controller
     public function showByCircle(Request $request, $id)
     {
         try {
+
             $circle = Circle::findOrFail($id);
             $schedules = Schedule::where('circleId', $circle->id)->where('status', 'Active')->orderByDesc('id')->paginate(10);
 

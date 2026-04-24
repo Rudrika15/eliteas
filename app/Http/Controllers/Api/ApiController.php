@@ -2374,4 +2374,15 @@ class ApiController extends Controller
             return Utils::errorResponse($th->getMessage(), 'Internal Server Error', 500);
         }
     }
+
+    public function latestMembers()
+    {
+        try {
+            $latestMembers = Member::with('circle')->where('status', 'Active')->orderBy('created_at', 'desc')->take(4)->get();
+
+            return Utils::sendResponse($latestMembers, 'Latest members fetched successfully', 200);
+        } catch (\Throwable $th) {
+            return Utils::errorResponse($th->getMessage(), 'Internal Server Error', 500);
+        }
+    }
 }
