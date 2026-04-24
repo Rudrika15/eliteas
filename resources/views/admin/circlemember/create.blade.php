@@ -172,7 +172,7 @@
                 </div>
                 <div class="col-md-6 mt-3">
                     <div class="form-floating">
-                        <input type="text" class="form-control @error('mobileNo') is-invalid @enderror" id="mobileNo" name="mobileNo" placeholder="Mobile No" value="{{ old('mobileNo') }}" pattern="[0-9]{10}" oninput="if(this.value.length > 10) this.value = this.value.slice(0,10); this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');" oninvalid="this.setCustomValidity('Please enter a valid 10-digit mobile number');" oninput="this.setCustomValidity('')">
+                        <input type="text" class="form-control @error('mobileNo') is-invalid @enderror" id="mobileNo" name="mobileNo" placeholder="Mobile No" value="{{ old('mobileNo') }}" pattern="[0-9]{10}" oninput="if(this.value.length > 10) this.value = this.value.slice(0,10); this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                         <label for="mobileNo">Mobile No</label>
                         @error('mobileNo')
                             <div class="invalid-tooltip">
@@ -183,7 +183,7 @@
                             $errors->has('mobileNo') &&
                                 $errors->first('mobileNo') ==
                                     'Please enter a valid 10-digit mobile
-                                                                                                                                                                                                                                                                                                                                                                    number')
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    number')
                             <div class="invalid-tooltip" style="color: red;">
                                 {{ $errors->first('mobileNo') }}
                             </div>
@@ -224,6 +224,54 @@
                             </label>
                         </div>
                         @error('gender')
+                            <div class="invalid-tooltip">
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mt-3">
+                    <div class="form-floating">
+                        <input type="text" class="form-control @error('companyName') is-invalid @enderror" id="companyName" name="companyName" value="{{ old('companyName') }}" placeholder="Company Name">
+                        <label for="companyName">Company Name</label>
+                        @error('companyName')
+                            <div class="invalid-tooltip">
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+                </div>
+                <div class="col-md-6 mt-3">
+                    <div class="form-floating">
+                        <input type="text" class="form-control @error('gstinPan') is-invalid @enderror" id="gstinPan" name="gstinPan" value="{{ old('gstinPan') }}" placeholder="GSTIN / PAN">
+                        <label for="gstinPan">GSTIN / PAN </label>
+                        @error('gstinPan')
+                            <div class="invalid-tooltip">
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mt-3">
+                    <div class="form-floating">
+                        <input type="text" class="form-control @error('addressLine1') is-invalid @enderror" value="{{ old('addressLine1') }}" id="addressLine1" name="addressLine1" placeholder="Address Line 1">
+                        <label for="addressLine1">Address Line 1</label>
+                        @error('addressLine1')
+                            <div class="invalid-tooltip">
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+                </div>
+                <div class="col-md-6 mt-3">
+                    <div class="form-floating">
+                        <input type="text" class="form-control @error('addressLine2') is-invalid @enderror" id="addressLine2" name="addressLine2" value="{{ old('addressLine2') }}" placeholder="addressLine2">
+                        <label for="addressLine2">Address Line 2 </label>
+                        @error('addressLine2')
                             <div class="invalid-tooltip">
                                 {{ $message }}
                             </div>
@@ -339,6 +387,51 @@
                             <div class="invalid-tooltip">
                                 {{ $message }}
                             </div>
+                        @enderror
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <!-- Profile Photo -->
+                <div class="col-md-6 mt-3">
+                    <div class="form-label-group mt-3">
+                        <label for="profilePhoto" class="fw-bold">
+                            Profile Photo <sup class="text-danger">*</sup>
+                        </label>
+                        <input type="file" class="form-control @error('profilePhoto') is-invalid @enderror" id="profilePhoto" name="profilePhoto" accept="image/*" onchange="previewPhoto(event, 'photoPreview')">
+                        <span class="text-danger mt-1 d-block">
+                            * File size: Max 2MB
+                        </span>
+                        <!-- Default Preview -->
+                        <div style="width: 100px; height: 100px;" class="mt-3">
+                            <img id="photoPreview" src="{{ asset('default.jpg') }}" style="width:100%; height:100%; object-fit:contain;">
+                        </div>
+                        @error('profilePhoto')
+                            <span class="text-danger">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
+
+                <!-- Company Logo -->
+                <div class="col-md-6 mt-3">
+                    <div class="form-label-group mt-3">
+                        <label for="companyLogo" class="fw-bold">
+                            Company Logo <sup class="text-danger">*</sup>
+                        </label>
+
+                        <input type="file" class="form-control @error('companyLogo') is-invalid @enderror" id="companyLogo" name="companyLogo" accept="image/*" onchange="previewPhoto(event, 'logoPreview')">
+
+                        <span class="text-danger mt-1 d-block">
+                            * File size: Max 2MB
+                        </span>
+
+                        <!-- Default Preview -->
+                        <div style="width: 100px; height: 100px;" class="mt-3">
+                            <img id="logoPreview" src="{{ asset('default.jpg') }}" style="width:100%; height:100%; object-fit:contain;">
+                        </div>
+
+                        @error('companyLogo')
+                            <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
                 </div>
@@ -655,6 +748,19 @@
                 }
             });
         });
+
+        function previewPhoto(event, previewId) {
+            const input = event.target;
+            const reader = new FileReader();
+
+            reader.onload = function() {
+                document.getElementById(previewId).src = reader.result;
+            }
+
+            if (input.files[0]) {
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
     </script>
 
 @endsection

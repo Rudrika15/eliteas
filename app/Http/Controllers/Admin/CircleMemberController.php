@@ -195,7 +195,7 @@ class CircleMemberController extends Controller
             } else {
                 $circle = Circle::where('status', 'Active')->orderBy('circleName', 'asc')->get();
             }
-            $bCategory = BusinessCategory::where('status', 'Active')->orderBy('categoryName', 'asc')->get();    
+            $bCategory = BusinessCategory::where('status', 'Active')->orderBy('categoryName', 'asc')->get();
             $roles = Role::all();
 
             $membershipType = MembershipType::where('status', 'Active')->get();
@@ -427,7 +427,7 @@ class CircleMemberController extends Controller
             $countries = Country::where('status', 'Active')->orderBy('countryName', 'asc')->get();
             $states = State::where('status', 'Active')->orderBy('stateName', 'asc')->get();
             $cities = City::where('status', 'Active')->orderBy('cityName', 'asc')->get();
-            $membershipType = MembershipType::where('status', 'Active')->orderBy('membershipType', 'asc')->get();
+            $membershipType = MembershipType::where('status', 'Active')->where('membershipType', 'Supreme - Yearly')->get();
 
             // $circles = Circle::where('status', 'Active')->orderBy('circleName', 'asc')->get();
             // $circleMember = Member::with('circle')->where('status', 'Active')->orderBy('firstName', 'asc')->get(); // Ensure 'circleId' is included
@@ -464,7 +464,7 @@ class CircleMemberController extends Controller
 
     public function store(Request $request)
     {
-        // return $request;
+
         $this->validate($request, [
             'title' => 'required',
             'circleIds' => 'required',
@@ -552,6 +552,8 @@ class CircleMemberController extends Controller
             $member->firstName = $request->firstName;
             $member->lastName = $request->lastName;
             $member->gender = $request->gender;
+            $member->companyName = $request->companyName;
+            $member->gstinPan = $request->gstinPan;
 
             $member->membershipType = $request->membershipType;
 
@@ -562,7 +564,20 @@ class CircleMemberController extends Controller
             } else {
                 $member->membershipAmount = $membershipType->amount;
             }
+            if ($request->hasFile('profilePhoto')) {
+                $profilePhoto = $request->file('profilePhoto');
+                $profilePhotoName = time() . '.' . $profilePhoto->getClientOriginalExtension();
+                $profilePhoto->move(public_path('ProfilePhoto'), $profilePhotoName);
+                $member->profilePhoto = $profilePhotoName;
+            }
 
+
+            if ($request->hasFile('companyLogo')) {
+                $companyLogo = $request->file('companyLogo');
+                $companyLogoName = time() . '.' . $companyLogo->getClientOriginalExtension();
+                $companyLogo->move(public_path('CompanyLogo'), $companyLogoName);
+                $member->companyLogo = $companyLogoName;
+            }
             $member->status = 'Active';
             $member->save();
 
@@ -587,6 +602,7 @@ class CircleMemberController extends Controller
             //     // $reverseConnection->save();
             // }
 
+          
             // Create and save TopsProfile
             $tops = new TopsProfile;
             $tops->memberId = $member->id;
@@ -597,6 +613,9 @@ class CircleMemberController extends Controller
             $contact = new ContactDetails;
             $contact->memberId = $member->id;
             $contact->mobileNo = $request->mobileNo;
+            $contact->email = $request->email;
+            $contact->addressLine1 = $request->addressLine1;
+            $contact->addressLine2 = $request->addressLine2;
             $contact->status = 'Active';
             $contact->save();
 

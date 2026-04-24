@@ -936,9 +936,9 @@ class HomeController extends Controller
                             $missingFields[] = 'Gender';
                         }
 
-                        if (isEmptyField($member->birthDate)) {
-                            $missingFields[] = 'Birth Date';
-                        }
+                        // if (isEmptyField($member->birthDate)) {
+                        //     $missingFields[] = 'Birth Date';
+                        // }
 
                         if (isEmptyField($member->companyName)) {
                             $missingFields[] = 'Company Name';
@@ -948,9 +948,9 @@ class HomeController extends Controller
                             $missingFields[] = 'Website';
                         }
 
-                        if (isEmptyField($member->gstinPan)) {
-                            $missingFields[] = 'GST/PAN';
-                        }
+                        // if (isEmptyField($member->gstinPan)) {
+                        //     $missingFields[] = 'GST/PAN';
+                        // }
 
                         $landmarks = collect();
 
