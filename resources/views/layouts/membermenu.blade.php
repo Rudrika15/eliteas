@@ -33,10 +33,30 @@
 
 @role('Franchise Admin')
     <li class="nav-item">
-        <a class="nav-link collapsed" href="{{ route('franchise.index') }}">
-            <i class="bi bi-person-vcard" style="color: #e76a35"></i>
-            <span style="color: #1d2856">Franchise</span>
+        <a class="nav-link collapsed" data-bs-target="#circle-nav" data-bs-toggle="collapse" href="#">
+            <i class="bi bi-person-vcard" style="color: #e76a35"></i></i><span>Franchise</span><i class="bi bi-chevron-down ms-auto" style="color: #e76a35"></i>
         </a>
+        <ul id="circle-nav" class="nav-content collapse" data-bs-parent="#sidebar-nav">
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('franchise.index') }}">
+                    <i class="bi bi-person-vcard" style="color: #e76a35"></i>
+                    <span>Franchise</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link " href="{{ route('circle.index') }}">
+                    <i class="bi bi-plus-circle-dotted" style="color: #e76a35"></i>
+                    <span>Circle List</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link " href="{{ route('circlemember.index') }}">
+                    <i class="bi bi-plus-circle-dotted" style="color: #e76a35"></i>
+                    <span>Circle Member</span>
+                </a>
+            </li>
+        </ul>
     </li>
 @endrole
 
@@ -121,7 +141,7 @@
     </li>
 @endrole
 
-@role(['Circle Admin', 'Franchise Admin'])
+@role('Circle Admin')
     <li class="nav-item">
         <a class="nav-link collapsed" data-bs-target="#circle-nav" data-bs-toggle="collapse" href="#">
             <i class="bi bi-plus-circle-dotted" style="color: #e76a35"></i><span>Circle</span><i class="bi bi-chevron-down ms-auto" style="color: #e76a35"></i>

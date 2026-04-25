@@ -118,6 +118,9 @@ class ProfileController extends Controller
             if ($request->filled('gender')) {
                 $member->gender = $request->gender;
             }
+            if ($request->filled('bussinessType')) {
+                $member->bussinessType = $request->bussinessType;
+            }
             // $member->language = $request->language;
             // $member->timeZone = $request->timeZone;
 

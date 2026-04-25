@@ -554,6 +554,7 @@ class CircleMemberController extends Controller
             $member->gender = $request->gender;
             $member->companyName = $request->companyName;
             $member->gstinPan = $request->gstinPan;
+            $member->bussinessType = $request->bussinessType;
 
             $member->membershipType = $request->membershipType;
 
@@ -602,7 +603,7 @@ class CircleMemberController extends Controller
             //     // $reverseConnection->save();
             // }
 
-          
+
             // Create and save TopsProfile
             $tops = new TopsProfile;
             $tops->memberId = $member->id;
@@ -757,6 +758,7 @@ class CircleMemberController extends Controller
     public function update(Request $request)
     {
 
+
         // return $request;
 
         try {
@@ -792,6 +794,7 @@ class CircleMemberController extends Controller
             $member->industry = $request->has('industry') ? $request->industry : $member->industry;
             $member->classification = $request->has('classification') ? $request->classification : $member->classification;
             $member->gender = $request->has('gender') ? $request->gender : $member->gender;
+            $member->businessType = $request->has('businessType') ? $request->businessType : $member->businessType;
             $member->language = $request->has('language') ? $request->language : $member->language;
             $member->timeZone = $request->has('timeZone') ? $request->timeZone : $member->timeZone;
 

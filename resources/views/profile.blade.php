@@ -215,6 +215,7 @@
                                     <?php } ?>
                                 </div>
 
+
                                 <div class="col-md-6 mt-3">
                                     <div class="form-floating">
                                         <input type="text" class="form-control @error('companyName') is-invalid @enderror" id="companyName" name="companyName" value="{{ $member->companyName ?? '-' }}" placeholder="Company Name">
@@ -226,7 +227,56 @@
                                         @enderror
                                     </div>
                                 </div>
-                                <div class="col-md-6 mt-3">
+                                <div class="col-md-3 mt-3">
+                                    <?php
+                                if($member->bussinessType === "Service Base")
+                                {
+                                ?>
+                                    <div class="form-floating">
+                                        <div class="form-check">
+                                            <input class="form-check-input" checked type="radio" name="bussinessType" id="bussinessType" value="Product Base">
+                                            <label class="form-check-label" for="bussinessType">
+                                                Product Base
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="bussinessType" id="bussinessType" value="Service Base" checked>
+                                            <label class="form-check-label" for="bussinessType">
+                                                Service Base
+                                            </label>
+                                        </div>
+
+                                        @error('bussinessType')
+                                            <div class="invalid-tooltip">
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
+                                    </div>
+                                    <?php }
+                                else {?>
+                                    <div class="form-floating">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="bussinessType" id="bussinessType" value="Product Base" checked>
+                                            <label class="form-check-label" for="bussinessType">
+                                                Product Base
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" checked type="radio" name="bussinessType" id="bussinessType" value="Service Base">
+                                            <label class="form-check-label" for="bussinessType">
+                                                Service Base
+                                            </label>
+                                        </div>
+
+                                        @error('bussinessType')
+                                            <div class="invalid-tooltip">
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
+                                    </div>
+                                    <?php } ?>
+                                </div>
+                                <div class="col-md-3 mt-3">
                                     <div class="form-floating">
                                         <input type="text" class="form-control @error('gStinPan') is-invalid @enderror" id="gStinPan" name="gStinPan" value="{{ $member->gstinPan ?? '-' }}" placeholder="GSTIN / PAN">
                                         <label for="gStinPan">GSTIN / PAN </label>

@@ -64,6 +64,7 @@ use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\PrivacyPolicyController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\TermsController;
 use App\Http\Controllers\TestimonialController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\visitor\VisitorFormController;
@@ -153,6 +154,11 @@ Route::group(['middleware' => ['auth']], function () {
         return response()->json(['roles' => $roles]);
     });
 
+    //Terms & Conditions 
+    Route::get('/terms', [TermsController::class, 'index'])->name('terms.index');
+    Route::get('/terms/preview', [TermsController::class, 'preview'])->name('terms.preview');
+    Route::get('/terms/download', [TermsController::class, 'download'])->name('terms.download');
+    Route::post('/terms/accept', [TermsController::class, 'accept'])->name('terms.accept');
     // permission
     Route::get('permission/index', [PermissionController::class, 'index'])->name('permission.index');
     Route::get('permission/create', [PermissionController::class, 'create'])->name('permission.create');

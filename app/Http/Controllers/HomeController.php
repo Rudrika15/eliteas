@@ -1011,7 +1011,7 @@ class HomeController extends Controller
                         $missingFields[] = 'Address Line 2';
                     }
                 }
-                $latestMembers = Member::with('circle')->where('status', 'Active')->orderBy('created_at', 'desc')->take(4)->get();
+                $latestMembers = Member::with('circle')->where('status', 'Active')->where('membershipType', 'Supreme - Yearly')->orderBy('created_at', 'desc')->take(4)->get();
 
                 // dd($missingFields);
                 $categoryNames = $businessCategories->pluck('categoryName');
