@@ -36,6 +36,7 @@ use App\Http\Controllers\Api\SlotController;
 use App\Http\Controllers\Api\SocialWallController;
 use App\Http\Controllers\Api\SpecificAskController;
 use App\Http\Controllers\Api\SupportTicketController;
+use App\Http\Controllers\Api\TermsController;
 // use App\Http\Controllers\Api\TestimonialController;
 // use App\Http\Controllers\Api\TestimonialController;
 
@@ -104,6 +105,10 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('/user/member/updateBillingAddress', [LoginController::class, 'billingAddressUpdate']);
     Route::post('/user/member/updateContactDetails', [LoginController::class, 'contactDetailsUpdate']);
     Route::post('/user/member/updateTopsProfile', [LoginController::class, 'topsProfileUpdate']);
+
+    Route::get('/terms/preview', [TermsController::class, 'preview']);
+    Route::get('/terms/download', [TermsController::class, 'download']);
+    Route::post('/terms/accept', [TermsController::class, 'accept']);
 
     Route::get('/home-counts', [ApiController::class, 'homeCounts']);
     Route::get('/top-networkers', [ApiController::class, 'topNetworkers']);

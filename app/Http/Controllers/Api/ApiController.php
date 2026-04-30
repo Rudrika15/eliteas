@@ -2375,12 +2375,66 @@ class ApiController extends Controller
         }
     }
 
+    // public function latestMembers()
+    // {
+    //     try {
+    //         $latestMembers = Member::with('circle')->where('status', 'Active')->orderBy('created_at', 'desc')->take(4)->get();
+
+    //         return Utils::sendResponse($latestMembers, 'Latest members fetched successfully', 200);
+    //     } catch (\Throwable $th) {
+    //         return Utils::errorResponse($th->getMessage(), 'Internal Server Error', 500);
+    //     }
+    // }
     public function latestMembers()
     {
         try {
-            $latestMembers = Member::with('circle')->where('status', 'Active')->orderBy('created_at', 'desc')->take(4)->get();
+            $authUserId = Auth::id();
 
-            return Utils::sendResponse($latestMembers, 'Latest members fetched successfully', 200);
+            $authMember = Member::where('userId', $authUserId)->first();
+            $membershipType = $authMember ? $authMember->membershipType : null;
+
+            $members = User::where('status', 'Active')
+                ->whereHas('member', function ($q) use ($authUserId, $membershipType) {
+                    $q->where('status', 'Active')
+                        ->where('userId', '!=', $authUserId)
+                        ->where('membershipType', $membershipType);
+                })
+                ->with([
+                    'member',
+                    'member.circle:id,circleName,cityId',
+                    'member.bCategory:id,categoryName'
+                ])
+                ->orderBy('created_at', 'desc')
+                ->take(4)
+                ->get();
+
+            foreach ($members as $user) {
+
+                $member = $user->member;
+
+                if (! $member) {
+                    $user->connection_status = 'Not Connected';
+                    continue;
+                }
+
+                $connection = Connection::where(function ($query) use ($authUserId, $member) {
+                    $query->where('userId', $authUserId)
+                        ->where('memberId', $member->userId);
+                })->orWhere(function ($query) use ($authUserId, $member) {
+                    $query->where('userId', $member->userId)
+                        ->where('memberId', $authUserId);
+                })->first();
+
+                if ($connection && $connection->status === 'Accepted') {
+                    $user->connection_status = 'Connected';
+                } else {
+                    $user->connection_status = $connection ? $connection->status : 'Not Connected';
+                }
+            }
+
+            return Utils::sendResponse([
+                'members' => $members
+            ], 'Latest members fetched successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse($th->getMessage(), 'Internal Server Error', 500);
         }

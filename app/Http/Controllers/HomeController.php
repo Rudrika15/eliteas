@@ -221,7 +221,16 @@ class HomeController extends Controller
     //     }
     //     return view('home', compact('count', 'nearestTraining',  'businessCategory', 'myInvites', 'findRegister'));
     // }
+    protected function authenticated(Request $request, $user)
+    {
+        $member = Member::where('userId', $user->id)->first();
 
+        if (!$member || !$member->terms_accepted) {
+            return redirect()->route('terms.preview');
+        }
+
+        return redirect()->route('home');
+    }
     public function count()
     {
         $authUser = auth()->user();
@@ -1011,12 +1020,13 @@ class HomeController extends Controller
                         $missingFields[] = 'Address Line 2';
                     }
                 }
-                $latestMembers = Member::with('circle')->where('status', 'Active')->where('membershipType', 'Supreme - Yearly')->orderBy('created_at', 'desc')->take(4)->get();
+                $latestCircleMembers = Member::with('circle')->where('status', 'Active')->where('membershipType', 'Supreme - Yearly')->orderBy('created_at', 'desc')->take(4)->get();
+                $latestDigitalMembers = Member::with('circle')->where('status', 'Active')->where('membershipType', 'Digital Membership')->orderBy('created_at', 'desc')->take(4)->get();
 
                 // dd($missingFields);
                 $categoryNames = $businessCategories->pluck('categoryName');
 
-                return view('home', compact('circleCount', 'authCircleId', 'categoryNames', 'membersCount', 'signedUrl', 'birthdaysToday', 'templates', 'count', 'monthlyPayments', 'totalAmountDue', 'nearestEvents', 'circlecalls', 'busGiver', 'refGiver', 'induction', 'nearestTraining', 'testimonials', 'meeting', 'businessCategory', 'myInvites', 'todaysBirthdays', 'pendingCount', 'receivedRequests', 'notifications', 'notificationCount', 'posts', 'missingFields', 'member', 'city', 'landmarks', 'latestMembers'));
+                return view('home', compact('circleCount', 'authCircleId', 'categoryNames', 'membersCount', 'signedUrl', 'birthdaysToday', 'templates', 'count', 'monthlyPayments', 'totalAmountDue', 'nearestEvents', 'circlecalls', 'busGiver', 'refGiver', 'induction', 'nearestTraining', 'testimonials', 'meeting', 'businessCategory', 'myInvites', 'todaysBirthdays', 'pendingCount', 'receivedRequests', 'notifications', 'notificationCount', 'posts', 'missingFields', 'member', 'city', 'landmarks', 'latestCircleMembers', 'latestDigitalMembers'));
             }
 
             return view('home', compact('circleCount', 'membersCount', 'count', 'nearestTraining', 'businessCategory', 'myInvites', 'birthdaysToday', 'templates', 'pendingCount'));

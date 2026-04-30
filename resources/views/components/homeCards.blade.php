@@ -1179,7 +1179,7 @@
         $nearestEvents = \App\Models\Event::where('eventStatus', 'Publish')->where('status', 'Active')->whereDate('event_date', '>=', $currentDate)->orderBy('event_date', 'asc')->get();
 
     @endphp
-    
+
     <div class="modal fade" id="updateProfileModal" tabindex="-1" data-bs-backdrop="true">
         <div class="modal-dialog modal-dialog-top">
             <div class="modal-content border-0" style="
@@ -1385,7 +1385,7 @@
             </div>
         </div>
     </div>
-    <style>
+    {{-- <style>
         .uplfeed-card {
             background: #f2f2f2;
 
@@ -1682,7 +1682,7 @@
 
             </div>
         </div>
-    @endif
+    @endif --}}
     <style>
         .fb-card {
             background-color: #ffffff;
@@ -1934,7 +1934,7 @@
             </div>
         </div>
     @endif
-    @if ($latestMembers && $latestMembers->count() > 0)
+    @if ($latestDigitalMembers && $latestDigitalMembers->count() > 0)
         <div class="card shadow-sm border-0 mt-3" style="border-radius: 12px; overflow: hidden;">
 
             <!-- Card Header -->
@@ -1955,7 +1955,7 @@
             <div class="card-body p-3">
 
                 <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
-                    @forelse ($latestMembers->take(4) as $member)
+                    @forelse ($latestDigitalMembers->take(4) as $member)
                         <div class="col">
                             <div class="fb-card shadow-sm h-100">
 
@@ -2406,6 +2406,78 @@
         // $latestMembers = Member::with('circle')->where('status', 'Active')->orderBy('created_at', 'desc')->take(4)->get();
     @endphp
     <!-- Modal -->
+    @if (auth()->user())
+        @php
+            $member = \App\Models\Member::where('userId', auth()->id())->first();
+        @endphp
+
+        @if (!$member || !$member->terms_accepted)
+            <!-- Modal -->
+            <div id="termsModal" style="
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        ">
+                <div style="
+                width: 80%;
+                height: 90%;
+                background: #fff;
+                border-radius: 12px;
+                overflow: hidden;
+                display: flex;
+                flex-direction: column;
+            ">
+
+                    <!-- Header -->
+                    <div style="padding:15px; background:#1d3268; color:white;">
+                        <h4 style="margin:0;">Terms & Conditions</h4>
+                    </div>
+
+                    <!-- PDF Preview -->
+                    <iframe src="{{ route('terms.preview') }}" style="flex:1; border:none;">
+                    </iframe>
+
+                    <!-- Footer -->
+                    <div style="padding:15px; text-align:center;">
+                        <form method="POST" action="{{ route('terms.accept') }}">
+                            @csrf
+                            <button type="submit" style="
+                            background:#1d3268;
+                            color:white;
+                            padding:10px 25px;
+                            border:none;
+                            border-radius:6px;
+                            cursor:pointer;
+                        ">
+                                Accept & Continue
+                            </button>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+            <style id="p7i0cq">
+                #termsModal {
+                    animation: fadeIn 0.3s ease-in-out;
+                }
+
+                @keyframes fadeIn {
+                    from {
+                        opacity: 0;
+                    }
+
+                    to {
+                        opacity: 1;
+                    }
+                }
+            </style>
+        @endif
+    @endif
 
     <div class="modal fade" id="updateProfileModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-center">
@@ -3001,7 +3073,7 @@
             </div>
         </div>
     </div>
-    <style>
+    {{-- <style>
         .uplfeed-card {
             background: #f2f2f2;
 
@@ -3311,7 +3383,7 @@
 
             </div>
         </div>
-    @endif
+    @endif --}}
     <h1 class="text-center card-title fs-2 " id="leaderboard-title"></h1>
 
     <script>
@@ -3815,7 +3887,7 @@
             </div>
         </div>
     @endif
-    @if ($latestMembers && $latestMembers->count() > 0)
+    @if ($latestCircleMembers && $latestCircleMembers->count() > 0)
         <div class="card shadow-sm border-0 mt-3" style="border-radius: 12px; overflow: hidden;">
 
             <!-- Card Header -->
@@ -3836,7 +3908,7 @@
             <div class="card-body p-3">
 
                 <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
-                    @forelse ($latestMembers->take(4) as $member)
+                    @forelse ($latestCircleMembers->take(4) as $member)
                         <div class="col">
                             <div class="fb-card shadow-sm h-100">
 

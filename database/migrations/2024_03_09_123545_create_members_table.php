@@ -46,6 +46,7 @@ return new class extends Migration
             $table->string('receiveUpdates');
             $table->string('shareRevenue');
             $table->string('status');
+            $table->boolean('terms_accepted')->default(0);
             $table->timestamps();
         });
     }
