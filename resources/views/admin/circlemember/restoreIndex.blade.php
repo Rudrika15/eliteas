@@ -9,9 +9,13 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h4 class="card-title">Deleted Circle Member</h4>
-                    <a href="{{ route('circlemember.index') }}" class="btn btn-bg-orange btn-sm mt-3">BACK</a>
+                    <div class="d-flex gap-2">
+                        <a href="{{ route('deleted.members.export', request()->query()) }}" class="btn btn-success btn-sm mt-3">
+                            Excel
+                        </a>
+                        <a href="{{ route('circlemember.index') }}" class="btn btn-bg-orange btn-sm mt-3">BACK</a>
+                    </div>
                 </div>
-
                 <form method="GET" id="searchForm" class="mb-3">
                     <div class="input-group">
                         <input type="text" name="search" id="searchInput" class="form-control" placeholder="Search member or circle" value="{{ request('search') }}">
@@ -41,6 +45,8 @@
                                 <th>Member Name</th>
                                 <th>Business Category</th>
                                 <th>Membership Type</th>
+                                <th>Joining Date</th>
+                                <th>Deleted Date</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -57,6 +63,8 @@
                                     </td>
                                     <td>{{ $circlememberData->bCategory->categoryName ?? '-' }}</td>
                                     <td>{{ $circlememberData->membershipType ?? '-' }} </td>
+                                    <td>{{ $circlememberData->created_at ? $circlememberData->created_at->format('d-m-Y') : '-' }}</td>
+                                    <td>{{ $circlememberData->updated_at ? $circlememberData->updated_at->format('d-m-Y') : '-' }}</td>
 
                                     <td>
                                         <button type="button" class="btn btn-danger btn-sm btn-tooltip" onclick="confirmRestore({{ $circlememberData->id }})">

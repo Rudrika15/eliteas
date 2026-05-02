@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Exports\CircleMembersExport;
+use App\Exports\DeletedMemberListExport;
 use App\Http\Controllers\Controller;
 use App\Mail\MemberSubscription;
 use App\Mail\MemberSubscriptionDiscount;
@@ -267,6 +268,10 @@ class CircleMemberController extends Controller
 
             return view('servererror');
         }
+    }
+    public function exportDeletedMembers(Request $request)
+    {
+        return Excel::download(new DeletedMemberListExport($request), 'deleted_members.xlsx');
     }
 
     public function induction($id)

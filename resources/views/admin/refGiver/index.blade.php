@@ -674,6 +674,12 @@
                         success: function(response) {
                             if (response.members && response.members.length > 0) {
                                 response.members.forEach(function(member) {
+                                    if (
+                                        member.firstName?.toLowerCase().trim() === 'ubn' &&
+                                        member.lastName?.toLowerCase().trim() === '-'
+                                    ) {
+                                        return;
+                                    }
                                     $('#memberId').append('<option value="' + member.id +
                                         '" data-user-id="' + member.userId +
                                         '" data-first-name="' + member.firstName +

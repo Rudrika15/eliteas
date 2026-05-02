@@ -20,11 +20,17 @@ class TermsController extends Controller
             return response()->json(['message' => 'Member not found'], 404);
         }
 
-        return response()->json([
+        $data = [
             'name' => $member->firstName . ' ' . $member->lastName,
             'date' => now()->format('d-m-Y'),
             'signature' => $member->signature
-        ]);
+        ];
+
+        $pdf = Pdf::loadView('pdf.terms', $data);
+
+        return response($pdf->output(), 200)
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', 'inline; filename="terms.pdf"');
     }
 
     // ✅ Download PDF (API)
@@ -51,46 +57,91 @@ class TermsController extends Controller
     }
 
     // ✅ Accept Terms (API)
+    
+    // 📧 Send Mail
     public function accept(Request $request)
     {
-        $user = $request->user();
-        $member = Member::where('userId', $user->id)->first();
+        try {
+            $user = $request->user();
 
-        if (!$member) {
-            return response()->json(['message' => 'Member not found'], 404);
+            $member = Member::where('userId', $user->id)->first();
+
+            if (!$member) {
+                return response()->json(['message' => 'Member not found'], 404);
+            }
+
+            // ✅ Update terms
+            $member->terms_accepted = 1;
+            $member->save();
+
+            // ✅ Prepare data
+            $data = [
+                'name' => $member->firstName . ' ' . $member->lastName,
+                'date' => now()->format('d-m-Y'),
+                'signature' => $member->signature
+            ];
+
+            // ✅ Generate PDF
+            $pdf = Pdf::loadView('pdf.terms', $data)
+                ->setPaper('A4', 'portrait');
+
+            $pdf->setOptions([
+                'isHtml5ParserEnabled' => true,
+                'isRemoteEnabled' => true
+            ]);
+
+            // ✅ Store in storage (better than public)
+            $fileName = 'terms_' . $user->id . '.pdf';
+            $filePath = storage_path('app/public/pdfs/' . $fileName);
+
+            if (!file_exists(storage_path('app/public/pdfs'))) {
+                mkdir(storage_path('app/public/pdfs'), 0755, true);
+            }
+
+            file_put_contents($filePath, $pdf->output());
+
+            // ✅ Send Mail (HTML + proper body)
+            Mail::send([], [], function ($message) use ($user, $filePath) {
+
+                $message->to($user->email)
+                    ->subject('Confirmation of Terms & Conditions Acceptance')
+                    ->attach($filePath)
+                    ->setBody('
+                    <p>Dear Member,</p>
+
+                    <p>We hope you are doing well.</p>
+
+                    <p>
+                        This is to formally acknowledge and confirm that you have read,
+                        understood, and accepted the Terms and Conditions associated
+                        with <strong>UBN Community</strong>.
+                    </p>
+
+                    <p>
+                        Your acceptance signifies your agreement to comply with all the
+                        guidelines, policies, and operational standards outlined therein.
+                    </p>
+
+                    <p>
+                        We appreciate your trust and look forward to a successful journey together.
+                    </p>
+
+                    <p>
+                        Warm regards,<br>
+                        <strong>UBN Team</strong>
+                    </p>
+                ', 'text/html');
+            });
+
+            return response()->json([
+                'message' => 'Terms accepted successfully',
+                'pdf_url' => asset('storage/pdfs/' . $fileName) // 👈 correct public URL
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => 'Something went wrong',
+                'error' => $th->getMessage()
+            ], 500);
         }
-
-        $member->terms_accepted = 1;
-        $member->save();
-
-        $data = [
-            'name' => $member->firstName . ' ' . $member->lastName,
-            'date' => now()->format('d-m-Y'),
-            'signature' => $member->signature
-        ];
-
-        $pdf = Pdf::loadView('pdf.terms', $data)->setPaper('A4', 'portrait');
-
-        $pdf->setOptions([
-            'isHtml5ParserEnabled' => true,
-            'isRemoteEnabled' => true
-        ]);
-
-        $fileName = 'terms_' . $user->id . '.pdf';
-        $filePath = public_path('pdfs/' . $fileName);
-
-        file_put_contents($filePath, $pdf->output());
-
-        // 📧 Send Mail
-        Mail::raw('Terms Accepted', function ($message) use ($user, $filePath) {
-            $message->to($user->email)
-                ->subject('Terms Accepted')
-                ->attach($filePath);
-        });
-
-        return response()->json([
-            'message' => 'Terms accepted successfully',
-            'pdf_url' => asset('pdfs/' . $fileName)
-        ]);
     }
 }

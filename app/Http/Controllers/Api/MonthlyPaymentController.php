@@ -202,7 +202,7 @@ class MonthlyPaymentController extends Controller
 
                     if ($user) {
                         // Add the name to the payment data
-                        $payment->memberName = $user->firstName.' '.$user->lastName;
+                        $payment->memberName = $user->firstName . ' ' . $user->lastName;
                     } else {
                         $payment->memberName = 'Unknown User'; // In case user not found
                     }

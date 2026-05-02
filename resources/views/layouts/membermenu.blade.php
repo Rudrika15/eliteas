@@ -37,23 +37,70 @@
             <i class="bi bi-person-vcard" style="color: #e76a35"></i></i><span>Franchise</span><i class="bi bi-chevron-down ms-auto" style="color: #e76a35"></i>
         </a>
         <ul id="circle-nav" class="nav-content collapse" data-bs-parent="#sidebar-nav">
-            <li class="nav-item">
+            {{-- <li class="nav-item">
                 <a class="nav-link" href="{{ route('franchise.index') }}">
                     <i class="bi bi-person-vcard" style="color: #e76a35"></i>
                     <span>Franchise</span>
                 </a>
-            </li>
+            </li> --}}
             <li class="nav-item">
-                <a class="nav-link " href="{{ route('circle.index') }}">
+                <a class="nav-link collapsed" href="{{ route('circle.index') }}">
                     <i class="bi bi-plus-circle-dotted" style="color: #e76a35"></i>
                     <span>Circle List</span>
                 </a>
             </li>
 
             <li class="nav-item">
-                <a class="nav-link " href="{{ route('circlemember.index') }}">
+                <a class="nav-link collapsed " href="{{ route('circlemember.index') }}">
                     <i class="bi bi-plus-circle-dotted" style="color: #e76a35"></i>
                     <span>Circle Member</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="{{ route('admin.report.ibm') }}">
+                    <i class="bi bi-file-earmark-text" style="color: #e76a35"></i>
+                    <span class="text-blue">IBM Report</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="{{ route('admin.report.reference') }}">
+                    <i class="bi bi-file-earmark-text" style="color: #e76a35"></i>
+                    <span class="text-blue">Reference Report</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="{{ route('admin.report.business') }}">
+                    <i class="bi bi-file-earmark-text" style="color: #e76a35"></i>
+                    <span class="text-blue">Business Report</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="{{ route('admin.report.joining') }}">
+                    <i class="bi bi-file-earmark-text" style="color: #e76a35"></i>
+                    <span class="text-blue">Joining Report</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="{{ route('admin.memberWiseReport') }}">
+                    <i class="bi bi-file-earmark-text" style="color: #e76a35"></i>
+                    <span class="text-blue">Member Report</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="{{ route('admin.report.circleMember') }}">
+                    <i class="bi bi-file-earmark-text" style="color: #e76a35"></i>
+                    <span class="text-blue">Circle Member Detailed Report</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="{{ route('admin.report.renewal') }}">
+                    <i class="bi bi-file-earmark-text" style="color: #e76a35"></i>
+                    <span class="text-blue">Circle Member Renewal Report</span>
                 </a>
             </li>
         </ul>

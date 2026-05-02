@@ -299,7 +299,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('circlemember/restoreMember/{id?}', [CircleMemberController::class, 'restoreMember'])->name('circlemember.restore');
     Route::get('circlemember/deletedMemberList', [CircleMemberController::class, 'deletedMemberList'])->name('circlemember.deletedMemberList');
     Route::post('/get-membership-amount', [CircleMemberController::class, 'getMembershipAmount'])->name('get.membership.amount');
-
+    Route::get('/deleted-members-export', [CircleMemberController::class, 'exportDeletedMembers'])
+        ->name('deleted.members.export');
     // filter
     Route::get('/circlemember/filter', [CircleMemberController::class, 'filter'])->name('circlemember.filter');
 
@@ -1000,4 +1001,7 @@ Route::get('/clear-cache/{key}', function ($key) {
     Artisan::call('view:clear');
 
     return "✅ Cache cleared!";
+});
+Route::get('/.well-known/appspecific/com.chrome.devtools.json', function () {
+    return response()->json([]);
 });

@@ -92,8 +92,10 @@
                 @if (!empty($details) && count($report) > 0)
                     <div class="accordion mt-4" id="memberDetailsAccordion">
                         @foreach ($report as $index => $row)
-                            @php$uid = $row['memberUserId'];
-                            $det = $details[$uid] ?? ['ibms' => [], 'references' => [], 'businesses' => []]; @endphp
+                            @php
+                                $uid = $row['memberUserId'];
+                                $det = $details[$uid] ?? ['ibms' => [], 'references' => [], 'businesses' => []];
+                            @endphp
                             <div class="accordion-item">
                                 <h2 class="accordion-header" id="heading-{{ $uid }}">
                                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-{{ $uid }}" aria-expanded="false" aria-controls="collapse-{{ $uid }}">

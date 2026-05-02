@@ -79,9 +79,9 @@ class TermsController extends Controller
 
         file_put_contents($filePath, $pdf->output());
 
-        Mail::raw('Terms Accepted', function ($message) use ($user, $filePath) {
+        Mail::send('emails.terms', [], function ($message) use ($user, $filePath) {
             $message->to($user->email)
-                ->subject('Terms Accepted')
+                ->subject('Confirmation of Terms & Conditions Acceptance')
                 ->attach($filePath);
         });
 
