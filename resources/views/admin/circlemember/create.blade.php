@@ -77,7 +77,7 @@
                 </div>
             </div>
 
-            <div class="row mt-3">
+            <div class="row mt-3" id="sponsoredSection">
                 <div class="col-md-6">
                     <div class="form-floating">
                         {{-- <select class="form-select @error('circleId') is-invalid @enderror" id="circleId" name="circleId">
@@ -119,14 +119,14 @@
             <script>
                 $(document).ready(function() {
                     // Initially hide the fields
-                    $('.row.mt-3').hide();
+                    $('#sponsoredSection').hide();
 
                     // Toggle visibility based on checkbox status
                     $('#isSponsered').on('change', function() {
                         if ($(this).is(':checked')) {
-                            $('.row.mt-3').show();
+                            $('#sponsoredSection').show();
                         } else {
-                            $('.row.mt-3').hide();
+                            $('#sponsoredSection').hide();
                         }
                     });
                 });
@@ -183,7 +183,7 @@
                             $errors->has('mobileNo') &&
                                 $errors->first('mobileNo') ==
                                     'Please enter a valid 10-digit mobile
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            number')
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            number')
                             <div class="invalid-tooltip" style="color: red;">
                                 {{ $errors->first('mobileNo') }}
                             </div>
@@ -455,6 +455,33 @@
                         @error('companyLogo')
                             <span class="text-danger">{{ $message }}</span>
                         @enderror
+                    </div>
+                </div>
+                <div class="col-md-12 mt-3">
+
+                    <label class="fw-bold">
+                        Gallery Images
+                        <span class="text-danger">(Max 6 Images)</span>
+                    </label>
+
+                    <!-- Hidden File Input -->
+                    <input type="file" name="galleryImages[]" id="galleryImages" accept="image/png,image/jpeg,image/jpg,image/avif,image/webp" multiple style="display:none;">
+
+                    <!-- Preview Container -->
+                    <div class="row mt-3 g-3" id="galleryPreviewContainer">
+
+                        <!-- Add More Box -->
+                        <div class="col-md-2 col-4" id="addMoreBox">
+
+                            <div id="addMoreBtn" class="border rounded d-flex flex-column justify-content-center align-items-center" style="
+                    height:150px;
+                    cursor:pointer;
+                    border:2px dashed #999;
+                ">
+                                <span style="font-size:40px;">+</span>
+                                <small>Add Image</small>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -783,6 +810,132 @@
                 reader.readAsDataURL(input.files[0]);
             }
         }
-    </script>
+        $(document).ready(function() {
 
+            let selectedFiles = [];
+
+            // OPEN FILE PICKER
+            $('#addMoreBtn').on('click', function() {
+                $('#galleryImages').click();
+            });
+
+            // IMAGE SELECT
+            $('#galleryImages').on('change', function(e) {
+
+                let files = Array.from(e.target.files);
+
+                files.forEach(file => {
+
+                    // CHECK IMAGE TYPE
+                    if (!file.type.startsWith('image/')) {
+                        return;
+                    }
+
+                    // LIMIT 6
+                    if (selectedFiles.length >= 6) {
+                        alert('Maximum 6 images allowed');
+                        return false;
+                    }
+
+                    selectedFiles.push(file);
+
+                });
+
+                renderImages();
+            });
+
+            // RENDER IMAGES
+            function renderImages() {
+
+                $('.preview-image').remove();
+
+                selectedFiles.forEach((file, index) => {
+
+                    const reader = new FileReader();
+
+                    reader.onload = function(e) {
+
+                        const html = `
+                        <div class="col-md-2 col-4 preview-image">
+
+                            <div class="position-relative border rounded overflow-hidden">
+
+                                <img
+                                    src="${e.target.result}"
+                                    style="
+                                        width:100%;
+                                        height:150px;
+                                        object-fit:cover;
+                                    "
+                                >
+
+                                <button
+                                    type="button"
+                                    class="btn btn-danger btn-sm remove-btn"
+                                    data-index="${index}"
+                                    style="
+                                        position:absolute;
+                                        top:5px;
+                                        right:5px;
+                                        border-radius:50%;
+                                        width:25px;
+                                        height:25px;
+                                        padding:0;
+                                    "
+                                >
+                                    ×
+                                </button>
+
+                            </div>
+
+                        </div>
+                    `;
+
+                        $('#addMoreBox').before(html);
+
+                    };
+
+                    reader.readAsDataURL(file);
+
+                });
+
+                updateInputFiles();
+                toggleAddMore();
+            }
+
+            // REMOVE IMAGE
+            $(document).on('click', '.remove-btn', function() {
+
+                const index = $(this).data('index');
+
+                selectedFiles.splice(index, 1);
+
+                renderImages();
+
+            });
+
+            // UPDATE INPUT FILES
+            function updateInputFiles() {
+
+                let dataTransfer = new DataTransfer();
+
+                selectedFiles.forEach(file => {
+                    dataTransfer.items.add(file);
+                });
+
+                $('#galleryImages')[0].files = dataTransfer.files;
+            }
+
+            // TOGGLE ADD BUTTON
+            function toggleAddMore() {
+
+                if (selectedFiles.length >= 6) {
+                    $('#addMoreBox').hide();
+                } else {
+                    $('#addMoreBox').show();
+                }
+            }
+
+        });
+    </script>
 @endsection

@@ -560,6 +560,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/admin/report/joining-members', [ReportController::class, 'getJoiningMembers'])->name('admin.report.joining');
     Route::get('/admin/report/renewal-members', [ReportController::class, 'getJoiningMembersRenewalDate'])->name('admin.report.renewal');
     Route::get('/admin/report/renewal-members/export', [ReportController::class, 'exportRenewalMembers'])->name('admin.report.renewal.export');
+    Route::get('/admin/reports/circle-member-net-added', [ReportController::class, 'circleMemberNetAddedReport'])->name('admin.report.circleMemberNetAdded');
 
     // vp report
     Route::get('/vp/report', [ReportController::class, 'vpReport'])->name('vp.report');

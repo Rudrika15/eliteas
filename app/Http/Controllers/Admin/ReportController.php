@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Exports\AttendanceReportExport;
 use App\Exports\MemberReportExport;
+use App\Exports\CircleMemberNetAddedExport;
 use App\Http\Controllers\Controller;
 use App\Models\Circle;
 use App\Models\CircleCall;
@@ -755,6 +756,7 @@ class ReportController extends Controller
 
         $startDate = $request->input('startDate');
         $endDate = $request->input('endDate');
+        $status = $request->input('status');
         $circleId = $request->input('circleId');
 
         // ✅ CIRCLE DROPDOWN FILTER
@@ -775,7 +777,10 @@ class ReportController extends Controller
         }
 
         // 🔥 MAIN MEMBER QUERY
-        $query = Member::query()->where('status', 'Active');
+        $query = Member::query();
+        // $query = Member::whereHas('circle', function ($q) {
+        //     $q->where('status', 'Active');
+        // });
 
         // ✅ CITY FILTER (Franchise Admin)
         if ($user->hasRole('Franchise Admin') && $userMember && $userMember->circleId) {
@@ -794,13 +799,15 @@ class ReportController extends Controller
 
         // Date filters
         if ($startDate) {
-            $query->whereDate('created_at', '>=', $startDate);
+            $query->whereDate('updated_at', '>=', $startDate);
         }
 
         if ($endDate) {
-            $query->whereDate('created_at', '<=', $endDate);
+            $query->whereDate('updated_at', '<=', $endDate);
         }
-
+        if ($status) {
+            $query->where('status', $status);
+        }
         // 📊 GROUPING DATA
         $members = $query->with('circle')
             ->get()
@@ -1736,7 +1743,7 @@ class ReportController extends Controller
         $endDate = $request->input('endDate');
         $circleId = $request->input('circleId');
 
-        $circleIds = collect(); // safe default
+        $circleIds = collect();
 
         // ✅ Franchise Admin → city-based circles
         if ($user->hasRole('Franchise Admin') && $userMember && $userMember->circleId) {
@@ -2119,5 +2126,97 @@ class ReportController extends Controller
         }
 
         return view('admin.report.attendanceReport', compact('reportData', 'startDate', 'endDate'));
+    }
+
+    public function circleMemberNetAddedReport(Request $request)
+    {
+        $user = Auth::user();
+        $userMember = Member::where('userId', $user->id)->first();
+
+        $circleId = $request->input('circleId');
+
+        // Month handling
+        $month = $request->input('month'); // format: 2026-05
+        $month = $month ? $month : now()->format('Y-m');
+
+        $startOfMonth = \Carbon\Carbon::parse($month)->startOfMonth();
+        $endOfMonth = \Carbon\Carbon::parse($month)->endOfMonth();
+
+        $startOfLastMonth = (clone $startOfMonth)->subMonth();
+        $endOfLastMonth = (clone $startOfMonth)->subDay();
+
+        $circleIds = collect();
+
+        // 🔐 Franchise Admin restriction (same as your function)
+        if ($user->hasRole('Franchise Admin') && $userMember && $userMember->circleId) {
+
+            $cityId = Circle::where('id', $userMember->circleId)->value('cityId');
+
+            $circleIds = Circle::where('cityId', $cityId)->pluck('id');
+
+            $circles = Circle::whereIn('id', $circleIds)
+                ->where('status', 'Active')
+                ->get();
+        } else {
+
+            $circles = Circle::where('status', 'Active')->get();
+        }
+
+        $report = [];
+
+        if ($circleId) {
+
+            if ($circleIds->isNotEmpty() && ! $circleIds->contains($circleId)) {
+                abort(403, 'Unauthorized circle access');
+            }
+
+            $circles = Circle::where('id', $circleId)->get();
+        }
+
+        foreach ($circles as $circle) {
+
+            // 1️⃣ Last Month Active Members
+            $lastMonthMembers = Member::where('circleId', $circle->id)
+                ->where('status', 'Active')
+                ->where('created_at', '<=', $endOfLastMonth)
+                ->count();
+
+            // 2️⃣ Current Month Added
+            $currentAdded = Member::where('circleId', $circle->id)
+                ->where('status', 'Active')
+                ->whereBetween('created_at', [$startOfMonth, $endOfMonth])
+                ->count();
+
+            // 3️⃣ Current Month Deleted
+            $currentDeleted = Member::where('circleId', $circle->id)
+                ->where('status', 'Deleted')
+                ->whereBetween('updated_at', [$startOfMonth, $endOfMonth])
+                ->count();
+
+            // 4️⃣ Net Change
+            $netChange = $currentAdded - $currentDeleted;
+
+            $report[] = [
+                'circleName' => $circle->circleName,
+                'last_month_members' => $lastMonthMembers,
+                'current_added' => $currentAdded,
+                'current_deleted' => $currentDeleted,
+                'net_change' => $netChange,
+            ];
+        }
+        $monthLabel = $month ? \Carbon\Carbon::parse($month)->format('F-Y') : now()->format('F-Y');
+        if ($request->input('export') === 'excel') {
+
+            return Excel::download(
+                new CircleMemberNetAddedExport($report),
+                'circle_member_net_added_report_' . $monthLabel . '.xlsx'
+            );
+        }
+        return view('admin.report.circleMemberNetAddedReport', compact(
+            'report',
+            'circles',
+            'circleId',
+            'month'
+        ));
     }
 }

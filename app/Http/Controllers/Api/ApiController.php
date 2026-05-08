@@ -2385,7 +2385,7 @@ class ApiController extends Controller
     //         return Utils::errorResponse($th->getMessage(), 'Internal Server Error', 500);
     //     }
     // }
-    public function latestMembers()
+   public function latestMembers()
     {
         try {
             $authUserId = Auth::id();
@@ -2404,7 +2404,7 @@ class ApiController extends Controller
                     'member.circle:id,circleName,cityId',
                     'member.bCategory:id,categoryName'
                 ])
-                ->orderBy('created_at', 'desc')
+                ->latest()
                 ->take(4)
                 ->get();
 
@@ -2412,29 +2412,45 @@ class ApiController extends Controller
 
                 $member = $user->member;
 
-                if (! $member) {
-                    $user->connection_status = 'Not Connected';
+                if (!$member) {
+                    $user->connection_status = 'not_connected';
                     continue;
                 }
 
                 $connection = Connection::where(function ($query) use ($authUserId, $member) {
                     $query->where('userId', $authUserId)
-                        ->where('memberId', $member->userId);
+                          ->where('memberId', $member->userId);
                 })->orWhere(function ($query) use ($authUserId, $member) {
                     $query->where('userId', $member->userId)
-                        ->where('memberId', $authUserId);
+                          ->where('memberId', $authUserId);
                 })->first();
 
-                if ($connection && $connection->status === 'Accepted') {
-                    $user->connection_status = 'Connected';
-                } else {
-                    $user->connection_status = $connection ? $connection->status : 'Not Connected';
+                // Default
+                $user->connection_status = 'not_connected';
+
+                if ($connection) {
+
+                    if ($connection->status === 'Accepted') {
+                        $user->connection_status = 'connected';
+
+                    } elseif ($connection->status === 'Pending') {
+
+                        if ($connection->userId == $authUserId) {
+                            $user->connection_status = 'request_sent';
+                        } else {
+                            $user->connection_status = 'request_received';
+                        }
+
+                    } elseif ($connection->status === 'Rejected') {
+                        $user->connection_status = 'not_connected';
+                    }
                 }
             }
 
             return Utils::sendResponse([
                 'members' => $members
             ], 'Latest members fetched successfully', 200);
+
         } catch (\Throwable $th) {
             return Utils::errorResponse($th->getMessage(), 'Internal Server Error', 500);
         }

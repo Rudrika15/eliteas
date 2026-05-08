@@ -50,6 +50,7 @@
                                 <th>Circle Type</th>
                                 <th>Meeting Day</th>
                                 {{-- <th>Meeting Time</th> --}}
+                                <th>launch Date</th>
                                 <th>Status</th>
                                 <th>Action</th>
                             </tr>
@@ -85,6 +86,9 @@
                                         @endif
                                     </td>
                                     {{-- <td>{{$circleData->meetingTime}}</td> --}}
+                                    <td>
+                                        {{ $circleData->launch_date ? \Carbon\Carbon::parse($circleData->launch_date)->format('d-m-Y') : '-' }}
+                                    </td>
                                     <td>{{ $circleData->status }}</td>
                                     <td>
 

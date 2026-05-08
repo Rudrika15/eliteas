@@ -667,6 +667,7 @@ class CircleController extends Controller
             $circle->circletypeId = $request->circletypeId;
             $circle->meetingDay = $request->input('meetingDay');
             $circle->numberOfMeetings = $request->numberOfMeetings;
+            $circle->launch_date = $request->launchDate;
             $circle->weekNo = json_encode($request->weekNo); // Serialize the array of week numbers
             $circle->status = 'Active';
             $circle->save();
@@ -786,7 +787,7 @@ class CircleController extends Controller
 
     public function update(Request $request)
     {
-        // return request()->all();
+
         $this->validate($request, [
             // 'circleName' => 'required|unique:circles,circleName,' . $request->id,
             'franchiseId' => 'required',
@@ -797,6 +798,7 @@ class CircleController extends Controller
         ]);
 
         try {
+
             $id = $request->id;
             $circle = Circle::findOrFail($id);
             $circle->circleName = $request->circleName;
@@ -806,6 +808,7 @@ class CircleController extends Controller
             $circle->circletypeId = $request->circletypeId;
             $circle->meetingDay = $request->input('meetingDay');
             $circle->numberOfMeetings = $request->numberOfMeetings;
+            $circle->launch_date = $request->launchDate;
             $circle->weekNo = json_encode($request->weekNo); // Serialize the array of week numbers
             $circle->status = 'Active';
             $circle->save();

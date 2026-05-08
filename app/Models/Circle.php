@@ -17,6 +17,7 @@ class Circle extends Model
         'circleTypeId',
         'meetingDay',
         'meetingTime',
+        'launch_date',
     ];
 
     public function circletype()

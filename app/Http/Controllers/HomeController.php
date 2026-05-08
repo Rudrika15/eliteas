@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Mail\MeetingInvitation as MailMeetingInvitation;
 use App\Models\BusinessCategory;
 use App\Models\Circle;
+use App\Models\MemberGallery;
 use App\Models\CircleCall;
 use App\Models\CircleMeetingMembersBusiness;
 use App\Models\CircleMeetingMembersReference;
@@ -829,6 +830,7 @@ class HomeController extends Controller
                     ->where('recordStatus', 'Active')
                     ->where('status', 'Pending')
                     ->paginate(10);
+
                 $notifications = Notifications::latest()->get()->filter(function ($notification) use ($authUser) {
                     $data = json_decode($notification->data, true);
                     $type = $data['type'] ?? null;
@@ -1020,7 +1022,41 @@ class HomeController extends Controller
                         $missingFields[] = 'Address Line 2';
                     }
                 }
-                $latestCircleMembers = Member::with('circle')->where('status', 'Active')->where('membershipType', 'Supreme - Yearly')->orderBy('created_at', 'desc')->take(4)->get();
+                // $latestCircleMembers = Member::with('circle')->where('status', 'Active')->where('membershipType', 'Supreme - Yearly')->orderBy('created_at', 'desc')->take(4)->get();
+                $latestCircleMembers = Member::with(['circle', 'user', 'bCategory', 'sponsored'])
+                    ->where('status', 'Active')
+                    ->where('membershipType', 'Supreme - Yearly')
+                    ->orderBy('created_at', 'desc')
+                    ->take(4)
+                    ->get()
+                    ->map(function ($member) use ($authUserId) {
+
+                        $connection = Connection::where(function ($q) use ($authUserId, $member) {
+                            $q->where('userId', $authUserId)
+                                ->where('memberId', $member->userId);
+                        })->orWhere(function ($q) use ($authUserId, $member) {
+                            $q->where('userId', $member->userId)
+                                ->where('memberId', $authUserId);
+                        })->first();
+
+                        if ($connection) {
+
+                            if ($connection->status === 'Accepted') {
+                                $member->connection_status = 'Accepted';
+                            } else {
+                                // 🔥 KEY LOGIC
+                                if ($connection->userId == $authUserId) {
+                                    $member->connection_status = 'Requested'; // YOU sent
+                                } else {
+                                    $member->connection_status = 'Pending'; // received
+                                }
+                            }
+                        } else {
+                            $member->connection_status = 'Not Connected';
+                        }
+
+                        return $member;
+                    });
                 $latestDigitalMembers = Member::with('circle')->where('status', 'Active')->where('membershipType', 'Digital Membership')->orderBy('created_at', 'desc')->take(4)->get();
 
                 // dd($missingFields);
@@ -1635,14 +1671,18 @@ class HomeController extends Controller
             } else {
                 $member->connection_status = $connection ? $connection->status : 'Not Connected';
             }
+            $testimonials = Testimonial::with(['user', 'sender'])->where('memberId', $member->userId)->latest()->get();
 
+            $memberGallery = MemberGallery::where('memberId', $member->id)->where('status', 'Active')->latest()->get();
             return view('foundPersonDetails', compact(
                 'member',
                 'connections',
                 'connection',
                 'userCircleId',
                 'memberCircleId',
-                'memberInduction'
+                'memberInduction',
+                'testimonials',
+                'memberGallery'
             ));
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, request()->fullUrl());

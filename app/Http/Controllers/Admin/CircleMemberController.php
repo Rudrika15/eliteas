@@ -12,6 +12,7 @@ use App\Models\AllPayments;
 use App\Models\BillingAddress;
 use App\Models\BusinessCategory;
 use App\Models\Circle;
+use App\Models\MemberGallery;
 use App\Models\circleAdmin;
 use App\Models\CircleCall;
 use App\Models\CircleMeetingMembersBusiness;
@@ -481,6 +482,7 @@ class CircleMemberController extends Controller
         ]);
 
         try {
+            //return $request;
             // Generate random password
             $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()';
             $password = '';
@@ -584,9 +586,44 @@ class CircleMemberController extends Controller
                 $companyLogo->move(public_path('CompanyLogo'), $companyLogoName);
                 $member->companyLogo = $companyLogoName;
             }
-            $member->status = 'Active';
-            $member->save();
 
+
+            $member->status = 'Active';
+
+            $member->save();
+            // dd($request->hasFile('galleryImages'));
+            if ($request->hasFile('galleryImages')) {
+
+                if (!file_exists(public_path('MemberGallery'))) {
+                    mkdir(public_path('MemberGallery'), 0777, true);
+                }
+
+                foreach ($request->file('galleryImages') as $galleryImage) {
+
+                    if ($galleryImage && $galleryImage->isValid()) {
+
+                        $extension = strtolower($galleryImage->getClientOriginalExtension());
+
+                        $allowed = ['jpg', 'jpeg', 'png', 'webp', 'avif'];
+
+                        if (in_array($extension, $allowed)) {
+
+                            $imageName = time() . '_' . uniqid() . '.' . $extension;
+
+                            $galleryImage->move(
+                                public_path('MemberGallery'),
+                                $imageName
+                            );
+
+                            MemberGallery::create([
+                                'memberId' => $member->id,
+                                'image' => $imageName,
+                                'status' => 'Active'
+                            ]);
+                        }
+                    }
+                }
+            }
             // Compare circleId and add connections
             // $matchedMembers = Member::where('circleId', $member->circleId)
             //     ->where('userId', '!=', $member->userId) // Exclude the current member
@@ -744,11 +781,12 @@ class CircleMemberController extends Controller
             } else {
                 $circle = Circle::where('status', 'Active')->orderBy('circleName', 'asc')->get();
             }
+            $galleryImages = MemberGallery::where('memberId', $id)->where('status', 'Active')->get();
             $businessCategory = BusinessCategory::where('status', 'Active')->orderBy('categoryName', 'asc')->get();
             $membershipType = MembershipType::where('status', 'Active')->orderBy('membershipType', 'asc')->get();
             $circles = Circle::where('status', 'Active')->orderBy('circleName', 'asc')->get();
 
-            return view('admin.circlemember.edit', compact('countries', 'circles', 'members', 'membershipType', 'user', 'states', 'cities', 'member', 'contactDetails', 'billing', 'tops', 'circles', 'businessCategory'));
+            return view('admin.circlemember.edit', compact('countries', 'circles', 'members', 'membershipType', 'user', 'states', 'cities', 'member', 'contactDetails', 'billing', 'tops', 'circles', 'businessCategory', 'galleryImages'));
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError(
@@ -764,10 +802,10 @@ class CircleMemberController extends Controller
     {
 
 
-        // return $request;
-
+        // return $request->all();
         try {
-            // return $request;
+            //dd($request->all());
+            //return $request;
             // Find the member
             // return $member = $request->memberId;
             // $memberId = $request->memberId;
@@ -783,6 +821,18 @@ class CircleMemberController extends Controller
 
             // Update the member
             $member = Member::findOrFail($member);
+            if (!empty($request->deletedImages)) {
+                $deletedIds = explode(',', $request->deletedImages);
+                $images = MemberGallery::whereIn('id', $deletedIds)->get();
+                foreach ($images as $img) {
+                    $imagePath = public_path('MemberGallery/' . $img->image);
+                    if (file_exists($imagePath)) {
+                        unlink($imagePath);
+                    }
+                    $img->status = 'Deleted';
+                    $img->save();
+                }
+            }
             if ($request->has('circleIds')) {
                 $member->circleId = $request->circleIds;
             }
@@ -799,7 +849,7 @@ class CircleMemberController extends Controller
             $member->industry = $request->has('industry') ? $request->industry : $member->industry;
             $member->classification = $request->has('classification') ? $request->classification : $member->classification;
             $member->gender = $request->has('gender') ? $request->gender : $member->gender;
-            $member->businessType = $request->has('businessType') ? $request->businessType : $member->businessType;
+            $member->bussinessType = $request->has('bussinessType') ? $request->bussinessType : $member->bussinessType;
             $member->language = $request->has('language') ? $request->language : $member->language;
             $member->timeZone = $request->has('timeZone') ? $request->timeZone : $member->timeZone;
 
@@ -836,11 +886,47 @@ class CircleMemberController extends Controller
             $member->membershipStatus = $request->has('membershipStatus') ? $request->membershipStatus : $member->membershipStatus;
             // $member->membershipType = $request->has('membershipType') ? $request->membershipType : $member->membershipType;
             $member->keyWords = $request->has('keyWords') ? $request->keyWords : $member->keyWords;
+            //dd($request->hasFile('galleryImages'));
+
+
             $member->status = 'Active';
             $member->save();
+            if ($request->hasFile('galleryImages')) {
 
+                if (!file_exists(public_path('MemberGallery'))) {
+                    mkdir(public_path('MemberGallery'), 0777, true);
+                }
+
+                foreach ($request->file('galleryImages') as $galleryImage) {
+
+                    if (!$galleryImage || !$galleryImage->isValid()) {
+                        continue;
+                    }
+
+                    $extension = strtolower($galleryImage->getClientOriginalExtension());
+
+                    $allowed = ['jpg', 'jpeg', 'png', 'webp', 'avif'];
+
+                    if (!in_array($extension, $allowed)) {
+                        continue;
+                    }
+
+                    $imageName = time() . '_' . uniqid() . '.' . $extension;
+
+                    $galleryImage->move(
+                        public_path('MemberGallery'),
+                        $imageName
+                    );
+                    MemberGallery::create([
+                        'memberId' => $member->id,
+                        'image' => $imageName,
+                        'status' => 'Active'
+                    ]);
+                }
+            }
             // Update TopsProfile
             $tops = TopsProfile::where('memberId', $member->id)->firstOrFail();
+
             $tops->idealRef = $request->has('idealRef') ? $request->idealRef : $tops->idealRef;
             $tops->topProduct = $request->has('topProduct') ? $request->topProduct : $tops->topProduct;
             $tops->topProblemSolved = $request->has('topProblemSolved') ? $request->topProblemSolved : $tops->topProblemSolved;
@@ -860,6 +946,7 @@ class CircleMemberController extends Controller
             $tops->dontKnowAboutMe = $request->has('dontKnowAboutMe') ? $request->dontKnowAboutMe : $tops->dontKnowAboutMe;
             $tops->mKeyToSuccess = $request->has('mKeyToSuccess') ? $request->mKeyToSuccess : $tops->mKeyToSuccess;
             $tops->status = 'Active';
+
             $tops->save();
 
             // Update ContactDetails
@@ -887,11 +974,13 @@ class CircleMemberController extends Controller
             $contact->addressLine1 = $request->has('addressLine1') ? $request->addressLine1 : $contact->addressLine1;
             $contact->addressLine2 = $request->has('addressLine2') ? $request->addressLine2 : $contact->addressLine2;
 
+
             // $contact->profileAddress = $request->profileAddress;
             $contact->city = $request->has('city') ? $request->city : $contact->city;
             $contact->state = $request->has('state') ? $request->state : $contact->state;
             $contact->country = $request->has('country') ? $request->country : $contact->country;
             $contact->pinCode = $request->has('pinCode') ? $request->pinCode : $contact->pinCode;
+
             $contact->status = 'Active';
             $contact->save();
 

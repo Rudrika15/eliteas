@@ -831,16 +831,21 @@ class ConnectionController extends Controller
 
         if ($existingConnection) {
 
-            $existingStatus = $existingConnection->status;
+            // $existingStatus = $existingConnection->status;
 
-            $message = $existingStatus === 'Accepted'
-                ? 'You are already connected.'
-                : 'Connection request already sent.';
+            // $message = $existingStatus === 'Accepted'
+            //     ? 'You are already connected.'
+            //     : 'Connection request already sent.';
 
-            return response()->json([
-                'status' => 'info',
-                'message' => $message,
-            ]);
+            // return response()->json([
+            //     'status' => 'info',
+            //     'message' => $message,
+            // ]);
+            if ($existingConnection->status === 'Accepted') {
+                return redirect()->back()->with('success', 'You are already connected.');
+            }
+
+            return redirect()->back()->with('success', 'Connection request already sent.');
         }
 
         /*

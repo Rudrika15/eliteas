@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Mail\MeetingInvitation as MailMeetingInvitation;
 use App\Models\BusinessCategory;
 use App\Models\Circle;
+use App\Models\MemberGallery;
 use App\Models\CircleCall;
 use App\Models\CircleMeetingMembersBusiness;
 use App\Models\CircleMeetingMembersReference;
@@ -707,9 +708,9 @@ class HomeController extends Controller
                 ->where('userId', '!=', Auth::user()->id)
                 ->where('status', 'Active') // ✅ only active members
                 ->where(function ($q) use ($query) {
-                    $q->where('firstName', 'like', '%'.$query.'%')
-                        ->orWhere('lastName', 'like', '%'.$query.'%')
-                        ->orWhere('keyWords', 'like', '%'.$query.'%');
+                    $q->where('firstName', 'like', '%' . $query . '%')
+                        ->orWhere('lastName', 'like', '%' . $query . '%')
+                        ->orWhere('keyWords', 'like', '%' . $query . '%');
                 })
                 ->with([
                     'user',
@@ -741,9 +742,9 @@ class HomeController extends Controller
                 ->whereNotNull('cityId')
                 ->where('status', 'Active')
                 ->where(function ($q) use ($query) {
-                    $q->where('firstName', 'like', '%'.$query.'%')
-                        ->orWhere('lastName', 'like', '%'.$query.'%')
-                        ->orWhere('keyWords', 'like', '%'.$query.'%');
+                    $q->where('firstName', 'like', '%' . $query . '%')
+                        ->orWhere('lastName', 'like', '%' . $query . '%')
+                        ->orWhere('keyWords', 'like', '%' . $query . '%');
                 })
                 ->with('user', 'city', 'bCategory')
                 ->get();
@@ -765,7 +766,8 @@ class HomeController extends Controller
     {
         try {
             $aid = Auth::id(); // Get the ID of the authenticated user
-            $member = Member::find($id);
+            // $member = Member::find($id);
+            $member = Member::with(['memberGallery', 'testimonials.user', 'circle', 'user', 'billingAddress', 'bCategory', 'city'])->findOrFail($id);
 
             // Find connection based on the authenticated user's ID and member ID
             $connection = Connection::where('userId', $aid)
@@ -775,13 +777,12 @@ class HomeController extends Controller
             $memberStatus = Connection::where('memberId', $member->userId)
                 ->orWhere('userId', $member->userId)
                 ->first();
-
-            $testimonials = Testimonial::where('memberId', $member->id)->get();
+           
 
             // Alternatively, if you want to get all connections related to the authenticated user:
             // $connections = Connection::where('userId', $aid)->get();
 
-            return view('foundPersonDetails', compact('member', 'connection', 'memberStatus', 'testimonials'));
+            return view('foundPersonDetails', compact('member', 'connection', 'memberStatus', 'testimonials', 'memberGallery'));
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError($th, request()->fullUrl());

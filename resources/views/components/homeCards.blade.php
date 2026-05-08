@@ -1171,6 +1171,7 @@
             ->latest()
             ->take(4)
             ->get();
+        $member = Member::where('userId', Auth::id())->first();
 
         $currentDate = \Carbon\Carbon::now()->format('Y-m-d');
 
@@ -1178,103 +1179,365 @@
 
         $nearestEvents = \App\Models\Event::where('eventStatus', 'Publish')->where('status', 'Active')->whereDate('event_date', '>=', $currentDate)->orderBy('event_date', 'asc')->get();
 
+        $latestDigitalMembers = Member::with('circle')->where('status', 'Active')->where('membershipType', 'Digital Membership')->orderBy('created_at', 'desc')->take(4)->get();
     @endphp
 
-    <div class="modal fade" id="updateProfileModal" tabindex="-1" data-bs-backdrop="true">
-        <div class="modal-dialog modal-dialog-top">
-            <div class="modal-content border-0" style="
-                background:#1d3268;
-                border-radius:22px;
-                overflow:visible;
-                box-shadow:0 20px 60px rgba(0,0,0,0.4);
-             ">
-                <!-- Icon -->
-                <div class="text-center" style="margin-bottom:1.5rem;margin-top:10px;">
-                    <div class="d-inline-block position-relative p-3" style="
-                        background:rgba(255,255,255,0.05);
-                        border-radius:16px;
-                        border:1.5px solid rgba(255,255,255,0.12);
-                        backdrop-filter: blur(10px);
-                     ">
+    <div class="modal fade" id="updateProfileModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-center">
+            <div class="modal-content border-0 shadow-lg" style="border-radius:20px; overflow:hidden;">
 
-                        <i class="bi bi-clipboard-fill" style="font-size:2.2rem;color:#c7d6ff;"></i>
+                <div style="height:5px; background:linear-gradient(90deg,#1d3268,#4f8cff);"></div>
 
-                        <span class="position-absolute top-0 start-0 translate-middle" style="
-                            background:#1d3268;
-                            border-radius:50%;
-                            padding:4px;
-                          ">
-                            <i class="bi bi-exclamation-triangle-fill" style="color:#ffcc66;font-size:1rem;"></i>
-                        </span>
-                    </div>
-                </div>
-
-                <!-- Body -->
-                <div class="modal-body px-4 pb-4 pt-0">
-
-                    <h5 class="fw-semibold mb-2" style="color:#ffffff;font-size:20px;">
+                {{-- Header --}}
+                <div class="modal-header border-0 pb-0 pt-3 px-4">
+                    <h5 class="fw-bold" style="color:#1d3268;font-size:17px;">
                         Complete your profile
                     </h5>
-
-                    <p style="
-                        color:#b7c3e0;
-                        font-size:14px;
-                        line-height:1.7;
-                   ">
-                        Your profile is incomplete. Update your profile details to unlock all features of the platform.
-                    </p>
-
-                    <div class="d-flex align-items-center justify-content-between mt-4">
-
-                        <i></i>
-
-                        <div class="d-flex align-items-center gap-2">
-
-                            <!-- Maybe Later -->
-                            <button type="button" class="btn btn-link text-decoration-none" data-bs-dismiss="modal" style="
-                                    color:#9fb2e5;
-                                    font-size:14px;
-                                    transition:0.3s;
-                                " onmouseover="this.style.color='#ffffff'" onmouseout="this.style.color='#9fb2e5'">
-                                Maybe later
-                            </button>
-
-                            <!-- Update Profile Button -->
-                            <a href="{{ url('/member-update/' . Auth::user()->id) }}" style="
-                                border:none;
-                                background:linear-gradient(135deg,#4f8cff,#6ea8ff);
-                                color:#ffffff;
-                                border-radius:50px;
-                                font-size:14px;
-                                font-weight:600;
-                                padding:10px 26px;
-                                text-decoration:none;
-                                box-shadow:0 6px 18px rgba(79,140,255,0.4);
-                                transition:all 0.3s ease;
-                           " onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 10px 25px rgba(79,140,255,0.6)'" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 6px 18px rgba(79,140,255,0.4)'">
-                                Update profile
-                            </a>
-
-                        </div>
-                    </div>
-
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
 
+                {{-- Body --}}
+                <div class="modal-body px-4 pb-4 pt-3" style="color:#333;font-size:15px;font-family:sans-serif;">
+
+                    <form method="POST" action="{{ route('member.update', $member->id) }}" enctype="multipart/form-data">
+                        @csrf
+                        <input type="hidden" name="id" value="{{ $member->id }}">
+
+                        {{-- ================= PERSONAL ================= --}}
+                        @php
+                            $missingFields = [];
+                            $personalFields = ['Title', 'First Name', 'Last Name', 'Gender', 'Birth Date'];
+                            $personal = collect($missingFields)->filter(fn($f) => in_array($f, $personalFields));
+                            $col = $personal->count() == 1 ? 'col-12' : 'col-6';
+                        @endphp
+
+                        @if ($personal->isNotEmpty())
+                            <p class="section-label">Personal</p>
+                            <div class="row g-3">
+
+                                @if (in_array('Title', $missingFields))
+                                    <div class="{{ $col }}">
+                                        <label class="field-label">Title</label>
+                                        <select name="title" class="form-control custom-input">
+                                            <option value="">Select</option>
+                                            <option value="Mr">Mr</option>
+                                            <option value="Ms">Ms</option>
+                                            <option value="Mrs">Mrs</option>
+                                        </select>
+                                    </div>
+                                @endif
+
+                                @if (in_array('First Name', $missingFields))
+                                    <div class="{{ $col }}">
+                                        <label class="field-label">First Name</label>
+                                        <input type="text" name="firstName" class="form-control custom-input">
+                                    </div>
+                                @endif
+
+                                @if (in_array('Last Name', $missingFields))
+                                    <div class="{{ $col }}">
+                                        <label class="field-label">Last Name</label>
+                                        <input type="text" name="lastName" class="form-control custom-input">
+                                    </div>
+                                @endif
+
+                                @if (in_array('Gender', $missingFields))
+                                    <div class="{{ $col }}">
+                                        <label class="field-label">Gender</label>
+                                        <select name="gender" class="form-control custom-input">
+                                            <option value="">Select</option>
+                                            <option value="Male">Male</option>
+                                            <option value="Female">Female</option>
+                                        </select>
+                                    </div>
+                                @endif
+
+                                @if (in_array('Birth Date', $missingFields))
+                                    <div class="{{ $col }}">
+                                        <label class="field-label">Birth Date</label>
+                                        <input type="date" name="birthDate" class="form-control custom-input">
+                                    </div>
+                                @endif
+
+                            </div>
+                        @endif
+
+
+                        {{-- ================= KEYWORDS ================= --}}
+                        @if (in_array('Keywords', $missingFields))
+                            <p class="section-label mt-3">Keywords</p>
+                            <div class="row g-3">
+                                <div class="col-12">
+                                    <label class="field-label">Keyword 1</label>
+                                    <input type="text" name="keyword1" class="form-control custom-input">
+                                </div>
+
+                                <div class="col-12">
+                                    <label class="field-label">Keyword 2</label>
+                                    <input type="text" name="keyword2" class="form-control custom-input">
+                                </div>
+
+                                <div class="col-12">
+                                    <label class="field-label">Keyword 3</label>
+                                    <input type="text" name="keyword3" class="form-control custom-input">
+                                </div>
+                            </div>
+                        @endif
+
+
+                        {{-- ================= CONTACT ================= --}}
+                        @php
+                            $contactFields = ['Email', 'Contact Number', 'Address Line 1', 'Address Line 2', 'City', 'Landmark'];
+                            $contact = collect($missingFields)->filter(fn($f) => in_array($f, $contactFields));
+                            $col = $contact->count() == 1 ? 'col-12' : 'col-6';
+                        @endphp
+
+                        @if ($contact->isNotEmpty())
+                            <p class="section-label mt-3">Contact</p>
+                            <div class="row g-3">
+
+                                @if (in_array('Email', $missingFields))
+                                    <div class="{{ $col }}">
+                                        <label>Email</label>
+                                        <input type="email" name="email" class="form-control custom-input">
+                                    </div>
+                                @endif
+
+                                @if (in_array('Contact Number', $missingFields))
+                                    <div class="{{ $col }}">
+                                        <label>Contact Number</label>
+                                        <input type="text" name="contactNo" class="form-control custom-input">
+                                    </div>
+                                @endif
+
+                                @if (in_array('Address Line 1', $missingFields))
+                                    <div class="col-12">
+                                        <label>Address Line 1</label>
+                                        <input type="text" name="addressLine1" class="form-control custom-input">
+                                    </div>
+                                @endif
+
+                                @if (in_array('Address Line 2', $missingFields))
+                                    <div class="col-12">
+                                        <label>Address Line 2</label>
+                                        <input type="text" name="addressLine2" class="form-control custom-input">
+                                    </div>
+                                @endif
+
+                                @if (in_array('City', $missingFields))
+                                    <div class="{{ $col }}">
+                                        <label>City</label>
+                                        <select name="city" class="form-control custom-input">
+                                            <option value="">Select City</option>
+                                            @foreach ($city as $cities)
+                                                <option value="{{ $cities->id }}">{{ $cities->cityName }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                @endif
+
+                                @if (in_array('Landmark', $missingFields))
+                                    <div class="{{ $col }}">
+                                        <label>Landmark</label>
+                                        <select name="landmark" id="modalLandmark" class="form-control custom-input">
+                                            <option value="">Select Landmark</option>
+                                            @foreach ($landmarks as $lm)
+                                                <option value="{{ $lm }}">{{ $lm }}</option>
+                                            @endforeach
+                                            <option value="Other">Other</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-12 mt-2" id="modalOtherLandmark" style="display:none;">
+                                        <input type="text" name="other_landmark" class="form-control" placeholder="Enter Landmark">
+                                    </div>
+                                @endif
+
+                            </div>
+                        @endif
+
+
+                        {{-- ================= BUSINESS ================= --}}
+                        @php
+                            $businessFields = ['Company Name', 'Website', 'GST/PAN'];
+                            $business = collect($missingFields)->filter(fn($f) => in_array($f, $businessFields));
+                            $col = $business->count() == 1 ? 'col-12' : 'col-6';
+                        @endphp
+
+                        @if ($business->isNotEmpty())
+                            <p class="section-label mt-3">Business</p>
+                            <div class="row g-3">
+
+                                @if (in_array('Company Name', $missingFields))
+                                    <div class="{{ $col }}">
+                                        <label>Company Name</label>
+                                        <input type="text" name="companyName" class="form-control custom-input">
+                                    </div>
+                                @endif
+
+                                @if (in_array('GST/PAN', $missingFields))
+                                    <div class="{{ $col }}">
+                                        <label>GST / PAN</label>
+                                        <input type="text" name="gstinPan" class="form-control custom-input">
+                                    </div>
+                                @endif
+
+                                @if (in_array('Website', $missingFields))
+                                    <div class="col-12">
+                                        <label>Website</label>
+                                        <input type="text" name="webSite" class="form-control custom-input">
+                                    </div>
+                                @endif
+
+                            </div>
+                        @endif
+
+
+                        {{-- ================= UPLOAD ================= --}}
+                        @php
+                            $uploadFields = ['Profile Photo', 'Company Logo'];
+                            $upload = collect($missingFields)->filter(fn($f) => in_array($f, $uploadFields));
+                            $col = $upload->count() == 1 ? 'col-12' : 'col-6';
+
+                        @endphp
+
+                        @if ($upload->isNotEmpty())
+                            <p class="section-label mt-3">Uploads</p>
+                            <div class="row g-3">
+
+                                @if (in_array('Profile Photo', $missingFields))
+                                    <div class="{{ $col }}">
+                                        <label>Profile Photo</label>
+                                        <input type="file" name="profilePhoto" class="form-control custom-input">
+                                    </div>
+                                @endif
+
+                                @if (in_array('Company Logo', $missingFields))
+                                    <div class="{{ $col }}">
+                                        <label>Company Logo</label>
+                                        <input type="file" name="companyLogo" class="form-control custom-input">
+                                    </div>
+                                @endif
+
+                            </div>
+                        @endif
+
+
+                        <div class="d-flex justify-content-end gap-2 mt-4">
+                            <button type="button" class="btn btn-later" data-bs-dismiss="modal">Later</button>
+                            <button type="submit" class="btn btn-save">Save Changes</button>
+                        </div>
+
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            let showPopup = @json($show_profile_popup ?? false);
 
-            if (showPopup) {
-                let modal = new bootstrap.Modal(document.getElementById('updateProfileModal'));
-                modal.show();
-            }
+    @if (count($missingFields) > 0 && !session('profileUpdated'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                var myModal = new bootstrap.Modal(document.getElementById('updateProfileModal'));
+                myModal.show();
+            });
+        </script>
+    @endif
 
-        });
-    </script>
+    <style>
+        .section-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: #1d3268;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            margin: 0 0 12px;
+        }
 
+        .field-label {
+            display: block;
+            font-size: 11px;
+            font-weight: 600;
+            color: #6c7a9c;
+            margin-bottom: 5px;
+            letter-spacing: 0.3px;
+        }
+
+        .custom-input {
+            border-radius: 12px;
+            padding: 9px 13px;
+            border: 1px solid #e3e7f1;
+            font-size: 13px;
+            color: #1d3268;
+            transition: border-color .2s, box-shadow .2s;
+            background: #fff;
+        }
+
+        .custom-input:focus {
+            border-color: #4f8cff;
+            box-shadow: 0 0 0 3px rgba(79, 140, 255, .12);
+            outline: none;
+        }
+
+        .custom-input::placeholder {
+            color: #adb5cc;
+        }
+
+        .upload-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            border: 1.5px dashed #c8d1e8;
+            border-radius: 12px;
+            padding: 14px 8px;
+            cursor: pointer;
+            background: #fafbfd;
+            transition: border-color .2s, background .2s;
+        }
+
+        .upload-box:hover {
+            border-color: #4f8cff;
+            background: #f0f5ff;
+        }
+
+        .upload-box span {
+            font-size: 11px;
+            color: #6c7a9c;
+        }
+
+        .btn-later {
+            padding: 10px 20px;
+            border-radius: 12px;
+            border: 1px solid #e3e7f1;
+            background: #f4f6fb;
+            color: #6c7a9c;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .btn-later:hover {
+            background: #e3e7f1;
+            color: #1d3268;
+        }
+
+        .btn-save {
+            padding: 10px 28px;
+            border-radius: 12px;
+            border: none;
+            background: linear-gradient(135deg, #1d3268, #4f8cff);
+            color: #fff;
+            font-size: 13px;
+            font-weight: 600;
+            transition: opacity .2s, transform .15s;
+        }
+
+        .btn-save:hover {
+            opacity: .92;
+            transform: translateY(-1px);
+            color: #fff;
+        }
+    </style>
     <style>
         .compact-stats .stat-card {
             padding: 8px;
@@ -3964,7 +4227,7 @@
                                             <button type="button" class="fb-btn fb-btn-disabled">Connected</button>
                                         @elseif ($connectionStatus == 'Accepted')
                                             <button class="fb-btn fb-btn-primary">Message</button>
-                                        @elseif ($connectionStatus == 'Pending')
+                                        @elseif ($connectionStatus == 'Requested'||$connectionStatus == 'Pending')
                                             <button type="button" class="fb-btn fb-btn-disabled">Requested</button>
                                         @else
                                             <form action="{{ route('connect') }}" method="POST" class="d-block w-100">

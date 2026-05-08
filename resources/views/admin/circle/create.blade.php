@@ -155,8 +155,22 @@
                     </div>
                 </div>
             </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <input type="date" class="form-control @error('launchDate') is-invalid @enderror" id="launchDate" name="launchDate" value="{{ old('launchDate', date('Y-m-d')) }}">
+                        <label for="launchDate">Launch Date</label>
 
-            <div class="form-control">
+                        @error('launchDate')
+                            <div class="invalid-tooltip">
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-control mt-3">
                 <div class="row">
                     <div class="col-md-6">
                         <div class=" mt-3">

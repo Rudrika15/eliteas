@@ -11,27 +11,40 @@
                 </div>
 
                 <div class="row mb-3">
-                    <div class="col-md-4">
+                    <div>
                         <form method="GET" action="{{ route('admin.report.joining') }}" id="dateFilterForm">
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <small class="text-muted me-1"><strong>From:</strong></small><br>
-                                    <div class="d-flex align-items-center">
-                                        <input type="date" name="startDate" id="startDate" class="form-control form-control-sm" value="{{ request()->input('startDate') }}">
-                                    </div>
+                            <div class="row mb-3 align-items-end">
+
+                                <!-- From Date -->
+                                <div class="col-md-3">
+                                    <label class="form-label small text-muted"><strong>From</strong></label>
+                                    <input type="date" name="startDate" id="startDate" class="form-control form-control-sm" value="{{ request('startDate') }}">
                                 </div>
-                                <div class="col-md-6">
-                                    <small class="text-muted me-1"><strong>To:</strong></small><br>
-                                    <div class="d-flex align-items-center">
-                                        <input type="date" name="endDate" id="endDate" class="form-control form-control-sm" value="{{ request()->input('endDate') }}">
-                                    </div>
+
+                                <!-- To Date -->
+                                <div class="col-md-3">
+                                    <label class="form-label small text-muted"><strong>To</strong></label>
+                                    <input type="date" name="endDate" id="endDate" class="form-control form-control-sm" value="{{ request('endDate') }}">
                                 </div>
+
+                                <!-- Status -->
+                                <div class="col-md-3">
+                                    <label class="form-label small text-muted"><strong>Status</strong></label>
+                                    <select name="status" id="status" class="form-control form-control-sm">
+                                        <option value="">All</option>
+                                        <option value="Active" {{ request('status') == 'Active' ? 'selected' : '' }}>Active</option>
+                                        <option value="Deleted" {{ request('status') == 'Deleted' ? 'selected' : '' }}>Deleted</option>
+                                    </select>
+                                </div>
+
+                                <!-- Buttons -->
+                                <div class="col-md-3 d-flex gap-2">
+                                    <button type="submit" class="btn btn-bg-blue btn-sm w-50">Submit</button>
+                                    <button type="button" class="btn btn-bg-orange btn-sm w-50" id="resetButton">Reset</button>
+                                </div>
+
                             </div>
 
-                            <div class="d-flex justify-content-end mb-3">
-                                <button type="submit" class="btn btn-bg-blue btn-sm">Submit</button>
-                                <button type="button" class="btn btn-bg-orange btn-sm ms-2" id="resetButton">Reset</button>
-                            </div>
                         </form>
                     </div>
                     {{-- <div class="col-md-4">
