@@ -7,6 +7,7 @@ use App\Models\BillingAddress;
 use App\Models\BusinessCategory;
 use App\Models\Circle;
 use App\Models\CircleCall;
+use App\Models\MemberGallery;
 use App\Models\CircleMeetingMembersBusiness;
 use App\Models\CircleMeetingMembersReference;
 use App\Models\City;
@@ -2385,7 +2386,7 @@ class ApiController extends Controller
     //         return Utils::errorResponse($th->getMessage(), 'Internal Server Error', 500);
     //     }
     // }
-   public function latestMembers()
+    public function latestMembers()
     {
         try {
             $authUserId = Auth::id();
@@ -2419,10 +2420,10 @@ class ApiController extends Controller
 
                 $connection = Connection::where(function ($query) use ($authUserId, $member) {
                     $query->where('userId', $authUserId)
-                          ->where('memberId', $member->userId);
+                        ->where('memberId', $member->userId);
                 })->orWhere(function ($query) use ($authUserId, $member) {
                     $query->where('userId', $member->userId)
-                          ->where('memberId', $authUserId);
+                        ->where('memberId', $authUserId);
                 })->first();
 
                 // Default
@@ -2432,7 +2433,6 @@ class ApiController extends Controller
 
                     if ($connection->status === 'Accepted') {
                         $user->connection_status = 'connected';
-
                     } elseif ($connection->status === 'Pending') {
 
                         if ($connection->userId == $authUserId) {
@@ -2440,7 +2440,6 @@ class ApiController extends Controller
                         } else {
                             $user->connection_status = 'request_received';
                         }
-
                     } elseif ($connection->status === 'Rejected') {
                         $user->connection_status = 'not_connected';
                     }
@@ -2450,9 +2449,186 @@ class ApiController extends Controller
             return Utils::sendResponse([
                 'members' => $members
             ], 'Latest members fetched successfully', 200);
-
         } catch (\Throwable $th) {
             return Utils::errorResponse($th->getMessage(), 'Internal Server Error', 500);
         }
+    }
+
+    public function memberGallery($memberId)
+    {
+        $gallery = MemberGallery::where('memberId', $memberId)
+            ->where('status', 'Active')
+            ->get()
+            ->map(function ($item) {
+
+                $item->image_url = asset('MemberGallery/' . $item->image);
+
+                return $item;
+            });
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Gallery Images',
+            'data' => $gallery
+        ]);
+    }
+    public function storeMemberGallery(Request $request)
+    {
+        $request->validate([
+            'memberId' => 'required',
+            'galleryImages.*' => 'required|mimes:jpg,jpeg,png,webp,avif'
+        ]);
+
+        if (!$request->hasFile('galleryImages')) {
+
+            return response()->json([
+                'status' => false,
+                'message' => 'No images found'
+            ]);
+        }
+
+        if (!file_exists(public_path('MemberGallery'))) {
+            mkdir(public_path('MemberGallery'), 0777, true);
+        }
+
+        $uploadedImages = [];
+
+        foreach ($request->file('galleryImages') as $galleryImage) {
+
+            if (!$galleryImage || !$galleryImage->isValid()) {
+                continue;
+            }
+
+            $extension = strtolower($galleryImage->getClientOriginalExtension());
+
+            $imageName = time() . '_' . uniqid() . '.' . $extension;
+
+            $galleryImage->move(
+                public_path('MemberGallery'),
+                $imageName
+            );
+
+            $gallery = MemberGallery::create([
+                'memberId' => $request->memberId,
+                'image' => $imageName,
+                'status' => 'Active'
+            ]);
+
+            $gallery->image_url = asset('MemberGallery/' . $imageName);
+
+            $uploadedImages[] = $gallery;
+        }
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Gallery Images Uploaded Successfully',
+            'data' => $uploadedImages
+        ]);
+    }
+    public function updateMemberGallery(Request $request, $memberId)
+    {
+        /*
+    |--------------------------------------------------------------------------
+    | DELETE OLD IMAGES
+    |--------------------------------------------------------------------------
+    */
+
+        if (!empty($request->deletedImages)) {
+
+            $deletedIds = explode(',', $request->deletedImages);
+
+            $images = MemberGallery::whereIn('id', $deletedIds)->get();
+
+            foreach ($images as $img) {
+
+                $imagePath = public_path('MemberGallery/' . $img->image);
+
+                if (file_exists($imagePath)) {
+                    unlink($imagePath);
+                }
+
+                $img->status = 'Deleted';
+                $img->save();
+            }
+        }
+
+        /*
+    |--------------------------------------------------------------------------
+    | ADD NEW IMAGES
+    |--------------------------------------------------------------------------
+    */
+
+        $newImages = [];
+
+        if ($request->hasFile('galleryImages')) {
+
+            if (!file_exists(public_path('MemberGallery'))) {
+                mkdir(public_path('MemberGallery'), 0777, true);
+            }
+
+            foreach ($request->file('galleryImages') as $galleryImage) {
+
+                if (!$galleryImage || !$galleryImage->isValid()) {
+                    continue;
+                }
+
+                $extension = strtolower($galleryImage->getClientOriginalExtension());
+
+                $allowed = ['jpg', 'jpeg', 'png', 'webp', 'avif'];
+
+                if (!in_array($extension, $allowed)) {
+                    continue;
+                }
+
+                $imageName = time() . '_' . uniqid() . '.' . $extension;
+
+                $galleryImage->move(
+                    public_path('MemberGallery'),
+                    $imageName
+                );
+
+                $gallery = MemberGallery::create([
+                    'memberId' => $memberId,
+                    'image' => $imageName,
+                    'status' => 'Active'
+                ]);
+
+                $gallery->image_url = asset('MemberGallery/' . $imageName);
+
+                $newImages[] = $gallery;
+            }
+        }
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Gallery Updated Successfully',
+            'new_images' => $newImages
+        ]);
+    }
+    public function deleteMemberGallery($id)
+    {
+        $img = MemberGallery::find($id);
+
+        if (!$img) {
+
+            return response()->json([
+                'status' => false,
+                'message' => 'Image not found'
+            ]);
+        }
+
+        $imagePath = public_path('MemberGallery/' . $img->image);
+
+        if (file_exists($imagePath)) {
+            unlink($imagePath);
+        }
+
+        $img->status = 'Deleted';
+        $img->save();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Image Deleted Successfully'
+        ]);
     }
 }

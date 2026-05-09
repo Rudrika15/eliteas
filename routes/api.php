@@ -123,6 +123,12 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     //latest Members
     Route::get('/latestmembers', [ApiController::class, 'latestMembers']);
 
+    Route::get('member-gallery/{memberId}', [ApiController::class, 'memberGallery']);
+    Route::post('member-gallery /store', [ApiController::class, 'storeMemberGallery']);
+    Route::post('member-gallery /update/{memberId}', [ApiController::class, 'updateMemberGallery']);
+    Route::delete('member-gallery /delete/{id}', [ApiController::class, 'deleteMemberGallery']);
+
+
     // Admin side profile change
     Route::post('/members/{id}', [LoginController::class, 'memberUpdateAdmin']);
     // Route::put('/members/{id}', [MemberController::class, 'update']);

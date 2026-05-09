@@ -8,6 +8,7 @@ use App\Models\ContactDetails;
 use App\Models\Country;
 use App\Models\Landmark;
 use App\Models\Member;
+use App\Models\MemberGallery;
 use App\Models\State;
 use App\Models\TopsProfile;
 use App\Models\User;
@@ -59,7 +60,7 @@ class ProfileController extends Controller
             $contactDetails = ContactDetails::where('memberId', $member->id)->first();
             $billing = BillingAddress::where('memberId', $member->id)->first();
             $tops = TopsProfile::where('memberId', $member->id)->first();
-
+            $galleryImages = MemberGallery::where('memberId', $member->id)->where('status', 'Active')->get();
             $landmarks = [];
             if ($member->cityId) {
                 $landmarks = Landmark::where('cityId', $member->cityId)
@@ -67,7 +68,7 @@ class ProfileController extends Controller
                     ->pluck('name');
             }
 
-            return view('profile', compact('member', 'user', 'country', 'states', 'city', 'contactDetails', 'billing', 'tops', 'landmarks'));
+            return view('profile', compact('member', 'user', 'country', 'states', 'city', 'contactDetails', 'billing', 'tops', 'landmarks', 'galleryImages'));
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError(
@@ -199,6 +200,51 @@ class ProfileController extends Controller
 
             $member->status = 'Active';
             $member->save();
+            if (!empty($request->deletedImages)) {
+                $deletedIds = explode(',', $request->deletedImages);
+                $images = MemberGallery::whereIn('id', $deletedIds)->get();
+                foreach ($images as $img) {
+                    $imagePath = public_path('MemberGallery/' . $img->image);
+                    if (file_exists($imagePath)) {
+                        unlink($imagePath);
+                    }
+                    $img->status = 'Deleted';
+                    $img->save();
+                }
+            }
+            if ($request->hasFile('galleryImages')) {
+
+                if (!file_exists(public_path('MemberGallery'))) {
+                    mkdir(public_path('MemberGallery'), 0777, true);
+                }
+
+                foreach ($request->file('galleryImages') as $galleryImage) {
+
+                    if (!$galleryImage || !$galleryImage->isValid()) {
+                        continue;
+                    }
+
+                    $extension = strtolower($galleryImage->getClientOriginalExtension());
+
+                    $allowed = ['jpg', 'jpeg', 'png', 'webp', 'avif'];
+
+                    if (!in_array($extension, $allowed)) {
+                        continue;
+                    }
+
+                    $imageName = time() . '_' . uniqid() . '.' . $extension;
+
+                    $galleryImage->move(
+                        public_path('MemberGallery'),
+                        $imageName
+                    );
+                    MemberGallery::create([
+                        'memberId' => $member->id,
+                        'image' => $imageName,
+                        'status' => 'Active'
+                    ]);
+                }
+            }
 
             $user = User::find(Auth::id());
 

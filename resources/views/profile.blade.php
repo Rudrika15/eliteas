@@ -571,7 +571,50 @@
                                         </div>
                                     </div>
                                 </div>
-
+                                <div class="col-md-12 mt-3">
+                                    <label class="fw-bold">
+                                        Gallery Images
+                                        <span class="text-danger">(Max 6 Images)</span>
+                                    </label>
+                                    <input type="file" name="galleryImages[]" id="galleryImages" accept="image/*" multiple hidden>
+                                    <div class="row mt-3 g-3" id="galleryPreviewContainer">
+                                        @foreach ($galleryImages as $image)
+                                            <div class="col-md-2 col-4 old-image-box" id="old-image-{{ $image->id }}">
+                                                <div class="position-relative border rounded overflow-hidden">
+                                                    <img src="{{ asset('MemberGallery/' . $image->image) }}" style="
+                                                                width:100%;
+                                                                height:150px;
+                                                                object-fit:cover;
+                                                            ">
+                                                    <button type="button" class="btn btn-danger btn-sm delete-old-image" data-id="{{ $image->id }}" style="
+                                                            position:absolute;
+                                                            top:5px;
+                                                            right:5px;
+                                                            border-radius:50%;
+                                                            width:25px;
+                                                            height:25px;
+                                                            padding:0;
+                                                            line-height:1;
+                                                        ">
+                                                        ×
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                        <input type="hidden" name="deletedImages" id="deletedImages">
+                                        <!-- ADD MORE BOX -->
+                                        <div class="col-md-2 col-4" id="addMoreBox">
+                                            <div id="addMoreBtn" class="border rounded d-flex flex-column justify-content-center align-items-center" style="
+                                                        height:150px;
+                                                        cursor:pointer;
+                                                        border:2px dashed #999;
+                                                    ">
+                                                <span style="font-size:40px;">+</span>
+                                                <small>Add Image</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -2019,6 +2062,167 @@
                     // $(this).val(''); 
                 }
             });
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+
+            let selectedFiles = [];
+            let deletedImages = [];
+
+            // OPEN FILE PICKER
+            $('#addMoreBtn').click(function() {
+                $('#galleryImages').click();
+            });
+
+            // SELECT NEW IMAGES
+            $('#galleryImages').on('change', function(e) {
+
+                let files = Array.from(e.target.files);
+
+                // REMOVE INVALID FILES
+                files = files.filter(file =>
+                    file &&
+                    file.size > 0 &&
+                    file.type.startsWith('image/')
+                );
+
+                let oldImagesCount = $('.old-image-box').length;
+
+                // MAX 6 CHECK
+                if ((oldImagesCount + selectedFiles.length + files.length) > 6) {
+                    alert('Maximum 6 images allowed');
+                    return;
+                }
+
+                // ADD FILES
+                files.forEach(file => {
+                    selectedFiles.push(file);
+                });
+
+                // RESET INPUT
+                $('#galleryImages').val('');
+
+                renderImages();
+                updateFileInput();
+            });
+
+            // RENDER NEW IMAGES
+            function renderImages() {
+
+                $('.new-image-box').remove();
+
+                selectedFiles.forEach((file, index) => {
+
+                    let reader = new FileReader();
+
+                    reader.onload = function(e) {
+
+                        let html = `
+                    <div class="col-md-2 col-4 new-image-box">
+
+                        <div class="position-relative border rounded overflow-hidden">
+
+                            <img
+                                src="${e.target.result}"
+                                style="
+                                    width:100%;
+                                    height:150px;
+                                    object-fit:cover;
+                                "
+                            >
+
+                            <button
+                                type="button"
+                                class="btn btn-danger btn-sm remove-new-image"
+                                data-index="${index}"
+                                style="
+                                    position:absolute;
+                                    top:5px;
+                                    right:5px;
+                                    border-radius:50%;
+                                    width:25px;
+                                    height:25px;
+                                    padding:0;
+                                    line-height:1;
+                                "
+                            >
+                                ×
+                            </button>
+
+                        </div>
+
+                    </div>
+                `;
+
+                        $('#addMoreBox').before(html);
+
+                    };
+
+                    reader.readAsDataURL(file);
+
+                });
+
+                toggleAddMore();
+            }
+
+            // REMOVE NEW IMAGE
+            $(document).on('click', '.remove-new-image', function() {
+
+                let index = $(this).data('index');
+
+                selectedFiles.splice(index, 1);
+
+                renderImages();
+                updateFileInput();
+
+            });
+
+            // DELETE OLD IMAGE
+            $(document).on('click', '.delete-old-image', function() {
+
+                let imageId = $(this).data('id');
+
+                deletedImages.push(imageId);
+
+                $('#deletedImages').val(deletedImages.join(','));
+
+                $('#old-image-' + imageId).remove();
+
+                toggleAddMore();
+
+            });
+
+            // UPDATE FILE INPUT
+            function updateFileInput() {
+
+                let dataTransfer = new DataTransfer();
+
+                selectedFiles.forEach(file => {
+                    dataTransfer.items.add(file);
+                });
+
+                $('#galleryImages')[0].files = dataTransfer.files;
+
+            }
+
+            // SHOW/HIDE ADD MORE BOX
+            function toggleAddMore() {
+
+                let totalImages =
+                    $('.old-image-box').length +
+                    selectedFiles.length;
+
+                if (totalImages >= 6) {
+                    $('#addMoreBox').hide();
+                } else {
+                    $('#addMoreBox').show();
+                }
+
+            }
+
+            toggleAddMore();
+
         });
     </script>
 @endsection
