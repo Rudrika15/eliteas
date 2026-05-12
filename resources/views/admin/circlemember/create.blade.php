@@ -926,7 +926,6 @@
                 $('#galleryImages')[0].files = dataTransfer.files;
             }
 
-            // TOGGLE ADD BUTTON
             function toggleAddMore() {
 
                 if (selectedFiles.length >= 6) {

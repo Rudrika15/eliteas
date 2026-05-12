@@ -24,6 +24,7 @@ use App\Models\User;
 use App\Models\VisitorsDetails;
 use App\Utils\Utils;
 use App\Models\Notifications;
+use App\Utils\ErrorLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -103,6 +104,65 @@ class ApiController extends Controller
             return Utils::errorResponses(['error' => 'Unauthorized Access'], 'Email or Password does not match with our records', 401);
         } catch (\Throwable $th) {
             return Utils::errorResponses(['error' => $th->getMessage()], 'Internal Server Error', 500);
+        }
+    }
+
+    public function forceChangePassword(Request $request)
+    {
+        try {
+
+            $validator = Validator::make($request->all(), [
+                'password' => 'required|string|min:6|confirmed',
+            ]);
+
+            if ($validator->fails()) {
+
+                return response()->json([
+                    'status' => false,
+                    'message' => $validator->errors()->first(),
+                ], 422);
+            }
+
+            // Prevent default password
+            if ($request->password == '123456') {
+
+                return response()->json([
+                    'status' => false,
+                    'message' => '123456 password is not allowed.',
+                ], 422);
+            }
+
+            $user = Auth::user();
+
+            // Prevent same password
+            if (Hash::check($request->password, $user->password)) {
+
+                return response()->json([
+                    'status' => false,
+                    'message' => 'New password must be different from old password.',
+                ], 422);
+            }
+
+            // Update Password
+            $user->password = Hash::make($request->password);
+            $user->save();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Password changed successfully.',
+            ]);
+        } catch (\Throwable $th) {
+
+            ErrorLogger::logError(
+                $th,
+                request()->fullUrl()
+            );
+
+            return response()->json([
+                'status' => false,
+                'message' => 'Something went wrong.',
+                'error' => $th->getMessage(),
+            ], 500);
         }
     }
 
@@ -1270,6 +1330,11 @@ class ApiController extends Controller
         } else {
             $circle = null; // for Digital Member
         }
+        $forceChangePassword = false;
+
+        if (Hash::check('123456', $user->password)) {
+            $forceChangePassword = true;
+        }
 
         return response()->json([
             'user' => $user,
@@ -1279,6 +1344,7 @@ class ApiController extends Controller
             'topsProfile' => $topsProfile,
             'businessCategory' => $businessCategory,
             'circle' => $circle,
+            'forceChangePassword'=>$forceChangePassword,   
         ]);
     }
 
@@ -2454,9 +2520,12 @@ class ApiController extends Controller
         }
     }
 
-    public function memberGallery($memberId)
+    public function memberGallery(Request $request)
     {
-        $gallery = MemberGallery::where('memberId', $memberId)
+        $user = Auth::user();
+
+        $member = Member::where('userId', $user->id)->first();
+        $gallery = MemberGallery::where('memberId', $member->id)
             ->where('status', 'Active')
             ->get()
             ->map(function ($item) {
@@ -2474,8 +2543,11 @@ class ApiController extends Controller
     }
     public function storeMemberGallery(Request $request)
     {
+        $user = Auth::user();
+
+        $member = Member::where('userId', $user->id)->first();
         $request->validate([
-            'memberId' => 'required',
+            // 'memberId' => 'required',
             'galleryImages.*' => 'required|mimes:jpg,jpeg,png,webp,avif'
         ]);
 
@@ -2486,7 +2558,22 @@ class ApiController extends Controller
                 'message' => 'No images found'
             ]);
         }
+        // Current Active Images Count
+        $currentImagesCount = MemberGallery::where('memberId', $member->id)
+            ->where('status', 'Active')
+            ->count();
 
+        // New Upload Count
+        $newImagesCount = count($request->file('galleryImages'));
+
+        // Max 6 Validation
+        if (($currentImagesCount + $newImagesCount) > 6) {
+
+            return response()->json([
+                'status' => false,
+                'message' => 'Maximum 6 gallery images allowed.'
+            ]);
+        }
         if (!file_exists(public_path('MemberGallery'))) {
             mkdir(public_path('MemberGallery'), 0777, true);
         }
@@ -2509,7 +2596,7 @@ class ApiController extends Controller
             );
 
             $gallery = MemberGallery::create([
-                'memberId' => $request->memberId,
+                'memberId' => $member->id,
                 'image' => $imageName,
                 'status' => 'Active'
             ]);
@@ -2525,14 +2612,15 @@ class ApiController extends Controller
             'data' => $uploadedImages
         ]);
     }
-    public function updateMemberGallery(Request $request, $memberId)
+    public function updateMemberGallery(Request $request)
     {
         /*
     |--------------------------------------------------------------------------
     | DELETE OLD IMAGES
     |--------------------------------------------------------------------------
     */
-
+        $user = Auth::user();
+        $member = Member::where('userId', $user->id)->first();
         if (!empty($request->deletedImages)) {
 
             $deletedIds = explode(',', $request->deletedImages);
@@ -2557,7 +2645,25 @@ class ApiController extends Controller
     | ADD NEW IMAGES
     |--------------------------------------------------------------------------
     */
+        // Active Images Count After Delete
+        $currentImagesCount = MemberGallery::where('memberId', $member->id)
+            ->where('status', 'Active')
+            ->count();
 
+        $newImagesCount = 0;
+
+        if ($request->hasFile('galleryImages')) {
+            $newImagesCount = count($request->file('galleryImages'));
+        }
+
+        // Max 6 Validation
+        if (($currentImagesCount + $newImagesCount) > 6) {
+
+            return response()->json([
+                'status' => false,
+                'message' => 'You already have ' . $currentImagesCount . ' images. Maximum 6 images allowed.'
+            ]);
+        }
         $newImages = [];
 
         if ($request->hasFile('galleryImages')) {
@@ -2588,7 +2694,7 @@ class ApiController extends Controller
                 );
 
                 $gallery = MemberGallery::create([
-                    'memberId' => $memberId,
+                    'memberId' => $member->id,
                     'image' => $imageName,
                     'status' => 'Active'
                 ]);

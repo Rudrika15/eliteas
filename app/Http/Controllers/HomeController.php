@@ -32,6 +32,7 @@ use App\Utils\ErrorLogger;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
 
@@ -222,6 +223,51 @@ class HomeController extends Controller
     //     }
     //     return view('home', compact('count', 'nearestTraining',  'businessCategory', 'myInvites', 'findRegister'));
     // }
+    public function forceChangePassword(Request $request)
+    {
+        try {
+
+            $request->validate([
+                'password' => 'required|string|min:6|confirmed',
+            ]);
+            if ($request->password == '123456') {
+
+                return redirect()->back()->with(
+                    'error',
+                    'Default password 123456 is not allowed.'
+                );
+            }
+            $user = Auth::user();
+
+            // prevent same password again
+            if (Hash::check($request->password, $user->password)) {
+
+                return redirect()->back()->with(
+                    'error',
+                    'New password must be different from old password.'
+                );
+            }
+
+            $user->password = Hash::make($request->password);
+            $user->save();
+
+            return redirect()->back()->with(
+                'success',
+                'Password changed successfully.'
+            );
+        } catch (\Throwable $th) {
+
+            ErrorLogger::logError(
+                $th,
+                request()->fullUrl()
+            );
+
+            return redirect()->back()->with(
+                'error',
+                $th->getMessage()
+            );
+        }
+    }
     protected function authenticated(Request $request, $user)
     {
         $member = Member::where('userId', $user->id)->first();
@@ -1058,11 +1104,20 @@ class HomeController extends Controller
                         return $member;
                     });
                 $latestDigitalMembers = Member::with('circle')->where('status', 'Active')->where('membershipType', 'Digital Membership')->orderBy('created_at', 'desc')->take(4)->get();
-
-                // dd($missingFields);
                 $categoryNames = $businessCategories->pluck('categoryName');
 
-                return view('home', compact('circleCount', 'authCircleId', 'categoryNames', 'membersCount', 'signedUrl', 'birthdaysToday', 'templates', 'count', 'monthlyPayments', 'totalAmountDue', 'nearestEvents', 'circlecalls', 'busGiver', 'refGiver', 'induction', 'nearestTraining', 'testimonials', 'meeting', 'businessCategory', 'myInvites', 'todaysBirthdays', 'pendingCount', 'receivedRequests', 'notifications', 'notificationCount', 'posts', 'missingFields', 'member', 'city', 'landmarks', 'latestCircleMembers', 'latestDigitalMembers'));
+                // that For The Dahboard change password modal
+                $showChangePasswordModal = false;
+
+                if (Auth::check()) {
+
+                    // Check if current password is still default password
+                    if (Hash::check('123456', Auth::user()->password)) {
+                        $showChangePasswordModal = true;
+                    }
+                }
+
+                return view('home', compact('circleCount', 'authCircleId', 'categoryNames', 'membersCount', 'signedUrl', 'birthdaysToday', 'templates', 'count', 'monthlyPayments', 'totalAmountDue', 'nearestEvents', 'circlecalls', 'busGiver', 'refGiver', 'induction', 'nearestTraining', 'testimonials', 'meeting', 'businessCategory', 'myInvites', 'todaysBirthdays', 'pendingCount', 'receivedRequests', 'notifications', 'notificationCount', 'posts', 'missingFields', 'member', 'city', 'landmarks', 'latestCircleMembers', 'latestDigitalMembers', 'showChangePasswordModal'));
             }
 
             return view('home', compact('circleCount', 'membersCount', 'count', 'nearestTraining', 'businessCategory', 'myInvites', 'birthdaysToday', 'templates', 'pendingCount'));

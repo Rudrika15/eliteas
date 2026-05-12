@@ -170,8 +170,9 @@ Route::group(['middleware' => ['auth']], function () {
     // change password
     Route::get('change-password', [ChangePasswordController::class, 'showChangePasswordForm'])->name('changePasswordForm');
     Route::post('change-password', [ChangePasswordController::class, 'changePassword'])->name('changePassword');
+    Route::post('/force-change-password', [HomeController::class, 'forceChangePassword'])->name('force.change.password');
 
-    Route::post('/save-location', [LocationController::class, 'saveLocation']);
+    Route::post('/save-location', [LocationController::class, 'saveLocation'])->name('save.location');
 
     Route::get('/user-list', [UserController::class, 'userList'])->name('userList');
 

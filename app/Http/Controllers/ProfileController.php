@@ -60,13 +60,14 @@ class ProfileController extends Controller
             $contactDetails = ContactDetails::where('memberId', $member->id)->first();
             $billing = BillingAddress::where('memberId', $member->id)->first();
             $tops = TopsProfile::where('memberId', $member->id)->first();
-            $galleryImages = MemberGallery::where('memberId', $member->id)->where('status', 'Active')->get();
             $landmarks = [];
             if ($member->cityId) {
                 $landmarks = Landmark::where('cityId', $member->cityId)
                     ->where('status', 'Active')
                     ->pluck('name');
             }
+
+            $galleryImages = MemberGallery::where('memberId', $member->id)->where('status', 'Active')->get();
 
             return view('profile', compact('member', 'user', 'country', 'states', 'city', 'contactDetails', 'billing', 'tops', 'landmarks', 'galleryImages'));
         } catch (\Throwable $th) {

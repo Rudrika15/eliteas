@@ -29,7 +29,7 @@
         </div>
 
         <!-- Floating Labels Form -->
-        {{-- {{$member}} --}}
+        {{-- {{ $member }} --}}
         <form class="m-3 needs-validation" id="circlememberForm" enctype="multipart/form-data" method="post" action="{{ route('circlemember.update', $member->id) }}" novalidate>
             @csrf
 

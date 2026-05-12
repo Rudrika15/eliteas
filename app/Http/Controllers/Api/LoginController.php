@@ -9,6 +9,7 @@ use App\Models\Landmark;
 use App\Models\Member;
 use App\Models\TopsProfile;
 use App\Models\User;
+ues Illuminate\Support\Facades\Hash;
 use App\Utils\ErrorLogger;
 use App\Utils\Utils;
 use Illuminate\Http\Request;
@@ -151,7 +152,11 @@ class LoginController extends Controller
         } else {
             $circle = null; // For Digital Member, no circle data
         }
+        $forceChangePassword = false;
 
+        if (Hash::check('123456', $user->password)) {
+            $forceChangePassword = true;
+        }
         return response()->json([
             'user' => $user,
             'member' => $member,
@@ -159,6 +164,7 @@ class LoginController extends Controller
             'contactDetails' => $contactDetails,
             'topsProfile' => $topsProfile,
             'circle' => $circle,
+            'force_change_password' => $forceChangePassword,
         ]);
     }
 

@@ -7,6 +7,7 @@ use App\Models\BusinessCategory;
 use App\Models\Circle;
 use App\Models\CircleMeetingMembersBusiness;
 use App\Models\Connection;
+use App\Models\MemberGallery;
 use App\Models\Member;
 use App\Models\Notifications;
 use App\Models\Testimonial;
@@ -1007,10 +1008,16 @@ class ConnectionController extends Controller
             $member->induction_count = Member::where('sponsoredBy', $member->id)->count();
 
             // 🔹 Testimonials
-            $member->testimonials = Testimonial::where('memberId', $member->id)
-                ->with('user:id,firstName,lastName')
-                ->get() ?? [];
+            $member->testimonials = Testimonial::with(['user', 'sender'])->where('memberId', $member->userId)->latest()->get() ?? [];
+            $member->memberGallery = MemberGallery::where('memberId', $member->id)->where('status', 'Active')->latest()->get()
+                ->map(function ($item) {
 
+                    $item->image_url = asset(
+                        'MemberGallery/' . $item->image
+                    );
+
+                    return $item;
+                });
             return Utils::sendResponse([
                 'message' => 'Member Profile',
                 'member' => $member,

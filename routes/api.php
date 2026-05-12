@@ -100,6 +100,7 @@ Route::get('role-permissions', [LoginController::class, 'getRolePermissions']);
 
 Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/user/profile', [LoginController::class, 'profile']);
+    Route::post('/force-change-password',[ApiController::class, 'forceChangePassword']);
 
     Route::post('/user/member/update', [LoginController::class, 'memberUpdate']);
     Route::post('/user/member/updateBillingAddress', [LoginController::class, 'billingAddressUpdate']);

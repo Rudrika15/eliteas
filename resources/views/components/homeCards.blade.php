@@ -2668,13 +2668,204 @@
             ->get();
         // $latestMembers = Member::with('circle')->where('status', 'Active')->orderBy('created_at', 'desc')->take(4)->get();
     @endphp
-    <!-- Modal -->
+    <!-- Change Password Modal -->
+    @if ($showChangePasswordModal)
+        <div id="changePasswordPopup" style="
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 99999;
+">
+
+            <div style="
+        width: 650px;
+        background: #fff;
+        border-radius: 14px;
+        overflow: hidden;
+        animation: popupFade 0.3s ease-in-out;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    ">
+
+                <!-- Header -->
+                <div style="
+            background:#1d3268;
+            color:white;
+            padding:18px 20px;
+        ">
+                    <h4 style="
+                margin:0;
+                font-size:20px;
+                font-weight:600;
+            ">
+                        Change Password
+                    </h4>
+                </div>
+
+                <!-- Body -->
+                <div style="padding:25px;">
+
+                    <div style="
+                background:#fff3cd;
+                color:#856404;
+                border:1px solid #ffeeba;
+                padding:12px;
+                border-radius:8px;
+                margin-bottom:20px;
+                font-size:14px;
+            ">
+                        Your account is using a default password.
+                        Please change your password before continuing.
+                    </div>
+
+                    <form action="{{ route('force.change.password') }}" method="POST" onsubmit="return validatePasswordForm()">
+
+                        @csrf
+
+                        <!-- Error Box -->
+                        <div id="passwordError" style="
+        display:none;
+        background:#f8d7da;
+        color:#842029;
+        border:1px solid #f5c2c7;
+        padding:12px;
+        border-radius:8px;
+        margin-bottom:18px;
+        font-size:14px;
+    ">
+                        </div>
+
+                        <!-- New Password -->
+                        <div style="margin-bottom:18px;">
+
+                            <label style="
+            display:block;
+            margin-bottom:8px;
+            font-weight:600;
+            color:#333;
+        ">
+                                New Password
+                            </label>
+
+                            <input type="password" name="password" id="newPassword" required class="form-control" style="
+                    height:45px;
+                    border-radius:8px;
+               ">
+                        </div>
+
+                        <!-- Confirm Password -->
+                        <div style="margin-bottom:25px;">
+
+                            <label style="
+            display:block;
+            margin-bottom:8px;
+            font-weight:600;
+            color:#333;
+        ">
+                                Confirm Password
+                            </label>
+
+                            <input type="password" name="password_confirmation" id="confirmPassword" required class="form-control" style="
+                    height:45px;
+                    border-radius:8px;
+               ">
+                        </div>
+
+                        <!-- Button -->
+                        <button type="submit" style="
+                width:100%;
+                background:#1d3268;
+                color:white;
+                border:none;
+                height:48px;
+                border-radius:8px;
+                font-size:16px;
+                font-weight:600;
+                cursor:pointer;
+                transition:0.3s;
+            " onmouseover="this.style.background='#162750'" onmouseout="this.style.background='#1d3268'">
+
+                            Update Password
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <style>
+            @keyframes popupFade {
+
+                from {
+                    opacity: 0;
+                    transform: scale(0.9);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: scale(1);
+                }
+            }
+        </style>
+        <script>
+            function validatePasswordForm() {
+                let password = document.getElementById('newPassword').value;
+                let confirmPassword = document.getElementById('confirmPassword').value;
+
+                let errorBox = document.getElementById('passwordError');
+
+                errorBox.style.display = 'none';
+                errorBox.innerHTML = '';
+
+                // Prevent default password
+                if (password === '123456') {
+
+                    errorBox.style.display = 'block';
+                    errorBox.innerHTML =
+                        '123456 password is not allowed. Please use a secure password.';
+
+                    return false;
+                }
+
+                // Minimum 6 chars
+                if (password.length < 6) {
+
+                    errorBox.style.display = 'block';
+                    errorBox.innerHTML =
+                        'Password must be at least 6 characters.';
+
+                    return false;
+                }
+
+                // Password mismatch
+                if (password !== confirmPassword) {
+
+                    errorBox.style.display = 'block';
+                    errorBox.innerHTML =
+                        'Password and Confirm Password do not match.';
+
+                    return false;
+                }
+
+                return true;
+            }
+        </script>
+    @endif
     @if (auth()->user())
         @php
             $member = \App\Models\Member::where('userId', auth()->id())->first();
         @endphp
 
-        @if (!$member || !$member->terms_accepted)
+        @if (!$showChangePasswordModal && (!$member || !$member->terms_accepted))
             <!-- Modal -->
             <div id="termsModal" style="
             position: fixed;
@@ -2993,7 +3184,7 @@
         </div>
     </div>
 
-    @if (count($missingFields) > 0 && !session('profileUpdated'))
+    @if (!$showChangePasswordModal && $member && $member->terms_accepted && count($missingFields) > 0 && !session('profileUpdated'))
         <script>
             document.addEventListener('DOMContentLoaded', function() {
                 var myModal = new bootstrap.Modal(document.getElementById('updateProfileModal'));
@@ -4227,7 +4418,7 @@
                                             <button type="button" class="fb-btn fb-btn-disabled">Connected</button>
                                         @elseif ($connectionStatus == 'Accepted')
                                             <button class="fb-btn fb-btn-primary">Message</button>
-                                        @elseif ($connectionStatus == 'Requested'||$connectionStatus == 'Pending')
+                                        @elseif ($connectionStatus == 'Requested' || $connectionStatus == 'Pending')
                                             <button type="button" class="fb-btn fb-btn-disabled">Requested</button>
                                         @else
                                             <form action="{{ route('connect') }}" method="POST" class="d-block w-100">
