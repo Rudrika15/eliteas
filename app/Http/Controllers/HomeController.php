@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Mail\MeetingInvitation as MailMeetingInvitation;
 use App\Models\BusinessCategory;
 use App\Models\Circle;
+use Illuminate\Support\Facades\DB;
 use App\Models\MemberGallery;
 use App\Models\CircleCall;
 use App\Models\CircleMeetingMembersBusiness;
@@ -14,6 +15,7 @@ use App\Models\Post;
 use App\Models\Connection;
 use App\Models\ContactDetails;
 use App\Models\Event;
+use App\Models\Announcements;
 use App\Models\EventRegister;
 use App\Models\Landmark;
 use App\Models\MeetingInvitation;
@@ -27,9 +29,11 @@ use App\Models\Testimonial;
 use App\Models\Training;
 use App\Models\TrainingRegister;
 use App\Models\User;
+use App\Models\Banners;
 use App\Models\VisitorEventRegister;
 use App\Utils\ErrorLogger;
 use Carbon\Carbon;
+use App\Models\VisitorsDetails;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -758,6 +762,34 @@ class HomeController extends Controller
                     ->filter()
                     ->sortByDesc('count')
                     ->first();
+                // $previousMonth = Carbon::now()->subMonth()->month;
+                // $previousYear = Carbon::now()->subMonth()->year;
+
+                // $maxVisitor = VisitorsDetails::where('status', 'Active')
+                //     ->whereYear('created_at', $previousYear)
+                //     ->whereMonth('created_at', $previousMonth)
+                //     ->select(
+                //         'firstName',
+                //         'lastName',
+                //         'businessName',
+                //         'businessCategory',
+                //         'mobileNo',
+                //         'city',
+                //         'createdBy',
+                //         DB::raw('COUNT(*) as total_visitors')
+                //     )
+                //     ->groupBy(
+                //         'createdBy',
+                //         'firstName',
+                //         'lastName',
+                //         'businessName',
+                //         'businessCategory',
+                //         'mobileNo',
+                //         'city'
+                //     )
+                //     ->orderByDesc('total_visitors')
+                //     ->first();
+
 
                 if ($circlecalls && isset($circlecalls['member']) && $circlecalls['member']) {
                     $circlecalls['member']->loadMissing(['circle', 'bCategory']);
@@ -773,6 +805,11 @@ class HomeController extends Controller
                     $refGiver['member']->loadMissing(['circle', 'bCategory']);
                     $this->setConnectionStatusForMember($refGiver['member'], $authId, $authCircleId);
                 }
+
+                // if ($maxVisitor && isset($maxVisitor['member'])) {
+                //     $maxVisitor['member']->loadMissing(['circle', 'bCategory']);
+                //     $this->setConnectionStatusForMember($maxVisitor['member'], $authId, $authCircleId);
+                // }
 
                 // Get Highest Induction
                 $induction = Member::where('status', 'Active')
@@ -814,6 +851,49 @@ class HomeController extends Controller
                     $this->setConnectionStatusForMember($induction['member'], $authId, $authCircleId);
                 }
 
+
+                $topInductions = Member::where('status', 'Active')
+                    ->whereYear('created_at', $previousYear)
+                    ->whereMonth('created_at', $previousMonth)
+                    ->whereNotNull('sponsoredBy')
+                    ->get()
+                    ->groupBy('sponsoredBy')
+                    ->map(function ($group) use ($cityId) {
+
+                        $sponsorId = $group->first()->sponsoredBy;
+
+                        if (!$sponsorId) {
+                            return null;
+                        }
+
+                        $member = Member::with(['circle', 'bCategory', 'sponsored'])
+                            ->where('id', $sponsorId)
+                            ->where('status', 'Active')
+                            ->whereHas('circle', function ($query) use ($cityId) {
+                                $query->where('cityId', $cityId);
+                            })
+                            ->first();
+
+                        if (!$member) {
+                            return null;
+                        }
+
+                        return [
+                            'member' => $member,
+                            'count'  => $group->count(),
+                        ];
+                    })
+                    ->filter()
+                    ->sortByDesc('count')
+                    ->values()
+                    ->take(4);
+
+                foreach ($topInductions as $topinduction) {
+                    if (isset($topinduction['member'])) {
+                        $topinduction['member']->loadMissing(['circle', 'bCategory']);
+                        $this->setConnectionStatusForMember($topinduction['member'], $authId, $authCircleId);
+                    }
+                }
                 // Leaderboard code end
 
                 // leaderboard code end
@@ -1117,7 +1197,10 @@ class HomeController extends Controller
                     }
                 }
 
-                return view('home', compact('circleCount', 'authCircleId', 'categoryNames', 'membersCount', 'signedUrl', 'birthdaysToday', 'templates', 'count', 'monthlyPayments', 'totalAmountDue', 'nearestEvents', 'circlecalls', 'busGiver', 'refGiver', 'induction', 'nearestTraining', 'testimonials', 'meeting', 'businessCategory', 'myInvites', 'todaysBirthdays', 'pendingCount', 'receivedRequests', 'notifications', 'notificationCount', 'posts', 'missingFields', 'member', 'city', 'landmarks', 'latestCircleMembers', 'latestDigitalMembers', 'showChangePasswordModal'));
+                $banners =  Banners::where('status', 'Active')->paginate(5);
+                $announcements = Announcements::where('status', 'Active')->latest()->take(5)->get();
+
+                return view('home', compact('circleCount', 'authCircleId', 'categoryNames', 'membersCount', 'signedUrl', 'birthdaysToday', 'templates', 'count', 'monthlyPayments', 'totalAmountDue', 'nearestEvents', 'circlecalls', 'busGiver', 'refGiver', 'induction', 'nearestTraining', 'testimonials', 'meeting', 'businessCategory', 'myInvites', 'todaysBirthdays', 'pendingCount', 'receivedRequests', 'notifications', 'notificationCount', 'posts', 'missingFields', 'member', 'city', 'landmarks', 'latestCircleMembers', 'latestDigitalMembers', 'showChangePasswordModal', 'banners', 'topInductions', 'announcements'));
             }
 
             return view('home', compact('circleCount', 'membersCount', 'count', 'nearestTraining', 'businessCategory', 'myInvites', 'birthdaysToday', 'templates', 'pendingCount'));

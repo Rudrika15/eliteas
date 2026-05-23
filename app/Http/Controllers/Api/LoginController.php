@@ -9,7 +9,7 @@ use App\Models\Landmark;
 use App\Models\Member;
 use App\Models\TopsProfile;
 use App\Models\User;
-ues Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Hash;
 use App\Utils\ErrorLogger;
 use App\Utils\Utils;
 use Illuminate\Http\Request;

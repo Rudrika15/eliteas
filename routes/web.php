@@ -4,6 +4,8 @@ use App\Exports\MemberReportExport;
 use App\Exports\TrainersListExport;
 use App\Http\Controllers\Admin\AllActivityController;
 use App\Http\Controllers\Admin\AttendanceController;
+use App\Http\Controllers\Admin\BannerController;
+use App\Http\Controllers\Admin\AnnouncementController;
 use App\Http\Controllers\Admin\BusinessCategoryController;
 use App\Http\Controllers\Admin\ChatController;
 use App\Http\Controllers\Admin\CircleCallController;
@@ -189,6 +191,22 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('franchise/edit/{id?}', [FranchiseController::class, 'edit'])->name('franchise.edit');
     Route::post('franchise/update', [FranchiseController::class, 'update'])->name('franchise.update');
     Route::get('franchise/delete/{id?}', [FranchiseController::class, 'delete'])->name('franchise.delete');
+
+    Route::get('banner/show/{id?}', [BannerController::class, 'show'])->name('banner.show');
+    Route::get('/banner/index', [BannerController::class, 'index'])->name('banner.index');
+    Route::get('banner/create', [BannerController::class, 'create'])->name('banner.create');
+    Route::post('banner/store', [BannerController::class, 'store'])->name('banner.store');
+    Route::get('banner/edit/{id}', [BannerController::class, 'edit'])->name('banner.edit');
+    Route::post('banner/update/{id}', [BannerController::class, 'update'])->name('banner.update');
+    Route::get('banner/delete/{id}', [BannerController::class, 'destroy'])->name('banner.delete');
+
+    Route::get('announcement/show/{id?}', [AnnouncementController::class, 'show'])->name('announcement.show');
+    Route::get('/announcement/index', [AnnouncementController::class, 'index'])->name('announcement.index');
+    Route::get('announcement/create', [AnnouncementController::class, 'create'])->name('announcement.create');
+    Route::post('announcement/store', [AnnouncementController::class, 'store'])->name('announcement.store');
+    Route::get('announcement/edit/{id}', [AnnouncementController::class, 'edit'])->name('announcement.edit');
+    Route::post('announcement/update/{id}', [AnnouncementController::class, 'update'])->name('announcement.update');
+    Route::get('announcement/delete/{id}', [AnnouncementController::class, 'destroy'])->name('announcement.delete');
 
     Route::get('/country/index', [CountryController::class, 'index'])->name('country.index');
     Route::get('country/show/{id?}', [CountryController::class, 'show'])->name('country.show');

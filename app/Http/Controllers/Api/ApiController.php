@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\BillingAddress;
 use App\Models\BusinessCategory;
+use App\Models\Announcement;
 use App\Models\Circle;
 use App\Models\CircleCall;
+use App\Models\Banners;
 use App\Models\MemberGallery;
 use App\Models\CircleMeetingMembersBusiness;
 use App\Models\CircleMeetingMembersReference;
@@ -1344,7 +1346,7 @@ class ApiController extends Controller
             'topsProfile' => $topsProfile,
             'businessCategory' => $businessCategory,
             'circle' => $circle,
-            'forceChangePassword'=>$forceChangePassword,   
+            'forceChangePassword' => $forceChangePassword,
         ]);
     }
 
@@ -2736,5 +2738,135 @@ class ApiController extends Controller
             'status' => true,
             'message' => 'Image Deleted Successfully'
         ]);
+    }
+    public function banners()
+    {
+        $banners = Banners::where('status', 'Active')
+            ->latest()
+            ->take(5)
+            ->get()
+            ->map(function ($banner) {
+
+                return [
+                    'id' => $banner->id,
+                    'title' => $banner->title,
+                    'image' => asset('banners/' . $banner->image),
+                ];
+            });
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Top 5 Banner List',
+            'data' => $banners
+        ]);
+    }
+    public function announcements()
+    {
+        $announcements = Announcements::where('status', 'Active')
+            ->whereDate('start_date', '<=', now())
+            ->whereDate('end_date', '>=', now())
+            ->latest()
+            ->get();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Announcements fetched successfully',
+            'data' => $announcements
+        ], 200);
+    }
+    public function topInductions(Request $request)
+    {
+        // Auth User
+        $authUser = auth()->user();
+
+        // Get member from auth user
+        $authMember = Member::where('userId', $authUser->id)
+            ->where('status', 'Active')
+            ->first();
+
+        if (!$authMember) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Member not found'
+            ], 404);
+        }
+
+        // Get circle id
+        $circleId = $authMember->circleId;
+
+        // Get city id from circles table
+        $cityId = Circle::where('id', $circleId)->value('cityId');
+
+        if (!$cityId) {
+            return response()->json([
+                'status' => false,
+                'message' => 'City not found'
+            ], 404);
+        }
+
+        // Previous month
+        $previousDate = Carbon::now()->subMonth();
+
+        // Get all inducted members
+        $members = Member::where('status', 'Active')
+            ->whereYear('created_at', $previousDate->year)
+            ->whereMonth('created_at', $previousDate->month)
+            ->whereNotNull('sponsoredBy')
+            ->get();
+
+        if ($members->isEmpty()) {
+            return response()->json([
+                'status' => true,
+                'message' => 'No inductions found',
+                'data' => []
+            ]);
+        }
+
+        // Group by sponsor
+        $groupedMembers = $members->groupBy('sponsoredBy');
+
+        $topInductions = [];
+
+        foreach ($groupedMembers as $sponsorId => $group) {
+
+            $member = Member::with([
+                'circle',
+                'bCategory',
+                'sponsored'
+            ])
+                ->where('id', $sponsorId)
+                ->where('status', 'Active')
+                ->whereHas('circle', function ($query) use ($cityId) {
+                    $query->where('cityId', $cityId);
+                })
+                ->first();
+
+            if ($member) {
+
+                $topInductions[] = [
+                    'member' => [
+                        'id' => $member->id,
+                        'name' => $member->firstName . ' ' . $member->lastName ?? '',
+                        'mobile' => $member->user->contactNo ?? '',
+                        'image' => $member->profilePhoto ?? '',
+                        'company_name' => $member->companyName ?? '',
+                        'circle' => $member->circle->circleName ?? '',
+                        'category' => $member->bCategory->categoryName ?? '',
+                    ],
+                    'count' => $group->count(),
+                ];
+            }
+        }
+
+        $topInductions = collect($topInductions)
+            ->sortByDesc('count')
+            ->values()
+            ->take(4);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Top inductions fetched successfully',
+            'data' => $topInductions
+        ], 200);
     }
 }

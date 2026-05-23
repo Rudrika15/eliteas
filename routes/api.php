@@ -100,7 +100,7 @@ Route::get('role-permissions', [LoginController::class, 'getRolePermissions']);
 
 Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/user/profile', [LoginController::class, 'profile']);
-    Route::post('/force-change-password',[ApiController::class, 'forceChangePassword']);
+    Route::post('/force-change-password', [ApiController::class, 'forceChangePassword']);
 
     Route::post('/user/member/update', [LoginController::class, 'memberUpdate']);
     Route::post('/user/member/updateBillingAddress', [LoginController::class, 'billingAddressUpdate']);
@@ -120,9 +120,12 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/resource-index', [ApiController::class, 'resourceIndex']);
     Route::get('/notification/read/{id}', [ApiController::class, 'markAsRead']);
     Route::get('/members-activity-counts/{id?}', [ApiController::class, 'membersActivityCount']);
+    Route::get('/top-inductions', [ApiController::class, 'topInductions']);
 
     //latest Members
     Route::get('/latestmembers', [ApiController::class, 'latestMembers']);
+    Route::get('/banners', [ApiController::class, 'banners']);
+    Route::get('/announcements', [ApiController::class, 'announcements']);
 
     Route::get('member-gallery/{memberId}', [ApiController::class, 'memberGallery']);
     Route::post('member-gallery /store', [ApiController::class, 'storeMemberGallery']);
@@ -240,6 +243,8 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('franchise-create', [FranchiseController::class, 'create']);
     Route::put('franchise-update/{id}', [FranchiseController::class, 'update']);
     Route::delete('franchise-delete/{id}', [FranchiseController::class, 'delete']);
+
+
 
     // search member
     Route::post('search-member-index', [CircleCallController::class, 'searchmember']);

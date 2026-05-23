@@ -3846,7 +3846,262 @@
         const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
         document.getElementById("leaderboard-title").innerHTML = `Leaderboard - ${months[lastMonth.getMonth()]} ${date.getFullYear()}`;
     </script>
+    <style>
+        .ann-wrapper {
+            border-radius: 16px;
+            overflow: hidden;
+            border: 0.5px solid rgba(0, 0, 0, 0.12);
+            background: #fff;
+            margin-top: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+        }
 
+        .ann-accent {
+            height: 4px;
+            background: linear-gradient(90deg, #ff7a00, #1d3268);
+        }
+
+        .ann-header {
+            background: linear-gradient(90deg, #1d3268, #294a96);
+            color: white;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .ann-body {
+            padding: 1.5rem;
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+            position: relative;
+            min-height: 180px;
+        }
+
+        .ann-icon-box {
+            width: 52px;
+            height: 52px;
+            border-radius: 12px;
+            background: #EEEDFE;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 24px;
+        }
+
+        .ann-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 5px 12px;
+            border-radius: 100px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            background: #EEEDFE;
+            color: #3C3489;
+            margin-bottom: 10px;
+        }
+
+        .ann-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1d3268;
+            margin-bottom: 8px;
+        }
+
+        .ann-desc {
+            font-size: 15px;
+            color: #6b7280;
+            line-height: 1.8;
+            margin: 0;
+        }
+
+        .ann-time {
+            position: absolute;
+            top: 18px;
+            right: 20px;
+            font-size: 12px;
+            color: #6b7280;
+            font-weight: 600;
+            background: #f3f4f6;
+            padding: 5px 12px;
+            border-radius: 20px;
+        }
+
+        .carousel-indicators [data-bs-target] {
+            background-color: #1d3268;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .ann-empty {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #9d9c98;
+            font-size: 15px;
+            font-weight: 500;
+        }
+    </style>
+
+    <div class="ann-wrapper">
+
+        {{-- Header --}}
+        <div class="ann-header">
+            <span>📢 Latest Announcements</span>
+        </div>
+
+        {{-- Accent --}}
+        <div class="ann-accent"></div>
+
+        @if ($announcements->count() > 0)
+            <div id="announcementCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="4000">
+
+                {{-- Indicators --}}
+                <div class="carousel-indicators">
+
+                    @foreach ($announcements as $key => $announcement)
+                        <button type="button" data-bs-target="#announcementCarousel" data-bs-slide-to="{{ $key }}" class="{{ $key == 0 ? 'active' : '' }}">
+                        </button>
+                    @endforeach
+
+                </div>
+
+                {{-- Carousel Items --}}
+                <div class="carousel-inner">
+
+                    @foreach ($announcements as $key => $announcement)
+                        <div class="carousel-item {{ $key == 0 ? 'active' : '' }}">
+
+                            <div class="ann-body">
+
+                                {{-- Time --}}
+                                <div class="ann-time">
+                                    ⏰ {{ $announcement->created_at->timezone('Asia/Kolkata')->diffForHumans() }}
+                                </div>
+
+                                {{-- Icon --}}
+                                <div class="ann-icon-box">
+                                    🔔
+                                </div>
+
+                                {{-- Content --}}
+                                <div style="flex:1; min-width:0;">
+
+                                    <span class="ann-badge">
+                                        ⚡ Active
+                                    </span>
+
+                                    <div class="ann-title">
+                                        {{ $announcement->title }}
+                                    </div>
+
+                                    <p class="ann-desc">
+                                        {{ $announcement->description }}
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                    @endforeach
+
+                </div>
+
+            </div>
+        @else
+            <div class="ann-empty">
+                🚫 No Active Announcement Available
+            </div>
+        @endif
+
+    </div>
+    <style>
+        .banner-slider-card {
+            border-radius: 20px;
+            overflow: hidden;
+            border: none;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .banner-slider-header {
+            background: linear-gradient(90deg, #1d3268, #294a96);
+            color: #fff;
+            padding: 15px 20px;
+        }
+
+        .banner-slider-img {
+            width: 100%;
+            height: 500px;
+            object-fit: initial;
+            background: #f8f9fa;
+        }
+
+        .carousel-item {
+            transition: transform 1s ease-in-out;
+        }
+
+        .carousel-indicators [data-bs-target] {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .carousel-control-prev-icon,
+        .carousel-control-next-icon {
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 50%;
+            padding: 18px;
+        }
+
+        @media (max-width: 768px) {
+            .banner-slider-img {
+                height: 220px;
+            }
+        }
+    </style>
+
+    <div class="card banner-slider-card mt-4">
+
+        {{-- Header --}}
+        <div class="banner-slider-header">
+            <h4 class="fw-bold mb-0">
+                🎉 Latest Banners
+            </h4>
+        </div>
+
+        {{-- Slider --}}
+        <div id="dashboardBannerSlider" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000">
+
+            {{-- Indicators --}}
+            <div class="carousel-indicators">
+
+                @foreach ($banners->take(5) as $key => $banner)
+                    <button type="button" data-bs-target="#dashboardBannerSlider" data-bs-slide-to="{{ $key }}" class="{{ $key == 0 ? 'active' : '' }}">
+                    </button>
+                @endforeach
+
+            </div>
+
+            {{-- Images --}}
+            <div class="carousel-inner">
+
+                @foreach ($banners->take(5) as $key => $banner)
+                    <div class="carousel-item {{ $key == 0 ? 'active' : '' }}">
+
+                        <img src="{{ asset('banners/' . $banner->image) }}" class="d-block w-100 banner-slider-img" alt="Banner">
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    </div>
     <style>
         .fb-card {
             background-color: #ffffff;
@@ -4220,6 +4475,212 @@
                     </div>
                 </div>
             @endif
+        </div>
+    </div>
+
+    {{-- ================= TOP INDUCTIONS SECTION ================= --}}
+
+    <style>
+        .induction-section {
+            background: #ffffff;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e5e7eb;
+        }
+
+        .induction-header {
+            background: linear-gradient(90deg, #1d3268, #294a96);
+            padding: 18px 22px;
+            color: #fff;
+        }
+
+        .induction-header h5 {
+            margin: 0;
+            font-size: 22px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+        }
+
+        .induction-content {
+            padding: 25px;
+        }
+
+        .induction-card {
+            background: #fff;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid #e5e7eb;
+            transition: 0.3s ease;
+            height: 100%;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .induction-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .induction-img-wrapper {
+            position: relative;
+            width: 100%;
+            height: 240px;
+            overflow: hidden;
+            background: #f8f9fa;
+        }
+
+        .induction-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .induction-badge {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: #ff7a00;
+            color: #fff;
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 600;
+            z-index: 10;
+        }
+
+        .induction-body {
+            padding: 18px;
+        }
+
+        .induction-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1d3268;
+            margin-bottom: 8px;
+        }
+
+        .induction-subtitle {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .induction-subtitle i {
+            color: #ff7a00;
+        }
+
+        .induction-info {
+            font-size: 14px;
+            color: #4b5563;
+            line-height: 1.7;
+            margin-bottom: 15px;
+        }
+
+        .induction-info i {
+            color: #ff7a00;
+        }
+
+        .induction-count {
+            background: #f3f4f6;
+            padding: 10px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 15px;
+            font-weight: 700;
+            color: #1d3268;
+            margin-bottom: 15px;
+        }
+
+        .induction-btn {
+            width: 100%;
+            border: none;
+            border-radius: 10px;
+            padding: 10px;
+            background: #1d3268;
+            color: #fff;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .induction-btn:hover {
+            background: #ff7a00;
+            color: #fff;
+        }
+    </style>
+
+    <div class="induction-section mt-4">
+        <div class="induction-header">
+            <h5>
+                <i class="bi bi-people-fill me-2"></i>
+                Top Inductions
+            </h5>
+        </div>
+        <div class="induction-content">
+            <div class="row g-4">
+                @foreach ($topInductions as $topinduction)
+                    <div class="col-sm-6 col-lg-3">
+                        <div class="fb-card shadow-sm">
+                            <div class="fb-card-img-wrapper">
+                                <span class="fb-badge">Top Induction</span>
+                                <img src="{{ asset('ProfilePhoto/' . ($topinduction['member']->profilePhoto ?? 'profile.png')) }}" class="fb-card-img" alt="Profile Image">
+                            </div>
+                            <div class="fb-card-body">
+                                <h5 class="fb-card-title">{{ $topinduction['member']->firstName }} {{ $topinduction['member']->lastName }}</h5>
+
+                                <div class="fb-card-subtitle">
+                                    <i class="bi bi-people-fill"></i>
+                                    {{ $topinduction['member']->circle->circleName ?? 'N/A' }}
+                                    <span>&bull;</span>
+                                    <b><span>Inductions: {{ $topinduction['count'] ?? '0' }}</span></b>
+                                </div>
+
+                                <div class="fb-card-info">
+                                    @if (!empty($topinduction['member']->companyName))
+                                        <div><i class="bi bi-building me-1"></i> <b>{{ $topinduction['member']->companyName }}</b></div>
+                                    @endif
+                                    @if (!empty($topinduction['member']->bCategory->categoryName))
+                                        <div><i class="bi bi-tag me-1"></i> <b>{{ $topinduction['member']->bCategory->categoryName }}</b></div>
+                                    @endif
+                                </div>
+
+                                <div class="mt-auto">
+                                    <!-- Connect Button -->
+                                    @php
+                                        $connectionStatus = $topinduction['member']->connection_status ?? 'Not Connected';
+
+                                    @endphp
+                                    @if ($connectionStatus == 'Connected')
+                                        <button type="button" class="fb-btn fb-btn-disabled">Connected</button>
+                                    @elseif ($connectionStatus == 'Accepted')
+                                        <button class="fb-btn fb-btn-primary">Message</button>
+                                    @elseif ($connectionStatus == 'Pending')
+                                        <button type="button" class="fb-btn fb-btn-disabled">Requested</button>
+                                    @else
+                                        <form action="{{ route('connect') }}" method="POST" class="d-block w-100">
+                                            @csrf
+                                            <input type="hidden" value="{{ $topinduction['member']->id }}" name="memberId">
+                                            <button type="submit" class="fb-btn fb-btn-primary">Connect</button>
+                                        </form>
+                                    @endif
+
+                                    <div class="mt-2 text-center fw-bold" style="color: #1d3268;">
+                                        Inductions - {{ $topinduction['member']->sponsored->count() }}
+                                    </div>
+
+                                    <!-- View Profile -->
+                                    <a href="{{ route('foundPersonDetails', $topinduction['member']->id) }}" class="text-decoration-none d-block w-100">
+                                        <button class="fb-btn fb-btn-secondary">View Profile</button>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
         </div>
     </div>
     <style>

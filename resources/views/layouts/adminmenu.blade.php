@@ -99,6 +99,20 @@
 </li>
 
 <li class="nav-item">
+    <a class="nav-link collapsed" href="{{ route('banner.index') }}">
+        <i class="bi bi-image" style="color: #e76a35"></i>
+        <span style="color: #1d2856">Banner</span>
+    </a>
+</li>
+
+<li class="nav-item">
+    <a class="nav-link collapsed" href="{{ route('announcement.index') }}">
+        <i class="bi bi-megaphone-fill" style="color: #e76a35"></i>
+        <span style="color: #1d2856">Announcements</span>
+    </a>
+</li>
+
+<li class="nav-item">
     <a class="nav-link collapsed" data-bs-target="#allActivity-nav" data-bs-toggle="collapse" href="#">
         <i class="bi bi-person-gear" style="color: #e76a35"></i><span>All Activity</span><i class="bi bi-chevron-down ms-auto" style="color: #e76a35"></i>
     </a>
