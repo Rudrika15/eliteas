@@ -111,6 +111,19 @@
         <span style="color: #1d2856">Announcements</span>
     </a>
 </li>
+<li class="nav-item">
+    <a class="nav-link collapsed" href="{{ route('sponsors.index') }}">
+        <i class="bi bi-hand-thumbs-up-fill" style="color: #e76a35"></i>
+        <span style="color: #1d2856">Sponsors</span>
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link collapsed" href="{{ route('risingstar.index') }}">
+        <i class="bi bi-stars" style="color: #e76a35"></i>
+        <span style="color: #1d2856">Rising Star</span>
+    </a>
+</li>
+
 
 <li class="nav-item">
     <a class="nav-link collapsed" data-bs-target="#allActivity-nav" data-bs-toggle="collapse" href="#">

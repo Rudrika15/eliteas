@@ -3527,7 +3527,7 @@
             </div>
         </div>
     </div>
-    {{-- <style>
+    <style>
         .uplfeed-card {
             background: #f2f2f2;
 
@@ -3561,54 +3561,97 @@
     </style>
     @php
         $cityId = \App\Models\Member::where('userId', auth()->id())->value('cityId');
+
+        $sponsors = \App\Models\Sponsors::where('status', 'Active')->whereNotNull('image')->get();
     @endphp
-    @if ($cityId == 3)
+
+    @if ($cityId == 3 && $sponsors->isNotEmpty())
         <div class="card shadow-sm mt-3" style="border-radius: 12px; overflow: hidden;">
 
             <!-- Header -->
             <div class="card-header text-white" style="background:#1d3268;">
                 <div class="d-flex justify-content-between align-items-center">
                     <h5 class="fw-bold mb-0">
-                        🏏 UBN Primer League 2.0 Sponsers
+                        {{ $sponsors->first()->title }}
                     </h5>
                 </div>
             </div>
 
-            <div class="card-body p-3">
-
-                <!-- ✅ ONLY 2 CARDS -->
+            <!-- Body -->
+            {{-- <div class="card-body p-3">
                 <div class="row row-cols-1 row-cols-md-2 g-4">
 
-                    <!-- ✅ CARD 1 → Title Sponsor -->
-                    <div class="col">
-                        <div class="uplfeed-card image-only-card">
-                            <div class="uplfeed-img-section">
-                                <div class="uplfeed-img-wrapper">
-                                    <!-- 🔥 Replace with your actual image name -->
-                                    <img src="uplcricket_images/title_sponser.jpeg" class="uplfeed-img" alt="Title Sponsor">
+                    @foreach ($sponsors as $sponsor)
+                        <div class="col">
+                            <div class="uplfeed-card image-only-card">
+                                <div class="uplfeed-img-section">
+                                    <div class="uplfeed-img-wrapper">
+
+                                        <img src="{{ asset('sponsors/' . $sponsor->image) }}"
+                                            class="uplfeed-img"
+                                            alt="{{ $sponsor->title }}">
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    @endforeach
+                </div>
+            </div> --}}
 
-                    <!-- ✅ CARD 2 → Co Sponsor -->
-                    <div class="col">
-                        <div class="uplfeed-card image-only-card">
+            <div class="card-body p-3">
+                <div id="sponsorCarousel" class="carousel slide" data-bs-ride="carousel">
 
-                            <div class="uplfeed-img-section">
-                                <div class="uplfeed-img-wrapper">
-                                    <!-- 🔥 Replace with your actual image name -->
-                                    <img src="uplcricket_images/co_sponser.jpeg" class="uplfeed-img" alt="Co Sponsor">
+                    <div class="carousel-inner">
+                        @php
+                            $slides = [];
+
+                            foreach ($sponsors as $index => $sponsor) {
+                                $slides[] = [$sponsor, $sponsors[($index + 1) % $sponsors->count()]];
+                            }
+                        @endphp
+                        @foreach ($slides as $chunkIndex => $chunk)
+                            <div class="carousel-item {{ $chunkIndex == 0 ? 'active' : '' }}">
+                                <div class="row row-cols-1 row-cols-md-2 g-4">
+                                    @foreach ($chunk as $sponsor)
+                                        <div class="col">
+                                            <div class="uplfeed-card image-only-card">
+                                                <div class="uplfeed-img-section">
+                                                    <div class="uplfeed-img-wrapper">
+                                                        <img src="{{ asset('sponsors/' . $sponsor->image) }}" class="uplfeed-img" alt="{{ $sponsor->title }}">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
                                 </div>
                             </div>
-                        </div>
+                        @endforeach
                     </div>
+                    @if ($sponsors->count() > 2)
+                        <button class="carousel-control-prev" type="button" data-bs-target="#sponsorCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon"></span>
+                        </button>
+
+                        <button class="carousel-control-next" type="button" data-bs-target="#sponsorCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon"></span>
+                        </button>
+                    @endif
 
                 </div>
             </div>
         </div>
     @endif
-    <style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            new bootstrap.Carousel(document.getElementById('sponsorCarousel'), {
+                interval: 3000,
+                ride: 'carousel',
+                pause: false,
+                wrap: true
+            });
+        });
+    </script>
+    {{-- <style>
         .captianfeed-card {
             background: #ffffff;
             border-radius: 12px;
@@ -3704,8 +3747,8 @@
 
             </div>
         </div>
-    @endif
-    <style>
+    @endif --}}
+    {{-- <style>
         .sponsorfeed-card {
             background: #ffffff;
             border-radius: 12px;
@@ -3950,79 +3993,48 @@
         }
     </style>
 
-    <div class="ann-wrapper">
-
-        {{-- Header --}}
-        <div class="ann-header">
-            <span>📢 Latest Announcements</span>
-        </div>
-
-        {{-- Accent --}}
-        <div class="ann-accent"></div>
-
-        @if ($announcements->count() > 0)
+    @if ($announcements->count() > 0)
+        <div class="ann-wrapper">
+            <div class="ann-header">
+                <span>📢 Latest Announcements</span>
+            </div>
+            <div class="ann-accent"></div>
             <div id="announcementCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="4000">
-
-                {{-- Indicators --}}
                 <div class="carousel-indicators">
-
                     @foreach ($announcements as $key => $announcement)
                         <button type="button" data-bs-target="#announcementCarousel" data-bs-slide-to="{{ $key }}" class="{{ $key == 0 ? 'active' : '' }}">
                         </button>
                     @endforeach
-
                 </div>
-
-                {{-- Carousel Items --}}
                 <div class="carousel-inner">
-
                     @foreach ($announcements as $key => $announcement)
                         <div class="carousel-item {{ $key == 0 ? 'active' : '' }}">
-
                             <div class="ann-body">
-
-                                {{-- Time --}}
                                 <div class="ann-time">
                                     ⏰ {{ $announcement->created_at->timezone('Asia/Kolkata')->diffForHumans() }}
                                 </div>
-
-                                {{-- Icon --}}
                                 <div class="ann-icon-box">
                                     🔔
                                 </div>
-
-                                {{-- Content --}}
                                 <div style="flex:1; min-width:0;">
-
                                     <span class="ann-badge">
                                         ⚡ Active
                                     </span>
-
                                     <div class="ann-title">
                                         {{ $announcement->title }}
                                     </div>
-
                                     <p class="ann-desc">
                                         {{ $announcement->description }}
                                     </p>
-
                                 </div>
-
                             </div>
-
                         </div>
                     @endforeach
-
                 </div>
-
             </div>
-        @else
-            <div class="ann-empty">
-                🚫 No Active Announcement Available
-            </div>
-        @endif
-
-    </div>
+        </div>
+        </div>
+    @endif
     <style>
         .banner-slider-card {
             border-radius: 20px;
@@ -4068,40 +4080,30 @@
         }
     </style>
 
-    <div class="card banner-slider-card mt-4">
-
-        {{-- Header --}}
-        <div class="banner-slider-header">
-            <h4 class="fw-bold mb-0">
-                🎉 Latest Banners
-            </h4>
-        </div>
-
-        {{-- Slider --}}
-        <div id="dashboardBannerSlider" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000">
-
-            {{-- Indicators --}}
-            <div class="carousel-indicators">
-
-                @foreach ($banners->take(5) as $key => $banner)
-                    <button type="button" data-bs-target="#dashboardBannerSlider" data-bs-slide-to="{{ $key }}" class="{{ $key == 0 ? 'active' : '' }}">
-                    </button>
-                @endforeach
-
+    @if ($banners->count())
+        <div class="card banner-slider-card mt-4">
+            <div class="banner-slider-header">
+                <h4 class="fw-bold mb-0">
+                    🎉 Latest Banners
+                </h4>
             </div>
-
-            {{-- Images --}}
-            <div class="carousel-inner">
-
-                @foreach ($banners->take(5) as $key => $banner)
-                    <div class="carousel-item {{ $key == 0 ? 'active' : '' }}">
-
-                        <img src="{{ asset('banners/' . $banner->image) }}" class="d-block w-100 banner-slider-img" alt="Banner">
-                    </div>
-                @endforeach
+            <div id="dashboardBannerSlider"class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000">
+                <div class="carousel-indicators">
+                    @foreach ($banners->take(5) as $key => $banner)
+                        <button type="button" data-bs-target="#dashboardBannerSlider" data-bs-slide-to="{{ $key }}" class="{{ $key == 0 ? 'active' : '' }}">
+                        </button>
+                    @endforeach
+                </div>
+                <div class="carousel-inner">
+                    @foreach ($banners->take(5) as $key => $banner)
+                        <div class="carousel-item {{ $key == 0 ? 'active' : '' }}">
+                            <img src="{{ asset('banners/' . $banner->image) }}" class="d-block w-100 banner-slider-img"alt="Banner">
+                        </div>
+                    @endforeach
+                </div>
             </div>
         </div>
-    </div>
+    @endif
     <style>
         .fb-card {
             background-color: #ffffff;
@@ -4683,6 +4685,186 @@
             </div>
         </div>
     </div>
+    <style>
+        .rising-star-section {
+            background: #ffffff;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e5e7eb;
+        }
+
+        .rising-star-header {
+            background: linear-gradient(90deg, #1d3268, #294a96);
+            padding: 18px 22px;
+            color: #fff;
+        }
+
+        .rising-star-header h5 {
+            margin: 0;
+            font-size: 22px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+        }
+
+        .rising-star-content {
+            padding: 25px;
+        }
+
+        .rising-star-card {
+            background: #fff;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid #e5e7eb;
+            transition: .3s ease;
+            height: 100%;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, .05);
+        }
+
+        .rising-star-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .rising-star-img-wrapper {
+            position: relative;
+            width: 100%;
+            height: 240px;
+            overflow: hidden;
+            background: #f8f9fa;
+        }
+
+        .rising-star-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .rising-star-badge {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: #ff7a00;
+            color: #fff;
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .rising-star-body {
+            padding: 18px;
+        }
+
+        .rising-star-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1d3268;
+            margin-bottom: 8px;
+        }
+
+        .rising-star-subtitle {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .rising-star-info {
+            font-size: 14px;
+            color: #4b5563;
+            line-height: 1.7;
+            margin-bottom: 15px;
+        }
+
+        .rising-star-btn {
+            width: 100%;
+            border: none;
+            border-radius: 10px;
+            padding: 10px;
+            background: #1d3268;
+            color: #fff;
+            font-weight: 600;
+            transition: .3s;
+        }
+
+        .rising-star-btn:hover {
+            background: #ff7a00;
+            color: #fff;
+        }
+    </style>
+    @if (isset($risingStars) && $risingStars->isNotEmpty())
+        <div class="rising-star-section mt-4">
+            <div class="rising-star-header">
+                <h5><i class="bi bi-stars me-2"></i>Rising Stars</h5>
+            </div>
+            <div class="rising-star-content">
+                <div class="row g-4">
+                    @foreach ($risingStars->take(4) as $star)
+                        <div class="col-sm-6 col-lg-3">
+                            <div class="rising-star-card">
+                                <div class="rising-star-img-wrapper">
+                                    <span class="rising-star-badge">⭐ Rising Star</span>
+                                    <img src="{{ asset('ProfilePhoto/' . ($member->profilePhoto ?? 'profile.png')) }}" class="rising-star-img" alt="Profile Image">
+                                </div>
+                                <div class="rising-star-body">
+                                    <div class="rising-star-name">
+                                        {{ $star->member->firstName ?? '' }}
+                                        {{ $star->member->lastName ?? '' }}
+                                    </div>
+                                    <div class="rising-star-subtitle">
+                                        <i class="bi bi-people-fill"></i>{{ $star->member->circle->circleName ?? 'N/A' }}
+                                    </div>
+                                    <div class="rising-star-info">
+                                        @if (!empty($star->member->companyName))
+                                            <div>
+                                                <i class="bi bi-building me-1"></i>
+                                                <b>
+                                                    {{ $star->member->companyName }}
+                                                </b>
+                                            </div>
+                                        @endif
+                                        @if (!empty($star->member->bCategory->categoryName))
+                                            <div>
+                                                <i class="bi bi-tag me-1"></i>
+                                                <b>
+                                                    {{ $star->member->bCategory->categoryName }}
+                                                </b>
+                                            </div>
+                                        @endif
+                                    </div>
+                                    <div class="mt-auto">
+                                        @php
+                                            $connectionStatus = $star->member->connection_status ?? 'Not Connected';
+                                        @endphp
+                                        @if ($connectionStatus == 'Connected')
+                                            <button type="button" class="fb-btn fb-btn-disabled">Connected</button>
+                                        @elseif($connectionStatus == 'Accepted')
+                                            <button class="fb-btn fb-btn-primary">Message</button>
+                                        @elseif($connectionStatus == 'Pending')
+                                            <button type="button" class="fb-btn fb-btn-disabled">Requested</button>
+                                        @else
+                                            <form action="{{ route('connect') }}" method="POST" class="d-block w-100">
+                                                @csrf
+                                                <input type="hidden" name="memberId" value="{{ $star->member->id }}">
+                                                <button type="submit" class="fb-btn fb-btn-primary">Connect</button>
+
+                                            </form>
+                                        @endif
+                                        <div class="mt-2 text-center fw-bold" style="color:#1d3268;">
+                                            Inductions - {{ $star->member->sponsored->count() }}
+                                        </div>
+                                        <a href="{{ route('foundPersonDetails', $star->member->id) }}" class="text-decoration-none d-block w-100">
+                                            <button class="fb-btn fb-btn-secondary"> View Profile</button>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+    @endif
     <style>
         .view-more-btn {
             display: inline-block;

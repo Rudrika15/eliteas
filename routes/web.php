@@ -3,9 +3,9 @@
 use App\Exports\MemberReportExport;
 use App\Exports\TrainersListExport;
 use App\Http\Controllers\Admin\AllActivityController;
+use App\Http\Controllers\Admin\AnnouncementController;
 use App\Http\Controllers\Admin\AttendanceController;
 use App\Http\Controllers\Admin\BannerController;
-use App\Http\Controllers\Admin\AnnouncementController;
 use App\Http\Controllers\Admin\BusinessCategoryController;
 use App\Http\Controllers\Admin\ChatController;
 use App\Http\Controllers\Admin\CircleCallController;
@@ -39,10 +39,12 @@ use App\Http\Controllers\Admin\MembershipTypeController;
 use App\Http\Controllers\Admin\PaymentController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\ResourceCategoryController;
+use App\Http\Controllers\Admin\RisingStarController;
 use App\Http\Controllers\Admin\ScheduleController;
 use App\Http\Controllers\Admin\SlotController;
 use App\Http\Controllers\Admin\SocialWallController;
 use App\Http\Controllers\Admin\SpecificAskController;
+use App\Http\Controllers\Admin\SponsorsController;
 use App\Http\Controllers\Admin\StateController;
 use App\Http\Controllers\Admin\SupportController;
 use App\Http\Controllers\admin\TemplateDetailController;
@@ -68,8 +70,10 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\TermsController;
 use App\Http\Controllers\TestimonialController;
+use App\Http\Controllers\TopNetworkerController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\visitor\VisitorFormController;
+use App\Models\Circle;
 use App\Models\User;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
@@ -156,7 +160,7 @@ Route::group(['middleware' => ['auth']], function () {
         return response()->json(['roles' => $roles]);
     });
 
-    //Terms & Conditions 
+    // Terms & Conditions
     Route::get('/terms', [TermsController::class, 'index'])->name('terms.index');
     Route::get('/terms/preview', [TermsController::class, 'preview'])->name('terms.preview');
     Route::get('/terms/download', [TermsController::class, 'download'])->name('terms.download');
@@ -178,11 +182,11 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::get('/user-list', [UserController::class, 'userList'])->name('userList');
 
-    Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-    Route::get('birthday/canvas/{id?}', [App\Http\Controllers\HomeController::class, 'birthday'])->name('birthday.canvas');
+    Route::get('/', [HomeController::class, 'index'])->name('home');
+    Route::get('birthday/canvas/{id?}', [HomeController::class, 'birthday'])->name('birthday.canvas');
 
     // Top Networkers
-    Route::get('/top-networkers', [App\Http\Controllers\TopNetworkerController::class, 'index'])->name('topNetworkers.index');
+    Route::get('/top-networkers', [TopNetworkerController::class, 'index'])->name('topNetworkers.index');
 
     Route::get('franchise/show/{id?}', [FranchiseController::class, 'show'])->name('franchise.show');
     Route::get('/franchise/index', [FranchiseController::class, 'index'])->name('franchise.index');
@@ -207,6 +211,22 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('announcement/edit/{id}', [AnnouncementController::class, 'edit'])->name('announcement.edit');
     Route::post('announcement/update/{id}', [AnnouncementController::class, 'update'])->name('announcement.update');
     Route::get('announcement/delete/{id}', [AnnouncementController::class, 'destroy'])->name('announcement.delete');
+
+    Route::get('sponsor/show/{id?}', [SponsorsController::class, 'show'])->name('sponsors.show');
+    Route::get('/sponsor/index', [SponsorsController::class, 'index'])->name('sponsors.index');
+    Route::get('sponsor/create', [SponsorsController::class, 'create'])->name('sponsors.create');
+    Route::post('sponsor/store', [SponsorsController::class, 'store'])->name('sponsors.store');
+    Route::get('sponsor/edit/{id}', [SponsorsController::class, 'edit'])->name('sponsors.edit');
+    Route::post('sponsor/update/{id}', [SponsorsController::class, 'update'])->name('sponsors.update');
+    Route::get('sponsor/delete/{id}', [SponsorsController::class, 'destroy'])->name('sponsors.delete');
+
+    Route::get('risingstar/show/{id?}', [RisingStarController::class, 'show'])->name('risingstar.show');
+    Route::get('/risingstar/index', [RisingStarController::class, 'index'])->name('risingstar.index');
+    Route::get('risingstar/create', [RisingStarController::class, 'create'])->name('risingstar.create');
+    Route::post('risingstar/store', [RisingStarController::class, 'store'])->name('risingstar.store');
+    Route::get('risingstar/edit/{id}', [RisingStarController::class, 'edit'])->name('risingstar.edit');
+    Route::post('risingstar/update/{id}', [RisingStarController::class, 'update'])->name('risingstar.update');
+    Route::get('risingstar/delete/{id}', [RisingStarController::class, 'destroy'])->name('risingstar.delete');
 
     Route::get('/country/index', [CountryController::class, 'index'])->name('country.index');
     Route::get('country/show/{id?}', [CountryController::class, 'show'])->name('country.show');
@@ -528,11 +548,11 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/searchQuery', [HomeController::class, 'search'])->name('searchQuery');
     Route::get('/foundPersonDetails/{id}', [HomeController::class, 'foundPersonDetails'])->name('foundPersonDetails');
 
-    //Dashboard Connection Notifications
+    // Dashboard Connection Notifications
     Route::get('/notifications', [HomeController::class, 'notifications'])->name('notifications');
     Route::get('/notification/read/{id}', [HomeController::class, 'markAsRead'])->name('notification.read');
 
-    //Network Feed Notifications
+    // Network Feed Notifications
     Route::post('/networkfeed-notification/read/{id}', [SocialWallController::class, 'markNotificationRead']);
 
     // connections
@@ -554,16 +574,16 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/connection/{categoryId}/categoryList', [ConnectionController::class, 'categoryMembers'])->name('connection.category.members');
 
     // ================= Social Wall Routes =================
-    Route::get('/social-wall', [App\Http\Controllers\Admin\SocialWallController::class, 'index'])->name('social-wall.index');
-    Route::post('/social-wall/store', [App\Http\Controllers\Admin\SocialWallController::class, 'store'])->name('social-wall.store');
-    Route::post('/social-wall/like', [App\Http\Controllers\Admin\SocialWallController::class, 'toggleLike'])->name('social-wall.like');
-    Route::post('/social-wall/comment', [App\Http\Controllers\Admin\SocialWallController::class, 'addComment'])->name('social-wall.comment');
-    Route::post('/social-wall/comment/edit', [App\Http\Controllers\Admin\SocialWallController::class, 'editComment'])->name('social-wall.comment.edit');
-    Route::post('/social-wall/comment/delete', [App\Http\Controllers\Admin\SocialWallController::class, 'deleteComment'])->name('social-wall.comment.delete');
-    Route::get('/social-wall/comments/{postId}', [App\Http\Controllers\Admin\SocialWallController::class, 'getComments'])->name('social-wall.comments');
-    Route::post('/social-wall/post/delete', [App\Http\Controllers\Admin\SocialWallController::class, 'deletePost'])->name('social-wall.post.delete');
-    Route::post('/social-wall/post/edit', [App\Http\Controllers\Admin\SocialWallController::class, 'editPost'])->name('social-wall.post.edit');
-    Route::get('/social-wall/post/{postId}', [App\Http\Controllers\Admin\SocialWallController::class, 'getPostDetails'])->name('social-wall.post.details');
+    Route::get('/social-wall', [SocialWallController::class, 'index'])->name('social-wall.index');
+    Route::post('/social-wall/store', [SocialWallController::class, 'store'])->name('social-wall.store');
+    Route::post('/social-wall/like', [SocialWallController::class, 'toggleLike'])->name('social-wall.like');
+    Route::post('/social-wall/comment', [SocialWallController::class, 'addComment'])->name('social-wall.comment');
+    Route::post('/social-wall/comment/edit', [SocialWallController::class, 'editComment'])->name('social-wall.comment.edit');
+    Route::post('/social-wall/comment/delete', [SocialWallController::class, 'deleteComment'])->name('social-wall.comment.delete');
+    Route::get('/social-wall/comments/{postId}', [SocialWallController::class, 'getComments'])->name('social-wall.comments');
+    Route::post('/social-wall/post/delete', [SocialWallController::class, 'deletePost'])->name('social-wall.post.delete');
+    Route::post('/social-wall/post/edit', [SocialWallController::class, 'editPost'])->name('social-wall.post.edit');
+    Route::get('/social-wall/post/{postId}', [SocialWallController::class, 'getPostDetails'])->name('social-wall.post.details');
 
     Route::get('/member-subscription', [MembershipSubscriptionController::class, 'index'])->name('subscription.memberSubscription');
     Route::get('/member-subscription-all', [MembershipSubscriptionController::class, 'memberData'])->name('subscription.memberSubscription.admin');
@@ -585,11 +605,9 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/vp/report', [ReportController::class, 'vpReport'])->name('vp.report');
     Route::get('/vp/report/export', [ReportController::class, 'exportVpReport'])->name('vp.report.export');
 
-
     Route::get('/admin/reports/circle-activity', [ReportController::class, 'circleActivityReport'])->name('admin.report.circleActivity');
     Route::get('/admin/reports/attendance', [ReportController::class, 'attendanceReport'])->name('admin.report.attendance');
     Route::get('/admin/reports/circle-attendance-combined', [CombinedReportController::class, 'index'])->name('admin.report.circleAttendanceCombined');
-
 
     // excel report
     Route::get('admin/report/member-report', [ReportController::class, 'memberWiseReport'])->name('admin.memberWiseReport');
@@ -775,7 +793,6 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/activity/refrence/vp', [AllActivityController::class, 'refrenceVp'])->name('activity.refrenceVp');
     Route::get('/activity/businesses/vp', [AllActivityController::class, 'businessVp'])->name('activity.businessesVp');
 
-
     Route::get('/circle/{id}/report', [CircleController::class, 'report'])->name('circle.report');
 
     // Specific ask
@@ -876,6 +893,7 @@ Route::group(['middleware' => ['auth']], function () {
     // 6-10-25 new development - digital member route
     Route::get('/digitalMember/index', [DigitalMemberController::class, 'index'])->name('digitalMember.index');
     Route::get('/filter-table-data', [DigitalMemberController::class, 'filterTableData'])->name('filterTableData');
+    Route::get('/digitMember/export', [DigitalMemberController::class, 'export'])->name('digitalMember.export');
     Route::get('digitalMember/show/{id?}', [DigitalMemberController::class, 'show'])->name('digitalMember.show');
     Route::get('digitalMember/create', [DigitalMemberController::class, 'create'])->name('digitalMember.create');
     Route::post('digitalMember/store', [DigitalMemberController::class, 'store'])->name('digitalMember.store');
@@ -897,10 +915,10 @@ Route::group(['middleware' => ['auth']], function () {
     // new design netwwork
 
     Route::prefix('admin/network')->middleware(['auth'])->group(function () {
-        Route::get('/circles', [App\Http\Controllers\Admin\ConnectionController::class, 'circleList'])->name('admin.circles');
+        Route::get('/circles', [ConnectionController::class, 'circleList'])->name('admin.circles');
 
         Route::get('/circle-members/{id}', function ($id) {
-            $circle = App\Models\Circle::with(['members' => function ($q) {
+            $circle = Circle::with(['members' => function ($q) {
                 $q->where('status', 'Active')->with('user');
             }])->findOrFail($id);
 
@@ -912,7 +930,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     // network digital member
 
-    Route::get('/digital-member/cities', [App\Http\Controllers\Admin\ConnectionController::class, 'cityList'])
+    Route::get('/digital-member/cities', [ConnectionController::class, 'cityList'])
         ->name('digital.member.cities.list');
     Route::get('/digital-searchQuery', [HomeController::class, 'degitalMemberSearch'])->name('degitalMemberSearch');
 });
@@ -1020,7 +1038,7 @@ Route::get('/clear-cache/{key}', function ($key) {
     Artisan::call('route:clear');
     Artisan::call('view:clear');
 
-    return "✅ Cache cleared!";
+    return '✅ Cache cleared!';
 });
 Route::get('/.well-known/appspecific/com.chrome.devtools.json', function () {
     return response()->json([]);

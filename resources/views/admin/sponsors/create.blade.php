@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('header', 'Banner')
+@section('header', 'Sponsors')
 @section('content')
 
     {{-- Message --}}
@@ -25,19 +25,19 @@
 
     <div class="card">
         <div class="card-body d-flex justify-content-between align-items-center">
-            <h5 class="card-title">Banner</h5>
-            <a href="{{ route('banner.index') }}" class="btn btn-bg-orange btn-sm">BACK</a>
+            <h5 class="card-title">Sponsors</h5>
+            <a href="{{ route('sponsors.index') }}" class="btn btn-bg-orange btn-sm">BACK</a>
         </div>
 
         <!-- Floating Labels Form -->
-        <form class="m-3 needs-validation" id="cityForm" enctype="multipart/form-data" method="POST" action="{{ route('banner.store') }}" novalidate>
+        <form class="m-3 needs-validation" id="cityForm" enctype="multipart/form-data" method="POST" action="{{ route('sponsors.store') }}" novalidate>
             @csrf
             <div class="row ">
 
                 <div class="col-md-6">
                     <div class="form-floating mt-3">
-                        <input type="text" class="form-control @error('title') is-invalid @enderror" id="title" name="title" placeholder="Banner Title" required>
-                        <label for="title">Banner Title</label>
+                        <input type="text" class="form-control @error('title') is-invalid @enderror" id="title" name="title" placeholder="Sponsor Title" required>
+                        <label for="title">Sponsor Title</label>
                         @error('title')
                             <div class="invalid-tooltip">
                                 {{ $message }}
@@ -48,7 +48,7 @@
 
                 <div class="col-md-6 ">
                     <div class="form-label-group ">
-                        <label for="image" class="fw-bold">Banner Image<sup class="text-danger"></sup></label>
+                        <label for="image" class="fw-bold">Sponsor Image<sup class="text-danger"></sup></label>
                         <input type="file" class="form-control" id="image" name="image" accept="image/*" onchange="previewPhoto(event)">
                         <img id="photoPreview" src="{{ asset('images/default.jpg') }}" class="mt-2" width="250px" height="200px">
                         @error('image')

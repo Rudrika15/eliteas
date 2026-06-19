@@ -4,6 +4,7 @@ namespace App\Http\Controllers\admin;
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exports\DigitalMemberReport;
 use App\Http\Controllers\Controller;
 use App\Mail\MemberSubscription;
 use App\Mail\MemberSubscriptionDiscount;
@@ -26,11 +27,13 @@ use App\Models\State;
 use App\Models\TopsProfile;
 use App\Models\User;
 use App\Utils\ErrorLogger;
+use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Maatwebsite\Excel\Facades\Excel;
 use Spatie\Permission\Models\Role;
 
 class DigitalMemberController extends Controller
@@ -170,6 +173,11 @@ class DigitalMemberController extends Controller
 
             return view('servererror');
         }
+    }
+
+    public function export(Request $request)
+    {
+        return Excel::download(new DigitalMemberReport($request), 'digital_members.xlsx');
     }
 
     public function deletedMemberList(Request $request)
@@ -445,7 +453,7 @@ class DigitalMemberController extends Controller
     {
         try {
             $data = Crypt::decrypt($paymentData);
-        } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
+        } catch (DecryptException $e) {
             abort(404);
         }
 
@@ -526,7 +534,7 @@ class DigitalMemberController extends Controller
 
             if ($request->hasFile('profilePhoto')) {
                 $profilePhoto = $request->file('profilePhoto');
-                $profilePhotoName = time() . '.' . $profilePhoto->extension();
+                $profilePhotoName = time().'.'.$profilePhoto->extension();
                 $profilePhoto->move(public_path('ProfilePhoto'), $profilePhotoName);
                 $member->profilePhoto = $profilePhotoName;
             }
@@ -534,7 +542,7 @@ class DigitalMemberController extends Controller
             // CompanyLogo upload
             if ($request->hasFile('companyLogo')) {
                 $companyLogo = $request->file('companyLogo');
-                $companyLogoName = time() . '.' . $companyLogo->extension();
+                $companyLogoName = time().'.'.$companyLogo->extension();
                 $companyLogo->move(public_path('CompanyLogo'), $companyLogoName);
                 $member->companyLogo = $companyLogoName;
             }

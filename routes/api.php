@@ -40,11 +40,11 @@ use App\Http\Controllers\Api\TermsController;
 // use App\Http\Controllers\Api\TestimonialController;
 // use App\Http\Controllers\Api\TestimonialController;
 
+use App\Http\Controllers\Api\TestimonialController;
 use App\Http\Controllers\Api\TrainerMasterController;
 use App\Http\Controllers\Api\TrainingController;
 use App\Http\Controllers\Api\UpdateAppController;
 use App\Http\Controllers\Api\VisitorController;
-use App\Http\Controllers\Api\TestimonialController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -122,8 +122,9 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/members-activity-counts/{id?}', [ApiController::class, 'membersActivityCount']);
     Route::get('/top-inductions', [ApiController::class, 'topInductions']);
 
-    //latest Members
+    // latest Members
     Route::get('/latestmembers', [ApiController::class, 'latestMembers']);
+    Route::get('/sponsors', [ApiController::class, 'getSponsors']);
     Route::get('/banners', [ApiController::class, 'banners']);
     Route::get('/announcements', [ApiController::class, 'announcements']);
 
@@ -131,7 +132,6 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('member-gallery /store', [ApiController::class, 'storeMemberGallery']);
     Route::post('member-gallery /update/{memberId}', [ApiController::class, 'updateMemberGallery']);
     Route::delete('member-gallery /delete/{id}', [ApiController::class, 'deleteMemberGallery']);
-
 
     // Admin side profile change
     Route::post('/members/{id}', [LoginController::class, 'memberUpdateAdmin']);
@@ -244,8 +244,6 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::put('franchise-update/{id}', [FranchiseController::class, 'update']);
     Route::delete('franchise-delete/{id}', [FranchiseController::class, 'delete']);
 
-
-
     // search member
     Route::post('search-member-index', [CircleCallController::class, 'searchmember']);
 
@@ -287,7 +285,6 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('/connections/removeConnection', [ConnectionController::class, 'removeConnection']);
     Route::post('/connections/viewMemberProfile', [ConnectionController::class, 'viewMemberProfile']);
     Route::get('/connections/ConnectionsRequests', [ConnectionController::class, 'ConnectionsRequests']);
-
 
     // Route::get('/connections/myConnection', [ConnectionController::class, 'myConnection']);
 
@@ -492,7 +489,6 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     // notification
     Route::get('notification-index', [NotificationController::class, 'notificationIndex']);
-
 
     // ________________________________________________________________________________________________________________
 

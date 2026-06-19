@@ -3,13 +3,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Banners;
 use App\Models\BillingAddress;
 use App\Models\BusinessCategory;
-use App\Models\Announcement;
 use App\Models\Circle;
 use App\Models\CircleCall;
-use App\Models\Banners;
-use App\Models\MemberGallery;
 use App\Models\CircleMeetingMembersBusiness;
 use App\Models\CircleMeetingMembersReference;
 use App\Models\City;
@@ -18,15 +16,17 @@ use App\Models\ContactDetails;
 use App\Models\Help;
 use App\Models\MeetingInvitation;
 use App\Models\Member;
+use App\Models\MemberGallery;
+use App\Models\Notifications;
 use App\Models\ResourceCategory;
 use App\Models\Schedule;
+use App\Models\Sponsors;
 use App\Models\TopsProfile;
 use App\Models\Training;
 use App\Models\User;
 use App\Models\VisitorsDetails;
-use App\Utils\Utils;
-use App\Models\Notifications;
 use App\Utils\ErrorLogger;
+use App\Utils\Utils;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -81,7 +81,7 @@ class ApiController extends Controller
 
             $user = User::where('email', $request->email)->first();
 
-            if (!$user) {
+            if (! $user) {
                 return Utils::errorResponses(['error' => 'Account Not Found'], 'Invalid email address. Please enter the correct email');
             }
 
@@ -93,7 +93,6 @@ class ApiController extends Controller
             if (! Hash::check($request->password, $userPassword)) {
                 return Utils::errorResponses(['error' => 'Unauthorized Access'], 'Incorrect password. Please try again.');
             }
-
 
             if (Auth::attempt($request->only('email', 'password'))) {
                 $user = Auth::user();
@@ -381,7 +380,7 @@ class ApiController extends Controller
                 ->get();
 
             // Group and transform the data
-            $circlecalls = $circlecalls->groupBy('memberId')->map(function ($group) use ($authUserId, $authMember) {
+            $circlecalls = $circlecalls->groupBy('memberId')->map(function ($group) use ($authUserId) {
                 $member = $group->first()->member;
                 $inductionCount = Member::where('sponsoredBy', $member->id)->count();
 
@@ -555,7 +554,7 @@ class ApiController extends Controller
                 ->whereMonth('date', $previousMonth)
                 ->get();
 
-            $busGiver = $busGiver->groupBy('businessGiverId')->map(function ($group) use ($authUserId, $authMember, $circleIdsInCity) {
+            $busGiver = $busGiver->groupBy('businessGiverId')->map(function ($group) use ($authUserId, $circleIdsInCity) {
                 $user = $group->first()->users;
 
                 if (! $user) {
@@ -798,7 +797,7 @@ class ApiController extends Controller
                 ->whereMonth('created_at', $previousMonth)
                 ->get()
                 ->groupBy('referenceGiverId')
-                ->map(function ($group) use ($authUserId, $authMember, $circleIdsInCity) {
+                ->map(function ($group) use ($authUserId, $circleIdsInCity) {
                     $referenceGiverId = $group->first()->referenceGiverId ?? null;
 
                     if (! $referenceGiverId) {
@@ -1131,7 +1130,7 @@ class ApiController extends Controller
         }
     }
 
-    //max indution member api 
+    // max indution member api
     public function maxInduction(Request $request)
     {
         try {
@@ -1161,7 +1160,7 @@ class ApiController extends Controller
                 ->whereNotNull('sponsoredBy')
                 ->get()
                 ->groupBy('sponsoredBy')
-                ->map(function ($group) use ($authUserId, $authMember, $circleIdsInCity) {
+                ->map(function ($group) use ($authUserId, $circleIdsInCity) {
                     $sponsorId = $group->first()->sponsoredBy;
 
                     if (! $sponsorId) {
@@ -1251,7 +1250,6 @@ class ApiController extends Controller
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
-
 
     public function index(Request $request)
     {
@@ -1447,7 +1445,6 @@ class ApiController extends Controller
     //     // $member->addressLine1 = $request->input('addressLine1', $member->addressLine1);
     //     // $member->addressLine2 = $request->input('addressLine2', $member->addressLine2);
 
-
     //     if ($request->hasFile('profilePhoto')) {
     //         $file = $request->file('profilePhoto');
     //         $filename = time() . '.' . $file->getClientOriginalExtension();
@@ -1504,12 +1501,11 @@ class ApiController extends Controller
     {
         try {
 
-
             $user = Auth::user();
 
             $member = Member::where('userId', $user->id)->first();
 
-            if (!$member) {
+            if (! $member) {
                 return Utils::errorResponse(['error' => 'Member not found'], 404);
             }
 
@@ -1538,10 +1534,10 @@ class ApiController extends Controller
             if ($request->hasFile('profilePhoto')) {
 
                 $file = $request->file('profilePhoto');
-                $filename = time() . '_' . $file->getClientOriginalName();
+                $filename = time().'_'.$file->getClientOriginalName();
 
                 if ($member->profilePhoto) {
-                    $oldPath = public_path('ProfilePhoto/' . $member->profilePhoto);
+                    $oldPath = public_path('ProfilePhoto/'.$member->profilePhoto);
                     if (file_exists($oldPath)) {
                         unlink($oldPath);
                     }
@@ -1556,10 +1552,10 @@ class ApiController extends Controller
             if ($request->hasFile('companyLogo')) {
 
                 $file = $request->file('companyLogo');
-                $filename = time() . '_' . $file->getClientOriginalName();
+                $filename = time().'_'.$file->getClientOriginalName();
 
                 if ($member->companyLogo) {
-                    $oldPath = public_path('CompanyLogo/' . $member->companyLogo);
+                    $oldPath = public_path('CompanyLogo/'.$member->companyLogo);
                     if (file_exists($oldPath)) {
                         unlink($oldPath);
                     }
@@ -1602,7 +1598,7 @@ class ApiController extends Controller
 
             return Utils::sendResponse([
                 'member' => $member,
-                'message' => 'Member profile updated successfully'
+                'message' => 'Member profile updated successfully',
             ], 200);
         } catch (\Exception $e) {
 
@@ -1611,7 +1607,7 @@ class ApiController extends Controller
                 'message' => 'Something went wrong',
                 'error' => $e->getMessage(),
                 'line' => $e->getLine(),
-                'file' => $e->getFile()
+                'file' => $e->getFile(),
             ], 500);
         }
     }
@@ -2222,7 +2218,7 @@ class ApiController extends Controller
             $invitation = new MeetingInvitation;
             $invitation->meetingId = $visitor->meetingId;
             $invitation->invitedMemberId = $visitor->invitedBy;
-            $invitation->personName = $visitor->firstName . ' ' . $visitor->lastName;
+            $invitation->personName = $visitor->firstName.' '.$visitor->lastName;
             $invitation->personEmail = null;
             $invitation->personContact = $visitor->mobileNo;
             $invitation->businessCategoryId = $visitor->businessCategory;
@@ -2280,25 +2276,25 @@ class ApiController extends Controller
         }
     }
 
-    //active meeting schedule by circle 
+    // active meeting schedule by circle
     public function activeMeetingSchedules()
     {
         try {
             $user = Auth::user();
 
-            if (!$user) {
+            if (! $user) {
                 return Utils::sendResponse([], 'User not found', 404);
             }
 
             $member = Member::where('userId', $user->id)->first();
 
-            if (!$member) {
+            if (! $member) {
                 return Utils::sendResponse([], 'Member profile not found', 404);
             }
 
             $circleId = $member->circleId;
 
-            if (!$circleId) {
+            if (! $circleId) {
                 return Utils::sendResponse([], 'Circle not found for this member', 404);
             }
 
@@ -2313,7 +2309,7 @@ class ApiController extends Controller
         }
     }
 
-    //resoucrse index api 
+    // resoucrse index api
     public function resourceIndex(Request $request)
     {
         try {
@@ -2330,18 +2326,19 @@ class ApiController extends Controller
             return Utils::sendResponse([
                 'categories' => $categories,
                 'help' => $help,
-                'selectedCategoryId' => $selectedCategoryId
+                'selectedCategoryId' => $selectedCategoryId,
             ], 'Resources fetched successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse($th->getMessage(), 'Internal Server Error', 500);
         }
     }
+
     public function markAsRead(Request $request, $id)
     {
         try {
             $notification = Notifications::find($id);
 
-            if (!$notification) {
+            if (! $notification) {
                 return Utils::errorResponse(
                     ['error' => 'Notification not found'],
                     'Notification not found',
@@ -2350,7 +2347,7 @@ class ApiController extends Controller
             }
 
             // ✅ Mark as read
-            if (!$notification->is_read) {
+            if (! $notification->is_read) {
                 $notification->is_read = 1;
                 $notification->save();
             }
@@ -2367,7 +2364,8 @@ class ApiController extends Controller
             );
         }
     }
-    //top networkers
+
+    // top networkers
     public function topNetworkers()
     {
         try {
@@ -2397,7 +2395,7 @@ class ApiController extends Controller
 
             return Utils::sendResponse([
                 'topInfluencers' => $topInfluencers,
-                'crorepatiGivers' => $crorepatiGivers
+                'crorepatiGivers' => $crorepatiGivers,
             ], 'Top Networkers fetched successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse($th->getMessage(), 'Internal Server Error', 500);
@@ -2409,19 +2407,19 @@ class ApiController extends Controller
         try {
             $user = Auth::user();
 
-            if (!$user) {
+            if (! $user) {
                 return Utils::sendResponse([], 'User not found', 404);
             }
 
             $member = Member::where('userId', $user->id)->first();
 
-            if (!$member) {
+            if (! $member) {
                 return Utils::sendResponse([], 'Member profile not found', 404);
             }
 
             $circleId = $member->circleId;
 
-            if (!$circleId) {
+            if (! $circleId) {
                 return Utils::sendResponse([], 'Circle not found for this member', 404);
             }
 
@@ -2432,7 +2430,7 @@ class ApiController extends Controller
 
             $businessCategories = collect(); // Default empty collection
 
-            if (!empty($businessCategoryIdArray)) {
+            if (! empty($businessCategoryIdArray)) {
                 $businessCategories = BusinessCategory::whereIn('id', $businessCategoryIdArray)->get();
             }
 
@@ -2471,7 +2469,7 @@ class ApiController extends Controller
                 ->with([
                     'member',
                     'member.circle:id,circleName,cityId',
-                    'member.bCategory:id,categoryName'
+                    'member.bCategory:id,categoryName',
                 ])
                 ->latest()
                 ->take(4)
@@ -2481,8 +2479,9 @@ class ApiController extends Controller
 
                 $member = $user->member;
 
-                if (!$member) {
+                if (! $member) {
                     $user->connection_status = 'not_connected';
+
                     continue;
                 }
 
@@ -2515,7 +2514,7 @@ class ApiController extends Controller
             }
 
             return Utils::sendResponse([
-                'members' => $members
+                'members' => $members,
             ], 'Latest members fetched successfully', 200);
         } catch (\Throwable $th) {
             return Utils::errorResponse($th->getMessage(), 'Internal Server Error', 500);
@@ -2532,7 +2531,7 @@ class ApiController extends Controller
             ->get()
             ->map(function ($item) {
 
-                $item->image_url = asset('MemberGallery/' . $item->image);
+                $item->image_url = asset('MemberGallery/'.$item->image);
 
                 return $item;
             });
@@ -2540,9 +2539,10 @@ class ApiController extends Controller
         return response()->json([
             'status' => true,
             'message' => 'Gallery Images',
-            'data' => $gallery
+            'data' => $gallery,
         ]);
     }
+
     public function storeMemberGallery(Request $request)
     {
         $user = Auth::user();
@@ -2550,14 +2550,14 @@ class ApiController extends Controller
         $member = Member::where('userId', $user->id)->first();
         $request->validate([
             // 'memberId' => 'required',
-            'galleryImages.*' => 'required|mimes:jpg,jpeg,png,webp,avif'
+            'galleryImages.*' => 'required|mimes:jpg,jpeg,png,webp,avif',
         ]);
 
-        if (!$request->hasFile('galleryImages')) {
+        if (! $request->hasFile('galleryImages')) {
 
             return response()->json([
                 'status' => false,
-                'message' => 'No images found'
+                'message' => 'No images found',
             ]);
         }
         // Current Active Images Count
@@ -2573,10 +2573,10 @@ class ApiController extends Controller
 
             return response()->json([
                 'status' => false,
-                'message' => 'Maximum 6 gallery images allowed.'
+                'message' => 'Maximum 6 gallery images allowed.',
             ]);
         }
-        if (!file_exists(public_path('MemberGallery'))) {
+        if (! file_exists(public_path('MemberGallery'))) {
             mkdir(public_path('MemberGallery'), 0777, true);
         }
 
@@ -2584,13 +2584,13 @@ class ApiController extends Controller
 
         foreach ($request->file('galleryImages') as $galleryImage) {
 
-            if (!$galleryImage || !$galleryImage->isValid()) {
+            if (! $galleryImage || ! $galleryImage->isValid()) {
                 continue;
             }
 
             $extension = strtolower($galleryImage->getClientOriginalExtension());
 
-            $imageName = time() . '_' . uniqid() . '.' . $extension;
+            $imageName = time().'_'.uniqid().'.'.$extension;
 
             $galleryImage->move(
                 public_path('MemberGallery'),
@@ -2600,10 +2600,10 @@ class ApiController extends Controller
             $gallery = MemberGallery::create([
                 'memberId' => $member->id,
                 'image' => $imageName,
-                'status' => 'Active'
+                'status' => 'Active',
             ]);
 
-            $gallery->image_url = asset('MemberGallery/' . $imageName);
+            $gallery->image_url = asset('MemberGallery/'.$imageName);
 
             $uploadedImages[] = $gallery;
         }
@@ -2611,9 +2611,10 @@ class ApiController extends Controller
         return response()->json([
             'status' => true,
             'message' => 'Gallery Images Uploaded Successfully',
-            'data' => $uploadedImages
+            'data' => $uploadedImages,
         ]);
     }
+
     public function updateMemberGallery(Request $request)
     {
         /*
@@ -2623,7 +2624,7 @@ class ApiController extends Controller
     */
         $user = Auth::user();
         $member = Member::where('userId', $user->id)->first();
-        if (!empty($request->deletedImages)) {
+        if (! empty($request->deletedImages)) {
 
             $deletedIds = explode(',', $request->deletedImages);
 
@@ -2631,7 +2632,7 @@ class ApiController extends Controller
 
             foreach ($images as $img) {
 
-                $imagePath = public_path('MemberGallery/' . $img->image);
+                $imagePath = public_path('MemberGallery/'.$img->image);
 
                 if (file_exists($imagePath)) {
                     unlink($imagePath);
@@ -2663,20 +2664,20 @@ class ApiController extends Controller
 
             return response()->json([
                 'status' => false,
-                'message' => 'You already have ' . $currentImagesCount . ' images. Maximum 6 images allowed.'
+                'message' => 'You already have '.$currentImagesCount.' images. Maximum 6 images allowed.',
             ]);
         }
         $newImages = [];
 
         if ($request->hasFile('galleryImages')) {
 
-            if (!file_exists(public_path('MemberGallery'))) {
+            if (! file_exists(public_path('MemberGallery'))) {
                 mkdir(public_path('MemberGallery'), 0777, true);
             }
 
             foreach ($request->file('galleryImages') as $galleryImage) {
 
-                if (!$galleryImage || !$galleryImage->isValid()) {
+                if (! $galleryImage || ! $galleryImage->isValid()) {
                     continue;
                 }
 
@@ -2684,11 +2685,11 @@ class ApiController extends Controller
 
                 $allowed = ['jpg', 'jpeg', 'png', 'webp', 'avif'];
 
-                if (!in_array($extension, $allowed)) {
+                if (! in_array($extension, $allowed)) {
                     continue;
                 }
 
-                $imageName = time() . '_' . uniqid() . '.' . $extension;
+                $imageName = time().'_'.uniqid().'.'.$extension;
 
                 $galleryImage->move(
                     public_path('MemberGallery'),
@@ -2698,10 +2699,10 @@ class ApiController extends Controller
                 $gallery = MemberGallery::create([
                     'memberId' => $member->id,
                     'image' => $imageName,
-                    'status' => 'Active'
+                    'status' => 'Active',
                 ]);
 
-                $gallery->image_url = asset('MemberGallery/' . $imageName);
+                $gallery->image_url = asset('MemberGallery/'.$imageName);
 
                 $newImages[] = $gallery;
             }
@@ -2710,22 +2711,23 @@ class ApiController extends Controller
         return response()->json([
             'status' => true,
             'message' => 'Gallery Updated Successfully',
-            'new_images' => $newImages
+            'new_images' => $newImages,
         ]);
     }
+
     public function deleteMemberGallery($id)
     {
         $img = MemberGallery::find($id);
 
-        if (!$img) {
+        if (! $img) {
 
             return response()->json([
                 'status' => false,
-                'message' => 'Image not found'
+                'message' => 'Image not found',
             ]);
         }
 
-        $imagePath = public_path('MemberGallery/' . $img->image);
+        $imagePath = public_path('MemberGallery/'.$img->image);
 
         if (file_exists($imagePath)) {
             unlink($imagePath);
@@ -2736,9 +2738,10 @@ class ApiController extends Controller
 
         return response()->json([
             'status' => true,
-            'message' => 'Image Deleted Successfully'
+            'message' => 'Image Deleted Successfully',
         ]);
     }
+
     public function banners()
     {
         $banners = Banners::where('status', 'Active')
@@ -2750,16 +2753,17 @@ class ApiController extends Controller
                 return [
                     'id' => $banner->id,
                     'title' => $banner->title,
-                    'image' => asset('banners/' . $banner->image),
+                    'image' => asset('banners/'.$banner->image),
                 ];
             });
 
         return response()->json([
             'status' => true,
             'message' => 'Top 5 Banner List',
-            'data' => $banners
+            'data' => $banners,
         ]);
     }
+
     public function announcements()
     {
         $announcements = Announcements::where('status', 'Active')
@@ -2771,9 +2775,10 @@ class ApiController extends Controller
         return response()->json([
             'status' => true,
             'message' => 'Announcements fetched successfully',
-            'data' => $announcements
+            'data' => $announcements,
         ], 200);
     }
+
     public function topInductions(Request $request)
     {
         // Auth User
@@ -2784,10 +2789,10 @@ class ApiController extends Controller
             ->where('status', 'Active')
             ->first();
 
-        if (!$authMember) {
+        if (! $authMember) {
             return response()->json([
                 'status' => false,
-                'message' => 'Member not found'
+                'message' => 'Member not found',
             ], 404);
         }
 
@@ -2797,10 +2802,10 @@ class ApiController extends Controller
         // Get city id from circles table
         $cityId = Circle::where('id', $circleId)->value('cityId');
 
-        if (!$cityId) {
+        if (! $cityId) {
             return response()->json([
                 'status' => false,
-                'message' => 'City not found'
+                'message' => 'City not found',
             ], 404);
         }
 
@@ -2818,7 +2823,7 @@ class ApiController extends Controller
             return response()->json([
                 'status' => true,
                 'message' => 'No inductions found',
-                'data' => []
+                'data' => [],
             ]);
         }
 
@@ -2832,7 +2837,7 @@ class ApiController extends Controller
             $member = Member::with([
                 'circle',
                 'bCategory',
-                'sponsored'
+                'sponsored',
             ])
                 ->where('id', $sponsorId)
                 ->where('status', 'Active')
@@ -2846,7 +2851,7 @@ class ApiController extends Controller
                 $topInductions[] = [
                     'member' => [
                         'id' => $member->id,
-                        'name' => $member->firstName . ' ' . $member->lastName ?? '',
+                        'name' => $member->firstName.' '.$member->lastName ?? '',
                         'mobile' => $member->user->contactNo ?? '',
                         'image' => $member->profilePhoto ?? '',
                         'company_name' => $member->companyName ?? '',
@@ -2866,7 +2871,20 @@ class ApiController extends Controller
         return response()->json([
             'status' => true,
             'message' => 'Top inductions fetched successfully',
-            'data' => $topInductions
+            'data' => $topInductions,
         ], 200);
+    }
+
+    public function getSponsors()
+    {
+        $sponsors = Sponsors::where('status', 'Active')->get();
+
+        return response()->json([
+            'status' => true,
+            'title' => $sponsors->first()->title ?? '',
+            'images' => $sponsors->pluck('image')->map(function ($image) {
+                return asset('sponsors/'.$image);
+            }),
+        ]);
     }
 }

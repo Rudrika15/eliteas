@@ -3,39 +3,41 @@
 namespace App\Http\Controllers;
 
 use App\Mail\MeetingInvitation as MailMeetingInvitation;
+use App\Models\Announcements;
+use App\Models\Banners;
 use App\Models\BusinessCategory;
 use App\Models\Circle;
-use Illuminate\Support\Facades\DB;
-use App\Models\MemberGallery;
 use App\Models\CircleCall;
 use App\Models\CircleMeetingMembersBusiness;
 use App\Models\CircleMeetingMembersReference;
 use App\Models\City;
-use App\Models\Post;
 use App\Models\Connection;
 use App\Models\ContactDetails;
 use App\Models\Event;
-use App\Models\Announcements;
 use App\Models\EventRegister;
 use App\Models\Landmark;
 use App\Models\MeetingInvitation;
 use App\Models\Member;
+use App\Models\MemberGallery;
 use App\Models\Message;
 use App\Models\MonthlyPayment;
 use App\Models\Notifications;
+use App\Models\Post;
+use App\Models\RisingStar;
 use App\Models\Schedule;
 use App\Models\TemplateMaster;
 use App\Models\Testimonial;
 use App\Models\Training;
 use App\Models\TrainingRegister;
 use App\Models\User;
-use App\Models\Banners;
 use App\Models\VisitorEventRegister;
+use App\Models\VisitorsDetails;
 use App\Utils\ErrorLogger;
 use Carbon\Carbon;
-use App\Models\VisitorsDetails;
+use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
@@ -73,7 +75,7 @@ class HomeController extends Controller
     /**
      * Show the application dashboard.
      *
-     * @return \Illuminate\Contracts\Support\Renderable
+     * @return Renderable
      */
 
     // public function index()
@@ -272,16 +274,18 @@ class HomeController extends Controller
             );
         }
     }
+
     protected function authenticated(Request $request, $user)
     {
         $member = Member::where('userId', $user->id)->first();
 
-        if (!$member || !$member->terms_accepted) {
+        if (! $member || ! $member->terms_accepted) {
             return redirect()->route('terms.preview');
         }
 
         return redirect()->route('home');
     }
+
     public function count()
     {
         $authUser = auth()->user();
@@ -319,6 +323,7 @@ class HomeController extends Controller
             if ($type == 'chat_message') {
                 return isset($data['memberId']) && $data['memberId'] == $authUser->id;
             }
+
             return false;
         })->map(function ($notification) {
             $data = json_decode($notification->data, true);
@@ -328,6 +333,7 @@ class HomeController extends Controller
             $notification->sender = User::find($data['userId'] ?? null);
             // receiver = who receives notification
             $notification->receiver = User::find($data['memberId'] ?? null);
+
             return $notification;
         });
 
@@ -355,6 +361,7 @@ class HomeController extends Controller
 
         return view('layouts.master', compact('membersCount', 'circleCount', 'cityCount', 'pendingCount', 'notificationCount', 'notifications', 'authId', 'receivedRequests', 'posts'));
     }
+
     public function index()
     {
         try {
@@ -400,7 +407,6 @@ class HomeController extends Controller
             $templates = TemplateMaster::with('TemplateDetail')->get();
 
             $myInvites = MeetingInvitation::where('invitedMemberId', Auth::user()->id)->get();
-
 
             // if ($nearestTraining) {
             //     $findRegister = TrainingRegister::where('userId', Auth::user()->id)
@@ -790,7 +796,6 @@ class HomeController extends Controller
                 //     ->orderByDesc('total_visitors')
                 //     ->first();
 
-
                 if ($circlecalls && isset($circlecalls['member']) && $circlecalls['member']) {
                     $circlecalls['member']->loadMissing(['circle', 'bCategory']);
                     $this->setConnectionStatusForMember($circlecalls['member'], $authId, $authCircleId);
@@ -851,7 +856,6 @@ class HomeController extends Controller
                     $this->setConnectionStatusForMember($induction['member'], $authId, $authCircleId);
                 }
 
-
                 $topInductions = Member::where('status', 'Active')
                     ->whereYear('created_at', $previousYear)
                     ->whereMonth('created_at', $previousMonth)
@@ -862,7 +866,7 @@ class HomeController extends Controller
 
                         $sponsorId = $group->first()->sponsoredBy;
 
-                        if (!$sponsorId) {
+                        if (! $sponsorId) {
                             return null;
                         }
 
@@ -874,13 +878,13 @@ class HomeController extends Controller
                             })
                             ->first();
 
-                        if (!$member) {
+                        if (! $member) {
                             return null;
                         }
 
                         return [
                             'member' => $member,
-                            'count'  => $group->count(),
+                            'count' => $group->count(),
                         ];
                     })
                     ->filter()
@@ -984,6 +988,7 @@ class HomeController extends Controller
                     $notification->sender = User::find($data['userId'] ?? null);
                     // receiver = who receives notification
                     $notification->receiver = User::find($data['memberId'] ?? null);
+
                     return $notification;
                 });
 
@@ -1035,7 +1040,6 @@ class HomeController extends Controller
                 }
                 $city = City::where('status', 'Active')->get();
 
-
                 $missingFields = [];
 
                 if (Auth::check()) {
@@ -1047,9 +1051,11 @@ class HomeController extends Controller
                     // ✅ Helper function (VERY IMPORTANT)
                     function isEmptyField($value)
                     {
-                        if (is_null($value)) return true;
+                        if (is_null($value)) {
+                            return true;
+                        }
 
-                        $value = trim((string)$value);
+                        $value = trim((string) $value);
 
                         return $value === '' || $value === '-' || strtolower($value) === 'null';
                     }
@@ -1091,7 +1097,7 @@ class HomeController extends Controller
 
                         $landmarks = collect();
 
-                        if (!empty($member->cityId)) {
+                        if (! empty($member->cityId)) {
                             $landmarks = Landmark::where('cityId', $member->cityId)->pluck('name');
                         }
 
@@ -1099,17 +1105,17 @@ class HomeController extends Controller
                             $missingFields[] = 'Landmark';
                         }
 
-                        if (empty($member->profilePhoto) || !file_exists(public_path('ProfilePhoto/' . $member->profilePhoto))) {
+                        if (empty($member->profilePhoto) || ! file_exists(public_path('ProfilePhoto/'.$member->profilePhoto))) {
                             $missingFields[] = 'Profile Photo';
                         }
-                        if (empty($member->companyLogo) || !file_exists(public_path('CompanyLogo/' . $member->companyLogo))) {
+                        if (empty($member->companyLogo) || ! file_exists(public_path('CompanyLogo/'.$member->companyLogo))) {
                             $missingFields[] = 'Company Logo';
                         }
 
                         // ================= KEYWORDS =================
                         $keywords = [];
 
-                        if (!empty($member->keyWords)) {
+                        if (! empty($member->keyWords)) {
                             $decoded = json_decode($member->keyWords, true);
                             if (is_array($decoded)) {
                                 $keywords = array_filter($decoded);
@@ -1197,10 +1203,13 @@ class HomeController extends Controller
                     }
                 }
 
-                $banners =  Banners::where('status', 'Active')->paginate(5);
+                $banners = Banners::where('status', 'Active')->paginate(5);
+                $risingStars = RisingStar::with(['member', 'member.circle', 'member.bCategory'])->where('status', 'Active')->whereHas('member', function ($q) use ($cityId) {
+                    $q->where('cityId', $cityId);
+                })->latest()->take(4)->get();
                 $announcements = Announcements::where('status', 'Active')->latest()->take(5)->get();
 
-                return view('home', compact('circleCount', 'authCircleId', 'categoryNames', 'membersCount', 'signedUrl', 'birthdaysToday', 'templates', 'count', 'monthlyPayments', 'totalAmountDue', 'nearestEvents', 'circlecalls', 'busGiver', 'refGiver', 'induction', 'nearestTraining', 'testimonials', 'meeting', 'businessCategory', 'myInvites', 'todaysBirthdays', 'pendingCount', 'receivedRequests', 'notifications', 'notificationCount', 'posts', 'missingFields', 'member', 'city', 'landmarks', 'latestCircleMembers', 'latestDigitalMembers', 'showChangePasswordModal', 'banners', 'topInductions', 'announcements'));
+                return view('home', compact('circleCount', 'authCircleId', 'categoryNames', 'membersCount', 'signedUrl', 'birthdaysToday', 'templates', 'count', 'monthlyPayments', 'totalAmountDue', 'nearestEvents', 'circlecalls', 'busGiver', 'refGiver', 'induction', 'nearestTraining', 'testimonials', 'meeting', 'businessCategory', 'myInvites', 'todaysBirthdays', 'pendingCount', 'receivedRequests', 'notifications', 'notificationCount', 'posts', 'missingFields', 'member', 'city', 'landmarks', 'latestCircleMembers', 'latestDigitalMembers', 'showChangePasswordModal', 'banners', 'topInductions', 'announcements', 'risingStars'));
             }
 
             return view('home', compact('circleCount', 'membersCount', 'count', 'nearestTraining', 'businessCategory', 'myInvites', 'birthdaysToday', 'templates', 'pendingCount'));
@@ -1562,9 +1571,9 @@ class HomeController extends Controller
                 $members = Member::where('userId', '!=', $authId)
                     ->where('status', 'Active')
                     ->where(function ($q) use ($query) {
-                        $q->where('firstName', 'like', '%' . $query . '%')
-                            ->orWhere('lastName', 'like', '%' . $query . '%')
-                            ->orWhere('keyWords', 'like', '%' . $query . '%');
+                        $q->where('firstName', 'like', '%'.$query.'%')
+                            ->orWhere('lastName', 'like', '%'.$query.'%')
+                            ->orWhere('keyWords', 'like', '%'.$query.'%');
                     })
                     ->with(['user', 'circle', 'bCategory'])
                     ->get();
@@ -1631,9 +1640,9 @@ class HomeController extends Controller
                 ->whereNotNull('cityId')      // cityId is NOT NULL
                 ->where('status', 'Active')
                 ->where(function ($q) use ($query) {
-                    $q->where('firstName', 'like', '%' . $query . '%')
-                        ->orWhere('lastName', 'like', '%' . $query . '%')
-                        ->orWhere('keyWords', 'like', '%' . $query . '%');
+                    $q->where('firstName', 'like', '%'.$query.'%')
+                        ->orWhere('lastName', 'like', '%'.$query.'%')
+                        ->orWhere('keyWords', 'like', '%'.$query.'%');
                 })
                 ->with(['user', 'city', 'bCategory'])
                 ->get();
@@ -1812,6 +1821,7 @@ class HomeController extends Controller
             $testimonials = Testimonial::with(['user', 'sender'])->where('memberId', $member->userId)->latest()->get();
 
             $memberGallery = MemberGallery::where('memberId', $member->id)->where('status', 'Active')->latest()->get();
+
             return view('foundPersonDetails', compact(
                 'member',
                 'connections',
@@ -1865,7 +1875,6 @@ class HomeController extends Controller
         }
     }
 
-
     // public function notifications()
     // {
     //     try {
@@ -1908,11 +1917,13 @@ class HomeController extends Controller
                     $data = json_decode($data, true);
                 }
 
-                if (!$data) return false;
+                if (! $data) {
+                    return false;
+                }
                 $type = $data['type'] ?? null;
 
-                $memberId = isset($data['memberId']) ? (int)$data['memberId'] : null;
-                $senderId = isset($data['userId']) ? (int)$data['userId'] : null;
+                $memberId = isset($data['memberId']) ? (int) $data['memberId'] : null;
+                $senderId = isset($data['userId']) ? (int) $data['userId'] : null;
 
                 // // Connection Request -> Show to Receiver
                 // if ($type == 'connection_request') {
@@ -1969,17 +1980,18 @@ class HomeController extends Controller
             return view('servererror');
         }
     }
+
     public function markAsRead($id)
     {
 
         $notification = Notifications::find($id);
 
-        if (!$notification) {
+        if (! $notification) {
             return redirect()->back();
         }
 
         // ✅ Mark as read
-        if (!$notification->is_read) {
+        if (! $notification->is_read) {
             $notification->is_read = 1;
             $notification->save();
         }
@@ -1989,23 +2001,23 @@ class HomeController extends Controller
 
         if ($type === 'connection_request') {
             return redirect()->route('connection.myConnections', [
-                'tab' => 'received'
+                'tab' => 'received',
             ]);
         }
 
         if ($type === 'connection_accept' || $type === 'connection_reject') {
             return redirect()->route('connection.myConnections', [
-                'tab' => 'connections'
+                'tab' => 'connections',
             ]);
         }
         if ($type === 'chat_message') {
             return redirect()->route('chat.index', [
-                'userId' => $data['userId'] ?? null
+                'userId' => $data['userId'] ?? null,
             ]);
         }
         if ($type === 'reference_created') {
             return redirect()->route('chat.index', [
-                'userId' => $data['userId'] ?? null
+                'userId' => $data['userId'] ?? null,
             ]);
         }
 

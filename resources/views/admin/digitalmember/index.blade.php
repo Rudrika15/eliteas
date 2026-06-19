@@ -29,10 +29,21 @@
 
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h4 class="card-title">Digital Member</h4>
-                    <a href="{{ route('digitalMember.create') }}" class="btn btn-bg-orange btn-sm mt-3 btn-tooltip"><i class="bi bi-plus-circle"></i>
-                        <span class="btn-text">Add Member</span>
-                    </a>
+                    <h4 class="card-title">
+                        Digital Member
+                    </h4>
+                    <div class="d-flex gap-2">
+                        <a href="{{ route('digitalMember.export', request()->query()) }}" class="btn btn-success btn-sm mt-3">
+                            <i class="bi bi-file-earmark-excel"></i>
+                            Export Excel
+                        </a>
+                        <a href="{{ route('digitalMember.create') }}" class="btn btn-bg-orange btn-sm mt-3 btn-tooltip">
+                            <i class="bi bi-plus-circle"></i>
+                            <span class="btn-text">
+                                Add Member
+                            </span>
+                        </a>
+                    </div>
                 </div>
 
 
@@ -91,7 +102,7 @@
                         <input type="text" name="search" id="search" class="form-control mt-3 ms-3" placeholder="Search by name, circle, etc.." value="{{ request('search') }}">
 
                         <!-- ✅ Reset Button -->
-                        
+
                         <a href="{{ route('circlemember.index') }}" class="btn btn-secondary mt-3">
                             Reset
                         </a>
