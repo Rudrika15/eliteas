@@ -60,6 +60,7 @@ class SponsorsController extends Controller
 
     public function update(Request $request, $id)
     {
+        
         $sponsor = Sponsors::findOrFail($id);
 
         $request->validate([

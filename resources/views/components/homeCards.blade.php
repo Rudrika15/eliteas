@@ -3494,10 +3494,6 @@
                             </div>
                         </div>
                     </div>
-
-
-
-
                     <script>
                         function copyMeetingLink() {
                             var copyText = document.getElementById("shareableMeetingLink").value;

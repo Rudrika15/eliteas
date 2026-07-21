@@ -10,13 +10,11 @@ class RisingStar extends Model
     use HasFactory;
 
     protected $table = 'rising_star';
-    
+
     protected $fillable = [
         'member_id',
         'title',
         'image',
-        'month',
-        'year',
         'status',
     ];
 

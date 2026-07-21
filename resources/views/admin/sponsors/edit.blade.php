@@ -23,7 +23,7 @@
 
         <form class="m-3 needs-validation" enctype="multipart/form-data" method="POST" action="{{ route('sponsors.update', $sponsor->id) }}" novalidate>
             @csrf
-            @method('PUT')
+            {{-- @method('PUT') --}}
 
             <div class="row">
 
