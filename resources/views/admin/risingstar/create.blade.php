@@ -52,11 +52,11 @@
                 </div>
                 <div class="col-md-6">
                     <div class="form-floating mt-3">
-                        <select class="form-select" name="is_active">
-                            <option value="1">
+                        <select class="form-select" name="status">
+                            <option value="Active">
                                 Active
                             </option>
-                            <option value="0">
+                            <option value="Deleted">
                                 Deleted
                             </option>
                         </select>

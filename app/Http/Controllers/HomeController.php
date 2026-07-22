@@ -1206,7 +1206,32 @@ class HomeController extends Controller
                 $banners = Banners::where('status', 'Active')->paginate(5);
                 $risingStars = RisingStar::with(['member', 'member.circle', 'member.bCategory'])->where('status', 'Active')->whereHas('member', function ($q) use ($cityId) {
                     $q->where('cityId', $cityId);
-                })->latest()->take(4)->get();
+                })->latest()->take(4)->get()->map(function ($star) use ($authUserId) {
+                    if ($star->member) {
+                        $connection = Connection::where(function ($q) use ($authUserId, $star) {
+                            $q->where('userId', $authUserId)
+                                ->where('memberId', $star->member->userId);
+                        })->orWhere(function ($q) use ($authUserId, $star) {
+                            $q->where('userId', $star->member->userId)
+                                ->where('memberId', $authUserId);
+                        })->first();
+
+                        if ($connection) {
+                            if ($connection->status === 'Accepted') {
+                                $star->member->connection_status = 'Accepted';
+                            } else {
+                                if ($connection->userId == $authUserId) {
+                                    $star->member->connection_status = 'Requested';
+                                } else {
+                                    $star->member->connection_status = 'Pending';
+                                }
+                            }
+                        } else {
+                            $star->member->connection_status = 'Not Connected';
+                        }
+                    }
+                    return $star;
+                });
                 $announcements = Announcements::where('status', 'Active')->latest()->take(5)->get();
 
                 return view('home', compact('circleCount', 'authCircleId', 'categoryNames', 'membersCount', 'signedUrl', 'birthdaysToday', 'templates', 'count', 'monthlyPayments', 'totalAmountDue', 'nearestEvents', 'circlecalls', 'busGiver', 'refGiver', 'induction', 'nearestTraining', 'testimonials', 'meeting', 'businessCategory', 'myInvites', 'todaysBirthdays', 'pendingCount', 'receivedRequests', 'notifications', 'notificationCount', 'posts', 'missingFields', 'member', 'city', 'landmarks', 'latestCircleMembers', 'latestDigitalMembers', 'showChangePasswordModal', 'banners', 'topInductions', 'announcements', 'risingStars'));

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Announcements;
 use App\Models\Banners;
 use App\Models\BillingAddress;
 use App\Models\BusinessCategory;
@@ -19,6 +20,7 @@ use App\Models\Member;
 use App\Models\MemberGallery;
 use App\Models\Notifications;
 use App\Models\ResourceCategory;
+use App\Models\RisingStar;
 use App\Models\Schedule;
 use App\Models\Sponsors;
 use App\Models\TopsProfile;
@@ -2886,5 +2888,32 @@ class ApiController extends Controller
                 return asset('sponsors/'.$image);
             }),
         ]);
+    }
+
+    public function risingStar()
+    {
+        $risingStars = RisingStar::with('member')
+            ->where('status', 'Active')
+            ->latest()
+            ->get()
+            ->map(function ($star) {
+
+                return [
+                    'title' => $star->title,
+                    'name' => trim($star->member->firstName . ' ' . $star->member->lastName),
+                    'company_name' => $star->member->companyName,
+                    'mobile' => $star->member->mobile,
+                    'email' => $star->member->email,
+                    'profile_photo' => $star->member->profilePhoto
+                        ? asset('ProfilePhoto/' . $star->member->profilePhoto)
+                        : asset('admin/assets/images/default-user.png'),
+                ];
+            });
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Rising Stars fetched successfully.',
+            'data' => $risingStars
+        ], 200);
     }
 }

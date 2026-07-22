@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\MemberController;
 use App\Http\Controllers\Api\AllActivityController;
 use App\Http\Controllers\Api\ApiController;
 use App\Http\Controllers\Api\AttendanceController;
+use App\Http\Controllers\Api\BirthDayController;
 use App\Http\Controllers\Api\BusinessCategoryController;
 use App\Http\Controllers\Api\ChangePasswordController;
 use App\Http\Controllers\Api\ChatController;
@@ -127,6 +128,8 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/sponsors', [ApiController::class, 'getSponsors']);
     Route::get('/banners', [ApiController::class, 'banners']);
     Route::get('/announcements', [ApiController::class, 'announcements']);
+    Route::get('/birthdays/today', [BirthDayController::class, 'todayBirthdays']);
+    Route::get('/risingstars', [ApiController::class, 'risingStar']);
 
     Route::get('member-gallery/{memberId}', [ApiController::class, 'memberGallery']);
     Route::post('member-gallery /store', [ApiController::class, 'storeMemberGallery']);

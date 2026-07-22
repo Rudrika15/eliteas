@@ -100,7 +100,7 @@ class CircleCallController extends Controller
                 ->paginate(10);
 
             // ✅ If user has "Member" role
-            if (Auth::user()->hasRole('Member')) {
+            if (Auth::user()->hasRole(['Member','Digital Member'])) {
 
                 $circles = Circle::where('status', 'Active')
                     ->orderBy('circleName', 'asc')
@@ -115,14 +115,16 @@ class CircleCallController extends Controller
                     ->orderBy('firstName', 'asc')
                     ->get();
 
-                $scheduleDate = Schedule::where('circleId', Auth::user()->member->circle->id)
-                    ->where('status', 'Active')
-                    ->pluck('date');
+                $circleId = Auth::user()->member?->circle?->id ?? null;
 
-                $lastSchedule = Schedule::where('circleId', Auth::user()->member->circle->id)
+                $scheduleDate = $circleId ? Schedule::where('circleId', $circleId)
+                    ->where('status', 'Active')
+                    ->pluck('date') : collect();
+
+                $lastSchedule = $circleId ? Schedule::where('circleId', $circleId)
                     ->where('date', '<', now())
                     ->orderBy('date', 'desc')
-                    ->first();
+                    ->first() : null;
 
 
                 $lastDate = $lastSchedule ? $lastSchedule->date : null;
@@ -135,14 +137,14 @@ class CircleCallController extends Controller
                 //$allowedStartDate = $lastDate ? Carbon::parse($lastDate)->format('Y-m-d') : null;
                 $allowedStartDate =  null;
                 $allowedEndDate = Carbon::now()->format('Y-m-d');
-                if ($lastSchedule) {
+                if ($lastSchedule && $circleId) {
 
                     $lastDateCarbon = Carbon::parse($lastSchedule->date);
 
                     if ($lastDateCarbon->isToday()) {
 
                         // ✅ Fetch previous meeting
-                        $previousSchedule = Schedule::where('circleId', Auth::user()->member->circle->id)
+                        $previousSchedule = Schedule::where('circleId', $circleId)
                             ->where('status', 'Active')
                             ->where('date', '<', $lastSchedule->date)
                             ->orderBy('date', 'desc')
@@ -175,8 +177,8 @@ class CircleCallController extends Controller
 
                 $previousSchedule = null;
 
-                if ($lastSchedule) {
-                    $previousSchedule = Schedule::where('circleId', Auth::user()->member->circle->id)
+                if ($lastSchedule && $circleId) {
+                    $previousSchedule = Schedule::where('circleId', $circleId)
                         ->where('status', 'Active')
                         ->where('date', '<', $lastSchedule->date)
                         ->orderBy('date', 'desc')

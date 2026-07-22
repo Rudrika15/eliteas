@@ -22,7 +22,7 @@
                                 <th>S.No</th>
                                 <th>Member</th>
                                 <th>Title</th>
-                                <th>Image</th>
+                              
                                 <th>Status</th>
                                 <th>Action</th>
                             </tr>
@@ -37,7 +37,7 @@
                                         {{ ($risingStar->member->firstName ?? '') . ' ' . ($risingStar->member->lastName ?? '') }}
                                     </td>
                                     <td>
-                                        {{ $risingStar->title ?? '-' }}
+                                        {{ Str::limit($risingStar->title, 25) ?? '-' }}
                                     </td>
                                     <td>
                                         @if ($risingStar->status == 'Active')

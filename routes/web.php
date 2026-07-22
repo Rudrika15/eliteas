@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\AllActivityController;
 use App\Http\Controllers\Admin\AnnouncementController;
 use App\Http\Controllers\Admin\AttendanceController;
 use App\Http\Controllers\Admin\BannerController;
+use App\Http\Controllers\Admin\BirthDayController;
 use App\Http\Controllers\Admin\BusinessCategoryController;
 use App\Http\Controllers\Admin\ChatController;
 use App\Http\Controllers\Admin\CircleCallController;
@@ -184,6 +185,12 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::get('/', [HomeController::class, 'index'])->name('home');
     Route::get('birthday/canvas/{id?}', [HomeController::class, 'birthday'])->name('birthday.canvas');
+     Route::get('/birthday/index', [BirthDayController::class, 'index'])->name('birthday.index');
+    Route::get('birthday/create', [BirthDayController::class, 'create'])->name('birthday.create');
+    Route::post('birthday/store', [BirthDayController::class, 'store'])->name('birthday.store');
+    Route::get('birthday/edit/{id?}', [BirthDayController::class, 'edit'])->name('birthday.edit');
+    Route::post('birthday/update/{id?}', [BirthDayController::class, 'update'])->name('birthday.update');
+    Route::get('birthday/delete/{id?}', [BirthDayController::class, 'delete'])->name('birthday.delete');
 
     // Top Networkers
     Route::get('/top-networkers', [TopNetworkerController::class, 'index'])->name('topNetworkers.index');
@@ -226,7 +233,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('risingstar/store', [RisingStarController::class, 'store'])->name('risingstar.store');
     Route::get('risingstar/edit/{id}', [RisingStarController::class, 'edit'])->name('risingstar.edit');
     Route::post('risingstar/update/{id}', [RisingStarController::class, 'update'])->name('risingstar.update');
-    Route::get('risingstar/delete/{id}', [RisingStarController::class, 'destroy'])->name('risingstar.delete');
+    Route::match(['get', 'delete'], 'risingstar/delete/{id}', [RisingStarController::class, 'destroy'])->name('risingstar.delete');
 
     Route::get('/country/index', [CountryController::class, 'index'])->name('country.index');
     Route::get('country/show/{id?}', [CountryController::class, 'show'])->name('country.show');

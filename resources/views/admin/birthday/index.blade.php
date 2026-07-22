@@ -1,91 +1,111 @@
-<!doctype html>
-<html lang="en">
+@extends('layouts.master')
 
-<head>
-    <title>Birthday Post Editor</title>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+@section('header', 'Birthday Management')
+@section('content')
 
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" />
+    <div class="container">
 
-    <style>
-        /* Styling for the profile photo and overlay */
-        .photo-container {
-            position: relative;
-            width: 100%;
-            max-width: 400px;
-            /* Adjust as needed */
-            margin: auto;
-        }
+        @if (Session::has('success'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <strong>Success!</strong> {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
 
-        #profilePhoto,
-        #templateOverlay {
-            width: 100%;
-            height: auto;
-            display: block;
-            border-radius: 8px;
-        }
+        @if (Session::has('error'))
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>Error!</strong> {{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
 
-        #templateOverlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 8px;
-            pointer-events: none;
-            opacity: 0.8;
-        }
-    </style>
-</head>
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
+                    <h4 class="card-title mb-0">Member Birthdays</h4>
+                    
+                    <div class="d-flex align-items-center gap-2">
+                        <form method="GET" action="{{ route('birthday.index') }}" class="d-flex me-2">
+                            <input type="text" name="search" class="form-control form-control-sm me-2" placeholder="Search Member..." value="{{ request('search') }}">
+                            <button type="submit" class="btn btn-primary btn-sm"><i class="bi bi-search"></i></button>
+                            @if(request('search'))
+                                <a href="{{ route('birthday.index') }}" class="btn btn-secondary btn-sm ms-1"><i class="bi bi-x-circle"></i></a>
+                            @endif
+                        </form>
 
-<body>
-    <main class="container my-5">
-        <div class="row">
-            <!-- Profile Photo and Info -->
-            <div class="col-md-7 text-center">
-                <div class="card shadow-sm border border-3 mb-4">
-                    <div class="card-body">
-                        <div class="photo-container">
-                            <img id="profilePhoto" src="{{ asset('ProfilePhoto') }}/{{ $person->profilePhoto }}" class="img-fluid" alt="Profile Photo">
-                            <img id="templateOverlay" src="" class="img-fluid" alt="Template Overlay">
-                        </div>
-                        <h3 class="card-title">{{ $person->firstName }}'s Birthday</h3>
-                        <p class="card-text">Create a special birthday message for {{ $person->firstName }}!</p>
+                        <a href="{{ route('birthday.create') }}" class="btn btn-bg-orange btn-sm btn-tooltip">
+                            <i class="bi bi-plus-circle"></i>
+                            <span class="btn-text">Add Birthday</span>
+                        </a>
                     </div>
                 </div>
-            </div>
 
-            <!-- Template Sidebar -->
-            <div class="col-md-5 mt-4">
-                <div class="card shadow-sm border border-3">
-                    <div class="card-body">
-                        <h5 class="card-title">Select a Template</h5>
-                        <div class="row gy-3">
-                            @foreach ($templates as $template)
-                                <div class="col-12">
-                                    <img class="img-fluid rounded border border-2" src="{{ asset('templateImage') }}/{{ $template->templateImage }}" alt="Template Image" onclick="setTemplate('{{ asset('templateImage') }}/{{ $template->templateImage }}')">
-                                </div>
-                            @endforeach
-                        </div>
+                <!-- Table with stripped rows -->
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>S.No</th>
+                                <th>Member Name</th>
+                                <th>Birth Date</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($birthday as $memberData)
+                                <tr>
+                                    <td>{{ ($birthday->currentPage() - 1) * $birthday->perPage() + $loop->index + 1 }}</td>
+                                    
+                                    <td>
+                                        <strong>{{ $memberData->firstName }} {{ $memberData->lastName }}</strong>
+                                       
+                                    </td>
+                                
+                                    <td>
+                                        @if ($memberData->birthDate)
+                                            <span class="badge bg-success font-monospace" style="font-size: 0.9rem;">
+                                                <i class="bi bi-cake2 me-1"></i>{{ \Carbon\Carbon::parse($memberData->birthDate)->format('d M Y') }}
+                                            </span>
+                                        @else
+                                            <span class="badge bg-secondary">Not Set</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if($memberData->status == 'Active')
+                                            <span class="badge bg-success">Active</span>
+                                        @else
+                                            <span class="badge bg-danger">{{ $memberData->status ?? 'Inactive' }}</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        <a href="{{ route('birthday.edit', $memberData->id) }}" class="btn btn-bg-blue btn-sm btn-tooltip">
+                                            <i class="bi bi-pen"></i>
+                                            <span class="btn-text">Edit</span>
+                                        </a>
+
+                                        @if ($memberData->birthDate)
+                                            <a href="{{ route('birthday.delete', $memberData->id) }}" class="btn btn-danger btn-sm btn-tooltip" onclick="return confirm('Are you sure you want to remove birthday for this member?')">
+                                                <i class="bi bi-trash"></i>
+                                                <span class="btn-text">Remove</span>
+                                            </a>
+                                        @endif
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted">No members found.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+
+                    <div class="d-flex justify-content-end custom-pagination">
+                        {!! $birthday->appends(request()->input())->links() !!}
                     </div>
                 </div>
             </div>
         </div>
-    </main>
+    </div>
 
-    <!-- JavaScript to Set Template as Overlay -->
-    <script>
-        function setTemplate(imageUrl) {
-            document.getElementById('templateOverlay').src = imageUrl;
-        }
-    </script>
-
-    <!-- Bootstrap JavaScript Libraries -->
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
-</body>
-
-</html>
+@endsection

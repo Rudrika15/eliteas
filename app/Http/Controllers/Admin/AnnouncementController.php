@@ -34,7 +34,7 @@ class AnnouncementController extends Controller
         // dd($request->all());
         $announcement = Announcements::create([
             'title' => $request->title,
-            'description' => $request->descriptions,
+            'description' => $request->description,
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
             'status' => $request->status,

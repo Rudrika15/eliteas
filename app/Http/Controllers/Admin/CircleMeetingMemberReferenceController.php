@@ -131,8 +131,8 @@ class CircleMeetingMemberReferenceController extends Controller
     public function index(Request $request)
     {
         try {
-            // For normal Member
-            if (auth()->user()->hasRole('Member')) {
+            // For normal Member and Digital Member
+            if (auth()->user()->hasRole(['Member', 'Digital Member'])) {
 
                 $refGiver = CircleMeetingMembersReference::where('status', 'Active')
                     ->orderBy('id', 'DESC')
@@ -175,10 +175,11 @@ class CircleMeetingMemberReferenceController extends Controller
                 $circlemeeting = CircleMeeting::where('status', 'Active')->get();
 
                 // Lock Logic
-                $lastSchedule = Schedule::where('circleId', Auth::user()->member->circle->id)
+                $circleId = Auth::user()->member?->circle?->id ?? null;
+                $lastSchedule = $circleId ? Schedule::where('circleId', $circleId)
                     ->where('date', '<', now())
                     ->orderBy('date', 'desc')
-                    ->first();
+                    ->first() : null;
 
                 $isLocked = $lastSchedule ? $lastSchedule->is_locked : false;
                 $lockedStartDate = null;
@@ -188,8 +189,8 @@ class CircleMeetingMemberReferenceController extends Controller
                 $allowedStartDate = Carbon::now()->subDays(15)->format('Y-m-d');
                 $allowedEndDate = Carbon::now()->format('Y-m-d');
 
-                if ($isLocked) {
-                    $previousSchedule = Schedule::where('circleId', Auth::user()->member->circle->id)
+                if ($isLocked && $circleId) {
+                    $previousSchedule = Schedule::where('circleId', $circleId)
                         ->where('date', '<', $lastSchedule->date)
                         ->orderBy('date', 'desc')
                         ->first();

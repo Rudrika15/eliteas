@@ -69,10 +69,6 @@ class RisingStarController extends Controller
     public function destroy($id)
     {
         $risingStar = RisingStar::findOrFail($id);
-
-        if ($risingStar->image && file_exists(public_path('uploads/rising-stars/'.$risingStar->image))) {
-            unlink(public_path('uploads/rising-stars/'.$risingStar->image));
-        }
         $risingStar->delete();
 
         return redirect()->route('risingstar.index')->with('success', 'Rising Star deleted successfully.');
