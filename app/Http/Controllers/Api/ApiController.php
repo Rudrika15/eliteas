@@ -2890,7 +2890,7 @@ class ApiController extends Controller
         ]);
     }
 
-    public function risingStar()
+     public function risingStar()
     {
         $risingStars = RisingStar::with('member')
             ->where('status', 'Active')
@@ -2899,6 +2899,8 @@ class ApiController extends Controller
             ->map(function ($star) {
 
                 return [
+                    'memberId' => $star->member_id,
+                    'userId' => $star->member->userId,
                     'title' => $star->title,
                     'name' => trim($star->member->firstName . ' ' . $star->member->lastName),
                     'company_name' => $star->member->companyName,

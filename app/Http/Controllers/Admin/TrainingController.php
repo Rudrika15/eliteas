@@ -158,6 +158,7 @@ class TrainingController extends Controller
                 'time' => 'required',
                 'duration' => 'required|string',
                 'note' => 'nullable|string',
+                'training_for' => 'required|string',
             ]);
 
             // Create Training record
@@ -168,16 +169,17 @@ class TrainingController extends Controller
             $training->type = $request->type;
             $training->meetingLink = $request->meetingLink;
             $training->venue = $request->venue;
+            $training->training_for = $request->training_for;
 
             $uniqueId = time();
 
             if ($request->hasFile('training_thumb')) {
-                $training->training_thumb = $uniqueId.'_thumb.'.$request->training_thumb->extension();
+                $training->training_thumb = $uniqueId . '_thumb.' . $request->training_thumb->extension();
                 $request->training_thumb->move(public_path('Training'), $training->training_thumb);
             }
 
             if ($request->hasFile('training_banner')) {
-                $training->training_banner = $uniqueId.'_banner.'.$request->training_banner->extension();
+                $training->training_banner = $uniqueId . '_banner.' . $request->training_banner->extension();
                 $request->training_banner->move(public_path('Training'), $training->training_banner);
             }
 
@@ -234,13 +236,13 @@ class TrainingController extends Controller
 
                         try {
                             $messaging->send($message);
-                            Log::info('Notification sent to token: '.$user->fcm_token);
+                            Log::info('Notification sent to token: ' . $user->fcm_token);
                         } catch (\Kreait\Firebase\Exception\Messaging\NotFound $e) {
-                            Log::error('Token not found: '.$user->fcm_token);
+                            Log::error('Token not found: ' . $user->fcm_token);
                         } catch (\Kreait\Firebase\Exception\Messaging\InvalidArgument $e) {
-                            Log::error('Invalid argument error with token: '.$user->fcm_token);
+                            Log::error('Invalid argument error with token: ' . $user->fcm_token);
                         } catch (\Exception $e) {
-                            Log::error('General error sending to token: '.$user->fcm_token.'. Error: '.$e->getMessage());
+                            Log::error('General error sending to token: ' . $user->fcm_token . '. Error: ' . $e->getMessage());
                         }
                     }
                 }
@@ -280,7 +282,9 @@ class TrainingController extends Controller
     {
         try {
             // Validate the incoming request
-            $validatedData = $request->validate([]);
+            $validatedData = $request->validate([
+                'training_for' => 'required|string',
+            ]);
 
             // Update the fields with validated data
             $training = Training::findOrFail($id);
@@ -291,16 +295,17 @@ class TrainingController extends Controller
             $training->type = $request->type;
             $training->meetingLink = $request->meetingLink;
             $training->venue = $request->venue;
+            $training->training_for = $request->training_for;
 
             $uniqueId = time();
 
             if ($request->hasFile('training_thumb')) {
-                $training->training_thumb = $uniqueId.'_thumb.'.$request->training_thumb->extension();
+                $training->training_thumb = $uniqueId . '_thumb.' . $request->training_thumb->extension();
                 $request->training_thumb->move(public_path('Training'), $training->training_thumb);
             }
 
             if ($request->hasFile('training_banner')) {
-                $training->training_banner = $uniqueId.'_banner.'.$request->training_banner->extension();
+                $training->training_banner = $uniqueId . '_banner.' . $request->training_banner->extension();
                 $request->training_banner->move(public_path('Training'), $training->training_banner);
             }
 
@@ -417,9 +422,11 @@ class TrainingController extends Controller
                 ->get();
 
             if ($internalTrainerMasters->isEmpty()) {
-                return response()->json(['error' => 'Trainers not found'], 404);
+                return response()->json([
+                    'status' => false,
+                    'message' => 'No internal trainers found.'
+                ], 200);
             }
-
             return response()->json($internalTrainerMasters);
         } catch (\Throwable $th) {
             // throw $th;

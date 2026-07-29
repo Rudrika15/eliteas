@@ -10,7 +10,7 @@ class Event extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'slug', 'event_date', 'start_time', 'end_time', 'amount'];
+    protected $fillable = ['title', 'slug', 'event_date', 'start_time', 'end_time', 'amount', 'slot_type'];
 
     public function circle()
     {

@@ -126,11 +126,17 @@ class EventController extends Controller
             $memberId = Auth::user()->member->id;
 
             // Fetch all upcoming active events (no pagination)
-            $events = Event::with('circle')
+            $query = Event::with('circle')
                 ->where('status', 'Active')
-                ->whereDate('event_date', '>=', Carbon::today()->startOfDay())
-                ->orderBy('id', 'DESC')
-                ->get(); // replaced paginate(10) with get()
+                ->whereDate('event_date', '>=', Carbon::today()->startOfDay());
+
+            if (Auth::user()->hasRole('Digital Member')) {
+                $query->whereIn('slot_type', ['Digital', 'All']);
+            } else {
+                $query->whereIn('slot_type', ['Offline', 'All']);
+            }
+
+            $events = $query->orderBy('id', 'DESC')->get();
 
             // Attach counts and registration status to each event
             $events = $events->map(function ($event) use ($memberId) {
@@ -181,6 +187,7 @@ class EventController extends Controller
             'event_date' => 'required',
             'start_time' => 'required',
             'end_time' => 'required',
+            
         ]);
         try {
             $event = new Event;
@@ -190,6 +197,7 @@ class EventController extends Controller
             $event->event_date = $request->event_date;
             $event->is_slot = $request->is_slot;
             $event->slot_date = $request->slot_date;
+            $event->slot_type = $request->slot_type;
 
             $uniqueId = time();
 
@@ -292,6 +300,7 @@ class EventController extends Controller
             $event->event_date = $request->event_date;
             $event->is_slot = $request->is_slot;
             $event->slot_date = $request->slot_date;
+            $event->slot_type = $request->slot_type;
 
             $uniqueId = time();
 

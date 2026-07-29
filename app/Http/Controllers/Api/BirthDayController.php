@@ -13,17 +13,22 @@ class BirthDayController extends Controller
     public function todayBirthdays(Request $request)
     {
         try {
-            $today = Carbon::today()->toDateString();
+            $today = Carbon::today();
 
             $birthdayMembers = Member::with('user')
                 ->where('status', 'Active')
-                ->whereDate('birthDate', $today)
+                ->whereNotNull('birthDate')
+                ->whereMonth('birthDate', $today->month)
+                ->whereDay('birthDate', $today->day)
                 ->orderBy('firstName', 'ASC')
                 ->get();
 
             return response()->json([
                 'status' => true,
-                'message' => 'Today birthday members fetched successfully.',
+                'server_date' => $today->toDateString(),
+                'month' => $today->month,
+                'day' => $today->day,
+                'count' => $birthdayMembers->count(),
                 'data' => $birthdayMembers,
             ]);
         } catch (\Throwable $th) {
@@ -31,7 +36,7 @@ class BirthDayController extends Controller
 
             return response()->json([
                 'status' => false,
-                'message' => 'Something went wrong while fetching today birthdays.',
+                'message' => $th->getMessage(),
             ], 500);
         }
     }

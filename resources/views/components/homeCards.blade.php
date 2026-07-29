@@ -1032,17 +1032,8 @@
 </style> --}}
 
 <style>
-    .upcoming-events {
-        max-width: 1100px;
-        margin: auto;
-        background: #fff;
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    }
-
     /* Horizontal Scroll */
-    .upcoming-events .events-container {
+    .events-container {
         display: flex;
         gap: 16px;
         overflow-x: auto;
@@ -1050,12 +1041,12 @@
         padding-bottom: 10px;
     }
 
-    .upcoming-events .events-container::-webkit-scrollbar {
+    .events-container::-webkit-scrollbar {
         display: none;
         /* Hide scrollbar */
     }
 
-    .upcoming-events .event-card {
+    .event-card {
         min-width: 300px;
         max-width: 320px;
         border-radius: 10px;
@@ -1063,9 +1054,10 @@
         position: relative;
         background: #fff;
         box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        transition: 0.3s;
     }
 
-    .upcoming-events .event-card img {
+    .event-card img {
         width: 100%;
         height: 180px;
         object-fit: cover;
@@ -1074,7 +1066,7 @@
     }
 
     /* Overlay for Text */
-    .upcoming-events .event-info {
+    .event-info {
         position: relative;
         bottom: 0;
         left: 0;
@@ -1084,24 +1076,24 @@
         color: #1d3268;
     }
 
-    .upcoming-events .event-info h6 {
+    .event-info h6 {
         margin-bottom: 5px;
         font-size: 15px;
         font-weight: 600;
     }
 
-    .upcoming-events .event-info small {
+    .event-info small {
         font-size: 12px;
         display: block;
         opacity: 0.9;
     }
 
     /* Event Details Below */
-    .upcoming-events .event-details {
+    .event-details {
         padding: 12px;
     }
 
-    .upcoming-events .price-tag {
+    .price-tag {
         background: #ffe0e0;
         color: #d9534f;
         padding: 5px 10px;
@@ -1111,7 +1103,6 @@
 
     .card-title {
         padding: 0% !important;
-        font-size:
     }
 </style>
 
@@ -1175,9 +1166,9 @@ $member = Member::where('userId', Auth::id())->first();
 
 $currentDate = \Carbon\Carbon::now()->format('Y-m-d');
 
-$nearestTraining = \App\Models\Training::where('status', 'Active')->where('trainingStatus', 'Publish')->whereDate('date', '>', $currentDate)->orderBy('date', 'asc')->whereHas('trainers.user')->with('trainers.user')->whereHas('trainersTrainings.user')->get() ?? collect();
+$nearestTraining = \App\Models\Training::where('status', 'Active')->where('trainingStatus', 'Publish')->whereIn('training_for', ['Digital', 'All'])->whereDate('date', '>=', $currentDate)->orderBy('date', 'asc')->get() ?? collect();
 
-$nearestEvents = \App\Models\Event::where('eventStatus', 'Publish')->where('status', 'Active')->whereDate('event_date', '>=', $currentDate)->orderBy('event_date', 'asc')->get();
+$nearestEvents = \App\Models\Event::where('eventStatus', 'Publish')->where('status', 'Active')->whereDate('event_date', '>=', $currentDate)->whereIn('slot_type', ['Digital', 'All'])->orderBy('event_date', 'asc')->get();
 
 $latestDigitalMembers = Member::with('circle')->where('status', 'Active')->where('membershipType', 'Digital Membership')->orderBy('created_at', 'desc')->take(4)->get();
 @endphp
@@ -2529,92 +2520,66 @@ $cityId = \App\Models\Member::where('userId', auth()->id())->value('cityId');
     </div>
 </div>
 @if ($nearestTraining && $nearestTraining->count())
-<div class="bg-light py-5">
-    <div class="upcoming-events trainings">
-        <!-- Header -->
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h4 class="fw-bold" style="color: #1d3268;">Upcoming Training Workshops</h4>
-            <a href="#" class="fw-bold text-decoration-none" style="color: #1d3268;">See All</a>
+<div class="card shadow-sm mt-3" style="border-radius: 12px; overflow: hidden;">
+    <div class="card-header text-white" style="background:#1d3268;">
+        <div class="d-flex justify-content-between align-items-center">
+            <h5 class="fw-bold mb-0 text-white"><i class="bi bi-book me-2"></i>Upcoming Training Workshops</h5>
+            @if ($nearestTraining->count() > 4)
+            <a href="#" class="text-white custom-underline view-more-btn">
+                View All <span>»</span>
+            </a>
+            @endif
         </div>
-
-        <!-- Horizontal Scrollable Cards -->
-        <div class="events-container d-flex">
+    </div>
+    <div class="card-body p-3">
+        <div class="events-container">
             @foreach ($nearestTraining as $trainings)
             <div class="event-card">
-                {{-- <a href="{{ route('events.details', $trainings->id) }}" class="text-decoration-none">
-                --}}
-                <img src="{{ $trainings->training_banner ? url('Training/' . $trainings->training_banner) : asset('images/profile.png') }}" alt="{{ $trainings->title }}">
-
-                <!-- Event Info Overlay -->
+                <img src="{{ $trainings->training_banner ? url('Training/' . $trainings->training_banner) : asset('images/profile.png') }}" alt="{{ $trainings->title }}" class="event-img">
                 <div class="event-info">
                     <h6 class="fw-bold">{{ $trainings->title }}</h6>
                     <small class="fw-bold">📍 {{ $trainings->venue }}</small>
-                    {{-- <small>📍 {{ $trainings->venue }}, {{ $trainings->location }}</small> --}}
                 </div>
-
-                <!-- Event Details -->
                 <div class="event-details d-flex justify-content-between align-items-center text-muted small">
                     <span class="fw-bold" style="color: #1d3268;">{{ \Carbon\Carbon::parse($trainings->date)->format('d M Y') }} | {{ \Carbon\Carbon::parse($trainings->start_time)->format('H:i') }} To {{ \Carbon\Carbon::parse($trainings->end_time)->format('H:i') }}</span>
-                    {{-- <span>⏳ Time {{ $trainings->duration }}</span> --}}
                     <span class="price-tag fw-bold">₹ {{ $trainings->fees }}</span>
                 </div>
-                {{-- </a> --}}
             </div>
-
-            <!-- Event Details -->
-            <div class="event-details d-flex justify-content-between align-items-center text-muted small">
-                <span class="fw-bold" style="color: #1d3268;">{{ \Carbon\Carbon::parse($trainings->date)->format('d M Y') }} | {{ \Carbon\Carbon::parse($trainings->start_time)->format('H:i') }} To {{ \Carbon\Carbon::parse($trainings->end_time)->format('H:i') }}</span>
-                {{-- <span>⏳ Time {{ $trainings->duration }}</span> --}}
-                <span class="price-tag fw-bold">₹ {{ $trainings->fees }}</span>
-            </div>
-            {{-- </a> --}}
+            @endforeach
         </div>
-        @endforeach
     </div>
-</div>
 </div>
 @else
 <style>
-    .upcoming-events .trainings {
+    .trainings {
         display: none;
     }
 </style>
-{{-- <div class="bg-light py-5">
-            <div class="upcoming-events trainings">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h4 class="fw-bold" style="color: #1d3268;">Upcoming Training Workshops</h4>
-                </div>
-                <p class="text-muted text-center"><b>No Training Workshops for now.</b></p>
-            </div>
-        </div> --}}
 @endif
 @if ($nearestEvents && $nearestEvents->count())
-<div class="bg-light py-5">
-    <div class="upcoming-events">
-        <!-- Header -->
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h4 class="fw-bold" style="color: #1d3268;">Upcoming Events</h4>
-            <a href="#" class="fw-bold text-decoration-none" style="color: #1d3268;">See All</a>
+<div class="card shadow-sm mt-3" style="border-radius: 12px; overflow: hidden;">
+    <div class="card-header text-white" style="background:#1d3268;">
+        <div class="d-flex justify-content-between align-items-center">
+            <h5 class="fw-bold mb-0 text-white"><i class="bi bi-calendar-event me-2"></i>Upcoming Events</h5>
+            @if ($nearestEvents->count() > 4)
+            <a href="{{ route('member.eventIndex') }}" class="text-white custom-underline view-more-btn">
+                View All <span>»</span>
+            </a>
+            @endif
         </div>
-
-        <!-- Horizontal Scrollable Cards -->
-        <div class="events-container d-flex">
+    </div>
+    <div class="card-body p-3">
+        <div class="events-container">
             @foreach ($nearestEvents as $event)
             <div class="event-card">
                 <a href="{{ route('events.details', $event->id) }}" class="text-decoration-none">
-                    <img src="{{ $event->event_banner ? url('Event/' . $event->event_banner) : asset('images/event_default.png') }}" alt="{{ $event->title }}">
-
-                    <!-- Event Info Overlay -->
+                    <img src="{{ $event->event_banner ? url('Event/' . $event->event_banner) : asset('images/event_default.png') }}" class="event-img" alt="{{ $event->title }}">
                     <div class="event-info">
                         <h6 class="fw-bold">{{ $event->title }}</h6>
                         <small class="fw-bold">📍 {{ $event->venue }}</small>
-                        {{-- <small>📍 {{ $event->venue }}, {{ $event->location }}</small> --}}
                     </div>
-
-                    <!-- Event Details -->
                     <div class="event-details d-flex justify-content-between align-items-center text-muted small">
-                        <span class="fw-bold" style="color: #1d3268;">{{ \Carbon\Carbon::parse($event->date)->format('d M Y') }} | {{ \Carbon\Carbon::parse($event->start_time)->format('H:i') }} To {{ \Carbon\Carbon::parse($event->end_time)->format('H:i') }}</span>
-                        {{-- <span>⏳ Time {{ $event->duration }}</span> --}}
+                        <span class="fw-bold" style="color: #1d3268;">{{ \Carbon\Carbon::parse($event->event_date)->format('d M Y') }} | {{ \Carbon\Carbon::parse($event->start_time)->format('H:i') }} To {{ \Carbon\Carbon::parse($event->end_time)->format('H:i') }}</span>
                         <span class="price-tag fw-bold">₹ {{ $event->fees }}</span>
                     </div>
                 </a>
@@ -2629,14 +2594,6 @@ $cityId = \App\Models\Member::where('userId', auth()->id())->value('cityId');
         display: none;
     }
 </style>
-{{-- <div class="bg-light py-5">
-                <div class="upcoming-events">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h4 class="fw-bold" style="color: #1d3268;">Upcoming Events</h4>
-                    </div>
-                    <p class="text-muted text-center"><b>No Events for now.</b></p>
-                </div>
-            </div> --}}
 @endif
 @endrole
 
@@ -5588,32 +5545,29 @@ $sponsors = \App\Models\Sponsors::where('status', 'Active')->whereNotNull('image
 
 
 @if (count($nearestEvents) != 0)
-<div class="bg-light py-5">
-    <div class="upcoming-events">
-        <!-- Header -->
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h4 class="fw-bold" style="color: #1d3268;">Upcoming Events</h4>
-            <a href="#" class="fw-bold text-decoration-none" style="color: #1d3268;">See All</a>
+<div class="card shadow-sm mt-3" style="border-radius: 12px; overflow: hidden;">
+    <div class="card-header text-white" style="background:#1d3268;">
+        <div class="d-flex justify-content-between align-items-center">
+            <h5 class="fw-bold mb-0 text-white"><i class="bi bi-calendar-event me-2"></i>Upcoming Events</h5>
+            @if (count($nearestEvents) > 4)
+            <a href="{{ route('member.eventIndex') }}" class="text-white custom-underline view-more-btn">
+                View All <span>»</span>
+            </a>
+            @endif
         </div>
-
-        <!-- Horizontal Scrollable Cards -->
-        <div class="events-container d-flex">
+    </div>
+    <div class="card-body p-3">
+        <div class="events-container">
             @foreach ($nearestEvents as $event)
             <div class="event-card">
                 <a href="{{ route('events.details', $event->id) }}" class="text-decoration-none">
-                    <img src="{{ $event->event_banner ? url('Event/' . $event->event_banner) : asset('images/event_default.png') }}" alt="{{ $event->title }}">
-
-                    <!-- Event Info Overlay -->
+                    <img src="{{ $event->event_banner ? url('Event/' . $event->event_banner) : asset('images/event_default.png') }}" class="event-img" alt="{{ $event->title }}">
                     <div class="event-info">
                         <h6 class="fw-bold">{{ $event->title }}</h6>
                         <small class="fw-bold">📍 {{ $event->venue }}</small>
-                        {{-- <small>📍 {{ $event->venue }}, {{ $event->location }}</small> --}}
                     </div>
-
-                    <!-- Event Details -->
                     <div class="event-details d-flex justify-content-between align-items-center text-muted small">
-                        <span class="fw-bold" style="color: #1d3268;">{{ \Carbon\Carbon::parse($event->date)->format('d M Y') }} | {{ \Carbon\Carbon::parse($event->start_time)->format('H:i') }} To {{ \Carbon\Carbon::parse($event->end_time)->format('H:i') }}</span>
-                        {{-- <span>⏳ Time {{ $event->duration }}</span> --}}
+                        <span class="fw-bold" style="color: #1d3268;">{{ \Carbon\Carbon::parse($event->event_date)->format('d M Y') }} | {{ \Carbon\Carbon::parse($event->start_time)->format('H:i') }} To {{ \Carbon\Carbon::parse($event->end_time)->format('H:i') }}</span>
                         <span class="price-tag fw-bold">₹ {{ $event->fees }}</span>
                     </div>
                 </a>
@@ -5622,80 +5576,50 @@ $sponsors = \App\Models\Sponsors::where('status', 'Active')->whereNotNull('image
         </div>
     </div>
 </div>
-
+@else
 <style>
     .upcoming-events {
         display: none;
     }
 </style>
-{{-- <div class="bg-light py-5">
-                <div class="upcoming-events">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h4 class="fw-bold" style="color: #1d3268;">Upcoming Events</h4>
-                    </div>
-                    <p class="text-muted text-center"><b>No Events for now.</b></p>
-                </div>
-            </div> --}}
 @endif
 
 @if (count($nearestTraining) != 0)
-<div class="bg-light py-5">
-    <div class="upcoming-events trainings">
-        <!-- Header -->
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h4 class="fw-bold" style="color: #1d3268;">Upcoming Training Workshops</h4>
-            <a href="#" class="fw-bold text-decoration-none" style="color: #1d3268;">See All</a>
+<div class="card shadow-sm mt-3" style="border-radius: 12px; overflow: hidden;">
+    <div class="card-header text-white" style="background:#1d3268;">
+        <div class="d-flex justify-content-between align-items-center">
+            <h5 class="fw-bold mb-0 text-white"><i class="bi bi-book me-2"></i>Upcoming Training Workshops</h5>
+            @if (count($nearestTraining) > 4)
+            <a href="#" class="text-white custom-underline view-more-btn">
+                View All <span>»</span>
+            </a>
+            @endif
         </div>
-
-        <!-- Horizontal Scrollable Cards -->
-        <div class="events-container d-flex">
+    </div>
+    <div class="card-body p-3">
+        <div class="events-container">
             @foreach ($nearestTraining as $trainings)
             <div class="event-card">
-                {{-- <a href="{{ route('events.details', $trainings->id) }}" class="text-decoration-none">
-                --}}
-                <img src="{{ $trainings->training_banner ? url('Training/' . $trainings->training_banner) : asset('images/profile.png') }}" alt="{{ $trainings->title }}">
-
-                <!-- Event Info Overlay -->
+                <img src="{{ $trainings->training_banner ? url('Training/' . $trainings->training_banner) : asset('images/profile.png') }}" alt="{{ $trainings->title }}" class="event-img">
                 <div class="event-info">
                     <h6 class="fw-bold">{{ $trainings->title }}</h6>
                     <small class="fw-bold">📍 {{ $trainings->venue }}</small>
-                    {{-- <small>📍 {{ $trainings->venue }}, {{ $trainings->location }}</small> --}}
                 </div>
-
-                <!-- Event Details -->
                 <div class="event-details d-flex justify-content-between align-items-center text-muted small">
                     <span class="fw-bold" style="color: #1d3268;">{{ \Carbon\Carbon::parse($trainings->date)->format('d M Y') }} | {{ \Carbon\Carbon::parse($trainings->start_time)->format('H:i') }} To {{ \Carbon\Carbon::parse($trainings->end_time)->format('H:i') }}</span>
-                    {{-- <span>⏳ Time {{ $trainings->duration }}</span> --}}
                     <span class="price-tag fw-bold">₹ {{ $trainings->fees }}</span>
                 </div>
-                </a>
             </div>
-
-            <!-- Event Details -->
-            <div class="event-details d-flex justify-content-between align-items-center text-muted small">
-                <span class="fw-bold" style="color: #1d3268;">{{ \Carbon\Carbon::parse($trainings->date)->format('d M Y') }} | {{ \Carbon\Carbon::parse($trainings->start_time)->format('H:i') }} To {{ \Carbon\Carbon::parse($trainings->end_time)->format('H:i') }}</span>
-                {{-- <span>⏳ Time {{ $trainings->duration }}</span> --}}
-                <span class="price-tag fw-bold">₹ {{ $trainings->fees }}</span>
-            </div>
-            </a>
             @endforeach
         </div>
     </div>
-
 </div>
+@else
 <style>
-    .upcoming-events .trainings {
+    .trainings {
         display: none;
     }
 </style>
-{{-- <div class="bg-light py-5">
-            <div class="upcoming-events trainings">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h4 class="fw-bold" style="color: #1d3268;">Upcoming Training Workshops</h4>
-                </div>
-                <p class="text-muted text-center"><b>No Training Workshops for now.</b></p>
-            </div>
-        </div> --}}
 @endif
 
 

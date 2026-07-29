@@ -388,12 +388,10 @@ class HomeController extends Controller
 
             $nearestTraining = Training::where('status', 'Active')
                 ->where('trainingStatus', 'Publish')
-                // Only show trainings that are scheduled in the future (i.e. date is greater than today's date)
-                ->whereDate('date', '>', $currentDate)
+                ->whereIn('training_for', ['Offline', 'All'])
+                // Only show trainings that are scheduled for today or in the future
+                ->whereDate('date', '>=', $currentDate)
                 ->orderBy('date', 'asc')
-                ->whereHas('trainers.user')
-                ->with('trainers.user')
-                ->whereHas('trainersTrainings.user')
                 ->get();
 
             $businessCategory = BusinessCategory::where('status', 'Active')->get();
@@ -917,6 +915,7 @@ class HomeController extends Controller
                 $nearestEvents = Event::where('eventStatus', 'Publish')
                     ->where('status', 'Active')
                     ->whereDate('event_date', '>=', $currentDate)
+                    ->whereIn('slot_type', ['Offline', 'All'])
                     ->orderBy('event_date', 'asc')
                     ->get();
 
