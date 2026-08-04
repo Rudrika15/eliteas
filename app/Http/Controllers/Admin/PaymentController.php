@@ -886,6 +886,9 @@ class PaymentController extends Controller
             $eventPayment = new EventRegister;
             $eventPayment->eventId = $request->eventId;
             $eventPayment->memberId = Auth::user()->member->id;
+            $eventPayment->personName = $request->personName;
+            $eventPayment->personEmail = $request->personEmail;
+            $eventPayment->personContact = $request->personContact;
             $eventPayment->paymentStatus = 'unpaid';
             $eventPayment->save();
 

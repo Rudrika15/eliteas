@@ -42,11 +42,17 @@ class EventController extends Controller
     public function memberEventIndex(Request $request)
     {
         try {
-            $event = Event::with('circle')
+            $query = Event::with('circle')
                 ->where('status', 'Active')
-                ->where('eventStatus', 'Publish')
-                ->orderBy('id', 'DESC')
-                ->get();
+                ->where('eventStatus', 'Publish');
+
+            if (Auth::user()->hasRole('Digital Member')) {
+                $query->whereIn('slot_type', ['Digital', 'All', 'digital', 'all']);
+            } else {
+                $query->whereIn('slot_type', ['Offline', 'All', 'offline', 'all']);
+            }
+
+            $event = $query->orderBy('id', 'DESC')->get();
 
             return Utils::sendResponse(['Event' => $event], 'Event Data Fetched Successfully', 200);
         } catch (\Throwable $th) {
@@ -64,8 +70,16 @@ class EventController extends Controller
     {
         try {
             $memberId = Auth::user()->id;
-            // Fetch the event
-            $event = Event::where('id', $id)->where('eventStatus', 'Publish')->first();
+            // Fetch the event with slot type filtering based on user role
+            $query = Event::where('id', $id)->where('eventStatus', 'Publish');
+
+            if (Auth::user()->hasRole('Digital Member')) {
+                $query->whereIn('slot_type', ['Digital', 'All', 'digital', 'all']);
+            } else {
+                $query->whereIn('slot_type', ['Offline', 'All', 'offline', 'all']);
+            }
+
+            $event = $query->first();
             if (! $event) {
                 return Utils::errorResponse(['error' => 'Event not found or not published.'], 'Event Not Found', 404);
             }
@@ -228,14 +242,21 @@ class EventController extends Controller
             }
 
             // Get all future events that are associated with the member and exclude past events
-            $events = Event::with(['circle', 'registrations' => function ($query) use ($memberId) {
+            $query = Event::with(['circle', 'registrations' => function ($query) use ($memberId) {
                 // Get the registration details from event_registers table for the member
                 $query->where('memberId', $memberId);
             }])
                 ->where('status', 'Active')
                 ->where('eventStatus', 'Publish')
-                ->whereDate('event_date', '>=', now()->format('Y-m-d')) // Only get upcoming events including today
-                ->orderBy('event_date', 'ASC') // Order by date in ascending order (from the earliest)
+                ->whereDate('event_date', '>=', now()->format('Y-m-d')); // Only get upcoming events including today
+
+            if ($authUser->hasRole('Digital Member')) {
+                $query->whereIn('slot_type', ['Digital', 'All', 'digital', 'all']);
+            } else {
+                $query->whereIn('slot_type', ['Offline', 'All', 'offline', 'all']);
+            }
+
+            $events = $query->orderBy('event_date', 'ASC') // Order by date in ascending order (from the earliest)
                 ->get(); // Get all future events
 
             // Check if no future events are found
@@ -248,6 +269,14 @@ class EventController extends Controller
             if ($events->isEmpty()) {
                 return Utils::sendResponse([
                     'events' => [],
+                    'debug' => [
+                        'auth_user_id' => $authUser->id,
+                        'member_id' => $memberId,
+                        'user_roles' => $authUser->roles->pluck('name')->toArray(),
+                        'upcoming_events_all_slot_types' => Event::where('status', 'Active')->where('eventStatus', 'Publish')->whereDate('event_date', '>=', now()->format('Y-m-d'))->get(['id', 'title', 'slot_type'])->toArray(),
+                        'current_date' => now()->format('Y-m-d'),
+                        'role_is_digital' => $authUser->hasRole('Digital Member'),
+                    ]
                 ], 'No upcoming events for now.', 200);
             }
 
@@ -431,13 +460,20 @@ class EventController extends Controller
             }
 
             // Get specific event by ID with related circle and all registrations
-            $event = Event::with(['circle', 'registrations.members' => function ($query) {
+            $query = Event::with(['circle', 'registrations.members' => function ($query) {
                 $query->select('id', 'userId', 'firstName', 'lastName');
             }])
                 ->where('status', 'Active')
                 ->where('eventStatus', 'Publish')
-                ->whereDate('event_date', '>=', now()->format('Y-m-d'))
-                ->find($id);
+                ->whereDate('event_date', '>=', now()->format('Y-m-d'));
+
+            if (Auth::user()->hasRole('Digital Member')) {
+                $query->whereIn('slot_type', ['Digital', 'All', 'digital', 'all']);
+            } else {
+                $query->whereIn('slot_type', ['Offline', 'All', 'offline', 'all']);
+            }
+
+            $event = $query->find($id);
 
             if (! $event) {
                 return Utils::errorResponse([

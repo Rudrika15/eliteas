@@ -4813,6 +4813,7 @@ $sponsors = \App\Models\Sponsors::where('status', 'Active')->whereNotNull('image
     }
 </style>
 
+@if(isset($topInductions) && $topInductions->count() > 0)
 <div class="induction-section mt-4">
     <div class="induction-header">
         <h5>
@@ -4820,70 +4821,77 @@ $sponsors = \App\Models\Sponsors::where('status', 'Active')->whereNotNull('image
             Top Inductions
         </h5>
     </div>
+
     <div class="induction-content">
         <div class="row g-4">
             @foreach ($topInductions as $topinduction)
-            <div class="col-sm-6 col-lg-3">
-                <div class="fb-card shadow-sm">
-                    <div class="fb-card-img-wrapper">
-                        <span class="fb-badge">Top Induction</span>
-                        <img src="{{ asset('ProfilePhoto/' . ($topinduction['member']->profilePhoto ?? 'profile.png')) }}" class="fb-card-img" alt="Profile Image">
-                    </div>
-                    <div class="fb-card-body">
-                        <h5 class="fb-card-title">{{ $topinduction['member']->firstName }} {{ $topinduction['member']->lastName }}</h5>
-
-                        <div class="fb-card-subtitle">
-                            <i class="bi bi-people-fill"></i>
-                            {{ $topinduction['member']->circle->circleName ?? 'N/A' }}
-                            <span>&bull;</span>
-                            <b><span>Inductions: {{ $topinduction['count'] ?? '0' }}</span></b>
+                <div class="col-sm-6 col-lg-3">
+                    <div class="fb-card shadow-sm">
+                        <div class="fb-card-img-wrapper">
+                            <span class="fb-badge">Top Induction</span>
+                            <img src="{{ asset('ProfilePhoto/' . ($topinduction['member']->profilePhoto ?? 'profile.png')) }}"
+                                class="fb-card-img" alt="Profile Image">
                         </div>
 
-                        <div class="fb-card-info">
-                            @if (!empty($topinduction['member']->companyName))
-                            <div><i class="bi bi-building me-1"></i> <b>{{ $topinduction['member']->companyName }}</b></div>
-                            @endif
-                            @if (!empty($topinduction['member']->bCategory->categoryName))
-                            <div><i class="bi bi-tag me-1"></i> <b>{{ $topinduction['member']->bCategory->categoryName }}</b></div>
-                            @endif
-                        </div>
+                        <div class="fb-card-body">
+                            <h5 class="fb-card-title">
+                                {{ $topinduction['member']->firstName }}
+                                {{ $topinduction['member']->lastName }}
+                            </h5>
 
-                        <div class="mt-auto">
-                            <!-- Connect Button -->
-                            @php
-                            $connectionStatus = $topinduction['member']->connection_status ?? 'Not Connected';
-
-                            @endphp
-                            @if ($connectionStatus == 'Connected')
-                            <button type="button" class="fb-btn fb-btn-disabled">Connected</button>
-                            @elseif ($connectionStatus == 'Accepted')
-                            <button class="fb-btn fb-btn-primary">Message</button>
-                            @elseif ($connectionStatus == 'Pending')
-                            <button type="button" class="fb-btn fb-btn-disabled">Requested</button>
-                            @else
-                            <form action="{{ route('connect') }}" method="POST" class="d-block w-100">
-                                @csrf
-                                <input type="hidden" value="{{ $topinduction['member']->id }}" name="memberId">
-                                <button type="submit" class="fb-btn fb-btn-primary">Connect</button>
-                            </form>
-                            @endif
-
-                            <div class="mt-2 text-center fw-bold" style="color: #1d3268;">
-                                Inductions - {{ $topinduction['member']->sponsored->count() }}
+                            <div class="fb-card-subtitle">
+                                <i class="bi bi-people-fill"></i>
+                                {{ $topinduction['member']->circle->circleName ?? 'N/A' }}
+                                <span>&bull;</span>
+                                <b><span>Inductions: {{ $topinduction['count'] ?? '0' }}</span></b>
                             </div>
 
-                            <!-- View Profile -->
-                            <a href="{{ route('foundPersonDetails', $topinduction['member']->id) }}" class="text-decoration-none d-block w-100">
-                                <button class="fb-btn fb-btn-secondary">View Profile</button>
-                            </a>
+                            <div class="fb-card-info">
+                                @if (!empty($topinduction['member']->companyName))
+                                    <div><i class="bi bi-building me-1"></i> <b>{{ $topinduction['member']->companyName }}</b></div>
+                                @endif
+
+                                @if (!empty($topinduction['member']->bCategory->categoryName))
+                                    <div><i class="bi bi-tag me-1"></i> <b>{{ $topinduction['member']->bCategory->categoryName }}</b></div>
+                                @endif
+                            </div>
+
+                            <div class="mt-auto">
+                                @php
+                                    $connectionStatus = $topinduction['member']->connection_status ?? 'Not Connected';
+                                @endphp
+
+                                @if ($connectionStatus == 'Connected')
+                                    <button type="button" class="fb-btn fb-btn-disabled">Connected</button>
+                                @elseif ($connectionStatus == 'Accepted')
+                                    <button class="fb-btn fb-btn-primary">Message</button>
+                                @elseif ($connectionStatus == 'Pending')
+                                    <button type="button" class="fb-btn fb-btn-disabled">Requested</button>
+                                @else
+                                    <form action="{{ route('connect') }}" method="POST" class="d-block w-100">
+                                        @csrf
+                                        <input type="hidden" value="{{ $topinduction['member']->id }}" name="memberId">
+                                        <button type="submit" class="fb-btn fb-btn-primary">Connect</button>
+                                    </form>
+                                @endif
+
+                                <div class="mt-2 text-center fw-bold" style="color: #1d3268;">
+                                    Inductions - {{ $topinduction['member']->sponsored->count() }}
+                                </div>
+
+                                <a href="{{ route('foundPersonDetails', $topinduction['member']->id) }}"
+                                    class="text-decoration-none d-block w-100">
+                                    <button class="fb-btn fb-btn-secondary">View Profile</button>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
             @endforeach
         </div>
     </div>
 </div>
+@endif
 <style>
     .rising-star-section {
         background: #ffffff;

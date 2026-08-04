@@ -61,7 +61,7 @@ class CircleMeetingMembersController extends Controller
     public function create(Request $request)
     {
         try {
-            $member = Member::where('status', 'Active')->orderBy('memberName', 'asc')->get();
+            $member = Member::where('status', 'Active')->orderBy('firstName', 'asc')->get();
 
             return view('admin.circlemeetingmember.create', compact('member'));
         } catch (\Throwable $th) {
@@ -105,7 +105,7 @@ class CircleMeetingMembersController extends Controller
     {
         try {
             $meetingmember = CircleMeetingMember::find($id);
-            $member = Member::where('status', 'Active')->orderBy('memberName', 'asc')->get();
+            $member = Member::where('status', 'Active')->orderBy('firstName', 'asc')->get();
 
             return view('admin.circlemeetingmember.edit', compact('meetingmember', 'member'));
         } catch (\Throwable $th) {

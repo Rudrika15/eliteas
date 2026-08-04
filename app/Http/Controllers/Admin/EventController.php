@@ -486,7 +486,7 @@ class EventController extends Controller
     public function eventLink($slug)
     {
         try {
-            $event = Event::where('event_slug', $slug)->firstOrFail();
+            $event = Event::where('event_slug', $slug)->orderBy('id', 'desc')->firstOrFail();
 
             return view('admin.event.eventLink', compact('event'));
         } catch (\Throwable $th) {
@@ -542,6 +542,9 @@ class EventController extends Controller
             $eventRegister = new EventRegister;
             $eventRegister->eventId = $request->eventId;
             $eventRegister->memberId = Auth::user()->member->id;
+            $eventRegister->personName = $request->personName;
+            $eventRegister->personEmail = $request->personEmail;
+            $eventRegister->personContact = $request->personContact;
             $eventRegister->PaymentStatus = 'Event Is Free';
             $eventRegister->save();
 

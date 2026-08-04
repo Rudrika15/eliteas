@@ -58,30 +58,41 @@ class TrainingController extends Controller
         try {
             $id = $request->input('id');
             $userId = Auth::id(); // Get the authenticated user ID
+            $authUser = Auth::user();
 
             if ($id) {
-                $training = Training::with(['trainer', 'registerTraining'])
+                $query = Training::with(['trainer', 'registerTraining'])
                     ->where('status', 'Active')
                     ->where('id', $id)
                     ->first();
 
-                if (! $training) {
+                if (! $query) {
                     return Utils::errorResponse('Training not found', 'Not Found', 404);
                 }
 
                 // Add is_registered flag for this single training
-                $isRegistered = TrainingRegister::where('trainingId', $training->id)
+                $isRegistered = TrainingRegister::where('trainingId', $query->id)
                     ->where('userId', $userId) // Adjust if your column name differs
                     ->exists();
-                $training->setAttribute('is_registered', $isRegistered);
+                $query->setAttribute('is_registered', $isRegistered);
 
-                return Utils::sendResponse(['training' => $training], 'Training retrieved successfully', 200);
+                return Utils::sendResponse(['training' => $query], 'Training retrieved successfully', 200);
             }
 
             $trainings = Training::with(['trainer', 'registerTraining'])
                 ->where('status', 'Active')
-                ->where('date', '>', now()->toDateString())
-                ->get()
+                ->where('trainingStatus', 'Publish')
+                ->whereDate('date', '>=', now()->toDateString());
+
+            if ($authUser) {
+                if ($authUser->hasRole('Digital Member')) {
+                    $trainings->whereIn('training_for', ['Digital', 'All', 'digital', 'all']);
+                } else {
+                    $trainings->whereIn('training_for', ['Offline', 'All', 'offline', 'all']);
+                }
+            }
+
+            $trainings = $trainings->get()
                 ->map(function ($training) use ($userId) {
                     $isRegistered = TrainingRegister::where('trainingId', $training->id)
                         ->where('userId', $userId) // Adjust if needed

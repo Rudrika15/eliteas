@@ -149,7 +149,11 @@
                                 <input type="hidden" id="shareableLink" value="{{ URL::signedRoute('event.link', ['slug' => $event->event_slug, 'ref' => auth()->user()->member->id]) }}">
                                 <span class="fw-bold">Invite</span>
                             </a>
-                            <button class="book-btn btn btn-bg-orange" style="margin-left: 100px;">Book Now</button>
+                            @if($findEventRegister->isNotEmpty())
+                                <button class="btn btn-success" style="margin-left: 60px;" disabled>Already Booked</button>
+                            @else
+                                <button class="book-btn btn btn-bg-orange" style="margin-left: 60px;" data-bs-toggle="modal" data-bs-target="#registerModal">Book Now</button>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -321,7 +325,60 @@
                 bookTicketsDiv.style.display = "none";
             }
         });
-    </script>
+    </script>    <!-- Registration Modal -->
+    <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content" style="border-radius: 12px; border: none; box-shadow: 0 4px 20px rgba(0,0,0,0.15);">
+                <div class="modal-header" style="background-color: #1d2368; color: white; border-top-left-radius: 12px; border-top-right-radius: 12px;">
+                    <h5 class="modal-title fw-bold" id="registerModalLabel">Register for Event</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="registrationForm" method="POST" action="{{ route('event.register', ['eventId' => $event->id]) }}">
+                        @csrf
+                        <div class="mb-3">
+                            <label for="personName" class="form-label fw-bold text-muted small">Name</label>
+                            <input type="text" class="form-control" id="personName" name="personName" value="{{ Auth::user()->name }}" required style="border-radius: 8px;">
+                        </div>
+                        <div class="mb-3">
+                            <label for="personEmail" class="form-label fw-bold text-muted small">Email</label>
+                            <input type="email" class="form-control" id="personEmail" name="personEmail" value="{{ Auth::user()->email }}" required pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" title="Please enter a valid email address." style="border-radius: 8px;">
+                        </div>
+                        <div class="mb-3">
+                            <label for="personContact" class="form-label fw-bold text-muted small">Contact Number</label>
+                            <input type="text" class="form-control" id="personContact" name="personContact" value="{{ Auth::user()->contactNo ?? '' }}" required maxlength="10" placeholder="Enter 10 digit number" pattern="\d{10}" oninput="this.value = this.value.replace(/[^0-9]/g, '')" title="Please enter a valid 10-digit contact number." style="border-radius: 8px;">
+                        </div>
+
+                        @if ($event->fees > 0)
+                            
+
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="myCheckbox" checked>
+                                <label class="form-check-label fw-bold text-muted" for="myCheckbox">
+                                    Pay Now (Online Payment)
+                                </label>
+                            </div>
+
+                            <!-- Total Summary -->
+                            <div class="d-flex justify-content-between align-items-center mb-4 p-2 border-bottom">
+                                <span class="fw-bold text-muted">Event Fees:</span>
+                                <span class="fw-bold color-blue" id="finalAmountDisplay" style="font-size: 1.25rem;">₹{{ $event->fees }}</span>
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <button type="button" class="btn btn-bg-orange fw-bold py-2" id="razorpayBtnEvent" data-amount-event="{{ $event->fees }}" style="border-radius: 8px;">Pay Now</button>
+                                <button type="button" class="btn btn-bg-blue fw-bold py-2" id="registerWithoutPaymentBtn" data-event-id="{{ $event->id }}" style="display: none; border-radius: 8px;">Register & Pay Later</button>
+                            </div>
+                        @else
+                            <div class="d-grid gap-2 mt-4">
+                                <button type="submit" class="btn btn-bg-orange fw-bold py-2" style="border-radius: 8px;">Register for Free</button>
+                            </div>
+                        @endif
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -331,7 +388,7 @@
             var couponError = document.getElementById('couponError');
             var discountSuccess = document.getElementById('discountSuccess');
             var discountAmountSpan = document.getElementById('discountAmount');
-            var originalAmount = parseInt(razorpayBtnEvent.getAttribute('data-amount-event')) * 100; // Convert to paise
+            var originalAmount = razorpayBtnEvent ? parseInt(razorpayBtnEvent.getAttribute('data-amount-event')) * 100 : 0; // Convert to paise
             var discountAmount = 0;
 
             // Apply coupon functionality
@@ -353,8 +410,8 @@
                                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                             },
                             body: JSON.stringify({
-                                couponCode: couponCode, // Ensure it matches the backend's expected key
-                                eventId: '{{ $event->id }}' // Dynamically include the event ID
+                                couponCode: couponCode,
+                                eventId: '{{ $event->id }}'
                             })
                         })
                         .then(response => response.json())
@@ -365,11 +422,26 @@
                                 discountSuccess.style.display = 'block';
                                 discountAmountSpan.textContent = (discountAmount / 100).toFixed(2); // Show INR format
                                 couponError.style.display = 'none';
+
+                                // Update final amount display
+                                var finalAmount = (originalAmount - discountAmount) / 100;
+                                if (finalAmount < 0) finalAmount = 0;
+                                var finalAmountDisplay = document.getElementById('finalAmountDisplay');
+                                if (finalAmountDisplay) {
+                                    finalAmountDisplay.textContent = '₹' + finalAmount.toFixed(2);
+                                }
                             } else {
                                 // Coupon is invalid
                                 discountSuccess.style.display = 'none';
                                 couponError.textContent = 'Invalid or expired coupon code.';
                                 couponError.style.display = 'block';
+
+                                // Reset final amount display
+                                var finalAmountDisplay = document.getElementById('finalAmountDisplay');
+                                if (finalAmountDisplay) {
+                                    finalAmountDisplay.textContent = '₹' + (originalAmount / 100).toFixed(2);
+                                }
+                                discountAmount = 0;
                             }
                         })
                         .catch(error => {
@@ -381,9 +453,30 @@
                 });
             }
 
+            // Checkbox toggling for "Pay Now" vs "Register & Pay Later"
+            var myCheckbox = document.getElementById('myCheckbox');
+            if (myCheckbox && razorpayBtnEvent) {
+                var registerButton = document.getElementById('registerWithoutPaymentBtn');
+                myCheckbox.addEventListener('change', function() {
+                    if (myCheckbox.checked) {
+                        razorpayBtnEvent.style.display = 'block';
+                        registerButton.style.display = 'none';
+                    } else {
+                        registerButton.style.display = 'block';
+                        razorpayBtnEvent.style.display = 'none';
+                    }
+                });
+            }
+
             // Proceed to payment with discount
             if (razorpayBtnEvent) {
-                razorpayBtnEvent.addEventListener('click', function() {
+                razorpayBtnEvent.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    var form = document.getElementById('registrationForm');
+                    if (!form.checkValidity()) {
+                        form.reportValidity();
+                        return;
+                    }
                     var finalAmount = originalAmount - discountAmount;
                     proceedWithPayment(finalAmount);
                 });
@@ -392,9 +485,9 @@
             // Function to initialize Razorpay and proceed with payment
             function proceedWithPayment(amount) {
                 var razorpayKey = "{{ env('RAZORPAY_KEY') }}";
-                // var razorpayKey = "rzp_test_VVNmvqg0nEoaOf";
-                var username = "{{ Auth::user()->name }}";
-                var useremail = "{{ Auth::user()->email }}";
+                var username = document.getElementById('personName').value;
+                var useremail = document.getElementById('personEmail').value;
+                var usercontact = document.getElementById('personContact').value;
 
                 var eventOptions = {
                     key: razorpayKey,
@@ -405,11 +498,12 @@
                     image: "/img/logo.png",
                     handler: function(response) {
                         console.log('Payment successful, Payment ID:', response.razorpay_payment_id);
-                        storeEventPaymentDetails(response.razorpay_payment_id, amount);
+                        storeEventPaymentDetails(response.razorpay_payment_id, amount, username, useremail, usercontact);
                     },
                     prefill: {
                         name: username,
-                        email: useremail
+                        email: useremail,
+                        contact: usercontact
                     },
                     theme: {
                         color: "#F37254"
@@ -421,7 +515,7 @@
             }
 
             // Store payment details after successful payment
-            function storeEventPaymentDetails(paymentId, amount) {
+            function storeEventPaymentDetails(paymentId, amount, personName, personEmail, personContact) {
                 var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
                 var url = `{{ route('razorpay.payment.eventPayment') }}`;
                 var eventId = '{{ $event->id }}';
@@ -435,7 +529,10 @@
                         body: JSON.stringify({
                             paymentId: paymentId,
                             amount: amount,
-                            eventId: eventId
+                            eventId: eventId,
+                            personName: personName,
+                            personEmail: personEmail,
+                            personContact: personContact
                         })
                     })
                     .then(response => {
@@ -464,14 +561,27 @@
 
     <script>
         $(document).ready(function() {
-            $('#registerWithoutPaymentBtn').on('click', function() {
+            $('#registerWithoutPaymentBtn').on('click', function(e) {
+                e.preventDefault();
+                var form = document.getElementById('registrationForm');
+                if (!form.checkValidity()) {
+                    form.reportValidity();
+                    return;
+                }
+
                 var eventId = $(this).data('event-id');
+                var personName = $('#personName').val();
+                var personEmail = $('#personEmail').val();
+                var personContact = $('#personContact').val();
 
                 $.ajax({
                     url: "{{ route('handle.EventRegistration') }}",
                     type: "POST",
                     data: {
                         eventId: eventId,
+                        personName: personName,
+                        personEmail: personEmail,
+                        personContact: personContact,
                         _token: "{{ csrf_token() }}"
                     },
                     success: function(response) {
