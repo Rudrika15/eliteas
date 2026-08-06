@@ -113,6 +113,11 @@
                                             <span class="btn-text">View Members</span>
                                         </a>
 
+                                        <a href="{{ route('circle.visitorForm', $circleData->id) }}" class="btn btn-bg-blue btn-sm btn-tooltip">
+                                            <i class="bi bi-file-earmark-plus"></i>
+                                            <span class="btn-text">Visitor Form</span>
+                                        </a>
+
                                         <a href="javascript:void(0)" onclick="confirmDelete({{ $circleData->id }})" class="btn btn-danger btn-sm btn-tooltip">
                                             <i class="bi bi-trash"></i>
                                             <span class="btn-text">Delete</span>

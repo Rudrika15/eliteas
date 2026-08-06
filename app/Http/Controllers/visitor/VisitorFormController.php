@@ -7,9 +7,13 @@ use App\Models\BusinessCategory;
 use App\Models\MeetingInvitation;
 use App\Models\Visitor;
 use App\Models\VisitorsDetails;
+use App\Models\VisitorForm;
+use App\Models\Member;
+use App\Models\Schedule;
 use App\Utils\ErrorLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 use Throwable;
 
 class VisitorFormController extends Controller
@@ -131,6 +135,7 @@ class VisitorFormController extends Controller
             $visitor->knowUs = $request->knowsUs; // Make sure this matches the field name
             $visitor->meetingId = $request->meetingId;
             $visitor->status = 'Active';
+            $visitor->isUser = 'No';
 
             // Save the visitor information
             $visitor->save();
@@ -294,4 +299,120 @@ class VisitorFormController extends Controller
             return view('servererror');
         }
     }
+
+    public function showEncryptedVisitorForm(Request $request)
+    {
+        try {
+            $code = $request->query('code');
+            if (!$code) {
+                return view('servererror')->with('error', 'Invalid Form Link');
+            }
+
+            $formId = Crypt::decryptString($code);
+            $visitorForm = VisitorForm::with('circle')->findOrFail($formId);
+
+            $businessCategory = BusinessCategory::where('status', 'Active')->orderBy('categoryName', 'asc')->get();
+            $members = Member::where('status', 'Active')->where('circleId', $visitorForm->circle_id)->orderBy('firstName', 'asc')->get();
+            if ($members->isEmpty()) {
+                $members = Member::where('status', 'Active')->orderBy('firstName', 'asc')->get();
+            }
+
+            return view('visitor.publicRegisterForm', compact('visitorForm', 'businessCategory', 'members', 'code'));
+        } catch (\Throwable $th) {
+            ErrorLogger::logError($th, request()->fullUrl());
+            return view('servererror')->with('error', 'Invalid or expired visitor form link.');
+        }
+    }
+
+    public function storeEncryptedVisitorForm(Request $request)
+    {
+        $request->validate([
+            'code' => 'required',
+            'firstName' => 'required',
+            'lastName' => 'required',
+            'mobileNo' => 'required',
+            'email' => 'required|email',
+            'businessName' => 'required',
+            'businessCategory' => 'required',
+            'invitedBy' => 'required',
+        ]);
+
+        try {
+            $formId = Crypt::decryptString($request->code);
+            $visitorForm = VisitorForm::with('circle')->findOrFail($formId);
+
+            // Business category handling
+            if ($request->businessCategory == 'other') {
+                $business = BusinessCategory::where('categoryName', $request->otherCategory)->first();
+                if (!$business) {
+                    $business = new BusinessCategory();
+                    $business->categoryName = $request->otherCategory;
+                    $business->status = 'Active';
+                    $business->save();
+                }
+                $bCategoryId = $business->id;
+            } else {
+                $bCategoryId = $request->businessCategory;
+            }
+
+            // Fetch latest meeting schedule ID for this circle
+            $latestSchedule = Schedule::where('circleId', $visitorForm->circle_id)->orderBy('id', 'desc')->first();
+            $meetingId = $latestSchedule ? $latestSchedule->id : 0;
+
+            // 1. Insert into visitors_details table
+            $visitor = new VisitorsDetails();
+            $visitor->firstName = $request->firstName;
+            $visitor->lastName = $request->lastName;
+            $visitor->email = $request->email;
+            $visitor->mobileNo = $request->mobileNo;
+            $visitor->businessName = $request->businessName;
+            $visitor->businessCategory = $bCategoryId;
+            $visitor->product = $request->product;
+            $visitor->networkingGroup = $request->networkingGroup;
+            $visitor->circleMeet = $visitorForm->circle->circleName ?? '';
+            $visitor->circleId = $visitorForm->circle_id;
+            $visitor->meetingId = $meetingId;
+            $visitor->invitedBy = $request->invitedBy ?? 0;
+            $visitor->knowUs = $request->knowUs ?? $request->knowsUs;
+            $visitor->status = 'Active';
+            $visitor->isUser = 'No';
+            $visitor->save();
+
+            // 2. Insert into meeting_invitations table
+            try {
+                $invitation = new MeetingInvitation();
+                $invitation->meetingId = $meetingId;
+                $invitation->invitedMemberId = is_numeric($visitor->invitedBy) ? (int)$visitor->invitedBy : 0;
+                $invitation->personName = $request->firstName . ' ' . $request->lastName;
+                $invitation->personEmail = $request->email;
+                $invitation->personContact = $request->mobileNo;
+                $invitation->businessCategoryId = $bCategoryId;
+                $invitation->paymentStatus = 'paid';
+                $invitation->save();
+            } catch (\Throwable $ex) {
+                \Illuminate\Support\Facades\Log::error('MeetingInvitation creation error: ' . $ex->getMessage());
+            }
+
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Registration completed successfully!'
+                ]);
+            }
+
+            return redirect()->back()->with('success', 'Your Registration has been Submitted Successfully!');
+        } catch (\Throwable $th) {
+            ErrorLogger::logError($th, $request->fullUrl());
+
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to submit registration. Please try again.'
+                ], 500);
+            }
+
+            return redirect()->back()->with('error', 'Failed to submit your registration.');
+        }
+    }
 }
+

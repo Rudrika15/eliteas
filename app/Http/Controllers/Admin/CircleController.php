@@ -21,6 +21,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use App\Models\VisitorForm;
+use Illuminate\Support\Facades\Crypt;
 
 class CircleController extends Controller
 {
@@ -1015,4 +1017,61 @@ class CircleController extends Controller
             return view('servererror');
         }
     }
+
+    public function visitorForm($id)
+    {
+        try {
+            $circle = Circle::findOrFail($id);
+            $visitorForm = VisitorForm::where('circle_id', $id)->first();
+            $shareableUrl = null;
+
+            if ($visitorForm) {
+                $encryptedCode = Crypt::encryptString($visitorForm->id);
+                $shareableUrl = route('visitor.public.registerForm', ['code' => $encryptedCode]);
+            }
+
+            return view('admin.circle.visitorForm', compact('circle', 'visitorForm', 'shareableUrl'));
+        } catch (\Throwable $th) {
+            ErrorLogger::logError($th, request()->fullUrl());
+            return view('servererror');
+        }
+    }
+
+    public function storeVisitorForm(Request $request, $id)
+    {
+        $request->validate([
+            'description' => 'required',
+            'date' => 'required|date',
+            'time' => 'required',
+            'venue' => 'required',
+            'visitor_registration_fee' => 'required|numeric|min:0',
+        ]);
+
+        try {
+            $circle = Circle::findOrFail($id);
+
+            $visitorForm = VisitorForm::updateOrCreate(
+                ['circle_id' => $id],
+                [
+                    'description' => $request->description,
+                    'date' => $request->date,
+                    'time' => $request->time,
+                    'venue' => $request->venue,
+                    'visitor_registration_fee' => $request->visitor_registration_fee,
+                    'status' => 'Active',
+                    'created_by' => Auth::id(),
+                ]
+            );
+
+            $encryptedCode = Crypt::encryptString($visitorForm->id);
+            $visitorForm->form_slug = $encryptedCode;
+            $visitorForm->save();
+
+            return redirect()->back()->with('success', 'Visitor Form saved successfully!');
+        } catch (\Throwable $th) {
+            ErrorLogger::logError($th, $request->fullUrl());
+            return redirect()->back()->with('error', 'Failed to save Visitor Form');
+        }
+    }
 }
+

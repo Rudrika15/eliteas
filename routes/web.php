@@ -108,6 +108,10 @@ Route::get('/visitor-form', [VisitorFormController::class, 'visitorForm'])->name
 Route::post('visitor-form-store', [VisitorFormController::class, 'store'])->name('visitor.form.store');
 Route::post('/razorpay-payment-visitor', [PaymentController::class, 'storePaymentDetails'])->name('razorpay.payment.store.visitor');
 
+// Encrypted Visitor Form Public Routes
+Route::get('/visitor-form-register', [VisitorFormController::class, 'showEncryptedVisitorForm'])->name('visitor.public.registerForm');
+Route::post('/visitor-form-register/store', [VisitorFormController::class, 'storeEncryptedVisitorForm'])->name('visitor.public.storeForm');
+
 Route::get('/event-link/{slug}', [EventController::class, 'eventLink'])->name('event.link')->middleware('signed');
 
 // event invite
@@ -333,6 +337,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('circle/delete/{id?}', [CircleController::class, 'delete'])->name('circle.delete');
     Route::get('circle/memberList/{id?}', [CircleController::class, 'memberList'])->name('circle.memberList');
     Route::get('circle/report/{id?}', [CircleController::class, 'report'])->name('circle.report');
+    Route::get('circle/visitor-form/{id}', [CircleController::class, 'visitorForm'])->name('circle.visitorForm');
+    Route::post('circle/visitor-form/store/{id}', [CircleController::class, 'storeVisitorForm'])->name('circle.visitorForm.store');
 
     Route::get('/circlemember/index', [CircleMemberController::class, 'index'])->name('circlemember.index');
     Route::get('/filter-table-data', [CircleMemberController::class, 'filterTableData'])->name('filterTableData');
