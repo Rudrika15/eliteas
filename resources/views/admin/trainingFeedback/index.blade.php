@@ -81,7 +81,7 @@
                                                     </button>
                                                 @endif
                                             @else
-                                                <button type="button disabled" class="btn btn-bg-orange pay">Already Registered</button>
+                                                <button type="button" disabled class="btn btn-bg-orange">Already Registered</button>
                                             @endif
                                         </div>
                                     </div>
@@ -118,16 +118,20 @@
 
             payButtons.forEach(function(button) {
                 button.addEventListener('click', function(e) {
-                    // Get the closest event card (to scope this button's context)
                     var card = e.target.closest('.event-card');
-
-                    // Safely get the amount text from this specific card
-                    var amountElement = card.querySelector('.price');
-                    var amountText = amountElement ? amountElement.textContent.trim() : '0';
-                    var amount = parseInt(amountText.replace(/[^\d]/g, '')) * 100;
-
-                    // Get training ID from data attribute
                     var trainingId = button.getAttribute('data-training-id');
+
+                    var amountElement = card ? card.querySelector('.price') : null;
+                    var amountText = amountElement ? amountElement.textContent.trim() : '0';
+                    var parsedAmount = parseInt(amountText.replace(/[^\d]/g, '')) || 0;
+
+                    // If training is free (fees == 0), register directly without opening Razorpay
+                    if (parsedAmount <= 0) {
+                        window.location.href = "{{ route('training.register') }}/" + trainingId;
+                        return;
+                    }
+
+                    var amount = parsedAmount * 100;
 
                     console.log('Amount:', amount);
                     console.log('Training ID:', trainingId);

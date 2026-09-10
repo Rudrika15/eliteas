@@ -149,7 +149,7 @@ class TrainingController extends Controller
             $request->validate([
                 'trainingMasterId' => 'required|exists:training_masters,id',
                 'title' => 'required|string|max:255',
-                'fees' => 'required|numeric',
+                'fees' => 'nullable|numeric|min:0',
                 'type' => 'required|string',
                 'meetingLink' => 'nullable|url',
                 'venue' => 'nullable|string|max:255',
@@ -165,12 +165,11 @@ class TrainingController extends Controller
             $training = new Training;
             $training->trainingMasterId = $request->trainingMasterId;
             $training->title = $request->title;
-            $training->fees = $request->fees;
+            $training->fees = $request->fees ?? 0;
             $training->type = $request->type;
             $training->meetingLink = $request->meetingLink;
             $training->venue = $request->venue;
             $training->training_for = $request->training_for;
-
             $uniqueId = time();
 
             if ($request->hasFile('training_thumb')) {
@@ -251,7 +250,6 @@ class TrainingController extends Controller
             // Redirect the user after successful submission
             return redirect()->route('training.index')->with('success', 'Training details saved successfully.');
         } catch (\Throwable $th) {
-            // throw $th;
             ErrorLogger::logError($th, request()->fullUrl());
 
             return view('servererror');
@@ -284,6 +282,7 @@ class TrainingController extends Controller
             // Validate the incoming request
             $validatedData = $request->validate([
                 'training_for' => 'required|string',
+                'fees' => 'nullable|numeric|min:0',
             ]);
 
             // Update the fields with validated data
@@ -291,7 +290,7 @@ class TrainingController extends Controller
 
             $training->trainingMasterId = $request->trainingMasterId;
             $training->title = $request->title;
-            $training->fees = $request->fees;
+            $training->fees = $request->fees ?? 0;
             $training->type = $request->type;
             $training->meetingLink = $request->meetingLink;
             $training->venue = $request->venue;

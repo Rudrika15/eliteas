@@ -163,6 +163,10 @@
             border-color: #223366;
         }
 
+        .upload-box.border-danger, .upload-box.is-invalid {
+            border-color: #dc3545 !important;
+        }
+
         .upload-content {
             color: #888;
             font-size: 16px;
@@ -355,7 +359,7 @@
                 </div>
 
                 <div class="modal-body">
-                    <form id="circlecallForm" enctype="multipart/form-data" method="post" action="{{ route('circlecall.store') }}">
+                    <form id="circlecallForm" enctype="multipart/form-data" method="post" action="{{ route('circlecall.store') }}" novalidate>
                         @csrf
 
                         <div class="card p-3 shadow-sm border-0 rounded">
@@ -402,7 +406,7 @@
                         @endif --}}
 
 
-                            @if (auth()->user()->hasRole('Member'))
+                            @if (auth()->user()->hasRole(['Member', 'Digital Member']))
                                 <!-- Circle Dropdown -->
                                 <div class="mb-3">
                                     <label for="circleId" class="form-label fw-bold color-blue required">
@@ -410,14 +414,16 @@
                                     </label>
                                     <select class="form-select @error('circleId') is-invalid @enderror" id="circleId" name="circleId" required>
                                         <option value="" selected disabled>Select Circle</option>
+                                        <option value="all">All Members (Circle + Digital)</option>
+                                        <option value="digital">Digital Members</option>
                                         @foreach ($circles as $circle)
-                                            <option value="{{ $circle->id }}" {{ old('circleId', auth()->user()->member->circleId) == $circle->id ? 'selected' : '' }}>
+                                            <option value="{{ $circle->id }}" {{ old('circleId', auth()->user()->member?->circleId) == $circle->id ? 'selected' : '' }}>
                                                 {{ $circle->circleName }}
                                             </option>
                                         @endforeach
                                     </select>
                                     @error('circleId')
-                                        <div class="invalid-feedback">This field is required.</div>
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
                                     @enderror
                                 </div>
 
@@ -435,21 +441,19 @@
                                         @endforeach
                                     </select>
                                     @error('memberId')
-                                        <div class="invalid-feedback">This field is required.</div>
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
                                     @enderror
                                 </div>
                             @endif
-
-
 
                             <!-- Meeting Person -->
                             <div class="mb-3">
                                 <label for="meetingPersonName" class="form-label fw-bold color-blue required">Meeting Person
                                     Name <span class="text-danger">*</span></label>
-                                <input type="hidden" id="meetingPersonId" name="meetingPersonId" required value="{{ old('meetingPersonId') }}">
+                                <input type="hidden" id="meetingPersonId" name="meetingPersonId" value="{{ old('meetingPersonId') }}">
                                 <input type="text" class="form-control @error('meetingPersonId') is-invalid @enderror" id="meetingPersonName" placeholder="Select Member" readonly disabled value="{{ old('meetingPersonName') }}">
                                 @error('meetingPersonId')
-                                    <div class="invalid-feedback">This field is required.</div>
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
                             </div>
 
@@ -457,7 +461,10 @@
                             <div class="mb-3">
                                 <label for="meetingPlace" class="form-label fw-bold color-blue required">Meeting Place Name
                                     <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="meetingPlace" name="meetingPlace" placeholder="Enter place" required value="{{ old('meetingPlace') }}">
+                                <input type="text" class="form-control @error('meetingPlace') is-invalid @enderror" id="meetingPlace" name="meetingPlace" placeholder="Enter place" required value="{{ old('meetingPlace') }}">
+                                @error('meetingPlace')
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <!-- Meeting Image Upload -->
@@ -468,11 +475,11 @@
                                         <i class="fas fa-image upload-icon"></i>
                                         <span>Upload Meeting Image</span>
                                     </div>
-                                    <input type="file" class="file-input" id="meetingImage" name="meetingImage" accept="image/*" onchange="previewPhoto(event)" required>
+                                    <input type="file" class="file-input @error('meetingImage') is-invalid @enderror" id="meetingImage" name="meetingImage" accept="image/*" onchange="previewPhoto(event)" required>
                                 </label>
                                 <span class="text-danger mt-1 d-block">* File size: Max 2MB</span>
                                 @error('meetingImage')
-                                    <div class="invalid-feedback d-block">The Maximum file size is 2MB</div>
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
 
                                 <!-- Image Preview -->
@@ -481,25 +488,7 @@
                                 </div>
                             </div>
 
-
-                            {{-- @if (auth()->user()->hasRole('Member'))
-                        <!-- Date -->
-                        <div class="mb-3">
-                            <label for="date" class="form-label fw-bold color-blue required">
-                                Date <span class="text-danger">*</span>
-                            </label>
-                            <?php
-                            $nearestDate = $scheduleDate->min();
-                            $nearestDate = $nearestDate ? \Illuminate\Support\Carbon::parse($nearestDate)->subDay()->format('Y-m-d') : \Illuminate\Support\Carbon::now()->format('Y-m-d');
-                            $selectedDate = request()->input('date') ?? (\Illuminate\Support\Carbon::now()->format('Y-m-d') == $nearestDate ? \Illuminate\Support\Carbon::now()->format('Y-m-d') : $nearestDate);
-                            ?>
-                            <input type="date" class="form-control" id="date" name="date" min="{{ $lastDate }}"
-                                max="{{ $nearestDate }}" value="{{ old('date', $selectedDate) }}" required>
-                        </div>
-                        @endif --}}
-
-
-                            @if (auth()->user()->hasRole('Member'))
+                            @if (auth()->user()->hasRole(['Member', 'Digital Member']))
                                 <!-- Date -->
                                 <div class="mb-3">
                                     <label for="date" class="form-label fw-bold color-blue required">
@@ -508,43 +497,30 @@
                                     <?php
                                     // Calculate allowed range
                                     $today = \Illuminate\Support\Carbon::today()->format('Y-m-d');
-                                    // $pastLimit = \Illuminate\Support\Carbon::today()->format('Y-m-d');
                                     
                                     if (isset($isLocked) && $isLocked && isset($lockedEndDate)) {
                                         $lockedEnd = \Illuminate\Support\Carbon::parse($lockedEndDate);
-                                        // If locked, start from the day AFTER the lock ends
                                         $minDate = $lockedEnd->addDay()->format('Y-m-d');
-                                        // Ensure we don't go back further than 15 days anyway (though lock usually covers it)
-                                        $pastLimit = $minDate > $pastLimit ? $minDate : $pastLimit;
+                                        $pastLimit = isset($pastLimit) && $minDate > $pastLimit ? $minDate : $pastLimit;
                                     }
                                     
                                     // Default selected date
                                     $selectedDate = old('date', request()->input('date') ?? $today);
                                     ?>
-                                    <input type="date" class="form-control" id="date" name="date" min="{{ $allowedStartDate }}" max="{{ $today }}" value="{{ $selectedDate }}" required>
+                                    <input type="date" class="form-control @error('date') is-invalid @enderror" id="date" name="date" min="{{ $allowedStartDate }}" max="{{ $today }}" value="{{ $selectedDate }}" required>
+                                    @error('date')
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                                    @enderror
                                 </div>
                             @endif
 
-
-
-
-
-                            {{-- @if (auth()->user()->hasRole('Member'))
-                        <!-- Date -->
-                        <div class="mb-3">
-                            <label for="date" class="form-label fw-bold color-blue required">
-                                Date <span class="text-danger">*</span>
-                            </label>
-
-                            <input type="date" class="form-control" id="date" name="date" value="" required>
-                        </div>
-                        @endif --}}
-
-
                             <!-- Remarks -->
                             <div class="mb-3">
-                                <label for="remarks" class="form-label fw-bold color-blue">Remarks <span class="text-danger">*</span> </label>
-                                <textarea class="form-control" id="remarks" name="remarks" placeholder="Enter remarks" required>{{ old('remarks') }}</textarea>
+                                <label for="remarks" class="form-label fw-bold color-blue required">Remarks <span class="text-danger">*</span> </label>
+                                <textarea class="form-control @error('remarks') is-invalid @enderror" id="remarks" name="remarks" placeholder="Enter remarks" required>{{ old('remarks') }}</textarea>
+                                @error('remarks')
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <!-- Button Row -->
@@ -647,6 +623,10 @@
                 reader.onload = function(e) {
                     preview.src = e.target.result;
                     preview.style.display = 'block';
+                    $('#meetingImage').removeClass('is-invalid');
+                    $('.upload-box').removeClass('border-danger is-invalid');
+                    $('.upload-box').next('.client-error').remove();
+                    $('#meetingImage').closest('.mb-3').find('.client-error').remove();
                 }
                 reader.readAsDataURL(file);
             }
@@ -721,10 +701,9 @@
             }
 
             // Load members on page load if a circle is selected by default
-            var defaultCircleId =
-                '{{ auth()->user()->member->circleId }}'; // Get the default circle ID from the authenticated user
+            var defaultCircleId = '{{ auth()->user()->member?->circleId ?? "digital" }}';
             if (defaultCircleId) {
-                loadMembers(defaultCircleId); // Load members for the default circle
+                loadMembers(defaultCircleId);
             }
 
             // Handle circle dropdown change event
@@ -755,6 +734,85 @@
                 console.log('Selected Member ID:', memberId);
                 console.log('Selected Member User ID:', userId); // Log the correct userId
                 console.log('Selected Member Name:', firstName + ' ' + lastName);
+            });
+
+            // Input change handlers to remove client-side errors in real-time
+            $('#circleId, #memberId, #meetingPlace, #date, #remarks').on('input change', function() {
+                if ($(this).val()) {
+                    $(this).removeClass('is-invalid');
+                    $(this).next('.client-error').remove();
+                }
+            });
+
+            // Client-side validation for Create IBM modal form
+            $('#circlecallForm').on('submit', function(e) {
+                let isValid = true;
+
+                // Clear existing client-side errors
+                $('.client-error').remove();
+                $('#circlecallForm .is-invalid').removeClass('is-invalid');
+                $('.upload-box').removeClass('border-danger is-invalid');
+
+                // Validate Circle
+                const circleSelect = $('#circleId');
+                if (circleSelect.length && (!circleSelect.val() || circleSelect.val() === '')) {
+                    isValid = false;
+                    circleSelect.addClass('is-invalid');
+                    circleSelect.after('<div class="invalid-feedback d-block client-error">Please select a circle.</div>');
+                }
+
+                // Validate Member
+                const memberSelect = $('#memberId');
+                if (memberSelect.length && (!memberSelect.val() || memberSelect.val() === '')) {
+                    isValid = false;
+                    memberSelect.addClass('is-invalid');
+                    memberSelect.after('<div class="invalid-feedback d-block client-error">Please select a member.</div>');
+                }
+
+                // Validate Meeting Place
+                const meetingPlaceInput = $('#meetingPlace');
+                if (!$.trim(meetingPlaceInput.val())) {
+                    isValid = false;
+                    meetingPlaceInput.addClass('is-invalid');
+                    meetingPlaceInput.after('<div class="invalid-feedback d-block client-error">Please enter the meeting place.</div>');
+                }
+
+                // Validate Meeting Image
+                const meetingImageInput = $('#meetingImage');
+                const uploadBox = $('.upload-box');
+                const photoPreview = $('#photoPreview');
+                const previewSrc = photoPreview.length ? photoPreview.attr('src') : '';
+                const hasValidPreview = previewSrc && !previewSrc.endsWith('img/profile.png') && !previewSrc.includes('profile.png');
+                
+                if (meetingImageInput.length && (!meetingImageInput[0].files || meetingImageInput[0].files.length === 0) && !hasValidPreview) {
+                    isValid = false;
+                    meetingImageInput.addClass('is-invalid');
+                    uploadBox.addClass('border-danger is-invalid');
+                    if (uploadBox.next('.client-error').length === 0) {
+                        uploadBox.after('<div class="invalid-feedback d-block client-error mt-1">Please upload a meeting image.</div>');
+                    }
+                }
+
+                // Validate Date
+                const dateInput = $('#date');
+                if (dateInput.length && !dateInput.val()) {
+                    isValid = false;
+                    dateInput.addClass('is-invalid');
+                    dateInput.after('<div class="invalid-feedback d-block client-error">Please select a date.</div>');
+                }
+
+                // Validate Remarks
+                const remarksInput = $('#remarks');
+                if (!$.trim(remarksInput.val())) {
+                    isValid = false;
+                    remarksInput.addClass('is-invalid');
+                    remarksInput.after('<div class="invalid-feedback d-block client-error">Please enter remarks.</div>');
+                }
+
+                if (!isValid) {
+                    e.preventDefault();
+                    return false;
+                }
             });
         });
     </script>

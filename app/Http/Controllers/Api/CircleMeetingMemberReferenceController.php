@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Circle;
 use App\Models\CircleMeeting;
 use App\Models\CircleMeetingMembersBusiness;
 use App\Models\CircleMeetingMembersReference;
@@ -35,6 +36,9 @@ class CircleMeetingMemberReferenceController extends Controller
             $refGiver->transform(function ($item) {
                 if ($item->members) {
                     $item->members->induction_count = Member::where('sponsoredBy', $item->members->id)->count();
+                    if (!$item->members->circle) {
+                        $item->members->setRelation('circle', new Circle(['id' => null, 'circleName' => 'Digital Member']));
+                    }
                 } else {
                     $item->induction_count = 0;
                 }
@@ -66,6 +70,9 @@ class CircleMeetingMemberReferenceController extends Controller
             $refReceiver->transform(function ($item) {
                 if ($item->refGiver) {
                     $item->refGiver->induction_count = Member::where('sponsoredBy', $item->refGiver->id)->count() ?? 0;
+                    if (!$item->refGiver->circle) {
+                        $item->refGiver->setRelation('circle', new Circle(['id' => null, 'circleName' => 'Digital Member']));
+                    }
                 }
 
                 return $item;

@@ -65,31 +65,45 @@ class PaymentController extends Controller
                 // 'date' => 'required|date',
             ]);
 
-            // Store the payment ID in the table
-            $payment = new Razorpay;
-            $payment->r_payment_id = $request->input('paymentId');
-            $payment->user_email = Auth::user()->email;
-            $payment->amount = $request->input('amount') / 100;
-            $payment->save();
+            $trainingId = $request->input('trainingId');
+            $paymentId = $request->input('paymentId');
+            $rawAmount = $request->input('amount', 0);
+            $amount = $rawAmount ? ($rawAmount / 100) : 0;
 
-            // Register for the training
-            $register = new TrainingRegister;
-            $register->userId = Auth::user()->id;
-            $register->trainingId = $request->input('trainingId');
-            $register->save();
+            if ($paymentId && $amount > 0) {
+                // Store the payment ID in the table
+                $payment = new Razorpay;
+                $payment->r_payment_id = $paymentId;
+                $payment->user_email = Auth::user()->email;
+                $payment->amount = $amount;
+                $payment->save();
+            }
 
-            // Store the payment details
-            $allPayments = new AllPayments;
-            $allPayments->memberId = $register->userId;
-            $allPayments->amount = $payment->amount;
-            $allPayments->paymentType = 'RazorPay'; // Hardcoded for RazorPay
-            $allPayments->date = now()->format('Y-m-d');
-            $allPayments->paymentMode = 'Training Register';
-            $allPayments->remarks = $payment->r_payment_id;
-            $allPayments->save();
+            // Register for the training if not already registered
+            $existing = TrainingRegister::where('userId', Auth::user()->id)
+                ->where('trainingId', $trainingId)
+                ->first();
 
-            // Return a success response
-            return response()->json(['message' => 'Payment ID stored successfully'], 200);
+            if (! $existing) {
+                $register = new TrainingRegister;
+                $register->userId = Auth::user()->id;
+                $register->trainingId = $trainingId;
+                $register->save();
+            }
+
+            if ($paymentId && $amount > 0) {
+                // Store the payment details
+                $allPayments = new AllPayments;
+                $allPayments->memberId = Auth::user()->id;
+                $allPayments->amount = $amount;
+                $allPayments->paymentType = 'RazorPay';
+                $allPayments->date = now()->format('Y-m-d');
+                $allPayments->paymentMode = 'Training Register';
+                $allPayments->remarks = $paymentId;
+                $allPayments->save();
+            }
+
+            return response()->json(['message' => 'Training registered successfully'], 200);
         } catch (\Throwable $th) {
             // Log the error using the ErrorLogger utility
             ErrorLogger::logError($th, $request->fullUrl());

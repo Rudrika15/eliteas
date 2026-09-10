@@ -209,24 +209,28 @@ class TrainingController extends Controller
     {
         try {
             $trainingId = $request->trainingId;
-            $trainerId = $request->trainerId;
 
-            $register = new TrainingRegister;
-            $register->userId = Auth::user()->id;
-            $register->trainingId = $trainingId;
-            // $register->trainerId = $trainerId;
-            $register->save();
+            $existing = TrainingRegister::where('userId', Auth::user()->id)
+                ->where('trainingId', $trainingId)
+                ->first();
 
-            $payment = new Razorpay;
-            $payment->r_payment_id = $request->paymentId;
-            $payment->user_email = Auth::user()->email;
-            $payment->amount = $request->amount;
-            $payment->save();
+            if (! $existing) {
+                $register = new TrainingRegister;
+                $register->userId = Auth::user()->id;
+                $register->trainingId = $trainingId;
+                $register->save();
+            }
+
+            if ($request->filled('paymentId')) {
+                $payment = new Razorpay;
+                $payment->r_payment_id = $request->paymentId;
+                $payment->user_email = Auth::user()->email;
+                $payment->amount = $request->amount ?? 0;
+                $payment->save();
+            }
 
             return Utils::sendResponse([], 'Training Registered Successfully', 200);
         } catch (\Throwable $th) {
-            throw $th;
-
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }

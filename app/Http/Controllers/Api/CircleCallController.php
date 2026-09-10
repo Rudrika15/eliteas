@@ -139,6 +139,9 @@ class CircleCallController extends Controller
             $circleCalls->transform(function ($call) {
                 if ($call->meetingPerson) {
                     $call->meetingPerson->induction_count = Member::where('sponsoredBy', $call->meetingPerson->id)->count() ?? 0;
+                    if (!$call->meetingPerson->circle) {
+                        $call->meetingPerson->setRelation('circle', new Circle(['id' => null, 'circleName' => 'Digital Member']));
+                    }
                 }
 
                 return $call;
@@ -214,6 +217,9 @@ class CircleCallController extends Controller
             $callWith->transform(function ($call) {
                 if ($call->member) {
                     $call->member->induction_count = Member::where('sponsoredBy', $call->member->id)->count() ?? 0;
+                    if (!$call->member->circle) {
+                        $call->member->setRelation('circle', new Circle(['id' => null, 'circleName' => 'Digital Member']));
+                    }
                 }
 
                 return $call;

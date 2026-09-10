@@ -155,7 +155,7 @@ class CircleMeetingMemberBusinessController extends Controller
     {
         try {
 
-            if (! auth()->user()->hasRole('Member')) {
+            if (! auth()->user()->hasRole(['Member', 'Digital Member'])) {
                 return Utils::errorResponse(['error' => 'Unauthorized'], 'Unauthorized access', 403);
             }
 
@@ -195,7 +195,7 @@ class CircleMeetingMemberBusinessController extends Controller
     {
         try {
 
-            if (! auth()->user()->hasRole('Member')) {
+            if (! auth()->user()->hasRole(['Member', 'Digital Member'])) {
                 return Utils::errorResponse(['error' => 'Unauthorized'], 'Unauthorized access', 403);
             }
 

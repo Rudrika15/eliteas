@@ -31,12 +31,6 @@ class CircleCallController extends Controller
         $this->middleware('permission:circle-call-create', ['only' => ['create', 'store']]);
         $this->middleware('permission:circle-call-edit', ['only' => ['edit', 'update']]);
         $this->middleware('permission:circle-call-delete', ['only' => ['delete']]);
-        $this->middleware('permission:get-member-by-circle', ['only' => ['getMembersByCircle']]);
-        $this->middleware('permission:get-circle', ['only' => ['getCircle']]);
-        $this->middleware('permission:get-circle-members', ['only' => ['getCircleMembers']]);
-        $this->middleware('permission:get-member', ['only' => ['getMember']]);
-        $this->middleware('permission:get-member-for-ref', ['only' => ['getMemberForRef']]);
-        $this->middleware('permission:get-member-for-ref-Giver', ['only' => ['getMemberForRefGiver']]);
     }
 
     // public function index(Request $request)
@@ -311,9 +305,17 @@ class CircleCallController extends Controller
     {
         $circleId = $request->circleId;
 
-        if ($circleId == 'digital') {
-            $query = Member::where('circleId', null)
+        if ($circleId == 'all') {
+            $query = Member::with('circle')
                 ->where('status', 'Active')
+                ->where('userId', '<>', Auth::id());
+        } elseif ($circleId == 'digital') {
+            $query = Member::with('circle')
+                ->where('status', 'Active')
+                ->where(function ($q) {
+                    $q->whereNull('circleId')
+                      ->orWhere('membershipType', 'Digital Membership');
+                })
                 ->where('userId', '<>', Auth::id());
         } else {
             $query = Member::with('circle')
@@ -573,12 +575,33 @@ class CircleCallController extends Controller
 
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $rules = [
             'meetingPlace' => 'required',
-            // 'date' => 'required|date',
+            'date' => 'required|date',
             'remarks' => 'required',
-            'meetingImage' => 'mimes:jpeg,jpg,png,gif|max:20480|required',
-        ]);
+            'meetingImage' => 'required|image|mimes:jpeg,jpg,png,gif,webp|max:20480',
+        ];
+
+        if (Auth::user()->hasRole(['Member', 'Digital Member'])) {
+            $rules['circleId'] = 'required';
+            $rules['memberId'] = 'required';
+            $rules['meetingPersonId'] = 'required';
+        }
+
+        $messages = [
+            'circleId.required' => 'Please select a circle.',
+            'memberId.required' => 'Please select a member.',
+            'meetingPersonId.required' => 'Please select a member.',
+            'meetingPlace.required' => 'Please enter the meeting place.',
+            'date.required' => 'Please select a date.',
+            'remarks.required' => 'Please enter remarks.',
+            'meetingImage.required' => 'Please upload a meeting image.',
+            'meetingImage.image' => 'The file must be a valid image.',
+            'meetingImage.mimes' => 'Allowed image formats are: jpeg, jpg, png, gif, webp.',
+            'meetingImage.max' => 'The image size cannot exceed 20MB.',
+        ];
+
+        $validator = Validator::make($request->all(), $rules, $messages);
 
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();

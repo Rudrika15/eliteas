@@ -87,7 +87,7 @@
                                         <option value="{{ old('circleId') }}" selected>{{ old('circleName') }}</option>
                                     @else
                                         <option value="{{ $refGiver->circleId }}" selected>
-                                            {{ $refGiver->members->circle->circleName ?? '-' }}
+                                            {{ $refGiver->members->circle->circleName ?? 'Digital Member' }}
                                         </option>
                                     @endif
                                     @foreach ($circles as $circle)

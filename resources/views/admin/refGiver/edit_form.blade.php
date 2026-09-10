@@ -32,7 +32,7 @@
                                     <select class="form-select circle-select" id="circleId_{{ $refGiverData->id }}" data-id="{{ $refGiverData->id }}" name="circleId" required>
                                         <option value="" disabled>Select Circle</option>
                                         <option value="{{ $refGiverData->circleId }}" selected>
-                                            {{ $refGiverData->members->circle->circleName ?? '-' }}
+                                            {{ $refGiverData->members->circle->circleName ?? 'Digital Member' }}
                                         </option>
                                         @foreach ($circles as $circle)
                                             <option value="{{ $circle->id }}">{{ $circle->circleName }}</option>

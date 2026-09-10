@@ -186,7 +186,7 @@
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ optional($refReceiverData->refGiver)->firstName ?? '-' }} {{ optional($refReceiverData->refGiver)->lastName ?? '-' }}</td>
-                                        <td>{{ optional($refReceiverData->refGiver->circle)->circleName ?? '-' }}</td>
+                                        <td>{{ optional($refReceiverData->refGiver->circle)->circleName ?? 'Digital Member' }}</td>
                                         <td>{{ $refReceiverData->created_at ? \Carbon\Carbon::parse($refReceiverData->created_at)->format('d-m-Y') : '-' }}</td>
                                         <td>{{ $refReceiverData->description ?? '-' }}</td>
                                         <td>
@@ -256,7 +256,7 @@
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ optional($refGiverData->members)->firstName ?? '-' }} {{ optional($refGiverData->members)->lastName ?? '-' }}</td>
-                                        <td>{{ optional($refGiverData->members->circle)->circleName ?? '-' }}</td>
+                                        <td>{{ optional($refGiverData->members->circle)->circleName ?? 'Digital Member' }}</td>
                                         <td>{{ $refGiverData->created_at ? \Carbon\Carbon::parse($refGiverData->created_at)->format('d-m-Y') : '-' }}</td>
                                         <td>{{ $refGiverData->description ?? '-' }}</td>
                                         <td>
@@ -374,7 +374,7 @@
                                             @endif --}}
 
 
-                            @if (auth()->user()->hasRole('Member'))
+                            @if (auth()->user()->hasRole(['Member', 'Digital Member']))
                                 <!-- Circle Dropdown -->
                                 <div class="mb-3">
                                     <div class="col-md-12">
@@ -383,8 +383,10 @@
                                         </label>
                                         <select class="form-select @error('circleId') is-invalid @enderror" id="circleId" name="circleId" required>
                                             <option value="" selected disabled>Select Circle</option>
+                                            <option value="all">All Members (Circle + Digital)</option>
+                                            <option value="digital">Digital Members</option>
                                             @foreach ($circles as $circle)
-                                                <option value="{{ $circle->id }}">{{ $circle->circleName }}
+                                                <option value="{{ $circle->id }}" {{ old('circleId', auth()->user()->member?->circleId) == $circle->id ? 'selected' : '' }}>{{ $circle->circleName }}
                                                 </option>
                                             @endforeach
                                         </select>
@@ -708,10 +710,9 @@
             }
 
             // Load members on page load if a circle is selected by default
-            var defaultCircleId =
-                '{{ auth()->user()->member->circleId }}'; // Get the default circle ID from the authenticated user
+            var defaultCircleId = '{{ auth()->user()->member?->circleId ?? "digital" }}';
             if (defaultCircleId) {
-                loadMembers(defaultCircleId); // Load members for the default circle
+                loadMembers(defaultCircleId);
             }
 
             // Handle circle dropdown change event

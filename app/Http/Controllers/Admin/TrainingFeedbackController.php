@@ -196,6 +196,7 @@ class TrainingFeedbackController extends Controller
             // Fetch all published trainings
             $trainings = Training::where('trainingStatus', 'Publish')
                 ->whereDate('date', '>=', now()->format('Y-m-d'))
+                ->where('status', 'Active')
                 ->get();
 
             // Extract training IDs from the collection

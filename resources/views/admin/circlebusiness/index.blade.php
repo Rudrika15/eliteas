@@ -340,13 +340,15 @@
                         @csrf
                         <!-- Circle and Member Selection -->
                         <div class="card p-3 shadow-sm border-0 rounded">
-                            @if (auth()->user()->hasRole('Member'))
+                            @if (auth()->user()->hasRole(['Member', 'Digital Member']))
                                 <div class="mb-3">
                                     <label for="circleId" class="form-label fw-bold color-blue required">Circle <span class="text-danger">*</span></label>
                                     <select class="form-select @error('circleId') is-invalid @enderror" id="circleId" name="circleId" required>
                                         <option value="" selected disabled>Select Circle</option>
+                                        <option value="all">All Members (Circle + Digital)</option>
+                                        <option value="digital">Digital Members</option>
                                         @foreach ($circles as $circle)
-                                            <option value="{{ $circle->id }}" {{ old('circleId', auth()->user()->member->circleId) == $circle->id ? 'selected' : '' }}>
+                                            <option value="{{ $circle->id }}" {{ old('circleId', auth()->user()->member?->circleId) == $circle->id ? 'selected' : '' }}>
                                                 {{ $circle->circleName }}
                                             </option>
                                         @endforeach
@@ -619,9 +621,9 @@
             }
 
             // Load members on page load if a circle is selected by default
-            var defaultCircleId = '{{ auth()->user()->member->circleId ?? '' }}'; // Get the default circle ID from the authenticated user
+            var defaultCircleId = '{{ auth()->user()->member?->circleId ?? "digital" }}';
             if (defaultCircleId) {
-                loadMembers(defaultCircleId); // Load members for the default circle
+                loadMembers(defaultCircleId);
             }
 
             // Handle circle dropdown change event

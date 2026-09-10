@@ -13,13 +13,20 @@ class ChangePasswordController extends Controller
     public function changePassword(Request $request)
     {
         try {
+            // Remove all spaces from password inputs
+            if ($request->has('newPassword')) {
+                $request->merge(['newPassword' => preg_replace('/\s+/', '', $request->newPassword)]);
+            }
+            if ($request->has('confirmPassword')) {
+                $request->merge(['confirmPassword' => preg_replace('/\s+/', '', $request->confirmPassword)]);
+            }
+
             // Validate the request
             $request->validate([
                 'currentPassword' => 'required',
                 'newPassword' => 'required|string|min:6',
                 'confirmPassword' => 'required|string|same:newPassword',
             ]);
-
             // Check if the current password matches the stored password
             if (! Hash::check($request->currentPassword, Auth::user()->password)) {
                 return Utils::errorResponse(
@@ -28,10 +35,21 @@ class ChangePasswordController extends Controller
                     422
                 );
             }
+            $user = Auth::user();
+
+            // Check for both Circle Member and Digital Member roles
+            if (! $user || (! $user->hasRole('Member') && ! $user->hasRole('Digital Member'))) {
+                return Utils::errorResponse(
+                    ['error' => 'Unauthorized. Password change is allowed for Circle Members and Digital Members only.'],
+                    'Unauthorized',
+                    403
+                );
+            }
+
+            $newPassword = $request->newPassword;
 
             // Update the user's password
-            $user = Auth::user();
-            $user->password = Hash::make($request->newPassword);
+            $user->password = Hash::make($newPassword);
             $user->save();
 
             // Return a success response

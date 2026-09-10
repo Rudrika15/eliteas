@@ -253,15 +253,6 @@
                     <input type="text" class="search-input" placeholder="Search Member or Circle Name">
                 </a>
             </div>
-            <div class="nav-item dropdown">
-                <a class="nav-link nav-icon position-relative hover:bg-orange" href="{{ route('notifications') }}">
-                    <i class="bi bi-bell fs-5"></i>
-
-                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                        {{ $notificationCount ?? 0 }}
-                    </span>
-                </a>
-            </div>
         </div>
         </div>
 
@@ -493,6 +484,15 @@
                 </li>
                 @endif --}}
                 {{-- @endrole --}}
+
+                <li class="nav-item pe-3">
+                    <a class="nav-link nav-icon position-relative hover:bg-orange" href="{{ route('notifications') }}">
+                        <i class="bi bi-bell fs-5"></i>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            {{ $notificationCount ?? 0 }}
+                        </span>
+                    </a>
+                </li>
 
                 @role('Admin')
                     <li class="nav-item pe-3">

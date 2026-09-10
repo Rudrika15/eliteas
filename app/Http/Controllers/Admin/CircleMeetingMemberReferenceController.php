@@ -409,9 +409,8 @@ class CircleMeetingMemberReferenceController extends Controller
 
     public function store(Request $request)
     {
-
         // $this->validate($request, [
-        //     // 'dateTime' => 'required',
+            //     // 'dateTime' => 'required',
         //     // 'totalMeeting' => 'required',
         //     // 'refGiven' => 'required',
         //     // 'refTaken' => 'required',
@@ -419,15 +418,14 @@ class CircleMeetingMemberReferenceController extends Controller
         //     // 'busTaken' => 'required',
         //     // 'hotelName' => 'required',
         // ]);
-
+        
         if ($request->group === 'external') {
             $this->validate($request, [
                 'contactNameExternal' => 'required|string',
                 'contactNo' => 'required',
             ]);
         }
-
-        // return $request;
+        
         try {
             $refGiver = new CircleMeetingMembersReference;
 
@@ -451,28 +449,17 @@ class CircleMeetingMemberReferenceController extends Controller
             $body = Auth::user()->name . ' has given you a reference.';
             Notifications::create([
                 'title' => 'New Reference Received',
-                'body' =>  $body,
+                'body' => $body,
                 'data' => json_encode([
                     'type' => 'reference_created',
-                    'userId' => Auth::user()->id,
                     'memberId' => $request->memberId,
+                    'userId' => Auth::user()->id,
                     'reference_id' => $refGiver->id
                 ])
             ]);
 
-            // $busGiver = new CircleMeetingMembersBusiness();
-            // // $busGiver->memberId = $request->memberId;
-            // $busGiver->businessGiverId = Auth::user()->id;
-            // $busGiver->loginMemberId = $refGiver->memberId;
-            // $busGiver->amount = $request->amount;
-            // $busGiver->date = Carbon::now()->toDateString();
-            // $busGiver->status = 'Active';
-            // $busGiver->save();
-
-            // return redirect()->route('refGiver.index')->with('success', ' Created Successfully!');
-            return redirect()->back()->with('success', ' Created Successfully!');
+            return redirect()->back()->with('success', 'Created Successfully!');
         } catch (\Throwable $th) {
-            // throw $th;
             ErrorLogger::logError(
                 $th,
                 $request->fullUrl()
