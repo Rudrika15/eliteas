@@ -1170,7 +1170,7 @@ $nearestTraining = \App\Models\Training::where('status', 'Active')->where('train
 
 $nearestEvents = \App\Models\Event::where('eventStatus', 'Publish')->where('status', 'Active')->whereDate('event_date', '>=', $currentDate)->whereIn('slot_type', ['Digital', 'All'])->orderBy('event_date', 'asc')->get();
 
-$latestDigitalMembers = Member::with('circle')->where('status', 'Active')->where('membershipType', 'Digital Membership')->orderBy('created_at', 'desc')->take(4)->get();
+$latestMembers = $latestMembers ?? Member::with('circle')->where('status', 'Active')->orderBy('created_at', 'desc')->take(4)->get();
 @endphp
 
 <div class="modal fade" id="updateProfileModal" tabindex="-1">
@@ -1196,7 +1196,7 @@ $latestDigitalMembers = Member::with('circle')->where('status', 'Active')->where
 
                     {{-- ================= PERSONAL ================= --}}
                     @php
-                    $missingFields = [];
+                    $missingFields = $missingFields ?? [];
                     $personalFields = ['Title', 'First Name', 'Last Name', 'Gender', 'Birth Date'];
                     $personal = collect($missingFields)->filter(fn($f) => in_array($f, $personalFields));
                     $col = $personal->count() == 1 ? 'col-12' : 'col-6';
@@ -1425,7 +1425,7 @@ $latestDigitalMembers = Member::with('circle')->where('status', 'Active')->where
     </div>
 </div>
 
-@if (count($missingFields) > 0 && !session('profileUpdated'))
+@if (isset($missingFields) && count($missingFields) > 0 && !session('profileUpdated'))
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         var myModal = new bootstrap.Modal(document.getElementById('updateProfileModal'));
@@ -2188,7 +2188,7 @@ $cityId = \App\Models\Member::where('userId', auth()->id())->value('cityId');
     </div>
 </div>
 @endif
-@if ($latestDigitalMembers && $latestDigitalMembers->count() > 0)
+@if (isset($latestMembers) && $latestMembers && $latestMembers->count() > 0)
 <div class="card shadow-sm border-0 mt-3" style="border-radius: 12px; overflow: hidden;">
 
     <!-- Card Header -->
@@ -2209,7 +2209,7 @@ $cityId = \App\Models\Member::where('userId', auth()->id())->value('cityId');
     <div class="card-body p-3">
 
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
-            @forelse ($latestDigitalMembers->take(4) as $member)
+            @forelse ($latestMembers->take(4) as $member)
             <div class="col">
                 <div class="fb-card shadow-sm h-100">
 
@@ -2626,10 +2626,11 @@ $posts = \App\Models\Post::with(['user.member', 'media'])
 $birthdaysToday = \App\Models\Member::whereMonth('birthDate', Carbon\Carbon::today()->month)
 ->whereDay('birthDate', Carbon\Carbon::today()->day)
 ->get();
-// $latestMembers = Member::with('circle')->where('status', 'Active')->orderBy('created_at', 'desc')->take(4)->get();
+
+$latestMembers = $latestMembers ?? Member::with('circle')->where('status', 'Active')->orderBy('created_at', 'desc')->take(4)->get();
 @endphp
 <!-- Change Password Modal -->
-@if ($showChangePasswordModal)
+@if (isset($showChangePasswordModal) && $showChangePasswordModal)
 <div id="changePasswordPopup" style="
     position: fixed;
     top: 0;
@@ -2825,7 +2826,7 @@ $birthdaysToday = \App\Models\Member::whereMonth('birthDate', Carbon\Carbon::tod
 $member = \App\Models\Member::where('userId', auth()->id())->first();
 @endphp
 
-@if (!$showChangePasswordModal && (!$member || !$member->terms_accepted))
+@if ((!isset($showChangePasswordModal) || !$showChangePasswordModal) && (!$member || !$member->terms_accepted))
 <!-- Modal -->
 <div id="termsModal" style="
             position: fixed;
@@ -2910,12 +2911,13 @@ $member = \App\Models\Member::where('userId', auth()->id())->first();
             {{-- Body --}}
             <div class="modal-body px-4 pb-4 pt-3" style="color:#333;font-size:15px;font-family:sans-serif;">
 
-                <form method="POST" action="{{ route('member.update', $member->id) }}" enctype="multipart/form-data">
+                <form method="POST" action="{{ route('member.update', $member->id ?? 0) }}" enctype="multipart/form-data">
                     @csrf
-                    <input type="hidden" name="id" value="{{ $member->id }}">
+                    <input type="hidden" name="id" value="{{ $member->id ?? '' }}">
 
                     {{-- ================= PERSONAL ================= --}}
                     @php
+                    $missingFields = $missingFields ?? [];
                     $personalFields = ['Title', 'First Name', 'Last Name', 'Gender', 'Birth Date'];
                     $personal = collect($missingFields)->filter(fn($f) => in_array($f, $personalFields));
                     $col = $personal->count() == 1 ? 'col-12' : 'col-6';
@@ -3144,7 +3146,7 @@ $member = \App\Models\Member::where('userId', auth()->id())->first();
     </div>
 </div>
 
-@if (!$showChangePasswordModal && $member && $member->terms_accepted && count($missingFields) > 0 && !session('profileUpdated'))
+@if ((!isset($showChangePasswordModal) || !$showChangePasswordModal) && isset($member) && $member && $member->terms_accepted && isset($missingFields) && count($missingFields) > 0 && !session('profileUpdated'))
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         var myModal = new bootstrap.Modal(document.getElementById('updateProfileModal'));
@@ -5204,7 +5206,8 @@ $sponsors = \App\Models\Sponsors::where('status', 'Active')->whereNotNull('image
     </div>
 </div>
 @endif
-@if ($latestCircleMembers && $latestCircleMembers->count() > 0)
+@if (isset($latestMembers) && $latestMembers && $latestMembers->count() > 0)
+
 <div class="card shadow-sm border-0 mt-3" style="border-radius: 12px; overflow: hidden;">
 
     <!-- Card Header -->
@@ -5225,7 +5228,8 @@ $sponsors = \App\Models\Sponsors::where('status', 'Active')->whereNotNull('image
     <div class="card-body p-3">
 
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
-            @forelse ($latestCircleMembers->take(4) as $member)
+            @forelse ($latestMembers->take(4) as $member)
+           
             <div class="col">
                 <div class="fb-card shadow-sm h-100">
 

@@ -368,7 +368,12 @@ class HomeController extends Controller
 
             if (Auth::user()->hasRole('Digital Member')) {
                 // Digital Member Dashboard View
-                return view('home')->with(['message', 'Digital Member Dashboard Coming Soon...', 'show_profile_popup' => true]);
+                $latestMembers = Member::with(['circle', 'user', 'bCategory', 'sponsored'])
+                    ->where('status', 'Active')
+                    ->orderBy('created_at', 'desc')
+                    ->take(4)
+                    ->get();
+                return view('home', compact('latestMembers'))->with(['message', 'Digital Member Dashboard Coming Soon...', 'show_profile_popup' => true]);
             }
 
             $membersCount = Member::where('status', 'Active')->count();
@@ -1153,10 +1158,8 @@ class HomeController extends Controller
                         $missingFields[] = 'Address Line 2';
                     }
                 }
-                // $latestCircleMembers = Member::with('circle')->where('status', 'Active')->where('membershipType', 'Supreme - Yearly')->orderBy('created_at', 'desc')->take(4)->get();
-                $latestCircleMembers = Member::with(['circle', 'user', 'bCategory', 'sponsored'])
+                $latestMembers = Member::with(['circle', 'user', 'bCategory', 'sponsored'])
                     ->where('status', 'Active')
-                    ->where('membershipType', 'Supreme - Yearly')
                     ->orderBy('created_at', 'desc')
                     ->take(4)
                     ->get()
@@ -1188,7 +1191,8 @@ class HomeController extends Controller
 
                         return $member;
                     });
-                $latestDigitalMembers = Member::with('circle')->where('status', 'Active')->where('membershipType', 'Digital Membership')->orderBy('created_at', 'desc')->take(4)->get();
+
+                    
                 $categoryNames = $businessCategories->pluck('categoryName');
 
                 // that For The Dahboard change password modal
@@ -1233,7 +1237,7 @@ class HomeController extends Controller
                 });
                 $announcements = Announcements::where('status', 'Active')->latest()->take(5)->get();
 
-                return view('home', compact('circleCount', 'authCircleId', 'categoryNames', 'membersCount', 'signedUrl', 'birthdaysToday', 'templates', 'count', 'monthlyPayments', 'totalAmountDue', 'nearestEvents', 'circlecalls', 'busGiver', 'refGiver', 'induction', 'nearestTraining', 'testimonials', 'meeting', 'businessCategory', 'myInvites', 'todaysBirthdays', 'pendingCount', 'receivedRequests', 'notifications', 'notificationCount', 'posts', 'missingFields', 'member', 'city', 'landmarks', 'latestCircleMembers', 'latestDigitalMembers', 'showChangePasswordModal', 'banners', 'topInductions', 'announcements', 'risingStars'));
+                return view('home', compact('circleCount', 'authCircleId', 'categoryNames', 'membersCount', 'signedUrl', 'birthdaysToday', 'templates', 'count', 'monthlyPayments', 'totalAmountDue', 'nearestEvents', 'circlecalls', 'busGiver', 'refGiver', 'induction', 'nearestTraining', 'testimonials', 'meeting', 'businessCategory', 'myInvites', 'todaysBirthdays', 'pendingCount', 'receivedRequests', 'notifications', 'notificationCount', 'posts', 'missingFields', 'member', 'city', 'landmarks', 'latestMembers', 'showChangePasswordModal', 'banners', 'topInductions', 'announcements', 'risingStars'));
             }
 
             return view('home', compact('circleCount', 'membersCount', 'count', 'nearestTraining', 'businessCategory', 'myInvites', 'birthdaysToday', 'templates', 'pendingCount'));

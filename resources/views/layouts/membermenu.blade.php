@@ -604,7 +604,7 @@
 <span style="color: #1d2856">Member Form </span>
 </a>
 </li> --}}
-
+<!-- 
 @if (Auth::user()->hasRole(['Admin', 'VC']))
 <li class="nav-item">
     <a class="nav-link collapsed " href="{{ route('activity.allActivityByCircle') }}">
@@ -612,7 +612,7 @@
         <span style="color: #1d2856">All Acitivity</span>
     </a>
 </li>
-@endif
+@endif -->
 
 {{-- Support removed from member menu --}}
 {{-- when role is digital member --}}
