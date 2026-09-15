@@ -579,7 +579,7 @@ class CircleCallController extends Controller
             'meetingPlace' => 'required',
             'date' => 'required|date',
             'remarks' => 'required',
-            'meetingImage' => 'required|image|mimes:jpeg,jpg,png,gif,webp|max:20480',
+            // 'meetingImage' => 'required|image|mimes:jpeg,jpg,png,gif,webp|max:20480',
         ];
 
         if (Auth::user()->hasRole(['Member', 'Digital Member'])) {
@@ -595,10 +595,10 @@ class CircleCallController extends Controller
             'meetingPlace.required' => 'Please enter the meeting place.',
             'date.required' => 'Please select a date.',
             'remarks.required' => 'Please enter remarks.',
-            'meetingImage.required' => 'Please upload a meeting image.',
-            'meetingImage.image' => 'The file must be a valid image.',
-            'meetingImage.mimes' => 'Allowed image formats are: jpeg, jpg, png, gif, webp.',
-            'meetingImage.max' => 'The image size cannot exceed 20MB.',
+            // 'meetingImage.required' => 'Please upload a meeting image.',
+            // 'meetingImage.image' => 'The file must be a valid image.',
+            // 'meetingImage.mimes' => 'Allowed image formats are: jpeg, jpg, png, gif, webp.',
+            // 'meetingImage.max' => 'The image size cannot exceed 20MB.',
         ];
 
         $validator = Validator::make($request->all(), $rules, $messages);
@@ -648,7 +648,6 @@ class CircleCallController extends Controller
             //     }
             // }
 
-            // ✅ अब आपका पुराना code
             $circlecall = new CircleCall;
             $circlecall->memberId = Auth::user()->id;
             $circlecall->meetingPersonId = $request->meetingPersonId;
@@ -851,7 +850,7 @@ class CircleCallController extends Controller
                 'meetingPlace' => 'required|regex:/^([a-zA-Z]+)(\s[a-zA-Z]+)*$/',
                 'date' => 'required',
                 'remarks' => 'required',
-                'meetingImage' => 'mimes:jpeg,jpg,png,gif|max:20480|required',
+                'meetingImage' => 'nullable|mimes:jpeg,jpg,png,gif,webp|max:20480',
             ]);
 
             $id = $request->id;

@@ -174,6 +174,9 @@
                                 <tr>
                                     <th>No</th>
                                     <th>Received From</th>
+                                    <th>External Person Name</th>
+                                    <th>Contact No</th>
+                                    <th>Email</th>
                                     <th>Circle</th>
                                     <th>Date</th>
                                     <th>Description</th>
@@ -186,6 +189,9 @@
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ optional($refReceiverData->refGiver)->firstName ?? '-' }} {{ optional($refReceiverData->refGiver)->lastName ?? '-' }}</td>
+                                        <td>{{ $refReceiverData->contactName ?? '-' }}</td>
+                                        <td>{{ $refReceiverData->contactNo ?? '-' }}</td>
+                                        <td>{{ $refReceiverData->email ?? '-' }}</td>
                                         <td>{{ optional($refReceiverData->refGiver->circle)->circleName ?? 'Digital Member' }}</td>
                                         <td>{{ $refReceiverData->created_at ? \Carbon\Carbon::parse($refReceiverData->created_at)->format('d-m-Y') : '-' }}</td>
                                         <td>{{ $refReceiverData->description ?? '-' }}</td>
@@ -214,7 +220,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="6" class="text-center text-muted">No records found</td>
+                                        <td colspan="10" class="text-center text-muted">No records found</td>
                                     </tr>
                                 @endforelse
                             </tbody>
@@ -244,6 +250,9 @@
                                 <tr>
                                     <th>No</th>
                                     <th>Given To</th>
+                                    <th>External Person Name</th>
+                                    <th>Contact No</th>
+                                    <th>Email</th>
                                     <th>Circle</th>
                                     <th>Date</th>
                                     <th>Description</th>
@@ -256,6 +265,9 @@
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ optional($refGiverData->members)->firstName ?? '-' }} {{ optional($refGiverData->members)->lastName ?? '-' }}</td>
+                                        <td>{{ $refGiverData->contactName ?? '-' }}</td>
+                                        <td>{{ $refGiverData->contactNo ?? '-' }}</td>
+                                        <td>{{ $refGiverData->email ?? '-' }}</td>
                                         <td>{{ optional($refGiverData->members->circle)->circleName ?? 'Digital Member' }}</td>
                                         <td>{{ $refGiverData->created_at ? \Carbon\Carbon::parse($refGiverData->created_at)->format('d-m-Y') : '-' }}</td>
                                         <td>{{ $refGiverData->description ?? '-' }}</td>
@@ -282,7 +294,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="5" class="text-center text-muted">No records found</td>
+                                        <td colspan="10" class="text-center text-muted">No records found</td>
                                     </tr>
                                 @endforelse
                             </tbody>

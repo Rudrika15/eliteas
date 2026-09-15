@@ -76,8 +76,8 @@
 
 
         <div class="mb-3">
-            <label class="form-label fw-bold color-blue required">Upload Meeting Image <span class="text-danger">*</span></label>
-            <input type="file" class="form-control @error('meetingImage') is-invalid @enderror" id="meetingImage" name="meetingImage" accept="image/*" required onchange="previewPhoto(event)" {{ ($oldMeetingImage = old('meetingImage')) ? 'data-old-value="' . $oldMeetingImage . '"' : '' }}>
+            <label class="form-label fw-bold color-blue">Upload Meeting Image</label>
+            <input type="file" class="form-control @error('meetingImage') is-invalid @enderror" id="meetingImage" name="meetingImage" accept="image/*" onchange="previewPhoto(event)" {{ ($oldMeetingImage = old('meetingImage')) ? 'data-old-value="' . $oldMeetingImage . '"' : '' }}>
             {{-- <label for="meetingImage">Upload Meeting Image</label> --}}
             <span class="text-danger mt-1 d-block">*
                 File size:Max 2MB</span>

@@ -469,13 +469,13 @@
 
                             <!-- Meeting Image Upload -->
                             <div class="mb-3">
-                                <label class="form-label fw-bold color-blue required">Upload Meeting Image <span class="text-danger">*</span></label>
+                                <label class="form-label fw-bold color-blue">Upload Meeting Image</label>
                                 <label for="meetingImage" class="upload-box @error('meetingImage') border-danger @enderror">
                                     <div class="upload-content">
                                         <i class="fas fa-image upload-icon"></i>
                                         <span>Upload Meeting Image</span>
                                     </div>
-                                    <input type="file" class="file-input @error('meetingImage') is-invalid @enderror" id="meetingImage" name="meetingImage" accept="image/*" onchange="previewPhoto(event)" required>
+                                    <input type="file" class="file-input @error('meetingImage') is-invalid @enderror" id="meetingImage" name="meetingImage" accept="image/*" onchange="previewPhoto(event)">
                                 </label>
                                 <span class="text-danger mt-1 d-block">* File size: Max 2MB</span>
                                 @error('meetingImage')
@@ -777,23 +777,7 @@
                     meetingPlaceInput.after('<div class="invalid-feedback d-block client-error">Please enter the meeting place.</div>');
                 }
 
-                // Validate Meeting Image
-                const meetingImageInput = $('#meetingImage');
-                const uploadBox = $('.upload-box');
-                const photoPreview = $('#photoPreview');
-                const previewSrc = photoPreview.length ? photoPreview.attr('src') : '';
-                const hasValidPreview = previewSrc && !previewSrc.endsWith('img/profile.png') && !previewSrc.includes('profile.png');
                 
-                if (meetingImageInput.length && (!meetingImageInput[0].files || meetingImageInput[0].files.length === 0) && !hasValidPreview) {
-                    isValid = false;
-                    meetingImageInput.addClass('is-invalid');
-                    uploadBox.addClass('border-danger is-invalid');
-                    if (uploadBox.next('.client-error').length === 0) {
-                        uploadBox.after('<div class="invalid-feedback d-block client-error mt-1">Please upload a meeting image.</div>');
-                    }
-                }
-
-                // Validate Date
                 const dateInput = $('#date');
                 if (dateInput.length && !dateInput.val()) {
                     isValid = false;

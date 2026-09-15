@@ -115,7 +115,7 @@ class ApiController extends Controller
         try {
 
             $validator = Validator::make($request->all(), [
-                'password' => 'required|string|min:6|confirmed',
+                // 'password' => 'required|string|min:6|confirmed',
             ]);
 
             if ($validator->fails()) {
@@ -2459,14 +2459,14 @@ class ApiController extends Controller
         try {
             $authUserId = Auth::id();
 
-            $authMember = Member::where('userId', $authUserId)->first();
-            $membershipType = $authMember ? $authMember->membershipType : null;
+            // $authMember = Member::where('userId', $authUserId)->first();
+            // $membershipType = $authMember ? $authMember->membershipType : null;
 
             $members = User::where('status', 'Active')
-                ->whereHas('member', function ($q) use ($authUserId, $membershipType) {
+                ->whereHas('member', function ($q) use ($authUserId) {
                     $q->where('status', 'Active')
-                        ->where('userId', '!=', $authUserId)
-                        ->where('membershipType', $membershipType);
+                        ->where('userId', '!=', $authUserId);
+                        // ->where('membershipType', $membershipType);
                 })
                 ->with([
                     'member',

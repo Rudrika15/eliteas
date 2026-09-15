@@ -2630,7 +2630,7 @@ $birthdaysToday = \App\Models\Member::whereMonth('birthDate', Carbon\Carbon::tod
 $latestMembers = $latestMembers ?? Member::with('circle')->where('status', 'Active')->orderBy('created_at', 'desc')->take(4)->get();
 @endphp
 <!-- Change Password Modal -->
-@if (isset($showChangePasswordModal) && $showChangePasswordModal)
+<!-- @if (isset($showChangePasswordModal) && $showChangePasswordModal)
 <div id="changePasswordPopup" style="
     position: fixed;
     top: 0;
@@ -2653,7 +2653,7 @@ $latestMembers = $latestMembers ?? Member::with('circle')->where('status', 'Acti
         box-shadow: 0 10px 40px rgba(0,0,0,0.2);
     ">
 
-        <!-- Header -->
+     
         <div style="
             background:#1d3268;
             color:white;
@@ -2668,7 +2668,7 @@ $latestMembers = $latestMembers ?? Member::with('circle')->where('status', 'Acti
             </h4>
         </div>
 
-        <!-- Body -->
+       
         <div style="padding:25px;">
 
             <div style="
@@ -2688,7 +2688,7 @@ $latestMembers = $latestMembers ?? Member::with('circle')->where('status', 'Acti
 
                 @csrf
 
-                <!-- Error Box -->
+                
                 <div id="passwordError" style="
         display:none;
         background:#f8d7da;
@@ -2701,7 +2701,7 @@ $latestMembers = $latestMembers ?? Member::with('circle')->where('status', 'Acti
     ">
                 </div>
 
-                <!-- New Password -->
+               
                 <div style="margin-bottom:18px;">
 
                     <label style="
@@ -2719,7 +2719,7 @@ $latestMembers = $latestMembers ?? Member::with('circle')->where('status', 'Acti
                ">
                 </div>
 
-                <!-- Confirm Password -->
+                
                 <div style="margin-bottom:25px;">
 
                     <label style="
@@ -2737,7 +2737,7 @@ $latestMembers = $latestMembers ?? Member::with('circle')->where('status', 'Acti
                ">
                 </div>
 
-                <!-- Button -->
+               
                 <button type="submit" style="
                 width:100%;
                 background:#1d3268;
@@ -2787,7 +2787,7 @@ $latestMembers = $latestMembers ?? Member::with('circle')->where('status', 'Acti
         errorBox.style.display = 'none';
         errorBox.innerHTML = '';
 
-        // Prevent default password
+       
         if (password === '123456') {
 
             errorBox.style.display = 'block';
@@ -2797,7 +2797,7 @@ $latestMembers = $latestMembers ?? Member::with('circle')->where('status', 'Acti
             return false;
         }
 
-        // Minimum 6 chars
+      
         if (password.length < 6) {
 
             errorBox.style.display = 'block';
@@ -2807,7 +2807,7 @@ $latestMembers = $latestMembers ?? Member::with('circle')->where('status', 'Acti
             return false;
         }
 
-        // Password mismatch
+       
         if (password !== confirmPassword) {
 
             errorBox.style.display = 'block';
@@ -2820,14 +2820,14 @@ $latestMembers = $latestMembers ?? Member::with('circle')->where('status', 'Acti
         return true;
     }
 </script>
-@endif
+@endif -->
 @if (auth()->user())
 @php
 $member = \App\Models\Member::where('userId', auth()->id())->first();
 @endphp
-
+<!-- 
 @if ((!isset($showChangePasswordModal) || !$showChangePasswordModal) && (!$member || !$member->terms_accepted))
-<!-- Modal -->
+
 <div id="termsModal" style="
             position: fixed;
             top: 0; left: 0;
@@ -2848,16 +2848,16 @@ $member = \App\Models\Member::where('userId', auth()->id())->first();
                 flex-direction: column;
             ">
 
-        <!-- Header -->
+       
         <div style="padding:15px; background:#1d3268; color:white;">
             <h4 style="margin:0;">Terms & Conditions</h4>
         </div>
 
-        <!-- PDF Preview -->
+       
         <iframe src="{{ route('terms.preview') }}" style="flex:1; border:none;">
         </iframe>
 
-        <!-- Footer -->
+        
         <div style="padding:15px; text-align:center;">
             <form method="POST" action="{{ route('terms.accept') }}">
                 @csrf
@@ -2892,7 +2892,7 @@ $member = \App\Models\Member::where('userId', auth()->id())->first();
     }
 </style>
 @endif
-@endif
+@endif -->
 
 <div class="modal fade" id="updateProfileModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-center">
@@ -3145,8 +3145,8 @@ $member = \App\Models\Member::where('userId', auth()->id())->first();
         </div>
     </div>
 </div>
-
-@if ((!isset($showChangePasswordModal) || !$showChangePasswordModal) && isset($member) && $member && $member->terms_accepted && isset($missingFields) && count($missingFields) > 0 && !session('profileUpdated'))
+<!-- (!isset($showChangePasswordModal) || !$showChangePasswordModal) -->
+@if (isset($member) && $member && $member->terms_accepted && isset($missingFields) && count($missingFields) > 0 && !session('profileUpdated'))
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         var myModal = new bootstrap.Modal(document.getElementById('updateProfileModal'));
