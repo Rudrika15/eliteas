@@ -2044,7 +2044,7 @@ class HomeController extends Controller
             ]);
         }
         if ($type === 'reference_created') {
-            return redirect()->route('chat.index', [
+            return redirect()->route('refGiver.index', [
                 'userId' => $data['userId'] ?? null,
             ]);
         }
