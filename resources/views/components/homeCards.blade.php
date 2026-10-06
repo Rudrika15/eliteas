@@ -1118,7 +1118,7 @@ use Illuminate\Support\Facades\DB;
 $memberCities = Member::where('status', 'Active')->whereNotNull('cityId')->distinct()->pluck('cityId')->toArray();
 
 // Get distinct city IDs from circles
-$circleCities = Circle::whereNotNull('cityId')->distinct()->pluck('cityId')->toArray();
+$circleCities = Circle::where('status', 'Active')->whereNotNull('cityId')->distinct()->pluck('cityId')->toArray();
 
 // Combine both lists and remove duplicates
 $allCities = array_unique(array_merge($memberCities, $circleCities));
@@ -1134,11 +1134,11 @@ $cityCount = count($allCities);
 @php
 $authUser = auth()->user();
 
-$totalBusinessAmount = \App\Models\CircleMeetingMembersBusiness::where('status', 'Active')->sum('amount');
+$totalBusinessAmount = \App\Models\CircleMeetingMembersBusiness::whereIn('status', ['Active', 'Deleted'])->sum('amount');
 
-$totalReferences = \App\Models\CircleMeetingMembersReference::where('status', 'Active')->count();
+$totalReferences = \App\Models\CircleMeetingMembersReference::whereIn('status', ['Active', 'Deleted'])->count();
 
-$totalIbms = \App\Models\CircleCall::where('status', 'Active')->count();
+$totalIbms = \App\Models\CircleCall::whereIn('status', ['Active', 'Deleted'])->count();
 
 $receivedRequests = \App\Models\Connection::whereHas('member', function ($query) use ($authUser) {
 $query->where('memberId', $authUser->id);
@@ -2602,9 +2602,9 @@ $cityId = \App\Models\Member::where('userId', auth()->id())->value('cityId');
 @role('Member')
 
 @php
-$totalBusinessAmount = \App\Models\CircleMeetingMembersBusiness::where('status', 'Active')->sum('amount');
-$totalReferences = \App\Models\CircleMeetingMembersReference::where('status', 'Active')->count();
-$totalIbms = \App\Models\CircleCall::where('status', 'Active')->count();
+$totalBusinessAmount = \App\Models\CircleMeetingMembersBusiness::whereIn('status', ['Active', 'Deleted'])->sum('amount');
+$totalReferences = \App\Models\CircleMeetingMembersReference::whereIn('status', ['Active', 'Deleted'])->count();
+$totalIbms = \App\Models\CircleCall::whereIn('status', ['Active', 'Deleted'])->count();
 
 // $posts = \App\Models\Post::with(['user.member', 'media'])
 // ->withCount(['likes', 'comments'])

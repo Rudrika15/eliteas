@@ -1038,26 +1038,24 @@ class CircleMemberController extends Controller
             $tops->status = 'Deleted';
             $tops->save();
 
-            // Fetch and update CircleCall records
-            $circleCalls = CircleCall::where('memberId', $circlemember->userId)->get();
-            foreach ($circleCalls as $circleCall) {
-                $circleCall->status = 'Deleted';
-                $circleCall->save();
-            }
+            // Keep CircleCall, CircleMeetingMembersBusiness, and CircleMeetingMembersReference records active so deleting a member does not decrease totals
+            // $circleCalls = CircleCall::where('memberId', $circlemember->userId)->get();
+            // foreach ($circleCalls as $circleCall) {
+            //     $circleCall->status = 'Deleted';
+            //     $circleCall->save();
+            // }
 
-            // Fetch and update CircleMeetingMembersBusiness records
-            $businessSlips = CircleMeetingMembersBusiness::where('businessGiverId', $circlemember->userId)->get();
-            foreach ($businessSlips as $businessSlip) {
-                $businessSlip->status = 'Deleted';
-                $businessSlip->save();
-            }
+            // $businessSlips = CircleMeetingMembersBusiness::where('businessGiverId', $circlemember->userId)->get();
+            // foreach ($businessSlips as $businessSlip) {
+            //     $businessSlip->status = 'Deleted';
+            //     $businessSlip->save();
+            // }
 
-            // Fetch and update CircleMeetingMembersReference records
-            $businessReferences = CircleMeetingMembersReference::where('memberId', $circlemember->userId)->get();
-            foreach ($businessReferences as $businessReference) {
-                $businessReference->status = 'Deleted';
-                $businessReference->save();
-            }
+            // $businessReferences = CircleMeetingMembersReference::where('memberId', $circlemember->userId)->get();
+            // foreach ($businessReferences as $businessReference) {
+            //     $businessReference->status = 'Deleted';
+            //     $businessReference->save();
+            // }
 
             $connection = Connection::where('memberId', $circlemember->userId)
                 ->orWhere('userId', $circlemember->userId)

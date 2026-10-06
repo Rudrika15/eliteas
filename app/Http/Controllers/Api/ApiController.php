@@ -2158,9 +2158,9 @@ class ApiController extends Controller
     public function totalCounts()
     {
         try {
-            $totalBusiness = CircleMeetingMembersBusiness::where('status', 'Active')->sum('amount');
-            $totalReferences = CircleMeetingMembersReference::where('status', 'Active')->count();
-            $totalIbms = CircleCall::where('status', 'Active')->count();
+            $totalBusiness = CircleMeetingMembersBusiness::whereIn('status', ['Active', 'Deleted'])->sum('amount');
+            $totalReferences = CircleMeetingMembersReference::whereIn('status', ['Active', 'Deleted'])->count();
+            $totalIbms = CircleCall::whereIn('status', ['Active', 'Deleted'])->count();
 
             return Utils::sendResponse([
                 'total_business' => $totalBusiness,
