@@ -3,18 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Models\BillingAddress;
+use App\Models\Circle;
 use App\Models\City;
 use App\Models\ContactDetails;
 use App\Models\Country;
 use App\Models\Landmark;
 use App\Models\Member;
 use App\Models\MemberGallery;
+use App\Models\Post;
 use App\Models\State;
 use App\Models\TopsProfile;
 use App\Models\User;
 use App\Utils\ErrorLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use Throwable;
 
 class ProfileController extends Controller
@@ -345,6 +348,145 @@ class ProfileController extends Controller
                 request()->fullUrl()
             );
 
+            return view('servererror');
+        }
+    }
+
+    public function showPublicProfile($identifier = null)
+    {
+        try {
+            $member = null;
+            $user = null;
+
+            if (empty($identifier)) {
+                if (Auth::check()) {
+                    $user = Auth::user();
+                    $member = Member::where('userId', $user->id)->first();
+                    $slug = $member && !empty($member->username) 
+                        ? Str::slug($member->username) 
+                        : Str::slug(($user->firstName ?? '') . '-' . ($user->lastName ?? ''));
+                    if (empty($slug)) {
+                        $slug = 'user-' . $user->id;
+                    }
+                    return redirect()->route('public.profile', $slug);
+                } else {
+                    abort(404, 'Profile not found');
+                }
+            }
+
+            $targetSlug = Str::slug($identifier);
+
+            // 1. Check exact match by username or ID in Member
+            $member = Member::where('username', $identifier)->first();
+
+            if (!$member) {
+                $member = Member::whereRaw("LOWER(username) = ?", [strtolower($identifier)])->first();
+            }
+
+            if (!$member && is_numeric($identifier)) {
+                $member = Member::find($identifier);
+                if (!$member) {
+                    $member = Member::where('userId', $identifier)->first();
+                }
+            }
+
+            // 2. Match slug against username or member full name or company
+            if (!$member) {
+                $allMembers = Member::all();
+                foreach ($allMembers as $m) {
+                    $uNameSlug = !empty($m->username) ? Str::slug($m->username) : '';
+                    $fullNameSlug = Str::slug(($m->firstName ?? '') . '-' . ($m->lastName ?? ''));
+                    $fullNameSpaceSlug = Str::slug(($m->firstName ?? '') . ' ' . ($m->lastName ?? ''));
+                    $companySlug = !empty($m->companyName) ? Str::slug($m->companyName) : '';
+
+                    if ($targetSlug === $uNameSlug || $targetSlug === $fullNameSlug || $targetSlug === $fullNameSpaceSlug || $targetSlug === $companySlug || $identifier === $uNameSlug || $identifier === $fullNameSlug) {
+                        $member = $m;
+                        break;
+                    }
+                }
+            }
+
+            // 3. Fallback check on User model
+            if (!$member) {
+                if (is_numeric($identifier)) {
+                    $user = User::find($identifier);
+                } else {
+                    $allUsers = User::all();
+                    foreach ($allUsers as $u) {
+                        $nameSlug = Str::slug(($u->firstName ?? '') . '-' . ($u->lastName ?? ''));
+                        $nameSpaceSlug = Str::slug(($u->firstName ?? '') . ' ' . ($u->lastName ?? ''));
+                        if ($targetSlug === $nameSlug || $targetSlug === $nameSpaceSlug) {
+                            $user = $u;
+                            break;
+                        }
+                    }
+                }
+                if ($user) {
+                    $member = Member::where('userId', $user->id)->first();
+                }
+            }
+
+            if ($member && !$user) {
+                $user = $member->user;
+            }
+
+            if (!$member && !$user) {
+                if (Auth::check()) {
+                    $user = Auth::user();
+                    $member = Member::where('userId', $user->id)->first();
+                }
+                if (!$member) {
+                    $member = Member::where('status', 'Active')->first() ?? Member::first();
+                }
+                if ($member && !$user) {
+                    $user = $member->user;
+                }
+                if (!$user) {
+                    $user = User::first();
+                }
+            }
+
+            // Fetch related data
+            $contactDetails = $member ? ContactDetails::where('memberId', $member->id)->first() : null;
+            $billing = $member ? BillingAddress::where('memberId', $member->id)->first() : null;
+            $tops = $member ? TopsProfile::where('memberId', $member->id)->first() : null;
+            $galleryImages = $member ? MemberGallery::where('memberId', $member->id)->where('status', 'Active')->get() : collect();
+            $city = $member && $member->cityId ? City::find($member->cityId) : null;
+            $state = $city && $city->stateId ? State::find($city->stateId) : null;
+            $country = $state && $state->countryId ? Country::find($state->countryId) : null;
+            $circle = $member && $member->circleId ? Circle::find($member->circleId) : null;
+
+            // User posts from Social Wall
+            $posts = $user ? Post::where('userId', $user->id)->latest()->take(5)->get() : collect();
+
+            // Other members for "More profiles for you"
+            $otherMembers = Member::where('status', 'Active')
+                ->when($member, function ($q) use ($member) {
+                    return $q->where('id', '!=', $member->id);
+                })
+                ->inRandomOrder()
+                ->take(5)
+                ->get();
+
+            $isSelfProfile = Auth::check() && $user && (Auth::id() == $user->id);
+
+            return view('visitor.linkedinProfile', compact(
+                'member',
+                'user',
+                'contactDetails',
+                'billing',
+                'tops',
+                'galleryImages',
+                'city',
+                'state',
+                'country',
+                'circle',
+                'posts',
+                'otherMembers',
+                'isSelfProfile'
+            ));
+        } catch (\Throwable $th) {
+            ErrorLogger::logError($th, request()->fullUrl());
             return view('servererror');
         }
     }

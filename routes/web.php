@@ -94,6 +94,10 @@ use Maatwebsite\Excel\Excel;
 
 Auth::routes();
 
+// LinkedIn Style Public Profile Route
+Route::get('/{slug?}', [ProfileController::class, 'showPublicProfile'])->name('public.profile');
+
+
 // Forgot Password
 
 Route::get('forget-password', [ForgotPasswordController::class, 'showForgetPasswordForm'])->name('forget.password.get');

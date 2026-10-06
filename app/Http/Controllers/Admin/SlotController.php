@@ -146,11 +146,8 @@ class SlotController extends Controller
     {
         try {
             $id = $request->id;
-            $member = Member::find($id);
-
-            return view('visitor.profileView', compact('member'));
+            return redirect()->route('public.profile', $id);
         } catch (\Throwable $th) {
-            // Log error and return a server error view
             ErrorLogger::logError(
                 $th,
                 $request->fullUrl()
@@ -164,11 +161,8 @@ class SlotController extends Controller
     {
         try {
             $id = $request->id;
-            $visitor = VisitorsDetails::where('userId', $id)->first();
-
-            return view('visitor.userProfileView', compact('visitor'));
+            return redirect()->route('public.profile', $id);
         } catch (\Throwable $th) {
-            // Log error and return a server error view
             ErrorLogger::logError(
                 $th,
                 $request->fullUrl()

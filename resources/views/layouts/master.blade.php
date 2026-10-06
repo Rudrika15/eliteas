@@ -546,6 +546,12 @@
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
+                             <li>
+                                <a class="dropdown-item d-flex align-items-center" href="{{ route('public.profile') }}">
+                                    <i class="bi bi-linkedin" style="color: #0a66c2"></i>
+                                    <span style="font-weight: bold; color: #1d2856">Public Profile</span>
+                                </a>
+                            </li>
 
                             {{-- <li>
                             <a class="dropdown-item d-flex align-items-center"
