@@ -53,10 +53,6 @@
                                         <i class="bi bi-trash"></i>
                                         <span class="btn-text">Delete User</span>
                                     </button>
-                                    <button type="button" class="btn btn-warning btn-sm btn-tooltip text-white" onclick="confirmResetPassword({{ $user->id }})">
-                                        <i class="bi bi-key"></i>
-                                        <span class="btn-text">Reset Password</span>
-                                    </button>
 
                                     <form id="delete-form-{{ $user->id }}" action="{{ route('users.destroy', $user->id) }}" method="POST" style="display: none;">
                                         @csrf
@@ -77,22 +73,6 @@
                                                 if (result.isConfirmed) {
                                                     console.log("Delete user with ID:", userId);
                                                     document.getElementById(`delete-form-${userId}`).submit();
-                                                }
-                                            });
-                                        }
-
-                                        function confirmResetPassword(userId) {
-                                            Swal.fire({
-                                                title: 'Reset Password?',
-                                                text: "Are you sure you want to reset this user's password to 123456?",
-                                                icon: 'warning',
-                                                showCancelButton: true,
-                                                confirmButtonColor: '#ffc107',
-                                                cancelButtonColor: '#d33',
-                                                confirmButtonText: 'Yes, reset it!'
-                                            }).then((result) => {
-                                                if (result.isConfirmed) {
-                                                    window.location.href = '{{ route('users.resetPassword', '') }}/' + userId;
                                                 }
                                             });
                                         }

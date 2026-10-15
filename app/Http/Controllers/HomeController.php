@@ -368,12 +368,7 @@ class HomeController extends Controller
 
             if (Auth::user()->hasRole('Digital Member')) {
                 // Digital Member Dashboard View
-                $latestMembers = Member::with(['circle', 'user', 'bCategory', 'sponsored'])
-                    ->where('status', 'Active')
-                    ->orderBy('created_at', 'desc')
-                    ->take(4)
-                    ->get();
-                return view('home', compact('latestMembers'))->with(['message', 'Digital Member Dashboard Coming Soon...', 'show_profile_popup' => true]);
+                return view('home')->with(['message', 'Digital Member Dashboard Coming Soon...', 'show_profile_popup' => true]);
             }
 
             $membersCount = Member::where('status', 'Active')->count();
@@ -1158,7 +1153,7 @@ class HomeController extends Controller
                         $missingFields[] = 'Address Line 2';
                     }
                 }
-                $latestMembers = Member::with(['circle', 'user', 'bCategory', 'sponsored'])
+               $latestMembers = Member::with(['circle', 'user', 'bCategory', 'sponsored'])
                     ->where('status', 'Active')
                     ->orderBy('created_at', 'desc')
                     ->take(4)
@@ -1192,19 +1187,18 @@ class HomeController extends Controller
                         return $member;
                     });
 
-                    
                 $categoryNames = $businessCategories->pluck('categoryName');
 
                 // that For The Dahboard change password modal
-                $showChangePasswordModal = false;
+               // $showChangePasswordModal = false;
 
-                if (Auth::check()) {
+               // if (Auth::check()) {
 
                     // Check if current password is still default password
-                    if (Hash::check('123456', Auth::user()->password)) {
-                        $showChangePasswordModal = true;
-                    }
-                }
+                 //   if (Hash::check('123456', Auth::user()->password)) {
+                 //       $showChangePasswordModal = true;
+                 //   }
+               // }
 
                 $banners = Banners::where('status', 'Active')->paginate(5);
                 $risingStars = RisingStar::with(['member', 'member.circle', 'member.bCategory'])->where('status', 'Active')->whereHas('member', function ($q) use ($cityId) {
@@ -1237,7 +1231,7 @@ class HomeController extends Controller
                 });
                 $announcements = Announcements::where('status', 'Active')->latest()->take(5)->get();
 
-                return view('home', compact('circleCount', 'authCircleId', 'categoryNames', 'membersCount', 'signedUrl', 'birthdaysToday', 'templates', 'count', 'monthlyPayments', 'totalAmountDue', 'nearestEvents', 'circlecalls', 'busGiver', 'refGiver', 'induction', 'nearestTraining', 'testimonials', 'meeting', 'businessCategory', 'myInvites', 'todaysBirthdays', 'pendingCount', 'receivedRequests', 'notifications', 'notificationCount', 'posts', 'missingFields', 'member', 'city', 'landmarks', 'latestMembers', 'showChangePasswordModal', 'banners', 'topInductions', 'announcements', 'risingStars'));
+                return view('home', compact('circleCount', 'authCircleId', 'categoryNames', 'membersCount', 'signedUrl', 'birthdaysToday', 'templates', 'count', 'monthlyPayments', 'totalAmountDue', 'nearestEvents', 'circlecalls', 'busGiver', 'refGiver', 'induction', 'nearestTraining', 'testimonials', 'meeting', 'businessCategory', 'myInvites', 'todaysBirthdays', 'pendingCount', 'receivedRequests', 'notifications', 'notificationCount', 'posts', 'missingFields', 'member', 'city', 'landmarks', 'latestMembers', 'banners', 'topInductions', 'announcements', 'risingStars'));
             }
 
             return view('home', compact('circleCount', 'membersCount', 'count', 'nearestTraining', 'businessCategory', 'myInvites', 'birthdaysToday', 'templates', 'pendingCount'));

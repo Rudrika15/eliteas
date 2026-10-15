@@ -17,7 +17,7 @@ class CircleMembersExport implements FromCollection, WithHeadings
 
     public function collection()
     {
-        return Member::where('members.circleId', $this->circleId)
+         return Member::where('members.circleId', $this->circleId)
             ->where('members.status', 'Active')
             ->join('users', 'users.id', '=', 'members.userId')
             ->where('users.status', 'Active')

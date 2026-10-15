@@ -1,12 +1,11 @@
 <?php
-
-use App\Http\Controllers\Admin\DuePaymentController;
 use App\Http\Controllers\Admin\MemberController;
+use App\Http\Controllers\Admin\DuePaymentController;
 use App\Http\Controllers\Api\AllActivityController;
 use App\Http\Controllers\Api\ApiController;
 use App\Http\Controllers\Api\AttendanceController;
-use App\Http\Controllers\Api\BirthDayController;
 use App\Http\Controllers\Api\BusinessCategoryController;
+use App\Http\Controllers\Api\BirthDayController;
 use App\Http\Controllers\Api\ChangePasswordController;
 use App\Http\Controllers\Api\ChatController;
 use App\Http\Controllers\Api\CircleCallController;
@@ -39,9 +38,6 @@ use App\Http\Controllers\Api\SocialWallController;
 use App\Http\Controllers\Api\SpecificAskController;
 use App\Http\Controllers\Api\SupportTicketController;
 use App\Http\Controllers\Api\TermsController;
-// use App\Http\Controllers\Api\TestimonialController;
-// use App\Http\Controllers\Api\TestimonialController;
-
 use App\Http\Controllers\Api\TestimonialController;
 use App\Http\Controllers\Api\TrainerMasterController;
 use App\Http\Controllers\Api\TrainingController;
@@ -102,14 +98,15 @@ Route::get('role-permissions', [LoginController::class, 'getRolePermissions']);
 
 Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/user/profile', [LoginController::class, 'profile']);
-    Route::post('/force-change-password', [ApiController::class, 'forceChangePassword']);
+    Route::post('/force-change-password',[ApiController::class, 'forceChangePassword']);
 
     Route::post('/user/member/update', [LoginController::class, 'memberUpdate']);
     Route::post('/user/member/updateBillingAddress', [LoginController::class, 'billingAddressUpdate']);
     Route::post('/user/member/updateContactDetails', [LoginController::class, 'contactDetailsUpdate']);
     Route::post('/user/member/updateTopsProfile', [LoginController::class, 'topsProfileUpdate']);
-
-    Route::get('/terms/preview', [TermsController::class, 'preview']);
+  	
+  //terms and Conditions 
+   	Route::get('/terms/preview', [TermsController::class, 'preview']);
     Route::get('/terms/download', [TermsController::class, 'download']);
     Route::post('/terms/accept', [TermsController::class, 'accept']);
 
@@ -120,23 +117,26 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/vacant-categories', [ApiController::class, 'vacantCategories']);
     Route::get('/active-meeting-schedule', [ApiController::class, 'activeMeetingSchedules']);
     Route::get('/resource-index', [ApiController::class, 'resourceIndex']);
-    Route::get('/notification/read/{id}', [ApiController::class, 'markAsRead']);
+  	Route::get('/notification/read/{id}', [ApiController::class, 'markAsRead']);
     Route::get('/members-activity-counts/{id?}', [ApiController::class, 'membersActivityCount']);
-    Route::get('/top-inductions', [ApiController::class, 'topInductions']);
+  	
+  	
+  
 
-    // latest Members
+   //latest Members
     Route::get('/latestmembers', [ApiController::class, 'latestMembers']);
     Route::get('/sponsors', [ApiController::class, 'getSponsors']);
+    Route::get('/top-inductions', [ApiController::class, 'topInductions']);
     Route::get('/banners', [ApiController::class, 'banners']);
     Route::get('/announcements', [ApiController::class, 'announcements']);
     Route::get('/birthdays/today', [BirthDayController::class, 'todayBirthdays']);
     Route::get('/risingstars', [ApiController::class, 'risingStar']);
-
-    Route::get('member-gallery/{memberId}', [ApiController::class, 'memberGallery']);
-    Route::post('member-gallery /store', [ApiController::class, 'storeMemberGallery']);
-    Route::post('member-gallery /update/{memberId}', [ApiController::class, 'updateMemberGallery']);
-    Route::delete('member-gallery /delete/{id}', [ApiController::class, 'deleteMemberGallery']);
-
+  
+    Route::get('member-gallery', [ApiController::class, 'memberGallery']);
+    Route::post('member-gallery/store', [ApiController::class, 'storeMemberGallery']);
+    Route::post('member-gallery/update', [ApiController::class, 'updateMemberGallery']);
+    Route::post('member-gallery/delete/{id}', [ApiController::class, 'deleteMemberGallery']);
+  
     // Admin side profile change
     Route::post('/members/{id}', [LoginController::class, 'memberUpdateAdmin']);
     // Route::put('/members/{id}', [MemberController::class, 'update']);
@@ -163,7 +163,6 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('circle-meeting-member-business-received-index', [CircleMeetingMemberBusinessController::class, 'recievedBus']);
     Route::get('circle-meeting-member-businesses/{id}', [CircleMeetingMemberBusinessController::class, 'view']);
     Route::post('circle-meeting-member-businesses/create', [CircleMeetingMemberBusinessController::class, 'create']);
-    Route::post('circle-meeting-member-businesses/{id}', [CircleMeetingMemberBusinessController::class, 'update']);
     Route::post('circle-meeting-member-businesses/update/{id}', [CircleMeetingMemberBusinessController::class, 'updateBusinessSlip']);
     Route::get('circle-meeting-member-businesses/delete/{id}', [CircleMeetingMemberBusinessController::class, 'delete']);
 
@@ -269,8 +268,8 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/testimonials/index', [TestimonialController::class, 'index']);
     Route::get('/testimonials/myTestimonials', [TestimonialController::class, 'myTestimonials']);
     Route::post('/testimonials/create', [TestimonialController::class, 'create']);
-    // Route::post('/testimonials/update/{id}', [TestimonialController::class, 'update']);
-    // Route::get('/testimonials/delete/{id}', [TestimonialController::class, 'delete']);
+    //Route::post('/testimonials/update/{id}', [TestimonialController::class, 'update']);
+    //Route::get('/testimonials/delete/{id}', [TestimonialController::class, 'delete']);
     Route::post('/testimonials/update/{id}', [TestimonialController::class, 'updateTestimonial']);
     Route::get('/testimonials/delete/{id}', [TestimonialController::class, 'deleteTestimonial']);
     // Route::get('/testimonials/admin', [TestimonialController::class, 'indexAdmin']);
@@ -298,11 +297,10 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     // My Payment History
     Route::get('/my-payment-history', [MyPaymentController::class, 'myPaymentHistory']);
-
-    // Due Payment API
+    
     Route::get('/due-payment/active', [DuePaymentController::class, 'getActiveDuePayment']);
     Route::post('/due-payment/pay', [DuePaymentController::class, 'payDuePayment']);
-
+      
     // Event
     Route::post('/register/{eventId}', [EventController::class, 'eventRegister']);
     // Store user details for an event
@@ -403,7 +401,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     // Personal Details update
     Route::get('v1/user/profile', [ApiController::class, 'profile']);
-    Route::post('v1/user/member/update', [ApiController::class, 'memberUpdate']);
+    Route::post('v1/user/member/update', [ApiController::class, 'meberUpdate']);
     Route::post('v1/user/member/updateBillingAddress', [ApiController::class, 'billingAddressUpdate']);
     Route::post('v1/user/member/updateContactDetails', [ApiController::class, 'contactDetailsUpdate']);
     Route::post('v1/user/member/updateTopsProfile', [ApiController::class, 'topsProfileUpdate']);
@@ -430,13 +428,13 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('v1/max-referral-user', [ApiController::class, 'maxRefferalUser']);
     Route::get('v1/max-visitor-user', [ApiController::class, 'maxVisitorUser']);
 
-    // latest members
-    Route::get('v1/latestmembers', [ApiController::class, 'latestMembers']);
-
     // userdata by id
     Route::get('v1/user-details/{userId}', [ApiController::class, 'getUserDetails']);
 
-    // connection
+   // latest members
+    Route::get('v1/latestmembers', [ApiController::class, 'latestMembers']); 
+  
+  // connection
 
     Route::get('v1/connections/receivedConnectionsRequests', [ConnectionController::class, 'receivedConnectionsRequests']);
     Route::get('v1/connections/myConnections', [ConnectionController::class, 'myConnections']);
@@ -448,7 +446,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('v1/connections/ConnectionsRequests', [ConnectionController::class, 'ConnectionsRequests']);
 
     Route::get('/connections/getCircleMembers', [ConnectionController::class, 'getAllCircles']);
-    Route::get('/connections/getCircleMembers/{id?}', [ConnectionController::class, 'getCircleMembers']);
+  	Route::get('/connections/getCircleMembers/{id?}', [ConnectionController::class, 'getCircleMembers']);
     Route::get('/connections/getCategoryMembers/{id?}', [ConnectionController::class, 'getCategoryMembers']);
 
     // Search Members for Chat Modules
@@ -550,7 +548,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('social-wall/post', [SocialWallController::class, 'createPost']);
     Route::get('social-wall/feed', [SocialWallController::class, 'getFeed']);
     Route::post('social-wall/like', [SocialWallController::class, 'toggleLike']);
-    Route::get('social-wall/like/{postId}', [SocialWallController::class, 'getPostLikes']);
+  	Route::get('social-wall/like/{postId}', [SocialWallController::class, 'getPostLikes']);
     Route::post('social-wall/comment', [SocialWallController::class, 'addComment']);
     Route::get('social-wall/comments/{postId}', [SocialWallController::class, 'getComments']);
     Route::post('social-wall/post/edit', [SocialWallController::class, 'editPost']);

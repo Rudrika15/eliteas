@@ -25,8 +25,10 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Bootstrap any application services.
      */
-    public function boot(): void
+     public function boot(): void
     {
+       
+
         view()->composer('*', function ($view) {
 
             if (!Auth::check()) {
@@ -35,7 +37,7 @@ class AppServiceProvider extends ServiceProvider
 
             $authUser = Auth::user();
 
-            $notifications = Notifications::latest()->whereMonth('created_at', now()->month)->whereYear('created_at', now()->year)->get()->filter(function ($notification) use ($authUser) {
+            $notifications = Notifications::latest()->get()->filter(function ($notification) use ($authUser) {
 
                 $data = json_decode($notification->data, true);
                 $type = $data['type'] ?? null;
@@ -45,7 +47,7 @@ class AppServiceProvider extends ServiceProvider
                 if ($type == 'connection_accept' || $type == 'connection_reject') {
                     return isset($data['memberId']) && $data['memberId'] == $authUser->id;
                 }
-                if ($type == 'chat_message') {
+               if ($type == 'chat_message') {
                     return isset($data['memberId']) && $data['memberId'] == $authUser->id;
                 }
                 if ($type == 'reference_created') {
@@ -62,6 +64,7 @@ class AppServiceProvider extends ServiceProvider
             });
 
             $notificationCount = $notifications->where('is_read', false)->count();
+          
             $view->with([
                 'membersCount' => Member::where('status', 'Active')->count(),
                 'circleCount' => Circle::where('status', 'Active')->count(),

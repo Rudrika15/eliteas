@@ -155,7 +155,7 @@ class CircleMeetingMemberBusinessController extends Controller
     {
         try {
 
-            if (! auth()->user()->hasRole(['Member', 'Digital Member'])) {
+             if (! auth()->user()->hasRole(['Member', 'Digital Member'])) {
                 return Utils::errorResponse(['error' => 'Unauthorized'], 'Unauthorized access', 403);
             }
 
@@ -195,7 +195,7 @@ class CircleMeetingMemberBusinessController extends Controller
     {
         try {
 
-            if (! auth()->user()->hasRole(['Member', 'Digital Member'])) {
+             if (! auth()->user()->hasRole(['Member', 'Digital Member'])) {
                 return Utils::errorResponse(['error' => 'Unauthorized'], 'Unauthorized access', 403);
             }
 
@@ -258,7 +258,6 @@ class CircleMeetingMemberBusinessController extends Controller
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
-
 
     public function view(Request $request, $id)
     {
@@ -365,7 +364,7 @@ class CircleMeetingMemberBusinessController extends Controller
             $busGiver->loginMemberId = Auth::user()->id;
             $busGiver->amount = $request->amount;
             $busGiver->remarks = $request->remarks;
-            $busGiver->date = $request->date;
+            $busGiver->date = Carbon::now()->toDateString();
             $busGiver->status = 'Active';
             $busGiver->save();
 
@@ -501,7 +500,7 @@ class CircleMeetingMemberBusinessController extends Controller
             return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
     }
-    public function updateBusinessSlip(Request $request, $id)
+  public function updateBusinessSlip(Request $request, $id)
     {
         try {
 
@@ -543,17 +542,16 @@ class CircleMeetingMemberBusinessController extends Controller
         }
     }
 
-    public function delete($id)
+    public function delete(Request $request, $id)
     {
-        // try {
-        $busGiver = CircleMeetingMembersBusiness::find($id);
-        $busGiver->status = 'Deleted';
-        $busGiver->save();
+        try {
+            $busGiver = CircleMeetingMembersBusiness::findOrFail($id);
+            $busGiver->status = 'Deleted';
+            $busGiver->save();
 
-
-        return Utils::sendResponse([], 'Circle Meeting Member Business Deleted Successfully!', 200);
-        // } catch (\Throwable $th) {
-        //     return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
-        // }
+            return Utils::sendResponse([], 'Circle Meeting Member Business Deleted Successfully!', 200);
+        } catch (\Throwable $th) {
+            return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
+        }
     }
 }

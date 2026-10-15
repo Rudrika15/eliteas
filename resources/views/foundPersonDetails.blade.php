@@ -368,10 +368,10 @@
                         </div>
 
                         <div class="card-body">
-                            @if (isset($member->memberGallery) && $member->memberGallery->count() > 0)
+                            @if (isset($memberGallery) && $memberGallery->count() > 0)
                                 <div class="row g-3">
-                                    @foreach ($member->memberGallery as $gallery)
-                                        @if ($gallery->status == 'Active' && !empty($gallery->image) && file_exists(public_path('MemberGallery/' . $gallery->image)))
+                                    @foreach ($memberGallery as $gallery)
+                                        @if ($gallery->status == 'Active' && !empty($gallery->image) && file_exists( public_path('MemberGallery/' . $gallery->image)))
                                             <div class="col-6">
                                                 <div class="gallery-card">
                                                     <img src="{{ asset('MemberGallery/' . $gallery->image) }}" class="img-fluid rounded-3 shadow-sm gallery-img" alt="Gallery Image">

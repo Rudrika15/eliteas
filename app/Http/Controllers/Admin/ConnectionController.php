@@ -829,24 +829,27 @@ class ConnectionController extends Controller
                 });
         })->first();
 
-        if ($existingConnection) {
+          if ($existingConnection) {
 
-            // $existingStatus = $existingConnection->status;
-
-            // $message = $existingStatus === 'Accepted'
-            //     ? 'You are already connected.'
-            //     : 'Connection request already sent.';
-
-            // return response()->json([
-            //     'status' => 'info',
-            //     'message' => $message,
-            // ]);
-            if ($existingConnection->status === 'Accepted') {
+         //   if ($existingConnection->status === 'Accepted') {
+         //       return response()->json([
+         //           'status' => 'info',
+         //           'connection_status' => 'Accepted',
+         //           'message' => 'You are already connected.',
+         //       ]);
+         //   }
+         //   return response()->json([
+         //       'status' => 'info',
+         //       'connection_status' => 'Requested',
+         //       'message' => 'Connection request already sent.',
+         //   ]);
+             if ($existingConnection->status === 'Accepted') {
                 return redirect()->back()->with('success', 'You are already connected.');
             }
 
             return redirect()->back()->with('success', 'Connection request already sent.');
-        }
+       }
+            
 
         /*
     |------------------------------------------
@@ -860,7 +863,7 @@ class ConnectionController extends Controller
         $connection->status = 'Pending';
         $connection->save();
 
-        /*            
+        /*
     |------------------------------------------
     | Create Notification (DB)
     |------------------------------------------
@@ -927,15 +930,6 @@ class ConnectionController extends Controller
             $userId = Auth::user()->id;
 
             // Query to get connection requests
-            // $connections = Connection::whereHas('member', function ($query) use ($userId) {
-            //     $query->where('memberId', $userId);
-            // })
-            //     ->with('member')
-            //     ->where('status', 'Pending')
-            //     ->whereHas('user', function ($query) {
-            //         $query->where('status', 'Active');
-            //     })
-            //     ->paginate(10);
             $connections = Connection::where('memberId', $userId)
                 ->where('status', 'Pending')
                 ->whereHas('user', function ($query) {
@@ -975,7 +969,7 @@ class ConnectionController extends Controller
             // Get the authenticated user's ID
             $userId = Auth::id();
 
-            $connections = Connection::where('userId', $userId)
+             $connections = Connection::where('userId', $userId)
                 ->where('status', 'Pending')
                 ->whereHas('receiver', function ($query) {
                     $query->where('status', 'Active');
@@ -1109,7 +1103,7 @@ class ConnectionController extends Controller
                 $query->where('userId', $userId)->orWhere('memberId', $userId);
             })->where('recordStatus', 'Active')
                 ->where('status', 'Accepted')
-                ->whereHas('user', function ($q) {
+               ->whereHas('user', function ($q) {
                     $q->where('status', 'Active');
                 })
                 ->whereHas('receiver', function ($q) {
@@ -1133,9 +1127,8 @@ class ConnectionController extends Controller
                 ->where('recordStatus', 'Active')
                 ->where('status', 'Pending')
                 ->whereHas('receiver', function ($q) {
-                    $q->where('status', 'Active');
-                })
-
+                      $q->where('status', 'Active');
+                  })
                 ->with([
                     'receiver' => function ($query) {
                         $query->select('id', 'email', 'firstName', 'lastName', 'contactNo');
@@ -1151,9 +1144,8 @@ class ConnectionController extends Controller
                 ->where('recordStatus', 'Active')
                 ->where('status', 'Pending')
                 ->whereHas('receiver', function ($q) {
-                    $q->where('status', 'Active');
-                })
-
+                      $q->where('status', 'Active');
+                  })
                 ->with([
                     'user' => function ($query) {
                         $query->select('id', 'email', 'firstName', 'lastName', 'contactNo');
@@ -1207,12 +1199,10 @@ class ConnectionController extends Controller
     public function accept($id)
     {
         try {
-            $connection = Connection::where('id', $id)
-                ->whereHas('user', function ($q) {
-                    $q->where('status', 'Active');
+             $connection = Connection::where('id', $id)->whereHas('user', function ($q) {
+                 $q->where('status', 'Active');
                 })
                 ->firstOrFail();
-
 
             $connection->status = 'Accepted';
             $connection->save();
@@ -1231,7 +1221,7 @@ class ConnectionController extends Controller
                 ])
             ]);
 
-            return redirect()->route('admin.connection.receivedConnections')
+            return redirect()->route('connection.myConnections')
                 ->with('success', 'Accepted Successfully');
         } catch (\Throwable $th) {
             // throw $th;
@@ -1268,14 +1258,14 @@ class ConnectionController extends Controller
                 ])
             ]);
 
-            return redirect()->route('admin.connection.receivedConnections')
+            return redirect()->route('connection.myConnections')
                 ->with('success', 'Rejected Successfully');
         } catch (\Throwable $th) {
             // throw $th;
 
             ErrorLogger::logError($th, request()->fullUrl());
 
-            return redirect()->route('admin.connection.receivedConnections')
+            return redirect()->route('connection.myConnections')
                 ->with('error', 'Failed to reject connection.');
         }
     }

@@ -17,7 +17,7 @@ class TopNetworkerController extends Controller
             ->having('sponsees_count', '>', 4)
             ->orderByDesc('sponsees_count')
             ->with(['circle', 'bCategory'])
-            ->where('status', 'Active')
+         	 ->where('status', 'Active')
             ->get();
 
         // Crorepati Givers (Business Given > 1 Crore)

@@ -13,7 +13,6 @@ class Member extends Model
     protected $fillable = [
         'firstName',
         'lastName',
-        'birthDate',
         // 'email',
         'userId',
     ];
@@ -102,10 +101,7 @@ class Member extends Model
     {
         return $this->belongsTo(User::class, 'createdBy', 'id');
     }
-    public function galleries()
-    {
-        return $this->hasMany(MemberGallery::class);
-    }
+
     public function sponsors()
     {
         return $this->belongsTo(Member::class, 'sponsoredBy');
@@ -124,14 +120,5 @@ class Member extends Model
     public function businessReceived()
     {
         return $this->hasMany(CircleMeetingMembersBusiness::class, 'loginMemberId', 'userId');
-    }
-    public function memberGallery()
-    {
-        return $this->hasMany(MemberGallery::class, 'memberId');
-    }
-
-    public function testimonials()
-    {
-        return $this->hasMany(Testimonial::class, 'memberId');
     }
 }

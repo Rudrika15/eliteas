@@ -64,15 +64,10 @@ class TermsController extends Controller
         $data = [
             'name' => $member->firstName . ' ' . $member->lastName,
             'date' => now()->format('d-m-Y'),
-            'signature' => $member->signature ?? null
+            'signature' => $member->signature ?? $member->firstName . ' ' . $member->lastName
         ];
 
         $pdf = Pdf::loadView('pdf.terms', $data)->setPaper('A4', 'portrait');
-        $pdf->setOptions([
-            'isHtml5ParserEnabled' => true,
-            'isRemoteEnabled' => true
-        ]);
-
 
         $fileName = 'terms' . '.pdf';
         $filePath = public_path('pdfs/' . $fileName);
@@ -84,7 +79,6 @@ class TermsController extends Controller
                 ->subject('Confirmation of Terms & Conditions Acceptance')
                 ->attach($filePath);
         });
-
 
         return redirect()->route('home')->with('success', 'Accepted!');
     }

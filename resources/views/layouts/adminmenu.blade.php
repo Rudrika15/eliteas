@@ -77,6 +77,43 @@
     </a>
 </li>
 
+<li class="nav-item">
+    <a class="nav-link collapsed" href="{{ route('announcement.index') }}">
+        <i class="bi bi-megaphone-fill" style="color: #e76a35"></i>
+        <span style="color: #1d2856">Announcements</span>
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link collapsed" href="{{ route('banner.index') }}">
+        <i class="bi bi-image" style="color: #e76a35"></i>
+        <span style="color: #1d2856">Banner</span>
+    </a>
+</li>
+
+
+<li class="nav-item">
+    <a class="nav-link collapsed" href="{{ route('sponsors.index') }}">
+        <i class="bi bi-hand-thumbs-up-fill" style="color: #e76a35"></i>
+        <span style="color: #1d2856">Sponsors</span>
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link collapsed" href="{{ route('risingstar.index') }}">
+        <i class="bi bi-stars" style="color: #e76a35"></i>
+        <span style="color: #1d2856">Rising Star</span>
+    </a>
+</li>
+
+<li class="nav-item">
+    <a class="nav-link collapsed" href="{{ route('birthday.index') }}">
+        <i class="bi bi-gift" style="color: #e76a35"></i>
+        <span style="color: #1d2856">Birthday</span>
+    </a>
+</li>
+
+
+
+
 {{-- <li class="nav-item">
     <a class="nav-link collapsed" href="{{ route('members.form') }}">
         <i class="bi bi-person" style="color: #e76a35"></i>
@@ -98,38 +135,6 @@
     </a>
 </li>
 
-<li class="nav-item">
-    <a class="nav-link collapsed" href="{{ route('banner.index') }}">
-        <i class="bi bi-image" style="color: #e76a35"></i>
-        <span style="color: #1d2856">Banner</span>
-    </a>
-</li>
-
-<li class="nav-item">
-    <a class="nav-link collapsed" href="{{ route('announcement.index') }}">
-        <i class="bi bi-megaphone-fill" style="color: #e76a35"></i>
-        <span style="color: #1d2856">Announcements</span>
-    </a>
-</li>
-<li class="nav-item">
-    <a class="nav-link collapsed" href="{{ route('sponsors.index') }}">
-        <i class="bi bi-hand-thumbs-up-fill" style="color: #e76a35"></i>
-        <span style="color: #1d2856">Sponsors</span>
-    </a>
-</li>
-<li class="nav-item">
-    <a class="nav-link collapsed" href="{{ route('risingstar.index') }}">
-        <i class="bi bi-stars" style="color: #e76a35"></i>
-        <span style="color: #1d2856">Rising Star</span>
-    </a>
-</li>
-
-<li class="nav-item">
-    <a class="nav-link collapsed" href="{{ route('birthday.index') }}">
-        <i class="bi bi-gift" style="color: #e76a35"></i>
-        <span style="color: #1d2856">Birthday</span>
-    </a>
-</li>
 <li class="nav-item">
     <a class="nav-link collapsed" data-bs-target="#allActivity-nav" data-bs-toggle="collapse" href="#">
         <i class="bi bi-person-gear" style="color: #e76a35"></i><span>All Activity</span><i class="bi bi-chevron-down ms-auto" style="color: #e76a35"></i>
@@ -254,6 +259,8 @@
             </a>
         </li> --}}
 
+
+
         <li class="nav-item">
             <a class="nav-link " href="{{ route('circle.index') }}">
                 <i class="bi bi-plus-circle-dotted" style="color: #e76a35"></i>
@@ -267,7 +274,6 @@
                 <span>Circle Member</span>
             </a>
         </li>
-
 
         <li class="nav-item">
             <a class="nav-link " href="{{ route('circlemember.deletedMemberList') }}">
@@ -580,8 +586,8 @@
             </a>
         </li>
     </ul>
-
-    <ul id="report-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+  
+   <ul id="report-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
         <li class="nav-item">
             <a class="nav-link collapsed" href="{{ route('admin.report.circleMemberNetAdded') }}">
                 <i class="bi bi-file-earmark-text" style="color: #e76a35"></i>

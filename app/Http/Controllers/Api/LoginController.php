@@ -9,7 +9,6 @@ use App\Models\Landmark;
 use App\Models\Member;
 use App\Models\TopsProfile;
 use App\Models\User;
-use Illuminate\Support\Facades\Hash;
 use App\Utils\ErrorLogger;
 use App\Utils\Utils;
 use Illuminate\Http\Request;
@@ -19,7 +18,7 @@ use Spatie\Permission\Models\Role;
 
 class LoginController extends Controller
 {
-    public function login(Request $request)
+   public function login(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'email' => 'required|email',
@@ -152,11 +151,7 @@ class LoginController extends Controller
         } else {
             $circle = null; // For Digital Member, no circle data
         }
-        $forceChangePassword = false;
 
-        if (Hash::check('123456', $user->password)) {
-            $forceChangePassword = true;
-        }
         return response()->json([
             'user' => $user,
             'member' => $member,
@@ -164,7 +159,6 @@ class LoginController extends Controller
             'contactDetails' => $contactDetails,
             'topsProfile' => $topsProfile,
             'circle' => $circle,
-            'force_change_password' => $forceChangePassword,
         ]);
     }
 
@@ -426,6 +420,7 @@ class LoginController extends Controller
         $member->chapter = $request->input('chapter', $member->chapter);
         $member->renewalDueDate = $request->input('renewalDueDate', $member->renewalDueDate);
         $member->membershipStatus = $request->input('membershipStatus', $member->membershipStatus);
+
         // $member->keyWords = $request->input('keyWords', $member->keyWords);
 
         $keyWords = [];

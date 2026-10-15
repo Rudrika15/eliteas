@@ -265,7 +265,7 @@
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ optional($refGiverData->members)->firstName ?? '-' }} {{ optional($refGiverData->members)->lastName ?? '-' }}</td>
-                                        <td>{{ $refGiverData->contactName ?? '-' }}</td>
+                                      <td>{{ $refGiverData->contactName ?? '-' }}</td>
                                         <td>{{ $refGiverData->contactNo ?? '-' }}</td>
                                         <td>{{ $refGiverData->email ?? '-' }}</td>
                                         <td>{{ optional($refGiverData->members->circle)->circleName ?? 'Digital Member' }}</td>

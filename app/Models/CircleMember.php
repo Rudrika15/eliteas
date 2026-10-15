@@ -49,4 +49,5 @@ class CircleMember extends Model
     {
         return $this->hasOne(User::class, 'id', 'memberId');
     }
+
 }

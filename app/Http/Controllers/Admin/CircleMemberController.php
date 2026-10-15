@@ -766,9 +766,15 @@ class CircleMemberController extends Controller
     public function edit(Request $request, $id)
     {
         try {
-            $user = User::find($id);
-            $members = Member::where('status', 'Active')->orderBy('firstName', 'asc')->get();
+            
             $member = Member::find($id);
+          	if (!$member) {
+
+                return redirect()->back()->with(
+                    'error',
+                    'Member not found'
+                );
+            }
             $countries = Country::where('status', 'Active')->orderBy('countryName', 'ASC')->get();
             $states = State::where('status', 'Active')->orderBy('stateName', 'ASC')->get();
             $cities = City::where('status', 'Active')->orderBy('cityName', 'ASC')->get();
@@ -786,7 +792,7 @@ class CircleMemberController extends Controller
             $membershipType = MembershipType::where('status', 'Active')->orderBy('membershipType', 'asc')->get();
             $circles = Circle::where('status', 'Active')->orderBy('circleName', 'asc')->get();
 
-            return view('admin.circlemember.edit', compact('countries', 'circles', 'members', 'membershipType', 'user', 'states', 'cities', 'member', 'contactDetails', 'billing', 'tops', 'circles', 'businessCategory', 'galleryImages'));
+            return view('admin.circlemember.edit', compact('countries', 'circles','membershipType', 'user', 'states', 'cities', 'member', 'contactDetails', 'billing', 'tops', 'circles', 'businessCategory', 'galleryImages'));
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError(
@@ -1077,6 +1083,7 @@ class CircleMemberController extends Controller
         }
     }
 
+
     public function restoreMember(Request $request, $id)
     {
 
@@ -1236,29 +1243,6 @@ class CircleMemberController extends Controller
             ErrorLogger::logError($th, $request->fullUrl());
 
             return redirect()->back()->with('error', 'Failed to export data.');
-        }
-    }
-
-    public function resetPassword(Request $request, $id)
-    {
-        try {
-            $member = Member::find($id);
-            if (!$member) {
-                return redirect()->back()->with('error', 'Member not found.');
-            }
-
-            $user = User::find($member->userId);
-            if (!$user) {
-                return redirect()->back()->with('error', 'Associated user not found.');
-            }
-
-            $user->password = Hash::make('123456');
-            $user->save();
-
-            return redirect()->back()->with('success', 'User password has been reset to 123456 successfully.');
-        } catch (\Throwable $th) {
-            ErrorLogger::logError($th, $request->fullUrl());
-            return redirect()->back()->with('error', 'Failed to reset password.');
         }
     }
 }

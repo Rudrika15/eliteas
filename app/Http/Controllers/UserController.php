@@ -189,21 +189,4 @@ class UserController extends Controller
     {
         return Excel::download(new UsersExport, 'users.xlsx');
     }
-
-    public function resetPassword(Request $request, $id)
-    {
-        try {
-            $user = User::find($id);
-            if (!$user) {
-                return redirect()->back()->with('error', 'User not found.');
-            }
-
-            $user->password = FacadesHash::make('123456');
-            $user->save();
-
-            return redirect()->back()->with('success', 'User password has been reset to 123456 successfully.');
-        } catch (\Throwable $th) {
-            return redirect()->back()->with('error', 'Failed to reset password.');
-        }
-    }
 }

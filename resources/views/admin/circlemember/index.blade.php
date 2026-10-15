@@ -221,12 +221,22 @@
                                     </td>
                                     <td>{{ $circlememberData->bCategory->categoryName ?? '-' }}</td>
                                     <td>{{ $circlememberData->membershipType ?? '-' }} </td>
-                                    <td>
+                               		{{-- <td>
                                         @foreach ($circlememberData->user->roles as $role)
                                             <span class="badge rounded-pill bg-success">{{ $role->name ?? '' }}</span>
                                             @if (!$loop->last)
                                             @endif
                                         @endforeach
+                                    </td> --}}
+                                  <td>
+                                          @forelse ($circlememberData->user?->roles ?? [] as $role)
+        <span class="badge rounded-pill bg-success">
+            {{ $role->name }}
+        </span>
+    @empty
+        <span class="badge rounded-pill bg-secondary">Member</span>
+    @endforelse
+                                    
                                     </td>
 
                                     <td>
@@ -242,10 +252,6 @@
                                             <i class="bi bi-trash"></i>
                                             <span class="btn-text">Delete Member</span>
                                         </button>
-                                        <button type="button" class="btn btn-warning btn-sm btn-tooltip text-white" onclick="confirmResetPassword({{ $circlememberData->id }})">
-                                            <i class="bi bi-key"></i>
-                                            <span class="btn-text">Reset Password</span>
-                                        </button>
 
                                         <script>
                                             function confirmDelete(memberId) {
@@ -260,22 +266,6 @@
                                                 }).then((result) => {
                                                     if (result.isConfirmed) {
                                                         window.location.href = '{{ route('circlemember.delete', '') }}/' + memberId;
-                                                    }
-                                                })
-                                            }
-
-                                            function confirmResetPassword(memberId) {
-                                                Swal.fire({
-                                                    title: 'Reset Password?',
-                                                    text: "Are you sure you want to reset this user's password to 123456?",
-                                                    icon: 'warning',
-                                                    showCancelButton: true,
-                                                    confirmButtonColor: '#ffc107',
-                                                    cancelButtonColor: '#d33',
-                                                    confirmButtonText: 'Yes, reset it!'
-                                                }).then((result) => {
-                                                    if (result.isConfirmed) {
-                                                        window.location.href = '{{ route('circlemember.resetPassword', '') }}/' + memberId;
                                                     }
                                                 })
                                             }
@@ -305,12 +295,16 @@
                                                             <input type="hidden" name="memberId" value="{{ $circlememberData->id }}">
                                                             <select name="roleId" class="form-select">
                                                                 <option value="">Select Role</option>
-                                                                @foreach ($roles as $role)
-                                                                    @if (!in_array($role->name, ['Member', 'Admin', 'Trainer']) && !$circlememberData->user->roles->contains($role->id))
-                                                                        <option value="{{ $role->id }}">
-                                                                            {{ $role->name }}</option>
-                                                                    @endif
-                                                                @endforeach
+                                                               @foreach ($roles as $role)
+                                                                @if (
+                                                                    !in_array($role->name, ['Member','Admin', 'Trainer']) &&
+                                                                    !($circlememberData->user?->roles?->contains('id', $role->id))
+                                                                )
+                                                                    <option value="{{ $role->id }}">
+                                                                        {{ $role->name }}
+                                                                    </option>
+                                                                @endif
+                                                            @endforeach
                                                             </select>
                                                             <div class="d-flex justify-content-end mt-3">
                                                                 <button type="submit" class="btn btn-bg-blue btn-sm">Assign</button>
@@ -341,12 +335,13 @@
                                                             <input type="hidden" name="memberId" value="{{ $circlememberData->id }}">
                                                             <select name="roleId" class="form-select">
                                                                 <option value="">Select Role</option>
-                                                                @foreach ($circlememberData->user->roles as $role)
-                                                                    @if (!in_array($role->name, ['Member', 'Trainer', 'Admin']))
-                                                                        <option value="{{ $role->id }}">
-                                                                            {{ $role->name }}</option>
-                                                                    @endif
-                                                                @endforeach
+                                                              @foreach (($circlememberData->user?->roles ?? []) as $role)
+                                                                  @if (!in_array($role->name, ['Member', 'Trainer', 'Admin']))
+                                                                      <option value="{{ $role->id }}">
+                                                                          {{ $role->name }}
+                                                                      </option>
+                                                                  @endif
+                                                              @endforeach
                                                             </select>
 
                                                             <div class="d-flex justify-content-end mt-3">

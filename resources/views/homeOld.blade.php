@@ -59,7 +59,7 @@
 
     @if (isset($error))
     <div class="alert alert-danger">{{ $error }}</div>
-    @endif                                  
+    @endif
 
     @if (isset($listOfUser) && $listOfUser->count())
     <ul>
@@ -301,7 +301,7 @@
                                             Invite
                                         </button>
 
-                                        <script>    
+                                        <script>
                                             function openInvitePage(url) {
                                                 // Open the pre-generated signed URL in a new tab
                                                 window.open(url, '_blank');
@@ -789,7 +789,7 @@
                 navigator.clipboard.writeText(copyText).then(function() {
                     alert("Link copied to clipboard");
                 }, function(err) {
-                    alert("Could not copy link");                                                                                               
+                    alert("Could not copy link");
                 });
             }
         </script>

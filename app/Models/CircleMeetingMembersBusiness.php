@@ -66,6 +66,7 @@ class CircleMeetingMembersBusiness extends Model
     {
         return $this->hasMany(BusinessAmount::class, 'circleMeetingMemberBusinessId');
     }
+  
     public function businessReceiver()
     {
         return $this->belongsTo(Member::class, 'loginMemberId', 'userId');

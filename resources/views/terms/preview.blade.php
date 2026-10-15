@@ -39,7 +39,7 @@
             border: 3px solid var(--blue);
             border-radius: 12px;
             width: 100%;
-            /* max-width: 760px; */
+            /* max-width: 1024px; */
             padding: 40px 44px 48px;
             position: relative;
         }

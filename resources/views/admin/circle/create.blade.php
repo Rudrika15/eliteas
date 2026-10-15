@@ -155,7 +155,8 @@
                     </div>
                 </div>
             </div>
-            <div class="row">
+          
+           <div class="row">
                 <div class="col-md-6">
                     <div class="form-floating">
                         <input type="date" class="form-control @error('launchDate') is-invalid @enderror" id="launchDate" name="launchDate" value="{{ old('launchDate', date('Y-m-d')) }}">

@@ -231,8 +231,7 @@
                         success: function(response) {
                             if (response.members && response.members.length > 0) {
                                 response.members.forEach(function(member) {
-
-                                    if (
+                                  if (
                                         member.firstName?.toLowerCase().trim() === 'ubn' &&
                                         member.lastName?.toLowerCase().trim() === '-'
                                     ) {

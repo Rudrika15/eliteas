@@ -7,6 +7,7 @@ use App\Mail\MembershipRenewed;
 use App\Mail\WelcomeMemberEmail;
 use App\Models\AllPayments;
 use App\Models\BusinessCategory;
+use App\Mail\MembershipSubcriptionRenewed;
 use App\Models\Circle;
 use App\Models\EventRegister;
 use App\Models\MeetingInvitation;
@@ -27,7 +28,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
-use App\Mail\MembershipSubcriptionRenewed;
 
 class PaymentController extends Controller
 {
@@ -112,7 +112,7 @@ class PaymentController extends Controller
             return response()->json(['message' => 'Failed to store payment ID'], 500);
         }
     }
-
+  
     public function invitePayment(Request $request)
     {
         try {
@@ -195,7 +195,7 @@ class PaymentController extends Controller
             $invitation = new MeetingInvitation;
             $invitation->meetingId = $request->meetingId;
             $invitation->invitedMemberId = $visitor->invitedBy;
-            $invitation->personName = $request->firstName . ' ' . $request->lastName;
+            $invitation->personName = $request->firstName.' '.$request->lastName;
             $invitation->personEmail = null;
             $invitation->personContact = $visitor->mobileNo;
             $invitation->businessCategoryId = $visitor->businessCategory;
@@ -212,7 +212,7 @@ class PaymentController extends Controller
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, $request->fullUrl());
 
-            return response()->json(['error' => 'Failed to store payment details: ' . $th->getMessage()], 500);
+            return response()->json(['error' => 'Failed to store payment details: '.$th->getMessage()], 500);
         }
     }
 
@@ -549,7 +549,7 @@ class PaymentController extends Controller
     public function renewMembership($userId)
     {
         try {
-
+            // 1. Find user
             $user = User::find($userId);
             if (! $user) {
                 return response()->json([
@@ -558,7 +558,7 @@ class PaymentController extends Controller
                 ], 404);
             }
 
-
+            // 2. Find subscription
             $subscription = MemberSubscriptions::where('userId', $userId)->first();
             if (! $subscription) {
                 return response()->json([
@@ -567,8 +567,7 @@ class PaymentController extends Controller
                 ], 404);
             }
 
-
-
+            // 3. Decide base date (future validity OR today)
             $currentValidity = $subscription->validity
                 ? \Carbon\Carbon::parse($subscription->validity)
                 : now();
@@ -577,44 +576,37 @@ class PaymentController extends Controller
                 ? $currentValidity
                 : now();
 
-
-            // if ($subscription->membershipType == 'Supreme - Yearly') {
-            //     $newValidity = $baseDate->addYear();
-            // } elseif ($subscription->membershipType == 'Prestige Lifetime') {
-            //     $newValidity = $baseDate->addYears(5);
-            // } else {
-            //     $newValidity = $baseDate->addYear();
-            // }
+            // 4. Extend validity
             if ($subscription->membershipType == 'Supreme - Yearly') {
-                $newValidity = $baseDate->copy()->addYear();
+                $newValidity = $baseDate->addYear();
             } elseif ($subscription->membershipType == 'Prestige Lifetime') {
-                $newValidity = $baseDate->copy()->addYears(5);
+                $newValidity = $baseDate->addYears(5);
             } else {
-                $newValidity = $baseDate->copy()->addYear();
+                $newValidity = $baseDate->addYear();
             }
 
-
+            // 5. Update subscription
             $subscription->validity = $newValidity->format('Y-m-d');
             $subscription->save();
 
-
+            // 6. Get amount from membership type table
             $membership = MembershipType::where(
                 'membershipType',
                 $subscription->membershipType
             )->first();
 
-
+            // 7. Save renewal history
             $renewal = new RenewSubscriptionHistory;
             $renewal->userId = $userId;
             $renewal->renewedBy = Auth::id();
-            $renewal->subscriptionId = $subscription->id;
+            $renewal->subscriptionId = $subscription->id; // Use ID instead of Type string
             $renewal->renewalDate = $newValidity->format('Y-m-d');
-            $renewal->amount = $membership ? $membership->amount : 0;
-            $renewal->status = 'Active';
+            $renewal->amount = $membership->amount ?? 0;
             $renewal->save();
+          
+           	Mail::to($user->email)->send(new MembershipSubcriptionRenewed($user, $subscription));
 
-            Mail::to($user->email)->send(new MembershipSubcriptionRenewed($user, $subscription));
-
+            // 8. Success JSON (SweetAlert)
             return response()->json([
                 'status' => 'success',
                 'message' => 'Membership renewed successfully!',
@@ -694,7 +686,7 @@ class PaymentController extends Controller
 
                 if ($memberDetails) {
                     $user = User::find($memberDetails->userId);
-                    $payment->memberName = $user ? $user->firstName . ' ' . $user->lastName : 'Unknown User';
+                    $payment->memberName = $user ? $user->firstName.' '.$user->lastName : 'Unknown User';
                 } else {
                     $payment->memberName = 'Unknown Member';
                 }
@@ -750,7 +742,7 @@ class PaymentController extends Controller
             'circleId' => 'required|integer|exists:circles,id',
         ]);
 
-        $currentMonth = $request->month . ' - ' . now()->format('Y');
+        $currentMonth = $request->month.' - '.now()->format('Y');
         $circleId = $request->circleId;
 
         // Check if payments for the current month and circle already exist
@@ -900,9 +892,6 @@ class PaymentController extends Controller
             $eventPayment = new EventRegister;
             $eventPayment->eventId = $request->eventId;
             $eventPayment->memberId = Auth::user()->member->id;
-            $eventPayment->personName = $request->personName;
-            $eventPayment->personEmail = $request->personEmail;
-            $eventPayment->personContact = $request->personContact;
             $eventPayment->paymentStatus = 'unpaid';
             $eventPayment->save();
 

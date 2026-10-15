@@ -1255,7 +1255,7 @@
                         var infoSection = document.createElement('div');
                         infoSection.classList.add('fb-card-info');
 
-                        const isConnected = (member.connection_status === 'Connected') //|| (member.connection_status === 'Accepted');
+                       	const isConnected = (member.connection_status === 'Connected') //|| (member.connection_status === 'Accepted');
                         const authCircleId = window.authCircleId || null;
                         const hasNoCircle = (!member.circle) || (member.circleId === null);
                         const showContacts = isConnected //|| (authCircleId && hasNoCircle);
@@ -1266,7 +1266,6 @@
                         var emailTooltip = showContacts ? (member.user?.email || '') : '';
 
                         var phoneText = showContacts ? (member.user?.contactNo || 'N/A') : '****';
-
                         var circleText = member.circle?.circleName || 'N/A';
 
                         var emailDiv = document.createElement('div');

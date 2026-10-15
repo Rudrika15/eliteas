@@ -199,7 +199,9 @@ class SocialWallService
             ->first();
 
         if ($like) {
+            // Unlike → delete
             $like->delete();
+
             return (object)[
                 'status' => 'unliked'
             ];

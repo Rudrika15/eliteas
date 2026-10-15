@@ -86,7 +86,7 @@ class TrainerMasterController extends Controller
 
     public function create()
     {
-        // try {
+        try {
             $circles = Circle::where('status', 'Active')->orderBy('circleName', 'asc')->get();
 
             $circleMember = Member::with('circle')
@@ -97,12 +97,12 @@ class TrainerMasterController extends Controller
             $trainer = TrainerMaster::all();
 
             return view('admin.trainerMaster.create', compact('trainer', 'circles', 'circleMember'));
-        // } catch (\Throwable $th) {
-        //     // throe $th;
-        //     ErrorLogger::logError($th, request()->fullUrl());
+        } catch (\Throwable $th) {
+            // throe $th;
+            ErrorLogger::logError($th, request()->fullUrl());
 
-        //     return view('servererror');
-        // }
+            return view('servererror');
+        }
     }
 
     public function store(Request $request)

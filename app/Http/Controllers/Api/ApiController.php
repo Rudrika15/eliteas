@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Announcements;
 use App\Models\Banners;
+use App\Models\RisingStar;
 use App\Models\BillingAddress;
 use App\Models\BusinessCategory;
 use App\Models\Circle;
@@ -20,7 +21,6 @@ use App\Models\Member;
 use App\Models\MemberGallery;
 use App\Models\Notifications;
 use App\Models\ResourceCategory;
-use App\Models\RisingStar;
 use App\Models\Schedule;
 use App\Models\Sponsors;
 use App\Models\TopsProfile;
@@ -115,7 +115,7 @@ class ApiController extends Controller
         try {
 
             $validator = Validator::make($request->all(), [
-                // 'password' => 'required|string|min:6|confirmed',
+                'password' => 'required|string|min:6|confirmed',
             ]);
 
             if ($validator->fails()) {
@@ -1334,9 +1334,9 @@ class ApiController extends Controller
         }
         $forceChangePassword = false;
 
-        if (Hash::check('123456', $user->password)) {
-            $forceChangePassword = true;
-        }
+       // if (Hash::check('123456', $user->password)) {
+       //     $forceChangePassword = true;
+       // }
 
         return response()->json([
             'user' => $user,
@@ -2158,10 +2158,14 @@ class ApiController extends Controller
     public function totalCounts()
     {
         try {
+           // $totalBusiness = CircleMeetingMembersBusiness::where('status', 'Active')->sum('amount');
+           // $totalReferences = CircleMeetingMembersReference::where('status', 'Active')->count();
+           // $totalIbms = CircleCall::where('status', 'Active')->count();
+          
             $totalBusiness = CircleMeetingMembersBusiness::whereIn('status', ['Active', 'Deleted'])->sum('amount');
             $totalReferences = CircleMeetingMembersReference::whereIn('status', ['Active', 'Deleted'])->count();
             $totalIbms = CircleCall::whereIn('status', ['Active', 'Deleted'])->count();
-
+          
             return Utils::sendResponse([
                 'total_business' => $totalBusiness,
                 'total_references' => $totalReferences,
@@ -2454,39 +2458,33 @@ class ApiController extends Controller
     //         return Utils::errorResponse($th->getMessage(), 'Internal Server Error', 500);
     //     }
     // }
-    public function latestMembers()
+  
+  public function latestMembers()
     {
         try {
             $authUserId = Auth::id();
 
-            // $authMember = Member::where('userId', $authUserId)->first();
-            // $membershipType = $authMember ? $authMember->membershipType : null;
+           // $authMember = Member::where('userId', $authUserId)->first();
+           // $membershipType = $authMember ? $authMember->membershipType : null;
 
-            $members = User::where('status', 'Active')
-                ->whereHas('member', function ($q) use ($authUserId) {
-                    $q->where('status', 'Active')
-                        ->where('userId', '!=', $authUserId);
-                        // ->where('membershipType', $membershipType);
+            $members = Member::where('status', 'Active')
+                ->where('userId', '!=', $authUserId)
+             //   ->when($membershipType, function ($q) use ($membershipType) {
+             //       $q->where('membershipType', $membershipType);
+             //   })
+                ->whereHas('user', function ($q) {
+                    $q->where('status', 'Active');
                 })
                 ->with([
-                    'member',
-                    'member.circle:id,circleName,cityId',
-                    'member.bCategory:id,categoryName',
+                    'user',
+                    'circle:id,circleName,cityId',
+                    'bCategory:id,categoryName',
                 ])
                 ->latest()
                 ->take(4)
                 ->get();
 
-            foreach ($members as $user) {
-
-                $member = $user->member;
-
-                if (! $member) {
-                    $user->connection_status = 'not_connected';
-
-                    continue;
-                }
-
+            foreach ($members as $member) {
                 $connection = Connection::where(function ($query) use ($authUserId, $member) {
                     $query->where('userId', $authUserId)
                         ->where('memberId', $member->userId);
@@ -2496,21 +2494,19 @@ class ApiController extends Controller
                 })->first();
 
                 // Default
-                $user->connection_status = 'not_connected';
+                $member->connection_status = 'not_connected';
 
                 if ($connection) {
-
                     if ($connection->status === 'Accepted') {
-                        $user->connection_status = 'connected';
+                        $member->connection_status = 'connected';
                     } elseif ($connection->status === 'Pending') {
-
                         if ($connection->userId == $authUserId) {
-                            $user->connection_status = 'request_sent';
+                            $member->connection_status = 'request_sent';
                         } else {
-                            $user->connection_status = 'request_received';
+                            $member->connection_status = 'request_received';
                         }
                     } elseif ($connection->status === 'Rejected') {
-                        $user->connection_status = 'not_connected';
+                        $member->connection_status = 'not_connected';
                     }
                 }
             }
@@ -2522,6 +2518,9 @@ class ApiController extends Controller
             return Utils::errorResponse($th->getMessage(), 'Internal Server Error', 500);
         }
     }
+  
+ 
+
 
     public function memberGallery(Request $request)
     {
@@ -2889,33 +2888,32 @@ class ApiController extends Controller
             }),
         ]);
     }
+    public function risingStar()
+      {
+          $risingStars = RisingStar::with('member')
+              ->where('status', 'Active')
+              ->latest()
+              ->get()
+              ->map(function ($star) {
 
-     public function risingStar()
-    {
-        $risingStars = RisingStar::with('member')
-            ->where('status', 'Active')
-            ->latest()
-            ->get()
-            ->map(function ($star) {
+                  return [
+                     'memberId' => $star->member_id,
+                      'userId' => $star->member->userId,
+                      'title' => $star->title,
+                      'name' => trim($star->member->firstName . ' ' . $star->member->lastName),
+                      'company_name' => $star->member->companyName,
+                      'mobile' => $star->member->mobile,
+                      'email' => $star->member->email,
+                      'profile_photo' => $star->member->profilePhoto
+                          ? asset('ProfilePhoto/' . $star->member->profilePhoto)
+                          : asset('admin/assets/images/default-user.png'),
+                  ];
+              });
 
-                return [
-                    'memberId' => $star->member_id,
-                    'userId' => $star->member->userId,
-                    'title' => $star->title,
-                    'name' => trim($star->member->firstName . ' ' . $star->member->lastName),
-                    'company_name' => $star->member->companyName,
-                    'mobile' => $star->member->mobile,
-                    'email' => $star->member->email,
-                    'profile_photo' => $star->member->profilePhoto
-                        ? asset('ProfilePhoto/' . $star->member->profilePhoto)
-                        : asset('admin/assets/images/default-user.png'),
-                ];
-            });
-
-        return response()->json([
-            'status' => true,
-            'message' => 'Rising Stars fetched successfully.',
-            'data' => $risingStars
-        ], 200);
+          return response()->json([
+              'status' => true,
+              'message' => 'Rising Stars fetched successfully.',
+              'data' => $risingStars
+          ], 200);
     }
 }

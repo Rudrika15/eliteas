@@ -142,7 +142,7 @@ class TrainingController extends Controller
     //     }
     // }
 
-    public function store(Request $request)
+      public function store(Request $request)
     {
         try {
             // Validate the incoming request
@@ -255,7 +255,7 @@ class TrainingController extends Controller
             return view('servererror');
         }
     }
-
+  
     public function edit($id)
     {
         try {
@@ -282,7 +282,6 @@ class TrainingController extends Controller
             // Validate the incoming request
             $validatedData = $request->validate([
                 'training_for' => 'required|string',
-                'fees' => 'nullable|numeric|min:0',
             ]);
 
             // Update the fields with validated data
@@ -290,7 +289,7 @@ class TrainingController extends Controller
 
             $training->trainingMasterId = $request->trainingMasterId;
             $training->title = $request->title;
-            $training->fees = $request->fees ?? 0;
+            $training->fees = $request->fees;
             $training->type = $request->type;
             $training->meetingLink = $request->meetingLink;
             $training->venue = $request->venue;

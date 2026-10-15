@@ -42,9 +42,7 @@ class CircleMeetingMemberReferenceController extends Controller
                 } else {
                     $item->induction_count = 0;
                 }
-
                 $item->externalPersonName = $item->contactName;
-
                 return $item;
             });
 
@@ -76,9 +74,7 @@ class CircleMeetingMemberReferenceController extends Controller
                         $item->refGiver->setRelation('circle', new Circle(['id' => null, 'circleName' => 'Digital Member']));
                     }
                 }
-
-                $item->externalPersonName = $item->contactName;
-
+				$item->externalPersonName = $item->contactName;
                 return $item;
             });
 
@@ -92,6 +88,7 @@ class CircleMeetingMemberReferenceController extends Controller
     public function view(Request $request, $id)
     {
         try {
+            //$refGiver = CircleMeetingMembersReference::findOrFail($id);
             $refGiver = CircleMeetingMembersReference::with(['members', 'refGiver', 'refGiverName', 'members.circle:id,circleName', 'refGiver.circle:id,circleName'])->findOrFail($id);
             $refGiver->externalPersonName = $refGiver->contactName;
 
@@ -160,6 +157,7 @@ class CircleMeetingMemberReferenceController extends Controller
             $refGiver->referenceGiverId = Auth::user()->id;
             $refGiver->memberId = $request->memberId;
 
+            //$refGiver->contactName = $request->contactNameExternal;
             $refGiver->contactName = $request->contactNameExternal ?? $request->contactName ?? $request->externalPersonName;
             $refGiver->contactNo = $request->contactNo;
             $refGiver->email = $request->email;
@@ -260,8 +258,10 @@ class CircleMeetingMemberReferenceController extends Controller
                 $refGiver->memberId = Auth::user()->id;
 
                 if ($request->group == 'internal') {
-                    $refGiver->contactName = $request->contactNameInternal ?? $request->contactName;
+                   // $refGiver->contactName = $request->contactNameInternal;
+                   $refGiver->contactName = $request->contactNameInternal ?? $request->contactName;
                 } else {
+                    //$refGiver->contactName = $request->contactNameExternal;
                     $refGiver->contactName = $request->contactNameExternal ?? $request->contactName ?? $request->externalPersonName;
                 }
 
@@ -315,6 +315,7 @@ class CircleMeetingMemberReferenceController extends Controller
             $refGiver = CircleMeetingMembersReference::find($id);
 
             $refGiver->memberId = $request->memberId;
+            //$refGiver->contactName = $request->contactNameExternal;
             $refGiver->contactName = $request->contactNameExternal ?? $request->contactName ?? $request->externalPersonName;
             $refGiver->contactNo = $request->contactNo;
             $refGiver->email = $request->email;

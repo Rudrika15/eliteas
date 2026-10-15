@@ -14,7 +14,6 @@
                     <div>
                         <form method="GET" action="{{ route('admin.report.joining') }}" id="dateFilterForm">
                             <div class="row mb-3 align-items-end">
-
                                 <!-- From Date -->
                                 <div class="col-md-3">
                                     <label class="form-label small text-muted"><strong>From</strong></label>
@@ -44,7 +43,6 @@
                                 </div>
 
                             </div>
-
                         </form>
                     </div>
                     {{-- <div class="col-md-4">

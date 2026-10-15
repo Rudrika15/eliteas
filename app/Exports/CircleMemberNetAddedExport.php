@@ -24,7 +24,7 @@ class CircleMemberNetAddedExport implements FromArray, WithStrictNullComparison
             'Last Month Members',
             'Current Month Added',
             'Current Month Deleted',
-            'Net Change'
+            'Net Count'
         ];
 
         foreach ($this->report as $row) {

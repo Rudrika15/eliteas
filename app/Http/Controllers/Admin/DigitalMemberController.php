@@ -4,9 +4,9 @@ namespace App\Http\Controllers\admin;
 
 namespace App\Http\Controllers\Admin;
 
-use App\Exports\DigitalMemberReport;
 use App\Http\Controllers\Controller;
 use App\Mail\MemberSubscription;
+use App\Exports\DigitalMemberReport;
 use App\Mail\MemberSubscriptionDiscount;
 use App\Models\AllPayments;
 use App\Models\BillingAddress;
@@ -27,7 +27,6 @@ use App\Models\State;
 use App\Models\TopsProfile;
 use App\Models\User;
 use App\Utils\ErrorLogger;
-use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
@@ -35,6 +34,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
 use Spatie\Permission\Models\Role;
+
 
 class DigitalMemberController extends Controller
 {
@@ -174,11 +174,11 @@ class DigitalMemberController extends Controller
             return view('servererror');
         }
     }
-
     public function export(Request $request)
     {
         return Excel::download(new DigitalMemberReport($request), 'digital_members.xlsx');
     }
+
 
     public function deletedMemberList(Request $request)
     {
@@ -453,7 +453,7 @@ class DigitalMemberController extends Controller
     {
         try {
             $data = Crypt::decrypt($paymentData);
-        } catch (DecryptException $e) {
+        } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
             abort(404);
         }
 
@@ -678,24 +678,26 @@ class DigitalMemberController extends Controller
             $tops->status = 'Deleted';
             $tops->save();
 
-            // Keep CircleCall, CircleMeetingMembersBusiness, and CircleMeetingMembersReference records active so deleting a digital member does not decrease totals
-            // $circleCalls = CircleCall::where('memberId', $circlemember->userId)->get();
-            // foreach ($circleCalls as $circleCall) {
-            //     $circleCall->status = 'Deleted';
-            //     $circleCall->save();
-            // }
+            // Fetch and update CircleCall records
+           // $circleCalls = CircleCall::where('memberId', $circlemember->userId)->get();
+           // foreach ($circleCalls as $circleCall) {
+           //     $circleCall->status = 'Deleted';
+           //     $circleCall->save();
+           // }
 
-            // $businessSlips = CircleMeetingMembersBusiness::where('businessGiverId', $circlemember->userId)->get();
-            // foreach ($businessSlips as $businessSlip) {
-            //     $businessSlip->status = 'Deleted';
-            //     $businessSlip->save();
-            // }
+            // Fetch and update CircleMeetingMembersBusiness records
+           // $businessSlips = CircleMeetingMembersBusiness::where('businessGiverId', $circlemember->userId)->get();
+           // foreach ($businessSlips as $businessSlip) {
+           //     $businessSlip->status = 'Deleted';
+            //    $businessSlip->save();
+            //}
 
-            // $businessReferences = CircleMeetingMembersReference::where('memberId', $circlemember->userId)->get();
-            // foreach ($businessReferences as $businessReference) {
-            //     $businessReference->status = 'Deleted';
-            //     $businessReference->save();
-            // }
+            // Fetch and update CircleMeetingMembersReference records
+           // $businessReferences = CircleMeetingMembersReference::where('memberId', $circlemember->userId)->get();
+           // foreach ($businessReferences as $businessReference) {
+           //     $businessReference->status = 'Deleted';
+           //     $businessReference->save();
+           // }
 
             return redirect()->route('digitalMember.index')->with('success', 'Circle Member Deleted Successfully!');
         } catch (\Throwable $th) {
@@ -763,29 +765,6 @@ class DigitalMemberController extends Controller
             );
 
             return view('servererror');
-        }
-    }
-
-    public function resetPassword(Request $request, $id)
-    {
-        try {
-            $member = Member::find($id);
-            if (!$member) {
-                return redirect()->back()->with('error', 'Member not found.');
-            }
-
-            $user = User::find($member->userId);
-            if (!$user) {
-                return redirect()->back()->with('error', 'Associated user not found.');
-            }
-
-            $user->password = Hash::make('123456');
-            $user->save();
-
-            return redirect()->back()->with('success', 'User password has been reset to 123456 successfully.');
-        } catch (\Throwable $th) {
-            ErrorLogger::logError($th, $request->fullUrl());
-            return redirect()->back()->with('error', 'Failed to reset password.');
         }
     }
 }

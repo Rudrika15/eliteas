@@ -173,12 +173,12 @@
         }
 
         /* .post-avatar {
-                                                                                                                                                                                                                                                                                    width: 40px;
-                                                                                                                                                                                                                                                                                    height: 40px;
-                                                                                                                                                                                                                                                                                    border-radius: 50%;
-                                                                                                                                                                                                                                                                                    margin-right: 10px;
-                                                                                                                                                                                                                                                                                    object-fit: cover;
-                                                                                                                                                                                                                                                                                } */
+                                                                                                                                                                                                                                    width: 40px;
+                                                                                                                                                                                                                                    height: 40px;
+                                                                                                                                                                                                                                    border-radius: 50%;
+                                                                                                                                                                                                                                    margin-right: 10px;
+                                                                                                                                                                                                                                    object-fit: cover;
+                                                                                                                                                                                                                                } */
         .post-avatar {
             width: 40px;
             height: 40px;
@@ -573,15 +573,6 @@
             border-radius: 8px;
             object-fit: cover;
         }
-
-        .fixed-textarea {
-            resize: none;
-            /* ❌ Disable manual resize */
-            height: 60px;
-            /* ✅ Fixed height */
-            overflow-y: auto;
-            /* ✅ Scroll if text is more */
-        }
     </style>
 
     <div class="social-wall-layout">
@@ -592,7 +583,7 @@
                     <div class="create-post-card">
                         <form id="create-post-form" onsubmit="uploadPost(event)" enctype="multipart/form-data">
                             <div class="mb-3">
-                                <textarea name="caption" class="form-control border-0 fixed-textarea" rows="2" placeholder="What's on your mind?"></textarea>
+                                <textarea name="caption" class="form-control border-0" rows="2" placeholder="What's on your mind?"></textarea>
                             </div>
 
                             {{-- Validation Errors --}}
@@ -640,8 +631,9 @@
                                 @php
                                     $postUserMember = optional($post->user->member);
                                     $postUserPhoto = $postUserMember->profilePhoto ?? null;
+                                    $imagePath = public_path('ProfilePhoto/' . $postUserPhoto);
                                 @endphp
-                                <img src="{{ !empty($postUserPhoto) ? asset('ProfilePhoto/' . $postUserPhoto) : asset('profile.png') }}" alt="User" class="post-avatar" onerror="this.onerror=null;this.src='{{ asset('profile.png') }}';">
+                               <img src="{{ (!empty($postUserPhoto) && file_exists($imagePath)) ? asset('ProfilePhoto/' . $postUserPhoto) : asset('ProfilePhoto/profile.png') }}"                                         alt="User" class="post-avatar">
                                 <div class="post-user-info">
                                     <h6>
                                         <a href="{{ route('foundPersonDetails', $post->user->member->id) }}" class="text-black font-bold">

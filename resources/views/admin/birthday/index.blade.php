@@ -94,7 +94,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="5" class="text-center text-muted">No members found.</td>
+                                    <td colspan="7" class="text-center text-muted">No members found.</td>
                                 </tr>
                             @endforelse
                         </tbody>

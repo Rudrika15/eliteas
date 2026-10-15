@@ -23,7 +23,7 @@
 
         <form class="m-3 needs-validation" enctype="multipart/form-data" method="POST" action="{{ route('sponsors.update', $sponsor->id) }}" novalidate>
             @csrf
-            {{-- @method('PUT') --}}
+          {{-- @method('PUT') --}}
 
             <div class="row">
 
@@ -49,7 +49,7 @@
 
                         <input type="file" class="form-control" id="image" name="image" accept="image/*" onchange="previewPhoto(event)">
 
-                        <img id="photoPreview" src="{{ $sponsor->image ? asset('sponsors/' . $sponsor->image) : asset('images/default.jpg') }}" class="mt-2" width="250" height="200">
+                        <img id="photoPreview" src="{{ $sponsor->image ? asset('uploads/sponsors/' . $sponsor->image) : asset('images/default.jpg') }}" class="mt-2" width="250" height="200">
 
                         @error('image')
                             <span class="text-danger">{{ $message }}</span>

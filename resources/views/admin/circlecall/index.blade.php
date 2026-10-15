@@ -777,7 +777,7 @@
                     meetingPlaceInput.after('<div class="invalid-feedback d-block client-error">Please enter the meeting place.</div>');
                 }
 
-                
+                // Validate Date
                 const dateInput = $('#date');
                 if (dateInput.length && !dateInput.val()) {
                     isValid = false;

@@ -1,3 +1,42 @@
+@php
+    $announcements = $announcements ?? collect();
+    $banners = $banners ?? collect();
+    $topInductions = $topInductions ?? collect();
+    $risingStars = $risingStars ?? collect();
+    $posts = $posts ?? collect();
+    $nearestTraining = $nearestTraining ?? collect();
+    $nearestEvents = $nearestEvents ?? collect();
+    $city = $city ?? collect();
+    $landmarks = $landmarks ?? collect();
+    $birthdaysToday = $birthdaysToday ?? collect();
+    $myInvites = $myInvites ?? collect();
+    $categoryNames = $categoryNames ?? collect();
+    $latestMembers = $latestMembers ?? collect();
+    $missingFields = $missingFields ?? [];
+   
+    $member = $member ?? null;
+    $circleCount = $circleCount ?? 0;
+    $membersCount = $membersCount ?? 0;
+    $authCircleId = $authCircleId ?? null;
+    $signedUrl = $signedUrl ?? '';
+    $templates = $templates ?? collect();
+    $count = $count ?? 0;
+    $monthlyPayments = $monthlyPayments ?? collect();
+    $totalAmountDue = $totalAmountDue ?? 0;
+    $circlecalls = $circlecalls ?? null;
+    $busGiver = $busGiver ?? null;
+    $refGiver = $refGiver ?? null;
+    $induction = $induction ?? null;
+    $testimonials = $testimonials ?? collect();
+    $meeting = $meeting ?? null;
+    $businessCategory = $businessCategory ?? collect();
+    $todaysBirthdays = $todaysBirthdays ?? collect();
+    $pendingCount = $pendingCount ?? 0;
+    $receivedRequests = $receivedRequests ?? collect();
+    $notifications = $notifications ?? collect();
+    $notificationCount = $notificationCount ?? 0;
+    $sponsors = $sponsors ?? collect();
+@endphp
 <style>
     /* Leaderboard style  */
     .profile-card {
@@ -1117,8 +1156,9 @@ use Illuminate\Support\Facades\DB;
 // Get distinct city IDs from active members
 $memberCities = Member::where('status', 'Active')->whereNotNull('cityId')->distinct()->pluck('cityId')->toArray();
 
+
 // Get distinct city IDs from circles
-$circleCities = Circle::where('status', 'Active')->whereNotNull('cityId')->distinct()->pluck('cityId')->toArray();
+$circleCities = Circle::whereNotNull('cityId')->distinct()->pluck('cityId')->toArray();
 
 // Combine both lists and remove duplicates
 $allCities = array_unique(array_merge($memberCities, $circleCities));
@@ -1134,10 +1174,13 @@ $cityCount = count($allCities);
 @php
 $authUser = auth()->user();
 
+//$totalBusinessAmount = \App\Models\CircleMeetingMembersBusiness::where('status', 'Active')->sum('amount');
 $totalBusinessAmount = \App\Models\CircleMeetingMembersBusiness::whereIn('status', ['Active', 'Deleted'])->sum('amount');
 
+//$totalReferences = \App\Models\CircleMeetingMembersReference::where('status', 'Active')->count();
 $totalReferences = \App\Models\CircleMeetingMembersReference::whereIn('status', ['Active', 'Deleted'])->count();
 
+//$totalIbms = \App\Models\CircleCall::where('status', 'Active')->count();
 $totalIbms = \App\Models\CircleCall::whereIn('status', ['Active', 'Deleted'])->count();
 
 $receivedRequests = \App\Models\Connection::whereHas('member', function ($query) use ($authUser) {
@@ -1196,7 +1239,7 @@ $latestMembers = $latestMembers ?? Member::with('circle')->where('status', 'Acti
 
                     {{-- ================= PERSONAL ================= --}}
                     @php
-                    $missingFields = $missingFields ?? [];
+                    $missingFields = [];
                     $personalFields = ['Title', 'First Name', 'Last Name', 'Gender', 'Birth Date'];
                     $personal = collect($missingFields)->filter(fn($f) => in_array($f, $personalFields));
                     $col = $personal->count() == 1 ? 'col-12' : 'col-6';
@@ -1425,7 +1468,7 @@ $latestMembers = $latestMembers ?? Member::with('circle')->where('status', 'Acti
     </div>
 </div>
 
-@if (isset($missingFields) && count($missingFields) > 0 && !session('profileUpdated'))
+@if (count($missingFields) > 0 && !session('profileUpdated'))
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         var myModal = new bootstrap.Modal(document.getElementById('updateProfileModal'));
@@ -2611,6 +2654,10 @@ $cityId = \App\Models\Member::where('userId', auth()->id())->value('cityId');
 @role('Member')
 
 @php
+//$totalBusinessAmount = \App\Models\CircleMeetingMembersBusiness::where('status', 'Active')->sum('amount');
+//$totalReferences = \App\Models\CircleMeetingMembersReference::where('status', 'Active')->count();
+//$totalIbms = \App\Models\CircleCall::where('status', 'Active')->count();
+
 $totalBusinessAmount = \App\Models\CircleMeetingMembersBusiness::whereIn('status', ['Active', 'Deleted'])->sum('amount');
 $totalReferences = \App\Models\CircleMeetingMembersReference::whereIn('status', ['Active', 'Deleted'])->count();
 $totalIbms = \App\Models\CircleCall::whereIn('status', ['Active', 'Deleted'])->count();
@@ -2635,9 +2682,7 @@ $posts = \App\Models\Post::with(['user.member', 'media'])
 $birthdaysToday = \App\Models\Member::whereMonth('birthDate', Carbon\Carbon::today()->month)
 ->whereDay('birthDate', Carbon\Carbon::today()->day)
 ->get();
-
 $latestMembers = $latestMembers ?? Member::with('circle')->where('status', 'Active')->orderBy('created_at', 'desc')->take(4)->get();
-
 $authUser = auth()->user();
 $activeDuePayment = null;
 $adminContactUser = null;
@@ -2944,6 +2989,8 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 @endif
 
+
+<!-- Change Password Modal -->
 <!-- Change Password Modal -->
 <!-- @if (isset($showChangePasswordModal) && $showChangePasswordModal)
 <div id="changePasswordPopup" style="
@@ -3140,9 +3187,9 @@ document.addEventListener('DOMContentLoaded', function () {
 @php
 $member = \App\Models\Member::where('userId', auth()->id())->first();
 @endphp
-<!-- 
-@if ((!isset($showChangePasswordModal) || !$showChangePasswordModal) && (!$member || !$member->terms_accepted))
 
+@if(!$member || !$member->terms_accepted)
+<!-- Modal -->
 <div id="termsModal" style="
             position: fixed;
             top: 0; left: 0;
@@ -3163,16 +3210,16 @@ $member = \App\Models\Member::where('userId', auth()->id())->first();
                 flex-direction: column;
             ">
 
-       
+        <!-- Header -->
         <div style="padding:15px; background:#1d3268; color:white;">
             <h4 style="margin:0;">Terms & Conditions</h4>
         </div>
 
-       
+        <!-- PDF Preview -->
         <iframe src="{{ route('terms.preview') }}" style="flex:1; border:none;">
         </iframe>
 
-        
+        <!-- Footer -->
         <div style="padding:15px; text-align:center;">
             <form method="POST" action="{{ route('terms.accept') }}">
                 @csrf
@@ -3207,7 +3254,7 @@ $member = \App\Models\Member::where('userId', auth()->id())->first();
     }
 </style>
 @endif
-@endif -->
+@endif
 
 <div class="modal fade" id="updateProfileModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-center">
@@ -3460,8 +3507,8 @@ $member = \App\Models\Member::where('userId', auth()->id())->first();
         </div>
     </div>
 </div>
-<!-- (!isset($showChangePasswordModal) || !$showChangePasswordModal) -->
-@if (isset($member) && $member && $member->terms_accepted && isset($missingFields) && count($missingFields) > 0 && !session('profileUpdated'))
+
+@if ($member && $member->terms_accepted && count($missingFields) > 0 && !session('profileUpdated'))
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         var myModal = new bootstrap.Modal(document.getElementById('updateProfileModal'));
@@ -5521,8 +5568,7 @@ $sponsors = \App\Models\Sponsors::where('status', 'Active')->whereNotNull('image
     </div>
 </div>
 @endif
-@if (isset($latestMembers) && $latestMembers && $latestMembers->count() > 0)
-
+@if ($latestMembers && $latestMembers->count() > 0)
 <div class="card shadow-sm border-0 mt-3" style="border-radius: 12px; overflow: hidden;">
 
     <!-- Card Header -->
@@ -5544,7 +5590,6 @@ $sponsors = \App\Models\Sponsors::where('status', 'Active')->whereNotNull('image
 
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
             @forelse ($latestMembers->take(4) as $member)
-           
             <div class="col">
                 <div class="fb-card shadow-sm h-100">
 
@@ -5869,7 +5914,6 @@ $sponsors = \App\Models\Sponsors::where('status', 'Active')->whereNotNull('image
     </div>
 </div>
 @endif
-
 
 @if (count($nearestEvents) != 0)
 <div class="card shadow-sm mt-3" style="border-radius: 12px; overflow: hidden;">

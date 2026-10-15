@@ -5,9 +5,9 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Utils\Utils;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
@@ -19,17 +19,17 @@ class ForgetPasswordController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function forgotPassword(Request $request)
+     public function forgotPassword(Request $request)
     {
-        try {
+       try {
 
-            $validator = Validator::make($request->all(), [
-                'email' => 'required|email|exists:users,email',
+             $validator = Validator::make($request->all(), [
+                 'email' => 'required|email|exists:users,email',
             ]);
-
-            if ($validator->errors()->has('email')) {
-                return Utils::errorResponse('Invalid email address. Please enter the correct email', 422);
-            }
+          
+             if ($validator->errors()->has('email')) {
+                  return Utils::errorResponse('Invalid email address. Please enter the correct email', 422);
+              }
 
             $user = User::where('email', $request->email)->first();
 
@@ -53,17 +53,17 @@ class ForgetPasswordController extends Controller
             return response()->json([
                 'message' => 'We have e-mailed your password reset link!'
             ]);
-        } catch (\Exception $e) {
+          } catch (\Exception $e) {
 
-            return response()->json([
+             return response()->json([
                 'status' => false,
-                'message' => $e->getMessage(),
+               'message' => $e->getMessage(),
                 'line' => $e->getLine(),
                 'file' => $e->getFile()
-            ], 404);
+           ], 404);
         }
+       
     }
-
 
     /**
      * Reset password.

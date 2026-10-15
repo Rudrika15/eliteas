@@ -53,7 +53,7 @@ class TrainingController extends Controller
     //     }
     // }
 
-    public function index(Request $request)
+     public function index(Request $request)
     {
         try {
             $id = $request->input('id');
@@ -205,40 +205,68 @@ class TrainingController extends Controller
     //     }
     // }
 
-    public function trainingRegister(Request $request, $id = null)
+ /*   public function trainingRegister(Request $request)
     {
         try {
-            $trainingId = $request->trainingId ?? $request->training_id ?? $request->id ?? $id;
+            $trainingId = $request->trainingId;
+            $trainerId = $request->trainerId;
 
-            if (!$trainingId) {
-                return Utils::errorResponse('Training ID is required', [], 400);
-            }
+            $register = new TrainingRegister;
+            $register->userId = Auth::user()->id;
+            $register->trainingId = $trainingId;
+            // $register->trainerId = $trainerId;
+            $register->save();
 
-            $existing = TrainingRegister::where('userId', Auth::user()->id)
-                ->where('trainingId', $trainingId)
-                ->first();
+            $payment = new Razorpay;
+            $payment->r_payment_id = $request->paymentId;
+            $payment->user_email = Auth::user()->email;
+            $payment->amount = $request->amount;
+            $payment->save();
 
-            if (! $existing) {
-                $register = new TrainingRegister;
-                $register->userId = Auth::user()->id;
-                $register->trainingId = $trainingId;
-                if ($request->filled('trainerId') || $request->filled('trainer_id')) {
-                    $register->trainerId = $request->trainerId ?? $request->trainer_id;
-                }
-                $register->save();
-            }
-
-            if ($request->filled('paymentId') || $request->filled('payment_id')) {
-                $payment = new Razorpay;
-                $payment->r_payment_id = $request->paymentId ?? $request->payment_id;
-                $payment->user_email = Auth::user()->email;
-                $payment->amount = $request->amount ?? 0;
-                $payment->save();
-            }
-
-            return Utils::sendResponse([], 'Training Registered Successfully');
+            return Utils::sendResponse([], 'Training Registered Successfully', 200);
         } catch (\Throwable $th) {
-            return Utils::errorResponse($th->getMessage(), [], 500);
+            throw $th;
+
+            return Utils::errorResponse(['error' => $th->getMessage()], 'Internal Server Error', 500);
         }
-    }
+    }*/
+    public function trainingRegister(Request $request, $id = null)
+  {
+      try {
+          // Fallback checks across different key naming conventions
+          $trainingId = $request->trainingId ?? $request->training_id ?? $request->id ?? $id;
+
+          if (!$trainingId) {
+              return Utils::errorResponse('Training ID is required', [], 400);
+          }
+
+          $existing = TrainingRegister::where('userId', Auth::user()->id)
+              ->where('trainingId', $trainingId)
+              ->first();
+
+          if (! $existing) {
+              $register = new TrainingRegister;
+              $register->userId = Auth::user()->id;
+              $register->trainingId = $trainingId;
+              if ($request->filled('trainerId') || $request->filled('trainer_id')) {
+                  $register->trainerId = $request->trainerId ?? $request->trainer_id;
+              }
+              $register->save();
+          }
+
+          if ($request->filled('paymentId') || $request->filled('payment_id')) {
+              $payment = new Razorpay;
+              $payment->r_payment_id = $request->paymentId ?? $request->payment_id;
+              $payment->user_email = Auth::user()->email;
+              $payment->amount = $request->amount ?? 0;
+              $payment->save();
+          }
+
+          return Utils::sendResponse([], 'Training Registered Successfully');
+      } catch (\Throwable $th) {
+          return Utils::errorResponse($th->getMessage(), [], 500);
+      }
+  }
+
+
 }

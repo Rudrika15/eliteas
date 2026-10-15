@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 class TermsController extends Controller
 {
     // ✅ Get Terms Data (Preview for App)
-    public function preview(Request $request)
+     public function preview(Request $request)
     {
         $user = $request->user();
         $member = Member::where('userId', $user->id)->first();
@@ -20,7 +20,7 @@ class TermsController extends Controller
             return response()->json(['message' => 'Member not found'], 404);
         }
 
-        $data = [
+       $data = [
             'name' => $member->firstName . ' ' . $member->lastName,
             'date' => now()->format('d-m-Y'),
             'signature' => $member->signature
@@ -32,7 +32,6 @@ class TermsController extends Controller
             ->header('Content-Type', 'application/pdf')
             ->header('Content-Disposition', 'inline; filename="terms.pdf"');
     }
-
     // ✅ Download PDF (API)
     public function download(Request $request)
     {
@@ -58,7 +57,6 @@ class TermsController extends Controller
 
     // ✅ Accept Terms (API)
     
-    // 📧 Send Mail
     public function accept(Request $request)
     {
         try {
@@ -70,11 +68,16 @@ class TermsController extends Controller
                 return response()->json(['message' => 'Member not found'], 404);
             }
 
-            // ✅ Update terms
+            // ✅ Prevent duplicate
+            if ($member->terms_accepted) {
+                return response()->json(['message' => 'Already accepted'], 400);
+            }
+
+            // ✅ Update
             $member->terms_accepted = 1;
             $member->save();
 
-            // ✅ Prepare data
+            // ✅ Data
             $data = [
                 'name' => $member->firstName . ' ' . $member->lastName,
                 'date' => now()->format('d-m-Y'),
@@ -83,30 +86,19 @@ class TermsController extends Controller
 
             // ✅ Generate PDF
             $pdf = Pdf::loadView('pdf.terms', $data)
-                ->setPaper('A4', 'portrait');
+                ->setPaper('A4', 'portrait')
+                ->setOptions([
+                    'isHtml5ParserEnabled' => true,
+                    'isRemoteEnabled' => true
+                ]);
 
-            $pdf->setOptions([
-                'isHtml5ParserEnabled' => true,
-                'isRemoteEnabled' => true
-            ]);
-
-            // ✅ Store in storage (better than public)
-            $fileName = 'terms_' . $user->id . '.pdf';
-            $filePath = storage_path('app/public/pdfs/' . $fileName);
-
-            if (!file_exists(storage_path('app/public/pdfs'))) {
-                mkdir(storage_path('app/public/pdfs'), 0755, true);
-            }
-
-            file_put_contents($filePath, $pdf->output());
-
-            // ✅ Send Mail (HTML + proper body)
-            Mail::send([], [], function ($message) use ($user, $filePath) {
+            // ✅ Send Email WITHOUT saving file
+           Mail::send([], [], function ($message) use ($user,$pdf) {
 
                 $message->to($user->email)
                     ->subject('Confirmation of Terms & Conditions Acceptance')
-                    ->attach($filePath)
-                    ->setBody('
+                    ->attachData($pdf->output(), 'terms.pdf')
+                    ->html('
                     <p>Dear Member,</p>
 
                     <p>We hope you are doing well.</p>
@@ -130,13 +122,15 @@ class TermsController extends Controller
                         Warm regards,<br>
                         <strong>UBN Team</strong>
                     </p>
-                ', 'text/html');
+                ');
             });
 
-            return response()->json([
-                'message' => 'Terms accepted successfully',
-                'pdf_url' => asset('storage/pdfs/' . $fileName) // 👈 correct public URL
-            ]);
+            // ✅ OPTIONAL: return PDF in same response (for preview in app)
+           return response()->json([
+              'success' => true,
+              'message' => 'Terms And Conditions Accepted Successfully'
+          ]);
+
         } catch (\Throwable $th) {
             return response()->json([
                 'message' => 'Something went wrong',

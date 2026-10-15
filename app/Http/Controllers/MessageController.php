@@ -64,11 +64,11 @@ class MessageController extends Controller
     }
 
     // Store a new message with encryption
-    public function store(Request $request)
-    {
+    	 public function store(Request $request)
+      {
         // Encrypt the message before saving
         $encryptedMessage = Crypt::encryptString($request->input('message'));
-
+		
         $message = Message::create([
             'conversation_id' => $request->input('conversation_id'),
             'sender_id' => $request->input('sender_id'),
@@ -83,7 +83,9 @@ class MessageController extends Controller
 
         $sender = User::find($senderId);
         $receiver = User::find($receiverId);
+        
         if ($receiver) {
+         
             Notifications::create([ // 👈 IMPORTANT
                 'title' => 'New Message',
                 'body' => $sender->firstName . ' ' . $sender->lastName . ' sent you a message',
@@ -91,7 +93,6 @@ class MessageController extends Controller
                     'type' => 'chat_message',
                     'userId' => $senderId,       // sender
                     'memberId' => $receiverId,   // receiver
-                    'conversation_id' => $conversation->id,
                     'message_id' => $message->id,
                     'message' => $request->input('message') // optional preview
                 ])

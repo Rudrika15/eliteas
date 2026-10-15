@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
+
 class FranchiseController extends Controller
 {
     public function __construct()
@@ -32,35 +33,25 @@ class FranchiseController extends Controller
         $this->middleware('permission:franchise-get-cities', ['only' => ['getCities']]);
     }
 
-    public function index(Request $request)
+     public function index(Request $request)
     {
         try {
             $user = Auth::user();
-
-            // default query
             $franchiseQuery = Franchise::where('status', 'Active');
-
-            // ✅ Franchise Admin restriction
             if ($user->hasRole('Franchise Admin')) {
 
                 $member = Member::where('userId', $user->id)->first();
 
                 if ($member) {
-
-                    // 🔥 Get franchiseId
                     $franchiseId = $member->franchiseId
                         ?? Circle::where('id', $member->circleId)->value('franchiseId');
 
                     $franchiseQuery->where('id', $franchiseId);
                 } else {
-                    $franchiseQuery->whereRaw('1=0'); // no member → no data
+                    $franchiseQuery->whereRaw('1=0');
                 }
             }
-
-            $franchises = $franchiseQuery
-                ->orderBy('franchiseName', 'asc')
-                ->paginate(10);
-
+            $franchises = $franchiseQuery->orderBy('franchiseName', 'asc')->paginate(10);
             $users = User::where('status', 'Active')->get();
 
             return view('admin.franchise.index', compact('franchises', 'users'));
@@ -69,7 +60,6 @@ class FranchiseController extends Controller
             return view('servererror');
         }
     }
-
     public function show(Request $request, $id)
     {
         try {
@@ -162,7 +152,6 @@ class FranchiseController extends Controller
 
         try {
             // Create Franchise
-
             $franchises = new Franchise;
             $franchises->franchiseName = $request->franchiseName;
             $franchises->franchiseContactDetails = $request->franchiseContactDetails;
@@ -171,7 +160,6 @@ class FranchiseController extends Controller
             $franchises->status = 'Active';
 
             // Only create a user if 'managedByUbn' is unchecked
-            // dd($request->managedByUbn);
             if (! $request->managedByUbn) {
                 // Generate a random password
                 $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()';
@@ -195,11 +183,10 @@ class FranchiseController extends Controller
                 $franchises->userId = $user->id;
 
                 // Send a welcome email
-                // Mail::to($user->email)->send(new WelcomeMemberEmail($user, $rowPassword));
+                Mail::to($user->email)->send(new WelcomeMemberEmail($user, $rowPassword));
             }
-            // dd($franchises);
-            $franchises->save();
 
+            $franchises->save();
 
             return redirect()->route('franchise.index')->with('success', 'Franchise and User Created Successfully!');
         } catch (\Throwable $th) {
@@ -234,7 +221,7 @@ class FranchiseController extends Controller
     {
         $this->validate($request, [
             'id' => 'required|exists:franchises,id',
-            'franchiseName' => 'required|unique:franchises,id,' . $request->id,
+            'franchiseName' => 'required|unique:franchises,id,'.$request->id,
             'franchiseContactDetails' => 'required',
         ]);
 
@@ -324,101 +311,29 @@ class FranchiseController extends Controller
     // }
 
     // Example Laravel Controller Method
-    // public function getStates(Request $request)
-    // {
-
-    //     $countryId = $request->countryId;
-    //     $states = State::where('countryId', $countryId)->where('status', 'Active')->orderBy('stateName', 'ASC')->get();
-
-    //     $options = '<option value="">Select State</option>';
-    //     foreach ($states as $state) {
-    //         $options .= '<option value="' . $state->id . '">' . $state->stateName . '</option>';
-    //     }
-
-    //     return response()->json($options);
-    // }
     public function getStates(Request $request)
     {
-        $user = Auth::user();
         $countryId = $request->countryId;
-
-        $states = State::where('countryId', $countryId)
-            ->where('status', 'Active');
-
-        // 🔵 Apply Franchise Admin filter
-        if ($user->hasRole('Franchise Admin')) {
-
-            $member = Member::where('userId', $user->id)->first();
-
-            if ($member) {
-                $franchiseId = $member->franchiseId
-                    ?? Circle::where('id', $member->circleId)->value('franchiseId');
-
-                $states->whereIn('id', function ($q) use ($franchiseId) {
-                    $q->select('stateId')
-                        ->from('cities')
-                        ->whereIn('id', function ($q2) use ($franchiseId) {
-                            $q2->select('cityId')
-                                ->from('circles')
-                                ->where('franchiseId', $franchiseId);
-                        });
-                });
-            }
-        }
-
-        $states = $states->orderBy('stateName', 'ASC')->get();
+        $states = State::where('countryId', $countryId)->where('status', 'Active')->orderBy('stateName', 'ASC')->get();
 
         $options = '<option value="">Select State</option>';
         foreach ($states as $state) {
-            $options .= '<option value="' . $state->id . '">' . $state->stateName . '</option>';
+            $options .= '<option value="'.$state->id.'">'.$state->stateName.'</option>';
         }
 
         return response()->json($options);
     }
-    // public function getCities(Request $request)
-    // {
-    //     $stateId = $request->stateId;
 
-    //     $cities = City::where('stateId', $stateId)->where('status', 'Active')->orderBy('cityName', 'ASC')->get();
-
-    //     $options = '<option value="">Select City</option>';
-
-    //     foreach ($cities as $city) {
-    //         $options .= '<option value="' . $city->id . '">' . $city->cityName . '</option>';
-    //     }
-
-    //     return response()->json($options);
-    // }
     public function getCities(Request $request)
     {
-        $user = Auth::user();
         $stateId = $request->stateId;
 
-        $cities = City::where('stateId', $stateId)
-            ->where('status', 'Active');
-
-        // 🔵 Apply Franchise Admin filter
-        if ($user->hasRole('Franchise Admin')) {
-
-            $member = Member::where('userId', $user->id)->first();
-
-            if ($member) {
-                $franchiseId = $member->franchiseId
-                    ?? Circle::where('id', $member->circleId)->value('franchiseId');
-
-                $cities->whereIn('id', function ($q) use ($franchiseId) {
-                    $q->select('cityId')
-                        ->from('circles')
-                        ->where('franchiseId', $franchiseId);
-                });
-            }
-        }
-
-        $cities = $cities->orderBy('cityName', 'ASC')->get();
+        $cities = City::where('stateId', $stateId)->where('status', 'Active')->orderBy('cityName', 'ASC')->get();
 
         $options = '<option value="">Select City</option>';
+
         foreach ($cities as $city) {
-            $options .= '<option value="' . $city->id . '">' . $city->cityName . '</option>';
+            $options .= '<option value="'.$city->id.'">'.$city->cityName.'</option>';
         }
 
         return response()->json($options);

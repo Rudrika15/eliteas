@@ -544,9 +544,6 @@ class EventController extends Controller
             $eventRegister = new EventRegister;
             $eventRegister->eventId = $request->eventId;
             $eventRegister->memberId = Auth::user()->member->id;
-            $eventRegister->personName = $request->personName;
-            $eventRegister->personEmail = $request->personEmail;
-            $eventRegister->personContact = $request->personContact;
             $eventRegister->PaymentStatus = 'Event Is Free';
             $eventRegister->save();
 

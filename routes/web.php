@@ -99,6 +99,7 @@ Auth::routes();
 Route::get('/in/{slug?}', [ProfileController::class, 'showPublicProfile'])->name('public.profile');
 
 
+
 // Forgot Password
 
 Route::get('forget-password', [ForgotPasswordController::class, 'showForgetPasswordForm'])->name('forget.password.get');
@@ -134,7 +135,6 @@ Auth::routes();
 Route::group(['middleware' => ['auth']], function () {
     Route::resource('roles', RoleController::class);
     Route::resource('users', UserController::class);
-    Route::get('users/resetPassword/{id?}', [UserController::class, 'resetPassword'])->name('users.resetPassword');
 
     Route::get('view', function () {
         Artisan::call('view:clear');
@@ -354,7 +354,6 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('circlemember/edit/{id?}', [CircleMemberController::class, 'edit'])->name('circlemember.edit');
     Route::post('circlemember/update/{id?}', [CircleMemberController::class, 'update'])->name('circlemember.update');
     Route::get('circlemember/delete/{id?}', [CircleMemberController::class, 'delete'])->name('circlemember.delete');
-    Route::get('circlemember/resetPassword/{id?}', [CircleMemberController::class, 'resetPassword'])->name('circlemember.resetPassword');
     Route::get('circlemember/restoreMember/{id?}', [CircleMemberController::class, 'restoreMember'])->name('circlemember.restore');
     Route::get('circlemember/deletedMemberList', [CircleMemberController::class, 'deletedMemberList'])->name('circlemember.deletedMemberList');
     Route::post('/get-membership-amount', [CircleMemberController::class, 'getMembershipAmount'])->name('get.membership.amount');
@@ -607,7 +606,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::get('/member-subscription', [MembershipSubscriptionController::class, 'index'])->name('subscription.memberSubscription');
     Route::get('/member-subscription-all', [MembershipSubscriptionController::class, 'memberData'])->name('subscription.memberSubscription.admin');
-    // Due Payment Routes
+    
     Route::get('/due-payment', [DuePaymentController::class, 'index'])->name('admin.duePayment.index');
     Route::get('/due-payment/members/{circleId}', [DuePaymentController::class, 'getMembersByCircle'])->name('admin.duePayment.members');
     Route::post('/due-payment/store', [DuePaymentController::class, 'store'])->name('admin.duePayment.store');
@@ -615,7 +614,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/due-payment/update/{id}', [DuePaymentController::class, 'update'])->name('admin.duePayment.update');
     Route::delete('/due-payment/{id}', [DuePaymentController::class, 'destroy'])->name('admin.duePayment.destroy');
     Route::post('/due-payment/pay', [DuePaymentController::class, 'payDuePayment'])->name('duePayment.pay');
-
+    
     // report
     // Route::get('/reports', [ReportController::class, 'index'])->name('report.index');
     Route::get('/admin/reports/ibm', [ReportController::class, 'ibm'])->name('admin.report.ibm');
@@ -928,7 +927,6 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('digitalMember/edit/{id?}', [DigitalMemberController::class, 'edit'])->name('digitalMember.edit');
     Route::post('digitalMember/update/{id?}', [DigitalMemberController::class, 'update'])->name('digitalMember.update');
     Route::get('digitalMember/delete/{id?}', [DigitalMemberController::class, 'delete'])->name('digitalMember.delete');
-    Route::get('digitalMember/resetPassword/{id?}', [DigitalMemberController::class, 'resetPassword'])->name('digitalMember.resetPassword');
     Route::get('digitalMember/restoreMember/{id?}', [DigitalMemberController::class, 'restoreMember'])->name('digitalMember.restore');
     Route::get('digitalMember/deletedMemberList', [DigitalMemberController::class, 'deletedMemberList'])->name('digitalMember.deletedMemberList');
     Route::post('/get-membership-amount', [DigitalMemberController::class, 'getMembershipAmount'])->name('get.membership.amount');
@@ -1061,14 +1059,16 @@ Route::get('/clear-cache/{key}', function ($key) {
         abort(403);
     }
 
-    Artisan::call('config:clear');
-    Artisan::call('cache:clear');
-    Artisan::call('config:cache');
-    Artisan::call('route:clear');
-    Artisan::call('view:clear');
+    //Artisan::call('config:clear');
+    //Artisan::call('cache:clear');
+    //Artisan::call('config:cache');
+    //Artisan::call('route:clear');
+    Artisan::call('optimize:clear');
 
     return '✅ Cache cleared!';
 });
+
+
 Route::get('/.well-known/appspecific/com.chrome.devtools.json', function () {
     return response()->json([]);
 });
