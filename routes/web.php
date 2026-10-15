@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\CircleMeetingMembersController;
 use App\Http\Controllers\Admin\CircleMemberActivityController;
 use App\Http\Controllers\Admin\CircleMemberController;
 use App\Http\Controllers\Admin\CircleTypeController;
+use App\Http\Controllers\Admin\DuePaymentController;
 use App\Http\Controllers\Admin\CityController;
 use App\Http\Controllers\Admin\CombinedReportController;
 use App\Http\Controllers\Admin\ConnectionController;
@@ -606,6 +607,14 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::get('/member-subscription', [MembershipSubscriptionController::class, 'index'])->name('subscription.memberSubscription');
     Route::get('/member-subscription-all', [MembershipSubscriptionController::class, 'memberData'])->name('subscription.memberSubscription.admin');
+    // Due Payment Routes
+    Route::get('/due-payment', [DuePaymentController::class, 'index'])->name('admin.duePayment.index');
+    Route::get('/due-payment/members/{circleId}', [DuePaymentController::class, 'getMembersByCircle'])->name('admin.duePayment.members');
+    Route::post('/due-payment/store', [DuePaymentController::class, 'store'])->name('admin.duePayment.store');
+    Route::get('/due-payment/{id}/edit', [DuePaymentController::class, 'edit'])->name('admin.duePayment.edit');
+    Route::post('/due-payment/update/{id}', [DuePaymentController::class, 'update'])->name('admin.duePayment.update');
+    Route::delete('/due-payment/{id}', [DuePaymentController::class, 'destroy'])->name('admin.duePayment.destroy');
+    Route::post('/due-payment/pay', [DuePaymentController::class, 'payDuePayment'])->name('duePayment.pay');
 
     // report
     // Route::get('/reports', [ReportController::class, 'index'])->name('report.index');

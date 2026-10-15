@@ -22,6 +22,7 @@
                                 <th>S.No</th>
                                 <th>Title</th>
                                 <th>Circle</th>
+                                <th>Event Mode</th>
                                 <th>Event Date</th>
                                 <th>Slot Date</th>
                                 <th>Event Image</th>
@@ -44,6 +45,12 @@
 
                                     <td>{{ $eventData->title ?? '-' }}</td>
                                     <td>{{ $eventData->circle->circleName ?? '-' }}</td>
+                                    <td>
+                                        @php $mode = $eventData->event_mode ?? 'UBN Event'; @endphp
+                                        <span class="badge" style="background-color: {{ $mode === 'Sponsor Event' ? '#e76a35' : '#1d2856' }}; font-size: 11px; font-weight: 500; padding: 4px 10px; border-radius: 20px;">
+                                            {{ $mode }}
+                                        </span>
+                                    </td>
                                     <td>{{ $eventData->event_date }}</td>
                                     <td>{{ $eventData->slot_date }}</td>
                                     <td>

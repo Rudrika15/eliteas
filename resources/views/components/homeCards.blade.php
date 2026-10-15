@@ -2571,9 +2571,18 @@ $cityId = \App\Models\Member::where('userId', auth()->id())->value('cityId');
     <div class="card-body p-3">
         <div class="events-container">
             @foreach ($nearestEvents as $event)
-            <div class="event-card">
+            @php
+                $evMode = $event->event_mode ?? 'UBN Event';
+                $isSponsor = $evMode === 'Sponsor Event';
+            @endphp
+            <div class="event-card" style="position: relative;">
                 <a href="{{ route('events.details', $event->id) }}" class="text-decoration-none">
-                    <img src="{{ $event->event_banner ? url('Event/' . $event->event_banner) : asset('images/event_default.png') }}" class="event-img" alt="{{ $event->title }}">
+                    <div style="position: relative; display: block; width: 100%;">
+                        <img src="{{ $event->event_banner ? url('Event/' . $event->event_banner) : asset('images/event_default.png') }}" class="event-img" alt="{{ $event->title }}">
+                        <span style="position: absolute; top: 10px; left: 10px; background: {{ $isSponsor ? '#e76a35' : '#1d2368' }}; color: #ffffff; font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px; box-shadow: 0 2px 6px rgba(0,0,0,0.3); display: inline-flex; align-items: center; gap: 4px; z-index: 2;">
+                            <i class="bi {{ $isSponsor ? 'bi-award-fill' : 'bi-building-fill' }}" style="font-size: 11px;"></i> {{ $evMode }}
+                        </span>
+                    </div>
                     <div class="event-info">
                         <h6 class="fw-bold">{{ $event->title }}</h6>
                         <small class="fw-bold">📍 {{ $event->venue }}</small>
@@ -2628,7 +2637,313 @@ $birthdaysToday = \App\Models\Member::whereMonth('birthDate', Carbon\Carbon::tod
 ->get();
 
 $latestMembers = $latestMembers ?? Member::with('circle')->where('status', 'Active')->orderBy('created_at', 'desc')->take(4)->get();
+
+$authUser = auth()->user();
+$activeDuePayment = null;
+$adminContactUser = null;
+
+if ($authUser && !$authUser->hasRole('Admin')) {
+    $authMember = \App\Models\Member::where('userId', $authUser->id)->first();
+    $activeDuePayment = \App\Models\DuePayment::where('status', 'Active')
+        ->where(function ($q) use ($authUser, $authMember) {
+            $q->where('userId', $authUser->id);
+            if ($authMember) {
+                $q->orWhere('member_id', $authMember->id);
+            }
+        })
+        ->latest()
+        ->first();
+
+    if ($activeDuePayment) {
+        $adminContactUser = \App\Models\User::role('Admin')->first();
+    }
+}
 @endphp
+
+@if ($activeDuePayment)
+<!-- =============================================================== -->
+<!-- FULL-SCREEN BLOCKING NON-DISMISSIBLE DUE PAYMENT POPUP (OVERLAY) -->
+<!-- =============================================================== -->
+<div id="duePaymentBlockingOverlay" style="
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(15, 23, 42, 0.90);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999999;
+    padding: 20px;
+">
+    <div class="card border-0 shadow-lg" style="
+        width: 100%;
+        max-width: 530px;
+        border-radius: 16px;
+        overflow: hidden;
+        animation: duePaymentPopupFade 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+    ">
+        <!-- Header -->
+        <div style="background: #1d2856; color: #ffffff; padding: 22px 26px; border-bottom: 4px solid #e76a35;">
+            <div class="d-flex align-items-center">
+                <div style="width: 44px; height: 44px; border-radius: 12px; background: rgba(231, 106, 53, 0.2); display: flex; align-items: center; justify-content: center; margin-right: 14px;">
+                    <i class="bi bi-shield-exclamation text-orange" style="font-size: 24px; color: #e76a35;"></i>
+                </div>
+                <div>
+                    <h5 class="mb-0 fw-bold" style="letter-spacing: -0.3px; color: #ffffff;">Action Required: Due Payment</h5>
+                    <small class="text-white-50">Please clear your pending due payment to continue</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Body -->
+        <div class="card-body p-4" style="background: #ffffff;">
+            <!-- Alert Notice -->
+            <div class="alert alert-warning border-0 d-flex align-items-start mb-4" style="background-color: #fff7ed; border-left: 4px solid #e76a35 !important; border-radius: 8px; color: #9a3412;">
+                <i class="bi bi-info-circle-fill me-2 fs-5" style="color: #e76a35; line-height: 1.2;"></i>
+                <div style="font-size: 13px; line-height: 1.5;">
+                    Your account has an active due payment. Website access is restricted until this due payment is resolved.
+                </div>
+            </div>
+
+            <!-- Details Box -->
+            <div class="p-3 mb-4" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px;">
+                <div class="d-flex justify-content-between align-items-center pb-2 mb-2 border-bottom">
+                    <span class="text-muted small">Member Name</span>
+                    <span class="fw-semibold text-dark">{{ $authUser->firstName }} {{ $authUser->lastName }}</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center pb-2 mb-2 border-bottom">
+                    <span class="text-muted small">Circle</span>
+                    <span class="badge" style="background: rgba(29, 40, 86, 0.1); color: #1d2856; font-size: 12px; font-weight: 600;">
+                        {{ $activeDuePayment->circle_name ?? 'Digital Member' }}
+                    </span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center pb-2 mb-2 border-bottom">
+                    <span class="text-muted small">Payment Description</span>
+                    <span class="fw-semibold text-dark">{{ $activeDuePayment->payment_type ?? 'Due Payment' }}</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center pt-1">
+                    <span class="text-muted small fw-bold">Total Amount Due</span>
+                    <span class="fs-4 fw-bold" style="color: #e76a35;">
+                        ₹ {{ number_format($activeDuePayment->amount, 0) }}
+                    </span>
+                </div>
+            </div>
+
+            <!-- Action Buttons (Pay Now & Contact to Admin) -->
+            <div class="d-flex flex-column flex-sm-row gap-2 mt-2">
+                <button type="button" class="btn btn-lg flex-fill fw-bold text-white shadow-sm" id="btnPayDuePaymentNow" style="background: #e76a35; border: none; font-size: 15px; border-radius: 10px; padding: 12px;">
+                    <i class="bi bi-credit-card-2-front-fill me-2"></i> Pay Now (₹ {{ number_format($activeDuePayment->amount, 0) }})
+                </button>
+                <button type="button" class="btn btn-lg flex-fill fw-semibold btn-outline-secondary" id="btnContactAdminToggle" style="border-radius: 10px; font-size: 14px; padding: 12px; border-color: #cbd5e1;">
+                    <i class="bi bi-headset me-1 text-primary"></i> Contact to Admin
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    @keyframes duePaymentPopupFade {
+        from {
+            opacity: 0;
+            transform: scale(0.92) translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+    }
+
+    /* Force SweetAlert2 container to always appear above the blocking overlay */
+    .swal2-container {
+        z-index: 2147483647 !important;
+    }
+</style>
+
+<!-- Load Razorpay & SweetAlert2 -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // Lock scrolling completely to restrict any page access
+    document.body.style.overflow = 'hidden';
+
+    // Prevent closing with Escape key
+    window.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' || e.keyCode === 27) {
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
+        }
+    }, true);
+
+    // Toggle Admin Contact Details Panel
+    const contactAdminBtn = document.getElementById('btnContactAdminToggle');
+    const contactPanel = document.getElementById('adminContactDetailsPanel');
+    if (contactAdminBtn && contactPanel) {
+        contactAdminBtn.addEventListener('click', function () {
+            if (contactPanel.style.display === 'none' || contactPanel.style.display === '') {
+                contactPanel.style.display = 'block';
+                contactAdminBtn.innerHTML = '<i class="bi bi-chevron-up me-1"></i> Hide Admin Contact';
+            } else {
+                contactPanel.style.display = 'none';
+                contactAdminBtn.innerHTML = '<i class="bi bi-headset me-1 text-primary"></i> Contact to Admin';
+            }
+        });
+    }
+
+    // Razorpay Checkout integration for Due Payment
+    const payNowBtn = document.getElementById('btnPayDuePaymentNow');
+    if (payNowBtn) {
+        payNowBtn.addEventListener('click', function () {
+            const razorpayKey = "{{ env('RAZORPAY_KEY') }}";
+            if (!razorpayKey) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Configuration Error',
+                    text: 'Razorpay key is missing. Please contact admin support.'
+                });
+                return;
+            }
+
+            const amountInPaise = Math.round(Number("{{ $activeDuePayment->amount }}") * 100);
+            const duePaymentId = "{{ $activeDuePayment->id }}";
+            const csrfToken = "{{ csrf_token() }}";
+            const originalBtnHtml = payNowBtn.innerHTML;
+
+            const options = {
+                "key": razorpayKey,
+                "amount": amountInPaise,
+                "currency": "INR",
+                "name": "UBN",
+                "description": "Due Payment - {{ addslashes($activeDuePayment->payment_type ?? 'Due Payment') }}",
+                "image": "/img/logo.png",
+                "prefill": {
+                    "name": "{{ addslashes($authUser->firstName . ' ' . $authUser->lastName) }}",
+                    "email": "{{ addslashes($authUser->email) }}",
+                    "contact": "{{ addslashes($authUser->contactNo ?? '') }}"
+                },
+                "theme": {
+                    "color": "#1d2856"
+                },
+                "modal": {
+                    "ondismiss": function () {
+                        // User closed Razorpay popup without paying -> Keep blocking overlay active
+                        payNowBtn.disabled = false;
+                        payNowBtn.innerHTML = originalBtnHtml;
+                    }
+                },
+                "handler": function (response) {
+                    payNowBtn.disabled = true;
+                    payNowBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span> Verifying Payment...';
+
+                    const modalBody = payNowBtn.closest('.card-body');
+
+                    // Send payment confirmation to backend
+                    fetch("{{ route('duePayment.pay') }}", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken,
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            paymentId: response.razorpay_payment_id,
+                            amount: Number("{{ $activeDuePayment->amount }}"),
+                            due_payment_id: duePaymentId
+                        })
+                    })
+                    .then(res => {
+                        if (!res.ok) {
+                            return res.json().catch(() => ({ success: false, message: 'Server responded with status ' + res.status })).then(errData => {
+                                throw new Error(errData.message || 'Payment verification failed');
+                            });
+                        }
+                        return res.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            // Immediately show success card in the modal so user sees progress
+                            if (modalBody) {
+                                modalBody.innerHTML = `
+                                    <div class="text-center py-4">
+                                        <div class="mb-3">
+                                            <i class="bi bi-check-circle-fill text-success" style="font-size: 52px;"></i>
+                                        </div>
+                                        <h4 class="fw-bold text-dark mb-2">Payment Successful!</h4>
+                                        <p class="text-muted mb-2">${data.message || 'Your due payment has been cleared.'}</p>
+                                        <div class="small text-muted mb-3">Transaction ID: <strong>${response.razorpay_payment_id}</strong></div>
+                                        <div class="spinner-border text-primary spinner-border-sm me-2" role="status"></div>
+                                        <span class="text-primary fw-semibold">Unlocking dashboard...</span>
+                                    </div>
+                                `;
+                            }
+
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Payment Successful!',
+                                text: data.message || 'Your due payment has been successfully cleared.',
+                                confirmButtonText: 'Access Website',
+                                confirmButtonColor: '#1d2856',
+                                allowOutsideClick: false,
+                                allowEscapeKey: false,
+                                timer: 3000,
+                                timerProgressBar: true
+                            }).then(() => {
+                                window.location.reload();
+                            });
+
+                            // Auto-reload after 2 seconds
+                            setTimeout(function () {
+                                window.location.reload();
+                            }, 2000);
+                        } else {
+                            payNowBtn.disabled = false;
+                            payNowBtn.innerHTML = originalBtnHtml;
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Payment Verification Failed',
+                                text: data.message || 'Could not verify payment. Please contact admin with payment ID: ' + response.razorpay_payment_id
+                            });
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Due payment store error:', err);
+                        payNowBtn.disabled = false;
+                        payNowBtn.innerHTML = originalBtnHtml;
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Server Error',
+                            text: (err.message || 'Failed to record payment.') + ' Please contact support with payment ID: ' + response.razorpay_payment_id
+                        });
+                    });
+                }
+            };
+
+            const rzp = new Razorpay(options);
+            rzp.on('payment.failed', function (failResponse) {
+                payNowBtn.disabled = false;
+                payNowBtn.innerHTML = originalBtnHtml;
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Payment Failed',
+                    text: failResponse.error.description || 'Payment was not completed. Please try again.'
+                });
+            });
+
+            rzp.open();
+        });
+    }
+});
+</script>
+@endif
+
 <!-- Change Password Modal -->
 <!-- @if (isset($showChangePasswordModal) && $showChangePasswordModal)
 <div id="changePasswordPopup" style="
@@ -5571,9 +5886,18 @@ $sponsors = \App\Models\Sponsors::where('status', 'Active')->whereNotNull('image
     <div class="card-body p-3">
         <div class="events-container">
             @foreach ($nearestEvents as $event)
-            <div class="event-card">
+            @php
+                $evMode = $event->event_mode ?? 'UBN Event';
+                $isSponsor = $evMode === 'Sponsor Event';
+            @endphp
+            <div class="event-card" style="position: relative;">
                 <a href="{{ route('events.details', $event->id) }}" class="text-decoration-none">
-                    <img src="{{ $event->event_banner ? url('Event/' . $event->event_banner) : asset('images/event_default.png') }}" class="event-img" alt="{{ $event->title }}">
+                    <div style="position: relative; display: block; width: 100%;">
+                        <img src="{{ $event->event_banner ? url('Event/' . $event->event_banner) : asset('images/event_default.png') }}" class="event-img" alt="{{ $event->title }}">
+                        <span style="position: absolute; top: 10px; left: 10px; background: {{ $isSponsor ? '#e76a35' : '#1d2368' }}; color: #ffffff; font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px; box-shadow: 0 2px 6px rgba(0,0,0,0.3); display: inline-flex; align-items: center; gap: 4px; z-index: 2;">
+                            <i class="bi {{ $isSponsor ? 'bi-award-fill' : 'bi-building-fill' }}" style="font-size: 11px;"></i> {{ $evMode }}
+                        </span>
+                    </div>
                     <div class="event-info">
                         <h6 class="fw-bold">{{ $event->title }}</h6>
                         <small class="fw-bold">📍 {{ $event->venue }}</small>

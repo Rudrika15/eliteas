@@ -90,6 +90,43 @@
 
         </div>
 
+        <!-- Event Mode Row -->
+        <div class="row mt-2">
+            <div class="col-md-12">
+                <div class="d-flex align-items-center gap-4 mt-2">
+                    <label class="fw-semibold mb-0">Event Mode :</label>
+
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio"
+                            name="event_mode"
+                            id="event_mode_ubn"
+                            value="UBN Event"
+                            {{ old('event_mode', $event->event_mode ?? 'UBN Event') == 'UBN Event' ? 'checked' : '' }}>
+                        <label class="form-check-label" for="event_mode_ubn">
+                            UBN Event
+                        </label>
+                    </div>
+
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio"
+                            name="event_mode"
+                            id="event_mode_sponsor"
+                            value="Sponsor Event"
+                            {{ old('event_mode', $event->event_mode ?? '') == 'Sponsor Event' ? 'checked' : '' }}>
+                        <label class="form-check-label" for="event_mode_sponsor">
+                            Sponsor Event
+                        </label>
+                    </div>
+                </div>
+
+                @error('event_mode')
+                <div class="invalid-feedback d-block">
+                    {{ $message }}
+                </div>
+                @enderror
+            </div>
+        </div>
+
 
         <div class="row">
             <div class="col-md-6">

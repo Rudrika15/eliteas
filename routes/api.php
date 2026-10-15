@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\DuePaymentController;
 use App\Http\Controllers\Admin\MemberController;
 use App\Http\Controllers\Api\AllActivityController;
 use App\Http\Controllers\Api\ApiController;
@@ -297,6 +298,10 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     // My Payment History
     Route::get('/my-payment-history', [MyPaymentController::class, 'myPaymentHistory']);
+
+    // Due Payment API
+    Route::get('/due-payment/active', [DuePaymentController::class, 'getActiveDuePayment']);
+    Route::post('/due-payment/pay', [DuePaymentController::class, 'payDuePayment']);
 
     // Event
     Route::post('/register/{eventId}', [EventController::class, 'eventRegister']);

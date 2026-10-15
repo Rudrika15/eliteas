@@ -611,6 +611,13 @@
 </li>
 
 <li class="nav-item">
+    <a class="nav-link {{ request()->is('due-payment*') ? '' : 'collapsed' }}" href="{{ route('admin.duePayment.index') }}">
+        <i class="bi bi-wallet2" style="color: #e76a35"></i>
+        <span class="text-blue">Due Payment</span>
+    </a>
+</li>
+
+<li class="nav-item">
     <a class="nav-link collapsed" href="{{ route('visitors.index') }}">
         <i class="bi bi-people" style="color: #e76a35"></i>
         <span class="text-blue">Visitors List</span>

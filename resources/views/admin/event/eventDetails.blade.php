@@ -116,9 +116,23 @@
         <div class="row">
             <!-- Left: Event Image and Details -->
             <div class="col-lg-9">
-                <img src="{{ asset('Event/' . $event->event_banner) }}" class="card-img-top" alt="event banner" style="border-radius: 10px; margin-bottom: 1rem;">
+                @php
+                    $evMode = $event->event_mode ?? 'UBN Event';
+                    $isSponsor = $evMode === 'Sponsor Event';
+                @endphp
+                <div style="position: relative; margin-bottom: 1rem;">
+                    <img src="{{ asset('Event/' . $event->event_banner) }}" class="card-img-top" alt="event banner" style="border-radius: 10px; margin-bottom: 0;">
+                    <span style="position: absolute; top: 15px; left: 15px; background: {{ $isSponsor ? '#e76a35' : '#1d2368' }}; color: #ffffff; font-size: 13px; font-weight: 600; padding: 6px 14px; border-radius: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.35); display: inline-flex; align-items: center; gap: 6px;">
+                        <i class="bi {{ $isSponsor ? 'bi-award-fill' : 'bi-building-fill' }}"></i> {{ $evMode }}
+                    </span>
+                </div>
 
-                <h5 class="fw-bold color-blue">{{ $event->title }}</h5>
+                <div class="d-flex align-items-center gap-3 mb-1">
+                    <h5 class="fw-bold color-blue mb-0">{{ $event->title }}</h5>
+                    <span class="badge" style="background-color: {{ $isSponsor ? '#e76a35' : '#1d2368' }}; font-size: 12px; font-weight: 600; padding: 5px 12px; border-radius: 20px;">
+                        <i class="bi {{ $isSponsor ? 'bi-award-fill' : 'bi-building-fill' }} me-1"></i>{{ $evMode }}
+                    </span>
+                </div>
 
                 <div class="text-muted">Date & Time</div>
 

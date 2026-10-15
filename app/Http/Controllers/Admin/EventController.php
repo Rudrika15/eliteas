@@ -198,6 +198,7 @@ class EventController extends Controller
             $event->is_slot = $request->is_slot;
             $event->slot_date = $request->slot_date;
             $event->slot_type = $request->slot_type;
+            $event->event_mode = $request->event_mode ?? 'UBN Event';
 
             $uniqueId = time();
 
@@ -301,6 +302,7 @@ class EventController extends Controller
             $event->is_slot = $request->is_slot;
             $event->slot_date = $request->slot_date;
             $event->slot_type = $request->slot_type;
+            $event->event_mode = $request->event_mode ?? 'UBN Event';
 
             $uniqueId = time();
 

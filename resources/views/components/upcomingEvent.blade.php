@@ -50,10 +50,19 @@
                 <div class="container mt-4">
                     <div class="row">
                         @foreach ($nearestEvents as $event)
+                            @php
+                                $evMode = $event->event_mode ?? 'UBN Event';
+                                $isSponsor = $evMode === 'Sponsor Event';
+                            @endphp
                             <div class="col-md-4 mb-4">
                                 <a href="{{ route('events.details', $event->id) }}" class="text-decoration-none">
-                                    <div class="card shadow text-center h-100">
-                                        <img src="{{ $event->event_banner ? url('Event/' . $event->event_banner) : asset('images/event_default.png') }}" alt="{{ $event->title }}" class="img-fluid rounded-top">
+                                    <div class="card shadow text-center h-100" style="position: relative; overflow: hidden;">
+                                        <div style="position: relative;">
+                                            <img src="{{ $event->event_banner ? url('Event/' . $event->event_banner) : asset('images/event_default.png') }}" alt="{{ $event->title }}" class="img-fluid rounded-top">
+                                            <span style="position: absolute; top: 10px; left: 10px; background: {{ $isSponsor ? '#e76a35' : '#1d2368' }}; color: #ffffff; font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px; box-shadow: 0 2px 6px rgba(0,0,0,0.3); display: inline-flex; align-items: center; gap: 4px;">
+                                                <i class="bi {{ $isSponsor ? 'bi-award-fill' : 'bi-building-fill' }}" style="font-size: 11px;"></i> {{ $evMode }}
+                                            </span>
+                                        </div>
                                         <div class="card-body">
                                             <h4 class="card-title text-center text-dark">{{ $event->title }}</h4>
                                         </div>

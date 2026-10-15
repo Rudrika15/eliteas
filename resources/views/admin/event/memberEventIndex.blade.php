@@ -84,7 +84,16 @@
 
                                 <div class="flex-grow-1 d-flex flex-column justify-content-between">
                                     <div>
-                                        <div class="event-title fw-bold" style="color: #1d3268; font-weight: bold;">{{ $eventData->title ?? '-' }}</div>
+                                        @php
+                                            $evMode = $eventData->event_mode ?? 'UBN Event';
+                                            $isSponsor = $evMode === 'Sponsor Event';
+                                        @endphp
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div class="event-title fw-bold" style="color: #1d3268; font-weight: bold;">{{ $eventData->title ?? '-' }}</div>
+                                            <span class="badge" style="background-color: {{ $isSponsor ? '#e76a35' : '#1d2368' }}; font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px;">
+                                                <i class="bi {{ $isSponsor ? 'bi-award-fill' : 'bi-building-fill' }} me-1"></i>{{ $evMode }}
+                                            </span>
+                                        </div>
 
                                         <div class="event-meta mt-1 text-muted small">
                                             <i class="bi bi-geo-alt-fill"></i>

@@ -19,7 +19,7 @@
         <div class="row mt-3">
 
             <!-- Left Side -->
-            <div class="col-md-6">
+            <div class="col-md-12">
                 <div class="form-check mt-2">
                     <input class="form-check-input @error('is_slot') is-invalid @enderror"
                         type="checkbox"
@@ -40,7 +40,45 @@
             </div>
 
             <!-- Right Side -->
+           
+
+        </div>
+
+        <!-- Event Mode Row -->
+        <div class="row mt-2">
             <div class="col-md-6">
+                <div class="d-flex align-items-center gap-4 mt-2">
+                    <label class="fw-semibold mb-0">Event Mode :</label>
+
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio"
+                            name="event_mode"
+                            id="event_mode_ubn"
+                            value="UBN Event"
+                            checked>
+                        <label class="form-check-label" for="event_mode_ubn">
+                            UBN Event
+                        </label>
+                    </div>
+
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio"
+                            name="event_mode"
+                            id="event_mode_sponsor"
+                            value="Sponsor Event">
+                        <label class="form-check-label" for="event_mode_sponsor">
+                            Sponsor Event
+                        </label>
+                    </div>
+                </div>
+
+                @error('event_mode')
+                <div class="invalid-feedback d-block">
+                    {{ $message }}
+                </div>
+                @enderror
+            </div>
+             <div class="col-md-6">
                 <div class="d-flex align-items-center gap-3 mt-2">
                     <label class="fw-semibold mb-0">Event View :</label>
 
@@ -82,7 +120,6 @@
                 </div>
                 @enderror
             </div>
-
         </div>
 
 
