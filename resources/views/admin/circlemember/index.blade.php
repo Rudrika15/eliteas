@@ -252,6 +252,10 @@
                                             <i class="bi bi-trash"></i>
                                             <span class="btn-text">Delete Member</span>
                                         </button>
+                                        <button type="button" class="btn btn-warning btn-sm btn-tooltip text-white" onclick="confirmResetPassword({{ $circlememberData->id }})">
+                                            <i class="bi bi-key"></i>
+                                            <span class="btn-text">Reset Password</span>
+                                        </button>
 
                                         <script>
                                             function confirmDelete(memberId) {
@@ -266,6 +270,22 @@
                                                 }).then((result) => {
                                                     if (result.isConfirmed) {
                                                         window.location.href = '{{ route('circlemember.delete', '') }}/' + memberId;
+                                                    }
+                                                })
+                                            }
+
+                                            function confirmResetPassword(memberId) {
+                                                Swal.fire({
+                                                    title: 'Reset Password?',
+                                                    text: "Are you sure you want to reset this user's password to 123456?",
+                                                    icon: 'warning',
+                                                    showCancelButton: true,
+                                                    confirmButtonColor: '#ffc107',
+                                                    cancelButtonColor: '#d33',
+                                                    confirmButtonText: 'Yes, reset it!'
+                                                }).then((result) => {
+                                                    if (result.isConfirmed) {
+                                                        window.location.href = '{{ route('circlemember.resetPassword', '') }}/' + memberId;
                                                     }
                                                 })
                                             }

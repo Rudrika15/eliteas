@@ -767,4 +767,27 @@ class DigitalMemberController extends Controller
             return view('servererror');
         }
     }
+
+    public function resetPassword(Request $request, $id)
+    {
+        try {
+            $member = Member::find($id);
+            if (!$member) {
+                return redirect()->back()->with('error', 'Member not found.');
+            }
+
+            $user = User::find($member->userId);
+            if (!$user) {
+                return redirect()->back()->with('error', 'Associated user not found.');
+            }
+
+            $user->password = Hash::make('123456');
+            $user->save();
+
+            return redirect()->back()->with('success', 'User password has been reset to 123456 successfully.');
+        } catch (\Throwable $th) {
+            ErrorLogger::logError($th, $request->fullUrl());
+            return redirect()->back()->with('error', 'Failed to reset password.');
+        }
+    }
 }
