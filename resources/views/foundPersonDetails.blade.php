@@ -1,8 +1,6 @@
 @extends('layouts.master')
 @section('content')
-    @extends('components.foundPersonDetailsCSS')
-
-
+@extends('components.foundPersonDetailsCSS')
     <style>
         .custom-btn {
             border: none;
@@ -102,6 +100,9 @@
                     @elseif ($connection && $connection->status == 'Pending')
                         <button class="btn btn-secondary">Requested</button>
                     @endif
+                    <a href="{{ route('public.profile', $member->firstname - $member->lastname ?? $member->id) }}" target="_blank" class="btn custom-btn" style="border: 1px solid #1d2856; color: #1d2856; text-decoration: none;">
+                        <i class="bi bi-person-badge"></i> Public Profile
+                    </a>
                 </div>
             </div>
 
