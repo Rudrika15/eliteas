@@ -161,6 +161,15 @@
                             @endforeach
                         </select>
 
+                        <select name="labelId" id="labelId" class="form-select mt-3 me-3">
+                            <option value="">Select Label</option>
+                            @foreach ($allLabels as $id => $name)
+                                <option value="{{ $id }}" {{ request('labelId') == $id ? 'selected' : '' }}>
+                                    {{ $name }}
+                                </option>
+                            @endforeach
+                        </select>
+
                         <!-- ✅ Global Search -->
                         <input type="text" name="search" id="search" class="form-control mt-3" placeholder="Search by name, circle, etc.." value="{{ request('search') }}">
 
@@ -196,6 +205,7 @@
                                 <th>Business Category</th>
                                 <th>Membership Type</th>
                                 <th>Roles</th> <!-- New column for roles -->
+                                <th>Labels</th>
                                 <th>Action</th>
                                 <th>Role Action</th> <!-- New column for assigning role -->
                                 <th>Assign Circle</th> <!-- New column for assigning role -->
@@ -221,9 +231,9 @@
                                     </td>
                                     <td>{{ $circlememberData->bCategory->categoryName ?? '-' }}</td>
                                     <td>{{ $circlememberData->membershipType ?? '-' }} </td>
-                               		{{-- <td>
+                                		{{-- <td>
                                         @foreach ($circlememberData->user->roles as $role)
-                                            <span class="badge rounded-pill bg-success">{{ $role->name ?? '' }}</span>
+                                             <span class="badge rounded-pill bg-success">{{ $role->name ?? '' }}</span>
                                             @if (!$loop->last)
                                             @endif
                                         @endforeach
@@ -237,6 +247,23 @@
         <span class="badge rounded-pill bg-secondary">Member</span>
     @endforelse
                                     
+                                    </td>
+
+                                    <td>
+                                        @php
+                                            $memberLabels = is_array($circlememberData->labels) 
+                                                ? $circlememberData->labels 
+                                                : (json_decode($circlememberData->labels, true) ?? []);
+                                        @endphp
+                                        @forelse ($memberLabels as $labelId)
+                                            @if(isset($allLabels[$labelId]))
+                                                <span class="badge rounded-pill bg-info text-dark mb-1">
+                                                    {{ $allLabels[$labelId] }}
+                                                </span>
+                                            @endif
+                                        @empty
+                                            <span class="badge rounded-pill bg-light text-muted">-</span>
+                                        @endforelse
                                     </td>
 
                                     <td>
@@ -443,7 +470,7 @@
             }
 
             // Auto submit on dropdown change
-            $('#filtercircleId, #categoryId, #membershipType').on('change', function() {
+            $('#filtercircleId, #categoryId, #membershipType, #labelId').on('change', function() {
                 showLoader();
                 $('#filterForm').submit();
             });

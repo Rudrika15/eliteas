@@ -22,6 +22,7 @@ use App\Models\City;
 use App\Models\Connection;
 use App\Models\ContactDetails;
 use App\Models\Country;
+use App\Models\Label;
 use App\Models\Member;
 use App\Models\MembershipType;
 use App\Models\MemberSubscriptions;
@@ -162,6 +163,14 @@ class CircleMemberController extends Controller
                 $memberQuery->where('membershipType', $request->membershipType);
             }
 
+            if ($request->filled('labelId')) {
+                $labelId = $request->labelId;
+                $memberQuery->where(function ($q) use ($labelId) {
+                    $q->whereJsonContains('labels', (string) $labelId)
+                        ->orWhereJsonContains('labels', (int) $labelId);
+                });
+            }
+
             if ($request->filled('search')) {
                 $search = $request->search;
 
@@ -201,13 +210,15 @@ class CircleMemberController extends Controller
             $roles = Role::all();
 
             $membershipType = MembershipType::where('status', 'Active')->get();
+            $allLabels = Label::pluck('name', 'id')->toArray();
 
             return view('admin.circlemember.index', compact(
                 'member',
                 'roles',
                 'circle',
                 'bCategory',
-                'membershipType'
+                'membershipType',
+                'allLabels'
             ));
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, $request->fullUrl());
@@ -459,7 +470,8 @@ class CircleMemberController extends Controller
                 $circles = Circle::where('status', 'Active')->orderBy('circleName', 'asc')->get();
                 $circleMember = Member::with('circle')->where('status', 'Active')->orderBy('firstName', 'asc')->get();
             }
-            return view('admin.circlemember.create', compact('circle', 'membershipType', 'circles', 'circleMember', 'member', 'countries', 'states', 'cities', 'businessCategory'));
+            $labels = Label::where('status', 'Active')->orderBy('name', 'asc')->get();
+            return view('admin.circlemember.create', compact('circle', 'membershipType', 'circles', 'circleMember', 'member', 'countries', 'states', 'cities', 'businessCategory', 'labels'));
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError($th, $request->fullUrl());
@@ -589,7 +601,7 @@ class CircleMemberController extends Controller
 
 
             $member->status = 'Active';
-
+            $member->labels = !empty($request->labelIds) ? array_values($request->labelIds) : null;
             $member->save();
             // dd($request->hasFile('galleryImages'));
             if ($request->hasFile('galleryImages')) {
@@ -791,8 +803,10 @@ class CircleMemberController extends Controller
             $businessCategory = BusinessCategory::where('status', 'Active')->orderBy('categoryName', 'asc')->get();
             $membershipType = MembershipType::where('status', 'Active')->orderBy('membershipType', 'asc')->get();
             $circles = Circle::where('status', 'Active')->orderBy('circleName', 'asc')->get();
+            $labels = Label::where('status', 'Active')->orderBy('name', 'asc')->get();
+            $memberLabelIds = is_array($member->labels) ? $member->labels : (json_decode($member->labels, true) ?? []);
 
-            return view('admin.circlemember.edit', compact('countries', 'circles','membershipType', 'user', 'states', 'cities', 'member', 'contactDetails', 'billing', 'tops', 'circles', 'businessCategory', 'galleryImages'));
+            return view('admin.circlemember.edit', compact('countries', 'circles','membershipType', 'user', 'states', 'cities', 'member', 'contactDetails', 'billing', 'tops', 'circles', 'businessCategory', 'galleryImages', 'labels', 'memberLabelIds'));
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError(
@@ -896,6 +910,7 @@ class CircleMemberController extends Controller
 
 
             $member->status = 'Active';
+            $member->labels = !empty($request->labelIds) ? array_values($request->labelIds) : null;
             $member->save();
             if ($request->hasFile('galleryImages')) {
 

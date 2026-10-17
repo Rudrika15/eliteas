@@ -85,6 +85,20 @@
 
                 </h5>
                 <small class="text-muted">{{ $member->companyName ?? '' }}</small>
+                @php
+                    $memberLabels = is_array($member->labels) ? $member->labels : (json_decode($member->labels, true) ?? []);
+                @endphp
+                @if(!empty($memberLabels))
+                    <div class="mt-2 d-flex flex-wrap justify-content-center gap-1">
+                        @foreach($memberLabels as $labelId)
+                            @if(isset($allLabels[$labelId]))
+                                <span class="badge rounded-pill" style="background-color: #fff3ed; color: #e76a35; border: 1px solid #ffd8c7; font-size: 0.8rem; font-weight: 600; padding: 5px 12px;">
+                                    <i class="bi bi-tag-fill me-1"></i>{{ $allLabels[$labelId] }}
+                                </span>
+                            @endif
+                        @endforeach
+                    </div>
+                @endif
                 <p class="mt-2 px-4 text-muted">
                     {{ $member->bio ?? 'This member has not added a bio yet.' }}
                 </p>
@@ -193,6 +207,33 @@
                         @endif
                         {{-- <p><strong>Corporate Address:</strong> {{ $member->companyAddress ?? 'N/A' }}</p> --}}
                         <p><i class="bi bi-tag-fill me-2 text-muted"></i><strong class="text-muted">Category:</strong> <span class="text-color fw-bold"> {{ $member->bCategory->categoryName ?? 'N/A' }} </span></p>
+                        @php
+                            $hasValidLabel = false;
+                            if(!empty($memberLabels)) {
+                                foreach($memberLabels as $labelId) {
+                                    if(isset($allLabels[$labelId])) {
+                                        $hasValidLabel = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        @endphp
+                        <p class="mb-2"><i class="bi bi-tags me-2 text-muted"></i><strong class="text-muted">Labels:</strong>
+                            @if(!$hasValidLabel)
+                                <span class="text-color fw-bold"> N/A</span>
+                            @endif
+                        </p>
+                        @if($hasValidLabel)
+                            <div class="d-flex flex-wrap gap-1 mb-3">
+                                @foreach($memberLabels as $labelId)
+                                    @if(isset($allLabels[$labelId]))
+                                        <span class="badge rounded-pill" style="background-color: #fff3ed; color: #e76a35; border: 1px solid #ffd8c7; font-size: 0.75rem; font-weight: 600; padding: 4px 10px;">
+                                            {{ $allLabels[$labelId] }}
+                                        </span>
+                                    @endif
+                                @endforeach
+                            </div>
+                        @endif
                         <p><i class="bi bi-tags-fill me-2 text-muted"></i><strong class="text-muted">Keywords:</strong></p>
                         <div>
                             <div class="keywords-container row">

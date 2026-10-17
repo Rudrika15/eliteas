@@ -434,6 +434,15 @@
 
     <ul id="master-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
         <li class="nav-item">
+            <a class="nav-link " href="{{ route('label.index') }}">
+                <i class="bi bi-tags" style="color: #e76a35"></i>
+                <span>Label Master</span>
+            </a>
+        </li>
+    </ul>
+
+    <ul id="master-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+        <li class="nav-item">
             <a class="nav-link " href="{{ route('eventType.index') }}">
                 <i class="bi bi-calendar-event" style="color: #e76a35"></i>
                 <span>Event Type</span>

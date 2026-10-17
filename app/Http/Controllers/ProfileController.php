@@ -7,6 +7,7 @@ use App\Models\Circle;
 use App\Models\City;
 use App\Models\ContactDetails;
 use App\Models\Country;
+use App\Models\Label;
 use App\Models\Landmark;
 use App\Models\Member;
 use App\Models\MemberGallery;
@@ -71,8 +72,10 @@ class ProfileController extends Controller
             }
 
             $galleryImages = MemberGallery::where('memberId', $member->id)->where('status', 'Active')->get();
+            $labels = Label::where('status', 'Active')->orderBy('name', 'asc')->get();
+            $memberLabelIds = is_array($member->labels) ? $member->labels : (json_decode($member->labels, true) ?? []);
 
-            return view('profile', compact('member', 'user', 'country', 'states', 'city', 'contactDetails', 'billing', 'tops', 'landmarks', 'galleryImages'));
+            return view('profile', compact('member', 'user', 'country', 'states', 'city', 'contactDetails', 'billing', 'tops', 'landmarks', 'galleryImages', 'labels', 'memberLabelIds'));
         } catch (\Throwable $th) {
             // throw $th;
             ErrorLogger::logError(
@@ -200,6 +203,12 @@ class ProfileController extends Controller
                     }
                 }
                 $member->landmark = $landmarkName;
+            }
+
+            if ($request->has('labelIds')) {
+                $member->labels = !empty($request->labelIds) ? array_values($request->labelIds) : null;
+            } else {
+                $member->labels = null;
             }
 
             $member->status = 'Active';

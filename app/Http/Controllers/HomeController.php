@@ -15,6 +15,7 @@ use App\Models\Connection;
 use App\Models\ContactDetails;
 use App\Models\Event;
 use App\Models\EventRegister;
+use App\Models\Label;
 use App\Models\Landmark;
 use App\Models\MeetingInvitation;
 use App\Models\Member;
@@ -1843,6 +1844,7 @@ class HomeController extends Controller
             $testimonials = Testimonial::with(['user', 'sender'])->where('memberId', $member->userId)->latest()->get();
 
             $memberGallery = MemberGallery::where('memberId', $member->id)->where('status', 'Active')->latest()->get();
+            $allLabels = Label::pluck('name', 'id')->toArray();
 
             return view('foundPersonDetails', compact(
                 'member',
@@ -1852,7 +1854,8 @@ class HomeController extends Controller
                 'memberCircleId',
                 'memberInduction',
                 'testimonials',
-                'memberGallery'
+                'memberGallery',
+                'allLabels'
             ));
         } catch (\Throwable $th) {
             ErrorLogger::logError($th, request()->fullUrl());

@@ -55,6 +55,42 @@
                         <div class="accordion-body">
                             <div class="row">
                                 <div class="col-md-6 mt-3">
+                                    <div class="dropdown custom-label-dropdown">
+                                        <button class="form-select text-start d-flex align-items-center" type="button" id="labelDropdownBtn" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" style="cursor: pointer; background-color: #fff; height: calc(3.5rem + 2px); min-height: 58px; font-size: 1rem; padding: 1rem 2.25rem 1rem 0.75rem;">
+                                            <span id="selectedLabelsText" class="text-truncate" style="max-width: 90%;">Select Labels</span>
+                                        </button>
+                                        <div class="dropdown-menu p-3 shadow-sm w-100" aria-labelledby="labelDropdownBtn" style="max-height: 280px; overflow-y: auto;">
+                                            <div class="mb-2 pb-2 border-bottom d-flex justify-content-between align-items-center">
+                                                <span class="small fw-bold text-muted">Available Labels</span>
+                                                <div>
+                                                    <a href="javascript:void(0)" class="small text-decoration-none me-2 select-all-labels" style="color: #e76a35; font-weight: 600;">Select All</a>
+                                                    <a href="javascript:void(0)" class="small text-decoration-none text-muted deselect-all-labels">Clear</a>
+                                                </div>
+                                            </div>
+                                            @if(isset($labels) && count($labels) > 0)
+                                                @foreach ($labels as $label)
+                                                    <div class="form-check my-2">
+                                                        <input class="form-check-input label-checkbox" type="checkbox" name="labelIds[]" value="{{ $label->id }}" id="label_profile_{{ $label->id }}" data-name="{{ $label->name }}"
+                                                            {{ (isset($memberLabelIds) && in_array($label->id, $memberLabelIds)) ? 'checked' : '' }}>
+                                                        <label class="form-check-label w-100" for="label_profile_{{ $label->id }}" style="cursor: pointer;">
+                                                            {{ $label->name }}
+                                                        </label>
+                                                    </div>
+                                                @endforeach
+                                            @else
+                                                <div class="text-muted small py-2">No Labels Available</div>
+                                            @endif
+                                            <div class="pt-2 mt-2 border-top d-flex justify-content-between align-items-center">
+                                                <span class="small text-muted">Click Done to apply</span>
+                                                <button type="button" class="btn btn-sm text-white px-3 close-label-dropdown" style="background-color: #e76a35; border-color: #e76a35; font-weight: 500;">
+                                                    <i class="bi bi-check-lg me-1"></i>Done
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 mt-3">
                                     <div class="form-floating">
                                         <select class="form-select @error('title') is-invalid @enderror" id="title" name="title">
                                             <option value="" disabled selected>Select Title</option>
@@ -2223,6 +2259,55 @@
 
             toggleAddMore();
 
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+            function updateSelectedLabelsText() {
+                let checked = [];
+                $('.label-checkbox:checked').each(function() {
+                    checked.push($(this).data('name'));
+                });
+                if (checked.length === 0) {
+                    $('#selectedLabelsText').text('Select Labels').addClass('text-muted');
+                } else if (checked.length <= 3) {
+                    $('#selectedLabelsText').text(checked.join(', ')).removeClass('text-muted');
+                } else {
+                    $('#selectedLabelsText').text(checked.length + ' labels selected (' + checked.slice(0, 2).join(', ') + ', ...)').removeClass('text-muted');
+                }
+            }
+
+            $(document).on('change', '.label-checkbox', function() {
+                updateSelectedLabelsText();
+            });
+
+            $('.select-all-labels').on('click', function() {
+                $('.label-checkbox').prop('checked', true);
+                updateSelectedLabelsText();
+            });
+
+            $('.deselect-all-labels').on('click', function() {
+                $('.label-checkbox').prop('checked', false);
+                updateSelectedLabelsText();
+            });
+
+            $(document).on('click', '.close-label-dropdown', function(e) {
+                e.preventDefault();
+                let $dropdown = $(this).closest('.custom-label-dropdown');
+                let btn = $dropdown.find('#labelDropdownBtn')[0];
+                if (btn) {
+                    if (typeof bootstrap !== 'undefined' && bootstrap.Dropdown) {
+                        let instance = bootstrap.Dropdown.getOrCreateInstance(btn);
+                        if (instance) {
+                            instance.hide();
+                            return;
+                        }
+                    }
+                    $(btn).trigger('click');
+                }
+            });
+
+            updateSelectedLabelsText();
         });
     </script>
 @endsection

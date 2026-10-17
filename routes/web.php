@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\CircleMeetingMembersController;
 use App\Http\Controllers\Admin\CircleMemberActivityController;
 use App\Http\Controllers\Admin\CircleMemberController;
 use App\Http\Controllers\Admin\CircleTypeController;
+use App\Http\Controllers\Admin\LabelController;
 use App\Http\Controllers\Admin\DuePaymentController;
 use App\Http\Controllers\Admin\CityController;
 use App\Http\Controllers\Admin\CombinedReportController;
@@ -304,6 +305,14 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('circletype/edit/{id?}', [CircleTypeController::class, 'edit'])->name('circletype.edit');
     Route::post('circletype/update', [CircleTypeController::class, 'update'])->name('circletype.update');
     Route::get('circletype/delete/{id?}', [CircleTypeController::class, 'delete'])->name('circletype.delete');
+
+    // Label Master
+    Route::get('/label/index', [LabelController::class, 'index'])->name('label.index');
+    Route::get('label/create', [LabelController::class, 'create'])->name('label.create');
+    Route::post('label/store', [LabelController::class, 'store'])->name('label.store');
+    Route::get('label/edit/{id?}', [LabelController::class, 'edit'])->name('label.edit');
+    Route::post('label/update/{id?}', [LabelController::class, 'update'])->name('label.update');
+    Route::get('label/delete/{id?}', [LabelController::class, 'delete'])->name('label.delete');
 
     // event Type
 

@@ -15,6 +15,11 @@ class Member extends Model
         'lastName',
         // 'email',
         'userId',
+        'labels',
+    ];
+
+    protected $casts = [
+        'labels' => 'array',
     ];
 
     public function sponsored()
@@ -120,5 +125,13 @@ class Member extends Model
     public function businessReceived()
     {
         return $this->hasMany(CircleMeetingMembersBusiness::class, 'loginMemberId', 'userId');
+    }
+
+    public function getLabelListAttribute()
+    {
+        if (empty($this->labels) || !is_array($this->labels)) {
+            return collect();
+        }
+        return Label::whereIn('id', $this->labels)->get();
     }
 }
