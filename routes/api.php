@@ -36,6 +36,7 @@ use App\Http\Controllers\Api\PermissionController;
 use App\Http\Controllers\Api\SlotController;
 use App\Http\Controllers\Api\SocialWallController;
 use App\Http\Controllers\Api\SpecificAskController;
+use App\Http\Controllers\Api\PublicProfileController;
 use App\Http\Controllers\Api\SupportTicketController;
 use App\Http\Controllers\Api\TermsController;
 use App\Http\Controllers\Api\TestimonialController;
@@ -96,9 +97,13 @@ Route::post('/verify-otp', [OTPLoginController::class, 'verifyOTP'])->name('veri
 
 Route::get('role-permissions', [LoginController::class, 'getRolePermissions']);
 
+
+Route::get('/public-profile/{slug?}', [PublicProfileController::class, 'getPublicProfile']);
+
 Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/user/profile', [LoginController::class, 'profile']);
-    Route::post('/force-change-password',[ApiController::class, 'forceChangePassword']);
+    Route::get('/user/public-profile', [PublicProfileController::class, 'getAuthPublicProfile']);
+    Route::post('/force-change-password', [ApiController::class, 'forceChangePassword']);
 
     Route::post('/user/member/update', [LoginController::class, 'memberUpdate']);
     Route::post('/user/member/updateBillingAddress', [LoginController::class, 'billingAddressUpdate']);
